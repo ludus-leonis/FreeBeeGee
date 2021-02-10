@@ -1,0 +1,45 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group vendors
+///
+/// Customize Bootstrap v5.
+///
+/// @access public
+////
+
+$primary: $color-primary;
+
+$border-radius: 3px;
+$border-radius-sm: $border-radius;
+$border-radius-lg: $border-radius;
+
+$btn-focus-width: px(2);
+
+$input-btn-focus-color: $color-primary;
+
+$transition-base: all .1s ease-in-out;
+
+$grid-breakpoints: (
+  xs: 0,
+  sm: 576px,
+  md: 768px,
+  lg: 992px,
+  xl: 1200px,
+  xxl: 1400px
+);

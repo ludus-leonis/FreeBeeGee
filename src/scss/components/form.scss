@@ -1,0 +1,132 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Forms and input fields.
+///
+/// @access public
+////
+
+$form-field-border: px(2) solid $color-gray-40; // $color-gray-75;
+
+$form-color-disabled: $color-gray-50;
+
+%form-box {
+  @extend %p-medium;
+
+  background-color: $color-white-100;
+  border: 0;
+  border-bottom: $form-field-border;
+  color: inherit;
+  padding: $spacing-micro $spacing-tiny;
+  width: 100%;
+}
+
+%form-typography {
+  @include typography-font($typography-font-list-sans, 400, px(18), 1.5em);
+}
+
+@mixin focus-border-embed($color) {
+  border-color: $color;
+  box-shadow: none;
+  outline: 0;
+}
+
+@mixin focus-border($color) {
+  &:focus,
+  &:focus:first-child,
+  &:focus:last-child {
+    @include focus-border-embed($color);
+  }
+}
+
+label {
+  @extend %p-label;
+  display: block;
+
+  + input,
+  textarea {
+    margin-top: 0;
+  }
+}
+
+select,
+textarea,
+[type='password'],
+[type='email'],
+[type='text'] {
+  @extend %form-box;
+  @extend %form-typography;
+  @include focus-border($color-primary);
+
+  &::placeholder {
+    opacity: .25;
+  }
+
+  &.form-control-plaintext {
+    background-color: transparent;
+    border-color: transparent;
+  }
+
+  label + & {
+    margin-top: 0;
+  }
+
+  &:invalid,
+  &.invalid {
+    border-color: $color-bad;
+    box-shadow: none;
+    color: $color-bad;
+  }
+
+  &::selection {
+    background: $color-primary;
+    color: $color-white-100;
+  }
+}
+
+[type='password'] {
+  letter-spacing: .25em;
+}
+
+select {
+  appearance: none;
+  background-image: url('img/select.png');
+  background-position: right .5rem center;
+  background-repeat: no-repeat;
+  background-size: 1rem;
+}
+
+form {
+  &.container,
+  .row,
+  [class^='col-'] {
+    margin: 0;
+    padding: 0;
+  }
+
+  &.container,
+  &.container:first-child {
+    margin: calc(var(--nr-spacing) / -2);
+  }
+
+  [class^='col-'] {
+    padding: calc(var(--nr-spacing) / 2);
+  }
+}

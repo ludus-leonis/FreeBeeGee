@@ -1,0 +1,113 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Our variants of Bootstrap buttons.
+///
+/// @access public
+////
+
+@import '../../../node_modules/bootstrap/scss/buttons';
+
+@mixin button-color($color-text, $color-bg, $color-border) {
+  $btn-primary-glow: rgba($color-border, .25);
+
+  &,
+  &:hover,
+  &:visited,
+  &:active,
+  &:focus,
+  &:active:focus {
+    background-color: $color-bg;
+    border-color: $color-border;
+    color: $color-text;
+  }
+
+  &:focus {
+    box-shadow: 0 0 0 px(4) $btn-primary-glow;
+  }
+
+  &.active,
+  &.active:hover,
+  &.active:visited,
+  &.active:active,
+  &.active:focus,
+  &.active:active:focus {
+    background-color: $color-white-100;
+    border-color: $color-white-100;
+    color: $color-bg;
+  }
+
+  &:disabled,
+  &.disabled {
+    background-color: $color-bg;
+    border-color: $color-border;
+    color: $color-text;
+  }
+}
+
+.btn {
+  border-radius: $border-radius;
+  border-width: 2px;
+  font-weight: 500;
+  min-width: px(128);
+
+  &,
+  &:hover,
+  &:visited,
+  &:active,
+  &:focus,
+  &:active:focus {
+    box-shadow: none;
+    outline: 0;
+  }
+
+  &:active {
+    opacity: .8;
+  }
+
+  &.active,
+  &.active:hover,
+  &.active:visited,
+  &.active:active,
+  &.active:focus,
+  &.active:active:focus {
+    box-shadow: none;
+    outline: 0;
+  }
+
+  &:disabled,
+  &.disabled {
+    opacity: .25;
+  }
+
+  &.btn-wide {
+    width: 100%;
+  }
+
+  @include button-color($color-bw-fg, $color-bw-bg, $color-bw-fg); // default = outlined in textcolor
+}
+
+.btn-primary {
+  @include button-color($color-white-100, $color-primary, $color-primary);
+}
+
+.btn-secondary {
+  @include button-color($color-white-100, $color-secondary, $color-secondary);
+}

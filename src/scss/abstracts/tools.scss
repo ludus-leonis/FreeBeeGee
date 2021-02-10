@@ -1,0 +1,64 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// tools.scss
+///
+/// Generic helper mixins.
+///
+/// @group abstracts
+/// @access public
+////
+
+/// Convert a px-length to rems. Will stick with pixels
+/// for small sizes. Based on 16px root font size.
+///
+/// @example scss
+///   px(32)
+///
+/// @param {length} $px Amout to convert without units, e.g. `32`.
+/// @return {length} Corresponding rem value, e.g. `2rem`.
+@function px($px) {
+  @if $px <= 2 {
+    @return $px * 1px;
+  }
+
+  @return((1rem / 16) * $px); // based on 16px = 1rem
+}
+
+/// Set a property only if it is not equal to another value.
+///
+/// Useful to minizize / avoid duplicate responsive rules.
+///
+/// @example scss
+///   set-property-if-not(font-size, $somesize, 2rem)
+///
+/// @param {property} $property Property to (not) set.
+/// @param {value} $old-value Old value to check against.
+/// @param {value} $new-value New value to set.
+/// @output Property clause or nothing.
+@mixin set-property-if-not($property, $old-value, $new-value) {
+  @if $old-value != $new-value {
+    #{$property}: $new-value;
+  }
+}
+
+%flex-center-center {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+}

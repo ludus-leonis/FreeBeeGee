@@ -1,0 +1,262 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group base
+///
+/// Defines fonts and typography rules.
+///
+/// @access public
+////
+
+@import '../../fonts/Poppins/Poppins';
+
+$typography-font-list-fallback:
+-apple-system,
+BlinkMacSystemFont,
+'Segoe UI',
+Roboto,
+'Helvetica Neue',
+Arial,
+sans-serif,
+'Apple Color Emoji',
+'Segoe UI Emoji',
+'Segoe UI Symbol';
+
+$typography-font-list-sans: Poppins, $typography-font-list-fallback;
+
+$typography-font-list-monospace:
+SFMono-Regular,
+Menlo,
+Monaco,
+Consolas,
+'Liberation Mono',
+'Courier New',
+monospace;
+
+/// Setup links (anchors). Fancy with color, opacity and colorful underlines!
+///
+/// @example scss
+///   @include a-underlined(#333, rgba(#333, 0.7), 2px, #555, rgba(#555, 0.7));
+///
+/// @param {color} $color [inherit] The text color.
+/// @param {color} $color-hover [$color] The text color when hovering.
+/// @param {length} $underline-height [1px] The height / thickness of the underline.
+/// @param {color} $underline-color [$color] The regular color of the underline.
+/// @param {color} $underline-color-hover [$color] The hover color fo the underline.
+/// @output An `a {}` rules block for fancy links.
+@mixin typography-links(
+  $color: inherit,
+  $color-hover: $color,
+  $underline-height: 1px,
+  $underline-color: $color,
+  $underline-color-hover: $color
+) {
+  $gradient-transparent: linear-gradient(transparent, transparent);
+
+  background-image: $gradient-transparent, $gradient-transparent, linear-gradient(to right, $underline-color, $underline-color);
+  background-position: left bottom 3px; // depends on underline
+  background-repeat: no-repeat;
+  background-size: 100% $underline-height;
+  color: $color;
+  display: inline;
+  padding-bottom: .05em;
+  position: relative;
+  text-decoration: none;
+
+  &:hover {
+    background-image: $gradient-transparent, $gradient-transparent, linear-gradient(to right, $underline-color-hover, $underline-color-hover);
+    color: $color-hover;
+    text-decoration: none;
+  }
+}
+
+@mixin typography-font (
+  $font-family,
+  $font-weight: 400,
+  $font-size: 1em,
+  $line-height: 1.5em,
+  $letter-spacing: 0
+) {
+  @include set-property-if-not(letter-spacing, 0, $letter-spacing);
+
+  font-family: $font-family;
+  font-size: $font-size;
+  font-weight: $font-weight;
+  line-height: $line-height;
+}
+
+// --- or general typography style set -----------------------------------------
+
+h0,
+.h0,
+%h0 {
+  @include typography-font($typography-font-list-sans, 200, px(64), 1.4em);
+  color: inherit;
+}
+
+h1,
+.h1,
+%h1 {
+  @extend %spacing-large;
+  @include typography-font($typography-font-list-sans, 400, px(40), 1.4em);
+  color: inherit;
+}
+
+h2,
+.h2,
+%h2 {
+  @extend %spacing-medium;
+  @include typography-font($typography-font-list-sans, 400, px(32), 1.25em);
+  color: inherit;
+}
+
+h3,
+.h3,
+%h3 {
+  @extend %spacing-medium;
+  @include typography-font($typography-font-list-sans, 400, px(24), 1.25em);
+  color: inherit;
+}
+
+h4,
+.h4,
+%h4,
+h5,
+.h5,
+%h5,
+h5,
+.h5,
+%h6 {
+  @include typography-font($typography-font-list-sans, 400, px(18), 1.5em);
+  color: inherit;
+}
+
+.p-large,
+%p-large {
+  @include typography-font($typography-font-list-sans, 300, px(22), 1.5em);
+}
+
+.p-medium,
+%p-medium {
+  @include typography-font($typography-font-list-sans, 400, px(18), 1.5em);
+}
+
+.p-small,
+%p-small {
+  @include typography-font($typography-font-list-sans, 400, px(14), 1.5em, .02em);
+}
+
+.p-tiny,
+%p-tiny {
+  @include typography-font($typography-font-list-sans, 700, px(10), 1.2em, .1em);
+
+  font-weight: 700;
+  text-transform: uppercase;
+
+  a {
+    padding-bottom: 3px;
+  }
+}
+
+.p-micro,
+%p-micro {
+  @include typography-font($typography-font-list-sans, 600, px(8), 1.2em, .1em);
+  font-weight: 700;
+}
+
+.p-pre,
+%p-pre {
+  @include typography-font($typography-font-list-monospace, 400, px(16), 1.5em);
+  background-color: $color-gray-05;
+  font-variant-ligatures: none;
+  padding: .1em .25em;
+}
+
+.p-label,
+%p-label {
+  @extend %p-small;
+  color: $color-primary;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+// --- default styling to all elements -----------------------------------------
+
+html,
+body {
+  font-size: 16px; // root font size
+}
+
+body {
+  @extend %p-medium;
+
+  background-color: var(--nr-color-bg);
+  color: var(--nr-color-text);
+
+  p > a {
+    @include typography-links(inherit, inherit, 2px, $color-primary, var(--nr-color-text));
+  }
+}
+
+::selection {
+  background: $color-primary;
+  color: $color-white-100;
+}
+
+b,
+strong {
+  font-weight: 600;
+}
+
+.a-invisible {
+  &,
+  &:hover,
+  &:active,
+  &:visited {
+    color: inherit;
+    text-decoration: inherit;
+  }
+}
+
+// --- is-* modifiers ----------------------------------------------------------
+
+.is-faded {
+  color: $color-gray-50;
+}
+
+.is-center {
+  text-align: center;
+}
+
+.is-left {
+  text-align: left;
+}
+
+.is-right {
+  text-align: right;
+}
+
+.is-justify {
+  text-align: justify;
+}
+
+.is-wrapping {
+  word-wrap: break-word;
+}

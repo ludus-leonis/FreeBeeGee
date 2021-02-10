@@ -1,0 +1,40 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Keyboard keys for help messages.
+///
+/// @access public
+////
+
+.key {
+  border: 1px solid $color-gray-50;
+  border-radius: .25em;
+  box-shadow: px(1) px(1) 0 $color-gray-80, px(2) px(1) px(2) $color-black-25a;
+  display: inline-block;
+  font-family: $typography-font-list-monospace;
+  font-size: .85em;
+  line-height: 1em;
+  margin-right: $spacing-micro;
+  min-width: 1.5em;
+  padding: .3em .2em .2em;
+  position: relative;
+  text-align: center;
+  top: -.1em;
+}

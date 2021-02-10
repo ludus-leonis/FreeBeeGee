@@ -1,0 +1,78 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group pages
+///
+/// Rules that affect the non-gaming screens like login/join or info pages.
+///
+/// @access public
+////
+
+.page-boxed {
+  align-items: center;
+  background-position-x: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+  width: 100%;
+
+  .col-12 {
+    .h0,
+    > p {
+      padding-left: $spacing-tiny;
+      padding-right: $spacing-tiny;
+      text-align: center;
+    }
+
+    .h0 {
+      color: $color-white-100;
+      font-size: 2.75em;
+      letter-spacing: px(2);
+      text-shadow: px(2) px(2) px(1) var(--nr-color-bg), px(-2) px(-2) px(1) var(--nr-color-bg);
+    }
+
+    .h3 {
+      font-size: 1.25em;
+    }
+
+    > p {
+      text-shadow: px(1) px(1) px(1) var(--nr-color-bg), px(-1) px(-1) px(1) var(--nr-color-bg);
+    }
+  }
+
+  .p-small {
+    color: $color-gray-45;
+  }
+
+  @include media-breakpoint-up(sm) {
+    background-image: radial-gradient(transparent, transparent, $color-vignette), url('img/checkers-white.png?v=$CACHE$');
+
+    .col-12 .h0 {
+      font-size: 4em;
+    }
+
+    .col-12 .h3 {
+      font-size: 1.5em;
+    }
+  }
+
+  .copyright {
+    padding-bottom: $spacing-small;
+  }
+}

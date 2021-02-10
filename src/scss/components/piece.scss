@@ -1,0 +1,344 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Gaming pieces on the virtual gaming board. E.g. tiles and tokens.
+///
+/// @access public
+////
+
+$piece-color: $color-gray-95;
+$piece-tile-size: 64px;
+$piece-border-size: 3px;
+$piece-margin-size: 4px;
+$piece-shadow-height: 4px;
+$piece-shadow: ($piece-shadow-height / 2) ($piece-shadow-height / 2) ($piece-shadow-height - 1) $color-black-75a;
+$piece-shadow-90: ($piece-shadow-height / 2) ($piece-shadow-height / -2) ($piece-shadow-height - 1) $color-black-75a;
+$piece-shadow-180: ($piece-shadow-height / -2) ($piece-shadow-height / -2) ($piece-shadow-height - 1) $color-black-75a;
+$piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piece-shadow-height - 1) $color-black-75a;
+
+.piece {
+  pointer-events: none;
+
+  // --- piece basics (size, ...) ----------------------------------------------
+
+  $piece-tile-half: $piece-tile-size / 2;
+
+  @for $x from 1 through 32 {
+    &.is-w-#{$x} {
+      width: $x * $piece-tile-size;
+
+      &.is-rotate-270,
+      &.is-rotate-270 .box,
+      &.is-rotate-270 .label {
+        transform-origin: $piece-tile-half * $x $piece-tile-half * $x;
+      }
+    }
+  }
+
+  @for $y from 1 through 32 {
+    &.is-h-#{$y} {
+      height: $y * $piece-tile-size;
+
+      &.is-rotate-90,
+      &.is-rotate-90 .box,
+      &.is-rotate-90 .label {
+        transform-origin: $piece-tile-half * $y $piece-tile-half * $y;
+      }
+    }
+  }
+
+  &.is-scale-1 {
+    height: $piece-tile-size;
+    width: $piece-tile-size;
+  }
+
+  &.is-scale-2 {
+    height: 2 * $piece-tile-size;
+    width: 2 * $piece-tile-size;
+  }
+
+  &.is-scale-1,
+  &.is-scale-2 {
+    &:not(.token) .border {
+      background-color: transparent;
+    }
+
+    .asset {
+      background-color: transparent !important; // sass-lint:disable-line no-important
+      background-repeat: no-repeat;
+      background-size: contain;
+    }
+  }
+
+  .box {
+    height: 100%;
+    width: 100%;
+  }
+
+  .border {
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+    position: relative;
+    width: 100%;
+  }
+
+  &.is-rotate-0 {
+    .box {
+      transform: rotate(0deg);
+    }
+  }
+
+  &.is-rotate-90 {
+    .box {
+      transform: rotate(90deg);
+    }
+
+    @for $x from -31 through 31 {
+      &.is-wh-#{$x} .label {
+        transform: translateX(-50%) translate($piece-tile-size * $x / -2, $piece-tile-size * $x);
+      }
+    }
+  }
+
+  &.is-rotate-180 {
+    .box {
+      transform: rotate(180deg);
+    }
+  }
+
+  &.is-rotate-270 {
+    .box {
+      transform: rotate(270deg);
+    }
+
+    @for $x from -31 through 31 {
+      &.is-wh-#{$x} .label {
+        transform: translateX(-50%) translate($piece-tile-size * $x / -2, $piece-tile-size * $x);
+      }
+    }
+  }
+
+  // --- asset within the tile -------------------------------------------------
+
+  .asset {
+    background-position: center;
+    background-size: cover;
+    height: 100%;
+    pointer-events: none;
+    width: 100%;
+  }
+
+  // --- info label at bottom --------------------------------------------------
+
+  .label {
+    @extend %p-micro;
+
+    bottom: px(-2);
+    color: $color-gray-25;
+    left: 50%;
+    min-width: 100%;
+    pointer-events: none;
+    position: absolute;
+    text-align: center;
+    text-shadow:
+    px(0) px(0) px(1) $color-black-100,
+    px(0) px(0) px(1) $color-black-100,
+    px(1) px(1) px(1) $color-black-100;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  // --- specifics for tokens --------------------------------------------------
+
+  &.token {
+
+    $token-offset: 4px;
+    &[id^='1'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 1, ($token-offset / 2) - $token-offset / 16 * 8); }
+    &[id^='2'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 2, ($token-offset / 2) - $token-offset / 16 * 7); }
+    &[id^='3'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 3, ($token-offset / 2) - $token-offset / 16 * 6); }
+    &[id^='4'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 4, ($token-offset / 2) - $token-offset / 16 * 5); }
+    &[id^='5'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 5, ($token-offset / 2) - $token-offset / 16 * 4); }
+    &[id^='6'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 6, ($token-offset / 2) - $token-offset / 16 * 3); }
+    &[id^='7'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 7, ($token-offset / 2) - $token-offset / 16 * 2); }
+    &[id^='8'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 8, ($token-offset / 2) - $token-offset / 16 * 1); }
+    &[id^='9'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 9, ($token-offset / 2) - $token-offset / 16 * 15); }
+    &[id^='a'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 10, ($token-offset / 2) - $token-offset / 16 * 14); }
+    &[id^='b'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 11, ($token-offset / 2) - $token-offset / 16 * 13); }
+    &[id^='c'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 12, ($token-offset / 2) - $token-offset / 16 * 12); }
+    &[id^='d'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 13, ($token-offset / 2) - $token-offset / 16 * 11); }
+    &[id^='e'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 14, ($token-offset / 2) - $token-offset / 16 * 10); }
+    &[id^='f'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 15, ($token-offset / 2) - $token-offset / 16 * 9); }
+
+    .box {
+      padding: $piece-margin-size;
+    }
+
+    // .label {
+    //   margin-left: 0;
+    // }
+
+    .border {
+      background-color: $piece-color; // tile background
+      border: $piece-border-size solid $piece-color;
+      border-radius: $piece-tile-size;
+      box-shadow: $piece-shadow;
+    }
+
+    &.is-rotate-90 .border {
+      box-shadow: $piece-shadow-90;
+    }
+
+    &.is-rotate-180 .border {
+      box-shadow: $piece-shadow-180;
+    }
+
+    &.is-rotate-270 .border {
+      box-shadow: $piece-shadow-270;
+    }
+
+    .asset {
+      background-position: center;
+      height: 100%;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+    }
+
+    &.is-selected {
+      .border {
+        border-color: $color-secondary !important; // sass-lint:disable-line no-important
+      }
+    }
+  }
+
+  // --- specifics for overlays ------------------------------------------------
+
+  &.overlay {
+    .box {
+      border-radius: px(3);
+    }
+
+    .asset {
+      background-position: center;
+      // border-radius: px(3);
+    }
+
+    &.is-selected {
+      .asset {
+        box-shadow: 0 0 0 $piece-border-size $color-secondary inset;
+      }
+    }
+  }
+
+  // --- specifics for tiles ---------------------------------------------------
+
+  &.tile {
+    .border {
+      background-color: $piece-color; // tile background
+    }
+
+    &.is-selected {
+      .asset {
+        box-shadow: 0 0 0 $piece-border-size $color-secondary inset;
+      }
+    }
+
+    $tile-rotate: .5deg;
+    &[id^='1'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 1); }
+    &[id^='2'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 2); }
+    &[id^='3'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 3); }
+    &[id^='4'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 4); }
+    &[id^='5'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 5); }
+    &[id^='6'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 6); }
+    &[id^='7'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 7); }
+    &[id^='8'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 8); }
+    &[id^='9'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 9); }
+    &[id^='a'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 10); }
+    &[id^='b'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 11); }
+    &[id^='c'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 12); }
+    &[id^='d'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 13); }
+    &[id^='e'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 14); }
+    &[id^='f'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 15); }
+
+    .box::after {
+      box-shadow:
+      px(1) px(1) px(2) px(-1) $color-white-15a inset,
+      px(2) px(2) px(4) px(-2) $color-white-15a inset,
+      px(-1) px(-1) px(2) px(-1) $color-black-20a inset,
+      px(-2) px(-2) px(4) px(-2) $color-black-20a inset,
+      $piece-shadow;
+      content: '';
+      display: block;
+      height: 100%;
+      left: 0;
+      position: absolute;
+      top: 0;
+      width: 100%;
+    }
+
+    &.is-rotate-90 .box::after {
+      box-shadow:
+      px(1) px(-1) px(2) px(-1) $color-white-15a inset,
+      px(2) px(-2) px(4) px(-2) $color-white-15a inset,
+      px(-1) px(1) px(2) px(-1) $color-black-20a inset,
+      px(-2) px(2) px(4) px(-2) $color-black-20a inset,
+      $piece-shadow-90;
+    }
+
+    &.is-rotate-180 .box::after {
+      box-shadow:
+      px(-1) px(-1) px(2) px(-1) $color-white-15a inset,
+      px(-2) px(-2) px(4) px(-2) $color-white-15a inset,
+      px(1) px(1) px(2) px(-1) $color-black-20a inset,
+      px(2) px(2) px(4) px(-2) $color-black-20a inset,
+      $piece-shadow-180;
+    }
+
+    &.is-rotate-270 .box::after {
+      box-shadow:
+      px(-1) px(1) px(2) px(-1) $color-white-15a inset,
+      px(-2) px(2) px(4) px(-2) $color-white-15a inset,
+      px(1) px(-1) px(2) px(-1) $color-black-20a inset,
+      px(2) px(-2) px(4) px(-2) $color-black-20a inset,
+      $piece-shadow-270;
+    }
+  }
+
+  // --- drag-n-drop -----------------------------------------------------------
+
+  &.dragging {
+    opacity: .5;
+
+    &.dragging-hidden {
+      opacity: 0;
+    }
+  }
+
+  &:not(.dragging) {
+    $piece-transition: 200ms ease-out;
+
+    transition:
+    left $piece-transition,
+    top $piece-transition;
+  }
+}

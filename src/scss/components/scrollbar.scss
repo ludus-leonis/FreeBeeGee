@@ -1,0 +1,56 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Our custom scrollbars. It's all about colors.
+///
+/// @access public
+////
+
+$scrollbar-color-fg: $color-bw-fg;
+$scrollbar-color-bg: $color-bw-bg;
+
+$scrollbar-color-fg-wood: #2b2929; // #2d241d;
+$scrollbar-color-bg-wood: #423e3d; // #463728;
+
+@mixin scrollbar-color($color-fg, $color-bg) {
+  scrollbar-color: $color-fg $color-bg; // sass-lint:disable-line no-misspelled-properties
+
+  ::scrollbar-track {
+    background-color: $color-bg;
+  }
+
+  ::scrollbar {
+    background-color: $color-bg;
+    width: px(12);
+  }
+
+  ::scrollbar-thumb {
+    background-color: $color-fg;
+  }
+}
+
+html,
+body {
+  @include scrollbar-color($scrollbar-color-fg, $scrollbar-color-bg);
+}
+
+.scroller {
+  @include scrollbar-color($scrollbar-color-fg-wood, $scrollbar-color-bg-wood);
+}

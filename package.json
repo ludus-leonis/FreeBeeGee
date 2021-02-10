@@ -1,0 +1,61 @@
+{
+  "name": "FreeBeeGee",
+  "version": "0.2.0",
+  "description": "A shared desktop for playing tabletop games.",
+  "engines": {
+    "npm": ">=6.5.0"
+  },
+  "author": "Markus Leupold-Löwenthal",
+  "homepage": "https://github.com/ludus-leonis/FreeBeeGee",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ludus-leonis/FreeBeeGee"
+  },
+  "bugs": {
+    "url": "https://github.com/ludus-leonis/FreeBeeGee/issues"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "license": "AGPL-3.0-or-later",
+  "color": "#40bfbf",
+  "cache": 1028,
+  "standard": {
+    "globals": [ "globalThis" ]
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "babelify": "^10.0.0",
+    "browserify": "^17.0.0",
+    "chai": "^4.3.0",
+    "chai-http": "^4.3.0",
+    "chai-match": "^1.1.1",
+    "del": "*",
+    "gulp": "*",
+    "gulp-autoprefixer": "*",
+    "gulp-babel": "^8.0.0",
+    "gulp-concat": "*",
+    "gulp-download-files": "0.0.3",
+    "gulp-gzip": "^1.4.2",
+    "gulp-jsdoc3": "^3.0.0",
+    "gulp-phpcs": "^3.1.0",
+    "gulp-phplint": "^0.9.0",
+    "gulp-rename": "*",
+    "gulp-replace": "*",
+    "gulp-sass": "*",
+    "gulp-sass-lint": "*",
+    "gulp-sort": "^2.0.0",
+    "gulp-sourcemaps": "*",
+    "gulp-standard": "*",
+    "gulp-tar": "^3.1.0",
+    "gulp-zip": "^5.0.2",
+    "mocha": "^8.2.1",
+    "vinyl-source-stream": "^2.0.0"
+  },
+  "dependencies": {
+    "bootstrap": "^5.0.0-beta1",
+    "bootstrap-icons": "^1.3.0",
+    "navigo": "7.1.2"
+  }
+}

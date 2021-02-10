@@ -1,0 +1,13 @@
+# Automatically add new line to end of all files on save.
+[*]
+insert_final_newline = true
+
+# 2 space indentation for SASS/CSS
+[*.{scss,sass,css}]
+indent_style = space
+indent_size = 2
+
+# 4 space indentation for PHP
+[*.php]
+indent_style = space
+indent_size = 4

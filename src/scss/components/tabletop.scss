@@ -1,0 +1,78 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// The virtual tabletop / game grid.
+///
+/// @access public
+////
+
+.tabletop {
+  $tile-size: 64px;
+
+  filter: grayscale(10%) sepia(5%);
+  position: relative;
+
+  .cursor {
+    border: 2px dashed $color-white-10a;
+    display: none;
+    height: $tile-size;
+    left: 0;
+    top: 0;
+    width: $tile-size;
+    z-index: 200000 - 1; // right below tokens
+  }
+
+  .layer {
+    height: 100%;
+    left: 0;
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: 100%;
+
+    > * {
+      position: absolute;
+    }
+
+    &-token {
+      z-index: 3;
+    }
+
+    &-overlay {
+      z-index: 2;
+    }
+
+    &-tile {
+      z-index: 1;
+    }
+
+    &-table {
+      z-index: 0;
+    }
+  }
+
+  @each $layer in (tile, overlay, token) {
+    &.layer-#{$layer}-enabled {
+      .layer-#{$layer} > * {
+        pointer-events: all;
+      }
+    }
+  }
+}

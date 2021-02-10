@@ -1,0 +1,19 @@
+RewriteEngine On
+
+# serve ".html" files if called without extension
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^(.+)$ $1.html [L,QSA]
+
+# redirect to remove "/index..."
+RewriteRule ^index / [R=301,L]
+
+# Block access to all hidden files and directories
+RewriteCond %{SCRIPT_FILENAME} -d [OR]
+RewriteCond %{SCRIPT_FILENAME} -f
+RewriteRule "(^|/)\." - [F]
+
+# Filename-based cache busting: style-1.0.5.css -> style.css
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.+)-([0-9\.]+)(-dev)?\.(css|js)$ $1.$4 [L]

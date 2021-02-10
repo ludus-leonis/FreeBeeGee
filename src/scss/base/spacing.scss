@@ -1,0 +1,191 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group base
+///
+/// Contains spacing elements and helpers.
+///
+/// @access public
+////
+
+:root {
+  #{'--nr-spacing'}: px(12);
+
+  @include media-breakpoint-up(md) {
+    #{'--nr-spacing'}: px(16);
+  }
+}
+
+$spacing-micro: calc(var(--nr-spacing) / 4);
+$spacing-tiny: calc(var(--nr-spacing) / 2);
+$spacing-small: var(--nr-spacing);
+$spacing-medium: calc(var(--nr-spacing) * 2);
+$spacing-large: calc(var(--nr-spacing) * 3);
+$spacing-huge: calc(var(--nr-spacing) * 4);
+
+@mixin spacing-margin-top ($margin-top) {
+  margin-bottom: 0;
+  margin-top: $margin-top;
+}
+
+// --- we want spacings applied to top, not bottom of stuff --------------------
+
+address,
+article,
+aside,
+blockquote,
+details,
+dialog,
+dd,
+// div,
+dl,
+dt,
+fieldset,
+figcaption,
+figure,
+footer,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6,
+header,
+hgroup,
+hr,
+li,
+// main,
+nav,
+ol,
+p,
+pre,
+section,
+table,
+ul,
+img,
+label,
+input,
+textarea {
+  @include spacing-margin-top($spacing-small);
+}
+
+// -----------------------------------------------------------------------------
+
+%spacing-huge {
+  margin-top: $spacing-huge;
+}
+
+%spacing-large {
+  margin-top: $spacing-large;
+}
+
+%spacing-medium {
+  margin-top: $spacing-medium;
+}
+
+%spacing-small {
+  margin-top: $spacing-small;
+}
+
+%spacing-tiny {
+  margin-top: $spacing-tiny;
+}
+
+%spacing-micro {
+  margin-top: $spacing-micro;
+}
+
+%spacing-none {
+  margin-top: 0;
+}
+
+.spacing {
+  + * {
+    margin-top: 0;
+  }
+}
+
+.spacing-huge {
+  margin-top: $spacing-huge !important; // sass-lint:disable-line no-important
+}
+
+.spacing-large {
+  margin-top: $spacing-large !important; // sass-lint:disable-line no-important
+}
+
+.spacing-medium {
+  margin-top: $spacing-medium !important; // sass-lint:disable-line no-important
+}
+
+.spacing-small {
+  margin-top: $spacing-small !important; // sass-lint:disable-line no-important
+}
+
+.spacing-tiny {
+  margin-top: $spacing-tiny !important; // sass-lint:disable-line no-important
+}
+
+.spacing-micro {
+  margin-top: $spacing-micro !important; // sass-lint:disable-line no-important
+}
+
+.spacing-none {
+  margin-top: 0 !important; // sass-lint:disable-line no-important
+}
+
+@mixin spacing-box-x($spacing) {
+  line-height: 1em;
+  margin: $spacing-small -$spacing -$spacing 0;
+
+  > * {
+    display: inline-block;
+    margin: 0 $spacing $spacing 0;
+  }
+}
+
+.spacing-box-huge {
+  @include spacing-box-x($spacing-huge);
+}
+
+.spacing-box-large {
+  @include spacing-box-x($spacing-large);
+}
+
+.spacing-box-medium {
+  @include spacing-box-x($spacing-medium);
+}
+
+.spacing-box,
+.spacing-box-small {
+  @include spacing-box-x($spacing-small);
+}
+
+.spacing-box-tiny {
+  @include spacing-box-x($spacing-tiny);
+}
+
+.spacing-box-micro {
+  @include spacing-box-x($spacing-micro);
+}
