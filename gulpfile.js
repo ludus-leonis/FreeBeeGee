@@ -198,19 +198,22 @@ gulp.task('html', function () {
     .pipe(gulp.dest(dirs.site))
 })
 
-gulp.task('assets', function () {
-  return gulp.src([
-    'src/assets/**/*.jpg',
-    'src/assets/**/*.png'
-  ])
-    .pipe(gulp.dest(dirs.site + '/assets'))
-})
-
 gulp.task('img', function () {
+  const image = require('gulp-image')
+
   return gulp.src([
     'src/img/**/*.jpg',
     'src/img/**/*.png'
   ])
+    .pipe(image({
+      optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+      pngquant: ['--speed=1', '--force', 256],
+      zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+      jpegRecompress: ['--strip', '--quality', 'medium', '--min', 40, '--max', 80],
+      mozjpeg: ['-optimize', '-progressive'],
+      gifsicle: ['--optimize'],
+      svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+    }))
     .pipe(gulp.dest(dirs.site + '/img'))
 })
 
@@ -235,7 +238,6 @@ gulp.task('build', gulp.parallel(
   'template-Classic',
   'fonts',
   'img',
-  'assets',
   'favicon'
 ))
 
