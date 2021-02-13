@@ -119,7 +119,7 @@ function drag (mousedown) {
   dragging.id = dragging.id + '-drag'
   dragging.origin = piece
   dragging.classList.add('dragging')
-  dragging.classList.add('dragging-hidden')
+  dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
   piece.parentNode.appendChild(dragging)
 
   // rect is relative to viewport, so we compensate for scrolling
@@ -143,7 +143,7 @@ function drag (mousedown) {
  */
 function move (mousemove) {
   if (isDragging()) {
-    dragging.classList.remove('dragging-hidden')
+    dragging.classList.remove('dragging-hidden') // we are moving now (1)
     setPosition(
       dragging,
       dragging.originX + mousemove.clientX - dragging.startX,

@@ -20,6 +20,20 @@
 // --- public endpoint calls ---------------------------------------------------
 
 /**
+ * Error class when the API responds with an unexpected HTTP code.
+ *
+ * Not necessarily an 'error', just something unexpected the caller might like
+ * to react on.
+ */
+export class UnexpectedStatus extends Error {
+  constructor (status) {
+    super('Got status ' + status)
+    this.name = 'UnexpectedStatus'
+    this.status = status
+  }
+}
+
+/**
  * API GET /
  *
  * @return {Promise} Promise containing JSON/Object payload.
@@ -141,6 +155,7 @@ export function apiPostPiece (gameName, piece) {
  * @param {String} path The URL to call. Can be relative.
  * @param {Object} data Optional playload for request.
  * @return {Promse} Promise of a JSON object.
+ * @throw {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
 function fetchOrThrow (expectedStatus, path, data = null) {
   return globalThis.fetch(path, data)
@@ -152,7 +167,7 @@ function fetchOrThrow (expectedStatus, path, data = null) {
           return response.json()
         }
       } else {
-        throw new Error('unexpected status: ' + response.status)
+        throw new UnexpectedStatus(response.status)
       }
     })
 }

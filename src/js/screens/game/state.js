@@ -32,7 +32,8 @@ import {
   apiPostGame,
   apiPatchPiece,
   apiDeletePiece,
-  apiPostPiece
+  apiPostPiece,
+  UnexpectedStatus
 } from '../../api.js'
 
 let gameStateTimeout = -1 /** setTimeout handle of sync method */
@@ -261,6 +262,14 @@ export function stateCreatePiece (piece, selected = false) {
  */
 function patchPiece (pieceId, patch) {
   apiPatchPiece(game.name, pieceId, patch)
+    .catch(error => {
+      if (error instanceof UnexpectedStatus && error.status === 404) {
+        // we somewhat expected this situation. silently ignore it.
+        console.info('Piece ' + pieceId + ' got deleted - no need to PATCH it.')
+      } else {
+        throw error // *that* was unexpected
+      }
+    })
     .finally(() => {
       pollState()
     })
@@ -300,10 +309,13 @@ function removeObsoletePieces (keepIds) {
   let ids = getAllPiecesIds()
   ids = Array.isArray(ids) ? ids : [ids]
 
-  // remove ids from list that still are ok
+  // remove ids from list that are still there
   for (const id of keepIds) {
     ids = ids.filter(item => item !== id)
   }
+
+  // remove ids from list that are dragndrop targets
+  ids = ids.filter(item => !item.endsWith('-drag'))
 
   // delete ids that are still left
   for (const id of ids) {
