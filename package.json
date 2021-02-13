@@ -1,7 +1,7 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.2.0",
-  "description": "A shared desktop for playing tabletop games.",
+  "version": "0.3.0-dev",
+  "description": "A virtual gaming tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=6.5.0"
   },
@@ -21,11 +21,13 @@
   "color": "#40bfbf",
   "cache": 1028,
   "standard": {
-    "globals": [ "globalThis" ]
+    "globals": [
+      "globalThis"
+    ]
   },
   "devDependencies": {
-    "@babel/core": "^7.12.10",
-    "@babel/preset-env": "^7.12.11",
+    "@babel/core": "^7.12.16",
+    "@babel/preset-env": "^7.12.16",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "chai": "^4.3.0",
@@ -34,14 +36,11 @@
     "del": "*",
     "gulp": "*",
     "gulp-autoprefixer": "*",
-    "gulp-babel": "^8.0.0",
     "gulp-concat": "*",
-    "gulp-download-files": "0.0.3",
     "gulp-gzip": "^1.4.2",
     "gulp-jsdoc3": "^3.0.0",
     "gulp-phpcs": "^3.1.0",
     "gulp-phplint": "^0.9.0",
-    "gulp-rename": "*",
     "gulp-replace": "*",
     "gulp-sass": "*",
     "gulp-sass-lint": "*",
@@ -50,12 +49,11 @@
     "gulp-standard": "*",
     "gulp-tar": "^3.1.0",
     "gulp-zip": "^5.0.2",
-    "mocha": "^8.2.1",
+    "mocha": "^8.3.0",
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
-    "bootstrap": "^5.0.0-beta1",
-    "bootstrap-icons": "^1.3.0",
+    "bootstrap": "^5.0.0-beta2",
     "navigo": "7.1.2"
   }
 }
