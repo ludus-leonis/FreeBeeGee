@@ -23,6 +23,7 @@ Here is a list what might happen next. However, priorities might change.
 
 ## v0.4
 
+* overlay-grid-on-tile option
 * docs how to make game/template `.zip`s
 * upload-zip as template during game create
 * game reset / restart / re-init

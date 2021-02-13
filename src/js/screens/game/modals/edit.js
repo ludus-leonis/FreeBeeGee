@@ -74,7 +74,7 @@ export function modalEdit (piece) {
 
     // width
     const pieceW = _('#piece-w')
-    for (let w = 1; w <= 8; w++) {
+    for (let w = 1; w <= 32; w++) {
       const option = _('option').create(w)
       option.value = w
       if (w === piece.width) option.selected = true
@@ -83,7 +83,7 @@ export function modalEdit (piece) {
 
     // height
     const pieceH = _('#piece-h')
-    for (let h = 1; h <= 8; h++) {
+    for (let h = 1; h <= 32; h++) {
       const option = _('option').create(h)
       option.value = h
       if (h === piece.height) option.selected = true

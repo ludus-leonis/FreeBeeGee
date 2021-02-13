@@ -1,8 +1,8 @@
 # FreeBeeGee
 
-A virtual gaming desktop. Host tabletop and role-playing games online for friends & family.
+A virtual gaming tabletop you can host on your own server.
 
-Your server. Your game. Your rules. Your data.
+Your game. Your rules. Your data.
 
 ## Requirements
 
