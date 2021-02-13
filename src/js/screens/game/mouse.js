@@ -18,11 +18,10 @@
  */
 
 import { getTemplate, stateMovePiece } from './state.js'
-import { getScrollPosition, unselectPieces } from '.'
+import { getScrollPosition, setScrollPosition, unselectPieces } from '.'
 import { clamp } from '../../utils.js'
 import _ from '../../FreeDOM.js'
 
-let dragging = null // the currently dragge object, or null
 let scroller = null // the tabletop wrapper
 let mouseX = 0
 let mouseY = 0
@@ -69,9 +68,9 @@ export function enableDragAndDrop (tabletop) {
   scroller = document.getElementById('scroller')
 
   _(tabletop)
-    .on('mousedown', mousedown => drag(mousedown))
-    .on('mousemove', mousemove => move(mousemove)) // needed also to keep track of cursor
-    .on('mouseup', mouseup => drop(mouseup))
+    .on('mousedown', mousedown => mouseDown(mousedown))
+    .on('mousemove', mousemove => mouseMove(mousemove)) // needed also to keep track of cursor
+    .on('mouseup', mouseup => mouseUp(mouseup))
 }
 
 /**
@@ -102,19 +101,87 @@ function touchMousePosition (x, y) {
 }
 
 /**
+ * Handle mousedown events.
+ *
+ * Will route the handling depeding on the button.
+ *
+ * @param {MouseEvent} mousedown The triggering mouse event.
+ */
+function mouseDown (mousedown) {
+  switch (mousedown.button) {
+    case 0:
+      handleSelection(mousedown.target)
+      dragStart(mousedown)
+      break
+    case 1:
+      grabStart(mousedown)
+      break
+    default:
+  }
+}
+
+/**
+ * Handle mousemove events.
+ *
+ * Will route the handling depeding on the button.
+ *
+ * @param {MouseEvent} mousemove The triggering mouse event.
+ */
+function mouseMove (mousemove) {
+  touchMousePosition(mousemove.clientX, mousemove.clientY)
+
+  // delegate the move, or end it if the button is no longer pressed. could
+  // happen if user releases outside of our window
+  if (mousemove.buttons & 1) {
+    dragContinue(mousemove)
+  } else {
+    dragEnd(mousemove, true)
+  }
+
+  if (mousemove.buttons & 4) {
+    grabContinue(mousemove)
+  } else {
+    grabEnd(mousemove)
+  }
+}
+
+/**
+ * Handle mouseup events.
+ *
+ * Will route the handling depeding on the button.
+ *
+ * @param {MouseEvent} mouseup The triggering mouse event.
+ */
+function mouseUp (mouseup) {
+  switch (mouseup.button) {
+    case 0:
+      dragEnd(mouseup)
+      break
+    case 1:
+      grabEnd(mouseup)
+      break
+    default:
+  }
+}
+
+// --- drag'n'drop -------------------------------------------------------------
+
+let dragging = null // the currently dragge object, or null
+
+/**
  * Start drag'n'drop after mousebutton was pushed.
  *
  * @param {MouseEvent} mousedown The triggering mouse event.
  */
-function drag (mousedown) {
-  if (isDragging()) {
+function dragStart (mousedown) {
+  if (isDragging()) { // you can't drag twice
     dragging.parentNode.removeChild(dragging) // quick fix for release-outsite bug
     dragging = null
     mousedown.preventDefault()
     return
   }
-  handleSelection(mousedown.target)
-  if (!mousedown.target.classList.contains('box')) return
+
+  if (!mousedown.target.classList.contains('box')) return // we only drag pieces
 
   const piece = mousedown.target.parentNode // box -> piece
   dragging = piece.cloneNode(true)
@@ -143,7 +210,7 @@ function drag (mousedown) {
  *
  * @param {MouseEvent} mousemove The triggering mouse event.
  */
-function move (mousemove) {
+function dragContinue (mousemove) {
   if (isDragging()) {
     dragging.classList.remove('dragging-hidden') // we are moving now (1)
     setPosition(
@@ -153,12 +220,6 @@ function move (mousemove) {
       1
     )
     mousemove.preventDefault()
-  } else {
-    touchMousePosition(mousemove.clientX, mousemove.clientY)
-    const cursor = document.getElementById('cursor')
-    const template = getTemplate()
-    cursor.style.left = getMouseTileX() * template.gridSize + 'px'
-    cursor.style.top = getMouseTileY() * template.gridSize + 'px'
   }
 }
 
@@ -167,25 +228,96 @@ function move (mousemove) {
  *
  * @param {MouseEvent} mouseup The triggering mouse event.
  */
-function drop (mouseup) {
+function dragEnd (mouseup, cancel = false) {
   if (isDragging()) {
-    setPosition(
-      dragging,
-      dragging.originX + mouseup.clientX - dragging.startX,
-      dragging.originY + mouseup.clientY - dragging.startY
-    )
+    if (!cancel) { // drag could be canceled by releasing outside
+      setPosition(
+        dragging,
+        dragging.originX + mouseup.clientX - dragging.startX,
+        dragging.originY + mouseup.clientY - dragging.startY
+      )
 
-    // only record state if there was a change in position
-    if (dragging.origin.dataset.x !== dragging.dataset.x ||
-      dragging.origin.dataset.y !== dragging.dataset.y) {
-      stateMovePiece(dragging.origin.id, dragging.dataset.x, dragging.dataset.y)
+      // only record state if there was a change in position
+      if (dragging.origin.dataset.x !== dragging.dataset.x ||
+        dragging.origin.dataset.y !== dragging.dataset.y) {
+        stateMovePiece(dragging.origin.id, dragging.dataset.x, dragging.dataset.y)
+      }
     }
 
-    dragging.parentNode.removeChild(dragging)
+    dragging.parentNode && dragging.parentNode.removeChild(dragging)
     dragging = null
     mouseup.preventDefault()
   }
 }
+
+// --- grab'n'move -------------------------------------------------------------
+
+let grabbing = null
+
+/**
+ * Start grab'n'move after mousebutton was pushed.
+ *
+ * @param {MouseEvent} mousedown The triggering mouse event.
+ */
+function grabStart (mousedown) {
+  if (grabbing != null) { // you can't grab twice
+    grabbing = null
+    mousedown.preventDefault()
+    return
+  }
+
+  // find the tabletop
+  let tabletop = mousedown.target
+  while (tabletop !== null && !tabletop.classList.contains('tabletop')) {
+    tabletop = tabletop.parentNode
+  }
+  if (!tabletop) return // no tabletop no grab
+
+  // record start position
+  grabbing = {}
+  grabbing.startX = mousedown.clientX // no need to compensate, as we
+  grabbing.startY = mousedown.clientY // only calculate offset anyway
+  grabbing.origin = getScrollPosition()
+  grabbing.rectInner = tabletop.getBoundingClientRect()
+  grabbing.rectOuter = tabletop.parentNode.getBoundingClientRect()
+
+  mousedown.preventDefault()
+}
+
+/**
+ * Continue grab'n'move while mousebutton is pushed and mouse is moved.
+ *
+ * @param {MouseEvent} mousemove The triggering mouse event.
+ */
+function grabContinue (mousemove) {
+  if (grabbing != null) {
+    const scrollToX = clamp(
+      0,
+      grabbing.origin.x + (grabbing.startX - mousemove.clientX),
+      grabbing.rectInner.width - grabbing.rectOuter.width
+    )
+    const scrollToY = clamp(
+      0,
+      grabbing.origin.y + (grabbing.startY - mousemove.clientY),
+      grabbing.rectInner.height - grabbing.rectOuter.height
+    )
+    setScrollPosition(scrollToX, scrollToY)
+    mousemove.preventDefault()
+  }
+}
+
+/**
+ * End/release grab'n'move when mousebutton is released.
+ *
+ * Not much to to here except to cancel the grab tracking.
+ *
+ * @param {MouseEvent} mouseup The triggering mouse event.
+ */
+function grabEnd (mouseup) {
+  grabbing = null
+}
+
+// --- other -------------------------------------------------------------------
 
 /**
  * Convert a window mouse-x position to a tabletop canvas x position.

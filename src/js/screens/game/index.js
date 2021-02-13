@@ -51,7 +51,17 @@ export function getScrollPosition () {
   return {
     x: scroller.scrollLeft,
     y: scroller.scrollTop
-  } // simplebar.getScrollElement().scrollLeft
+  }
+}
+
+/**
+ * Get current tabletop scroll position.
+ *
+ * @return {Number} x X-coordinate.
+ * @return {Number} y Y-coordinate.
+ */
+export function setScrollPosition (x, y) {
+  scroller.scrollTo(x, y)
 }
 
 /**
