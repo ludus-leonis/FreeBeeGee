@@ -35,10 +35,12 @@ import {
   apiPostPiece,
   UnexpectedStatus
 } from '../../api.js'
+import { runError } from '../error.js'
 
 let gameStateTimeout = -1 /** setTimeout handle of sync method */
 const gameStateRefreshMin = 1000 /** minimum syncing interval in ms */
 const gameStateRefreshMax = 5000 /** maximum syncing interval in ms */
+const gameStateRefreshNever = 365 * 24 * 60 * 60 * 1000 /** actually in a year */
 let lastDigest = '' /** last obtained hash/digest of state JSON */
 let gameStateRefresh = gameStateRefreshMin /** current, growing syncing interval */
 let game = {} /** stores the game meta info JSON */
@@ -60,15 +62,15 @@ export function getGame () {
  * @param {String} name The current game name.
  * @return {Object} Promise of game metadata object.
  */
-export function reloadGame (name) {
+export function loadGame (name) {
   return apiGetGame(name)
     .then(remoteGame => {
       game = remoteGame
       return game
     })
     .catch((error) => { // invalid game
-      console.error(error)
-      document.location = './?game=' + name
+      runError(4, name, error)
+      return null
     })
 }
 
@@ -121,6 +123,14 @@ export function pollState (selectId = null) {
       if (lastDigest !== digest) {
         syncState(selectId, digest)
         gameStateRefresh = gameStateRefreshMin
+      }
+    })
+    .catch(error => {
+      if (error instanceof UnexpectedStatus) {
+        gameStateRefresh = gameStateRefreshNever // stop polling
+        runError(4, game.name, error)
+      } else {
+        throw error // bubble
       }
     })
     .finally(() => {

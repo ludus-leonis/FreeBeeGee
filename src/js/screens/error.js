@@ -19,16 +19,21 @@
 
 import { createScreen } from '../screen.js'
 import _ from '../FreeDOM.js'
+import { UnexpectedStatus } from '../api.js'
 
 /**
  * Show an error dialog.
  *
  * @param {Number} code Code of error message to show.
+ * @param {*} options Options / stuff to simply forwart to the error.
  */
-export function runError (code) {
+export function runError (code, options) {
   createScreen()
 
   switch (code) {
+    case 4:
+      runErrorGameGone(options)
+      break
     case 3:
       runErrorNoSlotAvailable()
       break
@@ -43,6 +48,26 @@ export function runError (code) {
       runErrorGeneric()
       break
   }
+}
+
+/**
+ * Error screen be shown when an existing game disappeared. Probably the admin
+ * deleted/closed it.
+ */
+function runErrorGameGone (gameName, error) {
+  if (error instanceof UnexpectedStatus && error.status !== 404) {
+    console.error('game gone', error) // only log if error is serious
+  }
+
+  createScreen(
+    'Game gone ...',
+    `
+      <p class="is-wrapping">Game <strong>${gameName}</strong> does not exist (any more).</p>
+
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Restart</a>
+    `
+  )
+  _('#ok').on('click', click => { backToStart(gameName) })
 }
 
 /**
@@ -117,4 +142,17 @@ function runErrorGeneric () {
  */
 function forceReload () {
   globalThis.location.reload()
+}
+
+/**
+ * Go back to the start/join screen. Remember game name if possible.
+ *
+ * @param {?String} gameName Optional name of game to add in redirect.
+ */
+function backToStart (gameName) {
+  if (gameName) {
+    globalThis.location = './?game=' + gameName
+  } else {
+    globalThis.location = './'
+  }
 }

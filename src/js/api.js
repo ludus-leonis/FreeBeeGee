@@ -191,7 +191,7 @@ function head (path) {
       if (response.status === 200) {
         return response.headers
       } else {
-        throw new Error('unexpected status: ' + response.status)
+        throw new UnexpectedStatus(response.status)
       }
     })
 }

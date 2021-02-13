@@ -19,7 +19,7 @@
 
 import {
   getGame,
-  reloadGame,
+  loadGame,
   pollState,
   stateCreatePiece,
   stateDeletePiece,
@@ -63,10 +63,8 @@ export function getScrollPosition () {
 export function runGame (name) {
   console.info('$NAME$ v$VERSION$, game ' + name)
 
-  reloadGame(name)
-    .then(game => {
-      setupGame(game)
-    })
+  loadGame(name)
+    .then(game => { if (game) setupGame(game) })
 }
 
 /**
