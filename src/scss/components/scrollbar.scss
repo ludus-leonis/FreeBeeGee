@@ -23,34 +23,29 @@
 /// @access public
 ////
 
-$scrollbar-color-fg: $color-bw-fg;
-$scrollbar-color-bg: $color-bw-bg;
+:root { // output var as string to avoid sass-lint errors
+  #{'--nr-color-scroll-fg'}: $color-wb-bg;
+  #{'--nr-color-scroll-bg'}: $color-wb-fg;
+}
 
-$scrollbar-color-fg-wood: #2b2929; // #2d241d;
-$scrollbar-color-bg-wood: #423e3d; // #463728;
+@mixin scrollbar-color {
+  scrollbar-color: var(--nr-color-scroll-fg) var(--nr-color-scroll-bg); // sass-lint:disable-line no-misspelled-properties
 
-@mixin scrollbar-color($color-fg, $color-bg) {
-  scrollbar-color: $color-fg $color-bg; // sass-lint:disable-line no-misspelled-properties
-
-  ::scrollbar-track {
-    background-color: $color-bg;
+  ::-webkit-scrollbar-track { // sass-lint:disable-line no-vendor-prefixes
+    background-color: var(--nr-color-scroll-bg);
   }
 
-  ::scrollbar {
-    background-color: $color-bg;
+  ::-webkit-scrollbar { // sass-lint:disable-line no-vendor-prefixes
+    background-color: var(--nr-color-scroll-bg);
     width: px(12);
   }
 
-  ::scrollbar-thumb {
-    background-color: $color-fg;
+  ::-webkit-scrollbar-thumb { // sass-lint:disable-line no-vendor-prefixes
+    background-color: var(--nr-color-scroll-fg);
   }
 }
 
 html,
 body {
-  @include scrollbar-color($scrollbar-color-fg, $scrollbar-color-bg);
-}
-
-.scroller {
-  @include scrollbar-color($scrollbar-color-fg-wood, $scrollbar-color-bg-wood);
+  @include scrollbar-color;
 }

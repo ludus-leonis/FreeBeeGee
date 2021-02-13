@@ -17,8 +17,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getGame, stateMovePiece } from './state.js'
-import { getScrollPosition, tilesize, unselectPieces } from '.'
+import { getTemplate, stateMovePiece } from './state.js'
+import { getScrollPosition, unselectPieces } from '.'
 import { clamp } from '../../utils.js'
 import _ from '../../FreeDOM.js'
 
@@ -44,8 +44,9 @@ export function isDragging () {
  * @return {Number} Current tile X.
  */
 export function getMouseTileX () {
-  const mouseTileX = Math.floor(compensateOffsetX(mouseX) / tilesize)
-  return clamp(0, mouseTileX, getGame().width - 1)
+  const template = getTemplate()
+  const mouseTileX = Math.floor(compensateOffsetX(mouseX) / template.gridSize)
+  return clamp(0, mouseTileX, template.width - 1)
 }
 
 /**
@@ -54,8 +55,9 @@ export function getMouseTileX () {
  * @return {Number} Current tile Y.
  */
 export function getMouseTileY () {
-  const mouseTileY = Math.floor(compensateOffsetY(mouseY) / tilesize)
-  return clamp(0, mouseTileY, getGame().height - 1)
+  const template = getTemplate()
+  const mouseTileY = Math.floor(compensateOffsetY(mouseY) / template.gridSize)
+  return clamp(0, mouseTileY, template.height - 1)
 }
 
 /**
@@ -154,8 +156,9 @@ function move (mousemove) {
   } else {
     touchMousePosition(mousemove.clientX, mousemove.clientY)
     const cursor = document.getElementById('cursor')
-    cursor.style.left = getMouseTileX() * tilesize + 'px'
-    cursor.style.top = getMouseTileY() * tilesize + 'px'
+    const template = getTemplate()
+    cursor.style.left = getMouseTileX() * template.gridSize + 'px'
+    cursor.style.top = getMouseTileY() * template.gridSize + 'px'
   }
 }
 
@@ -220,13 +223,14 @@ function compensateOffsetY (y) {
  * @param {Number} y New y coordinate.
  * @param {Number} snap Grid/snap size. Defaults to the tilesize.
  */
-function setPosition (element, x, y, snap = tilesize) {
-  x = clamp(0, x, (getGame().width - element.dataset.w) * tilesize - 1)
-  y = clamp(0, y, (getGame().height - element.dataset.h) * tilesize - 1)
+function setPosition (element, x, y, snap = getTemplate().gridSize) {
+  const template = getTemplate()
+  x = clamp(0, x, (template.width - element.dataset.w) * template.gridSize - 1)
+  y = clamp(0, y, (template.height - element.dataset.h) * template.gridSize - 1)
   x += Math.floor(snap / 2)
   y += Math.floor(snap / 2)
-  element.dataset.x = Math.floor(x / tilesize)
-  element.dataset.y = Math.floor(y / tilesize)
+  element.dataset.x = Math.floor(x / template.gridSize)
+  element.dataset.y = Math.floor(y / template.gridSize)
   element.style.left = Math.max(0, (Math.floor(x / snap) * snap)) + 'px'
   element.style.top = Math.max(0, (Math.floor(y / snap) * snap)) + 'px'
 }

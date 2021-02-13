@@ -220,7 +220,7 @@ gulp.task('img', function () {
 function template (name) {
   const zip = require('gulp-zip')
 
-  return gulp.src('src/templates/' + name + '/**/*')
+  return replace(gulp.src('src/templates/' + name + '/**/*'))
     .pipe(zip(name + '.zip'))
     .pipe(gulp.dest(dirs.site + '/templates'))
 }

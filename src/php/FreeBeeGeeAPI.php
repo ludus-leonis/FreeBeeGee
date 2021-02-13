@@ -427,7 +427,7 @@ class FreeBeeGeeAPI
         if ($checkMandatory) {
             foreach (['type', 'assets', 'width', 'height', 'x', 'y', 'z', 'side', 'color', 'bg'] as $property) {
                 if (!\property_exists($validated, $property)) {
-                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing' . json_encode($incoming));
+                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing');
                 }
             }
         }
@@ -458,12 +458,6 @@ class FreeBeeGeeAPI
                 case 'name':
                     $validated->name = $this->api->assertString('name', $value, '[A-Za-z0-9]{8,48}');
                     break;
-                case 'width':
-                    $validated->width = $this->api->assertInteger('width', $value, 8, 64);
-                    break;
-                case 'height':
-                    $validated->height = $this->api->assertInteger('height', $value, 8, 64);
-                    break;
                 case 'template':
                     $validated->template = $this->api->assertString('template', $value, '[A-Za-z0-9]{1,99}');
                     break;
@@ -473,9 +467,9 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            foreach (['name', 'width', 'height', 'template'] as $property) {
+            foreach (['name', 'template'] as $property) {
                 if (!\property_exists($validated, $property)) {
-                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing' . json_encode($incoming));
+                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing');
                 }
             }
         }
@@ -554,17 +548,25 @@ class FreeBeeGeeAPI
         }
 
         // sanitize item by recreating it
-        $newGame = $this->validateGame($payload, true);
+        $validated = $this->validateGame($payload, true);
 
-        if (!is_file($this->getAppFolder() . 'templates/' . $newGame->template . '.zip')) {
-            $this->api->sendError(400, 'template ' . $newGame->template . ' not available');
+        if (!is_file($this->getAppFolder() . 'templates/' . $validated->template . '.zip')) {
+            $this->api->sendError(400, 'template ' . $validated->template . ' not available');
         }
 
-        // set some defaults
+        // create a new game
+        $newGame = new \stdClass();
         $newGame->id = JSONRestAPI::uuid();
+        $newGame->name = $validated->name;
         $newGame->engine = $this->version;
-        $newGame->backgroundColor = '#423e3d';
-        $newGame->backgroundImage = 'img/desktop-wood.jpg';
+        $newGame->tables = [new \stdClass()];
+
+        $table = $newGame->tables[0];
+        $table->name = 'Main';
+        $table->background = new \stdClass();
+        $table->background->color = '#423e3d';
+        $table->background->scroller = '#2b2929';
+        $table->background->image = 'img/desktop-wood.jpg';
 
         $folder = $this->getGameFolder($newGame->name);
         if (!is_dir($folder)) {
@@ -573,7 +575,13 @@ class FreeBeeGeeAPI
             }
 
             $lock = $this->api->waitForWriteLock($folder . '.flock');
-            $this->installTemplate($newGame->name, $newGame->template);
+            $this->installTemplate($newGame->name, $validated->template);
+
+            // add/overrule some template.json infos into the game.json
+            $table->template = json_decode(file_get_contents($folder . 'template.json'));
+            $table->width = $table->template->width * $table->template->gridSize; // specific for 'grid-square'
+            $table->height = $table->template->height * $table->template->gridSize; // specific for 'grid-square'
+
             file_put_contents($folder . 'game.json', json_encode($newGame));
             $this->api->unlockLock($lock);
 

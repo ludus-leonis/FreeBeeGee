@@ -52,14 +52,6 @@ export function createGame (name) {
       </select>
       <p class="p-small spacing-tiny">Let us know what we may pre-setup for you and what pieces you'll need.</p>
 
-      <label for="size">Table size</label>
-      <select id="size" name="size">
-        <option value="1">48x24 - cosy</option>
-        <option value="2" selected>62x32 - default</option>
-        <option value="3">64x64 - maximum</option>
-      </select>
-      <p class="p-small spacing-tiny">Bigger isn't always better. But don't worry – you can change this later, too.</p>
-
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Create</a>
     `,
 
@@ -88,21 +80,6 @@ export function createGame (name) {
 function ok (name) {
   const game = {
     name: name
-  }
-
-  switch (_('#size').value) {
-    case '1':
-      game.width = 48
-      game.height = 24
-      break
-    case '3':
-      game.width = 62
-      game.height = 32
-      break
-    case '2':
-    default:
-      game.width = 64
-      game.height = 64
   }
 
   game.template = _('#template').value

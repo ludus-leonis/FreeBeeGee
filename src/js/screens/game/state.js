@@ -57,6 +57,17 @@ export function getGame () {
 }
 
 /**
+ * Get the current game's template (cached).
+ *
+ * Until we support multiple tables, this is always the template of table 0.
+ *
+ * @return {Object} Current game's template metadata.
+ */
+export function getTemplate () {
+  return getGame().tables[0].template
+}
+
+/**
  * (Re)Fetch the game's state from the API and trigger the UI update.
  *
  * @param {String} name The current game name.

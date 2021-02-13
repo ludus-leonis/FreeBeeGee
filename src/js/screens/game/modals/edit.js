@@ -17,7 +17,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { statePieceEdit } from '../state.js'
+import { getTemplate, statePieceEdit } from '../state.js'
 import _ from '../../../FreeDOM.js'
 
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
@@ -113,8 +113,9 @@ export function modalEdit (piece) {
 
     // color
     const pieceColor = _('#piece-color')
+    const template = getTemplate()
     for (let c = 0; c <= 7; c++) {
-      const option = _('option').create(`${c + 1} - ${colornames[c]}`)
+      const option = _('option').create(`${c + 1} - ${template.colors[c].name}`)
       option.value = c
       if (c === piece.color) option.selected = true
       pieceColor.add(option)
@@ -175,6 +176,3 @@ function modalOk () {
   statePieceEdit(piece.id, updates)
   getModal().hide()
 }
-
-/** our token border color names */
-const colornames = ['black', 'blue', 'green', 'cyan', 'red', 'magenta', 'orange', 'ivory']

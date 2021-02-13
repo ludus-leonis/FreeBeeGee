@@ -19,6 +19,7 @@
 
 import {
   getGame,
+  getTemplate,
   loadGame,
   pollState,
   stateCreatePiece,
@@ -38,8 +39,6 @@ import { modalEdit } from './modals/edit.js'
 import { modalHelp } from './modals/help.js'
 
 let scroller = null /** keep reference to scroller div - we need it often */
-
-export const tilesize = 64 /** size of each grid field in px */
 
 // --- public ------------------------------------------------------------------
 
@@ -180,10 +179,11 @@ export function setPiece (json, select = false) {
   }
 
   // update dom infos (position, rotation ...)
+  const template = getTemplate()
   div = _('#' + json.id) // fresh query
     .css({
-      left: json.x * tilesize + 'px',
-      top: json.y * tilesize + 'px',
+      left: json.x * template.gridSize + 'px',
+      top: json.y * template.gridSize + 'px',
       zIndex: json.z
     })
     .remove('.is-rotate-0', '.is-rotate-90', '.is-rotate-180', '.is-rotate-270')
@@ -196,7 +196,7 @@ export function setPiece (json, select = false) {
   }
   if (json.color >= 0 && json.color <= 7) {
     _(`#${json.id} .border`).css({
-      borderColor: colors[json.color]
+      borderColor: template.colors[json.color].value
     })
   }
 
@@ -460,15 +460,24 @@ function setupGame (game) {
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => quit())
 
+  const table = game.tables[0] // assume one table for now
+
   _('#tabletop').css({
-    width: (game.width * tilesize) + 'px',
-    height: (game.height * tilesize) + 'px',
-    backgroundColor: game.backgroundColor,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + game.backgroundImage + '?v=$CACHE$")',
-    backgroundSize: '64px,768px'
+    width: table.width + 'px',
+    height: table.height + 'px',
+    backgroundColor: table.background.color,
+    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
+    backgroundSize: table.template.gridSize + 'px,768px'
   })
 
-  scroller = _('#scroller').node() // keep reference for scroll-tracking
+  // setup scroller + keep reference for scroll-tracking
+  scroller = _('#scroller')
+  scroller.css({ // this is for moz://a
+    scrollbarColor: `${table.background.scroller} ${table.background.color}`
+  })
+  scroller = scroller.node() // and this for the webkits out there
+  scroller.style.setProperty('--nr-color-scroll-fg', table.background.scroller)
+  scroller.style.setProperty('--nr-color-scroll-bg', table.background.color)
 
   // setup content
   pollState()
@@ -508,5 +517,3 @@ function updateNode (node, piece) {
   node.dataset.label = piece.label ?? ''
   return node
 }
-
-const colors = ['#0d0d0d', '#3f8efc', '#0f956a', '#40bfbf', '#cc2936', '#bf40bf', '#ff6700', '#f2e4be'] /** our outline colors */
