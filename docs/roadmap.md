@@ -2,47 +2,43 @@
 
 Here is a list what might happen next. However, priorities might change.
 
-## v0.3
+## v0.3 - Clicking Crab
 
-* click-to-edit (doubleclick or right-click)
-* download-as-zip any game you have created or joined
-* turn-counter token
-* middle button drag-scroll
-* remove hardcoded game values from client
-  * tile size
-  * border colors / names
-  * background / scroller colors
 * refactor game json
   * game meta info & version
   * (current) game state/history
   * use asset uuis as references / reduce duplicate information
   * refactor state.js into state.js + library.js
 * more API integration tests (CRUD)
-* technical FAQ/docs
 * bundle setup docs in release archives
 
-## v0.4
+## v0.4 - Zipping Zebra
 
-* overlay-grid-on-tile option
+* option token-no/ID addon within token
 * docs how to make game/template `.zip`s
 * upload-zip as template during game create
+* game version checking
 * game reset / restart / re-init
-* better tablet / touch support
 * fancier implementation for dynamic poll intervalls
   * show "you have been inactive" dialog after 10min
   * decrease poll intervall on mouse/keyboard activity
   * let others know via HEAD request
-* image optimization during build (resize, compress)
-* generate average tile color during build
+* generate average piece color during build
 * show artwork copyright somewhere
 * template GDRP privacy statement
 
-## v0.5
+## v0.5 - Uploading Unicorn
 
-* URL mapping for example.org/roomname -> example.org/#/game/roomname
 * upload custom images for tiles & tokens
-* add more classic game boards: go, backgammon, mills, solitaire
 * color.sh: detect dominant piece color instead of average color
+* add more classic game boards: go, backgammon, mills, solitaire
+
+## v0.6 - Mobile Monkey
+
+* better tablet / touch support
+* overlay-grid-on-tile option
+* catch all unhandled warnings/exceptions in PHP API and return 500
+* URL mapping for example.org/roomname -> example.org/#/game/roomname
 
 ## Backlog (unsorted)
 
@@ -73,8 +69,10 @@ Here is a list what might happen next. However, priorities might change.
 ### rather later
 
 * point-somewhere feature
+* detail-pane to the right for selected item
 * move stuff via cursor keys
 * rename game
+* use left-right keys to switch tabs in modals
 * arbitrary snap (e.g. 1px)
 * tabs / multiple desks
 * multi-panes / splitscreen / split.js
