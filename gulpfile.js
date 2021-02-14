@@ -97,6 +97,7 @@ function replace (pipe) {
   return pipe
     .pipe(repl('$NAME$', p.name, { skipBinary: true }))
     .pipe(repl('$VERSION$', p.version, { skipBinary: true }))
+    .pipe(repl('$CODENAME$', p.codename, { skipBinary: true }))
     .pipe(repl('$BUILD$', rnd, { skipBinary: true }))
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))
     .pipe(repl('$COLOR$', p.color, { skipBinary: true }))
@@ -292,4 +293,5 @@ gulp.task('default', gulp.series('dist'))
 gulp.task('watch', gulp.series('dist', function () {
   gulp.watch('src/scss/**/*scss', gulp.series('sass'))
   gulp.watch('src/js/**/*js', gulp.series('js-main'))
+  gulp.watch('src/php/**/*php', gulp.series('php'))
 }))

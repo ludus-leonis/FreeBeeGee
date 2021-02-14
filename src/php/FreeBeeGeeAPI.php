@@ -80,6 +80,13 @@ class FreeBeeGeeAPI
             $fbg->getTemplates();
         });
 
+        $this->api->register('GET', '/games/:gid/snapshot/?', function ($fbg, $data) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->getSnapshot($data['gid']);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
+        });
+
         // --- POST ---
 
         $this->api->register('POST', '/games/:gid/pieces/?', function ($fbg, $data, $payload) {
@@ -754,5 +761,50 @@ class FreeBeeGeeAPI
         }
 
         $this->api->sendReply(200, json_encode($assets));
+    }
+
+    /**
+     * Download a game's snapshot.
+     *
+     * Will zip the game folder and provide that zip.
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     */
+    public function getSnapshot(
+        string $gameName
+    ) {
+        $gameFolder = realpath($this->getGameFolder($gameName));
+
+        // get all files to zip and sort them
+        $toZip = [];
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($gameFolder),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
+        foreach ($iterator as $filename => $file) {
+            if (!$file->isDir()) {
+                $absolutePath = $file->getRealPath();
+                $relativePath = substr($absolutePath, strlen($gameFolder) + 1);
+                if ($relativePath !== '.flock' && $relativePath !== 'snapshot.zip') {
+                    $toZip[$relativePath] = $absolutePath;
+                }
+            }
+        }
+        ksort($toZip);
+
+        // now zip them
+        $zipName = $gameFolder . '/snapshot.zip';
+        $zip = new \ZipArchive();
+        $zip->open($zipName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
+        foreach ($toZip as $relative => $absolute) {
+            $zip->addFile($absolute, $relative);
+        }
+        $zip->close();
+
+        // send and delete temporary file
+        header('Content-disposition: attachment; filename=' . $gameName . '.zip');
+        header('Content-type: application/zip');
+        readfile($zipName);
+        unlink($zipName);
     }
 }

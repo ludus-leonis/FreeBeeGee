@@ -26,8 +26,8 @@ Your game. Your rules. Your data.
 **Note:** This is still an early/development version. A few rather major features are still missing, limiting it's current usefullness:
 
 * No asset upload yet. You can't add images/tiles/pieces right now and the default library is still quite limited.
-* You can't transfer games between servers via the web-interface yet. You need to copy folders via scp/sftp.
-* No per-game passwords yet. Anyone who knows a game's name can join.
+* You can download game snapshots - but can't upload them again. A sysadmin would have to do that via scp/sftp.
+* No per-game passwords yet. Anyone who knows a game's name can join. That is partly by design, but it would be nice to have that option.
 * You can attach (text)labels to tokens, but no fancy state-icons, HP counter etc. - yet.
 * Limited testing on Safari.
 
@@ -52,6 +52,8 @@ FreeBeeGee follows the [KISS principle](https://en.wikipedia.org/wiki/KISS_princ
 * A 3D or physics engine with dazzling visual effects.
 * A community management tool.
 * A campaign management tool.
+
+There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/limitations of this project.
 
 ## Requirements
 

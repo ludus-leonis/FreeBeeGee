@@ -34,7 +34,7 @@ export function modalHelp () {
     createModal(true)
 
     _('#modal-header').innerHTML = `
-      <h3 class="modal-title">FreeBeeGee v$VERSION$</h3>
+      <h3 class="modal-title">FreeBeeGee v$VERSION$ - $CODENAME$</h3>
     `
     _('#modal-body').innerHTML = `
       <div id="tabs-library" class="tabs">
@@ -61,11 +61,15 @@ export function modalHelp () {
               <li><strong>Tiles</strong> are assembled to form your game board. They can be rooms, caves and more.</li>
             </ul>
 
+            <p>Use your <strong>browser zoom</strong> buttons to zoom-in and zoom-out.</p>
+
             <h2 class="h3">Pieces</h2>
 
-            <p>To <strong>select</strong> a piece, click on it. It will get highlighted. However, you can only select pieces if their layer is currently active. Use the buttons in the menu to (de)activate layers. To <strong>move</strong> a selected piece, just drag'n'drop it.</p>
+            <p>To <strong>select</strong> a piece, left-click on it. It will get highlighted. However, you can only select pieces if their layer is currently active. Use the top three buttons in the menu to (de)activate layers. To <strong>move</strong> a selected piece, just drag'n'drop it.</p>
 
-            <p>To <strong>rotate</strong>, <strong>flip</strong>, <strong>clone</strong> or <strong>delete</strong> a selected piece, click on the corresponding menu icon or use a hotkey (see other tab for list of hotkeys). You can also open the <strong>edit</strong> window for a selected piece to change its properties as well as to <strong>set its label</strong>.</p>
+            <p>To edit a piece, either select it and use the menu-icons on your left, or right-click the piece and use the context menu.</p>
+
+            <p>You can <strong>rotate</strong>, <strong>flip</strong>, <strong>clone</strong> and <strong>delete</strong> a selected piece. You can also open the <strong>edit</strong> window for a selected piece to change its properties as well as to <strong>set its label</strong>.</p>
 
             <p>If a piece has only one side, flipping it will have no effect. Some pieces may have more than one side - in this case flipping will cycle through them.</p>
 
