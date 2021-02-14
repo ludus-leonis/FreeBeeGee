@@ -123,6 +123,7 @@ gulp.task('js-vendor', function () {
 
   return replace(gulp.src([
     'node_modules/navigo/lib/navigo.min.js',
+    'node_modules/@popperjs/core/dist/umd/popper.min.js',
     'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
   ]))
     .pipe(concat('vendor.js'))

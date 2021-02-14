@@ -17,6 +17,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { createPopper } from '@popperjs/core'
+
 import {
   getGame,
   getTemplate,
@@ -312,6 +314,7 @@ export function unselectPieces (layer = 'all') {
   for (const node of document.querySelectorAll(filter + ' .piece.is-selected')) {
     node.classList.remove('is-selected')
   }
+  _('#popper').remove('.show') // make sure popup is gone
 }
 
 /**
@@ -379,6 +382,68 @@ export function pieceToNode (json) {
   return updateNode(node, json)
 }
 
+export function popupPiece (id) {
+  const piece = _('#' + id)
+  const popup = _('#popper')
+
+  popup.innerHTML = `
+    <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
+    <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
+    <a class="popup-menu flip" href="#">${iconFlip}Flip</a>
+    <a class="popup-menu top" href="#">${iconTop}To top</a>
+    <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
+    <a class="popup-menu clone" href="#">${iconClone}Clone</a>
+    <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
+  `
+
+  _('#popper .edit').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    editSelected()
+  })
+
+  _('#popper .rotate').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    rotateSelected()
+  })
+
+  _('#popper .flip').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    flipSelected()
+  })
+
+  _('#popper .top').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    toTopSelected()
+  })
+
+  _('#popper .bottom').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    toBottomSelected()
+  })
+
+  _('#popper .delete').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    deleteSelected()
+  })
+
+  _('#popper .clone').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    cloneSelected(getMouseTileX(), getMouseTileY())
+  })
+
+  createPopper(piece.node(), popup.node(), {
+    placement: 'right'
+  })
+  popup.add('.show')
+}
+
 // --- internal ----------------------------------------------------------------
 
 /**
@@ -392,37 +457,37 @@ function setupGame (game) {
       <div class="menu">
         <div>
           <div>
-            <button id="btn-token" class="btn-icon" title="Toggle tokens [1]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg></button>
+            <button id="btn-token" class="btn-icon" title="Toggle tokens [1]">${iconToken}</button>
 
-            <button id="btn-overlay" class="btn-icon" title="Toggle overlays [2]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg></button>
+            <button id="btn-overlay" class="btn-icon" title="Toggle overlays [2]">${iconOverlay}</button>
 
-            <button id="btn-tile" class="btn-icon" title="Toggle tiles [3]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></button>
+            <button id="btn-tile" class="btn-icon" title="Toggle tiles [3]">${iconTile}</button>
           </div>
 
           <div class="spacing-medium">
-            <button id="btn-a" class="btn-icon" title="Add piece [a]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
+            <button id="btn-a" class="btn-icon" title="Add piece [a]">${iconAdd}</button>
           </div>
 
           <div class="menu-selected disabled spacing-medium">
-            <button id="btn-e" class="btn-icon" title="Edit [e]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+            <button id="btn-e" class="btn-icon" title="Edit [e]">${iconEdit}</button>
 
-            <button id="btn-r" class="btn-icon" title="Rotate [r]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+            <button id="btn-r" class="btn-icon" title="Rotate [r]">${iconRotate}</button>
 
-            <button id="btn-f" class="btn-icon" title="Flip [f]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></button>
+            <button id="btn-f" class="btn-icon" title="Flip [f]">${iconFlip}</button>
 
-            <button id="btn-t" class="btn-icon" title="To top [t]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg></button>
+            <button id="btn-t" class="btn-icon" title="To top [t]">${iconTop}</button>
 
-            <button id="btn-b" class="btn-icon" title="To bottom [b]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg></button>
+            <button id="btn-b" class="btn-icon" title="To bottom [b]">${iconBottom}</button>
 
-            <button id="btn-c" class="btn-icon" title="Clone [c]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+            <button id="btn-c" class="btn-icon" title="Clone [c]">${iconClone}</button>
 
-            <button id="btn-del" class="btn-icon" title="Delete [Del]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+            <button id="btn-del" class="btn-icon" title="Delete [Del]">${iconDelete}</button>
           </div>
         </div>
         <div>
-          <button id="btn-h" class="btn-icon" title="Help [h]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+          <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
 
-          <button id="btn-q" class="btn-icon" title="Leave game"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></button>
+          <button id="btn-q" class="btn-icon" title="Leave game">${iconQuit}</button>
         </div>
       </div>
       <div id="scroller" class="scroller">
@@ -444,6 +509,7 @@ function setupGame (game) {
         </div>
       </div>
     </div>
+    <div id="popper" class="popup is-content"></div>
   `
 
   // setup menu for layers
@@ -479,6 +545,8 @@ function setupGame (game) {
     backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
     backgroundSize: table.template.gridSize + 'px,768px'
   })
+
+  _('body').on('contextmenu', e => e.preventDefault())
 
   // setup scroller + keep reference for scroll-tracking
   scroller = _('#scroller')
@@ -527,3 +595,29 @@ function updateNode (node, piece) {
   node.dataset.label = piece.label ?? ''
   return node
 }
+
+const iconToken = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>'
+
+const iconOverlay = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>'
+
+const iconTile = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>'
+
+const iconAdd = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>'
+
+const iconEdit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>'
+
+const iconRotate = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>'
+
+const iconFlip = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>'
+
+const iconTop = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>'
+
+const iconBottom = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>'
+
+const iconClone = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>'
+
+const iconDelete = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>'
+
+const iconHelp = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
+
+const iconQuit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'

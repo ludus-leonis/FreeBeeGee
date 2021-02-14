@@ -16,44 +16,38 @@
 // along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
 
 ////
-/// @group layout
+/// @group components
 ///
-/// General layout utility classes.
+/// Our right-click/edit popups.
 ///
 /// @access public
 ////
 
-.is-noselect {
-  ::selection {
-    background: inherit;
-    color: inherit;
-  }
-}
-
-.is-hidden {
+.popup {
+  background-color: $color-bw-bg;
+  border: px(3) solid $color-bw-fg;
+  border-radius: $border-radius;
+  color: $color-bw-fg;
   display: none;
-}
+  margin-left: .25em;
+  padding: .25em;
 
-.is-hidden + *,
-.is-content .is-hidden + * {
-  margin-top: 0;
-}
+  &.show {
+    display: block;
+  }
 
-%is-large,
-.is-large {
-  max-width: 64rem;
-}
+  .popup-menu {
+    @include typography-links($color-bw-fg, $color-bw-bg, 0);
+    display: block;
+    line-height: 1em;
+    padding: .5em .25em;
 
-%is-medium,
-.is-medium {
-  max-width: 48rem;
-}
+    &:hover {
+      background-color: $color-primary;
+    }
 
-%is-small,
-.is-small {
-  max-width: 32rem;
-}
-
-.cursor-grab {
-  cursor: grabbing;
+    svg {
+      margin-right: .5em;
+    }
+  }
 }

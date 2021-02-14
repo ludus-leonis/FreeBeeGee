@@ -18,7 +18,7 @@
  */
 
 import { getTemplate, stateMovePiece } from './state.js'
-import { getScrollPosition, setScrollPosition, unselectPieces } from '.'
+import { getScrollPosition, setScrollPosition, unselectPieces, popupPiece } from '.'
 import { clamp } from '../../utils.js'
 import _ from '../../FreeDOM.js'
 
@@ -116,6 +116,11 @@ function mouseDown (mousedown) {
     case 1:
       grabStart(mousedown)
       break
+    case 2:
+      mousedown.preventDefault()
+      handleSelection(mousedown.target)
+      properties(mousedown)
+      break
     default:
   }
 }
@@ -182,6 +187,7 @@ function dragStart (mousedown) {
   }
 
   if (!mousedown.target.classList.contains('box')) return // we only drag pieces
+  scroller.classList.add('cursor-grab')
 
   const piece = mousedown.target.parentNode // box -> piece
   dragging = piece.cloneNode(true)
@@ -247,6 +253,7 @@ function dragEnd (mouseup, cancel = false) {
     dragging.parentNode && dragging.parentNode.removeChild(dragging)
     dragging = null
     mouseup.preventDefault()
+    scroller.classList.remove('cursor-grab')
   }
 }
 
@@ -272,6 +279,7 @@ function grabStart (mousedown) {
     tabletop = tabletop.parentNode
   }
   if (!tabletop) return // no tabletop no grab
+  scroller.classList.add('cursor-grab')
 
   // record start position
   grabbing = {}
@@ -314,7 +322,18 @@ function grabContinue (mousemove) {
  * @param {MouseEvent} mouseup The triggering mouse event.
  */
 function grabEnd (mouseup) {
-  grabbing = null
+  if (grabbing) {
+    grabbing = null
+    scroller.classList.remove('cursor-grab')
+  }
+}
+
+// --- right-click properties --------------------------------------------------
+
+function properties (mousedown) {
+  if (mousedown.target.classList.contains('box')) {
+    popupPiece(mousedown.target.parentNode.id)
+  }
 }
 
 // --- other -------------------------------------------------------------------
