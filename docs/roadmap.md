@@ -4,12 +4,8 @@ Here is a list what might happen next. However, priorities might change.
 
 ## v0.3 - Clicking Crab
 
-* snapshot tweaks
-  * cleanup files shipped in snapshot (no digest)
-  * add file date/time to snapshot name
-* more API integration tests (CRUD)
 * bundle setup docs in release archives
-* svg favicon
+* more API integration tests (CRUD)
 
 ## v0.4 - Zipping Zebra
 
@@ -29,6 +25,7 @@ Here is a list what might happen next. However, priorities might change.
 ## v0.5 - Uploading Unicorn
 
 * upload custom images for tiles & tokens
+* remove default entries from json fieles (e.g. side=0)
 * color.sh: detect dominant piece color instead of average color
 * add more classic game boards: go, backgammon, mills, solitaire
 * hide .../data/... from URLs (via .htaccess)

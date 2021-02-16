@@ -113,12 +113,37 @@ gulp.task('fonts', function () {
     .pipe(gulp.dest(dirs.site + '/fonts/'))
 })
 
-gulp.task('favicon', function () {
-  return replace(gulp.src([
-    'src/favicon/**/*'
-  ]))
+function svg2png (svg, outname, size) {
+  const svg2png = require('gulp-svg2png')
+  const image = require('gulp-image')
+  const rename = require('gulp-rename')
+  return gulp.src(svg)
+    .pipe(svg2png({ width: size, height: size }))
+    .pipe(rename(outname))
+    .pipe(image({
+      optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+      pngquant: ['--speed=1', '--force', 256],
+      zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent']
+    }))
+}
+
+gulp.task('favicon', gulp.parallel(() => {
+  return gulp.src([
+    'src/favicon/icon.svg',
+    'src/favicon/favicon.ico', // note: .ico is not (re)generated yet
+    'src/favicon/manifest.webmanifest'
+  ])
     .pipe(gulp.dest(dirs.site))
-})
+}, () => {
+  return svg2png('src/favicon/icon.svg', '512.png', 512)
+    .pipe(gulp.dest(dirs.site))
+}, () => {
+  return svg2png('src/favicon/icon.svg', 'apple-touch-icon.png', 180)
+    .pipe(gulp.dest(dirs.site))
+}, () => {
+  return svg2png('src/favicon/icon.svg', '192.png', 192)
+    .pipe(gulp.dest(dirs.site))
+}))
 
 gulp.task('js-vendor', function () {
   const concat = require('gulp-concat')
