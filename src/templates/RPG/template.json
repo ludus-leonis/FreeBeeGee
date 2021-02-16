@@ -1,7 +1,8 @@
 {
   "type": "grid-square",
   "gridSize": 64,
-  "templateVersion": "$VERSION$",
+  "version": "$VERSION$",
+  "engine": "^$ENGINE$",
   "width": 48,
   "height": 32,
   "colors": [

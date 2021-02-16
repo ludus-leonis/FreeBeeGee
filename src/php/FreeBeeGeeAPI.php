@@ -58,13 +58,6 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['gid']);
         });
 
-        $this->api->register('GET', '/games/:gid/library/?', function ($fbg, $data) {
-            if (is_dir($this->getGameFolder($data['gid']))) {
-                $fbg->getLibrary($data['gid']);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['gid']);
-        });
-
         $this->api->register('GET', '/games/:gid/state/?', function ($fbg, $data) {
             if (is_dir($this->getGameFolder($data['gid']))) {
                 $fbg->getState($data['gid']);
@@ -252,17 +245,19 @@ class FreeBeeGeeAPI
      *
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
      * @param string $template Name of the template, e.g. 'default' for default.zip
+     * @return array The library Json for this template.
      */
     private function installTemplate(
         string $gameName,
         string $template
-    ): void {
+    ): array {
         $zipPath = $this->getAppFolder() . 'templates/' . $template . '.zip';
         $zip = new \ZipArchive($zipPath);
         $res = $zip->open($this->getAppFolder() . 'templates/' . $template . '.zip');
         if ($res === true) {
             $zip->extractTo($this->getGameFolder($gameName));
             $zip->close();
+            return $this->generateLibraryJson($gameName);
         } else {
             $this->api->sendError(500, 'can\'t setup template ' . $zipPath);
         }
@@ -313,7 +308,7 @@ class FreeBeeGeeAPI
                     // this is an update, and we have to patch the item if the ID matches
                     if ($stateItem->id === $piece->id) {
                         // just skip deleted piece
-                        if ($piece->type === 'delete') {
+                        if ($piece->layer === 'delete') {
                             continue;
                         }
                         $stateItem = $this->merge($stateItem, $piece);
@@ -322,14 +317,12 @@ class FreeBeeGeeAPI
                     $ids[] = $stateItem->id;
                 }
             }
-            if (!in_array($piece->id, $ids) && $piece->type !== 'delete') {
+            if (!in_array($piece->id, $ids) && $piece->layer !== 'delete') {
                 $this->api->unlockLock($lock);
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
         }
-        $data = json_encode($newState);
-        file_put_contents($folder . 'state.json', $data);
-        file_put_contents($folder . 'state.json.digest', 'crc32:' . crc32($data));
+        $this->writeAsJsonAndDigest($folder . 'state.json', $newState);
         $this->api->unlockLock($lock);
     }
 
@@ -369,6 +362,72 @@ class FreeBeeGeeAPI
         return $asset;
     }
 
+    /**
+     * Regenerate a library Json.
+     *
+     * Done by iterating over all files in the assets folder.
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     * @return array The generated library Json data object.
+     */
+    private function generateLibraryJson(
+        string $gameName
+    ): array {
+        // generate json data
+        $gameFolder = $this->getGameFolder($gameName);
+        $assets = [];
+        foreach (['overlay', 'tile', 'token'] as $type) {
+            $assets[$type] = [];
+            $lastAsset = null;
+            foreach (glob($gameFolder . 'assets/' . $type . '/' . '*') as $filename) {
+                $asset = $this->fileToAsset(basename($filename));
+                $asset->type = $type;
+
+                // this ID only has to be unique within the server, but should be reproducable
+                // therefore we use a fast hash and even only use parts of it
+                $asset->id = substr(hash('md5', $type . '/' . basename($filename)), -16);
+
+                if (
+                    $lastAsset === null
+                    || $lastAsset->alias !== $asset->alias
+                    || $lastAsset->width !== $asset->width
+                    || $lastAsset->height !== $asset->height
+                ) {
+                    // this is a new asset. write out the old.
+                    if ($lastAsset !== null) {
+                        array_push($assets[$type], $lastAsset);
+                    }
+                    $lastAsset = $asset;
+                } else {
+                    // this is another side of the same asset. add it to the existing one.
+                    array_push($lastAsset->assets, $asset->assets[0]);
+                }
+            }
+            if ($lastAsset !== null) { // don't forget the last one!
+                array_push($assets[$type], $lastAsset);
+            }
+        }
+
+        return $assets;
+    }
+
+    /**
+     * Write a data object as JSON to a file and generate a digest.
+     *
+     * Digest will be in filename.digest. Does not do locking.
+     *
+     * @param $filename Path to file to write.
+     * @param $object PHP object to write.
+     */
+    private function writeAsJsonAndDigest(
+        $filename,
+        $object
+    ) {
+        $data = json_encode($object);
+        file_put_contents($filename, $data);
+        file_put_contents($filename . '.digest', 'crc32:' . crc32($data));
+    }
+
     // --- validators ----------------------------------------------------------
 
     /**
@@ -390,11 +449,11 @@ class FreeBeeGeeAPI
             switch ($property) {
                 case 'id':
                     break; // we accept but ignore these
-                case 'type':
-                    $validated->type = $this->api->assertEnum('type', $value, ['tile', 'token', 'overlay']);
+                case 'layer':
+                    $validated->layer = $this->api->assertEnum('layer', $value, ['tile', 'token', 'overlay']);
                     break;
-                case 'assets':
-                    $validated->assets = $this->api->assertStringArray('assets', $value, '[A-Za-z0-9._-]+');
+                case 'asset':
+                    $validated->asset = $this->api->assertString('asset', $value, '[a-z0-9]+');
                     break;
                 case 'width':
                     $validated->width = $this->api->assertInteger('width', $value, 1, 32);
@@ -417,9 +476,6 @@ class FreeBeeGeeAPI
                 case 'color':
                     $validated->color = $this->api->assertInteger('color', $value, 0, 7);
                     break;
-                case 'bg':
-                    $validated->bg = $this->api->assertString('bg', $value, '[A-Fa-f0-9]{6}');
-                    break;
                 case 'r':
                     $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
                     break;
@@ -432,7 +488,7 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            foreach (['type', 'assets', 'width', 'height', 'x', 'y', 'z', 'side', 'color', 'bg'] as $property) {
+            foreach (['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color'] as $property) {
                 if (!\property_exists($validated, $property)) {
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing');
                 }
@@ -563,7 +619,7 @@ class FreeBeeGeeAPI
 
         // create a new game
         $newGame = new \stdClass();
-        $newGame->id = JSONRestAPI::uuid();
+        $newGame->id = $this->generateId();
         $newGame->name = $validated->name;
         $newGame->engine = $this->version;
         $newGame->tables = [new \stdClass()];
@@ -582,14 +638,14 @@ class FreeBeeGeeAPI
             }
 
             $lock = $this->api->waitForWriteLock($folder . '.flock');
-            $this->installTemplate($newGame->name, $validated->template);
+            $table->library = $this->installTemplate($newGame->name, $validated->template);
 
             // add/overrule some template.json infos into the game.json
             $table->template = json_decode(file_get_contents($folder . 'template.json'));
             $table->width = $table->template->width * $table->template->gridSize; // specific for 'grid-square'
             $table->height = $table->template->height * $table->template->gridSize; // specific for 'grid-square'
 
-            file_put_contents($folder . 'game.json', json_encode($newGame));
+            $this->writeAsJsonAndDigest($folder . 'game.json', $newGame);
             $this->api->unlockLock($lock);
 
             $this->api->sendReply(201, json_encode($newGame), '/api/games/' . $newGame->name);
@@ -675,7 +731,7 @@ class FreeBeeGeeAPI
         string $json
     ) {
         $piece = $this->validatePiece($json, true);
-        $piece->id = JSONRestAPI::uuid();
+        $piece->id = $this->generateId();
         $this->updateState($gameName, $piece, true);
         $this->api->sendReply(201, json_encode($piece));
     }
@@ -714,53 +770,11 @@ class FreeBeeGeeAPI
     ) {
         // create a dummy 'delete' object to represent deletion
         $piece = new \stdClass(); // sanitize item by recreating it
-        $piece->type = 'delete';
+        $piece->layer = 'delete';
         $piece->id = $pieceId;
 
         $this->updateState($gameName, $piece, false);
         $this->api->sendReply(204, '');
-    }
-
-    /**
-     * Get a game's library.
-     *
-     * This is a list of all assets available in the game.
-     *
-     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
-     */
-    public function getLibrary(
-        string $gameName
-    ) {
-        $assets = [];
-        foreach (['overlay', 'tile', 'token'] as $type) {
-            $assets[$type] = [];
-            $lastAsset = null;
-            foreach (glob($this->getGameFolder($gameName) . 'assets/' . $type . '/*') as $filename) {
-                $asset = $this->fileToAsset(basename($filename));
-                $asset->type = $type;
-
-                if (
-                    $lastAsset === null
-                    || $lastAsset->alias !== $asset->alias
-                    || $lastAsset->width !== $asset->width
-                    || $lastAsset->height !== $asset->height
-                ) {
-                    // this is a new asset. write out the old.
-                    if ($lastAsset !== null) {
-                        array_push($assets[$type], $lastAsset);
-                    }
-                    $lastAsset = $asset;
-                } else {
-                    // this is another side of the same asset. add it to the existing one.
-                    array_push($lastAsset->assets, $asset->assets[0]);
-                }
-            }
-            if ($lastAsset !== null) { // don't forget the last one!
-                array_push($assets[$type], $lastAsset);
-            }
-        }
-
-        $this->api->sendReply(200, json_encode($assets));
     }
 
     /**
@@ -806,5 +820,17 @@ class FreeBeeGeeAPI
         header('Content-type: application/zip');
         readfile($zipName);
         unlink($zipName);
+    }
+
+    /**
+     * Generate an ID.
+     *
+     * Central function so we can change the type of ID easily later on.
+     *
+     * @return {String} A random ID.
+     */
+    private function generateId()
+    {
+        return JSONRestAPI::id();
     }
 }

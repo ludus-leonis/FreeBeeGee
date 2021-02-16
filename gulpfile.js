@@ -97,6 +97,7 @@ function replace (pipe) {
   return pipe
     .pipe(repl('$NAME$', p.name, { skipBinary: true }))
     .pipe(repl('$VERSION$', p.version, { skipBinary: true }))
+    .pipe(repl('$ENGINE$', p.version, { skipBinary: true }))
     .pipe(repl('$CODENAME$', p.codename, { skipBinary: true }))
     .pipe(repl('$BUILD$', rnd, { skipBinary: true }))
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))
@@ -184,7 +185,7 @@ gulp.task('php', gulp.series('test-php', function () {
   return replace(gulp.src([
     'src/php/**/*php',
     'src/php/.htaccess*',
-    'src/php/server.json'
+    'src/php/**/*.json'
   ]))
     .pipe(gulp.dest(dirs.site + '/api'))
 }))

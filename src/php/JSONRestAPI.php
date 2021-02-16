@@ -27,8 +27,8 @@ namespace com\ludusleonis\freebeegee;
  */
 class JSONRestAPI
 {
-    private $apiDirFS = ''; // e.g. /var/www/www.mysite.com/api/
-    private $apiRoot = '';  // URL-parent-folder of the API, e.g. /api
+    private $apiDirFS = null; // e.g. /var/www/www.mysite.com/api/
+    private $apiRoot = null;  // URL-parent-folder of the API, e.g. /api
     private $routes = [ // all registered routes
         'GET' => [],
         'PUT' => [],
@@ -63,7 +63,13 @@ class JSONRestAPI
      */
     public function getDataDir(): string
     {
-        return $this->apiDirFS;
+        $dir = $this->apiDirFS . 'data/';
+        if (!is_dir($dir)) { // create dir on the fly
+            if (!mkdir($dir, 0777, true)) {
+                $this->api->sendError(500, 'can\'t create API data dir');
+            }
+        }
+        return $dir;
     }
 
     // --- routing helpers -----------------------------------------------------
@@ -437,7 +443,7 @@ class JSONRestAPI
         ?string $lockFile
     ) {
         $lock = $this->waitForReadLock($lockFile);
-        $content = file_put_contents($path, $content);
+        file_put_contents($path, $content);
         $this->unlockLock($lock);
     }
 
@@ -461,6 +467,19 @@ class JSONRestAPI
     }
 
     /**
+     * Create a random ID.
+     *
+     * @param string $seed Optional seed for randomness.
+     * @return string 16-digit hex string, e.g. 'a2cc3a4c56af9fb8'.
+     */
+    public static function id(
+        string $seed = null
+    ): string {
+        $data = $seed ?? random_bytes(8);
+        return bin2hex($data);
+    }
+
+    /**
      * Delete a directory recursively.
      *
      * As sanity precaution it will only operate on directories blow the API.
@@ -471,7 +490,8 @@ class JSONRestAPI
     public function deleteDir(
         string $path
     ) {
-        if (substr($path . '/', 0, strlen($this->apiDirFS)) === $this->apiDirFS) { // sanity check
+        $dataDir = $this->getDataDir();
+        if (substr($path . '/', 0, strlen($dataDir)) === $dataDir) { // sanity check
             if (is_dir($path)) {
                 foreach (scandir($path) as $file) {
                     if (is_dir($path . '/' . $file)) {

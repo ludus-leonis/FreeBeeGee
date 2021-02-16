@@ -27,7 +27,6 @@ import {
 import {
   apiHeadState,
   apiGetState,
-  apiGetLibrary,
   apiGetGame,
   apiPostGame,
   apiPatchPiece,
@@ -57,6 +56,17 @@ export function getGame () {
 }
 
 /**
+ * Get the current game's table (cached).
+ *
+ * Until we support multiple tables, this is always table 0.
+ *
+ * @return {Object} Current game's template metadata.
+ */
+export function getTable () {
+  return getGame()?.tables[0]
+}
+
+/**
  * Get the current game's template (cached).
  *
  * Until we support multiple tables, this is always the template of table 0.
@@ -64,7 +74,35 @@ export function getGame () {
  * @return {Object} Current game's template metadata.
  */
 export function getTemplate () {
-  return getGame().tables[0].template
+  return getTable()?.template
+}
+
+/**
+ * Get the current game's template (cached).
+ *
+ * Until we support multiple tables, this is always the template of table 0.
+ *
+ * @return {Object} Current game's template metadata.
+ */
+export function getLibrary () {
+  return getTable()?.library
+}
+
+/**
+ * Get an asset from the asset cache.
+ *
+ * @param {String} id Asset ID.
+ * @return {Object} Asset or null if it is unknown.
+ */
+export function getAsset (id) {
+  let asset
+  asset = getLibrary()?.token?.find(asset => asset.id === id)
+  if (asset) return asset
+  asset = getLibrary()?.tile?.find(asset => asset.id === id)
+  if (asset) return asset
+  asset = getLibrary()?.overlay?.find(asset => asset.id === id)
+  if (asset) return asset
+  return null
 }
 
 /**
@@ -73,7 +111,7 @@ export function getTemplate () {
  * @param {String} name The current game name.
  * @return {Object} Promise of game metadata object.
  */
-export function loadGame (name) {
+export function loadGameState (name) {
   return apiGetGame(name)
     .then(remoteGame => {
       game = remoteGame
@@ -93,6 +131,9 @@ export function loadGame (name) {
  */
 export function createGame (game) {
   return apiPostGame(game)
+    .catch(error => {
+      runError(5, error)
+    })
 }
 
 /**
@@ -123,10 +164,12 @@ export function stateSetGamePref (pref, value) {
  * Will first do a HEAD request to detect changes, and only do a GET/update if
  * needed.
  *
- * @param {?String} selectId Optional UUID of an selected piece. Will be re-
+ * @param {?String} selectId Optional ID of an selected piece. Will be re-
  *                           selected after successfull update.
  */
-export function pollState (selectId = null) {
+export function pollGameState (
+  selectId = null
+) {
   clearTimeout(gameStateTimeout)
   apiHeadState(game.name)
     .then(headers => {
@@ -141,11 +184,11 @@ export function pollState (selectId = null) {
         gameStateRefresh = gameStateRefreshNever // stop polling
         runError(4, game.name, error)
       } else {
-        throw error // bubble
+        runError(5, error)
       }
     })
     .finally(() => {
-      gameStateTimeout = setTimeout(() => pollState(false), gameStateRefresh)
+      gameStateTimeout = setTimeout(() => pollGameState(false), gameStateRefresh)
       gameStateRefresh = Math.floor(Math.min(
         gameStateRefresh * 1.05,
         gameStateRefreshMax
@@ -154,21 +197,12 @@ export function pollState (selectId = null) {
 }
 
 /**
- * Fetch the current game's library / piece catalog object.
- *
- * @return {Object} Promise of library / piece catalog object.
- */
-export function getLibrary () {
-  return apiGetLibrary(game.name)
-}
-
-/**
  * Set the label of a piece of the current game.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {String} pieceId UUID of piece to change.
+ * @param {String} pieceId ID of piece to change.
  * @param {String} label New label text.
  */
 export function stateLabelPiece (pieceId, label) {
@@ -181,7 +215,7 @@ export function stateLabelPiece (pieceId, label) {
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {String} pieceId UUID of piece to change.
+ * @param {String} pieceId ID of piece to change.
  * @param {?Number} x New x. Will not be changed if null.
  * @param {?Number} y New y. Will not be changed if null.
  * @param {?Number} z New z. Will not be changed if null.
@@ -201,7 +235,7 @@ export function stateMovePiece (pieceId, x = null, y = null, z = null) {
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {String} pieceId UUID of piece to change.
+ * @param {String} pieceId ID of piece to change.
  * @param {Number} r New rotation (0, 90, 180, 270).
  */
 export function stateRotatePiece (pieceId, r) {
@@ -214,7 +248,7 @@ export function stateRotatePiece (pieceId, r) {
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {String} pieceId UUID of piece to change.
+ * @param {String} pieceId ID of piece to change.
  * @param {Number} side New side. Zero-based.
  */
 export function stateFlipPiece (pieceId, side) {
@@ -227,7 +261,7 @@ export function stateFlipPiece (pieceId, side) {
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {String} pieceId UUID of piece to change.
+ * @param {String} pieceId ID of piece to change.
  * @param {Object} updates All properties to be changed. Unchanged properties
  *                         should be omitted.
  */
@@ -243,12 +277,15 @@ export function statePieceEdit (pieceID, updates) {
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {String} pieceId UUID of piece to remove.
+ * @param {String} pieceId ID of piece to remove.
  */
 export function stateDeletePiece (id) {
   apiDeletePiece(game.name, id)
+    .catch(error => {
+      runError(5, error)
+    })
     .finally(() => {
-      pollState()
+      pollGameState()
     })
 }
 
@@ -268,8 +305,11 @@ export function stateCreatePiece (piece, selected = false) {
     .then(piece => {
       selectid = piece.id
     })
+    .catch(error => {
+      runError(5, error)
+    })
     .finally(() => {
-      pollState(selected ? selectid : null)
+      pollGameState(selected ? selectid : null)
     })
 }
 
@@ -278,7 +318,7 @@ export function stateCreatePiece (piece, selected = false) {
 /**
  * Update a piece on the server.
  *
- * @param {String} pieceId UUID of piece to change.
+ * @param {String} pieceId ID of piece to change.
  * @param {Object} patch Partial object of fields to send.
  */
 function patchPiece (pieceId, patch) {
@@ -288,18 +328,18 @@ function patchPiece (pieceId, patch) {
         // we somewhat expected this situation. silently ignore it.
         console.info('Piece ' + pieceId + ' got deleted - no need to PATCH it.')
       } else {
-        throw error // *that* was unexpected
+        runError(5, error) // *that* was unexpected
       }
     })
     .finally(() => {
-      pollState()
+      pollGameState()
     })
 }
 
 /**
  * Download the current game state and trigger updates on change.
  *
- * @param {String} selectId UUID of piece to select after update.
+ * @param {String} selectId ID of piece to select after update.
  * @param {String} digest Hash of last seen state to detect changes.
  */
 function syncState (selectId, digest) {
@@ -323,7 +363,7 @@ function syncState (selectId, digest) {
 /**
  * Detect deleted pieces and remove them from the game.
  *
- * @param {String[]} keepIds UUIDs of pieces to keep.
+ * @param {String[]} keepIds IDs of pieces to keep.
  */
 function removeObsoletePieces (keepIds) {
   // get all piece IDs from dom
@@ -348,10 +388,10 @@ function removeObsoletePieces (keepIds) {
  * Trigger UI update for new/changed items.
  *
  * @param {Object} piece Piece to add/update.
- * @param {String} selectId UUID of piece to select after update.
+ * @param {String} selectId ID of piece to select after update.
  */
 function setItem (piece, selectId) {
-  switch (piece.type) {
+  switch (piece.layer) {
     case 'tile':
     case 'token':
     case 'overlay':
@@ -360,3 +400,30 @@ function setItem (piece, selectId) {
     default:
   }
 }
+
+// const requestCache = [] /** stores cached server requests */
+//
+// /**
+//  * Cache server GET requests.
+//  *
+//  * Will serve data from an client cache if it is already present and only do the
+//  * API call only if not.
+//  *
+//  * @param {String} key The name/key for this cache item.
+//  * @param {Boolean} forced Always (re)fetch from API if true.
+//  * @param {function} call Has to return the actual fetch() promise when called.
+//  */
+// function getCached (key, forced, call) {
+//   if (forced) requestCache[key] = null
+//   if (requestCache[key]) {
+//     return new Promise((resolve, reject) => {
+//       resolve(requestCache[key])
+//     })
+//   } else {
+//     return call()
+//       .then(data => {
+//         requestCache[key] = data
+//         return requestCache[key]
+//       })
+//   }
+// }

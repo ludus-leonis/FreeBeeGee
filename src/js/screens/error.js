@@ -28,9 +28,10 @@ import { UnexpectedStatus } from '../api.js'
  * @param {*} options Options / stuff to simply forwart to the error.
  */
 export function runError (code, options) {
-  createScreen()
-
   switch (code) {
+    case 5:
+      runErrorUnexpected(options)
+      break
     case 4:
       runErrorGameGone(options)
       break
@@ -45,8 +46,20 @@ export function runError (code, options) {
       break
     case 0:
     default:
-      runErrorGeneric()
+      runErrorServerGeneric()
       break
+  }
+}
+
+/**
+ * Error screen be shown when an existing game disappeared. Probably the admin
+ * deleted/closed it.
+ */
+function runErrorUnexpected (error) {
+  console.error('*that* was unexpected!', error) // only log if error is serious
+
+  if (!'$VERSION$'.endsWith('dev')) {
+    runErrorClientGeneric() // show nice error message if not in development mode
   }
 }
 
@@ -124,13 +137,27 @@ function runErrorUpdate () {
 }
 
 /**
- * A generic error to be shown when the unexcepted happened.
+ * A generic server error to be shown when the unexcepted happened.
  */
-function runErrorGeneric () {
+function runErrorServerGeneric () {
   createScreen(
     'We are sorry ...',
     `
       <p>Our server is currently experiencing technical difficulties. Please try again later.</p>
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
+    `
+  )
+  _('#ok').on('click', click => { forceReload() })
+}
+
+/**
+ * A generic server error to be shown when the unexcepted happened.
+ */
+function runErrorClientGeneric () {
+  createScreen(
+    'We are sorry ...',
+    `
+      <p>We are currently experiencing technical difficulties. You might have found a bug here. Please try again, but if the issue persists, please consider reporting it.</p>
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
     `
   )

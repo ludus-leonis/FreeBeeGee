@@ -22,8 +22,9 @@ import { createPopper } from '@popperjs/core'
 import {
   getGame,
   getTemplate,
-  loadGame,
-  pollState,
+  getAsset,
+  loadGameState,
+  pollGameState,
   stateCreatePiece,
   stateDeletePiece,
   stateFlipPiece,
@@ -74,7 +75,7 @@ export function setScrollPosition (x, y) {
 export function runGame (name) {
   console.info('$NAME$ v$VERSION$, game ' + name)
 
-  loadGame(name)
+  loadGameState(name)
     .then(game => { if (game) setupGame(game) })
 }
 
@@ -108,7 +109,7 @@ export function deleteSelected () {
  *
  * Will silently fail if this piece does not exist.
  *
- * @param {String} id UUID of piece.
+ * @param {String} id ID of piece.
  */
 export function deletePiece (id) {
   _('#' + id).delete()
@@ -152,7 +153,7 @@ export function cloneSelected (x, y) {
  */
 export function flipSelected () {
   _('#tabletop .is-selected').each(node => {
-    const sides = JSON.parse(node.dataset.assets).length
+    const sides = Number(node.dataset.sides)
     if (sides > 1) {
       stateFlipPiece(node.id, (Number(node.dataset.side) + 1) % sides)
     }
@@ -162,65 +163,65 @@ export function flipSelected () {
 /**
  * Add or re-set a piece.
  *
- * @param {Object} json The piece's full data object.
+ * @param {Object} pieceJson The piece's full data object.
  * @param {Boolean} select If true, the piece will also get selected. Defaults to false.
  */
-export function setPiece (json, select = false) {
-  json.height = json.height < 0 ? json.width : json.height
+export function setPiece (pieceJson, select = false) {
+  pieceJson.height = pieceJson.height < 0 ? pieceJson.width : pieceJson.height
 
   let selection = []
 
   // get the DOM node for the piece or (re)create it if major changes happened
-  let div = _('#' + json.id)
+  let div = _('#' + pieceJson.id)
   if (div.unique() && (
-    div.dataset.type !== json.type ||
-    Number(div.dataset.w) !== json.width ||
-    Number(div.dataset.h) !== json.height ||
-    Number(div.dataset.side) !== json.side
+    div.dataset.layer !== pieceJson.layer ||
+    Number(div.dataset.w) !== pieceJson.width ||
+    Number(div.dataset.h) !== pieceJson.height ||
+    Number(div.dataset.side) !== pieceJson.side
   )) {
     selection = _('#tabletop .is-selected').id
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
   }
   if (!div.unique()) {
-    const node = pieceToNode(json)
-    if (selection.includes(json.id)) node.add('.is-selected')
-    _('#layer-' + json.type).add(node)
+    const node = pieceToNode(pieceJson)
+    if (selection.includes(pieceJson.id)) node.add('.is-selected')
+    _('#layer-' + pieceJson.layer).add(node)
   } else {
-    updateNode(div.node(), json)
+    updateNode(div, pieceJson)
   }
 
   // update dom infos (position, rotation ...)
   const template = getTemplate()
-  div = _('#' + json.id) // fresh query
+  div = _('#' + pieceJson.id) // fresh query
     .css({
-      left: json.x * template.gridSize + 'px',
-      top: json.y * template.gridSize + 'px',
-      zIndex: json.z
+      left: pieceJson.x * template.gridSize + 'px',
+      top: pieceJson.y * template.gridSize + 'px',
+      zIndex: pieceJson.z
     })
     .remove('.is-rotate-0', '.is-rotate-90', '.is-rotate-180', '.is-rotate-270')
-  switch (json.r) {
+  switch (pieceJson.r) {
     case 0:
     case 90:
     case 180:
     case 270:
-      div.add('.is-rotate-' + json.r)
+      div.add('.is-rotate-' + pieceJson.r)
   }
-  if (json.color >= 0 && json.color <= 7) {
-    _(`#${json.id} .border`).css({
-      borderColor: template.colors[json.color].value
+  if (pieceJson.color >= 0 && pieceJson.color <= 7) {
+    _(`#${pieceJson.id} .border`).css({
+      borderColor: template.colors[pieceJson.color].value
     })
   }
 
   // update label
-  _('#' + json.id + ' .label').delete()
-  const label = json.label ?? ''
+  _('#' + pieceJson.id + ' .label').delete()
+  const label = pieceJson.label ?? ''
   if (label !== '') {
     div.add(_('.label').create(label))
   }
 
   // update select status
-  if (select && _('#tabletop.layer-' + json.type + '-enabled').exists()) {
+  if (select && _('#tabletop.layer-' + pieceJson.layer + '-enabled').exists()) {
     unselectPieces()
     div.add('.is-selected')
   }
@@ -282,7 +283,7 @@ export function getMaxZ (layer) {
  */
 export function toTopSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
-    const maxZ = getMaxZ(node.dataset.type)
+    const maxZ = getMaxZ(node.dataset.layer)
     if (Number(node.dataset.z) !== maxZ) {
       stateMovePiece(node.id, null, null, maxZ + 1)
     }
@@ -296,7 +297,7 @@ export function toTopSelected () {
  */
 export function toBottomSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
-    const minZ = getMinZ(node.dataset.type)
+    const minZ = getMinZ(node.dataset.layer)
     if (Number(node.dataset.z) !== minZ) {
       stateMovePiece(node.id, null, null, minZ - 1)
     }
@@ -320,7 +321,7 @@ export function unselectPieces (layer = 'all') {
 /**
  * Get a list of all pieces' IDs that are in play.
  *
- * @return {String[]} Possibly empty array of UUIDs.
+ * @return {String[]} Possibly empty array of IDs.
  */
 export function getAllPiecesIds () {
   const all = _('#tabletop .piece')
@@ -333,7 +334,7 @@ export function getAllPiecesIds () {
 /**
  * Get the piece data object for a piece via it's ID.
  *
- * @param {String} id UUID of piece.
+ * @param {String} id ID of piece.
  * @return {Object} Full piece data object.
  */
 export function nodeIdToPiece (id) {
@@ -350,21 +351,50 @@ export function nodeIdToPiece (id) {
  * @return {Object} Full piece data object.
  */
 export function nodeToPiece (node) {
-  const item = {}
-  item.id = node.id
-  item.type = node.dataset.type
-  item.assets = JSON.parse(node.dataset.assets)
-  item.width = Number(node.dataset.w)
-  item.height = Number(node.dataset.h)
-  item.x = Number(node.dataset.x)
-  item.y = Number(node.dataset.y)
-  item.z = Number(node.dataset.z)
-  item.r = Number(node.dataset.r)
-  item.side = Number(node.dataset.side)
-  item.label = node.dataset.label
-  item.color = Number(node.dataset.color)
-  item.bg = node.dataset.bg
-  return item
+  const piece = {}
+  piece.id = node.id
+  piece.layer = node.dataset.layer
+  piece.asset = node.dataset.asset
+  piece.width = Number(node.dataset.w)
+  piece.height = Number(node.dataset.h)
+  piece.x = Number(node.dataset.x)
+  piece.y = Number(node.dataset.y)
+  piece.z = Number(node.dataset.z)
+  piece.r = Number(node.dataset.r)
+  piece.side = Number(node.dataset.side)
+  piece.label = node.dataset.label
+  piece.color = Number(node.dataset.color)
+  return piece
+}
+
+/**
+* Convert an asset data object to a DOM node.
+ *
+ * @param {Object} assetJson Full asset data object.
+ * @param {Number} side Side to show (zero-based).
+ * @return {HTMLElement} Converted node (not added to DOM yet).
+ */
+export function assetToNode (assetJson, side = 0) {
+  const asset = _('.asset').create().css({
+    backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`,
+    backgroundColor: assetJson.type === 'overlay' ? 'transparent' : `#${assetJson.bg}`
+  })
+  const node = _(`.piece.${assetJson.type} > .box > .border`).create(asset) // .is-w-${assetJson.width}.is-h-${assetJson.height}.is-wh-${assetJson.width - assetJson.height}
+
+  // set default metadata from asset
+  node.data({
+    asset: assetJson.id,
+    layer: assetJson.type,
+    w: assetJson.width,
+    h: assetJson.height,
+    side: side,
+    sides: assetJson.assets.length,
+    r: 0,
+    bg: assetJson.bg,
+    color: 0
+  })
+
+  return node
 }
 
 /**
@@ -373,13 +403,12 @@ export function nodeToPiece (node) {
  * @param {Object} Full piece data object.
  * @return {HTMLElement} Converted node (not added to DOM yet).
  */
-export function pieceToNode (json) {
-  const asset = _('.asset').create().css({
-    backgroundImage: `url('api/games/${getGame().name}/assets/${json.type}/${json.assets[json.side ?? 0]}')`,
-    backgroundColor: json.type === 'overlay' ? 'transparent' : `#${json.bg}`
-  })
-  const node = _(`.piece.${json.type}.is-w-${json.width}.is-h-${json.height}.is-wh-${json.width - json.height} > .box > .border`).create(asset)
-  return updateNode(node, json)
+export function pieceToNode (pieceJson) {
+  const node = assetToNode(getAsset(pieceJson.asset), pieceJson.side ?? 0)
+  node.add(`.is-w-${pieceJson.width}`, `.is-h-${pieceJson.height}`, `.is-wh-${pieceJson.width - pieceJson.height}`)
+
+  const ret = updateNode(node, pieceJson)
+  return ret
 }
 
 export function popupPiece (id) {
@@ -545,7 +574,7 @@ function setupGame (game) {
     height: table.height + 'px',
     backgroundColor: table.background.color,
     backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
-    backgroundSize: table.template.gridSize + 'px,768px'
+    backgroundSize: table.template.gridSize + 'px,1152px 768px'
   })
 
   _('body').on('contextmenu', e => e.preventDefault())
@@ -560,7 +589,7 @@ function setupGame (game) {
   scroller.style.setProperty('--nr-color-scroll-bg', table.background.color)
 
   // setup content
-  pollState()
+  pollGameState()
 
   enableDragAndDrop('#tabletop')
 }
@@ -577,24 +606,26 @@ function quit () {
  *
  * Will only set meta-fields (data-*), but not change styles.
  *
- * @param {HTMLElement} node DOM element to update.
+ * @param {FreeDOM} node DOM element to update.
  * @param {Object} piece Piece data.
  * @return {HTMLElement} Updated node.
  */
 function updateNode (node, piece) {
+  piece.sides = piece.sides ?? getAsset(piece.asset).assets.length // server pieces don't have this yet
   node.id = piece.id
-  node.dataset.assets = JSON.stringify(piece.assets)
-  node.dataset.type = piece.type ?? 'tile'
-  node.dataset.w = piece.width ?? 1
-  node.dataset.h = piece.height ?? 1
-  node.dataset.x = piece.x ?? 0
-  node.dataset.y = piece.y ?? 0
-  node.dataset.z = piece.z ?? 0
-  node.dataset.r = piece.r ?? 0
-  node.dataset.color = piece.color ?? 0
-  node.dataset.bg = piece.bg ?? '808080'
-  node.dataset.side = clamp(0, piece.side ?? 0, piece.assets.length - 1)
-  node.dataset.label = piece.label ?? ''
+  node.data({
+    asset: piece.asset,
+    layer: piece.layer ?? 'tile',
+    w: piece.width ?? 1,
+    h: piece.height ?? 1,
+    x: piece.x ?? 0,
+    y: piece.y ?? 0,
+    z: piece.z ?? 0,
+    r: piece.r ?? 0,
+    color: piece.color ?? 0,
+    side: clamp(0, piece.side ?? 0, piece.sides - 1),
+    label: piece.label ?? ''
+  })
   return node
 }
 

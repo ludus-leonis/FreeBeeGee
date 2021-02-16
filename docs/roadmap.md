@@ -4,13 +4,12 @@ Here is a list what might happen next. However, priorities might change.
 
 ## v0.3 - Clicking Crab
 
-* refactor game json
-  * game meta info & version
-  * (current) game state/history
-  * use asset uuis as references / reduce duplicate information
-  * refactor state.js into state.js + library.js
+* snapshot tweaks
+  * cleanup files shipped in snapshot (no digest)
+  * add file date/time to snapshot name
 * more API integration tests (CRUD)
 * bundle setup docs in release archives
+* svg favicon
 
 ## v0.4 - Zipping Zebra
 
@@ -32,6 +31,7 @@ Here is a list what might happen next. However, priorities might change.
 * upload custom images for tiles & tokens
 * color.sh: detect dominant piece color instead of average color
 * add more classic game boards: go, backgammon, mills, solitaire
+* hide .../data/... from URLs (via .htaccess)
 
 ## v0.6 - Mobile Monkey
 

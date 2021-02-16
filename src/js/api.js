@@ -92,16 +92,6 @@ export function apiHeadState (gameName) {
 }
 
 /**
- * API GET /games/:gameName/library/
- *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @return {Promise} Promise containing JSON/Object payload.
- */
-export function apiGetLibrary (gameName) {
-  return getJson([200], 'api/games/' + gameName + '/library/')
-}
-
-/**
  * API PUT /games/:gameName/pieces/
  *
  * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
@@ -116,7 +106,7 @@ export function apiPutPiece (gameName, piece) {
  * API PATCH /games/:gameName/pieces/:pieceId/
  *
  * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @param {String} pieceId Piece-ID (UUID) of piece to patch.
+ * @param {String} pieceId Piece-ID (ID) of piece to patch.
  * @param {Object} patch Partial piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
@@ -128,7 +118,7 @@ export function apiPatchPiece (gameName, pieceId, patch) {
  * API DELETE /games/:gameName/pieces/:pieceId/
  *
  * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @param {String} pieceId Piece-ID (UUID) of piece to delete.
+ * @param {String} pieceId Piece-ID (ID) of piece to delete.
  * @return {Promise} Promise containing JSON/Object payload.
  */
 export function apiDeletePiece (gameName, pieceId) {

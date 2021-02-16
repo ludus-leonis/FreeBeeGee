@@ -37,8 +37,8 @@ document.onreadystatechange = function (event) {
           stateSetServerInfo(info)
           router
             .on({
-              'game/:uuid': function (params) {
-                runGame(params.uuid)
+              'game/:id': function (params) {
+                runGame(params.id)
               },
               '*': function () {
                 runJoin()
