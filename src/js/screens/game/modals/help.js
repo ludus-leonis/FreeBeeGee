@@ -34,7 +34,7 @@ export function modalHelp () {
     createModal(true)
 
     _('#modal-header').innerHTML = `
-      <h3 class="modal-title">FreeBeeGee v$VERSION$ - $CODENAME$</h3>
+      <h3 class="modal-title">FreeBeeGee v$VERSION$ “$CODENAME$”</h3>
     `
     _('#modal-body').innerHTML = `
       <div id="tabs-library" class="tabs">

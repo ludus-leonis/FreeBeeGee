@@ -70,7 +70,7 @@ Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device su
 
 Download the latest release from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases). Extract the `*.tar.gz`/`*.zip` into a folder on your web-server and you are (almost) ready to go - FreeBeeGee comes with reasonable, secure defaults.
 
-Read the [Setup & Config](docs/setup.md) docs for details.
+Read the [Setup & Config](docs/INSTALL.md) docs for details.
 
 ## License
 

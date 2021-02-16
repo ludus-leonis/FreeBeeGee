@@ -4,7 +4,6 @@ Here is a list what might happen next. However, priorities might change.
 
 ## v0.3 - Clicking Crab
 
-* bundle setup docs in release archives
 * more API integration tests (CRUD)
 
 ## v0.4 - Zipping Zebra

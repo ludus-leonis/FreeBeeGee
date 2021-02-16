@@ -1,8 +1,21 @@
 # Setup
 
+This guide covers FreeBeeGee v$VERSION$.
+
+## Requirements
+
+### Server
+
+* PHP 7.2+
+* Apache with `.htaccess` / `mod_rewrite` support
+
+### Client
+
+Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.
+
 ## Installation
 
-If the requirements are met (PHP 7.2+, Apache + mod_rewrite support), installation is as simple as:
+If the server requirements are met, installation is as simple as:
 
 * Download the latest `*.tar.gz`/`*.zip` from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 * Extract the `*.tar.gz`/`*.zip` into a folder on your web-server.
@@ -11,13 +24,13 @@ You can pick the root folder of your server, or create a subfolder for FreeBeeGe
 
 Per default, FreeBeeGee comes with a simple `.htaccess` file with the same content as `.htaccess_basic`. This only contains a few, mandatory server settings. A better, more secure `.htaccess_full` is also provided, but depending on your web server / Apache version, the full version might break. It is recommended that you try to copy `.htaccess_full` over `.htaccess` and revert to the basic file if you get in trouble.
 
-`.htaccess_full` also contains rules how to enforce https and to supress 'www.', but they are commented out by default. Enable them if needed.
+`.htaccess_full` also contains rules how to enforce https and to supress 'www.', but they are disabled by default. Enable them if needed.
 
 Finally, review the `terms.html` and don't forget to add your GDPR / privacy statement to `privacy.html`. ;)
 
 ## Configuration
 
-The server config file is found in `api/server.json`:
+The server config file is found in `api/data/server.json`:
 
 ```
 {
@@ -53,4 +66,4 @@ npm install
 gulp release
 ```
 
-Afterwards, the archives can be found in the `dist/` folder.
+The archives can now be found in the `dist/` folder.

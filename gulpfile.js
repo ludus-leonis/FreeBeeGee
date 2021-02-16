@@ -221,6 +221,7 @@ gulp.task('html', function () {
     'src/misc/.htaccess*',
     'src/misc/robots.txt',
     'src/misc/README.md',
+    'docs/INSTALL.md',
     'LICENSE.md'
   ]))
     .pipe(gulp.dest(dirs.site))
