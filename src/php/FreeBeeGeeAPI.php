@@ -799,8 +799,15 @@ class FreeBeeGeeAPI
             if (!$file->isDir()) {
                 $absolutePath = $file->getRealPath();
                 $relativePath = substr($absolutePath, strlen($gameFolder) + 1);
-                if ($relativePath !== '.flock' && $relativePath !== 'snapshot.zip') {
-                    $toZip[$relativePath] = $absolutePath;
+                switch ($relativePath) { // filter those files away
+                    case '.flock':
+                    case 'snapshot.zip':
+                    case 'game.json':
+                    case 'game.json.digest':
+                    case 'state.json.digest':
+                        break; // they don't go into the zip
+                    default:
+                        $toZip[$relativePath] = $absolutePath; // keep all others
                 }
             }
         }
@@ -816,7 +823,7 @@ class FreeBeeGeeAPI
         $zip->close();
 
         // send and delete temporary file
-        header('Content-disposition: attachment; filename=' . $gameName . '.zip');
+        header('Content-disposition: attachment; filename=' . $gameName . '.' . date('Y-m-d-Hi') . '.zip');
         header('Content-type: application/zip');
         readfile($zipName);
         unlink($zipName);
