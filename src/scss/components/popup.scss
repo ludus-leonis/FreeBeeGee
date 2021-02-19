@@ -1,0 +1,53 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Our right-click/edit popups.
+///
+/// @access public
+////
+
+.popup {
+  background-color: $color-bw-bg;
+  border: px(3) solid $color-bw-fg;
+  border-radius: $border-radius;
+  color: $color-bw-fg;
+  display: none;
+  margin-left: .25em;
+  padding: .25em;
+
+  &.show {
+    display: block;
+  }
+
+  .popup-menu {
+    @include typography-links($color-bw-fg, $color-bw-bg, 0);
+    display: block;
+    line-height: 1em;
+    padding: .5em .25em;
+
+    &:hover {
+      background-color: $color-primary;
+    }
+
+    svg {
+      margin-right: .5em;
+    }
+  }
+}

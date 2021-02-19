@@ -72,12 +72,14 @@ function handleGameKeys (keydown) {
         cloneSelected(getMouseTileX(), getMouseTileY())
         break
       case 69: // e - edit
+      case 113: // F2
         editSelected()
         break
       case 70: // f - flip
         flipSelected()
         break
       case 72: // h - help
+      case 112: // F1
         modalHelp()
         break
       case 82: // r - rotate

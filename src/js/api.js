@@ -20,6 +20,20 @@
 // --- public endpoint calls ---------------------------------------------------
 
 /**
+ * Error class when the API responds with an unexpected HTTP code.
+ *
+ * Not necessarily an 'error', just something unexpected the caller might like
+ * to react on.
+ */
+export class UnexpectedStatus extends Error {
+  constructor (status) {
+    super('Got status ' + status)
+    this.name = 'UnexpectedStatus'
+    this.status = status
+  }
+}
+
+/**
  * API GET /
  *
  * @return {Promise} Promise containing JSON/Object payload.
@@ -78,16 +92,6 @@ export function apiHeadState (gameName) {
 }
 
 /**
- * API GET /games/:gameName/library/
- *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @return {Promise} Promise containing JSON/Object payload.
- */
-export function apiGetLibrary (gameName) {
-  return getJson([200], 'api/games/' + gameName + '/library/')
-}
-
-/**
  * API PUT /games/:gameName/pieces/
  *
  * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
@@ -102,7 +106,7 @@ export function apiPutPiece (gameName, piece) {
  * API PATCH /games/:gameName/pieces/:pieceId/
  *
  * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @param {String} pieceId Piece-ID (UUID) of piece to patch.
+ * @param {String} pieceId Piece-ID (ID) of piece to patch.
  * @param {Object} patch Partial piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
@@ -114,7 +118,7 @@ export function apiPatchPiece (gameName, pieceId, patch) {
  * API DELETE /games/:gameName/pieces/:pieceId/
  *
  * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @param {String} pieceId Piece-ID (UUID) of piece to delete.
+ * @param {String} pieceId Piece-ID (ID) of piece to delete.
  * @return {Promise} Promise containing JSON/Object payload.
  */
 export function apiDeletePiece (gameName, pieceId) {
@@ -141,6 +145,7 @@ export function apiPostPiece (gameName, piece) {
  * @param {String} path The URL to call. Can be relative.
  * @param {Object} data Optional playload for request.
  * @return {Promse} Promise of a JSON object.
+ * @throw {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
 function fetchOrThrow (expectedStatus, path, data = null) {
   return globalThis.fetch(path, data)
@@ -152,7 +157,7 @@ function fetchOrThrow (expectedStatus, path, data = null) {
           return response.json()
         }
       } else {
-        throw new Error('unexpected status: ' + response.status)
+        throw new UnexpectedStatus(response.status)
       }
     })
 }
@@ -176,7 +181,7 @@ function head (path) {
       if (response.status === 200) {
         return response.headers
       } else {
-        throw new Error('unexpected status: ' + response.status)
+        throw new UnexpectedStatus(response.status)
       }
     })
 }

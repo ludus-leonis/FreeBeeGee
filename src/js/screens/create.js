@@ -23,7 +23,7 @@ import { runError } from './error.js'
 import { createGame as stateCreateGame } from './game/state.js'
 import { stateGetServerInfo } from '../state.js'
 import _ from '../FreeDOM.js'
-import { apiGetTemplates } from '../api.js'
+import { apiGetTemplates, UnexpectedStatus } from '../api.js'
 
 /**
  * Show a create-game dialog.
@@ -41,26 +41,20 @@ export function createGame (name) {
     `
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <p class="is-wrapping">The game <strong>${name}</strong> does not exist yet. Go ahead and create it!</p>
-    ` + (stateGetServerInfo().createPassword ? `
-      <label for="password">Password</label>
-      <input id="password" type="password" placeholder="* * * * * *">
-      <p class="p-small spacing-tiny">This server requires a password to create new games.</p>
-    ` : '') + `
+
       <label for="template">Template</label>
       <select id="template" name="template">
         <option value="RPG" selected>RPG</option>
       </select>
       <p class="p-small spacing-tiny">Let us know what we may pre-setup for you and what pieces you'll need.</p>
 
-      <label for="size">Table size</label>
-      <select id="size" name="size">
-        <option value="1">48x24 - cosy</option>
-        <option value="2" selected>62x32 - default</option>
-        <option value="3">64x64 - maximum</option>
-      </select>
-      <p class="p-small spacing-tiny">Bigger isn't always better. But don't worry – you can change this later, too.</p>
+      ` + (stateGetServerInfo().createPassword ? `
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="* * * * * *">
+        <p class="p-small spacing-tiny">This server requires a password to create new games.</p>
+      ` : '') + `
 
-      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Create</a>
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Let's play!</a>
     `,
 
     `This server deletes games after ${stateGetServerInfo().ttl}h of inactivity.`
@@ -78,7 +72,9 @@ export function createGame (name) {
       }
     })
 
-  _('#password').on('blur', blur => { _('#password').remove('.invalid') })
+  _('#password')
+    .on('blur', blur => { _('#password').remove('.invalid') })
+    .on('keydown', keydown => { if (keydown.keyCode === 13) ok(name) })
   _('#ok').on('click', click => { click.preventDefault(); ok(name) })
 }
 
@@ -88,21 +84,6 @@ export function createGame (name) {
 function ok (name) {
   const game = {
     name: name
-  }
-
-  switch (_('#size').value) {
-    case '1':
-      game.width = 48
-      game.height = 24
-      break
-    case '3':
-      game.width = 62
-      game.height = 32
-      break
-    case '2':
-    default:
-      game.width = 64
-      game.height = 64
   }
 
   game.template = _('#template').value
@@ -117,16 +98,21 @@ function ok (name) {
       document.location = './#/game/' + remoteGame.name
     })
     .catch((error) => {
-      if (error.message.includes('401')) {
-        const p = _('#password')
-        p.value = ''
-        p.add('.invalid')
-        p.focus()
-      } if (error.message.includes('503')) {
-        runError(2)
-      } else {
-        console.error('unexpected error:')
-        console.error(error.message)
+      if (error instanceof UnexpectedStatus) {
+        let p
+        switch (error.status) {
+          case 401:
+            p = _('#password')
+            p.value = ''
+            p.add('.invalid')
+            p.focus()
+            break
+          case 503:
+            runError(2)
+            break
+          default:
+            runError(5)
+        }
       }
     })
 }

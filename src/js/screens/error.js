@@ -19,16 +19,22 @@
 
 import { createScreen } from '../screen.js'
 import _ from '../FreeDOM.js'
+import { UnexpectedStatus } from '../api.js'
 
 /**
  * Show an error dialog.
  *
  * @param {Number} code Code of error message to show.
+ * @param {*} options Options / stuff to simply forwart to the error.
  */
-export function runError (code) {
-  createScreen()
-
+export function runError (code, options) {
   switch (code) {
+    case 5:
+      runErrorUnexpected(options)
+      break
+    case 4:
+      runErrorGameGone(options)
+      break
     case 3:
       runErrorNoSlotAvailable()
       break
@@ -40,9 +46,41 @@ export function runError (code) {
       break
     case 0:
     default:
-      runErrorGeneric()
+      runErrorServerGeneric()
       break
   }
+}
+
+/**
+ * Error screen be shown when an existing game disappeared. Probably the admin
+ * deleted/closed it.
+ */
+function runErrorUnexpected (error) {
+  console.error('*that* was unexpected!', error) // only log if error is serious
+
+  if (!'$VERSION$'.endsWith('dev')) {
+    runErrorClientGeneric() // show nice error message if not in development mode
+  }
+}
+
+/**
+ * Error screen be shown when an existing game disappeared. Probably the admin
+ * deleted/closed it.
+ */
+function runErrorGameGone (gameName, error) {
+  if (error instanceof UnexpectedStatus && error.status !== 404) {
+    console.error('game gone', error) // only log if error is serious
+  }
+
+  createScreen(
+    'Game gone ...',
+    `
+      <p class="is-wrapping">Game <strong>${gameName}</strong> does not exist (any more).</p>
+
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Restart</a>
+    `
+  )
+  _('#ok').on('click', click => { backToStart(gameName) })
 }
 
 /**
@@ -99,9 +137,9 @@ function runErrorUpdate () {
 }
 
 /**
- * A generic error to be shown when the unexcepted happened.
+ * A generic server error to be shown when the unexcepted happened.
  */
-function runErrorGeneric () {
+function runErrorServerGeneric () {
   createScreen(
     'We are sorry ...',
     `
@@ -113,8 +151,35 @@ function runErrorGeneric () {
 }
 
 /**
+ * A generic server error to be shown when the unexcepted happened.
+ */
+function runErrorClientGeneric () {
+  createScreen(
+    'We are sorry ...',
+    `
+      <p>We are currently experiencing technical difficulties. You might have found a bug here. Please try again, but if the issue persists, please consider reporting it.</p>
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
+    `
+  )
+  _('#ok').on('click', click => { forceReload() })
+}
+
+/**
  * Force the browser to reload the page.
  */
 function forceReload () {
   globalThis.location.reload()
+}
+
+/**
+ * Go back to the start/join screen. Remember game name if possible.
+ *
+ * @param {?String} gameName Optional name of game to add in redirect.
+ */
+function backToStart (gameName) {
+  if (gameName) {
+    globalThis.location = './?game=' + gameName
+  } else {
+    globalThis.location = './'
+  }
 }

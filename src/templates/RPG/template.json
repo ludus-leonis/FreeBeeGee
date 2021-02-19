@@ -1,0 +1,18 @@
+{
+  "type": "grid-square",
+  "gridSize": 64,
+  "version": "$VERSION$",
+  "engine": "^$ENGINE$",
+  "width": 48,
+  "height": 32,
+  "colors": [
+    { "name": "black", "value": "#0d0d0d" },
+    { "name": "blue", "value": "#3f8efc" },
+    { "name": "green", "value": "#0f956a" },
+    { "name": "cyan", "value": "#40bfbf" },
+    { "name": "red", "value": "#cc2936" },
+    { "name": "magenta", "value": "#bf40bf" },
+    { "name": "orange", "value": "#ff6700" },
+    { "name": "ivory", "value": "#f2e4be" }
+  ]
+}

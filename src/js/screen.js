@@ -34,7 +34,7 @@ export function createScreen (headline, content, footer = '') {
     <div class="container is-small">
       <div class="row">
         <div class="col-12 is-content">
-          <a class="a-invisible" href="./"><h1 class="h0"><span class="color-primary">Free</span>Bee<span class="color-secondary">Gee</span></h1></a>
+        <a class="a-invisible" href="./"><img src="img/freebeegee-logo.svg" alt="FreeBeeGee"></a>
           <p class="spacing-none">Your game. Your data.</p>
           <form class="card spacing-large">
             <div class="card-header"><h1 id="title" class="h3">${headline}</h1></div>

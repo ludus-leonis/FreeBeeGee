@@ -4,9 +4,11 @@
 
 # FreeBeeGee
 
-A virtual gaming desktop. Host tabletop and role-playing games online for friends & family.
+A virtual gaming tabletop you can host on your own server.
 
-Your server. Your game. Your rules. Your data.
+Your game. Your rules. Your data.
+
+Visit FreeBeeGee's official [Homepage here](https://freebeegee.org/).
 
 ## Key features
 
@@ -26,8 +28,8 @@ Your server. Your game. Your rules. Your data.
 **Note:** This is still an early/development version. A few rather major features are still missing, limiting it's current usefullness:
 
 * No asset upload yet. You can't add images/tiles/pieces right now and the default library is still quite limited.
-* You can't transfer games between servers via the web-interface yet. You need to copy folders via scp/sftp.
-* No per-game passwords yet. Anyone who knows a game's name can join.
+* You can download game snapshots - but can't upload them again. A sysadmin would have to do that via scp/sftp.
+* No per-game passwords yet. Anyone who knows a game's name can join. That is partly by design, but it would be nice to have that option.
 * You can attach (text)labels to tokens, but no fancy state-icons, HP counter etc. - yet.
 * Limited testing on Safari.
 
@@ -53,6 +55,8 @@ FreeBeeGee follows the [KISS principle](https://en.wikipedia.org/wiki/KISS_princ
 * A community management tool.
 * A campaign management tool.
 
+There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/limitations of this project.
+
 ## Requirements
 
 ### Server
@@ -68,7 +72,7 @@ Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device su
 
 Download the latest release from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases). Extract the `*.tar.gz`/`*.zip` into a folder on your web-server and you are (almost) ready to go - FreeBeeGee comes with reasonable, secure defaults.
 
-Read the [Setup & Config](docs/setup.md) docs for details.
+Read the [Setup & Config](docs/INSTALL.md) docs for details.
 
 ## License
 

@@ -175,8 +175,8 @@ h5,
 
 .p-micro,
 %p-micro {
-  @include typography-font($typography-font-list-sans, 600, px(8), 1.2em, .1em);
-  font-weight: 700;
+  @include typography-font($typography-font-list-sans, 600, px(10), 1.2em, .1em);
+  font-weight: 600;
 }
 
 .p-pre,

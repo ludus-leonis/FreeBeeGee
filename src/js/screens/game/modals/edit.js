@@ -17,7 +17,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { statePieceEdit } from '../state.js'
+import { getTemplate, statePieceEdit, getAsset } from '../state.js'
 import _ from '../../../FreeDOM.js'
 
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
@@ -74,7 +74,7 @@ export function modalEdit (piece) {
 
     // width
     const pieceW = _('#piece-w')
-    for (let w = 1; w <= 8; w++) {
+    for (let w = 1; w <= 32; w++) {
       const option = _('option').create(w)
       option.value = w
       if (w === piece.width) option.selected = true
@@ -83,7 +83,7 @@ export function modalEdit (piece) {
 
     // height
     const pieceH = _('#piece-h')
-    for (let h = 1; h <= 8; h++) {
+    for (let h = 1; h <= 32; h++) {
       const option = _('option').create(h)
       option.value = h
       if (h === piece.height) option.selected = true
@@ -100,10 +100,11 @@ export function modalEdit (piece) {
     }
 
     // side
+    const asset = getAsset(piece.asset)
     const pieceSide = _('#piece-side')
-    for (let s = 1; s <= piece.assets.length; s++) {
+    for (let s = 1; s <= asset.assets.length; s++) {
       let label = s
-      if (s === piece.assets.length) label = 'back'
+      if (s === asset.assets.length) label = 'back'
       if (s === 1) label = 'front'
       const option = _('option').create(label)
       option.value = s - 1
@@ -113,8 +114,9 @@ export function modalEdit (piece) {
 
     // color
     const pieceColor = _('#piece-color')
-    for (let c = 0; c <= 7; c++) {
-      const option = _('option').create(`${c + 1} - ${colornames[c]}`)
+    const template = getTemplate()
+    for (let c = 0; c < template.colors.length; c++) {
+      const option = _('option').create(`${c + 1} - ${template.colors[c].name}`)
       option.value = c
       if (c === piece.color) option.selected = true
       pieceColor.add(option)
@@ -175,6 +177,3 @@ function modalOk () {
   statePieceEdit(piece.id, updates)
   getModal().hide()
 }
-
-/** our token border color names */
-const colornames = ['black', 'blue', 'green', 'cyan', 'red', 'magenta', 'orange', 'ivory']

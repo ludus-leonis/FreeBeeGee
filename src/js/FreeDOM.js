@@ -253,6 +253,22 @@ class FreeDOM {
   }
 
   /**
+   * Add data-* attributes to all selected nodes
+   *
+   * Will set HTMLElement.dataset.* properties provided as flat object.
+   *
+   * @param {object} dataset Object with property -> value entries.
+   * @return {FreeDOM} DOM object for chaining.
+   */
+  data (dataset) {
+    return this.each(node => {
+      for (const property in dataset) {
+        node.dataset[property] = dataset[property]
+      }
+    })
+  }
+
+  /**
    * Remove all selected nodes from DOM tree.
    *
    * Won't return anything as deleting is the end of every chain.

@@ -40,6 +40,20 @@
       text-align: center;
     }
 
+    > a {
+      display: block;
+      text-align: center;
+      width: 100%;
+    }
+
+    img {
+      height: px(48);
+
+      @include media-breakpoint-up(sm) {
+        height: px(80);
+      }
+    }
+
     .h0 {
       color: $color-white-100;
       font-size: 2.75em;

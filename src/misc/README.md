@@ -1,23 +1,12 @@
-# FreeBeeGee
+# FreeBeeGee v$VERSION$ “$CODENAME$”
 
-A virtual gaming desktop. Host tabletop and role-playing games online for friends & family.
+A virtual gaming tabletop you can host on your own server.
 
-Your server. Your game. Your rules. Your data.
-
-## Requirements
-
-### Server
-
-* PHP 7.2+
-* Apache with `.htaccess` / `mod_rewrite` support
-
-### Client
-
-Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.
+Your game. Your rules. Your data.
 
 ## Installation
 
-Please refer to our [GitHub repository](https://github.com/ludus-leonis/FreeBeeGee/) for installation instructions.
+Please refer to [INSTALL.md](INSTALL.md) for information about requirements and installation.
 
 ## License
 

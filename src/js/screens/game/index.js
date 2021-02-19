@@ -17,10 +17,14 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { createPopper } from '@popperjs/core'
+
 import {
   getGame,
-  reloadGame,
-  pollState,
+  getTemplate,
+  getAsset,
+  loadGameState,
+  pollGameState,
   stateCreatePiece,
   stateDeletePiece,
   stateFlipPiece,
@@ -39,8 +43,6 @@ import { modalHelp } from './modals/help.js'
 
 let scroller = null /** keep reference to scroller div - we need it often */
 
-export const tilesize = 64 /** size of each grid field in px */
-
 // --- public ------------------------------------------------------------------
 
 /**
@@ -52,7 +54,17 @@ export function getScrollPosition () {
   return {
     x: scroller.scrollLeft,
     y: scroller.scrollTop
-  } // simplebar.getScrollElement().scrollLeft
+  }
+}
+
+/**
+ * Get current tabletop scroll position.
+ *
+ * @return {Number} x X-coordinate.
+ * @return {Number} y Y-coordinate.
+ */
+export function setScrollPosition (x, y) {
+  scroller.scrollTo(x, y)
 }
 
 /**
@@ -63,10 +75,8 @@ export function getScrollPosition () {
 export function runGame (name) {
   console.info('$NAME$ v$VERSION$, game ' + name)
 
-  reloadGame(name)
-    .then(game => {
-      setupGame(game)
-    })
+  loadGameState(name)
+    .then(game => { if (game) setupGame(game) })
 }
 
 /**
@@ -99,7 +109,7 @@ export function deleteSelected () {
  *
  * Will silently fail if this piece does not exist.
  *
- * @param {String} id UUID of piece.
+ * @param {String} id ID of piece.
  */
 export function deletePiece (id) {
   _('#' + id).delete()
@@ -143,7 +153,7 @@ export function cloneSelected (x, y) {
  */
 export function flipSelected () {
   _('#tabletop .is-selected').each(node => {
-    const sides = JSON.parse(node.dataset.assets).length
+    const sides = Number(node.dataset.sides)
     if (sides > 1) {
       stateFlipPiece(node.id, (Number(node.dataset.side) + 1) % sides)
     }
@@ -153,64 +163,65 @@ export function flipSelected () {
 /**
  * Add or re-set a piece.
  *
- * @param {Object} json The piece's full data object.
+ * @param {Object} pieceJson The piece's full data object.
  * @param {Boolean} select If true, the piece will also get selected. Defaults to false.
  */
-export function setPiece (json, select = false) {
-  json.height = json.height < 0 ? json.width : json.height
+export function setPiece (pieceJson, select = false) {
+  pieceJson.height = pieceJson.height < 0 ? pieceJson.width : pieceJson.height
 
   let selection = []
 
   // get the DOM node for the piece or (re)create it if major changes happened
-  let div = _('#' + json.id)
+  let div = _('#' + pieceJson.id)
   if (div.unique() && (
-    div.dataset.type !== json.type ||
-    Number(div.dataset.w) !== json.width ||
-    Number(div.dataset.h) !== json.height ||
-    Number(div.dataset.side) !== json.side
+    div.dataset.layer !== pieceJson.layer ||
+    Number(div.dataset.w) !== pieceJson.width ||
+    Number(div.dataset.h) !== pieceJson.height ||
+    Number(div.dataset.side) !== pieceJson.side
   )) {
     selection = _('#tabletop .is-selected').id
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
   }
   if (!div.unique()) {
-    const node = pieceToNode(json)
-    if (selection.includes(json.id)) node.add('.is-selected')
-    _('#layer-' + json.type).add(node)
+    const node = pieceToNode(pieceJson)
+    if (selection.includes(pieceJson.id)) node.add('.is-selected')
+    _('#layer-' + pieceJson.layer).add(node)
   } else {
-    updateNode(div.node(), json)
+    updateNode(div, pieceJson)
   }
 
   // update dom infos (position, rotation ...)
-  div = _('#' + json.id) // fresh query
+  const template = getTemplate()
+  div = _('#' + pieceJson.id) // fresh query
     .css({
-      left: json.x * tilesize + 'px',
-      top: json.y * tilesize + 'px',
-      zIndex: json.z
+      left: pieceJson.x * template.gridSize + 'px',
+      top: pieceJson.y * template.gridSize + 'px',
+      zIndex: pieceJson.z
     })
     .remove('.is-rotate-0', '.is-rotate-90', '.is-rotate-180', '.is-rotate-270')
-  switch (json.r) {
+  switch (pieceJson.r) {
     case 0:
     case 90:
     case 180:
     case 270:
-      div.add('.is-rotate-' + json.r)
+      div.add('.is-rotate-' + pieceJson.r)
   }
-  if (json.color >= 0 && json.color <= 7) {
-    _(`#${json.id} .border`).css({
-      borderColor: colors[json.color]
+  if (pieceJson.color >= 0 && pieceJson.color <= 7) {
+    _(`#${pieceJson.id} .border`).css({
+      borderColor: template.colors[pieceJson.color].value
     })
   }
 
   // update label
-  _('#' + json.id + ' .label').delete()
-  const label = json.label ?? ''
+  _('#' + pieceJson.id + ' .label').delete()
+  const label = pieceJson.label ?? ''
   if (label !== '') {
     div.add(_('.label').create(label))
   }
 
   // update select status
-  if (select && _('#tabletop.layer-' + json.type + '-enabled').exists()) {
+  if (select && _('#tabletop.layer-' + pieceJson.layer + '-enabled').exists()) {
     unselectPieces()
     div.add('.is-selected')
   }
@@ -272,7 +283,7 @@ export function getMaxZ (layer) {
  */
 export function toTopSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
-    const maxZ = getMaxZ(node.dataset.type)
+    const maxZ = getMaxZ(node.dataset.layer)
     if (Number(node.dataset.z) !== maxZ) {
       stateMovePiece(node.id, null, null, maxZ + 1)
     }
@@ -286,7 +297,7 @@ export function toTopSelected () {
  */
 export function toBottomSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
-    const minZ = getMinZ(node.dataset.type)
+    const minZ = getMinZ(node.dataset.layer)
     if (Number(node.dataset.z) !== minZ) {
       stateMovePiece(node.id, null, null, minZ - 1)
     }
@@ -304,12 +315,13 @@ export function unselectPieces (layer = 'all') {
   for (const node of document.querySelectorAll(filter + ' .piece.is-selected')) {
     node.classList.remove('is-selected')
   }
+  _('#popper').remove('.show') // make sure popup is gone
 }
 
 /**
  * Get a list of all pieces' IDs that are in play.
  *
- * @return {String[]} Possibly empty array of UUIDs.
+ * @return {String[]} Possibly empty array of IDs.
  */
 export function getAllPiecesIds () {
   const all = _('#tabletop .piece')
@@ -322,7 +334,7 @@ export function getAllPiecesIds () {
 /**
  * Get the piece data object for a piece via it's ID.
  *
- * @param {String} id UUID of piece.
+ * @param {String} id ID of piece.
  * @return {Object} Full piece data object.
  */
 export function nodeIdToPiece (id) {
@@ -339,21 +351,50 @@ export function nodeIdToPiece (id) {
  * @return {Object} Full piece data object.
  */
 export function nodeToPiece (node) {
-  const item = {}
-  item.id = node.id
-  item.type = node.dataset.type
-  item.assets = JSON.parse(node.dataset.assets)
-  item.width = Number(node.dataset.w)
-  item.height = Number(node.dataset.h)
-  item.x = Number(node.dataset.x)
-  item.y = Number(node.dataset.y)
-  item.z = Number(node.dataset.z)
-  item.r = Number(node.dataset.r)
-  item.side = Number(node.dataset.side)
-  item.label = node.dataset.label
-  item.color = Number(node.dataset.color)
-  item.bg = node.dataset.bg
-  return item
+  const piece = {}
+  piece.id = node.id
+  piece.layer = node.dataset.layer
+  piece.asset = node.dataset.asset
+  piece.width = Number(node.dataset.w)
+  piece.height = Number(node.dataset.h)
+  piece.x = Number(node.dataset.x)
+  piece.y = Number(node.dataset.y)
+  piece.z = Number(node.dataset.z)
+  piece.r = Number(node.dataset.r)
+  piece.side = Number(node.dataset.side)
+  piece.label = node.dataset.label
+  piece.color = Number(node.dataset.color)
+  return piece
+}
+
+/**
+* Convert an asset data object to a DOM node.
+ *
+ * @param {Object} assetJson Full asset data object.
+ * @param {Number} side Side to show (zero-based).
+ * @return {HTMLElement} Converted node (not added to DOM yet).
+ */
+export function assetToNode (assetJson, side = 0) {
+  const asset = _('.asset').create().css({
+    backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`,
+    backgroundColor: assetJson.type === 'overlay' ? 'transparent' : `#${assetJson.bg}`
+  })
+  const node = _(`.piece.${assetJson.type} > .box > .border`).create(asset) // .is-w-${assetJson.width}.is-h-${assetJson.height}.is-wh-${assetJson.width - assetJson.height}
+
+  // set default metadata from asset
+  node.data({
+    asset: assetJson.id,
+    layer: assetJson.type,
+    w: assetJson.width,
+    h: assetJson.height,
+    side: side,
+    sides: assetJson.assets.length,
+    r: 0,
+    bg: assetJson.bg,
+    color: 0
+  })
+
+  return node
 }
 
 /**
@@ -362,13 +403,74 @@ export function nodeToPiece (node) {
  * @param {Object} Full piece data object.
  * @return {HTMLElement} Converted node (not added to DOM yet).
  */
-export function pieceToNode (json) {
-  const asset = _('.asset').create().css({
-    backgroundImage: `url('api/games/${getGame().name}/assets/${json.type}/${json.assets[json.side ?? 0]}')`,
-    backgroundColor: json.type === 'overlay' ? 'transparent' : `#${json.bg}`
+export function pieceToNode (pieceJson) {
+  const node = assetToNode(getAsset(pieceJson.asset), pieceJson.side ?? 0)
+  node.add(`.is-w-${pieceJson.width}`, `.is-h-${pieceJson.height}`, `.is-wh-${pieceJson.width - pieceJson.height}`)
+
+  const ret = updateNode(node, pieceJson)
+  return ret
+}
+
+export function popupPiece (id) {
+  const piece = _('#' + id)
+  const popup = _('#popper')
+
+  popup.innerHTML = `
+    <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
+    <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
+    <a class="popup-menu flip" href="#">${iconFlip}Flip</a>
+    <a class="popup-menu top" href="#">${iconTop}To top</a>
+    <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
+    <a class="popup-menu clone" href="#">${iconClone}Clone</a>
+    <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
+  `
+
+  _('#popper .edit').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    editSelected()
   })
-  const node = _(`.piece.${json.type}.is-w-${json.width}.is-h-${json.height}.is-wh-${json.width - json.height} > .box > .border`).create(asset)
-  return updateNode(node, json)
+
+  _('#popper .rotate').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    rotateSelected()
+  })
+
+  _('#popper .flip').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    flipSelected()
+  })
+
+  _('#popper .top').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    toTopSelected()
+  })
+
+  _('#popper .bottom').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    toBottomSelected()
+  })
+
+  _('#popper .delete').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    deleteSelected()
+  })
+
+  _('#popper .clone').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    cloneSelected(getMouseTileX(), getMouseTileY())
+  })
+
+  createPopper(piece.node(), popup.node(), {
+    placement: 'right'
+  })
+  popup.add('.show')
 }
 
 // --- internal ----------------------------------------------------------------
@@ -384,37 +486,39 @@ function setupGame (game) {
       <div class="menu">
         <div>
           <div>
-            <button id="btn-token" class="btn-icon" title="Toggle tokens [1]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg></button>
+            <button id="btn-token" class="btn-icon" title="Toggle tokens [1]">${iconToken}</button>
 
-            <button id="btn-overlay" class="btn-icon" title="Toggle overlays [2]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg></button>
+            <button id="btn-overlay" class="btn-icon" title="Toggle overlays [2]">${iconOverlay}</button>
 
-            <button id="btn-tile" class="btn-icon" title="Toggle tiles [3]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg></button>
+            <button id="btn-tile" class="btn-icon" title="Toggle tiles [3]">${iconTile}</button>
           </div>
 
           <div class="spacing-medium">
-            <button id="btn-a" class="btn-icon" title="Add piece [a]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></button>
+            <button id="btn-a" class="btn-icon" title="Add piece [a]">${iconAdd}</button>
           </div>
 
           <div class="menu-selected disabled spacing-medium">
-            <button id="btn-e" class="btn-icon" title="Edit [e]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg></button>
+            <button id="btn-e" class="btn-icon" title="Edit [e]">${iconEdit}</button>
 
-            <button id="btn-r" class="btn-icon" title="Rotate [r]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg></button>
+            <button id="btn-r" class="btn-icon" title="Rotate [r]">${iconRotate}</button>
 
-            <button id="btn-f" class="btn-icon" title="Flip [f]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg></button>
+            <button id="btn-f" class="btn-icon" title="Flip [f]">${iconFlip}</button>
 
-            <button id="btn-t" class="btn-icon" title="To top [t]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg></button>
+            <button id="btn-t" class="btn-icon" title="To top [t]">${iconTop}</button>
 
-            <button id="btn-b" class="btn-icon" title="To bottom [b]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg></button>
+            <button id="btn-b" class="btn-icon" title="To bottom [b]">${iconBottom}</button>
 
-            <button id="btn-c" class="btn-icon" title="Clone [c]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg></button>
+            <button id="btn-c" class="btn-icon" title="Clone [c]">${iconClone}</button>
 
-            <button id="btn-del" class="btn-icon" title="Delete [Del]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg></button>
+            <button id="btn-del" class="btn-icon" title="Delete [Del]">${iconDelete}</button>
           </div>
         </div>
         <div>
-          <button id="btn-h" class="btn-icon" title="Help [h]"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg></button>
+          <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
 
-          <button id="btn-q" class="btn-icon" title="Leave game"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></button>
+          <a id="btn-s" class="btn-icon" title="Download game snapshot" href='./api/games/${game.name}/snapshot/'>${iconDownload}</a>
+
+          <button id="btn-q" class="btn-icon" title="Leave game">${iconQuit}</button>
         </div>
       </div>
       <div id="scroller" class="scroller">
@@ -436,6 +540,7 @@ function setupGame (game) {
         </div>
       </div>
     </div>
+    <div id="popper" class="popup is-content"></div>
   `
 
   // setup menu for layers
@@ -462,18 +567,29 @@ function setupGame (game) {
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => quit())
 
+  const table = game.tables[0] // assume one table for now
+
   _('#tabletop').css({
-    width: (game.width * tilesize) + 'px',
-    height: (game.height * tilesize) + 'px',
-    backgroundColor: game.backgroundColor,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + game.backgroundImage + '?v=$CACHE$")',
-    backgroundSize: '64px,768px'
+    width: table.width + 'px',
+    height: table.height + 'px',
+    backgroundColor: table.background.color,
+    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
+    backgroundSize: table.template.gridSize + 'px,1152px 768px'
   })
 
-  scroller = _('#scroller').node() // keep reference for scroll-tracking
+  _('body').on('contextmenu', e => e.preventDefault())
+
+  // setup scroller + keep reference for scroll-tracking
+  scroller = _('#scroller')
+  scroller.css({ // this is for moz://a
+    scrollbarColor: `${table.background.scroller} ${table.background.color}`
+  })
+  scroller = scroller.node() // and this for the webkits out there
+  scroller.style.setProperty('--nr-color-scroll-fg', table.background.scroller)
+  scroller.style.setProperty('--nr-color-scroll-bg', table.background.color)
 
   // setup content
-  pollState()
+  pollGameState()
 
   enableDragAndDrop('#tabletop')
 }
@@ -490,25 +606,53 @@ function quit () {
  *
  * Will only set meta-fields (data-*), but not change styles.
  *
- * @param {HTMLElement} node DOM element to update.
+ * @param {FreeDOM} node DOM element to update.
  * @param {Object} piece Piece data.
  * @return {HTMLElement} Updated node.
  */
 function updateNode (node, piece) {
+  piece.sides = piece.sides ?? getAsset(piece.asset).assets.length // server pieces don't have this yet
   node.id = piece.id
-  node.dataset.assets = JSON.stringify(piece.assets)
-  node.dataset.type = piece.type ?? 'tile'
-  node.dataset.w = piece.width ?? 1
-  node.dataset.h = piece.height ?? 1
-  node.dataset.x = piece.x ?? 0
-  node.dataset.y = piece.y ?? 0
-  node.dataset.z = piece.z ?? 0
-  node.dataset.r = piece.r ?? 0
-  node.dataset.color = piece.color ?? 0
-  node.dataset.bg = piece.bg ?? '808080'
-  node.dataset.side = clamp(0, piece.side ?? 0, piece.assets.length - 1)
-  node.dataset.label = piece.label ?? ''
+  node.data({
+    asset: piece.asset,
+    layer: piece.layer ?? 'tile',
+    w: piece.width ?? 1,
+    h: piece.height ?? 1,
+    x: piece.x ?? 0,
+    y: piece.y ?? 0,
+    z: piece.z ?? 0,
+    r: piece.r ?? 0,
+    color: piece.color ?? 0,
+    side: clamp(0, piece.side ?? 0, piece.sides - 1),
+    label: piece.label ?? ''
+  })
   return node
 }
 
-const colors = ['#0d0d0d', '#3f8efc', '#0f956a', '#40bfbf', '#cc2936', '#bf40bf', '#ff6700', '#f2e4be'] /** our outline colors */
+const iconToken = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>'
+
+const iconOverlay = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>'
+
+const iconTile = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>'
+
+const iconAdd = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>'
+
+const iconEdit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>'
+
+const iconRotate = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>'
+
+const iconFlip = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>'
+
+const iconTop = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>'
+
+const iconBottom = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>'
+
+const iconClone = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>'
+
+const iconDelete = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>'
+
+const iconDownload = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>'
+
+const iconHelp = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
+
+const iconQuit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
