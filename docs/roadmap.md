@@ -2,26 +2,22 @@
 
 Here is a list what might happen next. However, priorities might change.
 
-## v0.3 - Clicking Crab
-
-* create screen: switch field order, submit-on-enter
-* logo
-
 ## v0.4 - Zipping Zebra
 
-* option token-number/letter badge within token
-* upload-zip as template during game create
-* game version checking
-* game reset / restart / re-init
-* fancier implementation for dynamic poll intervalls
-  * show "you have been inactive" dialog after 10min
-  * decrease poll intervall on mouse/keyboard activity
-  * let others know via HEAD request
-* generate average piece color during build
-* FreeBeeGee icon in top-left corner
-* show artwork copyright somewhere
-* template GDRP privacy statement
-* more API integration tests
+* [ ] option token-number/letter badge within token
+* [ ] upload-zip as template during game create
+* [ ] game version checking
+* [ ] game reset / restart / re-init
+* [ ] fancier implementation for dynamic poll intervalls
+  * [ ] show "you have been inactive" dialog after 10min
+  * [ ] decrease poll intervall on mouse/keyboard activity
+  * [ ] let others know via HEAD request
+* [ ] generate average piece color during build
+* [ ] FreeBeeGee icon in top-left corner
+* [ ] show artwork copyright somewhere
+* [ ] template GDRP privacy statement
+* [ ] more API integration tests
+* [ ] update screenshots
 
 ## v0.5 - Uploading Unicorn
 

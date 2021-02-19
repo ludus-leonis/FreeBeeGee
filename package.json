@@ -1,6 +1,6 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.3.0-dev",
+  "version": "0.3.0",
   "codename": "Clicking Crab",
   "description": "A virtual gaming tabletop for board games and RPGs.",
   "engines": {

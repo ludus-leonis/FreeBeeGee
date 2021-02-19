@@ -231,6 +231,7 @@ gulp.task('img', () => {
   const image = require('gulp-image')
 
   return gulp.src([
+    'src/img/**/*.svg',
     'src/img/**/*.jpg',
     'src/img/**/*.png'
   ])
