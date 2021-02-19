@@ -18,6 +18,7 @@ Here is a list what might happen next. However, priorities might change.
 * [ ] template GDRP privacy statement
 * [ ] more API integration tests
 * [ ] update screenshots
+* [ ] update CHANGELOG
 
 ## v0.5 - Uploading Unicorn
 
