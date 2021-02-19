@@ -8,6 +8,8 @@ A virtual gaming tabletop you can host on your own server.
 
 Your game. Your rules. Your data.
 
+Visit FreeBeeGee's official [Homepage here](https://freebeegee.org/).
+
 ## Key features
 
 * Browser-based virtual gaming desktop.

@@ -23,7 +23,7 @@ import { runError } from './error.js'
 import { createGame as stateCreateGame } from './game/state.js'
 import { stateGetServerInfo } from '../state.js'
 import _ from '../FreeDOM.js'
-import { apiGetTemplates } from '../api.js'
+import { apiGetTemplates, UnexpectedStatus } from '../api.js'
 
 /**
  * Show a create-game dialog.
@@ -72,7 +72,9 @@ export function createGame (name) {
       }
     })
 
-  _('#password').on('blur', blur => { _('#password').remove('.invalid') })
+  _('#password')
+    .on('blur', blur => { _('#password').remove('.invalid') })
+    .on('keydown', keydown => { if (keydown.keyCode === 13) ok(name) })
   _('#ok').on('click', click => { click.preventDefault(); ok(name) })
 }
 
@@ -96,16 +98,21 @@ function ok (name) {
       document.location = './#/game/' + remoteGame.name
     })
     .catch((error) => {
-      if (error.message.includes('401')) {
-        const p = _('#password')
-        p.value = ''
-        p.add('.invalid')
-        p.focus()
-      } if (error.message.includes('503')) {
-        runError(2)
-      } else {
-        console.error('unexpected error:')
-        console.error(error.message)
+      if (error instanceof UnexpectedStatus) {
+        let p
+        switch (error.status) {
+          case 401:
+            p = _('#password')
+            p.value = ''
+            p.add('.invalid')
+            p.focus()
+            break
+          case 503:
+            runError(2)
+            break
+          default:
+            runError(5)
+        }
       }
     })
 }

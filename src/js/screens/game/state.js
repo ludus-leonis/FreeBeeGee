@@ -131,9 +131,6 @@ export function loadGameState (name) {
  */
 export function createGame (game) {
   return apiPostGame(game)
-    .catch(error => {
-      runError(5, error)
-    })
 }
 
 /**
