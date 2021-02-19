@@ -39,7 +39,7 @@ export function runJoin () {
   createScreen(
     'Join a game',
     `
-      <label for="game">Game name</label>
+      <label for="game">Choose game name</label>
       <input id="game" name="game" type="text" placeholder="DustyDish" maxlength="${gameNameMaxLength}" pattern="[a-zA-Z0-9]{8,${gameNameMaxLength}}">
       <p class="p-small spacing-tiny">Min. 8 characters - no spaces or funky letters, please.</p>
 

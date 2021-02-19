@@ -26,7 +26,7 @@ const dirs = {
   docs: 'dist/docs/'
 }
 
-gulp.task('clean', function () {
+gulp.task('clean', () => {
   const del = require('del')
   return del([
     [dirs.site] + '/**/*',
@@ -38,7 +38,7 @@ gulp.task('clean', function () {
 
 // --- testing targets ---------------------------------------------------
 
-gulp.task('test-js', function () {
+gulp.task('test-js', () => {
   const standard = require('gulp-standard')
 
   return gulp.src(['src/js/**/*js'])
@@ -51,7 +51,7 @@ gulp.task('test-js', function () {
     }))
 })
 
-gulp.task('test-sass', function () {
+gulp.task('test-sass', () => {
   const sassLint = require('gulp-sass-lint')
   return gulp.src(['src/scss/**/*.s+(a|c)ss'])
     .pipe(sassLint({ configFile: '.sass-lint.yml' }))
@@ -59,7 +59,7 @@ gulp.task('test-sass', function () {
     .pipe(sassLint.failOnError())
 })
 
-gulp.task('test-php', function () {
+gulp.task('test-php', () => {
   const phpcs = require('gulp-phpcs')
   const phplint = require('gulp-phplint')
 
@@ -81,7 +81,7 @@ gulp.task('tests', gulp.series('test-sass', 'test-js', 'test-php'))
 
 // --- docs targets ------------------------------------------------------------
 
-gulp.task('docs-js', function () {
+gulp.task('docs-js', () => {
   const jsdoc = require('gulp-jsdoc3')
 
   return gulp.src([
@@ -106,7 +106,7 @@ function replace (pipe) {
     .pipe(repl('$CACHE$', p.cache, { skipBinary: true }))
 }
 
-gulp.task('fonts', function () {
+gulp.task('fonts', () => {
   return replace(gulp.src([
     'src/fonts/*/*woff2'
   ]))
@@ -145,7 +145,7 @@ gulp.task('favicon', gulp.parallel(() => {
     .pipe(gulp.dest(dirs.site))
 }))
 
-gulp.task('js-vendor', function () {
+gulp.task('js-vendor', () => {
   const concat = require('gulp-concat')
 
   return replace(gulp.src([
@@ -157,7 +157,7 @@ gulp.task('js-vendor', function () {
     .pipe(gulp.dest(dirs.site))
 })
 
-gulp.task('js-main', gulp.series('test-js', function () {
+gulp.task('js-main', gulp.series('test-js', () => {
   const browserify = require('browserify')
   const babelify = require('babelify')
   const source = require('vinyl-source-stream')
@@ -187,7 +187,7 @@ gulp.task('js-main', gulp.series('test-js', function () {
     .pipe(gulp.dest(dirs.site))
 }))
 
-gulp.task('sass', gulp.series('test-sass', function () {
+gulp.task('sass', gulp.series('test-sass', () => {
   const sass = require('gulp-sass')
   const concat = require('gulp-concat')
   const autoprefixer = require('gulp-autoprefixer')
@@ -206,7 +206,7 @@ gulp.task('sass', gulp.series('test-sass', function () {
     .pipe(gulp.dest(dirs.site))
 }))
 
-gulp.task('php', gulp.series('test-php', function () {
+gulp.task('php', gulp.series('test-php', () => {
   return replace(gulp.src([
     'src/php/**/*php',
     'src/php/.htaccess*',
@@ -215,7 +215,7 @@ gulp.task('php', gulp.series('test-php', function () {
     .pipe(gulp.dest(dirs.site + '/api'))
 }))
 
-gulp.task('html', function () {
+gulp.task('html', () => {
   return replace(gulp.src([
     'src/html/**/*.html',
     'src/misc/.htaccess*',
@@ -227,7 +227,7 @@ gulp.task('html', function () {
     .pipe(gulp.dest(dirs.site))
 })
 
-gulp.task('img', function () {
+gulp.task('img', () => {
   const image = require('gulp-image')
 
   return gulp.src([
@@ -254,8 +254,8 @@ function template (name) {
     .pipe(gulp.dest(dirs.site + '/templates'))
 }
 
-gulp.task('template-RPG', function () { return template('RPG') })
-gulp.task('template-Classic', function () { return template('Classic') })
+gulp.task('template-RPG', () => template('RPG'))
+gulp.task('template-Classic', () => template('Classic'))
 
 gulp.task('build', gulp.parallel(
   'js-main',
@@ -271,6 +271,13 @@ gulp.task('build', gulp.parallel(
 ))
 
 gulp.task('dist', gulp.parallel('build'))
+
+gulp.task('dist-test', gulp.series('dist', () => {
+  return replace(gulp.src([
+    'test/data/**/*'
+  ]))
+    .pipe(gulp.dest(dirs.site + '/api/data'))
+}))
 
 gulp.task('release', gulp.series(
   'clean',

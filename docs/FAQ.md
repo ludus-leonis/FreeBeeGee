@@ -1,8 +1,8 @@
 # FAQ (technical)
 
-This document hopes to give insights into FreeBeeGees design goals and resulting technical decisions. tldr:
+This document hopes to give insights into FreeBeeGee's design goals and technical decisions. tldr:
 
-* **Easy is king.** FreeBeeGee should be very easy to install.
+* **Easy is king.** FreeBeeGee should be very, very easy to install.
 * **Distributed is king.** We prefer a lot of people running small installations over a few mega-servers.
 
 ## Wouldn't &lt;your-favorite-language&gt; be better for implementing the API?

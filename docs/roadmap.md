@@ -4,12 +4,12 @@ Here is a list what might happen next. However, priorities might change.
 
 ## v0.3 - Clicking Crab
 
-* more API integration tests (CRUD)
+* create screen: switch field order, submit-on-enter
+* logo
 
 ## v0.4 - Zipping Zebra
 
-* option token-no/ID addon within token
-* docs how to make game/template `.zip`s
+* option token-number/letter badge within token
 * upload-zip as template during game create
 * game version checking
 * game reset / restart / re-init
@@ -18,8 +18,10 @@ Here is a list what might happen next. However, priorities might change.
   * decrease poll intervall on mouse/keyboard activity
   * let others know via HEAD request
 * generate average piece color during build
+* FreeBeeGee icon in top-left corner
 * show artwork copyright somewhere
 * template GDRP privacy statement
+* more API integration tests
 
 ## v0.5 - Uploading Unicorn
 
@@ -35,6 +37,7 @@ Here is a list what might happen next. However, priorities might change.
 * overlay-grid-on-tile option
 * catch all unhandled warnings/exceptions in PHP API and return 500
 * URL mapping for example.org/roomname -> example.org/#/game/roomname
+* docs how to make game/template `.zip`s
 
 ## Backlog (unsorted)
 

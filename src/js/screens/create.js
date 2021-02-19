@@ -41,18 +41,20 @@ export function createGame (name) {
     `
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <p class="is-wrapping">The game <strong>${name}</strong> does not exist yet. Go ahead and create it!</p>
-    ` + (stateGetServerInfo().createPassword ? `
-      <label for="password">Password</label>
-      <input id="password" type="password" placeholder="* * * * * *">
-      <p class="p-small spacing-tiny">This server requires a password to create new games.</p>
-    ` : '') + `
+
       <label for="template">Template</label>
       <select id="template" name="template">
         <option value="RPG" selected>RPG</option>
       </select>
       <p class="p-small spacing-tiny">Let us know what we may pre-setup for you and what pieces you'll need.</p>
 
-      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Create</a>
+      ` + (stateGetServerInfo().createPassword ? `
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="* * * * * *">
+        <p class="p-small spacing-tiny">This server requires a password to create new games.</p>
+      ` : '') + `
+
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Let's play!</a>
     `,
 
     `This server deletes games after ${stateGetServerInfo().ttl}h of inactivity.`
