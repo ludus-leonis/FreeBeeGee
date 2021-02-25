@@ -4,6 +4,8 @@ Here is a list what might happen next. However, priorities might change.
 
 ## v0.4 - Zipping Zebra
 
+* [X] svg logo in docs
+* [ ] disable flip for 1-sided tokens
 * [ ] option token-number/letter badge within token
 * [ ] upload-zip as template during game create
 * [ ] game version checking
@@ -31,6 +33,7 @@ Here is a list what might happen next. However, priorities might change.
 ## v0.6 - Mobile Monkey
 
 * better tablet / touch support
+* distinct select-token look from outline
 * overlay-grid-on-tile option
 * catch all unhandled warnings/exceptions in PHP API and return 500
 * URL mapping for example.org/roomname -> example.org/#/game/roomname
@@ -42,6 +45,7 @@ Here is a list what might happen next. However, priorities might change.
 
 * multi-select stuff
 * join-passwords
+* "layer not active" hint when dragging nothing
 * randomize side (a.k.a. dice-tokens)
 * shuffle stack/square
 * I18N
@@ -50,7 +54,7 @@ Here is a list what might happen next. However, priorities might change.
 * full-screen key
 * dedicated HP/Mana/Value field(s)
 * LOS-ruler
-* tbletop settings (e.g. change background, size, grid)
+* tabletop settings (e.g. change background, size, grid)
 * snap-to-borders
 * token status (blind, poison, prone, dazed, ...)
 * auto-center
@@ -59,7 +63,7 @@ Here is a list what might happen next. However, priorities might change.
   * re-size desk if needed
 * undo (limited)
 * pinboard for handouts
-* text token ("A")
+* tour / first-time-tutorial
 * API Docs
 
 ### rather later
@@ -68,6 +72,7 @@ Here is a list what might happen next. However, priorities might change.
 * detail-pane to the right for selected item
 * move stuff via cursor keys
 * rename game
+* custom, faster tooltips
 * use left-right keys to switch tabs in modals
 * arbitrary snap (e.g. 1px)
 * tabs / multiple desks

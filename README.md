@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="256" src="docs/FreeBeeGee-logo.png">
+  <img width="256" src="docs/FreeBeeGee-logo.svg">
 </p>
 
 # FreeBeeGee
