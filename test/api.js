@@ -252,6 +252,7 @@ describe('CRUD piece', function () {
     y: 8,
     z: 10,
     r: 0,
+    no: 2,
     side: 0,
     color: 1
   }, body => {
@@ -265,6 +266,7 @@ describe('CRUD piece', function () {
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
     expect(body.r).to.be.eql(0)
+    expect(body.no).to.be.eql(2)
     expect(body.side).to.be.eql(0)
     expect(body.color).to.be.eql(1)
   }, 201)
@@ -280,6 +282,7 @@ describe('CRUD piece', function () {
     expect(body[0].y).to.be.eql(8)
     expect(body[0].z).to.be.eql(10)
     expect(body[0].r).to.be.eql(0)
+    expect(body[0].no).to.be.eql(2)
     expect(body[0].side).to.be.eql(0)
     expect(body[0].color).to.be.eql(1)
   })

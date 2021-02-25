@@ -90,6 +90,7 @@ export function modalHelp () {
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>
             <p><span class="key">Del</span> Delete selected piece.</p>
+            <p><span class="key">NumPad+</span>/<span class="key">NumPad-</span> Increase/decrease token letter. Hint: Only works for tokens!</p>
           </div>
           <div class="copyright">
             <h3>FreeBeeGee</h3>

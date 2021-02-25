@@ -27,6 +27,7 @@ import {
   pollGameState,
   stateCreatePiece,
   stateDeletePiece,
+  stateNumberPiece,
   stateFlipPiece,
   stateMovePiece,
   stateRotatePiece,
@@ -142,6 +143,10 @@ export function cloneSelected (x, y) {
     const piece = nodeToPiece(node)
     piece.x = x
     piece.y = y
+    if (piece.no > 0) { // increase piece letter (if it has one)
+      piece.no = piece.no + 1
+      if (piece.no > 26) piece.no = 1
+    }
     stateCreatePiece(piece, true)
   })
 }
@@ -157,6 +162,17 @@ export function flipSelected () {
     if (sides > 1) {
       stateFlipPiece(node.id, (Number(node.dataset.side) + 1) % sides)
     }
+  })
+}
+
+/**
+ * Increase/decrease the token number (if it is a token).
+ *
+ * Will cycle through all states
+ */
+export function numberSelected (delta) {
+  _('#tabletop .token.is-selected').each(node => {
+    stateNumberPiece(node.id, (Number(node.dataset.no) + 27 + delta) % 27)
   })
 }
 
@@ -218,6 +234,12 @@ export function setPiece (pieceJson, select = false) {
   const label = pieceJson.label ?? ''
   if (label !== '') {
     div.add(_('.label').create(label))
+  }
+
+  // update piece number
+  _('#' + pieceJson.id + ' .piece-no').delete()
+  if (pieceJson.layer === 'token' && pieceJson.no !== 0) {
+    div.add(_('.piece-no').create(String.fromCharCode(64 + pieceJson.no)))
   }
 
   // update select status
@@ -361,6 +383,7 @@ export function nodeToPiece (node) {
   piece.y = Number(node.dataset.y)
   piece.z = Number(node.dataset.z)
   piece.r = Number(node.dataset.r)
+  piece.no = Number(node.dataset.no)
   piece.side = Number(node.dataset.side)
   piece.label = node.dataset.label
   piece.color = Number(node.dataset.color)
@@ -390,6 +413,7 @@ export function assetToNode (assetJson, side = 0) {
     side: side,
     sides: assetJson.assets.length,
     r: 0,
+    no: 0,
     bg: assetJson.bg,
     color: 0
   })
@@ -622,6 +646,7 @@ function updateNode (node, piece) {
     y: piece.y ?? 0,
     z: piece.z ?? 0,
     r: piece.r ?? 0,
+    no: piece.no ?? 0,
     color: piece.color ?? 0,
     side: clamp(0, piece.side ?? 0, piece.sides - 1),
     label: piece.label ?? ''

@@ -476,6 +476,9 @@ class FreeBeeGeeAPI
                 case 'color':
                     $validated->color = $this->api->assertInteger('color', $value, 0, 7);
                     break;
+                case 'no':
+                    $validated->no = $this->api->assertInteger('no', $value, 0, 26);
+                    break;
                 case 'r':
                     $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
                     break;
@@ -488,7 +491,7 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            foreach (['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color'] as $property) {
+            foreach (['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color', 'no'] as $property) {
                 if (!\property_exists($validated, $property)) {
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing');
                 }

@@ -24,6 +24,7 @@ import {
   editSelected,
   flipSelected,
   toTopSelected,
+  numberSelected,
   toBottomSelected,
   toggleLayer
 } from '.'
@@ -87,6 +88,12 @@ function handleGameKeys (keydown) {
         break
       case 84: // t - to-top
         toTopSelected()
+        break
+      case 107: // NUM+ - increase No.
+        numberSelected(1)
+        break
+      case 109: // NUM- - increase No.
+        numberSelected(-1)
         break
       default:
         return false // nothing in the switch() triggered

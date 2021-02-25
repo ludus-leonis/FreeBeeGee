@@ -240,6 +240,19 @@ export function stateRotatePiece (pieceId, r) {
 }
 
 /**
+ * Update the number/letter of a piece/token.
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {String} pieceId ID of piece to change.
+ * @param {Number} no New number (0..27).
+ */
+export function stateNumberPiece (pieceId, no) {
+  patchPiece(pieceId, { no: no })
+}
+
+/**
  * Flip a piece of the current game and show another side of it.
  *
  * Will only do an API call and rely on later sync to get the change back to the

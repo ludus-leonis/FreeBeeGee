@@ -6,7 +6,7 @@ Here is a list what might happen next. However, priorities might change.
 
 * [X] svg logo in docs
 * [ ] disable flip for 1-sided tokens
-* [ ] option token-number/letter badge within token
+* [X] option token-number/letter badge within token
 * [ ] upload-zip as template during game create
 * [ ] game version checking
 * [ ] game reset / restart / re-init
