@@ -15,7 +15,7 @@ Here is a list what might happen next. However, priorities might change.
   * [ ] decrease poll intervall on mouse/keyboard activity
   * [ ] let others know via HEAD request
 * [X] FreeBeeGee icon in top-left corner
-* [ ] show artwork copyright somewhere
+* [X] show artwork copyright somewhere
 * [ ] template GDRP privacy statement
 * [ ] more API integration tests
 * [ ] update screenshots

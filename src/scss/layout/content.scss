@@ -54,4 +54,31 @@
   *:first-child {
     margin-top: 0;
   }
+
+  ul {
+    $content-ul-indent: 1em;
+
+    list-style: none;
+    padding-left: $content-ul-indent;
+
+    li,
+    > *:first-child {
+      margin-top: $spacing-tiny;
+    }
+
+    li::before {
+      color: $color-secondary;
+      content: '»';
+      display: inline-block;
+      font-weight: 600;
+      margin-left: -$content-ul-indent;
+      text-align: center;
+      width: $content-ul-indent;
+    }
+
+    ul li::before {
+      content: '›';
+    }
+  }
+
 }

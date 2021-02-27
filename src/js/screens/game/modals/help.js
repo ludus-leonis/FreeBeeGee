@@ -20,7 +20,8 @@
 import _ from '../../../FreeDOM.js'
 
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
-import { stateGetGamePref, stateSetGamePref } from '../state.js'
+import { getTable, stateGetGamePref, stateSetGamePref } from '../state.js'
+import marked from 'marked'
 
 // --- public ------------------------------------------------------------------
 
@@ -101,15 +102,13 @@ export function modalHelp () {
 
             <p>FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://www.gnu.org/licenses/">GNU Affero General Public License</a> for more details.</p>
 
-            <h3>Icons</h3>
+            <h3>UI assets</h3>
 
-            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>.</p>
+            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more table background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
 
-            <p>The <strong>default</strong> game template contains various icons from <a href="https://game-icons.net/">game-icons.net</a>. They are licensed <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> by their respective authors.</p>
+            <h3>Game assets</h3>
 
-            <h3>Backgrounds</h3>
-
-            <p>One or more textures on this map have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
+            ${marked(getTable().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
           </div>
         </div>
       </div>

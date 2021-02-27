@@ -656,6 +656,11 @@ class FreeBeeGeeAPI
 
             // add/overrule some template.json infos into the game.json
             $table->template = json_decode(file_get_contents($folder . 'template.json'));
+            if (is_file($folder . 'LICENSE.md')) {
+                $table->credits = file_get_contents($folder . 'LICENSE.md');
+            } else {
+                $table->credits = 'Your game template does not provide license information.';
+            }
             $table->width = $table->template->width * $table->template->gridSize; // specific for 'grid-square'
             $table->height = $table->template->height * $table->template->gridSize; // specific for 'grid-square'
 
