@@ -643,6 +643,9 @@ class FreeBeeGeeAPI
             $lock = $this->api->waitForWriteLock($folder . '.flock');
             $table->library = $this->installTemplate($newGame->name, $validated->template);
 
+            // keep original state for game resets
+            file_put_contents($folder . 'state-initial.json', file_get_contents($folder . 'state.json'));
+
             // add/overrule some template.json infos into the game.json
             $table->template = json_decode(file_get_contents($folder . 'template.json'));
             $table->width = $table->template->width * $table->template->gridSize; // specific for 'grid-square'
@@ -808,6 +811,7 @@ class FreeBeeGeeAPI
                     case 'game.json':
                     case 'game.json.digest':
                     case 'state.json.digest':
+                    case 'state-initial.json':
                         break; // they don't go into the zip
                     default:
                         $toZip[$relativePath] = $absolutePath; // keep all others

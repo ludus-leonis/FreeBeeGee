@@ -29,8 +29,7 @@ import _ from './FreeDOM.js'
  */
 export function createScreen (headline, content, footer = '') {
   const body = _('body')
-
-  _('body').innerHTML = `
+  _('body').add('.page-boxed').innerHTML = `
     <div class="container is-small">
       <div class="row">
         <div class="col-12 is-content">

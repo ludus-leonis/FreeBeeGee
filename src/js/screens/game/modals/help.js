@@ -116,7 +116,6 @@ export function modalHelp () {
     `
 
     _('#modal-footer').innerHTML = `
-      <div></div>
       <button id='btn-close' type="button" class="btn btn-primary">Close</button>
     `
 

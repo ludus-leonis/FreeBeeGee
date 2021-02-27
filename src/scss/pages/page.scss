@@ -47,6 +47,7 @@
     }
 
     img {
+      background-color: $color-gray-95;
       height: px(48);
 
       @include media-breakpoint-up(sm) {

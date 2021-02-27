@@ -41,6 +41,7 @@ import { clamp } from '../../utils.js'
 import { modalLibrary } from './modals/library.js'
 import { modalEdit } from './modals/edit.js'
 import { modalHelp } from './modals/help.js'
+import { modalSettings } from './modals/settings.js'
 
 let scroller = null /** keep reference to scroller div - we need it often */
 
@@ -114,6 +115,13 @@ export function deleteSelected () {
  */
 export function deletePiece (id) {
   _('#' + id).delete()
+}
+
+/**
+ * Show settings dialog for the current game/table.
+ */
+export function settings () {
+  modalSettings()
 }
 
 /**
@@ -505,10 +513,14 @@ export function popupPiece (id) {
  * @param {Object} game Game data object.
  */
 function setupGame (game) {
-  _('body').innerHTML = `
+  _('body').remove('.page-boxed').innerHTML = `
     <div id="game" class="game is-fullscreen is-noselect">
       <div class="menu">
         <div>
+          <div class="menu-brand is-content">
+            <button id="btn-s" class="btn-icon" title="Game settings [s]"><img src="icon.svg"></button>
+          </div>
+
           <div>
             <button id="btn-token" class="btn-icon" title="Toggle tokens [1]">${iconToken}</button>
 
@@ -540,7 +552,7 @@ function setupGame (game) {
         <div>
           <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
 
-          <a id="btn-s" class="btn-icon" title="Download game snapshot" href='./api/games/${game.name}/snapshot/'>${iconDownload}</a>
+          <a id="btn-snap" class="btn-icon" title="Download game snapshot" href='./api/games/${game.name}/snapshot/'>${iconDownload}</a>
 
           <button id="btn-q" class="btn-icon" title="Leave game">${iconQuit}</button>
         </div>
@@ -585,6 +597,7 @@ function setupGame (game) {
   _('#btn-t').on('click', () => toTopSelected())
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())
+  _('#btn-s').on('click', () => settings())
   _('#btn-del').on('click', () => deleteSelected())
 
   // setup remaining menu

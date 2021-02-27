@@ -14,8 +14,7 @@ Here is a list what might happen next. However, priorities might change.
   * [ ] show "you have been inactive" dialog after 10min
   * [ ] decrease poll intervall on mouse/keyboard activity
   * [ ] let others know via HEAD request
-* [ ] generate average piece color during build
-* [ ] FreeBeeGee icon in top-left corner
+* [X] FreeBeeGee icon in top-left corner
 * [ ] show artwork copyright somewhere
 * [ ] template GDRP privacy statement
 * [ ] more API integration tests
@@ -43,6 +42,7 @@ Here is a list what might happen next. However, priorities might change.
 
 ### rather sooner
 
+* generate average piece color during build
 * multi-select stuff
 * join-passwords
 * "layer not active" hint when dragging nothing

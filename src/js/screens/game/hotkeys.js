@@ -18,6 +18,7 @@
  */
 
 import {
+  settings,
   rotateSelected,
   deleteSelected,
   cloneSelected,
@@ -85,6 +86,9 @@ function handleGameKeys (keydown) {
         break
       case 82: // r - rotate
         rotateSelected()
+        break
+      case 83: // s - settings
+        settings()
         break
       case 84: // t - to-top
         toTopSelected()
