@@ -5,10 +5,13 @@ Here is a list what might happen next. However, priorities might change.
 ## v0.4 - Zipping Zebra
 
 * [X] svg logo in docs
-* [ ] disable flip for 1-sided tokens
+* [X] disable flip for 1-sided tokens
 * [X] option token-number/letter badge within token
+* [ ] template zip checking
+  * [ ] game version checking
+  * [ ] included files
+  * [ ] size vs maxSize
 * [ ] upload-zip as template during game create
-* [ ] game version checking
 * [ ] game reset / restart / re-init
 * [ ] fancier implementation for dynamic poll intervalls
   * [ ] show "you have been inactive" dialog after 10min

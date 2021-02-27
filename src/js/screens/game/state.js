@@ -106,7 +106,7 @@ export function getAsset (id) {
     assets: ['invalid.svg'],
     width: 1,
     height: 1,
-    bg: '808080',
+    bg: '40bfbf',
     alias: 'invalid',
     type: 'tile',
     id: '0000000000000000'

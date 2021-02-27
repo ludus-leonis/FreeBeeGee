@@ -414,7 +414,7 @@ export function assetToNode (assetJson, side = 0) {
     // asset invalid - can happen if e.g. images got renamed/removed
     asset = _('.asset').create().css({
       backgroundImage: `url('api/data/games/${getGame().name}/invalid.svg')`,
-      backgroundColor: '#bf40bf'
+      backgroundColor: '#40bfbf'
     })
   } else {
     asset = _('.asset').create().css({
@@ -463,7 +463,7 @@ export function popupPiece (id) {
   popup.innerHTML = `
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
-    <a class="popup-menu flip" href="#">${iconFlip}Flip</a>
+    <a class="popup-menu flip ${piece.dataset.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>

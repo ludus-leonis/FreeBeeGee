@@ -49,5 +49,14 @@
     svg {
       margin-right: .5em;
     }
+
+    &.disabled {
+      color: $color-gray-25;
+      cursor: not-allowed;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
   }
 }
