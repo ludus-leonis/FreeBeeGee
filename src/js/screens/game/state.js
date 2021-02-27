@@ -102,7 +102,15 @@ export function getAsset (id) {
   if (asset) return asset
   asset = getLibrary()?.overlay?.find(asset => asset.id === id)
   if (asset) return asset
-  return null
+  return { // create dummy asset
+    assets: ['invalid.svg'],
+    width: 1,
+    height: 1,
+    bg: '808080',
+    alias: 'invalid',
+    type: 'tile',
+    id: '0000000000000000'
+  }
 }
 
 /**

@@ -344,18 +344,21 @@ class FreeBeeGeeAPI
             // name, size and color
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
+            $asset->side = (int)$matches[4];
             $asset->bg = $matches[5];
             $asset->alias = $matches[1];
         } elseif (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
             // name and size
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
+            $asset->side = (int)$matches[4];
             $asset->bg = '808080';
             $asset->alias = $matches[1];
         } elseif (preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
             // name only
             $asset->width = 1;
             $asset->height = 1;
+            $asset->side = 1;
             $asset->bg = '808080';
             $asset->alias = $matches[1];
         }
@@ -383,9 +386,11 @@ class FreeBeeGeeAPI
                 $asset = $this->fileToAsset(basename($filename));
                 $asset->type = $type;
 
-                // this ID only has to be unique within the server, but should be reproducable
+                // this ID only has to be unique within the game, but should be reproducable
                 // therefore we use a fast hash and even only use parts of it
-                $asset->id = substr(hash('md5', $type . '/' . basename($filename)), -16);
+                $idBase = $type . '/' . $asset->alias . '.' . $asset->width . 'x' . $asset->height . 'x' . $asset->side;
+                $asset->id = substr(hash('md5', $idBase), -16);
+                unset($asset->side); // we don't keep the side in the json data
 
                 if (
                     $lastAsset === null
@@ -645,6 +650,9 @@ class FreeBeeGeeAPI
 
             // keep original state for game resets
             file_put_contents($folder . 'state-initial.json', file_get_contents($folder . 'state.json'));
+
+            // add invalid.svg to game | @codingStandardsIgnoreLine
+            file_put_contents($folder . 'invalid.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.4 25.4" height="96" width="96"><path fill="#bf40bf" d="M0 0h25.4v25.4H0z"/><g fill="#fff" stroke="#fff" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M1.9 1.9l21.6 21.6M23.5 1.9L1.9 23.5" stroke-width="1.1"/></g></svg>');
 
             // add/overrule some template.json infos into the game.json
             $table->template = json_decode(file_get_contents($folder . 'template.json'));

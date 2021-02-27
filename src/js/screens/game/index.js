@@ -399,18 +399,31 @@ export function nodeToPiece (node) {
 }
 
 /**
-* Convert an asset data object to a DOM node.
+ * Convert an asset data object to a DOM node.
+ *
+ * If we get an invalid asset (null or invalid propierties), we create and
+ * return a dummy entry on screen.
  *
  * @param {Object} assetJson Full asset data object.
  * @param {Number} side Side to show (zero-based).
  * @return {HTMLElement} Converted node (not added to DOM yet).
  */
 export function assetToNode (assetJson, side = 0) {
-  const asset = _('.asset').create().css({
-    backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`,
-    backgroundColor: assetJson.type === 'overlay' ? 'transparent' : `#${assetJson.bg}`
-  })
-  const node = _(`.piece.${assetJson.type} > .box > .border`).create(asset) // .is-w-${assetJson.width}.is-h-${assetJson.height}.is-wh-${assetJson.width - assetJson.height}
+  let asset
+  if (assetJson.id === '0000000000000000') {
+    // asset invalid - can happen if e.g. images got renamed/removed
+    asset = _('.asset').create().css({
+      backgroundImage: `url('api/data/games/${getGame().name}/invalid.svg')`,
+      backgroundColor: '#bf40bf'
+    })
+  } else {
+    asset = _('.asset').create().css({
+      backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`,
+      backgroundColor: assetJson.type === 'overlay' ? 'transparent' : `#${assetJson.bg}`
+    })
+  }
+
+  const node = _(`.piece.${assetJson.type} > .box > .border`).create(asset)
 
   // set default metadata from asset
   node.data({
