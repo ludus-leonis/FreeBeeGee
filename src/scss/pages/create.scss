@@ -1,0 +1,18 @@
+.page-create {
+  .mode {
+    opacity: 0;
+    position: absolute;
+  }
+
+  .mode:not(:checked) ~ .upload-label,
+  .mode:not(:checked) ~ .upload-group,
+  .mode:not(:checked) ~ .upload-text {
+    display: none;
+  }
+
+  .mode:checked ~ .template-label,
+  .mode:checked ~ .template,
+  .mode:checked ~ .template-text {
+    display: none;
+  }
+}

@@ -34,9 +34,10 @@ The server config file is found in `api/data/server.json`:
 
 ```
 {
-  "ttl": 48,          // hours of inactivity after a game gets deleted
-  "maxGames": 128,    // maximum concurrent games allowed
-  "maxGameSizeMB": 4, // maximum size per game folder (not used yet)
+  "ttl": 48,                // hours of inactivity after a table gets deleted
+  "maxGames": 128,          // maximum concurrent tables allowed
+  "maxGameSizeMB": 4,       // maximum size per table folder / snapshot / template
+  "customTemplates": false, // set to true to enable snapshot upload on table create
   "passwordCreate": "................."
 }
 ```

@@ -27,6 +27,11 @@ namespace com\ludusleonis\freebeegee;
  */
 class JSONRestAPI
 {
+    public const REGEXP_SEMVER =
+        '/^(?P<operator>[=<>^~]*)?(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)' .
+        '(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?'
+         . '(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/';
+
     private $apiDirFS = null; // e.g. /var/www/www.mysite.com/api/
     private $apiRoot = null;  // URL-parent-folder of the API, e.g. /api
     private $routes = [ // all registered routes
@@ -66,7 +71,7 @@ class JSONRestAPI
         $dir = $this->apiDirFS . 'data/';
         if (!is_dir($dir)) { // create dir on the fly
             if (!mkdir($dir, 0777, true)) {
-                $this->api->sendError(500, 'can\'t create API data dir');
+                $this->sendError(500, 'can\'t create API data dir');
             }
         }
         return $dir;
@@ -222,6 +227,28 @@ class JSONRestAPI
     }
 
     /**
+     * Check/convert String JSON field to be a Semver string.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $value The value to check.
+     * @return string The parsed value.
+     */
+    public function assertSemver(
+        string $field,
+        $value
+    ) {
+        if ($value !== null) {
+            if (preg_match(JSONRestAPI::REGEXP_SEMVER, $value)) {
+                return $value;
+            }
+        }
+        $this->sendError(400, 'invalid JSON: ' . $field . ' is not a Semver version string.');
+    }
+
+    /**
      * Check/convert array-of-strings JSON field against a RegExp.
      *
      * To be used on fields send by the client. Will send an 400-error to the
@@ -249,6 +276,53 @@ class JSONRestAPI
             }
         }
         $this->sendError(400, 'invalid JSON: ' . $field . ' does not match ' . $pattern);
+    }
+
+    /**
+     * Check/convert if data is array.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $values The value(s) to check.
+     * @param int $minLength Minimum length of array.
+     * @return array The parsed array.
+     */
+    public function assertArray(
+        string $field,
+        $values,
+        int $minLength
+    ) {
+        if ($values !== null && gettype($values) === 'array' && sizeof($values) >= $minLength) {
+            return $values;
+        }
+        $this->sendError(400, 'invalid JSON: ' . $field . ' is not an array of minLength ' . $minLength);
+    }
+
+    /**
+     * Check/convert if data is array of objects.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $values The value(s) to check.
+     * @param int $minLength Minimum length of array.
+     * @return array The parsed array.
+     */
+    public function assertObjectArray(
+        string $field,
+        $values,
+        int $minLength
+    ) {
+        $objects = $this->assertArray($field, $values, $minLength);
+        foreach ($objects as $object) {
+            if (gettype($object) !== 'object') {
+                $this->sendError(400, 'invalid JSON: ' . $field . ' is not an array of (only) objects');
+            }
+        }
+        return $objects;
     }
 
     /**
@@ -281,7 +355,59 @@ class JSONRestAPI
         $this->sendError(400, 'invalid JSON: ' . $field . ' not between ' . $min . ' and ' . $max);
     }
 
+    /**
+     * Check if an object has a set of fields.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $value The value to check.
+     * @param string[] $properties Properties to find in object.
+     * @return int The parsed item.
+     */
+    public function assertHasProperties(
+        string $field,
+        $value,
+        $properties
+    ): object {
+        if ($value !== null && gettype($value) === 'object') {
+            foreach ($properties as $property) {
+                if (!\property_exists($value, $property)) {
+                    $this->sendError(400, 'invalid JSON: ' . $property . ' missing');
+                }
+            }
+        } else {
+            $this->sendError(400, 'invalid JSON: ' . $field . ' invalid ' . gettype($value));
+        }
+        return $value;
+    }
+
     // --- payload helpers -----------------------------------------------------
+
+    /**
+     * Convert incoming payload from form-data to Json.
+     *
+     * @return object Incoming data as parsed JSON data if successfull, or null
+     *                if request was not 'multipart/form-data'.
+     */
+    public function multipartToJson()
+    {
+        $headers = getallheaders();
+        if (
+            array_key_exists('Content-Type', $headers)
+            && substr($headers['Content-Type'], 0, 19) === 'multipart/form-data'
+        ) {
+            $payload = [];
+
+            foreach ($_POST as $key => $value) {
+                $payload[$key] = $value;
+            }
+            if (count($_FILES) > 0) {
+                $payload['_files'] = array_keys($_FILES);
+            }
+
+            return json_encode($payload);
+        }
+        return null;
+    }
 
     /**
      * Assert that user-data is in JSON format.
@@ -312,14 +438,24 @@ class JSONRestAPI
      * Will also terminate execution after sending.
      *
      * @param int $cod Statuscode to send. Defaults to 200.
-     * @param string $message An error message.
+     * @param string $mainMessage A primary error message.
+     * @param string $appErrorcode An error code for the webapp to react upon,
+     *                             e.g. 'ZIP_INVALID'.
+     * @param array $otherMessages An optional array of strings of more,
+     *                             detailes messages.
      * @return void
      */
     public function sendError(
         int $code,
-        string $message
+        string $mainMessage,
+        string $appErrorCode = 'GENERIC_ERROR',
+        array $otherMessages = []
     ): void {
-        $this->sendReply($code, '{"_errors":["' . $message . '"]}');
+        $errors = [$mainMessage];
+        foreach ($otherMessages as $message) {
+            $errors[] = $message;
+        }
+        $this->sendReply($code, '{"_error": "' . $appErrorCode . '","_messages":' . json_encode($errors) . '}');
     }
 
     /**
@@ -393,7 +529,7 @@ class JSONRestAPI
         if (flock($lock, LOCK_SH)) {  // acquire a shared lock
             return $lock;
         } else {
-            $this->api->sendError(423, 'can\'t lock ' + $lockFile + ' for reading');
+            $this->sendError(423, 'can\'t lock ' + $lockFile + ' for reading');
         }
     }
 
@@ -477,6 +613,76 @@ class JSONRestAPI
     ): string {
         $data = $seed ?? random_bytes(8);
         return bin2hex($data);
+    }
+
+    /**
+     * Determine if a SemVer 2 version string satisfies a target string.
+     *
+     * This does not cover all the edge cases, but is good enough for us.
+     * Supports single targets ('^', '~', '>', '>=', '<', '<=' and '=' a.k.a.
+     * ''), but no ranges or combined targets.
+     *
+     * @param string $version Version to check, e.g. '1.2.3-rc.2'.
+     * @param string $target A version target to check against, e.g. '~1.2.3'.
+     * @return bool True if version satisifes the target. False otherwise.
+     */
+    public static function semverSatisfies(
+        string $version,
+        string $target
+    ): bool {
+        // split both items
+        if (!preg_match(JSONRestAPI::REGEXP_SEMVER, $version, $vParts) || !preg_match(JSONRestAPI::REGEXP_SEMVER, $target, $rParts)) {
+            // invalid stuff never satisfies
+            return false;
+        }
+        $vParts['major'] = array_key_exists('major', $vParts) ? $vParts['major'] : '0';
+        $vParts['minor'] = array_key_exists('minor', $vParts) ? $vParts['minor'] : '0';
+        $vParts['patch'] = array_key_exists('patch', $vParts) ? $vParts['patch'] : '0';
+        $vParts['prerelease'] = array_key_exists('prerelease', $vParts) ? $vParts['prerelease'] : '~';
+        $rParts['major'] = array_key_exists('major', $rParts) ? $rParts['major'] : '0';
+        $rParts['minor'] = array_key_exists('minor', $rParts) ? $rParts['minor'] : '0';
+        $rParts['patch'] = array_key_exists('patch', $rParts) ? $rParts['patch'] : '0';
+        $rParts['prerelease'] = array_key_exists('prerelease', $rParts) ? $rParts['prerelease'] : '~';
+
+        // prepare string-compareable version of both items
+        $strVersion = sprintf(
+            '%08d%08d%08d',
+            $vParts['major'],
+            $vParts['minor'],
+            $vParts['patch']
+        ) . $vParts['prerelease'];
+        $strTarget = sprintf(
+            '%08d%08d%08d',
+            $rParts['major'],
+            $rParts['minor'],
+            $rParts['patch']
+        ) . $rParts['prerelease'];
+
+        // compare necessary parts depending on operator
+        switch ($rParts['operator']) {
+            case '^':
+                return
+                    $vParts['major'] === $rParts['major']
+                    && strcmp(substr($strVersion, 8), substr($strTarget, 8)) >= 0;
+            case '~':
+                return
+                    $vParts['major'] === $rParts['major']
+                    && $vParts['minor'] === $rParts['minor']
+                    && strcmp(substr($strVersion, 16), substr($strTarget, 16)) >= 0;
+            case '>':
+                return strcmp($strVersion, $strTarget) > 0;
+            case '>=':
+                return strcmp($strVersion, $strTarget) >= 0;
+            case '<':
+                return strcmp($strVersion, $strTarget) < 0;
+            case '<=':
+                return strcmp($strVersion, $strTarget) <= 0;
+            case '=':
+            case '':
+                return $strVersion === $strTarget;
+        }
+
+        return false; // unknown operator never satisfies
     }
 
     /**

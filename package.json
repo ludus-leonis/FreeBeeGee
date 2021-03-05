@@ -1,6 +1,7 @@
 {
   "name": "FreeBeeGee",
   "version": "0.4.0-dev",
+  "versionEngine": "0.1.1",
   "codename": "Zipping Zebra",
   "description": "A virtual gaming tabletop for board games and RPGs.",
   "engines": {
@@ -60,7 +61,7 @@
   "dependencies": {
     "@popperjs/core": "^2.6.0",
     "bootstrap": "^5.0.0-beta2",
-    "marked": "^0.8.2",
+    "marked": "^2.0.1",
     "navigo": "7.1.2"
   }
 }

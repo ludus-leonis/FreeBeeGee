@@ -161,7 +161,7 @@ describe('CRUD game', function () {
   // get game - should not be there yet
   testJsonGet('/games/crudGame/', body => {
     expect(body).to.be.an('object')
-    expect(body._errors).to.include('not found: crudGame')
+    expect(body._messages).to.include('not found: crudGame')
   }, 404)
 
   // create game

@@ -31,7 +31,7 @@ export function modalSettings () {
   createModal()
 
   _('#modal-header').innerHTML = `
-    <h3 class="modal-title">Settings</h3>
+    <h3 class="modal-title">Table settings</h3>
   `
   _('#modal-body').innerHTML = `
     <form class="container">
@@ -40,12 +40,30 @@ export function modalSettings () {
         <div class="col-12">
           <h2 class="h3">Game statistics</h2>
           <p>Table size: ${getTemplate().width}x${getTemplate().height} spaces</p>
-          <p>Tokens: ${_('.piece.token').nodes().length}</p>
-          <p>Overlays:  ${_('.piece.overlay').nodes().length}</p>
-          <p>Tiles:  ${_('.piece.tile').nodes().length}</p>
+          <p>Pieces: ${_('.piece.token').nodes().length}x token, ${_('.piece.overlay').nodes().length}x overlay, ${_('.piece.tile').nodes().length}x tile</p>
+          <p>Engine: $ENGINE$</p>
 
-          <!-- <h2 class="h3">Danger zone</h2>
-          <p>Lorem</p> -->
+          <h2 class="h3">Danger zone</h2>
+          <p>The following settings will affect the whole table. There will be no <em>undo</em> if you push any of those buttons!</p>
+          <p><input id="danger" type="checkbox"><label for="danger">Enable danger mode.</label></p>
+        </div>
+        <div class="col-12 col-sm-8">
+          <p>Clearing the table will remove all pieces from it. Your library will not be changed.</p>
+        </div>
+        <div class="col-12 col-sm-4">
+          <button id="btn-table-clear" class="btn btn-wide" disabled>Clear table</button>
+        </div>
+        <div class="col-12 col-sm-8">
+          <p>Resetting the table will revert it to the initial setup. Your library will not be changed.</p>
+        </div>
+        <div class="col-12 col-sm-4">
+          <button id="btn-table-reset" class="btn btn-wide" disabled>Reset table</button>
+        </div>
+        <div class="col-12 col-sm-8">
+          <p>Deleting your table will erase it and your library. The other players will be thrown out.</p>
+        </div>
+        <div class="col-12 col-sm-4">
+          <button id="btn-table-delete" class="btn btn-wide" disabled>Delete table</button>
         </div>
       </div>
     </form>
@@ -53,6 +71,18 @@ export function modalSettings () {
   _('#modal-footer').innerHTML = `
     <button id='btn-close' type="button" class="btn btn-primary">Close</button>
   `
+
+  _('#danger').on('click', () => {
+    if (_('#danger').checked) {
+      _('#btn-table-clear').disabled = false
+      _('#btn-table-reset').disabled = false
+      _('#btn-table-delete').disabled = false
+    } else {
+      _('#btn-table-clear').disabled = true
+      _('#btn-table-reset').disabled = true
+      _('#btn-table-delete').disabled = true
+    }
+  })
 
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())

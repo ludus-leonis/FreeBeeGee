@@ -17,6 +17,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+/* global FormData */
+
 // --- public endpoint calls ---------------------------------------------------
 
 /**
@@ -26,10 +28,11 @@
  * to react on.
  */
 export class UnexpectedStatus extends Error {
-  constructor (status) {
+  constructor (status, payload = {}) {
     super('Got status ' + status)
     this.name = 'UnexpectedStatus'
     this.status = status
+    this.body = payload
   }
 }
 
@@ -65,10 +68,22 @@ export function apiGetGame (gameName) {
  * API POST /games/
  *
  * @param {Object} game Game meta-JSON/Object to send.
+ * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostGame (game) {
-  return postJson([201], 'api/games/', game) // 409 = existing game
+export function apiPostGame (game, snapshot) {
+  const formData = new FormData()
+  formData.append('name', game.name)
+  if (game.template) formData.append('template', game.template)
+  if (game.auth) formData.append('auth', game.auth)
+  if (snapshot) formData.append('snapshot', snapshot)
+
+  return fetchOrThrow([201], 'api/games/', {
+    method: 'POST',
+    body: formData
+  })
+
+  // return postJson([201], 'api/games/', game) // 409 = existing game
 }
 
 /**
@@ -150,15 +165,27 @@ export function apiPostPiece (gameName, piece) {
 function fetchOrThrow (expectedStatus, path, data = null) {
   return globalThis.fetch(path, data)
     .then(response => {
-      if (expectedStatus.includes(response.status)) {
-        if (response.status === 204) { // no content
-          return {}
-        } else {
-          return response.json()
-        }
-      } else {
-        throw new UnexpectedStatus(response.status)
-      }
+      return response.text()
+        .then(text => {
+          try {
+            return JSON.parse(text)
+          } catch (error) {
+            throw new UnexpectedStatus(response.status, text)
+          }
+        })
+        .then(json => {
+          // we now have response code + json paylod, but don't know yet if it
+          // was an error
+          if (expectedStatus.includes(response.status)) {
+            if (response.status === 204) { // no content
+              return {}
+            } else {
+              return json
+            }
+          } else {
+            throw new UnexpectedStatus(response.status, json)
+          }
+        })
     })
 }
 

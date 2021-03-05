@@ -48,3 +48,12 @@ export function createScreen (headline, content, footer = '') {
 
   return body
 }
+
+/**
+ * Show a server feedback (error message).
+ *
+ * @param {String} message Message to show.
+ */
+export function serverFeedback (message) {
+  _('.server-feedback').add('.show').innerHTML = message
+}

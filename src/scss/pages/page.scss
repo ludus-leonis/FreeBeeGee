@@ -69,6 +69,15 @@
     > p {
       text-shadow: px(1) px(1) px(1) var(--nr-color-bg), px(-1) px(-1) px(1) var(--nr-color-bg);
     }
+
+    .server-feedback {
+      color: $color-bad;
+      display: none;
+
+      &.show {
+        display: block;
+      }
+    }
   }
 
   .p-small {

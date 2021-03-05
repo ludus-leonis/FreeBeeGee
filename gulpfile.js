@@ -97,7 +97,7 @@ function replace (pipe) {
   return pipe
     .pipe(repl('$NAME$', p.name, { skipBinary: true }))
     .pipe(repl('$VERSION$', p.version, { skipBinary: true }))
-    .pipe(repl('$ENGINE$', p.version, { skipBinary: true }))
+    .pipe(repl('$ENGINE$', p.versionEngine, { skipBinary: true }))
     .pipe(repl('$CODENAME$', p.codename, { skipBinary: true }))
     .pipe(repl('$BUILD$', rnd, { skipBinary: true }))
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))

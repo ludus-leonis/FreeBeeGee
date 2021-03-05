@@ -28,7 +28,10 @@ namespace com\ludusleonis\freebeegee;
 class FreeBeeGeeAPI
 {
     private $version = '$VERSION$';
+    private $engine = '$ENGINE$';
     private $api = null; // JSONRestAPI instance
+    private $minTableGridSize = 16;
+    private $maxTableGridSize = 128;
 
     /**
      * Constructor - setup our routes.
@@ -90,7 +93,19 @@ class FreeBeeGeeAPI
         });
 
         $this->api->register('POST', '/games/', function ($fbg, $data, $payload) {
-            $fbg->createGame($payload);
+            $formData = $this->api->multipartToJson();
+            if ($formData) { // client sent us multipart
+                $fbg->createGame($formData);
+            } else { // client sent us regular json
+                $fbg->createGame($payload);
+            }
+        });
+
+        $this->api->register('POST', '/games/:gid/snapshot/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->postSnapshot($data['gid'], $payload);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
         });
 
         // --- PUT ---
@@ -168,6 +183,7 @@ class FreeBeeGeeAPI
     {
         $config = json_decode(file_get_contents($this->api->getDataDir() . 'server.json'));
         $config->version = '$VERSION$';
+        $config->engine = '$ENGINE$';
         return $config;
     }
 
@@ -238,23 +254,182 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Install a game template into a game.
+     * Validate a game template / snapshot.
+     *
+     * Does a few sanity checks to see if everything is there we need. Will
+     * termiante execution and send a 400 in case of invalid zips.
+     *
+     * @param string $zipPath Full path to the zip to check.
+     */
+    private function validateSnapshot(
+        string $zipPath
+    ) {
+        $size = 0;
+        $mandatory = [
+            'LICENSE.md' => 'LICENSE.md',
+            'state.json' => 'state.json',
+            'template.json' => 'template.json',
+        ];
+        $optional = [
+            'assets/' => 'assets/',
+            'assets/tile/' => 'assets/tile/',
+            'assets/token/' => 'assets/token/',
+            'assets/overlay/' => 'assets/overlay/',
+        ];
+        $issues = [];
+        $maxSize = $this->getServerConfig()->maxGameSizeMB;
+
+        // basic tests
+        if (filesize($zipPath) > $maxSize * 1024 * 1024) {
+            // if the zip itself is too large, then so probably is its content
+            $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
+        }
+
+        // more detailed tests
+        $zip = new \ZipArchive();
+        if (!$zip->open($zipPath)) {
+            return ['invalid zip'];
+        }
+        $assetCount = 0;
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $entry = $zip->statIndex($i);
+
+            // filename checks
+            $entryName = $entry['name'];
+            if (array_key_exists($entryName, $mandatory)) {
+                unset($mandatory[$entryName]);
+            } elseif (array_key_exists($entryName, $optional)) {
+                // just ignore
+            } else {
+                if (preg_match('/^assets\/(overlay|tile|token)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/', $entryName)) {
+                    $assetCount++;
+                } else {
+                    $issues[] = 'unexpected ' . $entryName;
+                }
+            }
+            // filesize checks
+            $entrySize = $entry['size'];
+            if ($entrySize > 512 * 1024) {
+                $issues[] = $entryName . ' exceeded 512kB';
+            }
+            $size += $entrySize;
+        }
+        if ($assetCount <= 0) {
+            $issues[] = 'no assets found in snapshot';
+        }
+        foreach ($mandatory as $missing) {
+            $issues[] = 'missing ' . $missing;
+        }
+        if ($size > $maxSize * 1024 * 1024) {
+            $issues[] = 'total size exceeded server maximum of ' . $maxSize . 'MB';
+            $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
+        }
+
+        // report any findings so far back
+        if ($issues !== []) {
+            $this->api->sendError(400, 'validating snapshot failed', 'ZIP_INVALID', $issues);
+        }
+
+        // at this point the zip is formally ok, but now we look into individual files
+        $this->validateTemplateJson(file_get_contents('zip://' . $zipPath . '#template.json'));
+        $this->validateStateJson(file_get_contents('zip://' . $zipPath . '#state.json'));
+    }
+
+    /**
+     * Validate a template.json.
+     *
+     * Will termiante execution and send a 400 in case of invalid JSON.
+     *
+     * @param string $json JSON string.
+     */
+    private function validateTemplateJson(
+        string $json
+    ) {
+        $msg = 'validating template.json failed';
+        $template = json_decode($json);
+
+        // check the basics and abort on error
+        if ($template === null) {
+            $this->api->sendError(400, $msg, 'TEMPLATE_JSON_INVALID');
+        }
+        if (!property_exists($template, 'engine') || !$this->api->semverSatisfies($this->engine, $template->engine)) {
+            $this->api->sendError(400, $msg, 'TEMPLATE_JSON_INVALID_ENGINE', [$template->engine, $this->engine]);
+        }
+
+        // check for more stuff
+        $this->api->assertHasProperties(
+            'template.json',
+            $template,
+            ['type', 'gridSize', 'version', 'engine', 'width', 'height', 'colors']
+        );
+        foreach ($template as $property => $value) {
+            switch ($property) {
+                case 'engine':
+                    break; // was checked above
+                case 'type':
+                    $this->api->assertString('type', $value, 'grid-square');
+                    break;
+                case 'gridSize':
+                    $this->api->assertInteger('gridSize', $value, 64, 64);
+                    break;
+                case 'version':
+                    $this->api->assertSemver('version', $value);
+                    break;
+                case 'width':
+                    $this->api->assertInteger('width', $value, $this->minTableGridSize, $this->maxTableGridSize);
+                    break;
+                case 'height':
+                    $this->api->assertInteger('height', $value, $this->minTableGridSize, $this->maxTableGridSize);
+                    break;
+                case 'colors':
+                    $this->api->assertObjectArray('colors', $value, 1);
+                    break;
+                default:
+                    $this->api->sendError(400, 'invalid template.json: ' . $property . ' unkown');
+            }
+        }
+    }
+
+    /**
+     * Validate a state.json.
+     *
+     * Will termiante execution and send a 400 in case of invalid JSON.
+     *
+     * @param string $json JSON string.
+     */
+    private function validateStateJson(
+        string $json
+    ) {
+        $msg = 'validating template.json failed';
+        $state = json_decode($json);
+
+        // check the basics and abort on error
+        if ($state === null) {
+            $this->api->sendError(400, $msg, 'STATE_JSON_INVALID');
+        }
+
+        // check for more stuff
+        $this->api->assertObjectArray('state.json', $state, 0);
+
+        return $state;
+    }
+
+    /**
+     * Install a game template/snapshot into a game.
      *
      * Will unpack the template .zip into the game folder. Terminates execution
      * on errors.
      *
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
-     * @param string $template Name of the template, e.g. 'default' for default.zip
+     * @param string $zipPath Path to snapshot/template zip to install.
      * @return array The library Json for this template.
      */
-    private function installTemplate(
+    private function installSnapshot(
         string $gameName,
-        string $template
+        string $zipPath
     ): array {
-        $zipPath = $this->getAppFolder() . 'templates/' . $template . '.zip';
-        $zip = new \ZipArchive($zipPath);
-        $res = $zip->open($this->getAppFolder() . 'templates/' . $template . '.zip');
-        if ($res === true) {
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath) === true) {
             $zip->extractTo($this->getGameFolder($gameName));
             $zip->close();
             return $this->generateLibraryJson($gameName);
@@ -496,11 +671,11 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            foreach (['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color', 'no'] as $property) {
-                if (!\property_exists($validated, $property)) {
-                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing');
-                }
-            }
+            $this->api->assertHasProperties(
+                'piece',
+                $validated,
+                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color', 'no']
+            );
         }
 
         return $validated;
@@ -521,11 +696,18 @@ class FreeBeeGeeAPI
         $incoming = $this->api->assertJson($json);
         $validated = new \stdClass();
 
+        if ($checkMandatory) {
+            $this->api->assertHasProperties('game', $incoming, ['name']);
+        }
+
         foreach ($incoming as $property => $value) {
             switch ($property) {
                 case 'id':
                 case 'auth':
                     break; // we accept but ignore these
+                case '_files':
+                    $validated->_files = $value;
+                    break;
                 case 'name':
                     $validated->name = $this->api->assertString('name', $value, '[A-Za-z0-9]{8,48}');
                     break;
@@ -534,14 +716,6 @@ class FreeBeeGeeAPI
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
-            }
-        }
-
-        if ($checkMandatory) {
-            foreach (['name', 'template'] as $property) {
-                if (!\property_exists($validated, $property)) {
-                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing');
-                }
             }
         }
 
@@ -566,7 +740,9 @@ class FreeBeeGeeAPI
         // assemble json
         $info = new \stdClass();
         $info->version = $server->version;
+        $info->engine = $server->engine;
         $info->ttl = $server->ttl;
+        $info->customTemplates = $server->customTemplates;
         $info->openSlots = $this->getOpenSlots($server);
         if ($server->passwordCreate ?? '' !== '') {
             $info->createPassword = true;
@@ -621,15 +797,28 @@ class FreeBeeGeeAPI
         // sanitize item by recreating it
         $validated = $this->validateGame($payload, true);
 
-        if (!is_file($this->getAppFolder() . 'templates/' . $validated->template . '.zip')) {
-            $this->api->sendError(400, 'template ' . $validated->template . ' not available');
+        // we need either a template name or an uploaded snapshot
+        if (
+            $validated->template && $validated->_files
+            || (!$validated->template && !$validated->_files )
+        ) {
+            $this->api->sendError(400, 'you need to either specify a template or upload a snapshot');
         }
+
+        // doublecheck template / snapshot
+        $zipPath = ($validated->_files ?? null)
+            ? ($_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid')
+            : ($this->getAppFolder() . 'templates/' . $validated->template . '.zip');
+        if (!is_file($zipPath)) {
+            $this->api->sendError(400, 'template not available');
+        }
+        $this->validateSnapshot($zipPath);
 
         // create a new game
         $newGame = new \stdClass();
         $newGame->id = $this->generateId();
         $newGame->name = $validated->name;
-        $newGame->engine = $this->version;
+        $newGame->engine = $this->engine;
         $newGame->tables = [new \stdClass()];
 
         $table = $newGame->tables[0];
@@ -646,7 +835,7 @@ class FreeBeeGeeAPI
             }
 
             $lock = $this->api->waitForWriteLock($folder . '.flock');
-            $table->library = $this->installTemplate($newGame->name, $validated->template);
+            $table->library = $this->installSnapshot($newGame->name, $zipPath);
 
             // keep original state for game resets
             file_put_contents($folder . 'state-initial.json', file_get_contents($folder . 'state.json'));
@@ -821,6 +1010,7 @@ class FreeBeeGeeAPI
                 switch ($relativePath) { // filter those files away
                     case '.flock':
                     case 'snapshot.zip':
+                    case 'invalid.svg':
                     case 'game.json':
                     case 'game.json.digest':
                     case 'state.json.digest':
@@ -847,6 +1037,23 @@ class FreeBeeGeeAPI
         header('Content-type: application/zip');
         readfile($zipName);
         unlink($zipName);
+    }
+
+    /**
+     * Install a game snapshot.
+     *
+     * Will unzip the posted payload (a zip) and try to install it as template/
+     * snapshot. This will replace the current table setup.
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     */
+    public function postSnapshot(
+        string $gameName,
+        string $payload
+    ) {
+        $zipPath = $this->getAppFolder() . 'templates/HeroQuest.zip';
+        $this->validateSnapshot($zipPath);
+        $this->api->sendReply(200, "[]");
     }
 
     /**

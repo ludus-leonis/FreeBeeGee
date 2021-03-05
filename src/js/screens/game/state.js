@@ -135,10 +135,11 @@ export function loadGameState (name) {
  * Create a new game on the server.
  *
  * @param {Object} game The game object to send to the API.
+ * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
  * @return {Object} Promise of created game metadata object.
  */
-export function createGame (game) {
-  return apiPostGame(game)
+export function createGame (game, snapshot) {
+  return apiPostGame(game, snapshot)
 }
 
 /**

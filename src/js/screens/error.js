@@ -56,7 +56,7 @@ export function runError (code, options) {
  * deleted/closed it.
  */
 function runErrorUnexpected (error) {
-  console.error('*that* was unexpected!', error) // only log if error is serious
+  console.error('*that* was unexpected!', error, error.body) // only log if error is serious
 
   if (!'$VERSION$'.endsWith('dev')) {
     runErrorClientGeneric() // show nice error message if not in development mode
