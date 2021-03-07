@@ -24,27 +24,27 @@ import { UnexpectedStatus } from '../api.js'
 /**
  * Show an error dialog.
  *
- * @param {Number} code Code of error message to show.
+ * @param {String} code Code of error message to show.
  * @param {*} options Options / stuff to simply forwart to the error.
  */
 export function runError (code, options) {
   switch (code) {
-    case 5:
+    case 'UNEXPECTED': // 5
       runErrorUnexpected(options)
       break
-    case 4:
+    case 'GAME_GONE': // 4
       runErrorGameGone(options)
       break
-    case 3:
+    case 'NO_SLOT': // 3
       runErrorNoSlotAvailable()
       break
-    case 2:
+    case 'FULL': // 2
       runErrorOverCapacity()
       break
-    case 1:
+    case 'UPDATE': // 1
       runErrorUpdate()
       break
-    case 0:
+    case 'UNKNOWN':
     default:
       runErrorServerGeneric()
       break

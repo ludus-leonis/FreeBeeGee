@@ -19,8 +19,15 @@
 
 import _ from '../../../FreeDOM.js'
 
-import { createModal, getModal, modalClose } from '../../../modal.js'
-import { getTemplate } from '../state.js'
+import {
+  createModal,
+  getModal,
+  modalClose
+} from '../../../modal.js'
+import {
+  getTemplate,
+  updateState
+} from '../state.js'
 
 // --- public ------------------------------------------------------------------
 
@@ -87,7 +94,18 @@ export function modalSettings () {
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())
 
+  _('#btn-table-clear').on('click', () => clearTable())
+
   getModal().show()
 }
 
 // --- internal ----------------------------------------------------------------
+
+/**
+ * Remove all pieces from the table.
+ *
+ * Done by sending an empty ([]) state to the server.
+ */
+function clearTable () {
+  updateState([])
+}

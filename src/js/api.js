@@ -97,6 +97,17 @@ export function apiGetState (gameName) {
 }
 
 /**
+ * API PUT /games/:gameName/state/
+ *
+ * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {Array} state The new game state (array of pieces).
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPutState (gameName, state) {
+  return putJson([200], 'api/games/' + gameName + '/state/', state)
+}
+
+/**
  * API HEAD /games/:gameName/state/
  *
  * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.

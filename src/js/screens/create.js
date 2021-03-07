@@ -32,7 +32,7 @@ import { apiGetTemplates, UnexpectedStatus } from '../api.js'
  */
 export function createGame (name) {
   if (stateGetServerInfo().openSlots <= 0) {
-    runError(3)
+    runError('NO_SLOT')
     return
   }
 
@@ -174,10 +174,10 @@ function ok (name) {
             _('#template').add('.invalid').focus()
             break
           case 503:
-            runError(2)
+            runError('FULL')
             break
           default:
-            runError(5, error)
+            runError('UNEXPECTED', error)
         }
       }
     })

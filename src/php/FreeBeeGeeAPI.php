@@ -117,6 +117,13 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['gid']);
         });
 
+        $this->api->register('PUT', '/games/:gid/state/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->replaceState($data['gid'], $payload);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
+        });
+
         // --- PATCH ---
 
         $this->api->register('PATCH', '/games/:gid/pieces/:pid/?', function ($fbg, $data, $payload) {
@@ -402,6 +409,7 @@ class FreeBeeGeeAPI
     ) {
         $msg = 'validating template.json failed';
         $state = json_decode($json);
+        $validated = [];
 
         // check the basics and abort on error
         if ($state === null) {
@@ -410,8 +418,11 @@ class FreeBeeGeeAPI
 
         // check for more stuff
         $this->api->assertObjectArray('state.json', $state, 0);
+        foreach ($state as $piece) {
+            $validated[] = $this->validatePiece($piece, true);
+        }
 
-        return $state;
+        return $validated;
     }
 
     /**
@@ -448,7 +459,7 @@ class FreeBeeGeeAPI
      * @param object $piece The parsed & validated piece to update.
      * @param bool $create If true, this piece must not exist.
      */
-    private function updateState(
+    private function updatePieceState(
         string $gameName,
         object $piece,
         bool $create
@@ -616,19 +627,34 @@ class FreeBeeGeeAPI
      * @param string $json JSON string from the client.
      * @param boolean $checkMandatory If true, this function will also ensure all
      *                mandatory fields are present.
-     * @return object Validated JSON, convertet to an object.
+     * @return object Validated JSON, converted to an object.
      */
-    private function validatePiece(
+    private function validatePieceJson(
         string $json,
         bool $checkMandatory
     ): object {
-        $incoming = $this->api->assertJson($json);
-        $validated = new \stdClass();
+        $piece = $this->api->assertJson($json);
+        return $this->validatePiece($piece, $checkMandatory);
+    }
 
-        foreach ($incoming as $property => $value) {
+    /**
+     * Sanity check for pieces.
+     *
+     * @param object $piece Full or partial piece.
+     * @param boolean $checkMandatory If true, this function will also ensure all
+     *                mandatory fields are present.
+     * @return object New, validated object.
+     */
+    private function validatePiece(
+        object $piece,
+        bool $checkMandatory
+    ): object {
+        $validated = new \stdClass();
+        foreach ($piece as $property => $value) {
             switch ($property) {
                 case 'id':
-                    break; // we accept but ignore these
+                    $validated->id = $this->api->assertString('id', $value, '^[0-9a-f]{16}$');
+                    break;
                 case 'layer':
                     $validated->layer = $this->api->assertEnum('layer', $value, ['tile', 'token', 'overlay']);
                     break;
@@ -674,7 +700,7 @@ class FreeBeeGeeAPI
             $this->api->assertHasProperties(
                 'piece',
                 $validated,
-                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color', 'no']
+                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color'] // no
             );
         }
 
@@ -928,6 +954,28 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Replace the internal state with a new one.
+     *
+     * Can be used to reset a table or to revert to a save.
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     * @param string $json New state JSON from client.
+     */
+    public function replaceState(
+        string $gameName,
+        string $json
+    ) {
+        $folder = $this->getGameFolder($gameName);
+        $newState = $this->validateStateJson($json);
+
+        $lock = $this->api->waitForWriteLock($folder . '.flock');
+        $this->writeAsJsonAndDigest($folder . 'state.json', $newState);
+        $this->api->unlockLock($lock);
+
+        $this->api->sendReply(200, json_encode($newState));
+    }
+
+    /**
      * Add a new piece to a game.
      *
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
@@ -938,9 +986,9 @@ class FreeBeeGeeAPI
         string $gameName,
         string $json
     ) {
-        $piece = $this->validatePiece($json, true);
+        $piece = $this->validatePieceJson($json, true);
         $piece->id = $this->generateId();
-        $this->updateState($gameName, $piece, true);
+        $this->updatePieceState($gameName, $piece, true);
         $this->api->sendReply(201, json_encode($piece));
     }
 
@@ -958,9 +1006,9 @@ class FreeBeeGeeAPI
         string $pieceId,
         string $json
     ) {
-        $patch = $this->validatePiece($json, false);
+        $patch = $this->validatePieceJson($json, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $this->updateState($gameName, $patch, false);
+        $this->updatePieceState($gameName, $patch, false);
         $this->api->sendReply(200, json_encode($patch));
     }
 
@@ -981,7 +1029,7 @@ class FreeBeeGeeAPI
         $piece->layer = 'delete';
         $piece->id = $pieceId;
 
-        $this->updateState($gameName, $piece, false);
+        $this->updatePieceState($gameName, $piece, false);
         $this->api->sendReply(204, '');
     }
 

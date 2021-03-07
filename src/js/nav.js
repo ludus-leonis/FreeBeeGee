@@ -32,7 +32,7 @@ document.onreadystatechange = function (event) {
       .then(info => {
         if (info.version !== '$VERSION$') {
           console.info('update', info.version, '$VERSION$')
-          runError(1)
+          runError('UPDATE')
         } else {
           stateSetServerInfo(info)
           router
@@ -47,6 +47,6 @@ document.onreadystatechange = function (event) {
             .resolve()
         }
       })
-      .catch(() => runError(0))
+      .catch(() => runError('UNKNOWN'))
   }
 }

@@ -382,7 +382,7 @@ export function nodeIdToPiece (id) {
  */
 export function nodeToPiece (node) {
   const piece = {}
-  piece.id = node.id
+  if (piece.id && piece.id !== '') piece.id = node.id
   piece.layer = node.dataset.layer
   piece.asset = node.dataset.asset
   piece.width = Number(node.dataset.w)

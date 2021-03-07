@@ -27,6 +27,7 @@ import {
 import {
   apiHeadState,
   apiGetState,
+  apiPutState,
   apiGetGame,
   apiPostGame,
   apiPatchPiece,
@@ -126,7 +127,7 @@ export function loadGameState (name) {
       return game
     })
     .catch((error) => { // invalid game
-      runError(4, name, error)
+      runError('GAME_GONE', name, error)
       return null
     })
 }
@@ -188,9 +189,9 @@ export function pollGameState (
     .catch(error => {
       if (error instanceof UnexpectedStatus) {
         gameStateRefresh = gameStateRefreshNever // stop polling
-        runError(4, game.name, error)
+        runError('GAME_GONE', game.name, error)
       } else {
-        runError(5, error)
+        runError('UNEXPECTED', error)
       }
     })
     .finally(() => {
@@ -301,7 +302,7 @@ export function statePieceEdit (pieceID, updates) {
 export function stateDeletePiece (id) {
   apiDeletePiece(game.name, id)
     .catch(error => {
-      runError(5, error)
+      runError('UNEXPECTED', error)
     })
     .finally(() => {
       pollGameState()
@@ -325,10 +326,27 @@ export function stateCreatePiece (piece, selected = false) {
       selectid = piece.id
     })
     .catch(error => {
-      runError(5, error)
+      runError('UNEXPECTED', error)
     })
     .finally(() => {
       pollGameState(selected ? selectid : null)
+    })
+}
+
+/**
+ * Update the game state to the a new one.
+ *
+ * Will replace the existing state.
+ *
+ * @param {Array} state Array of pieces (game state).
+ */
+export function updateState (state) {
+  apiPutState(game.name, state)
+    .catch(error => {
+      runError('UNEXPECTED', error)
+    })
+    .finally(() => {
+      pollGameState()
     })
 }
 
@@ -347,7 +365,7 @@ function patchPiece (pieceId, patch) {
         // we somewhat expected this situation. silently ignore it.
         console.info('Piece ' + pieceId + ' got deleted - no need to PATCH it.')
       } else {
-        runError(5, error) // *that* was unexpected
+        runError('UNEXPECTED', error) // *that* was unexpected
       }
     })
     .finally(() => {
