@@ -16,8 +16,7 @@ Here is a list what might happen next. However, priorities might change.
 * [X] svg logo in docs
 * [X] disable flip for 1-sided tokens
 * [X] option token-number/letter badge within token
-* [ ] game reset / restart / re-init
-* [ ] scroll to center of setup/table when opening new tables
+* [X] game reset / restart / re-init
 * [X] FreeBeeGee icon in top-left corner
 * [X] show artwork copyright somewhere
 * [ ] pre-release
@@ -33,6 +32,7 @@ Here is a list what might happen next. However, priorities might change.
 * dicetray (separate dice window/pane)
 * basic dice-assets d4, d6, d8, d10, d12, d20
 * support for custom dice
+* delete table
 * fancier implementation for dynamic poll intervalls
   * show "you have been inactive" dialog after 10min
   * decrease poll intervall on mouse/keyboard activity
@@ -42,6 +42,7 @@ Here is a list what might happen next. However, priorities might change.
 ## v0.6 - Uploading Unicorn
 
 * rename "game" to "table"
+* scroll to center of setup/table when opening new tables
 * upload custom images for tiles & tokens
 * remove default entries from json fieles (e.g. side=0)
 * hide .../data/... from URLs (via .htaccess)

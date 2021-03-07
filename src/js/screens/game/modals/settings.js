@@ -67,12 +67,12 @@ export function modalSettings () {
         <div class="col-12 col-sm-4">
           <button id="btn-table-reset" class="btn btn-wide" disabled>Reset table</button>
         </div>
-        <div class="col-12 col-sm-8">
+        <!-- <div class="col-12 col-sm-8">
           <p>Deleting your table will erase it and your library. Other players will be kicked out.</p>
         </div>
         <div class="col-12 col-sm-4">
           <button id="btn-table-delete" class="btn btn-wide" disabled>Delete table</button>
-        </div>
+        </div> -->
       </div>
     </form>
   `

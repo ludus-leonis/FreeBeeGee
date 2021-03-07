@@ -9,6 +9,38 @@ require_once 'src/php/JSONRestAPI.php';
 
 final class JSONRestAPITest extends TestCase
 {
+    public function testUUID(): void
+    {
+        $this->assertEquals(
+            '74686973-2069-4320-a120-72616e646f6d',
+            JSONRestAPI::uuid('this is a random seed')
+        );
+        $this->assertEquals(
+            '74686973-2069-4320-a16e-6f7468657220',
+            JSONRestAPI::uuid('this is another random seed'),
+        );
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/',
+            JSONRestAPI::uuid()
+        );
+    }
+
+    public function testID(): void
+    {
+        $this->assertEquals(
+            '7468697320697320',
+            JSONRestAPI::id('this is a random seed')
+        );
+        $this->assertEquals(
+            '7468697320697320',
+            JSONRestAPI::id('this is another random seed')
+        );
+        $this->assertMatchesRegularExpression(
+            '/^[0-9a-f]{16}$/',
+            JSONRestAPI::id()
+        );
+    }
+
     public function testSemverSatisfies(): void
     {
         $this->assertTrue(JSONRestAPI::semverSatisfies('1.2.3', '>1.2.2'));

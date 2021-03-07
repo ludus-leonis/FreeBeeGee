@@ -529,7 +529,7 @@ class JSONRestAPI
         if (flock($lock, LOCK_SH)) {  // acquire a shared lock
             return $lock;
         } else {
-            $this->sendError(423, 'can\'t lock ' + $lockFile + ' for reading');
+            $this->sendError(423, 'can\'t lock ' . $lockFile . ' for reading');
         }
     }
 
@@ -611,7 +611,11 @@ class JSONRestAPI
     public static function id(
         string $seed = null
     ): string {
-        $data = $seed ?? random_bytes(8);
+        if ($seed) {
+            $data = substr($seed . '1234567890', 0, 8);
+        } else {
+            $data = random_bytes(8);
+        }
         return bin2hex($data);
     }
 
@@ -631,7 +635,10 @@ class JSONRestAPI
         string $target
     ): bool {
         // split both items
-        if (!preg_match(JSONRestAPI::REGEXP_SEMVER, $version, $vParts) || !preg_match(JSONRestAPI::REGEXP_SEMVER, $target, $rParts)) {
+        if (
+            !preg_match(JSONRestAPI::REGEXP_SEMVER, $version, $vParts)
+            || !preg_match(JSONRestAPI::REGEXP_SEMVER, $target, $rParts)
+        ) {
             // invalid stuff never satisfies
             return false;
         }

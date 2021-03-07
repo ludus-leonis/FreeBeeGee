@@ -90,6 +90,13 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['gid']);
         });
 
+        $this->api->register('GET', '/games/:gid/pieces/:pid/?', function ($fbg, $data) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->getPiece($data['gid'], $data['pid']);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
+        });
+
         // --- POST ---
 
         $this->api->register('POST', '/games/:gid/pieces/?', function ($fbg, $data, $payload) {
@@ -465,16 +472,18 @@ class FreeBeeGeeAPI
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
      * @param object $piece The parsed & validated piece to update.
      * @param bool $create If true, this piece must not exist.
+     * @return object The updated piece.
      */
     private function updatePieceState(
         string $gameName,
         object $piece,
         bool $create
-    ) {
+    ): object {
         $folder = $this->getGameFolder($gameName);
         $lock = $this->api->waitForWriteLock($folder . '.flock');
 
         $oldState = json_decode(file_get_contents($folder . 'state.json'));
+        $result = $piece;
 
         // rewrite state, starting with new item
         // only latest (first) state item per ID matters
@@ -505,6 +514,7 @@ class FreeBeeGeeAPI
                             continue;
                         }
                         $stateItem = $this->merge($stateItem, $piece);
+                        $result = $stateItem;
                     }
                     $newState[] = $stateItem;
                     $ids[] = $stateItem->id;
@@ -517,6 +527,8 @@ class FreeBeeGeeAPI
         }
         $this->writeAsJsonAndDigest($folder . 'state.json', $newState);
         $this->api->unlockLock($lock);
+
+        return $result;
     }
 
     /**
@@ -1012,7 +1024,6 @@ class FreeBeeGeeAPI
      *
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
      * @param string $json Full piece JSON from client.
-     * @return type Description.
      */
     public function createPiece(
         string $gameName,
@@ -1022,6 +1033,33 @@ class FreeBeeGeeAPI
         $piece->id = $this->generateId();
         $this->updatePieceState($gameName, $piece, true);
         $this->api->sendReply(201, json_encode($piece));
+    }
+
+    /**
+     * Get an individual piece.
+     *
+     * Not very performant, but also not needed very often ;)
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     * @param string $pieceId Id of piece.
+     */
+    public function getPiece(
+        string $gameName,
+        string $pieceId
+    ) {
+        $folder = $this->getGameFolder($gameName);
+        $state = json_decode($this->api->fileGetContentsLocked(
+            $folder . 'state.json',
+            $folder . '.flock'
+        ));
+
+        foreach ($state as $piece) {
+            if ($piece->id === $pieceId) {
+                $this->api->sendReply(200, json_encode($piece));
+            }
+        }
+
+        $this->api->sendError(404, 'not found: piece ' . $pieceId . ' in game ' . $gameName);
     }
 
     /**
@@ -1040,8 +1078,8 @@ class FreeBeeGeeAPI
     ) {
         $patch = $this->validatePieceJson($json, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $this->updatePieceState($gameName, $patch, false);
-        $this->api->sendReply(200, json_encode($patch));
+        $updatedPiece = $this->updatePieceState($gameName, $patch, false);
+        $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
     /**
