@@ -80,10 +80,19 @@ export function enableDragAndDrop (tabletop) {
  */
 export function updateMenu () {
   // (de)activate menu
-  const menu = document.querySelector('.menu-selected')
-  menu.classList.remove('disabled')
-  if (document.querySelectorAll('.is-selected').length <= 0) {
-    menu.classList.add('disabled')
+  const menu = _('.menu-selected')
+  const selected = _('.is-selected').nodes()
+
+  _('.menu-selected button').remove('.disabled')
+  if (selected.length <= 0) {
+    menu.add('.disabled')
+  } else if (selected.length === 1) {
+    menu.remove('.disabled')
+    if (selected[0].dataset.sides <= 1) {
+      _('#btn-f').add('.disabled')
+    }
+  } else {
+    menu.remove('.disabled')
   }
 }
 

@@ -20,7 +20,8 @@
 import _ from '../../../FreeDOM.js'
 
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
-import { stateGetGamePref, stateSetGamePref } from '../state.js'
+import { getTable, stateGetGamePref, stateSetGamePref } from '../state.js'
+import marked from 'marked'
 
 // --- public ------------------------------------------------------------------
 
@@ -76,7 +77,7 @@ export function modalHelp () {
             <p>If a piece got hidden behind another piece, you can use the <strong>to&nbsp;top</strong> and <strong>to&nbsp;bottom</strong> buttons to change the order of pieces within their layer.</p>
           </div>
           <div class="hotkeys">
-            <p>The following hotkeys are available at any time on the gaming table:</p>
+            <p>The following hotkeys are available on the table:</p>
             <p><span class="key">1</span> Toggle token layer.</p>
             <p><span class="key">2</span> Toggle overlay layer.</p>
             <p><span class="key">3</span> Toggle tile layer.</p>
@@ -90,6 +91,9 @@ export function modalHelp () {
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>
             <p><span class="key">Del</span> Delete selected piece.</p>
+            <p><span class="key">NumPad+</span>/<span class="key">NumPad-</span> Increase/decrease token letter. Hint: Only works for tokens!</p>
+            <p><span class="key">s</span> Show the table statistics &amp; settings.</p>
+
           </div>
           <div class="copyright">
             <h3>FreeBeeGee</h3>
@@ -100,22 +104,19 @@ export function modalHelp () {
 
             <p>FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://www.gnu.org/licenses/">GNU Affero General Public License</a> for more details.</p>
 
-            <h3>Icons</h3>
+            <h3>UI assets</h3>
 
-            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>.</p>
+            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more table background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
 
-            <p>The <strong>default</strong> game template contains various icons from <a href="https://game-icons.net/">game-icons.net</a>. They are licensed <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a> by their respective authors.</p>
+            <h3>Game assets</h3>
 
-            <h3>Backgrounds</h3>
-
-            <p>One or more textures on this map have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
+            ${marked(getTable().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
           </div>
         </div>
       </div>
     `
 
     _('#modal-footer').innerHTML = `
-      <div></div>
       <button id='btn-close' type="button" class="btn btn-primary">Close</button>
     `
 

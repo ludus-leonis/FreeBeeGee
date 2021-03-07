@@ -27,6 +27,7 @@ import {
   pollGameState,
   stateCreatePiece,
   stateDeletePiece,
+  stateNumberPiece,
   stateFlipPiece,
   stateMovePiece,
   stateRotatePiece,
@@ -40,6 +41,7 @@ import { clamp } from '../../utils.js'
 import { modalLibrary } from './modals/library.js'
 import { modalEdit } from './modals/edit.js'
 import { modalHelp } from './modals/help.js'
+import { modalSettings } from './modals/settings.js'
 
 let scroller = null /** keep reference to scroller div - we need it often */
 
@@ -116,6 +118,13 @@ export function deletePiece (id) {
 }
 
 /**
+ * Show settings dialog for the current game/table.
+ */
+export function settings () {
+  modalSettings()
+}
+
+/**
  * Show edit dialog for currently selected piece.
  *
  * Will silently fail if nothing is selected.
@@ -142,6 +151,10 @@ export function cloneSelected (x, y) {
     const piece = nodeToPiece(node)
     piece.x = x
     piece.y = y
+    if (piece.no > 0) { // increase piece letter (if it has one)
+      piece.no = piece.no + 1
+      if (piece.no > 26) piece.no = 1
+    }
     stateCreatePiece(piece, true)
   })
 }
@@ -157,6 +170,17 @@ export function flipSelected () {
     if (sides > 1) {
       stateFlipPiece(node.id, (Number(node.dataset.side) + 1) % sides)
     }
+  })
+}
+
+/**
+ * Increase/decrease the token number (if it is a token).
+ *
+ * Will cycle through all states
+ */
+export function numberSelected (delta) {
+  _('#tabletop .token.is-selected').each(node => {
+    stateNumberPiece(node.id, (Number(node.dataset.no) + 27 + delta) % 27)
   })
 }
 
@@ -218,6 +242,12 @@ export function setPiece (pieceJson, select = false) {
   const label = pieceJson.label ?? ''
   if (label !== '') {
     div.add(_('.label').create(label))
+  }
+
+  // update piece number
+  _('#' + pieceJson.id + ' .piece-no').delete()
+  if (pieceJson.layer === 'token' && pieceJson.no !== 0) {
+    div.add(_('.piece-no').create(String.fromCharCode(64 + pieceJson.no)))
   }
 
   // update select status
@@ -352,7 +382,7 @@ export function nodeIdToPiece (id) {
  */
 export function nodeToPiece (node) {
   const piece = {}
-  piece.id = node.id
+  if (node.id && node.id !== '') piece.id = node.id
   piece.layer = node.dataset.layer
   piece.asset = node.dataset.asset
   piece.width = Number(node.dataset.w)
@@ -361,6 +391,7 @@ export function nodeToPiece (node) {
   piece.y = Number(node.dataset.y)
   piece.z = Number(node.dataset.z)
   piece.r = Number(node.dataset.r)
+  piece.no = Number(node.dataset.no)
   piece.side = Number(node.dataset.side)
   piece.label = node.dataset.label
   piece.color = Number(node.dataset.color)
@@ -368,18 +399,31 @@ export function nodeToPiece (node) {
 }
 
 /**
-* Convert an asset data object to a DOM node.
+ * Convert an asset data object to a DOM node.
+ *
+ * If we get an invalid asset (null or invalid propierties), we create and
+ * return a dummy entry on screen.
  *
  * @param {Object} assetJson Full asset data object.
  * @param {Number} side Side to show (zero-based).
  * @return {HTMLElement} Converted node (not added to DOM yet).
  */
 export function assetToNode (assetJson, side = 0) {
-  const asset = _('.asset').create().css({
-    backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`,
-    backgroundColor: assetJson.type === 'overlay' ? 'transparent' : `#${assetJson.bg}`
-  })
-  const node = _(`.piece.${assetJson.type} > .box > .border`).create(asset) // .is-w-${assetJson.width}.is-h-${assetJson.height}.is-wh-${assetJson.width - assetJson.height}
+  let asset
+  if (assetJson.id === '0000000000000000') {
+    // asset invalid - can happen if e.g. images got renamed/removed
+    asset = _('.asset').create().css({
+      backgroundImage: `url('api/data/games/${getGame().name}/invalid.svg')`,
+      backgroundColor: '#40bfbf'
+    })
+  } else {
+    asset = _('.asset').create().css({
+      backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`,
+      backgroundColor: assetJson.type === 'overlay' ? 'transparent' : `#${assetJson.bg}`
+    })
+  }
+
+  const node = _(`.piece.${assetJson.type} > .box > .border`).create(asset)
 
   // set default metadata from asset
   node.data({
@@ -390,6 +434,7 @@ export function assetToNode (assetJson, side = 0) {
     side: side,
     sides: assetJson.assets.length,
     r: 0,
+    no: 0,
     bg: assetJson.bg,
     color: 0
   })
@@ -418,7 +463,7 @@ export function popupPiece (id) {
   popup.innerHTML = `
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
-    <a class="popup-menu flip" href="#">${iconFlip}Flip</a>
+    <a class="popup-menu flip ${piece.dataset.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
@@ -481,10 +526,14 @@ export function popupPiece (id) {
  * @param {Object} game Game data object.
  */
 function setupGame (game) {
-  _('body').innerHTML = `
+  _('body').remove('.page-boxed').innerHTML = `
     <div id="game" class="game is-fullscreen is-noselect">
       <div class="menu">
         <div>
+          <div class="menu-brand is-content">
+            <button id="btn-s" class="btn-icon" title="Game settings [s]"><img src="icon.svg"></button>
+          </div>
+
           <div>
             <button id="btn-token" class="btn-icon" title="Toggle tokens [1]">${iconToken}</button>
 
@@ -516,7 +565,7 @@ function setupGame (game) {
         <div>
           <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
 
-          <a id="btn-s" class="btn-icon" title="Download game snapshot" href='./api/games/${game.name}/snapshot/'>${iconDownload}</a>
+          <a id="btn-snap" class="btn-icon" title="Download game snapshot" href='./api/games/${game.name}/snapshot/'>${iconDownload}</a>
 
           <button id="btn-q" class="btn-icon" title="Leave game">${iconQuit}</button>
         </div>
@@ -561,6 +610,7 @@ function setupGame (game) {
   _('#btn-t').on('click', () => toTopSelected())
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())
+  _('#btn-s').on('click', () => settings())
   _('#btn-del').on('click', () => deleteSelected())
 
   // setup remaining menu
@@ -622,6 +672,7 @@ function updateNode (node, piece) {
     y: piece.y ?? 0,
     z: piece.z ?? 0,
     r: piece.r ?? 0,
+    no: piece.no ?? 0,
     color: piece.color ?? 0,
     side: clamp(0, piece.side ?? 0, piece.sides - 1),
     label: piece.label ?? ''

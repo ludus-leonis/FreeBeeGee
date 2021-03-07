@@ -31,7 +31,10 @@
 }
 
 .is-hidden {
-  display: none;
+  height: 1px;
+  opacity: 0;
+  position: absolute;
+  width: 1px;
 }
 
 .is-hidden + *,

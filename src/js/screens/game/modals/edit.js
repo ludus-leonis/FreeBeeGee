@@ -61,16 +61,33 @@ export function modalEdit (piece) {
             <label for="piece-side">Side</label>
             <select id="piece-side" name="piece-side"></select>
           </div>
-          <div class="col-12">
+          <div class="col-6">
             <label for="piece-color">Color (Border)</label>
             <select id="piece-color" name="piece-color"></select>
+          </div>
+          <div class="col-6">
+            <label for="piece-no">Letter</label>
+            <select id="piece-no" name="piece-no"></select>
           </div>
         </div>
       </form>
     `
-
     // label
     _('#piece-label').value = piece.label
+
+    // piece number
+    const pieceNo = _('#piece-no')
+    const option = _('option').create('none')
+    option.value = 0
+    if (piece.no === 0) option.selected = true
+    pieceNo.add(option)
+    for (let w = 1; w <= 26; w++) {
+      const letter = String.fromCharCode(64 + w)
+      const option = _('option').create(letter)
+      option.value = w
+      if (w === piece.no) option.selected = true
+      pieceNo.add(option)
+    }
 
     // width
     const pieceW = _('#piece-w')
@@ -173,6 +190,11 @@ function modalOk () {
 
   value = Number(_('#piece-color').value)
   if (value !== piece.color) updates.color = value
+
+  value = Number(_('#piece-no').value)
+  if (value !== piece.no) updates.no = value
+
+  console.log(piece)
 
   statePieceEdit(piece.id, updates)
   getModal().hide()

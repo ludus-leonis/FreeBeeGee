@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="256" src="docs/FreeBeeGee-logo.png">
+  <img width="256" src="docs/FreeBeeGee-logo.svg">
 </p>
 
 # FreeBeeGee
@@ -27,22 +27,20 @@ Visit FreeBeeGee's official [Homepage here](https://freebeegee.org/).
 
 **Note:** This is still an early/development version. A few rather major features are still missing, limiting it's current usefullness:
 
-* No asset upload yet. You can't add images/tiles/pieces right now and the default library is still quite limited.
-* You can download game snapshots - but can't upload them again. A sysadmin would have to do that via scp/sftp.
+* No direct asset upload yet. You can't add images/tiles/pieces via the web-UI, only by adding them to game snapshots (zips).
 * No per-game passwords yet. Anyone who knows a game's name can join. That is partly by design, but it would be nice to have that option.
 * You can attach (text)labels to tokens, but no fancy state-icons, HP counter etc. - yet.
-* Limited testing on Safari.
 
 The good news is: You can still use FreeBeeGee today to play! Missing features will arrive sooner or later. See the [roadmap](docs/roadmap.md) for details.
 
 ## Screenshots
 
-<img src="docs/FreeBeeGee-screenshot-1.jpg" width="320px">
-<img src="docs/FreeBeeGee-screenshot-2.jpg" width="320px">
 <img src="docs/FreeBeeGee-screenshot-3.jpg" width="320px">
+<img src="docs/FreeBeeGee-screenshot-6.jpg" width="320px">
 <img src="docs/FreeBeeGee-screenshot-4.jpg" width="320px">
 <img src="docs/FreeBeeGee-screenshot-5.jpg" width="320px">
-<img src="docs/FreeBeeGee-screenshot-6.jpg" width="320px">
+<img src="docs/FreeBeeGee-screenshot-1.jpg" width="320px">
+<img src="docs/FreeBeeGee-screenshot-2.jpg" width="320px">
 
 ## What FreeBeeGee is not
 

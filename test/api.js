@@ -40,14 +40,40 @@ chai
  * GET an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
  * specific tests.
  *
- * @param path Server within the api/ folder.
+ * @param path Function to return a path (possibly with dynamic ID) during runtime.
  * @param payloadTests Callback function. Will recieve the parsed payload for
  *                     further checking.
  */
-function testJsonGet (path, payloadTests, status = 200) {
-  it(`GET ${API_URL}${path}`, function (done) {
+function testJsonGet (path, payloadTests, status = 200, forward = null) {
+  it(`GET ${API_URL}${path()}`, function (done) {
     chai.request(API_URL)
-      .get(path)
+      .get(path())
+      .end(function (err, res) {
+        expect(err).to.be.null
+        expect(res).to.have.status(status)
+        expect(res).to.be.json
+        expect(res.body).to.be.not.null
+        payloadTests(res.body, forward)
+        done()
+      })
+  })
+}
+
+/**
+ * POST an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
+ * specific tests.
+ *
+ * @param path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param payload Function to return (possibly dynamic) object to send as JSON.
+ * @param payloadTests Callback function. Will recieve the parsed payload for
+ *                     further checking.
+ */
+function testJsonPost (path, payload, payloadTests, status = 200) {
+  it(`POST ${API_URL}${path()}`, function (done) {
+    chai.request(API_URL)
+      .post(path())
+      .set('content-type', 'application/json')
+      .send(payload())
       .end(function (err, res) {
         expect(err).to.be.null
         expect(res).to.have.status(status)
@@ -63,17 +89,17 @@ function testJsonGet (path, payloadTests, status = 200) {
  * POST an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
  * specific tests.
  *
- * @param path Server within the api/ folder.
- * @param payload Javascript object to send as JSON.
+ * @param path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param payload Function to return (possibly dynamic) object to send as JSON.
  * @param payloadTests Callback function. Will recieve the parsed payload for
  *                     further checking.
  */
-function testJsonPost (path, payload, payloadTests, status = 200) {
-  it(`POST ${API_URL}${path}`, function (done) {
+function testJsonPut (path, payload, payloadTests, status = 200) {
+  it(`PUT ${API_URL}${path()}`, function (done) {
     chai.request(API_URL)
-      .post(path)
+      .put(path())
       .set('content-type', 'application/json')
-      .send(payload)
+      .send(payload())
       .end(function (err, res) {
         expect(err).to.be.null
         expect(res).to.have.status(status)
@@ -85,62 +111,61 @@ function testJsonPost (path, payload, payloadTests, status = 200) {
   })
 }
 
-// /**
-//  * POST an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
-//  * specific tests.
-//  *
-//  * @param path Server within the api/ folder.
-//  * @param payload Javascript object to send as JSON.
-//  * @param payloadTests Callback function. Will recieve the parsed payload for
-//  *                     further checking.
-//  */
-// function testJsonPut (path, payload, payloadTests, status = 200) {
-//   it(`PUT ${API_URL}${path}`, function (done) {
-//     chai.request(API_URL)
-//       .put(path)
-//       .set('content-type', 'application/json')
-//       .send(payload)
-//       .end(function (err, res) {
-//         expect(err).to.be.null
-//         expect(res).to.have.status(status)
-//         expect(res).to.be.json
-//         expect(res.body).to.be.not.null
-//         payloadTests(res.body)
-//         done()
-//       })
-//   })
-// }
+/**
+ * PATCH an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
+ * specific tests.
+ *
+ * @param path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param payload Function to return (possibly dynamic) object to send as JSON.
+ * @param payloadTests Callback function. Will recieve the parsed payload for
+ *                     further checking.
+ */
+function testJsonPatch (path, payload, payloadTests, status = 200) {
+  it(`PUT ${API_URL}${path()}`, function (done) {
+    chai.request(API_URL)
+      .patch(path())
+      .set('content-type', 'application/json')
+      .send(payload())
+      .end(function (err, res) {
+        expect(err).to.be.null
+        expect(res).to.have.status(status)
+        expect(res).to.be.json
+        expect(res.body).to.be.not.null
+        payloadTests(res.body)
+        done()
+      })
+  })
+}
 
-// /**
-//  * PATCH an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
-//  * specific tests.
-//  *
-//  * @param path Server within the api/ folder.
-//  * @param payload Javascript object to send as JSON.
-//  * @param payloadTests Callback function. Will recieve the parsed payload for
-//  *                     further checking.
-//  */
-// function testJsonPatch (path, payload, payloadTests, status = 200) {
-//   it(`PUT ${API_URL}${path}`, function (done) {
-//     chai.request(API_URL)
-//       .patch(path)
-//       .set('content-type', 'application/json')
-//       .send(payload)
-//       .end(function (err, res) {
-//         expect(err).to.be.null
-//         expect(res).to.have.status(status)
-//         expect(res).to.be.json
-//         expect(res.body).to.be.not.null
-//         payloadTests(res.body)
-//         done()
-//       })
-//   })
-// }
+/**
+ * DELETE an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
+ * specific tests.
+ *
+ * @param path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param payloadTests Callback function. Will recieve the parsed payload for
+ *                     further checking.
+ */
+function testJsonDelete (path, status = 204) {
+  it(`PUT ${API_URL}${path()}`, function (done) {
+    chai.request(API_URL)
+      .delete(path())
+      .set('content-type', 'application/json')
+      .end(function (err, res) {
+        expect(err).to.be.null
+        expect(res).to.have.status(status)
+        expect(res.body).to.be.not.null
+        expect(res.body).to.be.eql({}) // API returns empty json objects as "no content"
+        done()
+      })
+  })
+}
 
 // --- the actual tests --------------------------------------------------------
 
+let data = null
+
 describe('API Server-Info', function () {
-  testJsonGet('/', body => {
+  testJsonGet(() => '/', body => {
     expect(body).to.be.an('object')
     expect(body.createPassword).to.be.eql(true)
     expect(body.openSlots).to.be.eql(16)
@@ -150,7 +175,7 @@ describe('API Server-Info', function () {
 })
 
 describe('API Templates', function () {
-  testJsonGet('/templates/', body => {
+  testJsonGet(() => '/templates/', body => {
     expect(body).to.be.an('array')
     expect(body).to.include('RPG')
     expect(body).to.include('Classic')
@@ -159,21 +184,23 @@ describe('API Templates', function () {
 
 describe('CRUD game', function () {
   // get game - should not be there yet
-  testJsonGet('/games/crudGame/', body => {
+  testJsonGet(() => '/games/crudGame/', body => {
     expect(body).to.be.an('object')
-    expect(body._errors).to.include('not found: crudGame')
+    expect(body._messages).to.include('not found: crudGame')
   }, 404)
 
   // create game
-  testJsonPost('/games/', {
-    name: 'crudGame',
-    template: 'RPG',
-    auth: 'apitests'
+  testJsonPost(() => '/games/', () => {
+    return {
+      name: 'crudGame',
+      template: 'RPG',
+      auth: 'apitests'
+    }
   }, body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
     expect(body.name).to.be.eql('crudGame')
-    expect(body.engine).to.be.eql(p.version)
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.tables).to.be.an('array')
     expect(body.tables[0].name).to.be.eql('Main')
     expect(body.tables[0].background).to.be.an('object')
@@ -192,16 +219,16 @@ describe('CRUD game', function () {
     expect(body.tables[0].template.width).to.be.eql(48)
     expect(body.tables[0].template.height).to.be.eql(32)
     expect(body.tables[0].template.version).to.be.eql(p.version)
-    expect(body.tables[0].template.engine).to.be.eql('^' + p.version)
+    expect(body.tables[0].template.engine).to.be.eql('^' + p.versionEngine)
     expect(body.tables[0].template.colors).to.be.an('array')
   }, 201)
 
   // read game
-  testJsonGet('/games/crudGame/', body => {
+  testJsonGet(() => '/games/crudGame/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
     expect(body.name).to.be.eql('crudGame')
-    expect(body.engine).to.be.eql(p.version)
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.tables).to.be.an('array')
     expect(body.tables[0].name).to.be.eql('Main')
     expect(body.tables[0].background).to.be.an('object')
@@ -220,7 +247,7 @@ describe('CRUD game', function () {
     expect(body.tables[0].template.width).to.be.eql(48)
     expect(body.tables[0].template.height).to.be.eql(32)
     expect(body.tables[0].template.version).to.be.eql(p.version)
-    expect(body.tables[0].template.engine).to.be.eql('^' + p.version)
+    expect(body.tables[0].template.engine).to.be.eql('^' + p.versionEngine)
     expect(body.tables[0].template.colors).to.be.an('array')
   }, 200)
 
@@ -231,29 +258,75 @@ describe('CRUD game', function () {
   // [not possible yet]
 })
 
+describe('CRUD state', function () {
+  // create game
+  testJsonPost(() => '/games/', () => {
+    return {
+      name: 'crudState',
+      template: 'RPG',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.name).to.be.eql('crudState')
+  }, 201)
+
+  // get state
+  testJsonGet(() => '/games/crudState/state/', body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.gt(5)
+    data = body
+  })
+
+  // get initial state
+  testJsonGet(() => '/games/crudState/state/save/0/', save => {
+    expect(save).to.be.eql(data)
+    data = save
+  })
+
+  // reset game
+  testJsonPut(() => '/games/crudState/state/', () => [], body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eq(0)
+  })
+
+  // get state again - still empty
+  testJsonGet(() => '/games/crudState/state/', body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eq(0)
+  })
+
+  // restore save
+})
+
 describe('CRUD piece', function () {
   // create game
-  testJsonPost('/games/', {
-    name: 'crudPiece',
-    template: 'RPG',
-    auth: 'apitests'
+  testJsonPost(() => '/games/', () => {
+    return {
+      name: 'crudPiece',
+      template: 'RPG',
+      auth: 'apitests'
+    }
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql('crudPiece')
   }, 201)
 
   // create piece
-  testJsonPost('/games/crudPiece/pieces/', { // add letter-token
-    layer: 'token',
-    asset: 'dd74249373740cdf',
-    width: 1,
-    height: 1,
-    x: 18,
-    y: 8,
-    z: 10,
-    r: 0,
-    side: 0,
-    color: 1
+  testJsonPost(() => '/games/crudPiece/pieces/', () => {
+    return { // add letter-token
+      layer: 'token',
+      asset: 'dd74249373740cdf',
+      width: 1,
+      height: 1,
+      x: 18,
+      y: 8,
+      z: 10,
+      r: 0,
+      no: 2,
+      side: 0,
+      color: 1
+    }
   }, body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
@@ -265,28 +338,118 @@ describe('CRUD piece', function () {
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
     expect(body.r).to.be.eql(0)
+    expect(body.no).to.be.eql(2)
     expect(body.side).to.be.eql(0)
     expect(body.color).to.be.eql(1)
+    data = body
   }, 201)
 
-  // get piece - done via get state - new item is always first
-  testJsonGet('/games/crudPiece/state/', body => {
-    expect(body).to.be.an('array')
-    expect(body[0].layer).to.be.eql('token')
-    expect(body[0].asset).to.be.eql('dd74249373740cdf')
-    expect(body[0].width).to.be.eql(1)
-    expect(body[0].height).to.be.eql(1)
-    expect(body[0].x).to.be.eql(18)
-    expect(body[0].y).to.be.eql(8)
-    expect(body[0].z).to.be.eql(10)
-    expect(body[0].r).to.be.eql(0)
-    expect(body[0].side).to.be.eql(0)
-    expect(body[0].color).to.be.eql(1)
+  // get & compare piece
+  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql(data.id)
+    expect(body.layer).to.be.eql('token')
+    expect(body.asset).to.be.eql('dd74249373740cdf')
+    expect(body.width).to.be.eql(1)
+    expect(body.height).to.be.eql(1)
+    expect(body.x).to.be.eql(18)
+    expect(body.y).to.be.eql(8)
+    expect(body.z).to.be.eql(10)
+    expect(body.r).to.be.eql(0)
+    expect(body.no).to.be.eql(2)
+    expect(body.side).to.be.eql(0)
+    expect(body.color).to.be.eql(1)
   })
 
-  // update game
-  // [no test yet]
+  // update piece (patch)
+  testJsonPatch(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
+    return {
+      x: 19
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.match(/^[0-9a-f]+$/)
+    expect(body.layer).to.be.eql('token')
+    expect(body.asset).to.be.eql('dd74249373740cdf')
+    expect(body.width).to.be.eql(1)
+    expect(body.height).to.be.eql(1)
+    expect(body.x).to.be.eql(19)
+    expect(body.y).to.be.eql(8)
+    expect(body.z).to.be.eql(10)
+    expect(body.r).to.be.eql(0)
+    expect(body.no).to.be.eql(2)
+    expect(body.side).to.be.eql(0)
+    expect(body.color).to.be.eql(1)
+  })
 
-  // delete game
-  // [no test yet]
+  // get & compare piece
+  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql(data.id)
+    expect(body.layer).to.be.eql('token')
+    expect(body.asset).to.be.eql('dd74249373740cdf')
+    expect(body.width).to.be.eql(1)
+    expect(body.height).to.be.eql(1)
+    expect(body.x).to.be.eql(19)
+    expect(body.y).to.be.eql(8)
+    expect(body.z).to.be.eql(10)
+    expect(body.r).to.be.eql(0)
+    expect(body.no).to.be.eql(2)
+    expect(body.side).to.be.eql(0)
+    expect(body.color).to.be.eql(1)
+  })
+
+  // update/replace piece (put)
+  testJsonPut(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
+    return {
+      layer: 'tile',
+      asset: '0d74249373740cdf',
+      width: 2,
+      height: 3,
+      x: 17,
+      y: 7,
+      z: 27,
+      r: 90,
+      no: 5,
+      side: 3,
+      color: 2
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql(data.id)
+    expect(body.layer).to.be.eql('tile')
+    expect(body.asset).to.be.eql('0d74249373740cdf')
+    expect(body.width).to.be.eql(2)
+    expect(body.height).to.be.eql(3)
+    expect(body.x).to.be.eql(17)
+    expect(body.y).to.be.eql(7)
+    expect(body.z).to.be.eql(27)
+    expect(body.r).to.be.eql(90)
+    expect(body.no).to.be.eql(5)
+    expect(body.side).to.be.eql(3)
+    expect(body.color).to.be.eql(2)
+  })
+
+  // get & compare piece
+  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql(data.id)
+    expect(body.layer).to.be.eql('tile')
+    expect(body.asset).to.be.eql('0d74249373740cdf')
+    expect(body.width).to.be.eql(2)
+    expect(body.height).to.be.eql(3)
+    expect(body.x).to.be.eql(17)
+    expect(body.y).to.be.eql(7)
+    expect(body.z).to.be.eql(27)
+    expect(body.r).to.be.eql(90)
+    expect(body.no).to.be.eql(5)
+    expect(body.side).to.be.eql(3)
+    expect(body.color).to.be.eql(2)
+  })
+
+  // delete piece
+  testJsonDelete(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/')
+
+  // get - should be gone
+  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {}, 404)
 })

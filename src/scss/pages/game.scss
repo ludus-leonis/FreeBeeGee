@@ -48,13 +48,22 @@
     width: $menu-icon-size;
     z-index: 100;
 
+    .menu-brand {
+      background-color: $color-gray-85;
+      margin-bottom: $spacing-micro;
+
+      .btn-icon {
+        padding: $spacing-micro;
+      }
+    }
+
     .btn-icon {
       background-color: transparent;
       border: 0;
       border-radius: 0;
       color: $color-white-100;
       margin: 0;
-      padding: .5em .25em;
+      padding: $spacing-tiny $spacing-micro;
 
       &.active {
         color: $color-black-100;
@@ -66,10 +75,11 @@
       }
     }
 
+    .btn-icon.disabled,
     .disabled > .btn-icon {
-      opacity: .25;
+      color: $color-white-25a;
+      cursor: not-allowed;
     }
-
 
     > div {
       text-align: center;

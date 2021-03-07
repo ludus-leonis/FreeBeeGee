@@ -26,10 +26,12 @@
 $form-field-border: px(2) solid $color-gray-40; // $color-gray-75;
 
 $form-color-disabled: $color-gray-50;
+$form-color-placeholder: $color-gray-25;
 
 %form-box {
   @extend %p-medium;
 
+  appearance: none;
   background-color: $color-white-100;
   border: 0;
   border-bottom: $form-field-border;
@@ -66,17 +68,22 @@ label {
   }
 }
 
+.is-input,
+%is-input,
 select,
 textarea,
 [type='password'],
 [type='email'],
-[type='text'] {
+[type='text'],
+[type='checkbox'] {
   @extend %form-box;
   @extend %form-typography;
   @include focus-border($color-primary);
 
+  &.placeholder,
   &::placeholder {
-    opacity: .25;
+    color: $form-color-placeholder;
+    // opacity: .25;
   }
 
   &.form-control-plaintext {
@@ -111,6 +118,37 @@ select {
   background-position: right .5rem center;
   background-repeat: no-repeat;
   background-size: 1rem;
+}
+
+[type='checkbox'] {
+  border: $form-field-border;
+  height: 1em;
+  margin-right: $spacing-tiny;
+  padding: 0;
+  position: relative;
+  top: .15em;
+  width: 1em;
+
+  &:checked {
+    background-image: url('img/checked.svg');
+  }
+
+  + label {
+    display: inline-block;
+  }
+}
+
+.upload-group {
+  margin-top: 0;
+
+  div {
+    color: $color-bw-fg;
+    cursor: pointer;
+    letter-spacing: 0;
+    overflow: hidden;
+    text-transform: none;
+    white-space: nowrap;
+  }
 }
 
 form {

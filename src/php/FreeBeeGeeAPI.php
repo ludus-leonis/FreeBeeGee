@@ -28,7 +28,10 @@ namespace com\ludusleonis\freebeegee;
 class FreeBeeGeeAPI
 {
     private $version = '$VERSION$';
+    private $engine = '$ENGINE$';
     private $api = null; // JSONRestAPI instance
+    private $minTableGridSize = 16;
+    private $maxTableGridSize = 128;
 
     /**
      * Constructor - setup our routes.
@@ -80,6 +83,20 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['gid']);
         });
 
+        $this->api->register('GET', '/games/:gid/state/save/0/?', function ($fbg, $data) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->getStateSave($data['gid'], 0);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
+        });
+
+        $this->api->register('GET', '/games/:gid/pieces/:pid/?', function ($fbg, $data) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->getPiece($data['gid'], $data['pid']);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
+        });
+
         // --- POST ---
 
         $this->api->register('POST', '/games/:gid/pieces/?', function ($fbg, $data, $payload) {
@@ -90,7 +107,19 @@ class FreeBeeGeeAPI
         });
 
         $this->api->register('POST', '/games/', function ($fbg, $data, $payload) {
-            $fbg->createGame($payload);
+            $formData = $this->api->multipartToJson();
+            if ($formData) { // client sent us multipart
+                $fbg->createGame($formData);
+            } else { // client sent us regular json
+                $fbg->createGame($payload);
+            }
+        });
+
+        $this->api->register('POST', '/games/:gid/snapshot/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->postSnapshot($data['gid'], $payload);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
         });
 
         // --- PUT ---
@@ -98,6 +127,13 @@ class FreeBeeGeeAPI
         $this->api->register('PUT', '/games/:gid/pieces/:pid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getGameFolder($data['gid']))) {
                 $fbg->updatePiece($data['gid'], $data['pid'], $payload);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
+        });
+
+        $this->api->register('PUT', '/games/:gid/state/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->replaceState($data['gid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['gid']);
         });
@@ -168,6 +204,7 @@ class FreeBeeGeeAPI
     {
         $config = json_decode(file_get_contents($this->api->getDataDir() . 'server.json'));
         $config->version = '$VERSION$';
+        $config->engine = '$ENGINE$';
         return $config;
     }
 
@@ -238,23 +275,186 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Install a game template into a game.
+     * Validate a game template / snapshot.
+     *
+     * Does a few sanity checks to see if everything is there we need. Will
+     * termiante execution and send a 400 in case of invalid zips.
+     *
+     * @param string $zipPath Full path to the zip to check.
+     */
+    private function validateSnapshot(
+        string $zipPath
+    ) {
+        $size = 0;
+        $mandatory = [
+            'LICENSE.md' => 'LICENSE.md',
+            'state.json' => 'state.json',
+            'template.json' => 'template.json',
+        ];
+        $optional = [
+            'assets/' => 'assets/',
+            'assets/tile/' => 'assets/tile/',
+            'assets/token/' => 'assets/token/',
+            'assets/overlay/' => 'assets/overlay/',
+        ];
+        $issues = [];
+        $maxSize = $this->getServerConfig()->maxGameSizeMB;
+
+        // basic tests
+        if (filesize($zipPath) > $maxSize * 1024 * 1024) {
+            // if the zip itself is too large, then so probably is its content
+            $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
+        }
+
+        // more detailed tests
+        $zip = new \ZipArchive();
+        if (!$zip->open($zipPath)) {
+            return ['invalid zip'];
+        }
+        $assetCount = 0;
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            $entry = $zip->statIndex($i);
+
+            // filename checks
+            $entryName = $entry['name'];
+            if (array_key_exists($entryName, $mandatory)) {
+                unset($mandatory[$entryName]);
+            } elseif (array_key_exists($entryName, $optional)) {
+                // just ignore
+            } else {
+                if (preg_match('/^assets\/(overlay|tile|token)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/', $entryName)) {
+                    $assetCount++;
+                } else {
+                    $issues[] = 'unexpected ' . $entryName;
+                }
+            }
+            // filesize checks
+            $entrySize = $entry['size'];
+            if ($entrySize > 512 * 1024) {
+                $issues[] = $entryName . ' exceeded 512kB';
+            }
+            $size += $entrySize;
+        }
+        if ($assetCount <= 0) {
+            $issues[] = 'no assets found in snapshot';
+        }
+        foreach ($mandatory as $missing) {
+            $issues[] = 'missing ' . $missing;
+        }
+        if ($size > $maxSize * 1024 * 1024) {
+            $issues[] = 'total size exceeded server maximum of ' . $maxSize . 'MB';
+            $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
+        }
+
+        // report any findings so far back
+        if ($issues !== []) {
+            $this->api->sendError(400, 'validating snapshot failed', 'ZIP_INVALID', $issues);
+        }
+
+        // at this point the zip is formally ok, but now we look into individual files
+        $this->validateTemplateJson(file_get_contents('zip://' . $zipPath . '#template.json'));
+        $this->validateStateJson(file_get_contents('zip://' . $zipPath . '#state.json'));
+    }
+
+    /**
+     * Validate a template.json.
+     *
+     * Will termiante execution and send a 400 in case of invalid JSON.
+     *
+     * @param string $json JSON string.
+     */
+    private function validateTemplateJson(
+        string $json
+    ) {
+        $msg = 'validating template.json failed';
+        $template = json_decode($json);
+
+        // check the basics and abort on error
+        if ($template === null) {
+            $this->api->sendError(400, $msg, 'TEMPLATE_JSON_INVALID');
+        }
+        if (!property_exists($template, 'engine') || !$this->api->semverSatisfies($this->engine, $template->engine)) {
+            $this->api->sendError(400, $msg, 'TEMPLATE_JSON_INVALID_ENGINE', [$template->engine, $this->engine]);
+        }
+
+        // check for more stuff
+        $this->api->assertHasProperties(
+            'template.json',
+            $template,
+            ['type', 'gridSize', 'version', 'engine', 'width', 'height', 'colors']
+        );
+        foreach ($template as $property => $value) {
+            switch ($property) {
+                case 'engine':
+                    break; // was checked above
+                case 'type':
+                    $this->api->assertString('type', $value, 'grid-square');
+                    break;
+                case 'gridSize':
+                    $this->api->assertInteger('gridSize', $value, 64, 64);
+                    break;
+                case 'version':
+                    $this->api->assertSemver('version', $value);
+                    break;
+                case 'width':
+                    $this->api->assertInteger('width', $value, $this->minTableGridSize, $this->maxTableGridSize);
+                    break;
+                case 'height':
+                    $this->api->assertInteger('height', $value, $this->minTableGridSize, $this->maxTableGridSize);
+                    break;
+                case 'colors':
+                    $this->api->assertObjectArray('colors', $value, 1);
+                    break;
+                default:
+                    $this->api->sendError(400, 'invalid template.json: ' . $property . ' unkown');
+            }
+        }
+    }
+
+    /**
+     * Validate a state.json.
+     *
+     * Will termiante execution and send a 400 in case of invalid JSON.
+     *
+     * @param string $json JSON string.
+     */
+    private function validateStateJson(
+        string $json
+    ) {
+        $msg = 'validating template.json failed';
+        $state = json_decode($json);
+        $validated = [];
+
+        // check the basics and abort on error
+        if ($state === null) {
+            $this->api->sendError(400, $msg, 'STATE_JSON_INVALID');
+        }
+
+        // check for more stuff
+        $this->api->assertObjectArray('state.json', $state, 0);
+        foreach ($state as $piece) {
+            $validated[] = $this->validatePiece($piece, true);
+        }
+
+        return $validated;
+    }
+
+    /**
+     * Install a game template/snapshot into a game.
      *
      * Will unpack the template .zip into the game folder. Terminates execution
      * on errors.
      *
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
-     * @param string $template Name of the template, e.g. 'default' for default.zip
+     * @param string $zipPath Path to snapshot/template zip to install.
      * @return array The library Json for this template.
      */
-    private function installTemplate(
+    private function installSnapshot(
         string $gameName,
-        string $template
+        string $zipPath
     ): array {
-        $zipPath = $this->getAppFolder() . 'templates/' . $template . '.zip';
-        $zip = new \ZipArchive($zipPath);
-        $res = $zip->open($this->getAppFolder() . 'templates/' . $template . '.zip');
-        if ($res === true) {
+        $zip = new \ZipArchive();
+        if ($zip->open($zipPath) === true) {
             $zip->extractTo($this->getGameFolder($gameName));
             $zip->close();
             return $this->generateLibraryJson($gameName);
@@ -272,16 +472,18 @@ class FreeBeeGeeAPI
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
      * @param object $piece The parsed & validated piece to update.
      * @param bool $create If true, this piece must not exist.
+     * @return object The updated piece.
      */
-    private function updateState(
+    private function updatePieceState(
         string $gameName,
         object $piece,
         bool $create
-    ) {
+    ): object {
         $folder = $this->getGameFolder($gameName);
         $lock = $this->api->waitForWriteLock($folder . '.flock');
 
         $oldState = json_decode(file_get_contents($folder . 'state.json'));
+        $result = $piece;
 
         // rewrite state, starting with new item
         // only latest (first) state item per ID matters
@@ -312,6 +514,7 @@ class FreeBeeGeeAPI
                             continue;
                         }
                         $stateItem = $this->merge($stateItem, $piece);
+                        $result = $stateItem;
                     }
                     $newState[] = $stateItem;
                     $ids[] = $stateItem->id;
@@ -324,6 +527,8 @@ class FreeBeeGeeAPI
         }
         $this->writeAsJsonAndDigest($folder . 'state.json', $newState);
         $this->api->unlockLock($lock);
+
+        return $result;
     }
 
     /**
@@ -344,18 +549,21 @@ class FreeBeeGeeAPI
             // name, size and color
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
+            $asset->side = (int)$matches[4];
             $asset->bg = $matches[5];
             $asset->alias = $matches[1];
         } elseif (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
             // name and size
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
+            $asset->side = (int)$matches[4];
             $asset->bg = '808080';
             $asset->alias = $matches[1];
         } elseif (preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
             // name only
             $asset->width = 1;
             $asset->height = 1;
+            $asset->side = 1;
             $asset->bg = '808080';
             $asset->alias = $matches[1];
         }
@@ -383,9 +591,11 @@ class FreeBeeGeeAPI
                 $asset = $this->fileToAsset(basename($filename));
                 $asset->type = $type;
 
-                // this ID only has to be unique within the server, but should be reproducable
+                // this ID only has to be unique within the game, but should be reproducable
                 // therefore we use a fast hash and even only use parts of it
-                $asset->id = substr(hash('md5', $type . '/' . basename($filename)), -16);
+                $idBase = $type . '/' . $asset->alias . '.' . $asset->width . 'x' . $asset->height . 'x' . $asset->side;
+                $asset->id = substr(hash('md5', $idBase), -16);
+                unset($asset->side); // we don't keep the side in the json data
 
                 if (
                     $lastAsset === null
@@ -436,19 +646,34 @@ class FreeBeeGeeAPI
      * @param string $json JSON string from the client.
      * @param boolean $checkMandatory If true, this function will also ensure all
      *                mandatory fields are present.
-     * @return object Validated JSON, convertet to an object.
+     * @return object Validated JSON, converted to an object.
      */
-    private function validatePiece(
+    private function validatePieceJson(
         string $json,
         bool $checkMandatory
     ): object {
-        $incoming = $this->api->assertJson($json);
-        $validated = new \stdClass();
+        $piece = $this->api->assertJson($json);
+        return $this->validatePiece($piece, $checkMandatory);
+    }
 
-        foreach ($incoming as $property => $value) {
+    /**
+     * Sanity check for pieces.
+     *
+     * @param object $piece Full or partial piece.
+     * @param boolean $checkMandatory If true, this function will also ensure all
+     *                mandatory fields are present.
+     * @return object New, validated object.
+     */
+    private function validatePiece(
+        object $piece,
+        bool $checkMandatory
+    ): object {
+        $validated = new \stdClass();
+        foreach ($piece as $property => $value) {
             switch ($property) {
                 case 'id':
-                    break; // we accept but ignore these
+                    $validated->id = $this->api->assertString('id', $value, '^[0-9a-f]{16}$');
+                    break;
                 case 'layer':
                     $validated->layer = $this->api->assertEnum('layer', $value, ['tile', 'token', 'overlay']);
                     break;
@@ -476,6 +701,9 @@ class FreeBeeGeeAPI
                 case 'color':
                     $validated->color = $this->api->assertInteger('color', $value, 0, 7);
                     break;
+                case 'no':
+                    $validated->no = $this->api->assertInteger('no', $value, 0, 26);
+                    break;
                 case 'r':
                     $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
                     break;
@@ -488,11 +716,11 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            foreach (['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color'] as $property) {
-                if (!\property_exists($validated, $property)) {
-                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing');
-                }
-            }
+            $this->api->assertHasProperties(
+                'piece',
+                $validated,
+                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color'] // no
+            );
         }
 
         return $validated;
@@ -513,11 +741,18 @@ class FreeBeeGeeAPI
         $incoming = $this->api->assertJson($json);
         $validated = new \stdClass();
 
+        if ($checkMandatory) {
+            $this->api->assertHasProperties('game', $incoming, ['name']);
+        }
+
         foreach ($incoming as $property => $value) {
             switch ($property) {
                 case 'id':
                 case 'auth':
                     break; // we accept but ignore these
+                case '_files':
+                    $validated->_files = $value;
+                    break;
                 case 'name':
                     $validated->name = $this->api->assertString('name', $value, '[A-Za-z0-9]{8,48}');
                     break;
@@ -526,14 +761,6 @@ class FreeBeeGeeAPI
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
-            }
-        }
-
-        if ($checkMandatory) {
-            foreach (['name', 'template'] as $property) {
-                if (!\property_exists($validated, $property)) {
-                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' missing');
-                }
             }
         }
 
@@ -558,7 +785,9 @@ class FreeBeeGeeAPI
         // assemble json
         $info = new \stdClass();
         $info->version = $server->version;
+        $info->engine = $server->engine;
         $info->ttl = $server->ttl;
+        $info->snapshotUploads = $server->snapshotUploads;
         $info->openSlots = $this->getOpenSlots($server);
         if ($server->passwordCreate ?? '' !== '') {
             $info->createPassword = true;
@@ -613,15 +842,31 @@ class FreeBeeGeeAPI
         // sanitize item by recreating it
         $validated = $this->validateGame($payload, true);
 
-        if (!is_file($this->getAppFolder() . 'templates/' . $validated->template . '.zip')) {
-            $this->api->sendError(400, 'template ' . $validated->template . ' not available');
+        // we need either a template name or an uploaded snapshot
+        if (
+            $validated->template && $validated->_files
+            || (!$validated->template && !$validated->_files )
+        ) {
+            $this->api->sendError(400, 'you need to either specify a template or upload a snapshot');
         }
+        if ($validated->_files && !$server->snapshotUploads) {
+            $this->api->sendError(400, 'snapshot upload is not enabled on this server');
+        }
+
+        // doublecheck template / snapshot
+        $zipPath = ($validated->_files ?? null)
+            ? ($_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid')
+            : ($this->getAppFolder() . 'templates/' . $validated->template . '.zip');
+        if (!is_file($zipPath)) {
+            $this->api->sendError(400, 'template not available');
+        }
+        $this->validateSnapshot($zipPath);
 
         // create a new game
         $newGame = new \stdClass();
         $newGame->id = $this->generateId();
         $newGame->name = $validated->name;
-        $newGame->engine = $this->version;
+        $newGame->engine = $this->engine;
         $newGame->tables = [new \stdClass()];
 
         $table = $newGame->tables[0];
@@ -638,10 +883,21 @@ class FreeBeeGeeAPI
             }
 
             $lock = $this->api->waitForWriteLock($folder . '.flock');
-            $table->library = $this->installTemplate($newGame->name, $validated->template);
+            $table->library = $this->installSnapshot($newGame->name, $zipPath);
+
+            // keep original state for game resets
+            file_put_contents($folder . 'state-0.json', file_get_contents($folder . 'state.json'));
+
+            // add invalid.svg to game | @codingStandardsIgnoreLine
+            file_put_contents($folder . 'invalid.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.4 25.4" height="96" width="96"><path fill="#40bfbf" d="M0 0h25.4v25.4H0z"/><g fill="#fff" stroke="#fff" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M1.9 1.9l21.6 21.6M23.5 1.9L1.9 23.5" stroke-width="1.1"/></g></svg>');
 
             // add/overrule some template.json infos into the game.json
             $table->template = json_decode(file_get_contents($folder . 'template.json'));
+            if (is_file($folder . 'LICENSE.md')) {
+                $table->credits = file_get_contents($folder . 'LICENSE.md');
+            } else {
+                $table->credits = 'Your game template does not provide license information.';
+            }
             $table->width = $table->template->width * $table->template->gridSize; // specific for 'grid-square'
             $table->height = $table->template->height * $table->template->gridSize; // specific for 'grid-square'
 
@@ -720,20 +976,93 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Get a saved state of the game.
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     * @param int $slot Number between 0 and 9 of save slot, 0 = initial.
+     */
+    public function getStateSave(
+        string $gameName,
+        int $slot
+    ) {
+        if (!is_int($slot) || $slot < 0 || $slot > 9) {
+            $this->api->sendError(404, 'save not found: ' . $gameName . ' / #' . $slot);
+        }
+        $folder = $this->getGameFolder($gameName);
+        if (is_dir($folder)) {
+            $body = $this->api->fileGetContentsLocked(
+                $folder . 'state-' . $slot . '.json',
+                $folder . '.flock'
+            );
+            $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
+        }
+        $this->api->sendError(404, 'not found: ' . $gameName);
+    }
+
+
+    /**
+     * Replace the internal state with a new one.
+     *
+     * Can be used to reset a table or to revert to a save.
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     * @param string $json New state JSON from client.
+     */
+    public function replaceState(
+        string $gameName,
+        string $json
+    ) {
+        $folder = $this->getGameFolder($gameName);
+        $newState = $this->validateStateJson($json);
+
+        $lock = $this->api->waitForWriteLock($folder . '.flock');
+        $this->writeAsJsonAndDigest($folder . 'state.json', $newState);
+        $this->api->unlockLock($lock);
+
+        $this->api->sendReply(200, json_encode($newState));
+    }
+
+    /**
      * Add a new piece to a game.
      *
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
      * @param string $json Full piece JSON from client.
-     * @return type Description.
      */
     public function createPiece(
         string $gameName,
         string $json
     ) {
-        $piece = $this->validatePiece($json, true);
+        $piece = $this->validatePieceJson($json, true);
         $piece->id = $this->generateId();
-        $this->updateState($gameName, $piece, true);
+        $this->updatePieceState($gameName, $piece, true);
         $this->api->sendReply(201, json_encode($piece));
+    }
+
+    /**
+     * Get an individual piece.
+     *
+     * Not very performant, but also not needed very often ;)
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     * @param string $pieceId Id of piece.
+     */
+    public function getPiece(
+        string $gameName,
+        string $pieceId
+    ) {
+        $folder = $this->getGameFolder($gameName);
+        $state = json_decode($this->api->fileGetContentsLocked(
+            $folder . 'state.json',
+            $folder . '.flock'
+        ));
+
+        foreach ($state as $piece) {
+            if ($piece->id === $pieceId) {
+                $this->api->sendReply(200, json_encode($piece));
+            }
+        }
+
+        $this->api->sendError(404, 'not found: piece ' . $pieceId . ' in game ' . $gameName);
     }
 
     /**
@@ -750,10 +1079,10 @@ class FreeBeeGeeAPI
         string $pieceId,
         string $json
     ) {
-        $patch = $this->validatePiece($json, false);
+        $patch = $this->validatePieceJson($json, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $this->updateState($gameName, $patch, false);
-        $this->api->sendReply(200, json_encode($patch));
+        $updatedPiece = $this->updatePieceState($gameName, $patch, false);
+        $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
     /**
@@ -773,7 +1102,7 @@ class FreeBeeGeeAPI
         $piece->layer = 'delete';
         $piece->id = $pieceId;
 
-        $this->updateState($gameName, $piece, false);
+        $this->updatePieceState($gameName, $piece, false);
         $this->api->sendReply(204, '');
     }
 
@@ -802,9 +1131,20 @@ class FreeBeeGeeAPI
                 switch ($relativePath) { // filter those files away
                     case '.flock':
                     case 'snapshot.zip':
+                    case 'invalid.svg':
                     case 'game.json':
                     case 'game.json.digest':
                     case 'state.json.digest':
+                    case 'state-0.json':
+                    case 'state-1.json':
+                    case 'state-2.json':
+                    case 'state-3.json':
+                    case 'state-4.json':
+                    case 'state-5.json':
+                    case 'state-6.json':
+                    case 'state-7.json':
+                    case 'state-8.json':
+                    case 'state-9.json':
                         break; // they don't go into the zip
                     default:
                         $toZip[$relativePath] = $absolutePath; // keep all others
@@ -827,6 +1167,23 @@ class FreeBeeGeeAPI
         header('Content-type: application/zip');
         readfile($zipName);
         unlink($zipName);
+    }
+
+    /**
+     * Install a game snapshot.
+     *
+     * Will unzip the posted payload (a zip) and try to install it as template/
+     * snapshot. This will replace the current table setup.
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     */
+    public function postSnapshot(
+        string $gameName,
+        string $payload
+    ) {
+        $zipPath = $this->getAppFolder() . 'templates/HeroQuest.zip';
+        $this->validateSnapshot($zipPath);
+        $this->api->sendReply(200, "[]");
     }
 
     /**

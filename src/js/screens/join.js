@@ -37,20 +37,20 @@ const gameNameMaxLength = 48
  */
 export function runJoin () {
   createScreen(
-    'Join a game',
+    'Pick a table',
     `
-      <label for="game">Choose game name</label>
+      <label for="game">Table name</label>
       <input id="game" name="game" type="text" placeholder="DustyDish" maxlength="${gameNameMaxLength}" pattern="[a-zA-Z0-9]{8,${gameNameMaxLength}}">
       <p class="p-small spacing-tiny">Min. 8 characters - no spaces or funky letters, please.</p>
 
       <!--label for="user">Your name</label-->
       <input id="user" name="user" type="hidden" placeholder="Jolie Average">
-      <!--p class="p-small spacing-tiny">Will be visible to other players in this game.</p-->
+      <!--p class="p-small spacing-tiny">Will be visible to other players at this table.</p-->
 
-      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Join</a>
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Take me there!</a>
     `,
 
-    `This server deletes games after ${stateGetServerInfo().ttl}h of inactivity.`
+    `This server deletes tables after ${stateGetServerInfo().ttl}h of inactivity.`
   )
 
   const game = _('#game')

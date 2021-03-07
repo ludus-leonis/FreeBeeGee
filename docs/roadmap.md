@@ -2,54 +2,62 @@
 
 Here is a list what might happen next. However, priorities might change.
 
-## v0.4 - Zipping Zebra
+## v0.5 - Random Rabbit
 
-* [ ] option token-number/letter badge within token
-* [ ] upload-zip as template during game create
-* [ ] game version checking
-* [ ] game reset / restart / re-init
+* [ ] randomize side (a.k.a. dice-tokens)
+* [ ] shuffle stack/square
+* [ ] dicetray (separate dice window/pane)
+* [ ] basic dice-assets d4, d6, d8, d10, d12, d20
+* [ ] support for custom dice
+* [ ] delete table
 * [ ] fancier implementation for dynamic poll intervalls
   * [ ] show "you have been inactive" dialog after 10min
   * [ ] decrease poll intervall on mouse/keyboard activity
-  * [ ] let others know via HEAD request
-* [ ] generate average piece color during build
-* [ ] FreeBeeGee icon in top-left corner
-* [ ] show artwork copyright somewhere
 * [ ] template GDRP privacy statement
-* [ ] more API integration tests
-* [ ] update screenshots
+* [ ] pre-release
+  * [ ] update+run unit+integration tests
+  * [ ] update docs
+  * [ ] update CHANGELOG
 
-## v0.5 - Uploading Unicorn
+## v0.6 - Uploading Unicorn
 
+* rename "game" to "table"
+* scroll to center of setup/table when opening new tables
 * upload custom images for tiles & tokens
 * remove default entries from json fieles (e.g. side=0)
-* color.sh: detect dominant piece color instead of average color
-* add more classic game boards: go, backgammon, mills, solitaire
 * hide .../data/... from URLs (via .htaccess)
 
-## v0.6 - Mobile Monkey
+## v0.7 - Mobile Monkey
 
 * better tablet / touch support
-* overlay-grid-on-tile option
 * catch all unhandled warnings/exceptions in PHP API and return 500
 * URL mapping for example.org/roomname -> example.org/#/game/roomname
 * docs how to make game/template `.zip`s
+* update screenshots
 
 ## Backlog (unsorted)
 
 ### rather sooner
 
+* overlay-grid-on-tile option
+* distinct select-token look from outline
+* persist scroll position between page refresh
+* change table size
+* option to force-install templates with invalid versions
+* color.sh: detect dominant piece color instead of average color
+* rightclick on desk -> add piece popup
+* generate average piece color during build
 * multi-select stuff
 * join-passwords
-* randomize side (a.k.a. dice-tokens)
-* shuffle stack/square
+* add more classic game boards: go, backgammon, mills, solitaire
+* "layer not active" hint when dragging nothing
 * I18N
 * show backside/all sides in tile browser
 * show even more infos in media browser
 * full-screen key
 * dedicated HP/Mana/Value field(s)
 * LOS-ruler
-* tbletop settings (e.g. change background, size, grid)
+* tabletop settings (e.g. change background, size, grid)
 * snap-to-borders
 * token status (blind, poison, prone, dazed, ...)
 * auto-center
@@ -58,7 +66,8 @@ Here is a list what might happen next. However, priorities might change.
   * re-size desk if needed
 * undo (limited)
 * pinboard for handouts
-* text token ("A")
+* full set of mm1/bestiary1 monsters in RPG template
+* tour / first-time-tutorial
 * API Docs
 
 ### rather later
@@ -67,6 +76,7 @@ Here is a list what might happen next. However, priorities might change.
 * detail-pane to the right for selected item
 * move stuff via cursor keys
 * rename game
+* custom, faster tooltips
 * use left-right keys to switch tabs in modals
 * arbitrary snap (e.g. 1px)
 * tabs / multiple desks
@@ -81,7 +91,6 @@ Here is a list what might happen next. However, priorities might change.
   * nicer cards/selection
   * multiselect + create
   * asset adding: (re)set token size 2x2->3x4
-* dicetray (separate dice window/pane)
 * FreeDOM: Emmet '~' support
 * shared notepad / scratchpad / piece of paper / postits
 * users + roles

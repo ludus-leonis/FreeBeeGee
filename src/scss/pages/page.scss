@@ -47,6 +47,7 @@
     }
 
     img {
+      background-color: $color-gray-95;
       height: px(48);
 
       @include media-breakpoint-up(sm) {
@@ -67,6 +68,15 @@
 
     > p {
       text-shadow: px(1) px(1) px(1) var(--nr-color-bg), px(-1) px(-1) px(1) var(--nr-color-bg);
+    }
+
+    .server-feedback {
+      color: $color-bad;
+      display: none;
+
+      &.show {
+        display: block;
+      }
     }
   }
 

@@ -32,6 +32,11 @@ $piece-shadow: ($piece-shadow-height / 2) ($piece-shadow-height / 2) ($piece-sha
 $piece-shadow-90: ($piece-shadow-height / 2) ($piece-shadow-height / -2) ($piece-shadow-height - 1) $color-black-75a;
 $piece-shadow-180: ($piece-shadow-height / -2) ($piece-shadow-height / -2) ($piece-shadow-height - 1) $color-black-75a;
 $piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piece-shadow-height - 1) $color-black-75a;
+$piece-outline:
+px(0) px(1) 0 $piece-color,
+px(1) px(0) 0 $piece-color,
+px(0) px(-1) 0 $piece-color,
+px(-1) px(0) 0 $piece-color;
 
 .piece {
   pointer-events: none;
@@ -46,7 +51,8 @@ $piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piec
 
       &.is-rotate-270,
       &.is-rotate-270 .box,
-      &.is-rotate-270 .label {
+      &.is-rotate-270 .label,
+      &.is-rotate-270 .piece-no {
         transform-origin: $piece-tile-half * $x $piece-tile-half * $x;
       }
     }
@@ -58,7 +64,8 @@ $piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piec
 
       &.is-rotate-90,
       &.is-rotate-90 .box,
-      &.is-rotate-90 .label {
+      &.is-rotate-90 .label,
+      &.is-rotate-90 .piece-no {
         transform-origin: $piece-tile-half * $y $piece-tile-half * $y;
       }
     }
@@ -115,6 +122,10 @@ $piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piec
       &.is-wh-#{$x} .label {
         transform: translateX(-50%) translate($piece-tile-size * $x / -2, $piece-tile-size * $x);
       }
+
+      &.is-wh-#{$x} .piece-no {
+        transform: translate($piece-tile-size * $x * -1, $piece-tile-size * $x / 2);
+      }
     }
   }
 
@@ -132,6 +143,10 @@ $piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piec
     @for $x from -31 through 31 {
       &.is-wh-#{$x} .label {
         transform: translateX(-50%) translate($piece-tile-size * $x / -2, $piece-tile-size * $x);
+      }
+
+      &.is-wh-#{$x} .piece-no {
+        transform: translate($piece-tile-size * $x * -1, $piece-tile-size * $x / 2);
       }
     }
   }
@@ -158,19 +173,28 @@ $piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piec
     pointer-events: none;
     position: absolute;
     text-align: center;
-    text-shadow:
-    px(0) px(1) 0 $color-black-100,
-    px(1) px(0) 0 $color-black-100,
-    px(0) px(-1) 0 $color-black-100,
-    px(-1) px(0) 0 $color-black-100;
-    // text-shadow:
-    // px(0) px(0) px(1) $color-black-100,
-    // px(0) px(0) px(1) $color-black-100,
-    // px(0) px(0) px(1) $color-black-100,
-    // px(0) px(0) px(1) $color-black-100,
-    // px(0) px(0) px(1) $color-black-100;
+    text-shadow: $piece-outline;
     transform: translateX(-50%);
     white-space: nowrap;
+  }
+
+  // --- additional counter number ---------------------------------------------
+
+  .piece-no {
+    @extend %flex-center-center;
+    @extend %p-micro;
+
+    border-radius: 100%;
+    font-size: 12px;
+    font-weight: 700;
+    height: 16px;
+    line-height: 1em;
+    overflow: hidden;
+    position: absolute;
+    right: px(4);
+    text-shadow: $piece-outline;
+    top: calc(50% - 8px);
+    width: px(16);
   }
 
   // --- specifics for tokens --------------------------------------------------
@@ -197,10 +221,6 @@ $piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piec
     .box {
       padding: $piece-margin-size;
     }
-
-    // .label {
-    //   margin-left: 0;
-    // }
 
     .border {
       background-color: $piece-color; // tile background

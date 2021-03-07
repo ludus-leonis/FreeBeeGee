@@ -155,6 +155,11 @@ $modal-zindex: 1000;
   justify-content: space-between;
   margin: 0;
   padding: $spacing-medium;
+
+  > *:first-child:last-child { // center single buttons/items
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .modal-backdrop {

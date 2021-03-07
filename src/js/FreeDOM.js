@@ -323,6 +323,15 @@ class FreeDOM {
   }
 
   /**
+   * Get all matching nodes.
+   *
+   * @return {HTMLElement[]} Array of nodes, possibly empty.
+   */
+  nodes () { // get first node
+    return this._getNodes()
+  }
+
+  /**
    * Add an event handler to each selected node.
    *
    * @param {String} event HTML event, e.g. 'click' or 'mousedown'.

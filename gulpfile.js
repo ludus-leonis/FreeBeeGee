@@ -97,7 +97,7 @@ function replace (pipe) {
   return pipe
     .pipe(repl('$NAME$', p.name, { skipBinary: true }))
     .pipe(repl('$VERSION$', p.version, { skipBinary: true }))
-    .pipe(repl('$ENGINE$', p.version, { skipBinary: true }))
+    .pipe(repl('$ENGINE$', p.versionEngine, { skipBinary: true }))
     .pipe(repl('$CODENAME$', p.codename, { skipBinary: true }))
     .pipe(repl('$BUILD$', rnd, { skipBinary: true }))
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))
@@ -254,6 +254,24 @@ function template (name) {
     .pipe(zip(name + '.zip'))
     .pipe(gulp.dest(dirs.site + '/templates'))
 }
+
+// function templateOpt (name) {
+//   const zip = require('gulp-zip')
+//   const image = require('gulp-image')
+//
+//   return replace(gulp.src('src/templates/' + name + '/**/*'))
+//     .pipe(image({
+//       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+//       pngquant: ['--speed=1', '--force', 256],
+//       zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+//       jpegRecompress: ['--strip', '--quality', 'medium', '--min', 40, '--max', 80],
+//       mozjpeg: ['-optimize', '-progressive'],
+//       gifsicle: ['--optimize'],
+//       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+//     }))
+//     .pipe(zip(name + '.zip'))
+//     .pipe(gulp.dest(dirs.site + '/templates'))
+// }
 
 gulp.task('template-RPG', () => template('RPG'))
 gulp.task('template-Classic', () => template('Classic'))

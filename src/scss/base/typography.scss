@@ -218,6 +218,7 @@ body {
 ::selection {
   background: $color-primary;
   color: $color-white-100;
+  text-shadow: none;
 }
 
 b,
@@ -236,6 +237,27 @@ strong {
 }
 
 // --- is-* modifiers ----------------------------------------------------------
+
+.is-link {
+  $gradient-transparent: linear-gradient(transparent, transparent);
+
+  background-image: $gradient-transparent, $gradient-transparent, linear-gradient(to right, $color-primary, $color-primary);
+  background-position: left bottom 2px;
+  background-repeat: no-repeat;
+  background-size: 100% 2px;
+  color: inherit;
+  cursor: pointer;
+  display: inline;
+  font-size: inherit;
+  font-weight: inherit;
+  letter-spacing: inherit;
+  line-height: inherit;
+  text-transform: inherit;
+
+  &:hover {
+    background-image: $gradient-transparent, $gradient-transparent, linear-gradient(to right, $color-gray-50, $color-gray-50);
+  }
+}
 
 .is-faded {
   color: $color-gray-50;

@@ -26,7 +26,9 @@ import {
 } from '../../utils.js'
 import {
   apiHeadState,
+  apiGetStateSave,
   apiGetState,
+  apiPutState,
   apiGetGame,
   apiPostGame,
   apiPatchPiece,
@@ -102,7 +104,15 @@ export function getAsset (id) {
   if (asset) return asset
   asset = getLibrary()?.overlay?.find(asset => asset.id === id)
   if (asset) return asset
-  return null
+  return { // create dummy asset
+    assets: ['invalid.svg'],
+    width: 1,
+    height: 1,
+    bg: '40bfbf',
+    alias: 'invalid',
+    type: 'tile',
+    id: '0000000000000000'
+  }
 }
 
 /**
@@ -118,7 +128,7 @@ export function loadGameState (name) {
       return game
     })
     .catch((error) => { // invalid game
-      runError(4, name, error)
+      runError('GAME_GONE', name, error)
       return null
     })
 }
@@ -127,10 +137,11 @@ export function loadGameState (name) {
  * Create a new game on the server.
  *
  * @param {Object} game The game object to send to the API.
+ * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
  * @return {Object} Promise of created game metadata object.
  */
-export function createGame (game) {
-  return apiPostGame(game)
+export function createGame (game, snapshot) {
+  return apiPostGame(game, snapshot)
 }
 
 /**
@@ -179,9 +190,9 @@ export function pollGameState (
     .catch(error => {
       if (error instanceof UnexpectedStatus) {
         gameStateRefresh = gameStateRefreshNever // stop polling
-        runError(4, game.name, error)
+        runError('GAME_GONE', game.name, error)
       } else {
-        runError(5, error)
+        runError('UNEXPECTED', error)
       }
     })
     .finally(() => {
@@ -240,6 +251,19 @@ export function stateRotatePiece (pieceId, r) {
 }
 
 /**
+ * Update the number/letter of a piece/token.
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {String} pieceId ID of piece to change.
+ * @param {Number} no New number (0..27).
+ */
+export function stateNumberPiece (pieceId, no) {
+  patchPiece(pieceId, { no: no })
+}
+
+/**
  * Flip a piece of the current game and show another side of it.
  *
  * Will only do an API call and rely on later sync to get the change back to the
@@ -279,7 +303,7 @@ export function statePieceEdit (pieceID, updates) {
 export function stateDeletePiece (id) {
   apiDeletePiece(game.name, id)
     .catch(error => {
-      runError(5, error)
+      runError('UNEXPECTED', error)
     })
     .finally(() => {
       pollGameState()
@@ -303,10 +327,48 @@ export function stateCreatePiece (piece, selected = false) {
       selectid = piece.id
     })
     .catch(error => {
-      runError(5, error)
+      runError('UNEXPECTED', error)
     })
     .finally(() => {
       pollGameState(selected ? selectid : null)
+    })
+}
+
+/**
+ * Update the game state to the a new one.
+ *
+ * Will replace the existing state.
+ *
+ * @param {Array} state Array of pieces (game state).
+ */
+export function updateState (state) {
+  apiPutState(game.name, state)
+    .catch(error => {
+      runError('UNEXPECTED', error)
+    })
+    .finally(() => {
+      pollGameState()
+    })
+}
+
+/**
+ * Restore a saved table state.
+ *
+ * @param {Number} index Integer index of state, 0 = initial.
+ */
+export function restoreState (index) {
+  apiGetStateSave(game.name, index)
+    .then(state => {
+      apiPutState(game.name, state)
+        .catch(error => {
+          runError('UNEXPECTED', error)
+        })
+        .finally(() => {
+          pollGameState()
+        })
+    })
+    .catch(error => {
+      runError('UNEXPECTED', error)
     })
 }
 
@@ -325,7 +387,7 @@ function patchPiece (pieceId, patch) {
         // we somewhat expected this situation. silently ignore it.
         console.info('Piece ' + pieceId + ' got deleted - no need to PATCH it.')
       } else {
-        runError(5, error) // *that* was unexpected
+        runError('UNEXPECTED', error) // *that* was unexpected
       }
     })
     .finally(() => {
