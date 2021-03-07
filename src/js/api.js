@@ -118,6 +118,17 @@ export function apiHeadState (gameName) {
 }
 
 /**
+ * API GET /games/:gameName/state/initial/
+ *
+ * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {Number} index The number of the save state to fetch, 0 = initial.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiGetStateSave (gameName, index) {
+  return getJson([200], 'api/games/' + gameName + '/state/save/' + index + '/')
+}
+
+/**
  * API PUT /games/:gameName/pieces/
  *
  * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.

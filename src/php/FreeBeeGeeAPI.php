@@ -83,6 +83,13 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['gid']);
         });
 
+        $this->api->register('GET', '/games/:gid/state/save/0/?', function ($fbg, $data) {
+            if (is_dir($this->getGameFolder($data['gid']))) {
+                $fbg->getStateSave($data['gid'], 0);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['gid']);
+        });
+
         // --- POST ---
 
         $this->api->register('POST', '/games/:gid/pieces/?', function ($fbg, $data, $payload) {
@@ -864,7 +871,7 @@ class FreeBeeGeeAPI
             $table->library = $this->installSnapshot($newGame->name, $zipPath);
 
             // keep original state for game resets
-            file_put_contents($folder . 'state-initial.json', file_get_contents($folder . 'state.json'));
+            file_put_contents($folder . 'state-0.json', file_get_contents($folder . 'state.json'));
 
             // add invalid.svg to game | @codingStandardsIgnoreLine
             file_put_contents($folder . 'invalid.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.4 25.4" height="96" width="96"><path fill="#40bfbf" d="M0 0h25.4v25.4H0z"/><g fill="#fff" stroke="#fff" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M1.9 1.9l21.6 21.6M23.5 1.9L1.9 23.5" stroke-width="1.1"/></g></svg>');
@@ -952,6 +959,31 @@ class FreeBeeGeeAPI
         }
         $this->api->sendError(404, 'not found: ' . $gameName);
     }
+
+    /**
+     * Get a saved state of the game.
+     *
+     * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
+     * @param int $slot Number between 0 and 9 of save slot, 0 = initial.
+     */
+    public function getStateSave(
+        string $gameName,
+        int $slot
+    ) {
+        if (!is_int($slot) || $slot < 0 || $slot > 9) {
+            $this->api->sendError(404, 'save not found: ' . $gameName . ' / #' . $slot);
+        }
+        $folder = $this->getGameFolder($gameName);
+        if (is_dir($folder)) {
+            $body = $this->api->fileGetContentsLocked(
+                $folder . 'state-' . $slot . '.json',
+                $folder . '.flock'
+            );
+            $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
+        }
+        $this->api->sendError(404, 'not found: ' . $gameName);
+    }
+
 
     /**
      * Replace the internal state with a new one.
@@ -1062,7 +1094,16 @@ class FreeBeeGeeAPI
                     case 'game.json':
                     case 'game.json.digest':
                     case 'state.json.digest':
-                    case 'state-initial.json':
+                    case 'state-0.json':
+                    case 'state-1.json':
+                    case 'state-2.json':
+                    case 'state-3.json':
+                    case 'state-4.json':
+                    case 'state-5.json':
+                    case 'state-6.json':
+                    case 'state-7.json':
+                    case 'state-8.json':
+                    case 'state-9.json':
                         break; // they don't go into the zip
                     default:
                         $toZip[$relativePath] = $absolutePath; // keep all others

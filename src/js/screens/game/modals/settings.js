@@ -26,7 +26,8 @@ import {
 } from '../../../modal.js'
 import {
   getTemplate,
-  updateState
+  updateState,
+  restoreState
 } from '../state.js'
 
 // --- public ------------------------------------------------------------------
@@ -67,7 +68,7 @@ export function modalSettings () {
           <button id="btn-table-reset" class="btn btn-wide" disabled>Reset table</button>
         </div>
         <div class="col-12 col-sm-8">
-          <p>Deleting your table will erase it and your library. The other players will be thrown out.</p>
+          <p>Deleting your table will erase it and your library. Other players will be kicked out.</p>
         </div>
         <div class="col-12 col-sm-4">
           <button id="btn-table-delete" class="btn btn-wide" disabled>Delete table</button>
@@ -94,18 +95,10 @@ export function modalSettings () {
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())
 
-  _('#btn-table-clear').on('click', () => clearTable())
+  _('#btn-table-clear').on('click', () => updateState([]))
+  _('#btn-table-reset').on('click', () => restoreState(0))
 
   getModal().show()
 }
 
 // --- internal ----------------------------------------------------------------
-
-/**
- * Remove all pieces from the table.
- *
- * Done by sending an empty ([]) state to the server.
- */
-function clearTable () {
-  updateState([])
-}

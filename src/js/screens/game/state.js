@@ -26,6 +26,7 @@ import {
 } from '../../utils.js'
 import {
   apiHeadState,
+  apiGetStateSave,
   apiGetState,
   apiPutState,
   apiGetGame,
@@ -347,6 +348,27 @@ export function updateState (state) {
     })
     .finally(() => {
       pollGameState()
+    })
+}
+
+/**
+ * Restore a saved table state.
+ *
+ * @param {Number} index Integer index of state, 0 = initial.
+ */
+export function restoreState (index) {
+  apiGetStateSave(game.name, index)
+    .then(state => {
+      apiPutState(game.name, state)
+        .catch(error => {
+          runError('UNEXPECTED', error)
+        })
+        .finally(() => {
+          pollGameState()
+        })
+    })
+    .catch(error => {
+      runError('UNEXPECTED', error)
     })
 }
 
