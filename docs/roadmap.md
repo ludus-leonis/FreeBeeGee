@@ -2,42 +2,22 @@
 
 Here is a list what might happen next. However, priorities might change.
 
-## v0.4 - Zipping Zebra
+## v0.5 - Random Rabbit
 
-* [X] upload-zip as template during game create
-  * [X] template zip checking
-    * [X] meaningful user-feedback on errors
-    * [X] game version checking
-    * [X] included files
-    * [X] size vs maxSize
-    * [X] verify template.json
-    * [X] verify game.json
-  * [X] Add upload to create-table dialog
-* [X] svg logo in docs
-* [X] disable flip for 1-sided tokens
-* [X] option token-number/letter badge within token
-* [X] game reset / restart / re-init
-* [X] FreeBeeGee icon in top-left corner
-* [X] show artwork copyright somewhere
+* [ ] randomize side (a.k.a. dice-tokens)
+* [ ] shuffle stack/square
+* [ ] dicetray (separate dice window/pane)
+* [ ] basic dice-assets d4, d6, d8, d10, d12, d20
+* [ ] support for custom dice
+* [ ] delete table
+* [ ] fancier implementation for dynamic poll intervalls
+  * [ ] show "you have been inactive" dialog after 10min
+  * [ ] decrease poll intervall on mouse/keyboard activity
+* [ ] template GDRP privacy statement
 * [ ] pre-release
   * [ ] update+run unit+integration tests
   * [ ] update docs
-  * [ ] update screenshots
   * [ ] update CHANGELOG
-
-## v0.5 - Random Rabbit
-
-* randomize side (a.k.a. dice-tokens)
-* shuffle stack/square
-* dicetray (separate dice window/pane)
-* basic dice-assets d4, d6, d8, d10, d12, d20
-* support for custom dice
-* delete table
-* fancier implementation for dynamic poll intervalls
-  * show "you have been inactive" dialog after 10min
-  * decrease poll intervall on mouse/keyboard activity
-  * let others know via HEAD request
-* template GDRP privacy statement
 
 ## v0.6 - Uploading Unicorn
 
@@ -53,6 +33,7 @@ Here is a list what might happen next. However, priorities might change.
 * catch all unhandled warnings/exceptions in PHP API and return 500
 * URL mapping for example.org/roomname -> example.org/#/game/roomname
 * docs how to make game/template `.zip`s
+* update screenshots
 
 ## Backlog (unsorted)
 

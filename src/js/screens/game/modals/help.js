@@ -77,7 +77,7 @@ export function modalHelp () {
             <p>If a piece got hidden behind another piece, you can use the <strong>to&nbsp;top</strong> and <strong>to&nbsp;bottom</strong> buttons to change the order of pieces within their layer.</p>
           </div>
           <div class="hotkeys">
-            <p>The following hotkeys are available at any time on the gaming table:</p>
+            <p>The following hotkeys are available on the table:</p>
             <p><span class="key">1</span> Toggle token layer.</p>
             <p><span class="key">2</span> Toggle overlay layer.</p>
             <p><span class="key">3</span> Toggle tile layer.</p>
@@ -92,6 +92,8 @@ export function modalHelp () {
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>
             <p><span class="key">Del</span> Delete selected piece.</p>
             <p><span class="key">NumPad+</span>/<span class="key">NumPad-</span> Increase/decrease token letter. Hint: Only works for tokens!</p>
+            <p><span class="key">s</span> Show the table statistics &amp; settings.</p>
+
           </div>
           <div class="copyright">
             <h3>FreeBeeGee</h3>

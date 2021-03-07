@@ -2,6 +2,19 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+* added more unit/integration tests
+* added reset-table feature
+* added clear-table feature
+* added snapshot uploads
+* disabled flip menu for single-sided pieces
+* added template credits / license information to about window
+* replaced png assets with svgs in default templates
+* improved handling of missing assets
+* added settings dialog
+* added token numbers (letters)
+* added logo icon to readme
+* fixed logo font
+
 ## v0.3.0 - Clicking Crab
 
 * added logo

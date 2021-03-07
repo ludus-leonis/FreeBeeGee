@@ -37,10 +37,12 @@ The server config file is found in `api/data/server.json`:
   "ttl": 48,                // hours of inactivity after a table gets deleted
   "maxGames": 128,          // maximum concurrent tables allowed
   "maxGameSizeMB": 4,       // maximum size per table folder / snapshot / template
-  "customTemplates": false, // set to true to enable snapshot upload on table create
+  "snapshotUploads": false, // set to true to enable snapshot upload on table create
   "passwordCreate": "................."
 }
 ```
+
+### Passwords
 
 `passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join games. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
 
@@ -49,6 +51,10 @@ htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
 ```
 
 FreeBeeGee ships with an unkown password. No games can be created until you either set one or explicitly disable it.
+
+### Uploads
+
+Snapshot uploads are disabled by default. To enable them, set `snapshotUploads` to `true`.
 
 ## Upgrading
 

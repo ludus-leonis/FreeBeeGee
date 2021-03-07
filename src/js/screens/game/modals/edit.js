@@ -194,6 +194,8 @@ function modalOk () {
   value = Number(_('#piece-no').value)
   if (value !== piece.no) updates.no = value
 
+  console.log(piece)
+
   statePieceEdit(piece.id, updates)
   getModal().hide()
 }

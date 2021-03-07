@@ -2,6 +2,6 @@
   "ttl": 48,
   "maxGames": 16,
   "maxGameSizeMB": 4,
-  "customTemplates": true,
+  "snapshotUploads": true,
   "passwordCreate": "$2y$12$De/CBGzPRxb6zsZTn.35FOtOE1BMCBvKdSKBliCgidR0ckPeTZuJq"
 }

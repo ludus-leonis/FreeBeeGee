@@ -36,7 +36,7 @@ export function createGame (name) {
     return
   }
 
-  const templateHelp = stateGetServerInfo().customTemplates
+  const templateHelp = stateGetServerInfo().snapshotUploads
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
     : 'Let us know what kind of game we may prepare for you.'
 

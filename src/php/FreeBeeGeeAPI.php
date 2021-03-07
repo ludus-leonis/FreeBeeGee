@@ -787,7 +787,7 @@ class FreeBeeGeeAPI
         $info->version = $server->version;
         $info->engine = $server->engine;
         $info->ttl = $server->ttl;
-        $info->customTemplates = $server->customTemplates;
+        $info->snapshotUploads = $server->snapshotUploads;
         $info->openSlots = $this->getOpenSlots($server);
         if ($server->passwordCreate ?? '' !== '') {
             $info->createPassword = true;
@@ -848,6 +848,9 @@ class FreeBeeGeeAPI
             || (!$validated->template && !$validated->_files )
         ) {
             $this->api->sendError(400, 'you need to either specify a template or upload a snapshot');
+        }
+        if ($validated->_files && !$server->snapshotUploads) {
+            $this->api->sendError(400, 'snapshot upload is not enabled on this server');
         }
 
         // doublecheck template / snapshot
