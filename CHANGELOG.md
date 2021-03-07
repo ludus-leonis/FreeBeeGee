@@ -2,6 +2,12 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.4.1
+
+* fixed piece-delete bug
+
+## v0.4.0 - Zipping Zebra
+
 * added more unit/integration tests
 * added reset-table feature
 * added clear-table feature
