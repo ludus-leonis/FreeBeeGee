@@ -185,12 +185,17 @@ export function apiPostPiece (gameName, piece) {
  * @throw {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
 function fetchOrThrow (expectedStatus, path, data = null) {
+  console.log('fetchOrThrow', expectedStatus)
   return globalThis.fetch(path, data)
     .then(response => {
       return response.text()
         .then(text => {
           try {
-            return JSON.parse(text)
+            if (response.status === 204) { // no-content
+              return {}
+            } else {
+              return JSON.parse(text)
+            }
           } catch (error) {
             throw new UnexpectedStatus(response.status, text)
           }
