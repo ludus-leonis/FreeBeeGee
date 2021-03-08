@@ -1,8 +1,8 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.4.2",
+  "version": "0.5.0-dev",
   "versionEngine": "0.1.1",
-  "codename": "Zipping Zebra",
+  "codename": "Random Rabbit",
   "description": "A virtual gaming tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=6.5.0"
