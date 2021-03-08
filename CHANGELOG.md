@@ -2,6 +2,10 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.4.2
+
+* fixed create-table error due case-sensitive http headers for POST requests
+
 ## v0.4.1
 
 * fixed piece-delete bug

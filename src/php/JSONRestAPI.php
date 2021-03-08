@@ -390,21 +390,19 @@ class JSONRestAPI
      */
     public function multipartToJson()
     {
-        $headers = getallheaders();
-        if (
-            array_key_exists('Content-Type', $headers)
-            && substr($headers['Content-Type'], 0, 19) === 'multipart/form-data'
-        ) {
-            $payload = [];
+        foreach ($_SERVER as $header => $headerValue) {
+            if (preg_match('/^content.type$/i', $header) && substr($headerValue, 0, 19) === 'multipart/form-data') {
+                $payload = [];
 
-            foreach ($_POST as $key => $value) {
-                $payload[$key] = $value;
-            }
-            if (count($_FILES) > 0) {
-                $payload['_files'] = array_keys($_FILES);
-            }
+                foreach ($_POST as $key => $value) {
+                    $payload[$key] = $value;
+                }
+                if (count($_FILES) > 0) {
+                    $payload['_files'] = array_keys($_FILES);
+                }
 
-            return json_encode($payload);
+                return json_encode($payload);
+            }
         }
         return null;
     }
