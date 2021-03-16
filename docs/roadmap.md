@@ -4,15 +4,19 @@ Here is a list what might happen next. However, priorities might change.
 
 ## v0.5 - Random Rabbit
 
-* [ ] randomize side (a.k.a. dice-tokens)
-* [ ] shuffle stack/square
-* [ ] dicetray (separate dice window/pane)
-* [ ] basic dice-assets d4, d6, d8, d10, d12, d20
-* [ ] support for custom dice
+* [ ] randomize features
+  * [X] randomize side (a.k.a. dice-tokens)
+  * [ ] shuffle stack/square
+  * [X] dicetray (separate layer)
+  * [.] basic dice-assets d4, d6, d8, d10, d12, d20
+  * [X] support for custom dice
+  * [X] fix dice not shown properly in asset dialog
+* [X] quality settings / disable shadows
+* [X] improve library view (show 1x1 tiles smaller, hide common 1x1 tags)
+* [ ] always move cloned items to-top
+* [ ] support download-game filenames for re-uploads (special characters)
 * [ ] delete table
-* [ ] fancier implementation for dynamic poll intervalls
-  * [ ] show "you have been inactive" dialog after 10min
-  * [ ] decrease poll intervall on mouse/keyboard activity
+* [ ] show ping/request time in setting
 * [ ] template GDRP privacy statement
 * [ ] pre-release
   * [ ] update+run unit+integration tests
@@ -21,6 +25,9 @@ Here is a list what might happen next. However, priorities might change.
 
 ## v0.6 - Uploading Unicorn
 
+* fancier implementation for dynamic poll intervalls
+  * show "you have been inactive" dialog after 10min
+  * decrease poll intervall on mouse/keyboard activity
 * rename "game" to "table"
 * scroll to center of setup/table when opening new tables
 * upload custom images for tiles & tokens
@@ -30,6 +37,7 @@ Here is a list what might happen next. However, priorities might change.
 ## v0.7 - Mobile Monkey
 
 * better tablet / touch support
+* performance improvements
 * catch all unhandled warnings/exceptions in PHP API and return 500
 * URL mapping for example.org/roomname -> example.org/#/game/roomname
 * docs how to make game/template `.zip`s
@@ -39,6 +47,8 @@ Here is a list what might happen next. However, priorities might change.
 
 ### rather sooner
 
+* add template version to asset urls
+* 3d effekt für tiles
 * overlay-grid-on-tile option
 * distinct select-token look from outline
 * persist scroll position between page refresh

@@ -27,7 +27,9 @@ import {
 import {
   getTemplate,
   updateState,
-  restoreState
+  restoreState,
+  stateGetGamePref,
+  stateSetGamePref
 } from '../state.js'
 
 // --- public ------------------------------------------------------------------
@@ -45,16 +47,34 @@ export function modalSettings () {
     <form class="container">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
-        <div class="col-12">
-          <h2 class="h3">Game statistics</h2>
+        <div class="col-12 col-md-6">
+          <h2 class="h3">Table statistics</h2>
           <p>Table size: ${getTemplate().width}x${getTemplate().height} spaces</p>
-          <p>Pieces: ${_('.piece.token').nodes().length}x token, ${_('.piece.overlay').nodes().length}x overlay, ${_('.piece.tile').nodes().length}x tile</p>
+          <p>Pieces: ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile</p>
           <p>Engine: $ENGINE$</p>
+        </div>
+        <div class="col-12 col-md-6">
+          <h2 class="h3">Game/Server statistics</h2>
+          <p>Avg. request time: ???</p>
+          <p>Avg. refresh time: ???</p>
+        </div>
 
+        <div class="col-12 spacing-small">
+          <h2 class="h3">Render quality</h2>
+          <p>If your game seems to be slow, you can change the render quality here:</p>
+          <input type="range" min="0" max="3" value="${stateGetGamePref('renderQuality') ?? 3}" class="slider" id="quality">
+          <p class="if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
+          <p class="if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
+          <p class="if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
+          <p class="if-quality-ultra"><strong>Ultra:</strong> Full details and random piece rotation are enabled.</p>
+        </div>
+
+        <div class="col-12 spacing-small">
           <h2 class="h3">Danger zone</h2>
           <p>The following settings will affect the whole table. There will be no <em>undo</em> if you push any of those buttons!</p>
           <p><input id="danger" type="checkbox"><label for="danger">Enable danger mode.</label></p>
         </div>
+
         <div class="col-12 col-sm-8">
           <p>Clearing the table will remove all pieces from it. Your library will not be changed.</p>
         </div>
@@ -80,6 +100,8 @@ export function modalSettings () {
     <button id='btn-close' type="button" class="btn btn-primary">Close</button>
   `
 
+  _('#quality').on('change', () => changeQuality(Number(_('#quality').value)))
+
   _('#danger').on('click', () => {
     if (_('#danger').checked) {
       _('#btn-table-clear').disabled = false
@@ -99,6 +121,32 @@ export function modalSettings () {
   _('#btn-table-reset').on('click', () => restoreState(0))
 
   getModal().show()
+}
+
+/**
+ * Adapt the quality settings based on the current slider position.
+ *
+ * Will add matching .is-quality-* classes to the body.
+ *
+ * @param {Number} value Quality setting. 0 = low, 1 = medium, 2 = high, 3 = ultra
+ */
+export function changeQuality (value) {
+  const body = _('body').remove('.is-quality-low', '.is-quality-medium', '.is-quality-high', '.is-quality-ultra')
+  stateSetGamePref('renderQuality', value)
+  switch (value) {
+    case 0:
+      body.add('.is-quality-low')
+      break
+    case 1:
+      body.add('.is-quality-medium')
+      break
+    case 2:
+      body.add('.is-quality-high')
+      break
+    case 3:
+    default:
+      body.add('.is-quality-ultra')
+  }
 }
 
 // --- internal ----------------------------------------------------------------

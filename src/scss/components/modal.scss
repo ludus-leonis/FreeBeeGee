@@ -105,45 +105,14 @@ $modal-zindex: 1000;
   padding: $spacing-medium;
 
   .piece {
-    margin: $spacing-small auto;
     pointer-events: none;
     position: relative;
-
-    .tag {
-      margin: .5em;
-      pointer-events: none;
-      position: absolute;
-      text-transform: none;
-    }
-
-    .tr {
-      right: 0;
-      top: 0;
-    }
-
-    .tl {
-      left: 0;
-      top: 0;
-    }
-
-    .bl {
-      bottom: 0;
-      left: 0;
-    }
-
-    .br {
-      bottom: 0;
-      right: 0;
-    }
   }
 
   .col-card p {
-    margin-bottom: $spacing-small;
+    margin: $spacing-tiny auto $spacing-small;
     text-align: center;
-  }
-
-  .piece.tile .box::after {
-    box-shadow: none;
+    width: 128px;
   }
 }
 

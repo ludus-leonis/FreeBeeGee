@@ -195,10 +195,10 @@ function dragStart (mousedown) {
     return
   }
 
-  if (!mousedown.target.classList.contains('box')) return // we only drag pieces
+  if (!mousedown.target.classList.contains('piece')) return // we only drag pieces
   scroller.classList.add('cursor-grab')
 
-  const piece = mousedown.target.parentNode // box -> piece
+  const piece = mousedown.target
   dragging = piece.cloneNode(true)
   dragging.id = dragging.id + '-drag'
   dragging.origin = piece
@@ -340,8 +340,8 @@ function grabEnd (mouseup) {
 // --- right-click properties --------------------------------------------------
 
 function properties (mousedown) {
-  if (mousedown.target.classList.contains('box')) {
-    popupPiece(mousedown.target.parentNode.id)
+  if (mousedown.target.classList.contains('piece')) {
+    popupPiece(mousedown.target.id)
   }
 }
 
@@ -402,13 +402,13 @@ function setPosition (element, x, y, snap = getTemplate().gridSize) {
  */
 function handleSelection (element) {
   // remove selection from all elements if we clicked on the background or on a piece
-  if (element.id === 'tabletop' || element.classList.contains('box')) {
+  if (element.id === 'tabletop' || element.classList.contains('piece')) {
     unselectPieces()
   }
 
   // add selection to clicked element (if it is a piece)
-  if (element.classList.contains('box')) {
-    element.parentNode.classList.add('is-selected')
+  if (element.classList.contains('piece')) {
+    element.classList.add('is-selected')
   }
 
   updateMenu()

@@ -66,7 +66,7 @@ export function modalEdit (piece) {
             <select id="piece-color" name="piece-color"></select>
           </div>
           <div class="col-6">
-            <label for="piece-no">Letter</label>
+            <label for="piece-no">No.</label>
             <select id="piece-no" name="piece-no"></select>
           </div>
         </div>
@@ -81,8 +81,8 @@ export function modalEdit (piece) {
     option.value = 0
     if (piece.no === 0) option.selected = true
     pieceNo.add(option)
-    for (let w = 1; w <= 26; w++) {
-      const letter = String.fromCharCode(64 + w)
+    for (let w = 1; w <= 15; w++) {
+      const letter = w <= 9 ? String.fromCharCode(48 + w) : String.fromCharCode(64 + w - 9)
       const option = _('option').create(letter)
       option.value = w
       if (w === piece.no) option.selected = true
@@ -193,8 +193,6 @@ function modalOk () {
 
   value = Number(_('#piece-no').value)
   if (value !== piece.no) updates.no = value
-
-  console.log(piece)
 
   statePieceEdit(piece.id, updates)
   getModal().hide()

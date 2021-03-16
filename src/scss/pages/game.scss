@@ -92,3 +92,17 @@
     }
   }
 }
+
+.if-quality-low,
+.if-quality-medium,
+.if-quality-high,
+.if-quality-ultra {
+  display: none;
+}
+
+body {
+  &.is-quality-low .if-quality-low { display: block; }
+  &.is-quality-medium .if-quality-medium { display: block; }
+  &.is-quality-high .if-quality-high { display: block; }
+  &.is-quality-ultra .if-quality-ultra { display: block; }
+}

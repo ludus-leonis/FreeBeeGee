@@ -25,22 +25,22 @@ import {
   editSelected,
   flipSelected,
   toTopSelected,
+  randomSelected,
   numberSelected,
   toBottomSelected,
   toggleLayer
 } from '.'
 import { isDragging, getMouseTileX, getMouseTileY } from './mouse.js'
-import { modalActive } from '../../modal.js'
+import {
+  modalActive,
+  modalClose
+} from '../../modal.js'
 import { modalLibrary } from './modals/library.js'
 import { modalHelp } from './modals/help.js'
 import _ from '../../FreeDOM.js'
 
 /** register the keyboard handler on document load */
-document.addEventListener('keydown', function (keydown) {
-  if (handleGameKeys(keydown)) {
-    keydown.preventDefault()
-  }
-})
+document.addEventListener('keydown', keydown => handleGameKeys(keydown))
 
 /**
  * Call proper functions after certain keys are pressed.
@@ -49,60 +49,77 @@ document.addEventListener('keydown', function (keydown) {
  * @return {Boolean} True if we could handle the event, false if it should bubble.
  */
 function handleGameKeys (keydown) {
-  if (!_('#tabletop').exists()) return false
+  if (!_('#tabletop').exists()) return
+
+  if (keydown.key === 'Escape') {
+    if (modalActive()) {
+      modalClose()
+      keydown.stopPropagation()
+      return
+    }
+  }
+
   if (!isDragging() && !modalActive()) {
-    switch (keydown.keyCode) {
-      case 46: // DEL - delete selected
+    switch (keydown.key) {
+      case 'Delete': // delete selected
         deleteSelected()
         break
-      case 49: // 1 - toggle layer
+      case '1': // toggle layer
+        toggleLayer('other')
+        break
+      case '2': // toggle layer
         toggleLayer('token')
         break
-      case 50: // 2 - toggle layer
+      case '3': // toggle layer
         toggleLayer('overlay')
         break
-      case 51: // 3 - toggle layer
+      case '4': // toggle layer
         toggleLayer('tile')
         break
-      case 65: // a - add pice
+      case 'a': // add pice
         modalLibrary(getMouseTileX(), getMouseTileY())
         break
-      case 66: // b - to-bottom
+      case 'b': // to-bottom
         toBottomSelected()
         break
-      case 67: // c - copy/clone
-        cloneSelected(getMouseTileX(), getMouseTileY())
-        break
-      case 69: // e - edit
-      case 113: // F2
-        editSelected()
-        break
-      case 70: // f - flip
-        flipSelected()
-        break
-      case 72: // h - help
-      case 112: // F1
-        modalHelp()
-        break
-      case 82: // r - rotate
-        rotateSelected()
-        break
-      case 83: // s - settings
-        settings()
-        break
-      case 84: // t - to-top
+      case 't': // to-top
         toTopSelected()
         break
-      case 107: // NUM+ - increase No.
+      case 'c': // copy/clone
+        cloneSelected(getMouseTileX(), getMouseTileY())
+        break
+      case 'e': // edit
+      case 'F2':
+        editSelected()
+        break
+      case 'f': // flip
+        flipSelected()
+        break
+      case 'h': // help
+      case 'H':
+      case '?':
+      case 'F1':
+        modalHelp()
+        break
+      case 'r': // rotate
+        rotateSelected()
+        break
+      case 'S': // settings
+        settings()
+        break
+      case '#': // random side
+        randomSelected()
+        break
+      case '>': // increase No.
         numberSelected(1)
         break
-      case 109: // NUM- - increase No.
+      case '<': // decrease No.
         numberSelected(-1)
         break
       default:
-        return false // nothing in the switch() triggered
+        return // nothing in the switch() triggered
     }
-    return true // something in the switch() triggered
+    keydown.stopPropagation()
+    keydown.preventDefault()
   }
-  return false // if nothing above triggered, we did not handle the key
 }

@@ -55,8 +55,9 @@ export function modalHelp () {
 
             <h2 class="h3">Layers</h2>
 
-            <p>Your game has three different layers, containing pieces of a specific type each. From top to bottom the layers are:</p>
+            <p>Your game has different layers, containing pieces of a specific type each. From top to bottom the layers are:</p>
             <ul>
+              <li><strong>Dice</strong> are your friendly random number generators.</li>
               <li><strong>Tokens</strong> are round player figures, usually heroes and monsters.</li>
               <li><strong>Overlays</strong> help you mark areas of interest.</li>
               <li><strong>Tiles</strong> are assembled to form your game board. They can be rooms, caves and more.</li>
@@ -75,24 +76,30 @@ export function modalHelp () {
             <p>If a piece has only one side, flipping it will have no effect. Some pieces may have more than one side - in this case flipping will cycle through them.</p>
 
             <p>If a piece got hidden behind another piece, you can use the <strong>to&nbsp;top</strong> and <strong>to&nbsp;bottom</strong> buttons to change the order of pieces within their layer.</p>
+
+            <h2 class="h3">Dice</h2>
+
+            <p>To roll dice, add them from the library to your table. Then <strong>select</strong> the die you want to roll and press <span class="key">#</span>.</p>
+
+            <p>If you want to roll multiple dice at once, add a <strong>Dicemat</strong> from the library to your table. Then move your dice onto the dicemat, <strong>select</strong> the dicemat and press <span class="key">#</span>.</p>
+
           </div>
           <div class="hotkeys">
-            <p>The following hotkeys are available on the table:</p>
-            <p><span class="key">1</span> Toggle token layer.</p>
-            <p><span class="key">2</span> Toggle overlay layer.</p>
-            <p><span class="key">3</span> Toggle tile layer.</p>
+            <p>The following hotkeys are available on the <strong>table</strong>:</p>
+            <p><span class="key">1</span> / <span class="key">2</span> / <span class="key">3</span> / <span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
             <p><span class="key">a</span> Add a new piece / show library. Hint: The new piece will be added at the position your mouse cursor was before the library window opened.</p>
+            <p><span class="key">S</span> Show the table statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
-            <p>The following hotkeys are available when pieces are selected:</p>
+            <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
             <p><span class="key">r</span> Rotate piece.</p>
             <p><span class="key">f</span> Flip over piece. Some pieces have more than two sides.</p>
+            <p><span class="key">#</span> Flip piece to a random side / randomize all dice on dicetrays.</p>
             <p><span class="key">t</span> Move selected piece to the top of its layer.</p>
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>
             <p><span class="key">Del</span> Delete selected piece.</p>
-            <p><span class="key">NumPad+</span>/<span class="key">NumPad-</span> Increase/decrease token letter. Hint: Only works for tokens!</p>
-            <p><span class="key">s</span> Show the table statistics &amp; settings.</p>
+            <p><span class="key">&lt;</span> / <span class="key">&gt;</span> Decrease/increase token letter. Hint: Only works for tokens!</p>
 
           </div>
           <div class="copyright">

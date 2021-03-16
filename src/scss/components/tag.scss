@@ -31,4 +31,30 @@
   color: $color-white-100;
   line-height: 1em;
   padding: .2em .25em;
+  pointer-events: none;
+  text-transform: none;
+
+  &.tr {
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  &.tl {
+    left: 0;
+    position: absolute;
+    top: 0;
+  }
+
+  &.bl {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+  }
+
+  &.br {
+    bottom: 0;
+    position: absolute;
+    right: 0;
+  }
 }

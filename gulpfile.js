@@ -255,7 +255,7 @@ function template (name) {
     .pipe(gulp.dest(dirs.site + '/templates'))
 }
 
-// function templateOpt (name) {
+// function template (name) {
 //   const zip = require('gulp-zip')
 //   const image = require('gulp-image')
 //

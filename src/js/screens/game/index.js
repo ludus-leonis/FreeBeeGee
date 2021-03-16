@@ -25,6 +25,7 @@ import {
   getAsset,
   loadGameState,
   pollGameState,
+  updatePieces,
   stateCreatePiece,
   stateDeletePiece,
   stateNumberPiece,
@@ -41,7 +42,7 @@ import { clamp } from '../../utils.js'
 import { modalLibrary } from './modals/library.js'
 import { modalEdit } from './modals/edit.js'
 import { modalHelp } from './modals/help.js'
-import { modalSettings } from './modals/settings.js'
+import { modalSettings, changeQuality } from './modals/settings.js'
 
 let scroller = null /** keep reference to scroller div - we need it often */
 
@@ -179,8 +180,72 @@ export function flipSelected () {
  * Will cycle through all states
  */
 export function numberSelected (delta) {
-  _('#tabletop .token.is-selected').each(node => {
-    stateNumberPiece(node.id, (Number(node.dataset.no) + 27 + delta) % 27)
+  _('#tabletop .piece-token.is-selected').each(node => {
+    stateNumberPiece(node.id, (Number(node.dataset.no) + 16 + delta) % 16) // 0=nothing, 1-9, A-F
+  })
+}
+
+/**
+ * Randomize the seleced piece.
+ *
+ * What happens depends a bit on the piece type, but usually it is flipped to a
+ * random side. It also gets rotated and/or moved on the dicemat, so that there
+ * is a visual difference even if the same side randomly comes up.
+ */
+export function randomSelected () {
+  _('#tabletop .is-selected').each(node => {
+    const coords = []
+    const pieces = []
+    switch (node.dataset.feature) {
+      case 'DICEMAT': // dicemat: randomize all pieces on it
+        pieces.length = 0
+        coords.length = 0
+        for (let x = 0; x < Math.min(Number(node.dataset.w), 4); x++) {
+          for (let y = 0; y < Math.min(Number(node.dataset.h), 4); y++) {
+            coords.push({ // a max. 4x4 area in the center of the dicemat
+              x: Math.max(0, Math.floor((Number(node.dataset.w) - 4) / 2)) + x,
+              y: Math.max(0, Math.floor((Number(node.dataset.h) - 4) / 2)) + y
+            })
+          }
+        }
+
+        for (const piece of getPiecesWithin({
+          left: Number(node.dataset.x),
+          top: Number(node.dataset.y),
+          right: Number(node.dataset.x) + Number(node.dataset.w) - 1,
+          bottom: Number(node.dataset.y) + Number(node.dataset.h) - 1
+        }, 'other')) {
+          if (piece.dataset.feature === 'DICEMAT') continue // don't touch the dicemat
+
+          // pick one random position
+          let coord = { x: 0, y: 0 }
+          let index = Math.floor(Math.random() * coords.length)
+          if (coords[index].x === Number(piece.dataset.x) && coords[index].y === Number(piece.dataset.y)) {
+            index = (index + 1) % coords.length
+          }
+          coord = coords[index]
+          coords.splice(index, 1)
+
+          // update the piece
+          pieces.push({
+            id: piece.id,
+            side: Math.floor(Math.random() * Number(piece.dataset.sides)),
+            x: Number(node.dataset.x) + coord.x,
+            y: Number(node.dataset.y) + coord.y,
+            r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
+          })
+        }
+        updatePieces(pieces)
+        break
+      default: // ordinary piece
+        if (Number(node.dataset.sides) > 1) { // only randomize multi-sided tokens
+          updatePieces([{
+            id: node.id,
+            side: Math.floor(Math.random() * Number(node.dataset.sides)),
+            r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
+          }])
+        }
+    }
   })
 }
 
@@ -211,8 +276,6 @@ export function setPiece (pieceJson, select = false) {
     const node = pieceToNode(pieceJson)
     if (selection.includes(pieceJson.id)) node.add('.is-selected')
     _('#layer-' + pieceJson.layer).add(node)
-  } else {
-    updateNode(div, pieceJson)
   }
 
   // update dom infos (position, rotation ...)
@@ -232,22 +295,25 @@ export function setPiece (pieceJson, select = false) {
       div.add('.is-rotate-' + pieceJson.r)
   }
   if (pieceJson.color >= 0 && pieceJson.color <= 7) {
-    _(`#${pieceJson.id} .border`).css({
-      borderColor: template.colors[pieceJson.color].value
+    _(`#${pieceJson.id}`).css({
+      '--fbg-border-color': template.colors[pieceJson.color].value
     })
   }
 
   // update label
-  _('#' + pieceJson.id + ' .label').delete()
-  const label = pieceJson.label ?? ''
-  if (label !== '') {
-    div.add(_('.label').create(label))
+  if (Number(div.dataset.label) !== pieceJson.label) {
+    _('#' + pieceJson.id + ' .label').delete()
+    if (pieceJson.label && pieceJson.label !== '') {
+      div.add(_('.label').create(pieceJson.label))
+    }
   }
 
   // update piece number
-  _('#' + pieceJson.id + ' .piece-no').delete()
-  if (pieceJson.layer === 'token' && pieceJson.no !== 0) {
-    div.add(_('.piece-no').create(String.fromCharCode(64 + pieceJson.no)))
+  if (Number(div.dataset.no) !== pieceJson.no) {
+    div.remove('.is-n', '.is-n-*')
+    if (pieceJson.layer === 'token' && pieceJson.no !== 0) {
+      div.add('.is-n', '.is-n-' + pieceJson.no)
+    }
   }
 
   // update select status
@@ -255,6 +321,8 @@ export function setPiece (pieceJson, select = false) {
     unselectPieces()
     div.add('.is-selected')
   }
+
+  updateNode(div, pieceJson)
 }
 
 /**
@@ -409,21 +477,28 @@ export function nodeToPiece (node) {
  * @return {HTMLElement} Converted node (not added to DOM yet).
  */
 export function assetToNode (assetJson, side = 0) {
-  let asset
+  let node
+
+  // create the dom node
   if (assetJson.id === '0000000000000000') {
-    // asset invalid - can happen if e.g. images got renamed/removed
-    asset = _('.asset').create().css({
-      backgroundImage: `url('api/data/games/${getGame().name}/invalid.svg')`,
-      backgroundColor: '#40bfbf'
-    })
+    node = createInvalidAsset(assetJson.type)
   } else {
-    asset = _('.asset').create().css({
-      backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`,
-      backgroundColor: assetJson.type === 'overlay' ? 'transparent' : `#${assetJson.bg}`
+    if (assetJson.base) { // layered asset
+      node = _(`.piece.piece-${assetJson.type}.has-layer`).create().css({
+        backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.base}')`,
+        '--fbg-layer-image': `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`
+      })
+    } else { // regular asset
+      node = _(`.piece.piece-${assetJson.type}`).create().css({
+        backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`
+      })
+    }
+  }
+  if (assetJson.type !== 'overlay' && assetJson.type !== 'other') {
+    node.css({
+      backgroundColor: '#' + (assetJson.bg ?? '808080')
     })
   }
-
-  const node = _(`.piece.${assetJson.type} > .box > .border`).create(asset)
 
   // set default metadata from asset
   node.data({
@@ -438,6 +513,13 @@ export function assetToNode (assetJson, side = 0) {
     bg: assetJson.bg,
     color: 0
   })
+
+  // add feature hook to piece (if it has one)
+  if (assetJson.alias === 'dicemat') {
+    node.data({
+      feature: 'DICEMAT'
+    })
+  }
 
   return node
 }
@@ -535,11 +617,13 @@ function setupGame (game) {
           </div>
 
           <div>
-            <button id="btn-token" class="btn-icon" title="Toggle tokens [1]">${iconToken}</button>
+            <button id="btn-other" class="btn-icon" title="Toggle dice [1]">${iconDice}</button>
 
-            <button id="btn-overlay" class="btn-icon" title="Toggle overlays [2]">${iconOverlay}</button>
+            <button id="btn-token" class="btn-icon" title="Toggle tokens [2]">${iconToken}</button>
 
-            <button id="btn-tile" class="btn-icon" title="Toggle tiles [3]">${iconTile}</button>
+            <button id="btn-overlay" class="btn-icon" title="Toggle overlays [3]">${iconOverlay}</button>
+
+            <button id="btn-tile" class="btn-icon" title="Toggle tiles [4]">${iconTile}</button>
           </div>
 
           <div class="spacing-medium">
@@ -573,6 +657,7 @@ function setupGame (game) {
       <div id="scroller" class="scroller">
         <div id="tabletop" class="tabletop">
           <div id="cursor" class="cursor"></div>
+          <div id="layer-other" class="layer layer-other"></div>
           <div id="layer-token" class="layer layer-token"></div>
           <div id="layer-overlay" class="layer layer-overlay"></div>
           <div id="layer-tile" class="layer layer-tile"></div>
@@ -580,27 +665,24 @@ function setupGame (game) {
         </div>
       </div>
     </div>
-    <div id="modal" class="modal is-noselect" tabindex="-1">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div id="modal-header" class="modal-header is-content"></div>
-          <div id="modal-body" class="modal-body is-content"></div>
-          <div id="modal-footer" class="modal-footer"></div>
-        </div>
-      </div>
-    </div>
     <div id="popper" class="popup is-content"></div>
   `
 
+  changeQuality(stateGetGamePref('renderQuality') ?? 3)
+
   // setup menu for layers
   let undefinedCount = 0
-  for (const layer of ['token', 'overlay', 'tile']) {
+  for (const layer of ['token', 'overlay', 'tile', 'other']) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
     const prop = stateGetGamePref('layer' + layer)
     if (prop === true) toggleLayer(layer) // stored enabled
     if (prop === undefined) undefinedCount++
   }
-  if (undefinedCount >= 3) toggleLayer('token') // default if store was empty
+  if (undefinedCount >= 4) {
+    // default if store was empty
+    toggleLayer('other')
+    toggleLayer('token')
+  }
 
   // setup menu for selection
   _('#btn-a').on('click', () => modalLibrary(getMouseTileX(), getMouseTileY()))
@@ -635,8 +717,8 @@ function setupGame (game) {
     scrollbarColor: `${table.background.scroller} ${table.background.color}`
   })
   scroller = scroller.node() // and this for the webkits out there
-  scroller.style.setProperty('--nr-color-scroll-fg', table.background.scroller)
-  scroller.style.setProperty('--nr-color-scroll-bg', table.background.color)
+  scroller.style.setProperty('--fbg-color-scroll-fg', table.background.scroller)
+  scroller.style.setProperty('--fbg-color-scroll-bg', table.background.color)
 
   // setup content
   pollGameState()
@@ -679,6 +761,58 @@ function updateNode (node, piece) {
   })
   return node
 }
+
+/**
+ * Find all pieces within a grid area.
+ *
+ * @param {Object} rect Rectangle object, containing top/left/bottom/right.
+ * @param {String} layer Optional name of layer to search within. Defaults to 'all'.
+ * @returns {Array} Array of nodes/pieces that are in or touch that area.
+ */
+function getPiecesWithin (rect, layer = 'all') {
+  const pieces = []
+  const filter = layer === 'all' ? '.piece' : '.layer-' + layer + ' .piece'
+  _('#tabletop ' + filter).each(node => {
+    if (intersect(rect, {
+      left: Number(node.dataset.x),
+      top: Number(node.dataset.y),
+      right: Number(node.dataset.x) + (node.dataset.r === '0' || node.dataset.r === '180' ? Number(node.dataset.w) : Number(node.dataset.h)) - 1,
+      bottom: Number(node.dataset.y) + (node.dataset.r === '0' || node.dataset.r === '180' ? Number(node.dataset.h) : Number(node.dataset.w)) - 1
+    })) {
+      pieces.push(node)
+    }
+  })
+  return pieces
+}
+
+/**
+ * Determine if two rectacles intersect / overlap.
+ *
+ * @param {Object} rect1 First rect, containing of top/left/bottom/right.
+ * @param {Object} rect2 Second rect, containing of top/left/bottom/right.
+ * @returns {Boolean} True if they intersect.
+ */
+function intersect (rect1, rect2) {
+  return (rect1.left <= rect2.right &&
+    rect2.left <= rect1.right &&
+    rect1.top <= rect2.bottom &&
+    rect2.top <= rect1.bottom)
+}
+
+/**
+ * Create an asset node for invalid assets / ids.
+ *
+ * @param {String} type Asset type (token, tile, ...).
+ * @return {FreeDOM} dummy node.
+ */
+function createInvalidAsset (type) {
+  return _(`.piece.piece-${type}`).create().css({
+    backgroundImage: `url('api/data/games/${getGame().name}/invalid.svg')`,
+    backgroundColor: '#40bfbf'
+  })
+}
+
+const iconDice = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
 
 const iconToken = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>'
 
