@@ -152,6 +152,7 @@ export function cloneSelected (x, y) {
     const piece = nodeToPiece(node)
     piece.x = x
     piece.y = y
+    piece.z = getMaxZ(piece.layer) + 1
     if (piece.no > 0) { // increase piece letter (if it has one)
       piece.no = piece.no + 1
       if (piece.no >= 16) piece.no = 1

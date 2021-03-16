@@ -12,7 +12,7 @@ Here is a list what might happen next. However, priorities can change.
   * [X] fix dice not shown properly in asset dialog
 * [X] quality settings / disable shadows
 * [X] improve library view (show 1x1 tiles smaller, hide common 1x1 tags)
-* [ ] always move cloned items to-top
+* [X] always move cloned items to-top
 * [ ] delete table
 * [X] show ping/request time in setting
 * [ ] template GDRP privacy statement
