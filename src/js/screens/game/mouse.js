@@ -90,6 +90,13 @@ export function updateMenu () {
     menu.remove('.disabled')
     if (selected[0].dataset.sides <= 1) {
       _('#btn-f').add('.disabled')
+      _('#btn-hash').add('.disabled')
+    }
+    if (selected[0].dataset.sides <= 2) {
+      _('#btn-hash').add('.disabled')
+    }
+    if (selected[0].dataset.feature === 'DICEMAT') {
+      _('#btn-hash').remove('.disabled')
     }
   } else {
     menu.remove('.disabled')

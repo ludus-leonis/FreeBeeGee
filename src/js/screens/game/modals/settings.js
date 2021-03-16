@@ -29,7 +29,9 @@ import {
   updateState,
   restoreState,
   stateGetGamePref,
-  stateSetGamePref
+  stateSetGamePref,
+  pollTimes,
+  syncTimes
 } from '../state.js'
 
 // --- public ------------------------------------------------------------------
@@ -55,8 +57,8 @@ export function modalSettings () {
         </div>
         <div class="col-12 col-md-6">
           <h2 class="h3">Game/Server statistics</h2>
-          <p>Avg. request time: ???</p>
-          <p>Avg. refresh time: ???</p>
+          <p>Avg. request time: ${Math.ceil(pollTimes.reduce((a, b) => a + b) / pollTimes.length)}ms</p>
+          <p>Avg. refresh time: ${Math.ceil(syncTimes.reduce((a, b) => a + b) / syncTimes.length)}ms</p>
         </div>
 
         <div class="col-12 spacing-small">

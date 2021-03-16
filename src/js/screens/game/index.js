@@ -154,7 +154,7 @@ export function cloneSelected (x, y) {
     piece.y = y
     if (piece.no > 0) { // increase piece letter (if it has one)
       piece.no = piece.no + 1
-      if (piece.no > 26) piece.no = 1
+      if (piece.no >= 16) piece.no = 1
     }
     stateCreatePiece(piece, true)
   })
@@ -546,6 +546,7 @@ export function popupPiece (id) {
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
     <a class="popup-menu flip ${piece.dataset.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
+    <a class="popup-menu random ${(piece.dataset.sides > 2 || piece.dataset.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
@@ -568,6 +569,12 @@ export function popupPiece (id) {
     click.preventDefault()
     _('#popper').remove('.show')
     flipSelected()
+  })
+
+  _('#popper .random').on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    randomSelected()
   })
 
   _('#popper .top').on('click', click => {
@@ -637,6 +644,8 @@ function setupGame (game) {
 
             <button id="btn-f" class="btn-icon" title="Flip [f]">${iconFlip}</button>
 
+            <button id="btn-hash" class="btn-icon" title="Random [#]">${iconShuffle}</button>
+
             <button id="btn-t" class="btn-icon" title="To top [t]">${iconTop}</button>
 
             <button id="btn-b" class="btn-icon" title="To bottom [b]">${iconBottom}</button>
@@ -693,6 +702,7 @@ function setupGame (game) {
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())
   _('#btn-s').on('click', () => settings())
+  _('#btn-hash').on('click', () => randomSelected())
   _('#btn-del').on('click', () => deleteSelected())
 
   // setup remaining menu
@@ -835,6 +845,8 @@ const iconBottom = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="2
 const iconClone = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>'
 
 const iconDelete = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>'
+
+const iconShuffle = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>'
 
 const iconDownload = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>'
 

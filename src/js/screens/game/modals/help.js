@@ -94,7 +94,7 @@ export function modalHelp () {
             <p><span class="key">e</span> Edit selected piece.</p>
             <p><span class="key">r</span> Rotate piece.</p>
             <p><span class="key">f</span> Flip over piece. Some pieces have more than two sides.</p>
-            <p><span class="key">#</span> Flip piece to a random side / randomize all dice on dicetrays.</p>
+            <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
             <p><span class="key">t</span> Move selected piece to the top of its layer.</p>
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>

@@ -1,12 +1,11 @@
 # Roadmap
 
-Here is a list what might happen next. However, priorities might change.
+Here is a list what might happen next. However, priorities can change.
 
 ## v0.5 - Random Rabbit
 
 * [ ] randomize features
   * [X] randomize side (a.k.a. dice-tokens)
-  * [ ] shuffle stack/square
   * [X] dicetray (separate layer)
   * [.] basic dice-assets d4, d6, d8, d10, d12, d20
   * [X] support for custom dice
@@ -14,9 +13,8 @@ Here is a list what might happen next. However, priorities might change.
 * [X] quality settings / disable shadows
 * [X] improve library view (show 1x1 tiles smaller, hide common 1x1 tags)
 * [ ] always move cloned items to-top
-* [ ] support download-game filenames for re-uploads (special characters)
 * [ ] delete table
-* [ ] show ping/request time in setting
+* [X] show ping/request time in setting
 * [ ] template GDRP privacy statement
 * [ ] pre-release
   * [ ] update+run unit+integration tests
@@ -48,11 +46,12 @@ Here is a list what might happen next. However, priorities might change.
 ### rather sooner
 
 * add template version to asset urls
-* 3d effekt für tiles
 * overlay-grid-on-tile option
 * distinct select-token look from outline
 * persist scroll position between page refresh
 * change table size
+* support for stacks/decks of cards
+  * shuffle deck/stack
 * option to force-install templates with invalid versions
 * color.sh: detect dominant piece color instead of average color
 * rightclick on desk -> add piece popup
@@ -79,6 +78,7 @@ Here is a list what might happen next. However, priorities might change.
 * full set of mm1/bestiary1 monsters in RPG template
 * tour / first-time-tutorial
 * API Docs
+* randomize button on dicemat
 
 ### rather later
 

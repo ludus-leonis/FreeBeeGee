@@ -168,6 +168,8 @@ export function stateSetGamePref (pref, value) {
   setStoreValue('g' + game.id.substr(0, 8), pref, value)
 }
 
+export const pollTimes = []
+
 /**
  * Poll the current game's state and trigger UI updates.
  *
@@ -181,6 +183,7 @@ export function pollGameState (
   selectId = null
 ) {
   clearTimeout(gameStateTimeout)
+  const pollTime = new Date().getMilliseconds()
   apiHeadState(game.name)
     .then(headers => {
       const digest = headers.get('digest')
@@ -203,6 +206,10 @@ export function pollGameState (
         gameStateRefresh * 1.05,
         gameStateRefreshMax
       ) + Math.random() * 250)
+
+      while (pollTimes.length >= 10) pollTimes.shift()
+      const ms = new Date().getMilliseconds() - pollTime
+      if (ms > 0) pollTimes.push(ms)
     })
 }
 
@@ -420,6 +427,8 @@ function patchPiece (pieceId, patch, poll = true) {
     })
 }
 
+export const syncTimes = []
+
 /**
  * Download the current game state and trigger updates on change.
  *
@@ -427,6 +436,8 @@ function patchPiece (pieceId, patch, poll = true) {
  * @param {String} digest Hash of last seen state to detect changes.
  */
 function syncState (selectId, digest) {
+  const syncTime = new Date().getMilliseconds()
+
   apiGetState(game.name)
     .then(state => {
       lastDigest = digest
@@ -441,6 +452,11 @@ function syncState (selectId, digest) {
     .catch((error) => { // invalid game
       console.error(error)
       document.location = './?game=' + game.name
+    })
+    .finally(() => {
+      while (syncTimes.length >= 10) syncTimes.shift()
+      const ms = new Date().getMilliseconds() - syncTime
+      if (ms > 0) syncTimes.push(ms)
     })
 }
 

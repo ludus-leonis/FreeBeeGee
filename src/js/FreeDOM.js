@@ -371,10 +371,8 @@ class FreeDOM {
           this.each(node => {
             const toRemove = []
             for (const cls of node.classList) {
-              console.log('check', search, cls)
               if (cls.startsWith(search)) toRemove.push(cls)
             }
-            console.log('toremove', toRemove)
             for (const cls of toRemove) {
               node.classList.remove(cls)
             }
