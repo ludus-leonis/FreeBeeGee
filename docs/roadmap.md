@@ -4,10 +4,10 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.5 - Random Rabbit
 
-* [ ] randomize features
+* [X] randomize features
   * [X] randomize side (a.k.a. dice-tokens)
   * [X] dicetray (separate layer)
-  * [.] basic dice-assets d4, d6, d8, d10, d12, d20
+  * [X] dice-assets d4, d6, d8, d10, d12, d20 in 4 colors
   * [X] support for custom dice
   * [X] fix dice not shown properly in asset dialog
 * [X] quality settings / disable shadows

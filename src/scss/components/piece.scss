@@ -39,7 +39,7 @@ $piece-shadow-flat: 3px 3px 0 $color-black-35a;
 $piece-shadow-flat-90: 3px -3px 0 $color-black-35a;
 $piece-shadow-flat-180: -3px ($piece-shadow-height / -2) 0 $color-black-35a;
 $piece-shadow-flat-270: -3px 3px 0 $color-black-35a;
-$piece-shadow-overlay: 4px 4px 4px $color-black-65a;
+$piece-shadow-overlay: 3px 3px 4px $color-black-50a;
 
 @mixin piece-rotate($r, $amount, $pre: '', $post: '') {
   &[id^='0'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 0) #{$post}; }
