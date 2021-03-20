@@ -546,26 +546,38 @@ class FreeBeeGeeAPI
     ) {
         $asset = new \stdClass();
         $asset->assets = [$filename];
-        if (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+)\.([a-fA-F0-9]{6})\.[a-zA-Z0-9]+$/', $filename, $matches)) {
-            // name, size and color
+        if (
+            preg_match(
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6})\.[a-zA-Z0-9]+$/',
+                $filename,
+                $matches
+            )
+        ) {
+            // group.name.1x2x3.808080.png
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
-            $asset->side = (int)$matches[4];
-            $asset->bg = $matches[5];
+            $asset->side = $matches[4];
+            $asset->color = $matches[5];
             $asset->alias = $matches[1];
-        } elseif (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
-            // name and size
+        } elseif (
+            preg_match(
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/',
+                $filename,
+                $matches
+            )
+        ) {
+            // group.name.1x2x3.png
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
-            $asset->side = (int)$matches[4];
-            $asset->bg = '808080';
+            $asset->side = $matches[4];
+            $asset->color = '808080';
             $asset->alias = $matches[1];
         } elseif (preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
-            // name only
+            // group.name.png
             $asset->width = 1;
             $asset->height = 1;
             $asset->side = 1;
-            $asset->bg = '808080';
+            $asset->color = '808080';
             $asset->alias = $matches[1];
         }
         return $asset;
@@ -607,7 +619,10 @@ class FreeBeeGeeAPI
                     if ($lastAsset !== null) {
                         array_push($assets[$type], $lastAsset);
                     }
-                    if ($asset->side === 0) { // this is an asset with a background layer
+                    if (preg_match('/^X+$/', $asset->side)) { // this is a back side
+                        $asset->back = $asset->assets[0];
+                        $asset->assets = [];
+                    } elseif ((int)$asset->side === 0) { // this is a background layer
                         $asset->base = $asset->assets[0];
                         $asset->assets = [];
                     }
@@ -703,8 +718,8 @@ class FreeBeeGeeAPI
                 case 'side':
                     $validated->side = $this->api->assertInteger('side', $value, 0, 128);
                     break;
-                case 'color':
-                    $validated->color = $this->api->assertInteger('color', $value, 0, 7);
+                case 'border':
+                    $validated->border = $this->api->assertInteger('border', $value, 0, 7);
                     break;
                 case 'no':
                     $validated->no = $this->api->assertInteger('no', $value, 0, 15);
@@ -724,7 +739,7 @@ class FreeBeeGeeAPI
             $this->api->assertHasProperties(
                 'piece',
                 $validated,
-                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color'] // no
+                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'border'] // no
             );
         }
 

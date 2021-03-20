@@ -62,8 +62,8 @@ export function modalEdit (piece) {
             <select id="piece-side" name="piece-side"></select>
           </div>
           <div class="col-6">
-            <label for="piece-color">Color (Border)</label>
-            <select id="piece-color" name="piece-color"></select>
+            <label for="piece-border">Border</label>
+            <select id="piece-border" name="piece-color"></select>
           </div>
           <div class="col-6">
             <label for="piece-no">No.</label>
@@ -129,13 +129,13 @@ export function modalEdit (piece) {
       pieceSide.add(option)
     }
 
-    // color
-    const pieceColor = _('#piece-color')
+    // border color
+    const pieceColor = _('#piece-border')
     const template = getTemplate()
     for (let c = 0; c < template.colors.length; c++) {
-      const option = _('option').create(`${c + 1} - ${template.colors[c].name}`)
+      const option = _('option').create(template.colors[c].name)
       option.value = c
-      if (c === piece.color) option.selected = true
+      if (c === piece.border) option.selected = true
       pieceColor.add(option)
     }
 
@@ -188,8 +188,8 @@ function modalOk () {
   value = Number(_('#piece-side').value)
   if (value !== piece.side) updates.side = value
 
-  value = Number(_('#piece-color').value)
-  if (value !== piece.color) updates.color = value
+  value = Number(_('#piece-border').value)
+  if (value !== piece.border) updates.border = value
 
   value = Number(_('#piece-no').value)
   if (value !== piece.no) updates.no = value

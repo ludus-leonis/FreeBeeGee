@@ -232,8 +232,8 @@ export function randomSelected () {
             id: piece.id,
             side: Math.floor(Math.random() * Number(piece.dataset.sides)),
             x: Number(node.dataset.x) + coord.x,
-            y: Number(node.dataset.y) + coord.y,
-            r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
+            y: Number(node.dataset.y) + coord.y
+            // r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
           })
         }
         updatePieces(pieces)
@@ -242,8 +242,8 @@ export function randomSelected () {
         if (Number(node.dataset.sides) > 1) { // only randomize multi-sided tokens
           updatePieces([{
             id: node.id,
-            side: Math.floor(Math.random() * Number(node.dataset.sides)),
-            r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
+            side: Math.floor(Math.random() * Number(node.dataset.sides))
+            // r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
           }])
         }
     }
@@ -295,9 +295,9 @@ export function setPiece (pieceJson, select = false) {
     case 270:
       div.add('.is-rotate-' + pieceJson.r)
   }
-  if (pieceJson.color >= 0 && pieceJson.color <= 7) {
+  if (pieceJson.border >= 0 && pieceJson.border <= 7) {
     _(`#${pieceJson.id}`).css({
-      '--fbg-border-color': template.colors[pieceJson.color].value
+      '--fbg-border-color': template.colors[pieceJson.border].value
     })
   }
 
@@ -463,7 +463,7 @@ export function nodeToPiece (node) {
   piece.no = Number(node.dataset.no)
   piece.side = Number(node.dataset.side)
   piece.label = node.dataset.label
-  piece.color = Number(node.dataset.color)
+  piece.border = Number(node.dataset.border)
   return piece
 }
 
@@ -497,7 +497,7 @@ export function assetToNode (assetJson, side = 0) {
   }
   if (assetJson.type !== 'overlay' && assetJson.type !== 'other') {
     node.css({
-      backgroundColor: '#' + (assetJson.bg ?? '808080')
+      backgroundColor: '#' + (assetJson.color ?? '808080')
     })
   }
 
@@ -511,8 +511,8 @@ export function assetToNode (assetJson, side = 0) {
     sides: assetJson.assets.length,
     r: 0,
     no: 0,
-    bg: assetJson.bg,
-    color: 0
+    color: assetJson.color,
+    border: 0
   })
 
   // add feature hook to piece (if it has one)
@@ -766,7 +766,7 @@ function updateNode (node, piece) {
     z: piece.z ?? 0,
     r: piece.r ?? 0,
     no: piece.no ?? 0,
-    color: piece.color ?? 0,
+    border: piece.border ?? 0,
     side: clamp(0, piece.side ?? 0, piece.sides - 1),
     label: piece.label ?? ''
   })
