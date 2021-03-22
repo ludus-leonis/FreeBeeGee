@@ -13,29 +13,30 @@ Here is a list what might happen next. However, priorities can change.
 * [X] quality settings / disable shadows
 * [X] improve library view (show 1x1 tiles smaller, hide common 1x1 tags)
 * [X] always move cloned items to-top
-* [ ] delete table
 * [X] show ping/request time in setting
-* [ ] template GDRP privacy statement
 * [ ] pre-release
-  * [ ] update+run unit+integration tests
-  * [ ] update docs
+  * [ ] bugfixing
+  * [ ] review+run unit+integration tests
+  * [ ] review docs
   * [ ] update CHANGELOG
 
 ## v0.6 - Uploading Unicorn
 
+* upload custom images for tiles & tokens via web UI
 * fancier implementation for dynamic poll intervalls
   * show "you have been inactive" dialog after 10min
   * decrease poll intervall on mouse/keyboard activity
 * rename "game" to "table"
-* scroll to center of setup/table when opening new tables
-* upload custom images for tiles & tokens
-* remove default entries from json fieles (e.g. side=0)
-* hide .../data/... from URLs (via .htaccess)
+* scroll to last position/center of setup/table when opening new tables
+* remove default entries from json files before save (e.g. side=0)
+* reduce impact of "back" button
+* delete table
+* template GDRP privacy statement
+* fix Firefox reset-table bug
 
 ## v0.7 - Mobile Monkey
 
 * better tablet / touch support
-* performance improvements
 * catch all unhandled warnings/exceptions in PHP API and return 500
 * URL mapping for example.org/roomname -> example.org/#/game/roomname
 * docs how to make game/template `.zip`s
@@ -47,6 +48,7 @@ Here is a list what might happen next. However, priorities can change.
 
 * add template version to asset urls
 * overlay-grid-on-tile option
+* hide .../data/... from URLs (via .htaccess)
 * distinct select-token look from outline
 * persist scroll position between page refresh
 * change table size

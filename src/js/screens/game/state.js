@@ -168,7 +168,7 @@ export function stateSetGamePref (pref, value) {
   setStoreValue('g' + game.id.substr(0, 8), pref, value)
 }
 
-export const pollTimes = []
+export const pollTimes = [25]
 
 /**
  * Poll the current game's state and trigger UI updates.
@@ -427,7 +427,7 @@ function patchPiece (pieceId, patch, poll = true) {
     })
 }
 
-export const syncTimes = []
+export const syncTimes = [75]
 
 /**
  * Download the current game state and trigger updates on change.

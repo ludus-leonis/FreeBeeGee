@@ -146,7 +146,7 @@ select {
   outline: none;
   width: 100%;
 
-  &::-webkit-slider-thumb {
+  &::-webkit-slider-thumb { // sass-lint:disable-line no-vendor-prefixes
     appearance: none;
     background: $color-primary;
     border: 0;
@@ -156,7 +156,7 @@ select {
     width: 2em;
   }
 
-  &::-moz-range-thumb {
+  &::-moz-range-thumb { // sass-lint:disable-line no-vendor-prefixes
     appearance: none;
     background: $color-primary;
     border: 0;

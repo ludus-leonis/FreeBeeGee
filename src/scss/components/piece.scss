@@ -30,16 +30,18 @@ $piece-border-radius: 3px;
 $piece-margin-size: 4px;
 $piece-rotate: 1deg;
 
-$piece-shadow-height: 4px;
-$piece-shadow: ($piece-shadow-height / 2) ($piece-shadow-height / 2) ($piece-shadow-height - 1) $color-black-75a;
-$piece-shadow-90: ($piece-shadow-height / 2) ($piece-shadow-height / -2) ($piece-shadow-height - 1) $color-black-75a;
-$piece-shadow-180: ($piece-shadow-height / -2) ($piece-shadow-height / -2) ($piece-shadow-height - 1) $color-black-75a;
-$piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piece-shadow-height - 1) $color-black-75a;
-$piece-shadow-flat: 3px 3px 0 $color-black-35a;
-$piece-shadow-flat-90: 3px -3px 0 $color-black-35a;
-$piece-shadow-flat-180: -3px ($piece-shadow-height / -2) 0 $color-black-35a;
-$piece-shadow-flat-270: -3px 3px 0 $color-black-35a;
-$piece-shadow-overlay: 3px 3px 4px $color-black-50a;
+$piece-shadow: 2px 2px 2px $color-black-75a;
+$piece-shadow-90: 2px -2px 2px $color-black-75a;
+$piece-shadow-180: -2px -2px 2px $color-black-75a;
+$piece-shadow-270: -2px 2px 2px $color-black-75a;
+
+$piece-shadow-other: 3px 3px 4px $color-black-50a;
+
+$piece-shadow-flat: 2px 2px 0 $color-black-25a;
+$piece-shadow-flat-90: 2px -2px 0 $color-black-25a;
+$piece-shadow-flat-180: -2px -2px 0 $color-black-25a;
+$piece-shadow-flat-270: -2px 2px 0 $color-black-25a;
+$piece-shadow-flat-overlay: 2px 2px 0 $color-black-25a;
 
 @mixin piece-rotate($r, $amount, $pre: '', $post: '') {
   &[id^='0'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 0) #{$post}; }
@@ -60,27 +62,85 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
   &[id^='f'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 15) #{$post}; }
 }
 
-@mixin piece-translate($x, $y, $amount, $pre: '', $post: '') {
-  $token-offset: 4px;
-  &[id^='0'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 0, $y + ($amount / 2) - $amount / 16 * 0) #{$post}; }
-  &[id^='1'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 1, $y + ($amount / 2) - $amount / 16 * 8) #{$post}; }
-  &[id^='2'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 2, $y + ($amount / 2) - $amount / 16 * 7) #{$post}; }
-  &[id^='3'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 3, $y + ($amount / 2) - $amount / 16 * 6) #{$post}; }
-  &[id^='4'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 4, $y + ($amount / 2) - $amount / 16 * 5) #{$post}; }
-  &[id^='5'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 5, $y + ($amount / 2) - $amount / 16 * 4) #{$post}; }
-  &[id^='6'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 6, $y + ($amount / 2) - $amount / 16 * 3) #{$post}; }
-  &[id^='7'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 7, $y + ($amount / 2) - $amount / 16 * 2) #{$post}; }
-  &[id^='8'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 8, $y + ($amount / 2) - $amount / 16 * 1) #{$post}; }
-  &[id^='9'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 9, $y + ($amount / 2) - $amount / 16 * 15) #{$post}; }
-  &[id^='a'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 10, $y + ($amount / 2) - $amount / 16 * 14) #{$post}; }
-  &[id^='b'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 11, $y + ($amount / 2) - $amount / 16 * 13) #{$post}; }
-  &[id^='c'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 12, $y + ($amount / 2) - $amount / 16 * 12) #{$post}; }
-  &[id^='d'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 13, $y + ($amount / 2) - $amount / 16 * 11) #{$post}; }
-  &[id^='e'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 14, $y + ($amount / 2) - $amount / 16 * 10) #{$post}; }
-  &[id^='f'] { transform: #{$pre} translate($x + ($amount / 2) - $amount / 16 * 15, $y + ($amount / 2) - $amount / 16 * 9) #{$post}; }
+@mixin piece-translate($amount) {
+  &[id^='0'] { transform: translate(round(($amount / 2) - $amount / 16 * 0), round(($amount / 2) - $amount / 16 * 0)); }
+  &[id^='1'] { transform: translate(round(($amount / 2) - $amount / 16 * 1), round(($amount / 2) - $amount / 16 * 8)); }
+  &[id^='2'] { transform: translate(round(($amount / 2) - $amount / 16 * 2), round(($amount / 2) - $amount / 16 * 7)); }
+  &[id^='3'] { transform: translate(round(($amount / 2) - $amount / 16 * 3), round(($amount / 2) - $amount / 16 * 6)); }
+  &[id^='4'] { transform: translate(round(($amount / 2) - $amount / 16 * 4), round(($amount / 2) - $amount / 16 * 5)); }
+  &[id^='5'] { transform: translate(round(($amount / 2) - $amount / 16 * 5), round(($amount / 2) - $amount / 16 * 4)); }
+  &[id^='6'] { transform: translate(round(($amount / 2) - $amount / 16 * 6), round(($amount / 2) - $amount / 16 * 3)); }
+  &[id^='7'] { transform: translate(round(($amount / 2) - $amount / 16 * 7), round(($amount / 2) - $amount / 16 * 2)); }
+  &[id^='8'] { transform: translate(round(($amount / 2) - $amount / 16 * 8), round(($amount / 2) - $amount / 16 * 1)); }
+  &[id^='9'] { transform: translate(round(($amount / 2) - $amount / 16 * 9), round(($amount / 2) - $amount / 16 * 15)); }
+  &[id^='a'] { transform: translate(round(($amount / 2) - $amount / 16 * 10), round(($amount / 2) - $amount / 16 * 14)); }
+  &[id^='b'] { transform: translate(round(($amount / 2) - $amount / 16 * 11), round(($amount / 2) - $amount / 16 * 13)); }
+  &[id^='c'] { transform: translate(round(($amount / 2) - $amount / 16 * 12), round(($amount / 2) - $amount / 16 * 12)); }
+  &[id^='d'] { transform: translate(round(($amount / 2) - $amount / 16 * 13), round(($amount / 2) - $amount / 16 * 11)); }
+  &[id^='e'] { transform: translate(round(($amount / 2) - $amount / 16 * 14), round(($amount / 2) - $amount / 16 * 10)); }
+  &[id^='f'] { transform: translate(round(($amount / 2) - $amount / 16 * 15), round(($amount / 2) - $amount / 16 * 9)); }
+
+  &.is-rotate-90 {
+    &[id^='0'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 0), round(($amount / 2) - $amount / 16 * 0) * -1); }
+    &[id^='1'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 8), round(($amount / 2) - $amount / 16 * 1) * -1); }
+    &[id^='2'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 7), round(($amount / 2) - $amount / 16 * 2) * -1); }
+    &[id^='3'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 6), round(($amount / 2) - $amount / 16 * 3) * -1); }
+    &[id^='4'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 5), round(($amount / 2) - $amount / 16 * 4) * -1); }
+    &[id^='5'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 4), round(($amount / 2) - $amount / 16 * 5) * -1); }
+    &[id^='6'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 3), round(($amount / 2) - $amount / 16 * 6) * -1); }
+    &[id^='7'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 2), round(($amount / 2) - $amount / 16 * 7) * -1); }
+    &[id^='8'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 1), round(($amount / 2) - $amount / 16 * 8) * -1); }
+    &[id^='9'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 15), round(($amount / 2) - $amount / 16 * 9) * -1); }
+    &[id^='a'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 14), round(($amount / 2) - $amount / 16 * 10) * -1); }
+    &[id^='b'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 13), round(($amount / 2) - $amount / 16 * 11) * -1); }
+    &[id^='c'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 12), round(($amount / 2) - $amount / 16 * 12) * -1); }
+    &[id^='d'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 11), round(($amount / 2) - $amount / 16 * 13) * -1); }
+    &[id^='e'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 10), round(($amount / 2) - $amount / 16 * 14) * -1); }
+    &[id^='f'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 9), round(($amount / 2) - $amount / 16 * 15) * -1); }
+  }
+
+  &.is-rotate-180 {
+    &[id^='0'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 0) * -1, round(($amount / 2) - $amount / 16 * 0) * -1); }
+    &[id^='1'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 1) * -1, round(($amount / 2) - $amount / 16 * 8) * -1); }
+    &[id^='2'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 2) * -1, round(($amount / 2) - $amount / 16 * 7) * -1); }
+    &[id^='3'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 3) * -1, round(($amount / 2) - $amount / 16 * 6) * -1); }
+    &[id^='4'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 4) * -1, round(($amount / 2) - $amount / 16 * 5) * -1); }
+    &[id^='5'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 5) * -1, round(($amount / 2) - $amount / 16 * 4) * -1); }
+    &[id^='6'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 6) * -1, round(($amount / 2) - $amount / 16 * 3) * -1); }
+    &[id^='7'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 7) * -1, round(($amount / 2) - $amount / 16 * 2) * -1); }
+    &[id^='8'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 8) * -1, round(($amount / 2) - $amount / 16 * 1) * -1); }
+    &[id^='9'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 9) * -1, round(($amount / 2) - $amount / 16 * 15) * -1); }
+    &[id^='a'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 10) * -1, round(($amount / 2) - $amount / 16 * 14) * -1); }
+    &[id^='b'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 11) * -1, round(($amount / 2) - $amount / 16 * 13) * -1); }
+    &[id^='c'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 12) * -1, round(($amount / 2) - $amount / 16 * 12) * -1); }
+    &[id^='d'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 13) * -1, round(($amount / 2) - $amount / 16 * 11) * -1); }
+    &[id^='e'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 14) * -1, round(($amount / 2) - $amount / 16 * 10) * -1); }
+    &[id^='f'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 15) * -1, round(($amount / 2) - $amount / 16 * 9) * -1); }
+  }
+
+  &.is-rotate-270 {
+    &[id^='0'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 0) * -1, round(($amount / 2) - $amount / 16 * 0)); }
+    &[id^='1'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 8) * -1, round(($amount / 2) - $amount / 16 * 1)); }
+    &[id^='2'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 7) * -1, round(($amount / 2) - $amount / 16 * 2)); }
+    &[id^='3'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 6) * -1, round(($amount / 2) - $amount / 16 * 3)); }
+    &[id^='4'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 5) * -1, round(($amount / 2) - $amount / 16 * 4)); }
+    &[id^='5'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 4) * -1, round(($amount / 2) - $amount / 16 * 5)); }
+    &[id^='6'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 3) * -1, round(($amount / 2) - $amount / 16 * 6)); }
+    &[id^='7'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 2) * -1, round(($amount / 2) - $amount / 16 * 7)); }
+    &[id^='8'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 1) * -1, round(($amount / 2) - $amount / 16 * 8)); }
+    &[id^='9'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 15) * -1, round(($amount / 2) - $amount / 16 * 9)); }
+    &[id^='a'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 14) * -1, round(($amount / 2) - $amount / 16 * 10)); }
+    &[id^='b'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 13) * -1, round(($amount / 2) - $amount / 16 * 11)); }
+    &[id^='c'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 12) * -1, round(($amount / 2) - $amount / 16 * 12)); }
+    &[id^='d'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 11) * -1, round(($amount / 2) - $amount / 16 * 13)); }
+    &[id^='e'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 10) * -1, round(($amount / 2) - $amount / 16 * 14)); }
+    &[id^='f'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 9) * -1, round(($amount / 2) - $amount / 16 * 15)); }
+  }
 }
 
 // --- piece basics (size, ...) ------------------------------------------------
+
+$label-offset: 8px;
 
 .piece {
   #{'--fbg-layer-image'}: none;
@@ -96,12 +156,18 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
 
   $piece-tile-half: $piece-tile-size / 2;
 
+  &.is-selected {
+    #{'--fbg-border-color'}: $color-secondary !important; // sass-lint:disable-line no-important
+    box-shadow: 0 0 0 $piece-border-size $color-secondary inset !important; // sass-lint:disable-line no-important
+  }
+
   // --- size ------------------------------------------------------------------
 
   @for $x from 1 through 32 {
     &.is-w-#{$x} {
       width: $x * $piece-tile-size;
       &.is-rotate-270 { transform-origin: $piece-tile-half * $x $piece-tile-half * $x; }
+      &.piece-token.is-rotate-270 { transform-origin: $piece-tile-half * $x - $piece-border-radius $piece-tile-half * $x - $piece-border-radius; }
     }
   }
 
@@ -109,12 +175,11 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
     &.is-h-#{$y} {
       height: $y * $piece-tile-size;
       &.is-rotate-90 { transform-origin: $piece-tile-half * $y $piece-tile-half * $y; }
+      &.piece-token.is-rotate-90 { transform-origin: $piece-tile-half * $y - $piece-border-radius $piece-tile-half * $y - $piece-border-radius; }
     }
   }
 
   // --- labels (flexbox positions) --------------------------------------------
-
-  $label-offset: 8px;
 
   .label {
     @extend %p-micro;
@@ -150,10 +215,6 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
   }
 
   // --- rotation --------------------------------------------------------------
-
-  &.is-rotate-0 {
-    transform: rotate(0deg);
-  }
 
   &.is-rotate-90 {
     align-items: center;
@@ -208,88 +269,57 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
   }
 }
 
+@mixin shadows($rotate0, $rotate90, $rotate180, $rotate270) {
+  filter: drop-shadow($rotate0);
+
+  &.is-rotate-90 {
+    filter: drop-shadow($rotate90);
+  }
+
+  &.is-rotate-180 {
+    filter: drop-shadow($rotate180);
+  }
+
+  &.is-rotate-270 {
+    filter: drop-shadow($rotate270);
+  }
+}
+
 // --- regular tiles -----------------------------------------------------------
 
 .piece-tile {
   background-color: $piece-color;
 
-  &.is-selected {
-    box-shadow: 0 0 0 $piece-border-size $color-secondary inset;
-  }
-
   // --- quality settings ---
 
   .is-quality-medium & {
-    box-shadow: $piece-shadow-flat;
-
-    &.is-selected { box-shadow: 0 0 $piece-border-size $color-secondary inset, $piece-shadow-flat; }
-
-    &.is-rotate-90 {
-      box-shadow: $piece-shadow-flat-90;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-flat-90; }
-    }
-
-    &.is-rotate-180 {
-      box-shadow: $piece-shadow-flat-180;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-flat-180; }
-    }
-
-    &.is-rotate-270 {
-      box-shadow: $piece-shadow-flat-270;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-flat-270; }
-    }
+    @include shadows($piece-shadow-flat, $piece-shadow-flat-90, $piece-shadow-flat-180, $piece-shadow-flat-270);
   }
 
-  .is-quality-high & {
-    box-shadow: $piece-shadow;
-
-    &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow; }
-
-    &.is-rotate-90 {
-      box-shadow: $piece-shadow-90;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-90; }
-    }
-
-    &.is-rotate-180 {
-      box-shadow: $piece-shadow-180;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-180; }
-    }
-
-    &.is-rotate-270 {
-      box-shadow: $piece-shadow-270;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-270; }
-    }
+  .is-quality-high &,
+  .is-quality-ultra & {
+    @include shadows($piece-shadow, $piece-shadow-90, $piece-shadow-180, $piece-shadow-270);
+    border-radius: $piece-border-radius;
   }
 
   .is-quality-ultra & {
-    box-shadow: 3px 3px 1px -2px $color-white-15a inset, -3px -3px 1px -2px $color-black-20a inset, $piece-shadow;
-
     @include piece-rotate(0deg, $piece-rotate);
-
-    &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow; }
+    box-shadow: 3px 3px 1px -2px $color-white-15a inset, -3px -3px 1px -2px $color-black-20a inset;
 
     &.is-rotate-90 {
       @include piece-rotate(90deg, $piece-rotate);
-      box-shadow: 3px -3px 1px -2px $color-white-15a inset, -3px 3px 1px -2px $color-black-20a inset, $piece-shadow-90;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-90; }
+      box-shadow: 3px -3px 1px -2px $color-white-15a inset, -3px 3px 1px -2px $color-black-20a inset;
     }
 
     &.is-rotate-180 {
       @include piece-rotate(180deg, $piece-rotate);
-      box-shadow: -3px -3px 1px -2px $color-white-15a inset, 3px 3px 1px -2px $color-black-20a inset, $piece-shadow-180;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-180; }
+      box-shadow: -3px -3px 1px -2px $color-white-15a inset, 3px 3px 1px -2px $color-black-20a inset;
     }
 
     &.is-rotate-270 {
       @include piece-rotate(270deg, $piece-rotate);
-      box-shadow: -3px 3px 1px -2px $color-white-15a inset, 3px -3px 1px -2px $color-black-20a inset, $piece-shadow-270;
-      &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset, $piece-shadow-270; }
+      box-shadow: -3px 3px 1px -2px $color-white-15a inset, 3px -3px 1px -2px $color-black-20a inset;
     }
-  }
-
-  .is-quality-high &,
-  .is-quality-ultray & {
-    border-radius: $piece-border-radius;
   }
 }
 
@@ -301,6 +331,7 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
   background-color: $piece-color; // tile background
   border: $piece-border-size solid var(--fbg-border-color);
   border-radius: $piece-tile-size;
+  margin: $piece-border-size;
 
   &.is-n::after {
     align-items: center;
@@ -334,14 +365,7 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
   &.is-n-14::after { content: 'E'; }
   &.is-n-15::after { content: 'F'; }
 
-  &.is-rotate-0 { @include piece-translate($piece-border-size, $piece-border-size, 4px, rotate(0deg)) }
-  &.is-rotate-90 { @include piece-translate($piece-border-size, $piece-border-size, 4px, rotate(90deg)) }
-  &.is-rotate-180 { @include piece-translate($piece-border-size, $piece-border-size, 4px, rotate(180deg)) }
-  &.is-rotate-270 { @include piece-translate($piece-border-size, $piece-border-size, 4px, rotate(270deg)) }
-
-  &.is-selected {
-    #{'--fbg-border-color'}: $color-secondary !important; // sass-lint:disable-line no-important
-  }
+  @include piece-translate(4px);
 
   @for $x from 1 through 32 {
     &.is-w-#{$x} { width: $x * $piece-tile-size - $piece-border-size * 2; }
@@ -353,29 +377,20 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
 
   // --- quality settings ---
 
-  .is-quality-high &,
-  .is-quality-ultra & {
-    box-shadow: $piece-shadow;
-
-    &.is-rotate-90 { box-shadow: $piece-shadow-90; }
-    &.is-rotate-180 { box-shadow: $piece-shadow-180; }
-    &.is-rotate-270 { box-shadow: $piece-shadow-270; }
+  .is-quality-medium & {
+    @include shadows($piece-shadow-flat, $piece-shadow-flat-90, $piece-shadow-flat-180, $piece-shadow-flat-270);
   }
 
-  .is-quality-medium & {
-    box-shadow: $piece-shadow-flat;
-
-    &.is-rotate-90 { box-shadow: $piece-shadow-flat-90; }
-    &.is-rotate-180 { box-shadow: $piece-shadow-flat-180; }
-    &.is-rotate-270 { box-shadow: $piece-shadow-flat-270; }
+  .is-quality-high &,
+  .is-quality-ultra & {
+    @include shadows($piece-shadow, $piece-shadow-90, $piece-shadow-180, $piece-shadow-270);
   }
 }
 
 // --- overlays ----------------------------------------------------------------
 
-.piece-overlay {
-  &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset; }
-}
+// .piece-overlay {
+// }
 
 // --- others (layered) --------------------------------------------------------
 
@@ -383,38 +398,40 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
   transform: none;
   &::after { transform: rotate(0deg); }
 
-  &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary inset; }
+  // --- can't rotate other pieces ---
 
-  &.is-rotate-0 {
-    transform: none;
-    &::after { transform: rotate(0deg); }
-  }
-
-  &.is-rotate-90 {
-    transform: none;
-    &::after { transform: rotate(90deg); }
-  }
-
-  &.is-rotate-180 {
-    transform: none;
-    &::after { transform: rotate(180deg); }
-  }
-
+  &.is-rotate-90,
+  &.is-rotate-180,
   &.is-rotate-270 {
+    align-items: flex-end;
+    justify-content: center;
     transform: none;
-    &::after { transform: rotate(270deg); }
+
+    &::after,
+    .label {
+      transform: none;
+    }
+
+    .label {
+      left: initial;
+      right: initial;
+      top: $label-offset;
+    }
   }
 
   // --- quality settings ---
 
+  .is-quality-medium & {
+    @include shadows($piece-shadow-flat, $piece-shadow-flat, $piece-shadow-flat, $piece-shadow-flat);
+  }
+
   .is-quality-high &,
   .is-quality-ultra & {
-    @include piece-rotate(0deg, $piece-rotate * 2);
-    filter: drop-shadow($piece-shadow-overlay);
+    @include shadows($piece-shadow-other, $piece-shadow-other, $piece-shadow-other, $piece-shadow-other);
+  }
 
-    &.is-rotate-0 {
-      @include piece-rotate(0deg, $piece-rotate * 2);
-    }
+  .is-quality-ultra & {
+    @include piece-rotate(0deg, $piece-rotate * 2);
 
     &.is-rotate-90 {
       @include piece-rotate(0deg, $piece-rotate * 2);
@@ -428,6 +445,7 @@ $piece-shadow-overlay: 3px 3px 4px $color-black-50a;
       @include piece-rotate(0deg, $piece-rotate * 2);
     }
   }
+
 }
 
 // --- helpers -----------------------------------------------------------------
