@@ -26,11 +26,14 @@
 .tabletop {
   $tile-size: 64px;
 
-  filter: grayscale(10%) sepia(5%);
   position: relative;
 
   .is-quality-low & {
     background-image: none !important; // sass-lint:disable-line no-important
+  }
+
+  .is-quality-ultra & {
+    filter: grayscale(10%) sepia(5%);
   }
 
   .cursor {
