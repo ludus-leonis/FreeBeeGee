@@ -15,8 +15,8 @@ Here is a list what might happen next. However, priorities can change.
 * [X] always move cloned items to-top
 * [X] show ping/request time in setting
 * [ ] pre-release
-  * [ ] bugfixing
-  * [ ] review+run unit+integration tests
+  * [X] bugfixing
+  * [X] review+run unit+integration tests
   * [ ] review docs
   * [ ] update CHANGELOG
 

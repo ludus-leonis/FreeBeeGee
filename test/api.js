@@ -325,7 +325,7 @@ describe('CRUD piece', function () {
       r: 0,
       no: 2,
       side: 0,
-      color: 1
+      border: 1
     }
   }, body => {
     expect(body).to.be.an('object')
@@ -340,7 +340,7 @@ describe('CRUD piece', function () {
     expect(body.r).to.be.eql(0)
     expect(body.no).to.be.eql(2)
     expect(body.side).to.be.eql(0)
-    expect(body.color).to.be.eql(1)
+    expect(body.border).to.be.eql(1)
     data = body
   }, 201)
 
@@ -358,7 +358,7 @@ describe('CRUD piece', function () {
     expect(body.r).to.be.eql(0)
     expect(body.no).to.be.eql(2)
     expect(body.side).to.be.eql(0)
-    expect(body.color).to.be.eql(1)
+    expect(body.border).to.be.eql(1)
   })
 
   // update piece (patch)
@@ -379,7 +379,7 @@ describe('CRUD piece', function () {
     expect(body.r).to.be.eql(0)
     expect(body.no).to.be.eql(2)
     expect(body.side).to.be.eql(0)
-    expect(body.color).to.be.eql(1)
+    expect(body.border).to.be.eql(1)
   })
 
   // get & compare piece
@@ -396,7 +396,7 @@ describe('CRUD piece', function () {
     expect(body.r).to.be.eql(0)
     expect(body.no).to.be.eql(2)
     expect(body.side).to.be.eql(0)
-    expect(body.color).to.be.eql(1)
+    expect(body.border).to.be.eql(1)
   })
 
   // update/replace piece (put)
@@ -412,7 +412,7 @@ describe('CRUD piece', function () {
       r: 90,
       no: 5,
       side: 3,
-      color: 2
+      border: 2
     }
   }, body => {
     expect(body).to.be.an('object')
@@ -427,7 +427,7 @@ describe('CRUD piece', function () {
     expect(body.r).to.be.eql(90)
     expect(body.no).to.be.eql(5)
     expect(body.side).to.be.eql(3)
-    expect(body.color).to.be.eql(2)
+    expect(body.border).to.be.eql(2)
   })
 
   // get & compare piece
@@ -444,7 +444,7 @@ describe('CRUD piece', function () {
     expect(body.r).to.be.eql(90)
     expect(body.no).to.be.eql(5)
     expect(body.side).to.be.eql(3)
-    expect(body.color).to.be.eql(2)
+    expect(body.border).to.be.eql(2)
   })
 
   // delete piece
