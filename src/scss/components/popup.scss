@@ -43,7 +43,7 @@
     padding: .5em .25em;
 
     &:hover {
-      background-color: $color-primary;
+      background-color: $color-secondary;
     }
 
     svg {
@@ -53,6 +53,7 @@
     &.disabled {
       color: $color-gray-25;
       cursor: not-allowed;
+      display: none;
 
       &:hover {
         background-color: transparent;

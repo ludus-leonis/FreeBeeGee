@@ -119,8 +119,8 @@ $color-good: $color-primary;
 $color-vignette: rgba(0, 0, 0, .5);
 
 :root { // output var as string to avoid sass-lint errors
-  #{'--nr-color-primary'}: $color-primary;
-  #{'--nr-color-secondary'}: $color-secondary;
-  #{'--nr-color-bg'}: $color-wb-bg;
-  #{'--nr-color-text'}: $color-wb-fg;
+  #{'--fbg-color-primary'}: $color-primary;
+  #{'--fbg-color-secondary'}: $color-secondary;
+  #{'--fbg-color-bg'}: $color-wb-bg;
+  #{'--fbg-color-text'}: $color-wb-fg;
 }

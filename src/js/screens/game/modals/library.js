@@ -69,15 +69,18 @@ export function modalLibrary (x, y) {
         <input id="tab-1" type="radio" name="tabs">
         <input id="tab-2" type="radio" name="tabs">
         <input id="tab-3" type="radio" name="tabs">
+        <input id="tab-4" type="radio" name="tabs">
         <div class="tabs-tabs">
           <label for="tab-1" class="tabs-tab">Tiles</label>
           <label for="tab-2" class="tabs-tab">Overlays</label>
           <label for="tab-3" class="tabs-tab">Token</label>
+          <label for="tab-4" class="tabs-tab">Dice &amp; Cards</label>
         </div>
         <div class="tabs-content">
           <div class="container"><div id="tab-tiles" class="row"></div></div>
           <div class="container"><div id="tab-overlays" class="row"></div></div>
           <div class="container"><div id="tab-tokens" class="row"></div></div>
+          <div class="container"><div id="tab-other" class="row"></div></div>
         </div>
       </div>
     `
@@ -91,11 +94,13 @@ export function modalLibrary (x, y) {
 
     // add items to their tab
     const tiles = _('#tab-tiles')
-    for (const asset of library.tile) { tiles.add(assetToPreview(asset)) }
+    for (const asset of library.tile ?? []) { tiles.add(assetToPreview(asset)) }
     const overlays = _('#tab-overlays')
-    for (const asset of library.overlay) { overlays.add(assetToPreview(asset)) }
+    for (const asset of library.overlay ?? []) { overlays.add(assetToPreview(asset)) }
     const tokens = _('#tab-tokens')
-    for (const asset of library.token) { tokens.add(assetToPreview(asset)) }
+    for (const asset of library.token ?? []) { tokens.add(assetToPreview(asset)) }
+    const other = _('#tab-other')
+    for (const asset of library.other ?? []) { other.add(assetToPreview(asset)) }
 
     // enable selection
     _('#tabs-library .col-6').on('click', click => {
@@ -118,22 +123,22 @@ export function modalLibrary (x, y) {
  */
 function assetToPreview (assetJson) {
   const asset = assetToNode(assetJson).add(
-    assetJson.type === 'tile' ? '.is-scale-2' : '.is-scale-2',
-    '.is-w-' + assetJson.width + '.is-h-' + assetJson.height
+    '.is-w-' + assetJson.width,
+    '.is-h-' + assetJson.height
   )
-  const card = _('.col-6.col-sm-4.col-md-3.col-lg-2.col-card').create(asset)
-  if (assetJson.assets.length > 1) {
-    asset.add(_('.tag.tr').create().add(document.createTextNode(
-      `${assetJson.width ?? 1}x${assetJson.height ?? 1}:${assetJson.assets.length ?? 0}`
-    )))
-  } else {
-    asset.add(_('.tag.tr').create().add(document.createTextNode(
-      `${assetJson.width ?? 1}x${assetJson.height ?? 1}`
-    )))
+
+  const max = _('.is-scale-2').create(asset)
+  const card = _('.col-6.col-sm-4.col-md-3.col-lg-2.col-card').create(max)
+  asset.add('.is-max-' + Math.max(assetJson.width, assetJson.height))
+  let tag = ''
+  if (assetJson.width > 2 || assetJson.height > 2) {
+    tag = `${assetJson.width}x${assetJson.height}`
   }
-  card.add(_('p').create().add(document.createTextNode(
-    `${prettyName(assetJson.alias)}`
-  )))
+  if (assetJson.assets.length > 1) {
+    tag += `:${assetJson.assets.length}`
+  }
+  if (tag !== '') max.add(_('.tag.tr').create().add(tag))
+  card.add(_('p').create().add(`${prettyName(assetJson.alias)}`))
   return card
 }
 

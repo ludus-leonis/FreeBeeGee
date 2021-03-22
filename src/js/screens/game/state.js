@@ -104,11 +104,13 @@ export function getAsset (id) {
   if (asset) return asset
   asset = getLibrary()?.overlay?.find(asset => asset.id === id)
   if (asset) return asset
+  asset = getLibrary()?.other?.find(asset => asset.id === id)
+  if (asset) return asset
   return { // create dummy asset
     assets: ['invalid.svg'],
     width: 1,
     height: 1,
-    bg: '40bfbf',
+    color: '40bfbf',
     alias: 'invalid',
     type: 'tile',
     id: '0000000000000000'
@@ -166,6 +168,8 @@ export function stateSetGamePref (pref, value) {
   setStoreValue('g' + game.id.substr(0, 8), pref, value)
 }
 
+export const pollTimes = [25]
+
 /**
  * Poll the current game's state and trigger UI updates.
  *
@@ -179,6 +183,7 @@ export function pollGameState (
   selectId = null
 ) {
   clearTimeout(gameStateTimeout)
+  const pollTime = new Date().getMilliseconds()
   apiHeadState(game.name)
     .then(headers => {
       const digest = headers.get('digest')
@@ -201,6 +206,10 @@ export function pollGameState (
         gameStateRefresh * 1.05,
         gameStateRefreshMax
       ) + Math.random() * 250)
+
+      while (pollTimes.length >= 10) pollTimes.shift()
+      const ms = new Date().getMilliseconds() - pollTime
+      if (ms > 0) pollTimes.push(ms)
     })
 }
 
@@ -273,7 +282,9 @@ export function stateNumberPiece (pieceId, no) {
  * @param {Number} side New side. Zero-based.
  */
 export function stateFlipPiece (pieceId, side) {
-  patchPiece(pieceId, { side: side })
+  patchPiece(pieceId, {
+    side: side
+  })
 }
 
 /**
@@ -372,6 +383,24 @@ export function restoreState (index) {
     })
 }
 
+/**
+ * Update (patch) a series of pieces.
+ *
+ * Will do only one state refresh after updating all items in the list.
+ *
+ * @param {Array} pieces (Partial) pieces to patch.
+ */
+export function updatePieces (pieces) {
+  const piece = pieces.shift()
+  patchPiece(piece.id, piece, false)
+    .then(() => {
+      if (pieces.length > 0) updatePieces(pieces)
+    })
+    .finally(() => {
+      if (pieces.length === 0) pollGameState()
+    })
+}
+
 // --- internal ----------------------------------------------------------------
 
 /**
@@ -379,9 +408,12 @@ export function restoreState (index) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Object} patch Partial object of fields to send.
+ * @param {Object} poll Optional. If true (default), the table state will be
+ *                 polled after the patch.
+ * @return {Object} Promise of the API request.
  */
-function patchPiece (pieceId, patch) {
-  apiPatchPiece(game.name, pieceId, patch)
+function patchPiece (pieceId, patch, poll = true) {
+  return apiPatchPiece(game.name, pieceId, patch)
     .catch(error => {
       if (error instanceof UnexpectedStatus && error.status === 404) {
         // we somewhat expected this situation. silently ignore it.
@@ -391,9 +423,11 @@ function patchPiece (pieceId, patch) {
       }
     })
     .finally(() => {
-      pollGameState()
+      if (poll) pollGameState()
     })
 }
+
+export const syncTimes = [75]
 
 /**
  * Download the current game state and trigger updates on change.
@@ -402,6 +436,8 @@ function patchPiece (pieceId, patch) {
  * @param {String} digest Hash of last seen state to detect changes.
  */
 function syncState (selectId, digest) {
+  const syncTime = new Date().getMilliseconds()
+
   apiGetState(game.name)
     .then(state => {
       lastDigest = digest
@@ -416,6 +452,11 @@ function syncState (selectId, digest) {
     .catch((error) => { // invalid game
       console.error(error)
       document.location = './?game=' + game.name
+    })
+    .finally(() => {
+      while (syncTimes.length >= 10) syncTimes.shift()
+      const ms = new Date().getMilliseconds() - syncTime
+      if (ms > 0) syncTimes.push(ms)
     })
 }
 
@@ -454,6 +495,7 @@ function setItem (piece, selectId) {
     case 'tile':
     case 'token':
     case 'overlay':
+    case 'other':
       setPiece(piece, selectId === piece.id)
       break
     default:

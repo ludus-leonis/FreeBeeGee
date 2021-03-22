@@ -24,24 +24,24 @@
 ////
 
 :root { // output var as string to avoid sass-lint errors
-  #{'--nr-color-scroll-fg'}: $color-wb-bg;
-  #{'--nr-color-scroll-bg'}: $color-wb-fg;
+  #{'--fbg-color-scroll-fg'}: $color-wb-bg;
+  #{'--fbg-color-scroll-bg'}: $color-wb-fg;
 }
 
 @mixin scrollbar-color {
-  scrollbar-color: var(--nr-color-scroll-fg) var(--nr-color-scroll-bg); // sass-lint:disable-line no-misspelled-properties
+  scrollbar-color: var(--fbg-color-scroll-fg) var(--fbg-color-scroll-bg); // sass-lint:disable-line no-misspelled-properties
 
   ::-webkit-scrollbar-track { // sass-lint:disable-line no-vendor-prefixes
-    background-color: var(--nr-color-scroll-bg);
+    background-color: var(--fbg-color-scroll-bg);
   }
 
   ::-webkit-scrollbar { // sass-lint:disable-line no-vendor-prefixes
-    background-color: var(--nr-color-scroll-bg);
+    background-color: var(--fbg-color-scroll-bg);
     width: px(12);
   }
 
   ::-webkit-scrollbar-thumb { // sass-lint:disable-line no-vendor-prefixes
-    background-color: var(--nr-color-scroll-fg);
+    background-color: var(--fbg-color-scroll-fg);
   }
 }
 

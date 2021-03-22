@@ -43,30 +43,52 @@ export function modalActive () {
 }
 
 /**
+ * Initialize an 'empty' new modal.
+ *
+ * This is a modal with no card / white area in it, to be filled by the caller.
+ *
+ * @return {FreeDOM} The modal's DOM node ('#modal').
+ */
+export function createModalRaw (html) {
+  const node = _('#modal.modal.is-noselect').create()
+  node.tabindex = -1
+  _('body').add(node)
+
+  node.innerHTML = html
+
+  modal = new globalThis.bootstrap.Modal(node.node(), {
+    backdrop: 'static',
+    keyboard: true,
+    focus: true
+  })
+
+  return node.node()
+}
+
+/**
  * Initialize a new modal.
  *
  * Assumes an hidden, empty modal frame to be present in the DOM as '#modal' and
  * will return it as Bootstrap Modal instance.
  *
  * @param {Boolean} large If true, a large modal will be created. If false, a
- *                        regular, smaller modal will be created.
- * @return {HTMLElement} The modal's DOM node ('#modal').
+ *                        regular (smaller) modal will be created.
+ * @return {FreeDOM} The modal's DOM node ('#modal').
  */
 export function createModal (large = false) {
-  const n = _('#modal')
-  if (large) {
-    n.add('.modal-large')
-  } else {
-    n.remove('.modal-large')
-  }
+  const node = createModalRaw(`
+      <div class="modal-dialog">
+        <div id="modal-content class="modal-content">
+          <div id="modal-header" class="modal-header is-content"></div>
+          <div id="modal-body" class="modal-body is-content"></div>
+          <div id="modal-footer" class="modal-footer fb"></div>
+        </div>
+      </div>
+    `)
 
-  modal = new globalThis.bootstrap.Modal(n.node(), {
-    backdrop: 'static',
-    // keyboard: false, // keyboard false to avoid not firing close handler
-    focus: true
-  })
+  if (large) node.classList.add('modal-large')
 
-  return n.node()
+  return node
 }
 
 /**
@@ -78,9 +100,7 @@ export function modalClose () {
   if (modalActive()) {
     modal.dispose()
     modal = null
-    // cleanup modal for re-use
-    _('#modal-header').innerHTML = ''
-    _('#modal-body').innerHTML = ''
-    _('#modal-footer').innerHTML = ''
+    _('#modal').delete()
+    _('.modal-backdrop').delete()
   }
 }

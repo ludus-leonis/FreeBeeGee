@@ -24,7 +24,7 @@
  *
  * * _('#username').value = 'Jolie' // set property
  * * _('.selected').value = 'Jolie' // set property of multiple nodes
- * * _('.tabletop .piece.token').add('.is-selected') // add classes
+ * * _('.tabletop .piece.piece-token').add('.is-selected') // add classes
  * * _('.container > .row > .col-12').create() // create nested nodes Emmet-style
  * * _('.piece.is-selected').css({ backgroundColor: 'red' })
  * * _('.piece').on('click', click => { console.log('clicked!') }) // add events
@@ -143,8 +143,12 @@ class FreeDOM {
    */
   add (...items) {
     for (const item of items) {
-      if (typeof item === 'string' && item.charAt(0) === '.') { // add class
-        this.each(node => node.classList.add(item.substr(1)))
+      if (typeof item === 'string') {
+        if (item.charAt(0) === '.') { // add as class
+          this.each(node => node.classList.add(item.substr(1)))
+        } else { // add as text node
+          return this.each(node => node.appendChild(document.createTextNode(item)))
+        }
       } else if (item instanceof globalThis.HTMLElement) { // add node
         return this.each(node => node.appendChild(item))
       } else if (item instanceof FreeDOM) { // add self
@@ -169,7 +173,11 @@ class FreeDOM {
   css (css) {
     return this.each(node => {
       for (const property in css) {
-        node.style[property] = css[property]
+        if (property[0] === '-') {
+          node.style.setProperty(property, css[property])
+        } else {
+          node.style[property] = css[property]
+        }
       }
     })
   }
@@ -355,7 +363,21 @@ class FreeDOM {
   remove (...items) {
     for (const item of items) {
       if (typeof item === 'string' && item.charAt(0) === '.') { // remove class
-        this.each(node => node.classList.remove(item.substr(1)))
+        const asterisk = item.indexOf('*')
+        if (asterisk < 0) {
+          this.each(node => node.classList.remove(item.substr(1)))
+        } else {
+          const search = item.substr(1, item.length - 2) // remove dot & asterisk
+          this.each(node => {
+            const toRemove = []
+            for (const cls of node.classList) {
+              if (cls.startsWith(search)) toRemove.push(cls)
+            }
+            for (const cls of toRemove) {
+              node.classList.remove(cls)
+            }
+          })
+        }
       } else {
         this._error('can\'t remove() ' + typeof item)
       }

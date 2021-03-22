@@ -24,19 +24,19 @@
 ////
 
 :root {
-  #{'--nr-spacing'}: px(12);
+  #{'--fbg-spacing'}: px(12);
 
   @include media-breakpoint-up(md) {
-    #{'--nr-spacing'}: px(16);
+    #{'--fbg-spacing'}: px(16);
   }
 }
 
-$spacing-micro: calc(var(--nr-spacing) / 4);
-$spacing-tiny: calc(var(--nr-spacing) / 2);
-$spacing-small: var(--nr-spacing);
-$spacing-medium: calc(var(--nr-spacing) * 2);
-$spacing-large: calc(var(--nr-spacing) * 3);
-$spacing-huge: calc(var(--nr-spacing) * 4);
+$spacing-micro: calc(var(--fbg-spacing) / 4);
+$spacing-tiny: calc(var(--fbg-spacing) / 2);
+$spacing-small: var(--fbg-spacing);
+$spacing-medium: calc(var(--fbg-spacing) * 2);
+$spacing-large: calc(var(--fbg-spacing) * 3);
+$spacing-huge: calc(var(--fbg-spacing) * 4);
 
 @mixin spacing-margin-top ($margin-top) {
   margin-bottom: 0;

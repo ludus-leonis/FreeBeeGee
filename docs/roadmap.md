@@ -1,31 +1,26 @@
 # Roadmap
 
-Here is a list what might happen next. However, priorities might change.
-
-## v0.5 - Random Rabbit
-
-* [ ] randomize side (a.k.a. dice-tokens)
-* [ ] shuffle stack/square
-* [ ] dicetray (separate dice window/pane)
-* [ ] basic dice-assets d4, d6, d8, d10, d12, d20
-* [ ] support for custom dice
-* [ ] delete table
-* [ ] fancier implementation for dynamic poll intervalls
-  * [ ] show "you have been inactive" dialog after 10min
-  * [ ] decrease poll intervall on mouse/keyboard activity
-* [ ] template GDRP privacy statement
-* [ ] pre-release
-  * [ ] update+run unit+integration tests
-  * [ ] update docs
-  * [ ] update CHANGELOG
+Here is a list what might happen next. However, priorities can change.
 
 ## v0.6 - Uploading Unicorn
 
-* rename "game" to "table"
-* scroll to center of setup/table when opening new tables
-* upload custom images for tiles & tokens
-* remove default entries from json fieles (e.g. side=0)
-* hide .../data/... from URLs (via .htaccess)
+* [ ] upload custom images for tiles & tokens via web UI
+* [ ] fancier implementation for dynamic poll intervalls
+  * [ ] show "you have been inactive" dialog after 10min
+  * [ ] decrease poll intervall on mouse/keyboard activity
+* [ ] rename "game" to "table"
+* [ ] scroll to last position/center of setup/table when opening new tables
+* [ ] remove default entries from json files before save (e.g. side=0)
+* [ ] reduce impact of "back" button
+* [ ] delete table
+* [ ] template GDRP privacy statement
+* [ ] fix Firefox reset-table bug
+* [ ] pre-release
+  * [ ] bugfixing
+  * [ ] review+run unit+integration tests
+  * [ ] update screenshots
+  * [ ] review docs
+  * [ ] bump version & update CHANGELOG
 
 ## v0.7 - Mobile Monkey
 
@@ -39,10 +34,14 @@ Here is a list what might happen next. However, priorities might change.
 
 ### rather sooner
 
+* add template version to asset urls
 * overlay-grid-on-tile option
+* hide .../data/... from URLs (via .htaccess)
 * distinct select-token look from outline
 * persist scroll position between page refresh
 * change table size
+* support for stacks/decks of cards
+  * shuffle deck/stack
 * option to force-install templates with invalid versions
 * color.sh: detect dominant piece color instead of average color
 * rightclick on desk -> add piece popup
@@ -69,6 +68,7 @@ Here is a list what might happen next. However, priorities might change.
 * full set of mm1/bestiary1 monsters in RPG template
 * tour / first-time-tutorial
 * API Docs
+* randomize button on dicemat
 
 ### rather later
 

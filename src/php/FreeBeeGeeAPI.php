@@ -296,6 +296,7 @@ class FreeBeeGeeAPI
             'assets/tile/' => 'assets/tile/',
             'assets/token/' => 'assets/token/',
             'assets/overlay/' => 'assets/overlay/',
+            'assets/other/' => 'assets/other/',
         ];
         $issues = [];
         $maxSize = $this->getServerConfig()->maxGameSizeMB;
@@ -322,7 +323,7 @@ class FreeBeeGeeAPI
             } elseif (array_key_exists($entryName, $optional)) {
                 // just ignore
             } else {
-                if (preg_match('/^assets\/(overlay|tile|token)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/', $entryName)) {
+                if (preg_match('/^assets\/(overlay|tile|token|other)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/', $entryName)) {
                     $assetCount++;
                 } else {
                     $issues[] = 'unexpected ' . $entryName;
@@ -330,8 +331,8 @@ class FreeBeeGeeAPI
             }
             // filesize checks
             $entrySize = $entry['size'];
-            if ($entrySize > 512 * 1024) {
-                $issues[] = $entryName . ' exceeded 512kB';
+            if ($entrySize > 1024 * 1024) {
+                $issues[] = $entryName . ' exceeded 1024kB';
             }
             $size += $entrySize;
         }
@@ -545,38 +546,50 @@ class FreeBeeGeeAPI
     ) {
         $asset = new \stdClass();
         $asset->assets = [$filename];
-        if (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+)\.([a-fA-F0-9]{6})\.[a-zA-Z0-9]+$/', $filename, $matches)) {
-            // name, size and color
+        if (
+            preg_match(
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6})\.[a-zA-Z0-9]+$/',
+                $filename,
+                $matches
+            )
+        ) {
+            // group.name.1x2x3.808080.png
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
-            $asset->side = (int)$matches[4];
-            $asset->bg = $matches[5];
+            $asset->side = $matches[4];
+            $asset->color = $matches[5];
             $asset->alias = $matches[1];
-        } elseif (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
-            // name and size
+        } elseif (
+            preg_match(
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/',
+                $filename,
+                $matches
+            )
+        ) {
+            // group.name.1x2x3.png
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
-            $asset->side = (int)$matches[4];
-            $asset->bg = '808080';
+            $asset->side = $matches[4];
+            $asset->color = '808080';
             $asset->alias = $matches[1];
         } elseif (preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
-            // name only
+            // group.name.png
             $asset->width = 1;
             $asset->height = 1;
             $asset->side = 1;
-            $asset->bg = '808080';
+            $asset->color = '808080';
             $asset->alias = $matches[1];
         }
         return $asset;
     }
 
     /**
-     * Regenerate a library Json.
+     * Regenerate a library JSON.
      *
      * Done by iterating over all files in the assets folder.
      *
      * @param string $gameName Name of the game, e.g. 'darkEscapingQuelea'
-     * @return array The generated library Json data object.
+     * @return array The generated library JSON data object.
      */
     private function generateLibraryJson(
         string $gameName
@@ -584,7 +597,7 @@ class FreeBeeGeeAPI
         // generate json data
         $gameFolder = $this->getGameFolder($gameName);
         $assets = [];
-        foreach (['overlay', 'tile', 'token'] as $type) {
+        foreach (['overlay', 'tile', 'token', 'other'] as $type) {
             $assets[$type] = [];
             $lastAsset = null;
             foreach (glob($gameFolder . 'assets/' . $type . '/' . '*') as $filename) {
@@ -595,7 +608,6 @@ class FreeBeeGeeAPI
                 // therefore we use a fast hash and even only use parts of it
                 $idBase = $type . '/' . $asset->alias . '.' . $asset->width . 'x' . $asset->height . 'x' . $asset->side;
                 $asset->id = substr(hash('md5', $idBase), -16);
-                unset($asset->side); // we don't keep the side in the json data
 
                 if (
                     $lastAsset === null
@@ -607,6 +619,14 @@ class FreeBeeGeeAPI
                     if ($lastAsset !== null) {
                         array_push($assets[$type], $lastAsset);
                     }
+                    if (preg_match('/^X+$/', $asset->side)) { // this is a back side
+                        $asset->back = $asset->assets[0];
+                        $asset->assets = [];
+                    } elseif ((int)$asset->side === 0) { // this is a background layer
+                        $asset->base = $asset->assets[0];
+                        $asset->assets = [];
+                    }
+                    unset($asset->side); // we don't keep the side in the json data
                     $lastAsset = $asset;
                 } else {
                     // this is another side of the same asset. add it to the existing one.
@@ -675,7 +695,7 @@ class FreeBeeGeeAPI
                     $validated->id = $this->api->assertString('id', $value, '^[0-9a-f]{16}$');
                     break;
                 case 'layer':
-                    $validated->layer = $this->api->assertEnum('layer', $value, ['tile', 'token', 'overlay']);
+                    $validated->layer = $this->api->assertEnum('layer', $value, ['tile', 'token', 'overlay', 'other']);
                     break;
                 case 'asset':
                     $validated->asset = $this->api->assertString('asset', $value, '[a-z0-9]+');
@@ -698,11 +718,11 @@ class FreeBeeGeeAPI
                 case 'side':
                     $validated->side = $this->api->assertInteger('side', $value, 0, 128);
                     break;
-                case 'color':
-                    $validated->color = $this->api->assertInteger('color', $value, 0, 7);
+                case 'border':
+                    $validated->border = $this->api->assertInteger('border', $value, 0, 7);
                     break;
                 case 'no':
-                    $validated->no = $this->api->assertInteger('no', $value, 0, 26);
+                    $validated->no = $this->api->assertInteger('no', $value, 0, 15);
                     break;
                 case 'r':
                     $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
@@ -719,7 +739,7 @@ class FreeBeeGeeAPI
             $this->api->assertHasProperties(
                 'piece',
                 $validated,
-                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'color'] // no
+                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'border'] // no
             );
         }
 
@@ -851,6 +871,15 @@ class FreeBeeGeeAPI
         }
         if ($validated->_files && !$server->snapshotUploads) {
             $this->api->sendError(400, 'snapshot upload is not enabled on this server');
+        }
+
+        // check if upload (if any) was ok
+        if ($validated->_files) {
+            if ($_FILES[$validated->_files[0]]['error'] > 0) {
+                $this->api->sendError(400, 'PHP upload failed', JSONRestAPI::UPLOAD_ERR[
+                    $_FILES[$validated->_files[0]]['error']
+                ]);
+            }
         }
 
         // doublecheck template / snapshot
@@ -1167,6 +1196,7 @@ class FreeBeeGeeAPI
         header('Content-type: application/zip');
         readfile($zipName);
         unlink($zipName);
+        die();
     }
 
     /**

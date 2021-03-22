@@ -14,6 +14,10 @@ RewriteCond %{SCRIPT_FILENAME} -d [OR]
 RewriteCond %{SCRIPT_FILENAME} -f
 RewriteRule "(^|/)\." - [F]
 
+# PHP tweaks
+php_value post_max_size 24M
+php_value upload_max_filesize 16M
+
 # ---- more boilerplate stuff below -------------------------------------
 
 # Thanks to html5boilerplate.com for providing most of this.

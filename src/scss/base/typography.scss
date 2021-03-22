@@ -207,11 +207,11 @@ body {
 body {
   @extend %p-medium;
 
-  background-color: var(--nr-color-bg);
-  color: var(--nr-color-text);
+  background-color: var(--fbg-color-bg);
+  color: var(--fbg-color-text);
 
   p > a {
-    @include typography-links(inherit, inherit, 2px, $color-primary, var(--nr-color-text));
+    @include typography-links(inherit, inherit, 2px, $color-primary, var(--fbg-color-text));
   }
 }
 

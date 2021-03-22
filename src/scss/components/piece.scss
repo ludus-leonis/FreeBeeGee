@@ -26,328 +26,230 @@
 $piece-color: $color-gray-95;
 $piece-tile-size: 64px;
 $piece-border-size: 3px;
+$piece-border-radius: 3px;
 $piece-margin-size: 4px;
-$piece-shadow-height: 4px;
-$piece-shadow: ($piece-shadow-height / 2) ($piece-shadow-height / 2) ($piece-shadow-height - 1) $color-black-75a;
-$piece-shadow-90: ($piece-shadow-height / 2) ($piece-shadow-height / -2) ($piece-shadow-height - 1) $color-black-75a;
-$piece-shadow-180: ($piece-shadow-height / -2) ($piece-shadow-height / -2) ($piece-shadow-height - 1) $color-black-75a;
-$piece-shadow-270: ($piece-shadow-height / -2) ($piece-shadow-height / 2) ($piece-shadow-height - 1) $color-black-75a;
-$piece-outline:
-px(0) px(1) 0 $piece-color,
-px(1) px(0) 0 $piece-color,
-px(0) px(-1) 0 $piece-color,
-px(-1) px(0) 0 $piece-color;
+$piece-rotate: 1deg;
+
+$piece-shadow: 2px 2px 2px $color-black-75a;
+$piece-shadow-90: 2px -2px 2px $color-black-75a;
+$piece-shadow-180: -2px -2px 2px $color-black-75a;
+$piece-shadow-270: -2px 2px 2px $color-black-75a;
+
+$piece-shadow-other: 3px 3px 4px $color-black-50a;
+
+$piece-shadow-flat: 2px 2px 0 $color-black-25a;
+$piece-shadow-flat-90: 2px -2px 0 $color-black-25a;
+$piece-shadow-flat-180: -2px -2px 0 $color-black-25a;
+$piece-shadow-flat-270: -2px 2px 0 $color-black-25a;
+$piece-shadow-flat-overlay: 2px 2px 0 $color-black-25a;
+
+@mixin piece-rotate($r, $amount, $pre: '', $post: '') {
+  &[id^='0'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 0) #{$post}; }
+  &[id^='1'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 1) #{$post}; }
+  &[id^='2'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 2) #{$post}; }
+  &[id^='3'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 3) #{$post}; }
+  &[id^='4'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 4) #{$post}; }
+  &[id^='5'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 5) #{$post}; }
+  &[id^='6'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 6) #{$post}; }
+  &[id^='7'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 7) #{$post}; }
+  &[id^='8'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 8) #{$post}; }
+  &[id^='9'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 9) #{$post}; }
+  &[id^='a'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 10) #{$post}; }
+  &[id^='b'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 11) #{$post}; }
+  &[id^='c'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 12) #{$post}; }
+  &[id^='d'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 13) #{$post}; }
+  &[id^='e'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 14) #{$post}; }
+  &[id^='f'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 15) #{$post}; }
+}
+
+@mixin piece-translate($amount) {
+  &[id^='0'] { transform: translate(round(($amount / 2) - $amount / 16 * 0), round(($amount / 2) - $amount / 16 * 0)); }
+  &[id^='1'] { transform: translate(round(($amount / 2) - $amount / 16 * 1), round(($amount / 2) - $amount / 16 * 8)); }
+  &[id^='2'] { transform: translate(round(($amount / 2) - $amount / 16 * 2), round(($amount / 2) - $amount / 16 * 7)); }
+  &[id^='3'] { transform: translate(round(($amount / 2) - $amount / 16 * 3), round(($amount / 2) - $amount / 16 * 6)); }
+  &[id^='4'] { transform: translate(round(($amount / 2) - $amount / 16 * 4), round(($amount / 2) - $amount / 16 * 5)); }
+  &[id^='5'] { transform: translate(round(($amount / 2) - $amount / 16 * 5), round(($amount / 2) - $amount / 16 * 4)); }
+  &[id^='6'] { transform: translate(round(($amount / 2) - $amount / 16 * 6), round(($amount / 2) - $amount / 16 * 3)); }
+  &[id^='7'] { transform: translate(round(($amount / 2) - $amount / 16 * 7), round(($amount / 2) - $amount / 16 * 2)); }
+  &[id^='8'] { transform: translate(round(($amount / 2) - $amount / 16 * 8), round(($amount / 2) - $amount / 16 * 1)); }
+  &[id^='9'] { transform: translate(round(($amount / 2) - $amount / 16 * 9), round(($amount / 2) - $amount / 16 * 15)); }
+  &[id^='a'] { transform: translate(round(($amount / 2) - $amount / 16 * 10), round(($amount / 2) - $amount / 16 * 14)); }
+  &[id^='b'] { transform: translate(round(($amount / 2) - $amount / 16 * 11), round(($amount / 2) - $amount / 16 * 13)); }
+  &[id^='c'] { transform: translate(round(($amount / 2) - $amount / 16 * 12), round(($amount / 2) - $amount / 16 * 12)); }
+  &[id^='d'] { transform: translate(round(($amount / 2) - $amount / 16 * 13), round(($amount / 2) - $amount / 16 * 11)); }
+  &[id^='e'] { transform: translate(round(($amount / 2) - $amount / 16 * 14), round(($amount / 2) - $amount / 16 * 10)); }
+  &[id^='f'] { transform: translate(round(($amount / 2) - $amount / 16 * 15), round(($amount / 2) - $amount / 16 * 9)); }
+
+  &.is-rotate-90 {
+    &[id^='0'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 0), round(($amount / 2) - $amount / 16 * 0) * -1); }
+    &[id^='1'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 8), round(($amount / 2) - $amount / 16 * 1) * -1); }
+    &[id^='2'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 7), round(($amount / 2) - $amount / 16 * 2) * -1); }
+    &[id^='3'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 6), round(($amount / 2) - $amount / 16 * 3) * -1); }
+    &[id^='4'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 5), round(($amount / 2) - $amount / 16 * 4) * -1); }
+    &[id^='5'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 4), round(($amount / 2) - $amount / 16 * 5) * -1); }
+    &[id^='6'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 3), round(($amount / 2) - $amount / 16 * 6) * -1); }
+    &[id^='7'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 2), round(($amount / 2) - $amount / 16 * 7) * -1); }
+    &[id^='8'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 1), round(($amount / 2) - $amount / 16 * 8) * -1); }
+    &[id^='9'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 15), round(($amount / 2) - $amount / 16 * 9) * -1); }
+    &[id^='a'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 14), round(($amount / 2) - $amount / 16 * 10) * -1); }
+    &[id^='b'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 13), round(($amount / 2) - $amount / 16 * 11) * -1); }
+    &[id^='c'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 12), round(($amount / 2) - $amount / 16 * 12) * -1); }
+    &[id^='d'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 11), round(($amount / 2) - $amount / 16 * 13) * -1); }
+    &[id^='e'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 10), round(($amount / 2) - $amount / 16 * 14) * -1); }
+    &[id^='f'] { transform: rotate(90deg) translate(round(($amount / 2) - $amount / 16 * 9), round(($amount / 2) - $amount / 16 * 15) * -1); }
+  }
+
+  &.is-rotate-180 {
+    &[id^='0'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 0) * -1, round(($amount / 2) - $amount / 16 * 0) * -1); }
+    &[id^='1'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 1) * -1, round(($amount / 2) - $amount / 16 * 8) * -1); }
+    &[id^='2'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 2) * -1, round(($amount / 2) - $amount / 16 * 7) * -1); }
+    &[id^='3'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 3) * -1, round(($amount / 2) - $amount / 16 * 6) * -1); }
+    &[id^='4'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 4) * -1, round(($amount / 2) - $amount / 16 * 5) * -1); }
+    &[id^='5'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 5) * -1, round(($amount / 2) - $amount / 16 * 4) * -1); }
+    &[id^='6'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 6) * -1, round(($amount / 2) - $amount / 16 * 3) * -1); }
+    &[id^='7'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 7) * -1, round(($amount / 2) - $amount / 16 * 2) * -1); }
+    &[id^='8'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 8) * -1, round(($amount / 2) - $amount / 16 * 1) * -1); }
+    &[id^='9'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 9) * -1, round(($amount / 2) - $amount / 16 * 15) * -1); }
+    &[id^='a'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 10) * -1, round(($amount / 2) - $amount / 16 * 14) * -1); }
+    &[id^='b'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 11) * -1, round(($amount / 2) - $amount / 16 * 13) * -1); }
+    &[id^='c'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 12) * -1, round(($amount / 2) - $amount / 16 * 12) * -1); }
+    &[id^='d'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 13) * -1, round(($amount / 2) - $amount / 16 * 11) * -1); }
+    &[id^='e'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 14) * -1, round(($amount / 2) - $amount / 16 * 10) * -1); }
+    &[id^='f'] { transform: rotate(180deg) translate(round(($amount / 2) - $amount / 16 * 15) * -1, round(($amount / 2) - $amount / 16 * 9) * -1); }
+  }
+
+  &.is-rotate-270 {
+    &[id^='0'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 0) * -1, round(($amount / 2) - $amount / 16 * 0)); }
+    &[id^='1'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 8) * -1, round(($amount / 2) - $amount / 16 * 1)); }
+    &[id^='2'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 7) * -1, round(($amount / 2) - $amount / 16 * 2)); }
+    &[id^='3'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 6) * -1, round(($amount / 2) - $amount / 16 * 3)); }
+    &[id^='4'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 5) * -1, round(($amount / 2) - $amount / 16 * 4)); }
+    &[id^='5'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 4) * -1, round(($amount / 2) - $amount / 16 * 5)); }
+    &[id^='6'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 3) * -1, round(($amount / 2) - $amount / 16 * 6)); }
+    &[id^='7'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 2) * -1, round(($amount / 2) - $amount / 16 * 7)); }
+    &[id^='8'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 1) * -1, round(($amount / 2) - $amount / 16 * 8)); }
+    &[id^='9'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 15) * -1, round(($amount / 2) - $amount / 16 * 9)); }
+    &[id^='a'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 14) * -1, round(($amount / 2) - $amount / 16 * 10)); }
+    &[id^='b'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 13) * -1, round(($amount / 2) - $amount / 16 * 11)); }
+    &[id^='c'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 12) * -1, round(($amount / 2) - $amount / 16 * 12)); }
+    &[id^='d'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 11) * -1, round(($amount / 2) - $amount / 16 * 13)); }
+    &[id^='e'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 10) * -1, round(($amount / 2) - $amount / 16 * 14)); }
+    &[id^='f'] { transform: rotate(270deg) translate(round(($amount / 2) - $amount / 16 * 9) * -1, round(($amount / 2) - $amount / 16 * 15)); }
+  }
+}
+
+// --- piece basics (size, ...) ------------------------------------------------
+
+$label-offset: 8px;
 
 .piece {
-  pointer-events: none;
+  #{'--fbg-layer-image'}: none;
 
-  // --- piece basics (size, ...) ----------------------------------------------
+  align-items: flex-end;
+  background-color: transparent;
+  background-position: center;
+  background-size: cover;
+  display: flex;
+  height: $piece-tile-size;
+  justify-content: center;
+  width: $piece-tile-size;
 
   $piece-tile-half: $piece-tile-size / 2;
+
+  &.is-selected {
+    #{'--fbg-border-color'}: $color-secondary !important; // sass-lint:disable-line no-important
+    box-shadow: 0 0 0 $piece-border-size $color-secondary inset !important; // sass-lint:disable-line no-important
+  }
+
+  // --- size ------------------------------------------------------------------
 
   @for $x from 1 through 32 {
     &.is-w-#{$x} {
       width: $x * $piece-tile-size;
-
-      &.is-rotate-270,
-      &.is-rotate-270 .box,
-      &.is-rotate-270 .label,
-      &.is-rotate-270 .piece-no {
-        transform-origin: $piece-tile-half * $x $piece-tile-half * $x;
-      }
+      &.is-rotate-270 { transform-origin: $piece-tile-half * $x $piece-tile-half * $x; }
+      &.piece-token.is-rotate-270 { transform-origin: $piece-tile-half * $x - $piece-border-radius $piece-tile-half * $x - $piece-border-radius; }
     }
   }
 
   @for $y from 1 through 32 {
     &.is-h-#{$y} {
       height: $y * $piece-tile-size;
-
-      &.is-rotate-90,
-      &.is-rotate-90 .box,
-      &.is-rotate-90 .label,
-      &.is-rotate-90 .piece-no {
-        transform-origin: $piece-tile-half * $y $piece-tile-half * $y;
-      }
+      &.is-rotate-90 { transform-origin: $piece-tile-half * $y $piece-tile-half * $y; }
+      &.piece-token.is-rotate-90 { transform-origin: $piece-tile-half * $y - $piece-border-radius $piece-tile-half * $y - $piece-border-radius; }
     }
   }
 
-  &.is-scale-1 {
-    height: $piece-tile-size;
-    width: $piece-tile-size;
-  }
+  // --- labels (flexbox positions) --------------------------------------------
 
-  &.is-scale-2 {
-    height: 2 * $piece-tile-size;
-    width: 2 * $piece-tile-size;
-  }
+  .label {
+    @extend %p-micro;
 
-  &.is-scale-1,
-  &.is-scale-2 {
-    &:not(.token) .border {
-      background-color: transparent;
-    }
-
-    .asset {
-      background-color: transparent !important; // sass-lint:disable-line no-important
-      background-repeat: no-repeat;
-      background-size: contain;
-    }
-  }
-
-  .box {
-    height: 100%;
-    width: 100%;
-  }
-
-  .border {
-    height: 100%;
-    overflow: hidden;
+    background-color: $color-black-50a;
+    border-radius: 2em;
+    color: $color-white-100;
+    padding: .125em .5em;
     pointer-events: none;
     position: relative;
-    width: 100%;
+    top: $label-offset;
+    white-space: nowrap;
   }
 
-  &.is-rotate-0 {
-    .box {
-      transform: rotate(0deg);
-    }
+  &:hover > .label {
+    font-size: px(16);
   }
+
+  // --- additional layer (dice) -----------------------------------------------
+
+  &.has-layer::after {
+    background-color: transparent;
+    background-image: var(--fbg-layer-image);
+    background-position: center;
+    background-size: cover;
+    bottom: 0;
+    content: '';
+    display: block;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+
+  // --- rotation --------------------------------------------------------------
 
   &.is-rotate-90 {
-    .box {
-      transform: rotate(90deg);
-    }
+    align-items: center;
+    justify-content: flex-end;
+    transform: rotate(90deg);
 
-    @for $x from -31 through 31 {
-      &.is-wh-#{$x} .label {
-        transform: translateX(-50%) translate($piece-tile-size * $x / -2, $piece-tile-size * $x);
-      }
-
-      &.is-wh-#{$x} .piece-no {
-        transform: translate($piece-tile-size * $x * -1, $piece-tile-size * $x / 2);
-      }
+    .label {
+      left: $label-offset;
+      top: 0;
+      transform: translateY(-50%) rotate(-90deg) translateX(50%);
+      transform-origin: 100% 100%;
     }
   }
 
   &.is-rotate-180 {
-    .box {
+    align-items: flex-start;
+    justify-content: center;
+    transform: rotate(180deg);
+
+    .label {
+      top: -$label-offset;
       transform: rotate(180deg);
     }
   }
 
   &.is-rotate-270 {
-    .box {
-      transform: rotate(270deg);
-    }
+    align-items: center;
+    justify-content: flex-start;
+    transform: rotate(270deg);
 
-    @for $x from -31 through 31 {
-      &.is-wh-#{$x} .label {
-        transform: translateX(-50%) translate($piece-tile-size * $x / -2, $piece-tile-size * $x);
-      }
-
-      &.is-wh-#{$x} .piece-no {
-        transform: translate($piece-tile-size * $x * -1, $piece-tile-size * $x / 2);
-      }
-    }
-  }
-
-  // --- asset within the tile -------------------------------------------------
-
-  .asset {
-    background-position: center;
-    background-size: cover;
-    height: 100%;
-    pointer-events: none;
-    width: 100%;
-  }
-
-  // --- info label at bottom --------------------------------------------------
-
-  .label {
-    @extend %p-micro;
-
-    bottom: px(-2);
-    color: $color-gray-25;
-    left: 50%;
-    min-width: 100%;
-    pointer-events: none;
-    position: absolute;
-    text-align: center;
-    text-shadow: $piece-outline;
-    transform: translateX(-50%);
-    white-space: nowrap;
-  }
-
-  // --- additional counter number ---------------------------------------------
-
-  .piece-no {
-    @extend %flex-center-center;
-    @extend %p-micro;
-
-    border-radius: 100%;
-    font-size: 12px;
-    font-weight: 700;
-    height: 16px;
-    line-height: 1em;
-    overflow: hidden;
-    position: absolute;
-    right: px(4);
-    text-shadow: $piece-outline;
-    top: calc(50% - 8px);
-    width: px(16);
-  }
-
-  // --- specifics for tokens --------------------------------------------------
-
-  &.token {
-
-    $token-offset: 4px;
-    &[id^='1'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 1, ($token-offset / 2) - $token-offset / 16 * 8); }
-    &[id^='2'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 2, ($token-offset / 2) - $token-offset / 16 * 7); }
-    &[id^='3'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 3, ($token-offset / 2) - $token-offset / 16 * 6); }
-    &[id^='4'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 4, ($token-offset / 2) - $token-offset / 16 * 5); }
-    &[id^='5'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 5, ($token-offset / 2) - $token-offset / 16 * 4); }
-    &[id^='6'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 6, ($token-offset / 2) - $token-offset / 16 * 3); }
-    &[id^='7'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 7, ($token-offset / 2) - $token-offset / 16 * 2); }
-    &[id^='8'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 8, ($token-offset / 2) - $token-offset / 16 * 1); }
-    &[id^='9'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 9, ($token-offset / 2) - $token-offset / 16 * 15); }
-    &[id^='a'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 10, ($token-offset / 2) - $token-offset / 16 * 14); }
-    &[id^='b'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 11, ($token-offset / 2) - $token-offset / 16 * 13); }
-    &[id^='c'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 12, ($token-offset / 2) - $token-offset / 16 * 12); }
-    &[id^='d'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 13, ($token-offset / 2) - $token-offset / 16 * 11); }
-    &[id^='e'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 14, ($token-offset / 2) - $token-offset / 16 * 10); }
-    &[id^='f'] { transform: translate(($token-offset / 2) - $token-offset / 16 * 15, ($token-offset / 2) - $token-offset / 16 * 9); }
-
-    .box {
-      padding: $piece-margin-size;
-    }
-
-    .border {
-      background-color: $piece-color; // tile background
-      border: $piece-border-size solid $piece-color;
-      border-radius: $piece-tile-size;
-      box-shadow: $piece-shadow;
-    }
-
-    &.is-rotate-90 .border {
-      box-shadow: $piece-shadow-90;
-    }
-
-    &.is-rotate-180 .border {
-      box-shadow: $piece-shadow-180;
-    }
-
-    &.is-rotate-270 .border {
-      box-shadow: $piece-shadow-270;
-    }
-
-    .asset {
-      background-position: center;
-      height: 100%;
-      left: 50%;
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 100%;
-    }
-
-    &.is-selected {
-      .border {
-        border-color: $color-secondary !important; // sass-lint:disable-line no-important
-      }
-    }
-  }
-
-  // --- specifics for overlays ------------------------------------------------
-
-  &.overlay {
-    .box {
-      border-radius: px(3);
-    }
-
-    .asset {
-      background-position: center;
-      // border-radius: px(3);
-    }
-
-    &.is-selected {
-      .asset {
-        box-shadow: 0 0 0 $piece-border-size $color-secondary inset;
-      }
-    }
-  }
-
-  // --- specifics for tiles ---------------------------------------------------
-
-  &.tile {
-    .border {
-      background-color: $piece-color; // tile background
-    }
-
-    &.is-selected {
-      .asset {
-        box-shadow: 0 0 0 $piece-border-size $color-secondary inset;
-      }
-    }
-
-    $tile-rotate: .5deg;
-    &[id^='1'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 1); }
-    &[id^='2'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 2); }
-    &[id^='3'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 3); }
-    &[id^='4'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 4); }
-    &[id^='5'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 5); }
-    &[id^='6'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 6); }
-    &[id^='7'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 7); }
-    &[id^='8'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 8); }
-    &[id^='9'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 9); }
-    &[id^='a'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 10); }
-    &[id^='b'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 11); }
-    &[id^='c'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 12); }
-    &[id^='d'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 13); }
-    &[id^='e'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 14); }
-    &[id^='f'] { transform: rotate(($tile-rotate / 2) - $tile-rotate / 16 * 15); }
-
-    .box::after {
-      box-shadow:
-      px(1) px(1) px(2) px(-1) $color-white-15a inset,
-      px(2) px(2) px(4) px(-2) $color-white-15a inset,
-      px(-1) px(-1) px(2) px(-1) $color-black-20a inset,
-      px(-2) px(-2) px(4) px(-2) $color-black-20a inset,
-      $piece-shadow;
-      content: '';
-      display: block;
-      height: 100%;
-      left: 0;
-      position: absolute;
+    .label {
+      right: $label-offset;
       top: 0;
-      width: 100%;
-    }
-
-    &.is-rotate-90 .box::after {
-      box-shadow:
-      px(1) px(-1) px(2) px(-1) $color-white-15a inset,
-      px(2) px(-2) px(4) px(-2) $color-white-15a inset,
-      px(-1) px(1) px(2) px(-1) $color-black-20a inset,
-      px(-2) px(2) px(4) px(-2) $color-black-20a inset,
-      $piece-shadow-90;
-    }
-
-    &.is-rotate-180 .box::after {
-      box-shadow:
-      px(-1) px(-1) px(2) px(-1) $color-white-15a inset,
-      px(-2) px(-2) px(4) px(-2) $color-white-15a inset,
-      px(1) px(1) px(2) px(-1) $color-black-20a inset,
-      px(2) px(2) px(4) px(-2) $color-black-20a inset,
-      $piece-shadow-180;
-    }
-
-    &.is-rotate-270 .box::after {
-      box-shadow:
-      px(-1) px(1) px(2) px(-1) $color-white-15a inset,
-      px(-2) px(2) px(4) px(-2) $color-white-15a inset,
-      px(1) px(-1) px(2) px(-1) $color-black-20a inset,
-      px(2) px(-2) px(4) px(-2) $color-black-20a inset,
-      $piece-shadow-270;
+      transform: translateY(-50%) rotate(90deg) translateX(-50%);
+      transform-origin: 0 100%;
     }
   }
 
@@ -363,9 +265,220 @@ px(-1) px(0) 0 $piece-color;
 
   &:not(.dragging) {
     $piece-transition: 200ms ease-out;
+    transition: left $piece-transition, top $piece-transition;
+  }
+}
 
-    transition:
-    left $piece-transition,
-    top $piece-transition;
+@mixin shadows($rotate0, $rotate90, $rotate180, $rotate270) {
+  filter: drop-shadow($rotate0);
+
+  &.is-rotate-90 {
+    filter: drop-shadow($rotate90);
+  }
+
+  &.is-rotate-180 {
+    filter: drop-shadow($rotate180);
+  }
+
+  &.is-rotate-270 {
+    filter: drop-shadow($rotate270);
+  }
+}
+
+// --- regular tiles -----------------------------------------------------------
+
+.piece-tile {
+  background-color: $piece-color;
+
+  // --- quality settings ---
+
+  .is-quality-medium & {
+    @include shadows($piece-shadow-flat, $piece-shadow-flat-90, $piece-shadow-flat-180, $piece-shadow-flat-270);
+  }
+
+  .is-quality-high &,
+  .is-quality-ultra & {
+    @include shadows($piece-shadow, $piece-shadow-90, $piece-shadow-180, $piece-shadow-270);
+    border-radius: $piece-border-radius;
+  }
+
+  .is-quality-ultra & {
+    @include piece-rotate(0deg, $piece-rotate);
+    box-shadow: 3px 3px 1px -2px $color-white-15a inset, -3px -3px 1px -2px $color-black-20a inset;
+
+    &.is-rotate-90 {
+      @include piece-rotate(90deg, $piece-rotate);
+      box-shadow: 3px -3px 1px -2px $color-white-15a inset, -3px 3px 1px -2px $color-black-20a inset;
+    }
+
+    &.is-rotate-180 {
+      @include piece-rotate(180deg, $piece-rotate);
+      box-shadow: -3px -3px 1px -2px $color-white-15a inset, 3px 3px 1px -2px $color-black-20a inset;
+    }
+
+    &.is-rotate-270 {
+      @include piece-rotate(270deg, $piece-rotate);
+      box-shadow: -3px 3px 1px -2px $color-white-15a inset, 3px -3px 1px -2px $color-black-20a inset;
+    }
+  }
+}
+
+// --- tokens ------------------------------------------------------------------
+
+.piece-token {
+  #{'--fbg-border-color'}: $piece-color;
+
+  background-color: $piece-color; // tile background
+  border: $piece-border-size solid var(--fbg-border-color);
+  border-radius: $piece-tile-size;
+  margin: $piece-border-size;
+
+  &.is-n::after {
+    align-items: center;
+    background-color: var(--fbg-border-color);
+    border-radius: 100%;
+    display: flex;
+    flex-direction: row;
+    font-size: .85em;
+    font-weight: 600;
+    height: 1rem;
+    justify-content: center;
+    margin-top: -.5rem;
+    position: absolute;
+    right: -3px;
+    top: 50%;
+    width: 1rem;
+  }
+  &.is-n-1::after { content: '1'; }
+  &.is-n-2::after { content: '2'; }
+  &.is-n-3::after { content: '3'; }
+  &.is-n-4::after { content: '4'; }
+  &.is-n-5::after { content: '5'; }
+  &.is-n-6::after { content: '6'; }
+  &.is-n-7::after { content: '7'; }
+  &.is-n-8::after { content: '8'; }
+  &.is-n-9::after { content: '9'; }
+  &.is-n-10::after { content: 'A'; }
+  &.is-n-11::after { content: 'B'; }
+  &.is-n-12::after { content: 'C'; }
+  &.is-n-13::after { content: 'D'; }
+  &.is-n-14::after { content: 'E'; }
+  &.is-n-15::after { content: 'F'; }
+
+  @include piece-translate(4px);
+
+  @for $x from 1 through 32 {
+    &.is-w-#{$x} { width: $x * $piece-tile-size - $piece-border-size * 2; }
+  }
+
+  @for $y from 1 through 32 {
+    &.is-h-#{$y} { height: $y * $piece-tile-size - $piece-border-size * 2; }
+  }
+
+  // --- quality settings ---
+
+  .is-quality-medium & {
+    @include shadows($piece-shadow-flat, $piece-shadow-flat-90, $piece-shadow-flat-180, $piece-shadow-flat-270);
+  }
+
+  .is-quality-high &,
+  .is-quality-ultra & {
+    @include shadows($piece-shadow, $piece-shadow-90, $piece-shadow-180, $piece-shadow-270);
+  }
+}
+
+// --- overlays ----------------------------------------------------------------
+
+// .piece-overlay {
+// }
+
+// --- others (layered) --------------------------------------------------------
+
+.piece-other {
+  transform: none;
+  &::after { transform: rotate(0deg); }
+
+  // --- can't rotate other pieces ---
+
+  &.is-rotate-90,
+  &.is-rotate-180,
+  &.is-rotate-270 {
+    align-items: flex-end;
+    justify-content: center;
+    transform: none;
+
+    &::after,
+    .label {
+      transform: none;
+    }
+
+    .label {
+      left: initial;
+      right: initial;
+      top: $label-offset;
+    }
+  }
+
+  // --- quality settings ---
+
+  .is-quality-medium & {
+    @include shadows($piece-shadow-flat, $piece-shadow-flat, $piece-shadow-flat, $piece-shadow-flat);
+  }
+
+  .is-quality-high &,
+  .is-quality-ultra & {
+    @include shadows($piece-shadow-other, $piece-shadow-other, $piece-shadow-other, $piece-shadow-other);
+  }
+
+  .is-quality-ultra & {
+    @include piece-rotate(0deg, $piece-rotate * 2);
+
+    &.is-rotate-90 {
+      @include piece-rotate(0deg, $piece-rotate * 2);
+    }
+
+    &.is-rotate-180 {
+      @include piece-rotate(0deg, $piece-rotate * 2);
+    }
+
+    &.is-rotate-270 {
+      @include piece-rotate(0deg, $piece-rotate * 2);
+    }
+  }
+
+}
+
+// --- helpers -----------------------------------------------------------------
+
+.is-scale-2 {
+  background-color: $color-gray-05;
+  height: $piece-tile-size * 2;
+  margin: 0 auto;
+  position: relative;
+  width: $piece-tile-size * 2;
+
+  &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary; }
+
+  > .piece {
+    left: 50%;
+    position: absolute;
+    top: 50%;
+  }
+
+  > .piece-token.is-max-1,
+  > .piece-token.is-max-2 {
+    margin: $piece-border-size / 2;
+  }
+
+  > .is-max-1,
+  > .is-max-2 {
+    transform: translate(-50%, -50%);
+  }
+
+  @for $x from 3 through 32 {
+    > .is-max-#{$x} {
+      transform: scale(2 / $x) translate(-50%, -50%);
+      transform-origin: top left;
+    }
   }
 }

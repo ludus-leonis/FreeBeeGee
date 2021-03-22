@@ -138,6 +138,35 @@ select {
   }
 }
 
+[type='range'] {
+  appearance: none;
+  background: $color-wb-fg;
+  border-radius: 1em;
+  height: 1em;
+  outline: none;
+  width: 100%;
+
+  &::-webkit-slider-thumb { // sass-lint:disable-line no-vendor-prefixes
+    appearance: none;
+    background: $color-primary;
+    border: 0;
+    border-radius: 100%;
+    cursor: pointer;
+    height: 2em;
+    width: 2em;
+  }
+
+  &::-moz-range-thumb { // sass-lint:disable-line no-vendor-prefixes
+    appearance: none;
+    background: $color-primary;
+    border: 0;
+    border-radius: 100%;
+    cursor: pointer;
+    height: 2em;
+    width: 2em;
+  }
+}
+
 .upload-group {
   margin-top: 0;
 
@@ -161,10 +190,10 @@ form {
 
   &.container,
   &.container:first-child {
-    margin: calc(var(--nr-spacing) / -2);
+    margin: calc(var(--fbg-spacing) / -2);
   }
 
   [class^='col-'] {
-    padding: calc(var(--nr-spacing) / 2);
+    padding: calc(var(--fbg-spacing) / 2);
   }
 }

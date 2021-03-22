@@ -59,7 +59,7 @@
       color: $color-white-100;
       font-size: 2.75em;
       letter-spacing: px(2);
-      text-shadow: px(2) px(2) px(1) var(--nr-color-bg), px(-2) px(-2) px(1) var(--nr-color-bg);
+      text-shadow: px(2) px(2) px(1) var(--fbg-color-bg), px(-2) px(-2) px(1) var(--fbg-color-bg);
     }
 
     .h3 {
@@ -67,7 +67,7 @@
     }
 
     > p {
-      text-shadow: px(1) px(1) px(1) var(--nr-color-bg), px(-1) px(-1) px(1) var(--nr-color-bg);
+      text-shadow: px(1) px(1) px(1) var(--fbg-color-bg), px(-1) px(-1) px(1) var(--fbg-color-bg);
     }
 
     .server-feedback {
