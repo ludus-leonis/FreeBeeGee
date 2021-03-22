@@ -2,37 +2,25 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.5 - Random Rabbit
-
-* [X] randomize features
-  * [X] randomize side (a.k.a. dice-tokens)
-  * [X] dicetray (separate layer)
-  * [X] dice-assets d4, d6, d8, d10, d12, d20 in 4 colors
-  * [X] support for custom dice
-  * [X] fix dice not shown properly in asset dialog
-* [X] quality settings / disable shadows
-* [X] improve library view (show 1x1 tiles smaller, hide common 1x1 tags)
-* [X] always move cloned items to-top
-* [X] show ping/request time in setting
-* [ ] pre-release
-  * [X] bugfixing
-  * [X] review+run unit+integration tests
-  * [ ] review docs
-  * [ ] update CHANGELOG
-
 ## v0.6 - Uploading Unicorn
 
-* upload custom images for tiles & tokens via web UI
-* fancier implementation for dynamic poll intervalls
-  * show "you have been inactive" dialog after 10min
-  * decrease poll intervall on mouse/keyboard activity
-* rename "game" to "table"
-* scroll to last position/center of setup/table when opening new tables
-* remove default entries from json files before save (e.g. side=0)
-* reduce impact of "back" button
-* delete table
-* template GDRP privacy statement
-* fix Firefox reset-table bug
+* [ ] upload custom images for tiles & tokens via web UI
+* [ ] fancier implementation for dynamic poll intervalls
+  * [ ] show "you have been inactive" dialog after 10min
+  * [ ] decrease poll intervall on mouse/keyboard activity
+* [ ] rename "game" to "table"
+* [ ] scroll to last position/center of setup/table when opening new tables
+* [ ] remove default entries from json files before save (e.g. side=0)
+* [ ] reduce impact of "back" button
+* [ ] delete table
+* [ ] template GDRP privacy statement
+* [ ] fix Firefox reset-table bug
+* [ ] pre-release
+  * [ ] bugfixing
+  * [ ] review+run unit+integration tests
+  * [ ] update screenshots
+  * [ ] review docs
+  * [ ] bump version & update CHANGELOG
 
 ## v0.7 - Mobile Monkey
 

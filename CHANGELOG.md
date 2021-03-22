@@ -2,6 +2,25 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.5 - Random Rabbit
+
+### Notable changes
+
+* added support for rolling dice on your table
+* added d4, d6, d8, d10, d12 and d20 in 4 colors
+* improved general rendering speed
+* added render-quality slider to settings dialog
+
+### Other changes
+
+* added randomize icon/popup menu
+* tweaked preview-size of pieces in library dialog
+* fixed z position for cloned pieces
+* improved piece shadows
+* fixed upload limits and upload problem verbosity
+* updated unit tests
+* updated help dialog
+
 ## v0.4.2
 
 * fixed create-table error due case-sensitive http headers for POST requests

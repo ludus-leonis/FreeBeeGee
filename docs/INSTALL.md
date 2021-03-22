@@ -56,6 +56,8 @@ FreeBeeGee ships with an unkown password. No games can be created until you eith
 
 Snapshot uploads are disabled by default. To enable them, set `snapshotUploads` to `true`.
 
+You can change the maximum upload file size via the `server.json` (see above). You also have to make sure that your PHP config file (`php.ini`) and/or your Apache/Proxy server settings allow that amount, too.
+
 ## Upgrading
 
 While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change any time, even games will break between versions. Start with a fresh install till we reach v1.0.
