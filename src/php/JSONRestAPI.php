@@ -47,6 +47,17 @@ class JSONRestAPI
         'TRACE' => [],
     ];
 
+    public const UPLOAD_ERR = [
+        0 => 'UPLOAD_ERR_OK',
+        1 => 'UPLOAD_ERR_INI_SIZE',
+        2 => 'UPLOAD_ERR_FORM_SIZE',
+        3 => 'UPLOAD_ERR_PARTIAL',
+        4 => 'UPLOAD_ERR_NO_FILE',
+        6 => 'UPLOAD_ERR_NO_TMP_DIR',
+        7 => 'UPLOAD_ERR_CANT_WRITE',
+        8 => 'UPLOAD_ERR_EXTENSION',
+    ];
+
     /**
      * Constructor.
      */

@@ -873,6 +873,15 @@ class FreeBeeGeeAPI
             $this->api->sendError(400, 'snapshot upload is not enabled on this server');
         }
 
+        // check if upload (if any) was ok
+        if ($validated->_files) {
+            if ($_FILES[$validated->_files[0]]['error'] > 0) {
+                $this->api->sendError(400, 'PHP upload failed', JSONRestAPI::UPLOAD_ERR[
+                    $_FILES[$validated->_files[0]]['error']
+                ]);
+            }
+        }
+
         // doublecheck template / snapshot
         $zipPath = ($validated->_files ?? null)
             ? ($_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid')
