@@ -46,61 +46,72 @@ export function modalSettings () {
     <h3 class="modal-title">Table settings</h3>
   `
   _('#modal-body').innerHTML = `
-    <form class="container">
-      <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
-      <div class="row">
-        <div class="col-12 col-md-6">
-          <h2 class="h3">Table statistics</h2>
-          <p>Table size: ${getTemplate().width}x${getTemplate().height} spaces</p>
-          <p>Pieces: ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile</p>
-          <p>Engine: $ENGINE$</p>
-        </div>
-        <div class="col-12 col-md-6">
-          <h2 class="h3">Game/Server statistics</h2>
-          <p>Avg. request time: ${Math.ceil(pollTimes.reduce((a, b) => a + b) / pollTimes.length)}ms</p>
-          <p>Avg. refresh time: ${Math.ceil(syncTimes.reduce((a, b) => a + b) / syncTimes.length)}ms</p>
-        </div>
-
-        <div class="col-12 spacing-small">
-          <h2 class="h3">Render quality</h2>
-          <p>If your game seems to be slow, you can change the render quality here:</p>
-          <input type="range" min="0" max="3" value="${stateGetGamePref('renderQuality') ?? 3}" class="slider" id="quality">
-          <p class="if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
-          <p class="if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
-          <p class="if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
-          <p class="if-quality-ultra"><strong>Ultra:</strong> Full details and random piece rotation are enabled.</p>
-        </div>
-
-        <div class="col-12 spacing-small">
-          <h2 class="h3">Danger zone</h2>
-          <p>The following settings will affect the whole table. There will be no <em>undo</em> if you push any of those buttons!</p>
-          <p><input id="danger" type="checkbox"><label for="danger">Enable danger mode.</label></p>
-        </div>
-
-        <div class="col-12 col-sm-8">
-          <p>Clearing the table will remove all pieces from it. Your library will not be changed.</p>
-        </div>
-        <div class="col-12 col-sm-4">
-          <button id="btn-table-clear" class="btn btn-wide" disabled>Clear table</button>
-        </div>
-        <div class="col-12 col-sm-8">
-          <p>Resetting the table will revert it to the initial setup. Your library will not be changed.</p>
-        </div>
-        <div class="col-12 col-sm-4">
-          <button id="btn-table-reset" class="btn btn-wide" disabled>Reset table</button>
-        </div>
-        <!-- <div class="col-12 col-sm-8">
-          <p>Deleting your table will erase it and your library. Other players will be kicked out.</p>
-        </div>
-        <div class="col-12 col-sm-4">
-          <button id="btn-table-delete" class="btn btn-wide" disabled>Delete table</button>
-        </div> -->
+    <div id="tabs-settings" class="tabs">
+      <input id="tab-1" type="radio" name="tabs">
+      <input id="tab-2" type="radio" name="tabs">
+      <div class="tabs-tabs">
+        <label for="tab-1" class="tabs-tab">My preferences</label>
+        <label for="tab-2" class="tabs-tab">Table settings</label>
       </div>
-    </form>
+      <div class="tabs-content">
+        <form class="container"><div id="tab-my" class="row">
+          <div class="col-12">
+            <p>This tab only affects your browser, not the other players.</p>
+
+            <h2 class="h3">Statistics</h2>
+            <p>Table: ${getTemplate().width}x${getTemplate().height} spaces, ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile, ${_('.piece.piece-other').nodes().length}x other</p>
+            <p>Refresh time: ${Math.ceil(pollTimes.reduce((a, b) => a + b) / pollTimes.length)}ms server + ${Math.ceil(syncTimes.reduce((a, b) => a + b) / syncTimes.length)}ms browser</p>
+
+            <h2 class="h3">Render quality</h2>
+            <p>If your game seems to be slow, you can change the render quality here:</p>
+            <input type="range" min="0" max="3" value="${stateGetGamePref('renderQuality') ?? 3}" class="slider" id="quality">
+            <p class="if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
+            <p class="if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
+            <p class="if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
+            <p class="if-quality-ultra"><strong>Ultra:</strong> Full details and random piece rotation are enabled.</p>
+          </div>
+        </div></form>
+        <form class="container"><div id="tab-server" class="row">
+          <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
+
+          <div class="col-12">
+            <h2 class="h3">Danger zone</h2>
+            <p>The following settings will affect the whole table and all players. There will be no <em>undo</em> if you push any of those buttons!</p>
+            <p><input id="danger" type="checkbox"><label for="danger">Enable danger mode.</label></p>
+          </div>
+
+          <div class="col-12 col-sm-8">
+            <p>Clearing the table will remove all pieces from it. Your library will not be changed.</p>
+          </div>
+          <div class="col-12 col-sm-4">
+            <button id="btn-table-clear" class="btn btn-wide" disabled>Clear table</button>
+          </div>
+          <div class="col-12 col-sm-8">
+            <p>Resetting the table will revert it to the initial setup. Your library will not be changed.</p>
+          </div>
+          <div class="col-12 col-sm-4">
+            <button id="btn-table-reset" class="btn btn-wide" disabled>Reset table</button>
+          </div>
+          <!-- <div class="col-12 col-sm-8">
+            <p>Deleting your table will erase it and your library. Other players will be kicked out.</p>
+          </div>
+          <div class="col-12 col-sm-4">
+            <button id="btn-table-delete" class="btn btn-wide" disabled>Delete table</button>
+          </div> -->
+        </div></form>
+      </div>
+    </div>
   `
   _('#modal-footer').innerHTML = `
     <button id='btn-close' type="button" class="btn btn-primary">Close</button>
   `
+
+  // store/retrieve selected tab
+  _('input[name="tabs"]').on('change', change => {
+    stateSetGamePref('modalSettingsTab', change.target.id)
+  })
+  const preselect = stateGetGamePref('modalSettingsTab') ?? 'tab-1'
+  _('#' + preselect).checked = true
 
   _('#quality').on('change', () => changeQuality(Number(_('#quality').value)))
 
