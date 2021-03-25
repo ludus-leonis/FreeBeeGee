@@ -85,10 +85,10 @@ export function modalLibrary (x, y) {
       </div>
     `
 
+    // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
       stateSetGamePref('modalLibraryTab', change.target.id)
     })
-
     const preselect = stateGetGamePref('modalLibraryTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 

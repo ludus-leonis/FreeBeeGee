@@ -47,7 +47,7 @@
   .tabs-content {
     margin-top: $spacing-small;
 
-    > div {
+    > * {
       display: none;
     }
   }

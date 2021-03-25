@@ -8,11 +8,12 @@ Here is a list what might happen next. However, priorities can change.
 * [ ] fancier implementation for dynamic poll intervalls
   * [ ] show "you have been inactive" dialog after 10min
   * [ ] decrease poll intervall on mouse/keyboard activity
-* [ ] rename "game" to "table"
+* [ ] fully rename "game" to "table"
 * [ ] scroll to last position/center of setup/table when opening new tables
 * [ ] remove default entries from json files before save (e.g. side=0)
 * [ ] reduce impact of "back" button
 * [ ] delete table
+* [ ] game passwords
 * [ ] template GDRP privacy statement
 * [ ] fix Firefox reset-table bug
 * [ ] pre-release

@@ -333,6 +333,8 @@ $label-offset: 8px;
   border-radius: $piece-tile-size;
   margin: $piece-border-size;
 
+  $is-n-size: 1rem;
+
   &.is-n::after {
     align-items: center;
     background-color: var(--fbg-border-color);
@@ -341,14 +343,39 @@ $label-offset: 8px;
     flex-direction: row;
     font-size: .85em;
     font-weight: 600;
-    height: 1rem;
+    height: $is-n-size;
     justify-content: center;
-    margin-top: -.5rem;
+    margin-top: $is-n-size / -2;
     position: absolute;
-    right: -3px;
+    right: -$piece-border-size;
     top: 50%;
-    width: 1rem;
+    width: $is-n-size;
   }
+
+  &.is-n.is-rotate-90::after {
+    left: 50%;
+    margin-left: $is-n-size / -2;
+    margin-top: 0;
+    right: initial;
+    top: -$piece-border-size;
+    transform: rotate(-90deg);
+  }
+
+  &.is-n.is-rotate-180::after {
+    left: -$piece-border-size;
+    right: initial;
+    transform: rotate(-180deg);
+  }
+
+  &.is-n.is-rotate-270::after {
+    left: 50%;
+    margin-left: $is-n-size / -2;
+    margin-top: 0;
+    right: initial;
+    top: calc(100% - #{$is-n-size} + #{$piece-border-size});
+    transform: rotate(-270deg);
+  }
+
   &.is-n-1::after { content: '1'; }
   &.is-n-2::after { content: '2'; }
   &.is-n-3::after { content: '3'; }

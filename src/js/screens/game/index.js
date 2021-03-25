@@ -535,6 +535,10 @@ export function pieceToNode (pieceJson) {
   const node = assetToNode(getAsset(pieceJson.asset), pieceJson.side ?? 0)
   node.add(`.is-w-${pieceJson.width}`, `.is-h-${pieceJson.height}`, `.is-wh-${pieceJson.width - pieceJson.height}`)
 
+  if (pieceJson.layer === 'token' && pieceJson.no !== 0) {
+    node.add('.is-n', '.is-n-' + pieceJson.no)
+  }
+
   const ret = updateNode(node, pieceJson)
   return ret
 }
