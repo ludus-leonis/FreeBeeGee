@@ -1,5 +1,5 @@
 /**
- * @file Handles the game/table settings modal.
+ * @file Handles the table settings modal.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -28,8 +28,8 @@ import {
   getTemplate,
   updateState,
   restoreState,
-  stateGetGamePref,
-  stateSetGamePref,
+  stateGetTablePref,
+  stateSetTablePref,
   pollTimes,
   syncTimes
 } from '../state.js'
@@ -63,8 +63,8 @@ export function modalSettings () {
             <p>Refresh time: ${Math.ceil(pollTimes.reduce((a, b) => a + b) / pollTimes.length)}ms server + ${Math.ceil(syncTimes.reduce((a, b) => a + b) / syncTimes.length)}ms browser</p>
 
             <h2 class="h3">Render quality</h2>
-            <p>If your game seems to be slow, you can change the render quality here:</p>
-            <input type="range" min="0" max="3" value="${stateGetGamePref('renderQuality') ?? 3}" class="slider" id="quality">
+            <p>If your table seems to be slow, you can change the render quality here:</p>
+            <input type="range" min="0" max="3" value="${stateGetTablePref('renderQuality') ?? 3}" class="slider" id="quality">
             <p class="if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
             <p class="if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
             <p class="if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
@@ -108,9 +108,9 @@ export function modalSettings () {
 
   // store/retrieve selected tab
   _('input[name="tabs"]').on('change', change => {
-    stateSetGamePref('modalSettingsTab', change.target.id)
+    stateSetTablePref('modalSettingsTab', change.target.id)
   })
-  const preselect = stateGetGamePref('modalSettingsTab') ?? 'tab-1'
+  const preselect = stateGetTablePref('modalSettingsTab') ?? 'tab-1'
   _('#' + preselect).checked = true
 
   _('#quality').on('change', () => changeQuality(Number(_('#quality').value)))
@@ -145,7 +145,7 @@ export function modalSettings () {
  */
 export function changeQuality (value) {
   const body = _('body').remove('.is-quality-low', '.is-quality-medium', '.is-quality-high', '.is-quality-ultra')
-  stateSetGamePref('renderQuality', value)
+  stateSetTablePref('renderQuality', value)
   switch (value) {
     case 0:
       body.add('.is-quality-low')

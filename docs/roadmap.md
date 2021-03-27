@@ -8,12 +8,12 @@ Here is a list what might happen next. However, priorities can change.
 * [ ] fancier implementation for dynamic poll intervalls
   * [ ] show "you have been inactive" dialog after 10min
   * [ ] decrease poll intervall on mouse/keyboard activity
-* [ ] fully rename "game" to "table"
+* [X] fully rename "game" to "table"
 * [ ] scroll to last position/center of setup/table when opening new tables
 * [ ] remove default entries from json files before save (e.g. side=0)
 * [ ] reduce impact of "back" button
 * [ ] delete table
-* [ ] game passwords
+* [ ] table passwords
 * [ ] template GDRP privacy statement
 * [ ] fix Firefox reset-table bug
 * [ ] pre-release
@@ -27,8 +27,8 @@ Here is a list what might happen next. However, priorities can change.
 
 * better tablet / touch support
 * catch all unhandled warnings/exceptions in PHP API and return 500
-* URL mapping for example.org/roomname -> example.org/#/game/roomname
-* docs how to make game/template `.zip`s
+* URL mapping for example.org/roomname -> example.org/#/table/roomname
+* docs how to make table/template `.zip`s
 * update screenshots
 
 ## Backlog (unsorted)
@@ -76,7 +76,7 @@ Here is a list what might happen next. However, priorities can change.
 * point-somewhere feature
 * detail-pane to the right for selected item
 * move stuff via cursor keys
-* rename game
+* rename table
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals
 * arbitrary snap (e.g. 1px)
@@ -97,7 +97,7 @@ Here is a list what might happen next. However, priorities can change.
 * users + roles
   * admins, players, spectators
   * vote for new admin / gm
-* cache/resuse/symlink same assets in different game folders (via sha256?)
+* cache/resuse/symlink same assets in different table folders (via sha256?)
 * common shadow layer for tile layer
 * download map/table as PDF for printing
 * cutcenes / message panels

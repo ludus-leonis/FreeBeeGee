@@ -55,122 +55,122 @@ export function apiGetTemplates () {
 }
 
 /**
- * API GET /games/:gameName/
+ * API GET /tables/:tableName/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetGame (gameName) {
-  return getJson([200], 'api/games/' + gameName + '/')
+export function apiGetTable (tableName) {
+  return getJson([200], 'api/tables/' + tableName + '/')
 }
 
 /**
- * API POST /games/
+ * API POST /tables/
  *
- * @param {Object} game Game meta-JSON/Object to send.
+ * @param {Object} table Table meta-JSON/Object to send.
  * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostGame (game, snapshot) {
+export function apiPostTable (table, snapshot) {
   const formData = new FormData()
-  formData.append('name', game.name)
-  if (game.template) formData.append('template', game.template)
-  if (game.auth) formData.append('auth', game.auth)
+  formData.append('name', table.name)
+  if (table.template) formData.append('template', table.template)
+  if (table.auth) formData.append('auth', table.auth)
   if (snapshot) formData.append('snapshot', snapshot)
 
-  return fetchOrThrow([201], 'api/games/', {
+  return fetchOrThrow([201], 'api/tables/', {
     method: 'POST',
     body: formData
   })
 
-  // return postJson([201], 'api/games/', game) // 409 = existing game
+  // return postJson([201], 'api/tables/', table) // 409 = existing table
 }
 
 /**
- * API GET /games/:gameName/state/
+ * API GET /tables/:tableName/state/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetState (gameName) {
-  return getJson([200], 'api/games/' + gameName + '/state/')
+export function apiGetState (tableName) {
+  return getJson([200], 'api/tables/' + tableName + '/state/')
 }
 
 /**
- * API PUT /games/:gameName/state/
+ * API PUT /tables/:tableName/state/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @param {Array} state The new game state (array of pieces).
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Array} state The new table state (array of pieces).
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutState (gameName, state) {
-  return putJson([200], 'api/games/' + gameName + '/state/', state)
+export function apiPutState (tableName, state) {
+  return putJson([200], 'api/tables/' + tableName + '/state/', state)
 }
 
 /**
- * API HEAD /games/:gameName/state/
+ * API HEAD /tables/:tableName/state/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiHeadState (gameName) {
-  return head('api/games/' + gameName + '/state/')
+export function apiHeadState (tableName) {
+  return head('api/tables/' + tableName + '/state/')
 }
 
 /**
- * API GET /games/:gameName/state/initial/
+ * API GET /tables/:tableName/state/initial/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @param {Number} index The number of the save state to fetch, 0 = initial.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetStateSave (gameName, index) {
-  return getJson([200], 'api/games/' + gameName + '/state/save/' + index + '/')
+export function apiGetStateSave (tableName, index) {
+  return getJson([200], 'api/tables/' + tableName + '/state/save/' + index + '/')
 }
 
 /**
- * API PUT /games/:gameName/pieces/
+ * API PUT /tables/:tableName/pieces/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @param {Object} piece Piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutPiece (gameName, piece) {
-  return putJson([200], 'api/games/' + gameName + '/pieces/' + piece.id + '/', piece)
+export function apiPutPiece (tableName, piece) {
+  return putJson([200], 'api/tables/' + tableName + '/pieces/' + piece.id + '/', piece)
 }
 
 /**
- * API PATCH /games/:gameName/pieces/:pieceId/
+ * API PATCH /tables/:tableName/pieces/:pieceId/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @param {String} pieceId Piece-ID (ID) of piece to patch.
  * @param {Object} patch Partial piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPiece (gameName, pieceId, patch) {
-  return patchJson([200], 'api/games/' + gameName + '/pieces/' + pieceId + '/', patch)
+export function apiPatchPiece (tableName, pieceId, patch) {
+  return patchJson([200], 'api/tables/' + tableName + '/pieces/' + pieceId + '/', patch)
 }
 
 /**
- * API DELETE /games/:gameName/pieces/:pieceId/
+ * API DELETE /tables/:tableName/pieces/:pieceId/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @param {String} pieceId Piece-ID (ID) of piece to delete.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeletePiece (gameName, pieceId) {
-  return deleteJson([204], 'api/games/' + gameName + '/pieces/' + pieceId + '/')
+export function apiDeletePiece (tableName, pieceId) {
+  return deleteJson([204], 'api/tables/' + tableName + '/pieces/' + pieceId + '/')
 }
 
 /**
- * API POST /games/:gameName/pieces/
+ * API POST /tables/:tableName/pieces/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @param {Object} piece Piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostPiece (gameName, piece) {
-  return postJson([201], 'api/games/' + gameName + '/pieces/', piece)
+export function apiPostPiece (tableName, piece) {
+  return postJson([201], 'api/tables/' + tableName + '/pieces/', piece)
 }
 
 // --- internal methods --------------------------------------------------------

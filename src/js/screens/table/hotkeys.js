@@ -40,7 +40,7 @@ import { modalHelp } from './modals/help.js'
 import _ from '../../FreeDOM.js'
 
 /** register the keyboard handler on document load */
-document.addEventListener('keydown', keydown => handleGameKeys(keydown))
+document.addEventListener('keydown', keydown => handleTableKeys(keydown))
 
 /**
  * Call proper functions after certain keys are pressed.
@@ -48,7 +48,7 @@ document.addEventListener('keydown', keydown => handleGameKeys(keydown))
  * @param {KeyboardEvent} keydown The triggering event.
  * @return {Boolean} True if we could handle the event, false if it should bubble.
  */
-function handleGameKeys (keydown) {
+function handleTableKeys (keydown) {
   if (!_('#tabletop').exists()) return
 
   if (keydown.key === 'Escape') {

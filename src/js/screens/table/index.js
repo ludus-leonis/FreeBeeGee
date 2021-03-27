@@ -1,5 +1,5 @@
 /**
- * @file The actual game / tabletop stuff.
+ * @file The actual table / tabletop stuff.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -20,11 +20,11 @@
 import { createPopper } from '@popperjs/core'
 
 import {
-  getGame,
+  getTable,
   getTemplate,
   getAsset,
-  loadGameState,
-  pollGameState,
+  loadTableState,
+  pollTableState,
   updatePieces,
   stateCreatePiece,
   stateDeletePiece,
@@ -32,8 +32,8 @@ import {
   stateFlipPiece,
   stateMovePiece,
   stateRotatePiece,
-  stateSetGamePref,
-  stateGetGamePref
+  stateSetTablePref,
+  stateGetTablePref
 } from './state.js'
 import { enableDragAndDrop, getMouseTileX, getMouseTileY } from './mouse.js'
 import _ from '../../FreeDOM.js'
@@ -71,15 +71,15 @@ export function setScrollPosition (x, y) {
 }
 
 /**
- * Initialize and start the game/tabletop screen.
+ * Initialize and start the table/tabletop screen.
  *
- * @param {String} name Name of game, e.g. hilariousGazingPenguin.
+ * @param {String} name Name of table, e.g. hilariousGazingPenguin.
  */
-export function runGame (name) {
-  console.info('$NAME$ v$VERSION$, game ' + name)
+export function runTable (name) {
+  console.info('$NAME$ v$VERSION$, table ' + name)
 
-  loadGameState(name)
-    .then(game => { if (game) setupGame(game) })
+  loadTableState(name)
+    .then(table => { if (table) setupTable(table) })
 }
 
 /**
@@ -91,15 +91,15 @@ export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
   _('#tabletop').toggle('.layer-' + layer + '-enabled')
   if (_('#btn-' + layer + '.active').exists()) {
-    stateSetGamePref('layer' + layer, true)
+    stateSetTablePref('layer' + layer, true)
   } else {
     unselectPieces(layer)
-    stateSetGamePref('layer' + layer, false)
+    stateSetTablePref('layer' + layer, false)
   }
 }
 
 /**
- * Delete the currently selected piece from the game.
+ * Delete the currently selected piece from the table.
  *
  * Will silently fail if nothing is selected.
  */
@@ -108,7 +108,7 @@ export function deleteSelected () {
 }
 
 /**
- * Delete a piece from the game.
+ * Delete a piece from the table.
  *
  * Will silently fail if this piece does not exist.
  *
@@ -119,7 +119,7 @@ export function deletePiece (id) {
 }
 
 /**
- * Show settings dialog for the current game/table.
+ * Show settings dialog for the current table/table.
  */
 export function settings () {
   modalSettings()
@@ -486,12 +486,12 @@ export function assetToNode (assetJson, side = 0) {
   } else {
     if (assetJson.base) { // layered asset
       node = _(`.piece.piece-${assetJson.type}.has-layer`).create().css({
-        backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.base}')`,
-        '--fbg-layer-image': `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`
+        backgroundImage: `url('api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.base}')`,
+        '--fbg-layer-image': `url('api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`
       })
     } else { // regular asset
       node = _(`.piece.piece-${assetJson.type}`).create().css({
-        backgroundImage: `url('api/data/games/${getGame().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`
+        backgroundImage: `url('api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`
       })
     }
   }
@@ -615,17 +615,17 @@ export function popupPiece (id) {
 // --- internal ----------------------------------------------------------------
 
 /**
- * Setup the game screen / HTML.
+ * Setup the table screen / HTML.
  *
- * @param {Object} game Game data object.
+ * @param {Object} table Table data object.
  */
-function setupGame (game) {
+function setupTable (table) {
   _('body').remove('.page-boxed').innerHTML = `
-    <div id="game" class="game is-fullscreen is-noselect">
+    <div id="table" class="table is-fullscreen is-noselect">
       <div class="menu">
         <div>
           <div class="menu-brand is-content">
-            <button id="btn-s" class="btn-icon" title="Game settings [s]"><img src="icon.svg"></button>
+            <button id="btn-s" class="btn-icon" title="Table settings [s]"><img src="icon.svg"></button>
           </div>
 
           <div>
@@ -663,14 +663,13 @@ function setupGame (game) {
         <div>
           <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
 
-          <a id="btn-snap" class="btn-icon" title="Download game snapshot" href='./api/games/${game.name}/snapshot/'>${iconDownload}</a>
+          <a id="btn-snap" class="btn-icon" title="Download snapshot" href='./api/tables/${table.name}/snapshot/'>${iconDownload}</a>
 
-          <button id="btn-q" class="btn-icon" title="Leave game">${iconQuit}</button>
+          <button id="btn-q" class="btn-icon" title="Leave table">${iconQuit}</button>
         </div>
       </div>
       <div id="scroller" class="scroller">
         <div id="tabletop" class="tabletop">
-          <div id="cursor" class="cursor"></div>
           <div id="layer-other" class="layer layer-other"></div>
           <div id="layer-token" class="layer layer-token"></div>
           <div id="layer-overlay" class="layer layer-overlay"></div>
@@ -682,13 +681,13 @@ function setupGame (game) {
     <div id="popper" class="popup is-content"></div>
   `
 
-  changeQuality(stateGetGamePref('renderQuality') ?? 3)
+  changeQuality(stateGetTablePref('renderQuality') ?? 3)
 
   // setup menu for layers
   let undefinedCount = 0
   for (const layer of ['token', 'overlay', 'tile', 'other']) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
-    const prop = stateGetGamePref('layer' + layer)
+    const prop = stateGetTablePref('layer' + layer)
     if (prop === true) toggleLayer(layer) // stored enabled
     if (prop === undefined) undefinedCount++
   }
@@ -714,14 +713,14 @@ function setupGame (game) {
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => quit())
 
-  const table = game.tables[0] // assume one table for now
+  const tabletop = table.tables[0] // assume one table for now
 
   _('#tabletop').css({
-    width: table.width + 'px',
-    height: table.height + 'px',
-    backgroundColor: table.background.color,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
-    backgroundSize: table.template.gridSize + 'px,1152px 768px'
+    width: tabletop.width + 'px',
+    height: tabletop.height + 'px',
+    backgroundColor: tabletop.background.color,
+    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + tabletop.background.image + '?v=$CACHE$")',
+    backgroundSize: tabletop.template.gridSize + 'px,1152px 768px'
   })
 
   _('body').on('contextmenu', e => e.preventDefault())
@@ -729,23 +728,23 @@ function setupGame (game) {
   // setup scroller + keep reference for scroll-tracking
   scroller = _('#scroller')
   scroller.css({ // this is for moz://a
-    scrollbarColor: `${table.background.scroller} ${table.background.color}`
+    scrollbarColor: `${tabletop.background.scroller} ${tabletop.background.color}`
   })
   scroller = scroller.node() // and this for the webkits out there
-  scroller.style.setProperty('--fbg-color-scroll-fg', table.background.scroller)
-  scroller.style.setProperty('--fbg-color-scroll-bg', table.background.color)
+  scroller.style.setProperty('--fbg-color-scroll-fg', tabletop.background.scroller)
+  scroller.style.setProperty('--fbg-color-scroll-bg', tabletop.background.color)
 
   // setup content
-  pollGameState()
+  pollTableState()
 
   enableDragAndDrop('#tabletop')
 }
 
 /**
- * Leave the current game by redirecting back to the join screen.
+ * Leave the current table by redirecting back to the join screen.
  */
 function quit () {
-  document.location = './?game=' + getGame().name
+  document.location = './?table=' + getTable().name
 }
 
 /**
@@ -822,7 +821,7 @@ function intersect (rect1, rect2) {
  */
 function createInvalidAsset (type) {
   return _(`.piece.piece-${type}`).create().css({
-    backgroundImage: `url('api/data/games/${getGame().name}/invalid.svg')`,
+    backgroundImage: `url('api/data/tables/${getTable().name}/invalid.svg')`,
     backgroundColor: '#40bfbf'
   })
 }

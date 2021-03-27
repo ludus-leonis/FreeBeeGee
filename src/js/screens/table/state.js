@@ -1,5 +1,5 @@
 /**
- * @file Holds and manages a game's data objects. Does not know about or
+ * @file Holds and manages a table's data objects. Does not know about or
  *       manipulate HTML/DOM. Might cache some values in the browser store.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
@@ -29,8 +29,8 @@ import {
   apiGetStateSave,
   apiGetState,
   apiPutState,
-  apiGetGame,
-  apiPostGame,
+  apiGetTable,
+  apiPostTable,
   apiPatchPiece,
   apiDeletePiece,
   apiPostPiece,
@@ -38,56 +38,56 @@ import {
 } from '../../api.js'
 import { runError } from '../error.js'
 
-let gameStateTimeout = -1 /** setTimeout handle of sync method */
-const gameStateRefreshMin = 1000 /** minimum syncing interval in ms */
-const gameStateRefreshMax = 5000 /** maximum syncing interval in ms */
-const gameStateRefreshNever = 365 * 24 * 60 * 60 * 1000 /** actually in a year */
+let tableStateTimeout = -1 /** setTimeout handle of sync method */
+const tableStateRefreshMin = 1000 /** minimum syncing interval in ms */
+const tableStateRefreshMax = 5000 /** maximum syncing interval in ms */
+const tableStateRefreshNever = 365 * 24 * 60 * 60 * 1000 /** actually in a year */
 let lastDigest = '' /** last obtained hash/digest of state JSON */
-let gameStateRefresh = gameStateRefreshMin /** current, growing syncing interval */
-let game = {} /** stores the game meta info JSON */
+let tableStateRefresh = tableStateRefreshMin /** current, growing syncing interval */
+let table = {} /** stores the table meta info JSON */
 
 // --- public ------------------------------------------------------------------
 
 /**
- * Get the current game's metadata (cached).
+ * Get the current table's metadata (cached).
  *
- * @return {Object} Game's metadata.
+ * @return {Object} Table's metadata.
  */
-export function getGame () {
-  return game
+export function getTable () {
+  return table
 }
 
 /**
- * Get the current game's table (cached).
+ * Get the current table's table (cached).
  *
  * Until we support multiple tables, this is always table 0.
  *
- * @return {Object} Current game's template metadata.
+ * @return {Object} Current table's template metadata.
  */
-export function getTable () {
-  return getGame()?.tables[0]
+export function getTabletop () {
+  return getTable()?.tables[0]
 }
 
 /**
- * Get the current game's template (cached).
+ * Get the current table's template (cached).
  *
  * Until we support multiple tables, this is always the template of table 0.
  *
- * @return {Object} Current game's template metadata.
+ * @return {Object} Current table's template metadata.
  */
 export function getTemplate () {
-  return getTable()?.template
+  return getTabletop()?.template
 }
 
 /**
- * Get the current game's template (cached).
+ * Get the current table's template (cached).
  *
  * Until we support multiple tables, this is always the template of table 0.
  *
- * @return {Object} Current game's template metadata.
+ * @return {Object} Current table's template metadata.
  */
 export function getLibrary () {
-  return getTable()?.library
+  return getTabletop()?.library
 }
 
 /**
@@ -118,60 +118,60 @@ export function getAsset (id) {
 }
 
 /**
- * (Re)Fetch the game's state from the API and trigger the UI update.
+ * (Re)Fetch the table's state from the API and trigger the UI update.
  *
- * @param {String} name The current game name.
- * @return {Object} Promise of game metadata object.
+ * @param {String} name The current table name.
+ * @return {Object} Promise of table metadata object.
  */
-export function loadGameState (name) {
-  return apiGetGame(name)
-    .then(remoteGame => {
-      game = remoteGame
-      return game
+export function loadTableState (name) {
+  return apiGetTable(name)
+    .then(remoteTable => {
+      table = remoteTable
+      return table
     })
-    .catch((error) => { // invalid game
-      runError('GAME_GONE', name, error)
+    .catch((error) => { // invalid table
+      runError('TABLE_GONE', name, error)
       return null
     })
 }
 
 /**
- * Create a new game on the server.
+ * Create a new table on the server.
  *
- * @param {Object} game The game object to send to the API.
+ * @param {Object} table The table object to send to the API.
  * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
- * @return {Object} Promise of created game metadata object.
+ * @return {Object} Promise of created table metadata object.
  */
-export function createGame (game, snapshot) {
-  return apiPostGame(game, snapshot)
+export function createTable (table, snapshot) {
+  return apiPostTable(table, snapshot)
 }
 
 /**
  * Get a setting from the browser HTML5 store. Automatically scoped to active
- * game.
+ * table.
  *
  * @param {String} pref Setting to obtain.
  * @return {String} The setting's value.
  */
-export function stateGetGamePref (pref) {
-  return getStoreValue('g' + game.id.substr(0, 8), pref)
+export function stateGetTablePref (pref) {
+  return getStoreValue('g' + table.id.substr(0, 8), pref)
 }
 
 /**
  * Set a setting in the browser HTML5 store. Automatically scoped to active
- * game.
+ * table.
  *
  * @param {String} pref Setting to set.
  * @param {String} value The value to set.
  */
-export function stateSetGamePref (pref, value) {
-  setStoreValue('g' + game.id.substr(0, 8), pref, value)
+export function stateSetTablePref (pref, value) {
+  setStoreValue('g' + table.id.substr(0, 8), pref, value)
 }
 
 export const pollTimes = [25]
 
 /**
- * Poll the current game's state and trigger UI updates.
+ * Poll the current table's state and trigger UI updates.
  *
  * Will first do a HEAD request to detect changes, and only do a GET/update if
  * needed.
@@ -179,32 +179,32 @@ export const pollTimes = [25]
  * @param {?String} selectId Optional ID of an selected piece. Will be re-
  *                           selected after successfull update.
  */
-export function pollGameState (
+export function pollTableState (
   selectId = null
 ) {
-  clearTimeout(gameStateTimeout)
+  clearTimeout(tableStateTimeout)
   const pollTime = new Date().getMilliseconds()
-  apiHeadState(game.name)
+  apiHeadState(table.name)
     .then(headers => {
       const digest = headers.get('digest')
       if (lastDigest !== digest) {
         syncState(selectId, digest)
-        gameStateRefresh = gameStateRefreshMin
+        tableStateRefresh = tableStateRefreshMin
       }
     })
     .catch(error => {
       if (error instanceof UnexpectedStatus) {
-        gameStateRefresh = gameStateRefreshNever // stop polling
-        runError('GAME_GONE', game.name, error)
+        tableStateRefresh = tableStateRefreshNever // stop polling
+        runError('TABLE_GONE', table.name, error)
       } else {
         runError('UNEXPECTED', error)
       }
     })
     .finally(() => {
-      gameStateTimeout = setTimeout(() => pollGameState(false), gameStateRefresh)
-      gameStateRefresh = Math.floor(Math.min(
-        gameStateRefresh * 1.05,
-        gameStateRefreshMax
+      tableStateTimeout = setTimeout(() => pollTableState(false), tableStateRefresh)
+      tableStateRefresh = Math.floor(Math.min(
+        tableStateRefresh * 1.05,
+        tableStateRefreshMax
       ) + Math.random() * 250)
 
       while (pollTimes.length >= 10) pollTimes.shift()
@@ -214,7 +214,7 @@ export function pollGameState (
 }
 
 /**
- * Set the label of a piece of the current game.
+ * Set the label of a piece of the current table.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
@@ -227,7 +227,7 @@ export function stateLabelPiece (pieceId, label) {
 }
 
 /**
- * Set the x/y/z of a piece of the current game.
+ * Set the x/y/z of a piece of the current table.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
@@ -247,7 +247,7 @@ export function stateMovePiece (pieceId, x = null, y = null, z = null) {
 }
 
 /**
- * Rotate a piece of the current game.
+ * Rotate a piece of the current table.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
@@ -273,7 +273,7 @@ export function stateNumberPiece (pieceId, no) {
 }
 
 /**
- * Flip a piece of the current game and show another side of it.
+ * Flip a piece of the current table and show another side of it.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
@@ -288,7 +288,7 @@ export function stateFlipPiece (pieceId, side) {
 }
 
 /**
- * Edit multiple properties of a piece of the current game.
+ * Edit multiple properties of a piece of the current table.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
@@ -304,7 +304,7 @@ export function statePieceEdit (pieceID, updates) {
 }
 
 /**
- * Remove a piece from the current game (from the table, not from the library).
+ * Remove a piece from the current table (from the table, not from the library).
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
@@ -312,17 +312,17 @@ export function statePieceEdit (pieceID, updates) {
  * @param {String} pieceId ID of piece to remove.
  */
 export function stateDeletePiece (id) {
-  apiDeletePiece(game.name, id)
+  apiDeletePiece(table.name, id)
     .catch(error => {
       runError('UNEXPECTED', error)
     })
     .finally(() => {
-      pollGameState()
+      pollTableState()
     })
 }
 
 /**
- * Edit multiple properties of a piece of the current game.
+ * Edit multiple properties of a piece of the current table.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
@@ -333,7 +333,7 @@ export function stateDeletePiece (id) {
  */
 export function stateCreatePiece (piece, selected = false) {
   let selectid = null
-  apiPostPiece(game.name, piece)
+  apiPostPiece(table.name, piece)
     .then(piece => {
       selectid = piece.id
     })
@@ -341,24 +341,24 @@ export function stateCreatePiece (piece, selected = false) {
       runError('UNEXPECTED', error)
     })
     .finally(() => {
-      pollGameState(selected ? selectid : null)
+      pollTableState(selected ? selectid : null)
     })
 }
 
 /**
- * Update the game state to the a new one.
+ * Update the table state to the a new one.
  *
  * Will replace the existing state.
  *
- * @param {Array} state Array of pieces (game state).
+ * @param {Array} state Array of pieces (table state).
  */
 export function updateState (state) {
-  apiPutState(game.name, state)
+  apiPutState(table.name, state)
     .catch(error => {
       runError('UNEXPECTED', error)
     })
     .finally(() => {
-      pollGameState()
+      pollTableState()
     })
 }
 
@@ -368,14 +368,14 @@ export function updateState (state) {
  * @param {Number} index Integer index of state, 0 = initial.
  */
 export function restoreState (index) {
-  apiGetStateSave(game.name, index)
+  apiGetStateSave(table.name, index)
     .then(state => {
-      apiPutState(game.name, state)
+      apiPutState(table.name, state)
         .catch(error => {
           runError('UNEXPECTED', error)
         })
         .finally(() => {
-          pollGameState()
+          pollTableState()
         })
     })
     .catch(error => {
@@ -397,7 +397,7 @@ export function updatePieces (pieces) {
       if (pieces.length > 0) updatePieces(pieces)
     })
     .finally(() => {
-      if (pieces.length === 0) pollGameState()
+      if (pieces.length === 0) pollTableState()
     })
 }
 
@@ -413,7 +413,7 @@ export function updatePieces (pieces) {
  * @return {Object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, poll = true) {
-  return apiPatchPiece(game.name, pieceId, patch)
+  return apiPatchPiece(table.name, pieceId, patch)
     .catch(error => {
       if (error instanceof UnexpectedStatus && error.status === 404) {
         // we somewhat expected this situation. silently ignore it.
@@ -423,14 +423,14 @@ function patchPiece (pieceId, patch, poll = true) {
       }
     })
     .finally(() => {
-      if (poll) pollGameState()
+      if (poll) pollTableState()
     })
 }
 
 export const syncTimes = [75]
 
 /**
- * Download the current game state and trigger updates on change.
+ * Download the current table state and trigger updates on change.
  *
  * @param {String} selectId ID of piece to select after update.
  * @param {String} digest Hash of last seen state to detect changes.
@@ -438,7 +438,7 @@ export const syncTimes = [75]
 function syncState (selectId, digest) {
   const syncTime = new Date().getMilliseconds()
 
-  apiGetState(game.name)
+  apiGetState(table.name)
     .then(state => {
       lastDigest = digest
       const keepIds = []
@@ -449,9 +449,9 @@ function syncState (selectId, digest) {
       removeObsoletePieces(keepIds)
       updateMenu()
     })
-    .catch((error) => { // invalid game
+    .catch((error) => { // invalid table
       console.error(error)
-      document.location = './?game=' + game.name
+      document.location = './?table=' + table.name
     })
     .finally(() => {
       while (syncTimes.length >= 10) syncTimes.shift()
@@ -461,7 +461,7 @@ function syncState (selectId, digest) {
 }
 
 /**
- * Detect deleted pieces and remove them from the game.
+ * Detect deleted pieces and remove them from the table.
  *
  * @param {String[]} keepIds IDs of pieces to keep.
  */

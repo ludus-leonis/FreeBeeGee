@@ -168,7 +168,7 @@ describe('API Server-Info', function () {
   testJsonGet(() => '/', body => {
     expect(body).to.be.an('object')
     expect(body.createPassword).to.be.eql(true)
-    expect(body.openSlots).to.be.eql(16)
+    expect(body.freeTables).to.be.eql(16)
     expect(body.ttl).to.be.eql(48)
     expect(body.version).to.match(/^[0-9]+\.[0-9]+\.[0-9]+/)
   })
@@ -182,24 +182,24 @@ describe('API Templates', function () {
   })
 })
 
-describe('CRUD game', function () {
-  // get game - should not be there yet
-  testJsonGet(() => '/games/crudGame/', body => {
+describe('CRUD table', function () {
+  // get table - should not be there yet
+  testJsonGet(() => '/tables/crudTable/', body => {
     expect(body).to.be.an('object')
-    expect(body._messages).to.include('not found: crudGame')
+    expect(body._messages).to.include('not found: crudTable')
   }, 404)
 
-  // create game
-  testJsonPost(() => '/games/', () => {
+  // create table
+  testJsonPost(() => '/tables/', () => {
     return {
-      name: 'crudGame',
+      name: 'crudTable',
       template: 'RPG',
       auth: 'apitests'
     }
   }, body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
-    expect(body.name).to.be.eql('crudGame')
+    expect(body.name).to.be.eql('crudTable')
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.tables).to.be.an('array')
     expect(body.tables[0].name).to.be.eql('Main')
@@ -223,11 +223,11 @@ describe('CRUD game', function () {
     expect(body.tables[0].template.colors).to.be.an('array')
   }, 201)
 
-  // read game
-  testJsonGet(() => '/games/crudGame/', body => {
+  // read table
+  testJsonGet(() => '/tables/crudTable/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
-    expect(body.name).to.be.eql('crudGame')
+    expect(body.name).to.be.eql('crudTable')
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.tables).to.be.an('array')
     expect(body.tables[0].name).to.be.eql('Main')
@@ -251,16 +251,16 @@ describe('CRUD game', function () {
     expect(body.tables[0].template.colors).to.be.an('array')
   }, 200)
 
-  // update game
+  // update table
   // [not possible yet]
 
-  // delete game
+  // delete table
   // [not possible yet]
 })
 
 describe('CRUD state', function () {
-  // create game
-  testJsonPost(() => '/games/', () => {
+  // create table
+  testJsonPost(() => '/tables/', () => {
     return {
       name: 'crudState',
       template: 'RPG',
@@ -272,26 +272,26 @@ describe('CRUD state', function () {
   }, 201)
 
   // get state
-  testJsonGet(() => '/games/crudState/state/', body => {
+  testJsonGet(() => '/tables/crudState/state/', body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.gt(5)
     data = body
   })
 
   // get initial state
-  testJsonGet(() => '/games/crudState/state/save/0/', save => {
+  testJsonGet(() => '/tables/crudState/state/save/0/', save => {
     expect(save).to.be.eql(data)
     data = save
   })
 
-  // reset game
-  testJsonPut(() => '/games/crudState/state/', () => [], body => {
+  // reset table
+  testJsonPut(() => '/tables/crudState/state/', () => [], body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
 
   // get state again - still empty
-  testJsonGet(() => '/games/crudState/state/', body => {
+  testJsonGet(() => '/tables/crudState/state/', body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
@@ -300,8 +300,8 @@ describe('CRUD state', function () {
 })
 
 describe('CRUD piece', function () {
-  // create game
-  testJsonPost(() => '/games/', () => {
+  // create table
+  testJsonPost(() => '/tables/', () => {
     return {
       name: 'crudPiece',
       template: 'RPG',
@@ -313,7 +313,7 @@ describe('CRUD piece', function () {
   }, 201)
 
   // create piece
-  testJsonPost(() => '/games/crudPiece/pieces/', () => {
+  testJsonPost(() => '/tables/crudPiece/pieces/', () => {
     return { // add letter-token
       layer: 'token',
       asset: 'dd74249373740cdf',
@@ -345,7 +345,7 @@ describe('CRUD piece', function () {
   }, 201)
 
   // get & compare piece
-  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
@@ -362,7 +362,7 @@ describe('CRUD piece', function () {
   })
 
   // update piece (patch)
-  testJsonPatch(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
+  testJsonPatch(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
     return {
       x: 19
     }
@@ -383,7 +383,7 @@ describe('CRUD piece', function () {
   })
 
   // get & compare piece
-  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
@@ -400,7 +400,7 @@ describe('CRUD piece', function () {
   })
 
   // update/replace piece (put)
-  testJsonPut(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
+  testJsonPut(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
     return {
       layer: 'tile',
       asset: '0d74249373740cdf',
@@ -431,7 +431,7 @@ describe('CRUD piece', function () {
   })
 
   // get & compare piece
-  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('tile')
@@ -448,8 +448,8 @@ describe('CRUD piece', function () {
   })
 
   // delete piece
-  testJsonDelete(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/')
+  testJsonDelete(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/')
 
   // get - should be gone
-  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {}, 404)
+  testJsonGet(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {}, 404)
 })

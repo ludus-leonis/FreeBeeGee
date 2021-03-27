@@ -6,7 +6,7 @@
 
 A virtual gaming tabletop you can host on your own server.
 
-Your game. Your rules. Your data.
+Your game. Your data.
 
 [FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Patreon](https://www.patreon.com/LudusLeonis)
 
@@ -14,21 +14,21 @@ Your game. Your rules. Your data.
 
 * Browser-based virtual gaming desktop.
 * Easy-to-use drag'n'drop interface. Keyboard hotkeys for power-users.
-* Invite friends by sending them a game's unique URL.
+* Invite friends by sending them a table's unique URL.
 * Tile-/grid-based, with snapping.
 * Separate layers for tiles, overlays and tokens.
 * Asset browser for your token/tiles. Individual libraries per game.
-* Templates to setup games and populate your library from.
-* Transfer individual games between servers. Or keep an offline backup.
-* Privacy friendly. No user tracking. No 3rd-party scripts. Games are deleted after some (configurable) time, usually 48h.
+* Templates to setup tables and populate your library from.
+* Transfer individual tables between servers. Or keep an offline backup.
+* Privacy friendly. No user tracking. No 3rd-party scripts. Tables are deleted after some (configurable) time, usually 48h.
 * File & folder-based. No database required.
 * Easy to install and maintain.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
 
 **Note:** This is still an early/development version. A few rather major features are still missing, limiting it's current usefullness:
 
-* No direct asset upload yet. You can't add images/tiles/pieces via the web-UI, only by adding them to game snapshots (zips).
-* No per-game passwords yet. Anyone who knows a game's name can join. That is partly by design, but it would be nice to have that option.
+* No direct asset upload yet. You can't add images/tiles/pieces via the web-UI, only by adding them to table snapshots (zips).
+* No per-table passwords yet. Anyone who knows a table name can join. That is partly by design, but it would be nice to have that option.
 * You can attach (text)labels to tokens, but no fancy state-icons, HP counter etc. - yet.
 
 The good news is: You can still use FreeBeeGee today to play! Missing features will arrive sooner or later. See the [roadmap](docs/roadmap.md) for details.

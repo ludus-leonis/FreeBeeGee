@@ -60,7 +60,7 @@ export function getMouseTileY () {
 }
 
 /**
- * Enable the game area drag'n'drop handling by registering the event handlers.
+ * Enable the table area drag'n'drop handling by registering the event handlers.
  *
  * @param {String} tabletop Selector/ID for tabletop div.
  */

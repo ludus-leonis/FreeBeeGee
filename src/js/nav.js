@@ -19,7 +19,7 @@
 
 import { runError } from './screens/error.js'
 import { runJoin } from './screens/join.js'
-import { runGame } from './screens/game'
+import { runTable } from './screens/table'
 import { stateSetServerInfo } from './state.js'
 import { apiGetServerInfo } from './api.js'
 
@@ -37,8 +37,8 @@ document.onreadystatechange = function (event) {
           stateSetServerInfo(info)
           router
             .on({
-              'game/:id': function (params) {
-                runGame(params.id)
+              'table/:id': function (params) {
+                runTable(params.id)
               },
               '*': function () {
                 runJoin()
