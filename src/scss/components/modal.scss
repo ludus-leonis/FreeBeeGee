@@ -23,8 +23,6 @@
 /// @access public
 ////
 
-$modal-zindex: 1000;
-
 .modal {
   align-items: center;
   display: none;
@@ -36,7 +34,7 @@ $modal-zindex: 1000;
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: $modal-zindex + 50;
+  z-index: $z-index-modal + 50;
 
   &.show {
     display: flex !important; // sass-lint:disable-line no-important
@@ -139,5 +137,5 @@ $modal-zindex: 1000;
   position: fixed;
   top: 0;
   width: 100vw;
-  z-index: $modal-zindex + 40;
+  z-index: $z-index-modal + 40;
 }

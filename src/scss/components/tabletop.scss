@@ -32,18 +32,12 @@
     background-image: none !important; // sass-lint:disable-line no-important
   }
 
-  .is-quality-ultra & {
-    filter: grayscale(10%) sepia(5%);
+  .is-quality-high & {
+    filter: grayscale(10%);
   }
 
-  .cursor {
-    border: 2px dashed $color-white-10a;
-    display: none;
-    height: $tile-size;
-    left: 0;
-    top: 0;
-    width: $tile-size;
-    z-index: 200000 - 1; // right below tokens
+  .is-quality-ultra & {
+    filter: grayscale(10%) sepia(5%);
   }
 
   .layer {
