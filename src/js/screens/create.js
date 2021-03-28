@@ -136,7 +136,7 @@ function ok (name) {
 
   stateCreateTable(table, snapshot)
     .then((remoteTable) => {
-      document.location = './#/table/' + remoteTable.name
+      document.location = './' + remoteTable.name
     })
     .catch((error) => {
       console.error(error)

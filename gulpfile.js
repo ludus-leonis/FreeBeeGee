@@ -127,6 +127,7 @@ function svg2png (svg, outname, size) {
     }))
 }
 
+// convert -background none icon.svg -define icon:auto-resize=32,16 favicon.ico
 gulp.task('favicon', gulp.parallel(() => {
   return gulp.src([
     'src/favicon/icon.svg',
@@ -149,7 +150,6 @@ gulp.task('js-vendor', () => {
   const concat = require('gulp-concat')
 
   return replace(gulp.src([
-    'node_modules/navigo/lib/navigo.min.js',
     'node_modules/@popperjs/core/dist/umd/popper.min.js',
     'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
   ]))
@@ -252,7 +252,7 @@ function template (name) {
 
   return replace(gulp.src('src/templates/' + name + '/**/*'))
     .pipe(zip(name + '.zip'))
-    .pipe(gulp.dest(dirs.site + '/templates'))
+    .pipe(gulp.dest(dirs.site + '/api/data/templates'))
 }
 
 // function template (name) {
@@ -270,7 +270,7 @@ function template (name) {
 //       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
 //     }))
 //     .pipe(zip(name + '.zip'))
-//     .pipe(gulp.dest(dirs.site + '/templates'))
+//     .pipe(gulp.dest(dirs.site + '/api/data/templates'))
 // }
 
 gulp.task('template-RPG', () => template('RPG'))

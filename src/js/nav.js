@@ -19,12 +19,8 @@
 
 import { runError } from './screens/error.js'
 import { runJoin } from './screens/join.js'
-import { runTable } from './screens/table'
 import { stateSetServerInfo } from './state.js'
 import { apiGetServerInfo } from './api.js'
-
-/** Store a reference to the global Navigo object */
-const router = new globalThis.Navigo('/', true)
 
 document.onreadystatechange = function (event) {
   if (document.readyState === 'complete') { // time to setup our routes
@@ -35,16 +31,18 @@ document.onreadystatechange = function (event) {
           runError('UPDATE')
         } else {
           stateSetServerInfo(info)
-          router
-            .on({
-              'table/:id': function (params) {
-                runTable(params.id)
-              },
-              '*': function () {
-                runJoin()
-              }
-            })
-            .resolve()
+
+          // run the corresponding screen/dialog
+          const rootFolder = info.root.substr(0, info.root.length - '/api'.length)
+          let path = window.location.pathname
+          if (path[0] !== '/') path = '/' + path
+          if (path === rootFolder || path === rootFolder + '/') {
+            runJoin()
+          } else if (path.endsWith('/')) {
+            document.location = path.substr(0, path.length - 1)
+          } else {
+            runJoin(path.replace(/^.*\//, ''))
+          }
         }
       })
       .catch(() => runError('UNKNOWN'))

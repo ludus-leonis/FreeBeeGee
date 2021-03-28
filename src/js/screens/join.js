@@ -19,6 +19,7 @@
 
 import { createScreen } from '../screen.js'
 import { createTable } from './create.js'
+import { runTable } from './table'
 
 import { stateGetServerInfo } from '../state.js'
 import _ from '../FreeDOM.js'
@@ -33,9 +34,24 @@ import { apiGetTable } from '../api.js'
 const tableNameMaxLength = 48
 
 /**
+ * Show the enter-name dialog or skip it if name was already given.
+ *
+ * @param {String} tableName Table name.
+ */
+export function runJoin (tableName) {
+  if (tableName) {
+    openOrCreate(tableName)
+  } else {
+    showJoinDialog()
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+/**
  * Show a join-table dialog.
  */
-export function runJoin () {
+function showJoinDialog () {
   createScreen(
     'Pick a table',
     `
@@ -119,11 +135,19 @@ function ok () {
   if (invalid) {
     invalid.focus()
   } else {
-    const name = _('#name').valueOrPlaceholder()
-    apiGetTable(name)
-      .then((table) => {
-        document.location = './#/table/' + table.name
-      })
-      .catch(() => createTable(name))
+    document.location = './' + _('#name').valueOrPlaceholder()
   }
+}
+
+/**
+ * Try to open/init a table. If it does not exist, show the create screen.
+ *
+ * @param {String} tableName Table name.
+ */
+function openOrCreate (name) {
+  apiGetTable(name)
+    .then((table) => {
+      runTable(name)
+    })
+    .catch(() => createTable(name))
 }

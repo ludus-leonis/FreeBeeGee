@@ -115,13 +115,6 @@ class FreeBeeGeeAPI
             }
         });
 
-        $this->api->register('POST', '/tables/:tid/snapshot/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->postSnapshot($data['tid'], $payload);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
-        });
-
         // --- PUT ---
 
         $this->api->register('PUT', '/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
@@ -809,6 +802,8 @@ class FreeBeeGeeAPI
         $info->ttl = $server->ttl;
         $info->snapshotUploads = $server->snapshotUploads;
         $info->freeTables = $this->getFreeTables($server);
+        $info->root = $this->api->getAPIPath();
+
         if ($server->passwordCreate ?? '' !== '') {
             $info->createPassword = true;
         }
@@ -824,7 +819,7 @@ class FreeBeeGeeAPI
     private function getTemplates()
     {
         $templates = [];
-        foreach (glob($this->getAppFolder() . 'templates/*zip') as $filename) {
+        foreach (glob($this->api->getDataDir() . 'templates/*zip') as $filename) {
             $zip = pathinfo($filename);
             $templates[] = $zip['filename'];
         }
@@ -885,7 +880,7 @@ class FreeBeeGeeAPI
         // doublecheck template / snapshot
         $zipPath = ($validated->_files ?? null)
             ? ($_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid')
-            : ($this->getAppFolder() . 'templates/' . $validated->template . '.zip');
+            : ($this->api->getDataDir() . 'templates/' . $validated->template . '.zip');
         if (!is_file($zipPath)) {
             $this->api->sendError(400, 'template not available');
         }
@@ -1197,23 +1192,6 @@ class FreeBeeGeeAPI
         readfile($zipName);
         unlink($zipName);
         die();
-    }
-
-    /**
-     * Install a table snapshot.
-     *
-     * Will unzip the posted payload (a zip) and try to install it as template/
-     * snapshot. This will replace the current table setup.
-     *
-     * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
-     */
-    public function postSnapshot(
-        string $tableName,
-        string $payload
-    ) {
-        $zipPath = $this->getAppFolder() . 'templates/HeroQuest.zip';
-        $this->validateSnapshot($zipPath);
-        $this->api->sendReply(200, "[]");
     }
 
     /**

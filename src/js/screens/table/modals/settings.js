@@ -130,8 +130,14 @@ export function modalSettings () {
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())
 
-  _('#btn-table-clear').on('click', () => updateState([]))
-  _('#btn-table-reset').on('click', () => restoreState(0))
+  _('#btn-table-clear').on('click', click => {
+    click.preventDefault()
+    updateState([])
+  })
+  _('#btn-table-reset').on('click', click => {
+    click.preventDefault()
+    restoreState(0)
+  })
 
   getModal().show()
 }

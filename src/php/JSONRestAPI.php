@@ -88,6 +88,18 @@ class JSONRestAPI
         return $dir;
     }
 
+    /**
+     * Get user-visible path for the API.
+     *
+     * Usefull to detect a subdir installation on the client.
+     *
+     * @return string URI path to api, e.g. '/api/' or '/my/sub/folder/api'.
+     */
+    public function getAPIPath(): string
+    {
+        return $this->apiRoot;
+    }
+
     // --- routing helpers -----------------------------------------------------
 
     /**

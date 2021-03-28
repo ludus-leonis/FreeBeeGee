@@ -7,15 +7,14 @@ Here is a list what might happen next. However, priorities can change.
 * [ ] upload custom images for tiles & tokens via web UI
 * [ ] fancier implementation for dynamic poll intervalls
   * [ ] show "you have been inactive" dialog after 10min
-  * [ ] decrease poll intervall on mouse/keyboard activity
+  * [ ] increase poll interval for inactive tabs/windows
+  * [ ] decrease poll interval on mouse/keyboard activity
 * [X] fully rename "game" to "table"
 * [ ] scroll to last position/center of setup/table when opening new tables
-* [ ] remove default entries from json files before save (e.g. side=0)
-* [ ] reduce impact of "back" button
 * [ ] delete table
-* [ ] table passwords
 * [ ] template GDRP privacy statement
-* [ ] fix Firefox reset-table bug
+* [X] fix Firefox reset-table bug
+* [X] URL mapping for example.org/roomname -> example.org/#/table/roomname
 * [ ] pre-release
   * [ ] bugfixing
   * [ ] review+run unit+integration tests
@@ -26,20 +25,22 @@ Here is a list what might happen next. However, priorities can change.
 ## v0.7 - Mobile Monkey
 
 * better tablet / touch support
-* catch all unhandled warnings/exceptions in PHP API and return 500
-* URL mapping for example.org/roomname -> example.org/#/table/roomname
+* table passwords
 * docs how to make table/template `.zip`s
-* update screenshots
+
+## v0.8 - Clean Cat
+
+* reduce impact of "back" button
+* remove default entries from json files before save (e.g. side=0)
+* add template version to asset urls
+* catch all unhandled warnings/exceptions in PHP API and return 500
 
 ## Backlog (unsorted)
 
 ### rather sooner
 
-* add template version to asset urls
 * overlay-grid-on-tile option
 * hide .../data/... from URLs (via .htaccess)
-* distinct select-token look from outline
-* persist scroll position between page refresh
 * change table size
 * support for stacks/decks of cards
   * shuffle deck/stack

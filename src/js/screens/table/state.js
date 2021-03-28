@@ -451,7 +451,7 @@ function syncState (selectId, digest) {
     })
     .catch((error) => { // invalid table
       console.error(error)
-      document.location = './?table=' + table.name
+      document.location = './'
     })
     .finally(() => {
       while (syncTimes.length >= 10) syncTimes.shift()
