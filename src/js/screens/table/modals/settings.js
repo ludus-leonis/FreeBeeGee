@@ -28,11 +28,14 @@ import {
   getTemplate,
   updateState,
   restoreState,
+  getTable,
+  deleteTable,
   stateGetTablePref,
   stateSetTablePref,
   pollTimes,
   syncTimes
 } from '../state.js'
+import { navigateToJoin } from '../../../nav.js'
 
 // --- public ------------------------------------------------------------------
 
@@ -81,23 +84,23 @@ export function modalSettings () {
           </div>
 
           <div class="col-12 col-sm-8">
-            <p>Clearing the table will remove all pieces from it. Your library will not be changed.</p>
+            <p>Clearing the table will remove all pieces from it. The library will not be changed.</p>
           </div>
           <div class="col-12 col-sm-4">
             <button id="btn-table-clear" class="btn btn-wide" disabled>Clear table</button>
           </div>
           <div class="col-12 col-sm-8">
-            <p>Resetting the table will revert it to the initial setup. Your library will not be changed.</p>
+            <p>Resetting the table will revert it to the initial setup. The library will not be changed.</p>
           </div>
           <div class="col-12 col-sm-4">
             <button id="btn-table-reset" class="btn btn-wide" disabled>Reset table</button>
           </div>
-          <!-- <div class="col-12 col-sm-8">
-            <p>Deleting your table will erase it and your library. Other players will be kicked out.</p>
+          <div class="col-12 col-sm-8">
+            <p>Deleting your table will permanently erase it and it's library.</p>
           </div>
           <div class="col-12 col-sm-4">
             <button id="btn-table-delete" class="btn btn-wide" disabled>Delete table</button>
-          </div> -->
+          </div>
         </div></form>
       </div>
     </div>
@@ -137,6 +140,10 @@ export function modalSettings () {
   _('#btn-table-reset').on('click', click => {
     click.preventDefault()
     restoreState(0)
+  })
+  _('#btn-table-delete').on('click', click => {
+    click.preventDefault()
+    deleteTable().then(() => navigateToJoin(getTable().name))
   })
 
   getModal().show()

@@ -148,6 +148,13 @@ class FreeBeeGeeAPI
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
+
+        $this->api->register('DELETE', '/tables/:tid/?', function ($fbg, $data) {
+            if (is_dir($this->getTableFolder($data['tid']))) {
+                $fbg->deleteTable($data['tid']);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['tid']);
+        });
     }
 
     /**
@@ -951,6 +958,19 @@ class FreeBeeGeeAPI
             ));
         }
         $this->api->sendError(404, 'not found: ' . $tableName);
+    }
+
+    /**
+     * Delete a whole table.
+     *
+     * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     */
+    public function deleteTable(
+        string $tableName
+    ) {
+        $this->api->deleteDir($this->getTableFolder($tableName));
+
+        $this->api->sendReply(204, '');
     }
 
     /**

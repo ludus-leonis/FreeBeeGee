@@ -31,12 +31,14 @@ import {
   apiPutState,
   apiGetTable,
   apiPostTable,
+  apiDeleteTable,
   apiPatchPiece,
   apiDeletePiece,
   apiPostPiece,
   UnexpectedStatus
 } from '../../api.js'
 import { runError } from '../error.js'
+import { navigateToJoin } from '../../nav.js'
 
 let tableStateTimeout = -1 /** setTimeout handle of sync method */
 const tableStateRefreshMin = 1000 /** minimum syncing interval in ms */
@@ -401,6 +403,15 @@ export function updatePieces (pieces) {
     })
 }
 
+/**
+ * Delete the current table for good.
+ *
+ * @return {Promise} Promise of deletion to wait for.
+ */
+export function deleteTable () {
+  return apiDeleteTable(table.name)
+}
+
 // --- internal ----------------------------------------------------------------
 
 /**
@@ -451,7 +462,7 @@ function syncState (selectId, digest) {
     })
     .catch((error) => { // invalid table
       console.error(error)
-      document.location = './'
+      navigateToJoin(table.name)
     })
     .finally(() => {
       while (syncTimes.length >= 10) syncTimes.shift()
@@ -501,30 +512,3 @@ function setItem (piece, selectId) {
     default:
   }
 }
-
-// const requestCache = [] /** stores cached server requests */
-//
-// /**
-//  * Cache server GET requests.
-//  *
-//  * Will serve data from an client cache if it is already present and only do the
-//  * API call only if not.
-//  *
-//  * @param {String} key The name/key for this cache item.
-//  * @param {Boolean} forced Always (re)fetch from API if true.
-//  * @param {function} call Has to return the actual fetch() promise when called.
-//  */
-// function getCached (key, forced, call) {
-//   if (forced) requestCache[key] = null
-//   if (requestCache[key]) {
-//     return new Promise((resolve, reject) => {
-//       resolve(requestCache[key])
-//     })
-//   } else {
-//     return call()
-//       .then(data => {
-//         requestCache[key] = data
-//         return requestCache[key]
-//       })
-//   }
-// }

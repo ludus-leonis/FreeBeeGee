@@ -11,7 +11,7 @@ Here is a list what might happen next. However, priorities can change.
   * [ ] decrease poll interval on mouse/keyboard activity
 * [X] fully rename "game" to "table"
 * [ ] scroll to last position/center of setup/table when opening new tables
-* [ ] delete table
+* [X] delete table
 * [ ] template GDRP privacy statement
 * [X] fix Firefox reset-table bug
 * [X] URL mapping for example.org/roomname -> example.org/#/table/roomname

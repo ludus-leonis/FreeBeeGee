@@ -22,6 +22,39 @@ import { runJoin } from './screens/join.js'
 import { stateSetServerInfo } from './state.js'
 import { apiGetServerInfo } from './api.js'
 
+// --- public ------------------------------------------------------------------
+
+/**
+ * Reload the current page.
+ */
+export function navigateReload () {
+  globalThis.location.reload()
+}
+
+/**
+ * Go back to the start/join screen. Remember table name if possible.
+ *
+ * @param {?String} tableName Optional name of table to add in redirect.
+ */
+export function navigateToJoin (tableName) {
+  if (tableName) {
+    globalThis.location = './?table=' + tableName
+  } else {
+    globalThis.location = './'
+  }
+}
+
+/**
+ * Go back to a table screen.
+ *
+ * @param {String} tableName Name of table to go to.
+ */
+export function navigateToTable (tableName) {
+  globalThis.location = './' + tableName
+}
+
+// --- private -----------------------------------------------------------------
+
 document.onreadystatechange = function (event) {
   if (document.readyState === 'complete') { // time to setup our routes
     apiGetServerInfo()

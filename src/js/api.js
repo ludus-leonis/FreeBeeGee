@@ -82,8 +82,16 @@ export function apiPostTable (table, snapshot) {
     method: 'POST',
     body: formData
   })
+}
 
-  // return postJson([201], 'api/tables/', table) // 409 = existing table
+/**
+ * API DELETE /tables/:tableName/
+ *
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiDeleteTable (tableName) {
+  return deleteJson([204], 'api/tables/' + tableName + '/')
 }
 
 /**

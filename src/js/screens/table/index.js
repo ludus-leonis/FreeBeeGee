@@ -38,6 +38,7 @@ import {
 import { enableDragAndDrop, getMouseTileX, getMouseTileY } from './mouse.js'
 import _ from '../../FreeDOM.js'
 import { clamp } from '../../utils.js'
+import { navigateToJoin } from '../../nav.js'
 
 import { modalLibrary } from './modals/library.js'
 import { modalEdit } from './modals/edit.js'
@@ -711,7 +712,7 @@ function setupTable (table) {
 
   // setup remaining menu
   _('#btn-h').on('click', () => modalHelp())
-  _('#btn-q').on('click', () => quit())
+  _('#btn-q').on('click', () => navigateToJoin(getTable().name))
 
   const tabletop = table.tables[0] // assume one table for now
 
@@ -738,13 +739,6 @@ function setupTable (table) {
   pollTableState()
 
   enableDragAndDrop('#tabletop')
-}
-
-/**
- * Leave the current table by redirecting back to the join screen.
- */
-function quit () {
-  document.location = './?table=' + getTable().name
 }
 
 /**

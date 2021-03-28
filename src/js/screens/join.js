@@ -29,6 +29,7 @@ import {
   generateUsername
 } from '../utils.js'
 import { apiGetTable } from '../api.js'
+import { navigateToTable } from '../nav.js'
 
 /** Limit table names like hilariousGazingPenguin */
 const tableNameMaxLength = 48
@@ -135,7 +136,7 @@ function ok () {
   if (invalid) {
     invalid.focus()
   } else {
-    document.location = './' + _('#name').valueOrPlaceholder()
+    navigateToTable(_('#name').valueOrPlaceholder())
   }
 }
 

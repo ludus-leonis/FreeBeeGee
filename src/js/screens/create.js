@@ -24,6 +24,7 @@ import { createTable as stateCreateTable } from './table/state.js'
 import { stateGetServerInfo } from '../state.js'
 import _ from '../FreeDOM.js'
 import { apiGetTemplates, UnexpectedStatus } from '../api.js'
+import { navigateToTable } from '../nav.js'
 
 /**
  * Show a create-table dialog.
@@ -136,7 +137,7 @@ function ok (name) {
 
   stateCreateTable(table, snapshot)
     .then((remoteTable) => {
-      document.location = './' + remoteTable.name
+      navigateToTable(remoteTable.name)
     })
     .catch((error) => {
       console.error(error)

@@ -20,6 +20,10 @@
 import { createScreen } from '../screen.js'
 import _ from '../FreeDOM.js'
 import { UnexpectedStatus } from '../api.js'
+import {
+  navigateToJoin,
+  navigateReload
+} from '../nav.js'
 
 /**
  * Show an error dialog.
@@ -80,7 +84,7 @@ function runErrorTableGone (tableName, error) {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Restart</a>
     `
   )
-  _('#ok').on('click', click => { backToStart(tableName) })
+  _('#ok').on('click', click => { navigateToJoin(tableName) })
 }
 
 /**
@@ -100,7 +104,7 @@ function runErrorNoSlotAvailable () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `
   )
-  _('#ok').on('click', click => { forceReload() })
+  _('#ok').on('click', click => { navigateToJoin() })
 }
 
 /**
@@ -118,7 +122,7 @@ function runErrorOverCapacity () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `
   )
-  _('#ok').on('click', click => { forceReload() })
+  _('#ok').on('click', click => { navigateToJoin() })
 }
 
 /**
@@ -133,7 +137,7 @@ function runErrorUpdate () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Reload</a>
     `
   )
-  _('#ok').on('click', click => { forceReload() })
+  _('#ok').on('click', click => { navigateReload() })
 }
 
 /**
@@ -147,7 +151,7 @@ function runErrorServerGeneric () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
     `
   )
-  _('#ok').on('click', click => { forceReload() })
+  _('#ok').on('click', click => { navigateReload() })
 }
 
 /**
@@ -161,25 +165,5 @@ function runErrorClientGeneric () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
     `
   )
-  _('#ok').on('click', click => { forceReload() })
-}
-
-/**
- * Force the browser to reload the page.
- */
-function forceReload () {
-  globalThis.location.reload()
-}
-
-/**
- * Go back to the start/join screen. Remember table name if possible.
- *
- * @param {?String} tableName Optional name of table to add in redirect.
- */
-function backToStart (tableName) {
-  if (tableName) {
-    globalThis.location = './?table=' + tableName
-  } else {
-    globalThis.location = './'
-  }
+  _('#ok').on('click', click => { navigateReload() })
 }
