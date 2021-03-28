@@ -107,10 +107,16 @@
     position: relative;
   }
 
-  .col-card p {
-    margin: $spacing-tiny auto $spacing-small;
-    text-align: center;
-    width: 128px;
+  .col-card {
+    .is-scale-2 {
+      cursor: pointer;
+    }
+
+    p {
+      margin: $spacing-tiny auto $spacing-small;
+      text-align: center;
+      width: 128px;
+    }
   }
 }
 
