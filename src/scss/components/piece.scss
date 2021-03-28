@@ -26,7 +26,7 @@
 $piece-color: $color-gray-95;
 $piece-tile-size: 64px;
 $piece-border-size: 3px;
-$piece-border-radius: 3px;
+$piece-border-radius: 2px;
 $piece-margin-size: 4px;
 $piece-rotate: 1deg;
 
@@ -167,7 +167,7 @@ $label-offset: 8px;
     &.is-w-#{$x} {
       width: $x * $piece-tile-size;
       &.is-rotate-270 { transform-origin: $piece-tile-half * $x $piece-tile-half * $x; }
-      &.piece-token.is-rotate-270 { transform-origin: $piece-tile-half * $x - $piece-border-radius $piece-tile-half * $x - $piece-border-radius; }
+      &.piece-token.is-rotate-270 { transform-origin: $piece-tile-half * $x - $piece-border-size $piece-tile-half * $x - $piece-border-size; }
     }
   }
 
@@ -175,7 +175,7 @@ $label-offset: 8px;
     &.is-h-#{$y} {
       height: $y * $piece-tile-size;
       &.is-rotate-90 { transform-origin: $piece-tile-half * $y $piece-tile-half * $y; }
-      &.piece-token.is-rotate-90 { transform-origin: $piece-tile-half * $y - $piece-border-radius $piece-tile-half * $y - $piece-border-radius; }
+      &.piece-token.is-rotate-90 { transform-origin: $piece-tile-half * $y - $piece-border-size $piece-tile-half * $y - $piece-border-size; }
     }
   }
 
