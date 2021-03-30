@@ -5,14 +5,14 @@ Here is a list what might happen next. However, priorities can change.
 ## v0.6 - Uploading Unicorn
 
 * [ ] upload custom images for tiles & tokens via web UI
-* [ ] fancier implementation for dynamic poll intervalls
-  * [ ] show "you have been inactive" dialog after 10min
-  * [ ] increase poll interval for inactive tabs/windows
-  * [ ] decrease poll interval on mouse/keyboard activity
+* [X] fancier implementation for dynamic poll intervalls
+  * [X] show "you have been inactive" dialog after 10min
+  * [X] increase poll interval for inactive tabs/windows
+  * [X] decrease poll interval on mouse/keyboard activity
 * [X] fully rename "game" to "table"
 * [ ] scroll to last position/center of setup/table when opening new tables
 * [X] delete table
-* [ ] template GDRP privacy statement
+* [X] template GDRP privacy statement
 * [X] fix Firefox reset-table bug
 * [X] URL mapping for example.org/roomname -> example.org/#/table/roomname
 * [ ] pre-release

@@ -23,8 +23,7 @@ import {
   getTable,
   getTemplate,
   getAsset,
-  loadTableState,
-  pollTableState,
+  loadTable,
   updatePieces,
   stateCreatePiece,
   stateDeletePiece,
@@ -35,6 +34,7 @@ import {
   stateSetTablePref,
   stateGetTablePref
 } from './state.js'
+import { startAutoSync } from './sync.js'
 import { enableDragAndDrop, getMouseTileX, getMouseTileY } from './mouse.js'
 import _ from '../../FreeDOM.js'
 import { clamp } from '../../utils.js'
@@ -79,7 +79,7 @@ export function setScrollPosition (x, y) {
 export function runTable (name) {
   console.info('$NAME$ v$VERSION$, table ' + name)
 
-  loadTableState(name)
+  loadTable(name)
     .then(table => { if (table) setupTable(table) })
 }
 
@@ -736,7 +736,7 @@ function setupTable (table) {
   scroller.style.setProperty('--fbg-color-scroll-bg', tabletop.background.color)
 
   // setup content
-  pollTableState()
+  startAutoSync()
 
   enableDragAndDrop('#tabletop')
 }

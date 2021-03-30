@@ -53,6 +53,12 @@
       @extend %is-large;
     }
   }
+
+  &-small {
+    .modal-dialog {
+      @extend %is-small;
+    }
+  }
 }
 
 .modal-dialog {
@@ -100,7 +106,7 @@
   margin: 0;
   max-height: 70vh;
   overflow-y: auto;
-  padding: $spacing-medium;
+  padding: $spacing-medium $spacing-medium $spacing-small;
 
   .piece {
     pointer-events: none;

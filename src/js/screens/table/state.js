@@ -1,6 +1,7 @@
 /**
- * @file Holds and manages a table's data objects. Does not know about or
- *       manipulate HTML/DOM. Might cache some values in the browser store.
+ * @file Holds and manages a table's data objects, a.k.a. state. Propagates
+ *       changes to the API but is not in charge of syncing the state back.
+ *       Might cache some values in the browser store.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -18,16 +19,12 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { setPiece, deletePiece, getAllPiecesIds } from '.'
-import { updateMenu } from './mouse.js'
 import {
   getStoreValue,
   setStoreValue
 } from '../../utils.js'
 import {
-  apiHeadState,
   apiGetStateSave,
-  apiGetState,
   apiPutState,
   apiGetTable,
   apiPostTable,
@@ -37,18 +34,30 @@ import {
   apiPostPiece,
   UnexpectedStatus
 } from '../../api.js'
+import { syncNow } from './sync.js'
 import { runError } from '../error.js'
-import { navigateToJoin } from '../../nav.js'
 
-let tableStateTimeout = -1 /** setTimeout handle of sync method */
-const tableStateRefreshMin = 1000 /** minimum syncing interval in ms */
-const tableStateRefreshMax = 5000 /** maximum syncing interval in ms */
-const tableStateRefreshNever = 365 * 24 * 60 * 60 * 1000 /** actually in a year */
-let lastDigest = '' /** last obtained hash/digest of state JSON */
-let tableStateRefresh = tableStateRefreshMin /** current, growing syncing interval */
 let table = {} /** stores the table meta info JSON */
 
 // --- public ------------------------------------------------------------------
+
+/**
+ * (Re)Fetch the table's state from the API and trigger the UI update.
+ *
+ * @param {String} name The current table name.
+ * @return {Object} Promise of table metadata object.
+ */
+export function loadTable (name) {
+  return apiGetTable(name)
+    .then(remoteTable => {
+      table = remoteTable
+      return table
+    })
+    .catch((error) => { // invalid table
+      runError('TABLE_GONE', name, error)
+      return null
+    })
+}
 
 /**
  * Get the current table's metadata (cached).
@@ -120,24 +129,6 @@ export function getAsset (id) {
 }
 
 /**
- * (Re)Fetch the table's state from the API and trigger the UI update.
- *
- * @param {String} name The current table name.
- * @return {Object} Promise of table metadata object.
- */
-export function loadTableState (name) {
-  return apiGetTable(name)
-    .then(remoteTable => {
-      table = remoteTable
-      return table
-    })
-    .catch((error) => { // invalid table
-      runError('TABLE_GONE', name, error)
-      return null
-    })
-}
-
-/**
  * Create a new table on the server.
  *
  * @param {Object} table The table object to send to the API.
@@ -168,51 +159,6 @@ export function stateGetTablePref (pref) {
  */
 export function stateSetTablePref (pref, value) {
   setStoreValue('g' + table.id.substr(0, 8), pref, value)
-}
-
-export const pollTimes = [25]
-
-/**
- * Poll the current table's state and trigger UI updates.
- *
- * Will first do a HEAD request to detect changes, and only do a GET/update if
- * needed.
- *
- * @param {?String} selectId Optional ID of an selected piece. Will be re-
- *                           selected after successfull update.
- */
-export function pollTableState (
-  selectId = null
-) {
-  clearTimeout(tableStateTimeout)
-  const pollTime = new Date().getMilliseconds()
-  apiHeadState(table.name)
-    .then(headers => {
-      const digest = headers.get('digest')
-      if (lastDigest !== digest) {
-        syncState(selectId, digest)
-        tableStateRefresh = tableStateRefreshMin
-      }
-    })
-    .catch(error => {
-      if (error instanceof UnexpectedStatus) {
-        tableStateRefresh = tableStateRefreshNever // stop polling
-        runError('TABLE_GONE', table.name, error)
-      } else {
-        runError('UNEXPECTED', error)
-      }
-    })
-    .finally(() => {
-      tableStateTimeout = setTimeout(() => pollTableState(false), tableStateRefresh)
-      tableStateRefresh = Math.floor(Math.min(
-        tableStateRefresh * 1.05,
-        tableStateRefreshMax
-      ) + Math.random() * 250)
-
-      while (pollTimes.length >= 10) pollTimes.shift()
-      const ms = new Date().getMilliseconds() - pollTime
-      if (ms > 0) pollTimes.push(ms)
-    })
 }
 
 /**
@@ -319,7 +265,7 @@ export function stateDeletePiece (id) {
       runError('UNEXPECTED', error)
     })
     .finally(() => {
-      pollTableState()
+      syncNow()
     })
 }
 
@@ -343,7 +289,7 @@ export function stateCreatePiece (piece, selected = false) {
       runError('UNEXPECTED', error)
     })
     .finally(() => {
-      pollTableState(selected ? selectid : null)
+      syncNow(selected ? [selectid] : [])
     })
 }
 
@@ -360,7 +306,7 @@ export function updateState (state) {
       runError('UNEXPECTED', error)
     })
     .finally(() => {
-      pollTableState()
+      syncNow()
     })
 }
 
@@ -377,7 +323,7 @@ export function restoreState (index) {
           runError('UNEXPECTED', error)
         })
         .finally(() => {
-          pollTableState()
+          syncNow()
         })
     })
     .catch(error => {
@@ -399,7 +345,7 @@ export function updatePieces (pieces) {
       if (pieces.length > 0) updatePieces(pieces)
     })
     .finally(() => {
-      if (pieces.length === 0) pollTableState()
+      if (pieces.length === 0) syncNow()
     })
 }
 
@@ -434,81 +380,6 @@ function patchPiece (pieceId, patch, poll = true) {
       }
     })
     .finally(() => {
-      if (poll) pollTableState()
+      if (poll) syncNow()
     })
-}
-
-export const syncTimes = [75]
-
-/**
- * Download the current table state and trigger updates on change.
- *
- * @param {String} selectId ID of piece to select after update.
- * @param {String} digest Hash of last seen state to detect changes.
- */
-function syncState (selectId, digest) {
-  const syncTime = new Date().getMilliseconds()
-
-  apiGetState(table.name)
-    .then(state => {
-      lastDigest = digest
-      const keepIds = []
-      for (const item of state) {
-        setItem(item, selectId)
-        keepIds.push(item.id)
-      }
-      removeObsoletePieces(keepIds)
-      updateMenu()
-    })
-    .catch((error) => { // invalid table
-      console.error(error)
-      navigateToJoin(table.name)
-    })
-    .finally(() => {
-      while (syncTimes.length >= 10) syncTimes.shift()
-      const ms = new Date().getMilliseconds() - syncTime
-      if (ms > 0) syncTimes.push(ms)
-    })
-}
-
-/**
- * Detect deleted pieces and remove them from the table.
- *
- * @param {String[]} keepIds IDs of pieces to keep.
- */
-function removeObsoletePieces (keepIds) {
-  // get all piece IDs from dom
-  let ids = getAllPiecesIds()
-  ids = Array.isArray(ids) ? ids : [ids]
-
-  // remove ids from list that are still there
-  for (const id of keepIds) {
-    ids = ids.filter(item => item !== id)
-  }
-
-  // remove ids from list that are dragndrop targets
-  ids = ids.filter(item => !item.endsWith('-drag'))
-
-  // delete ids that are still left
-  for (const id of ids) {
-    deletePiece(id)
-  }
-}
-
-/**
- * Trigger UI update for new/changed items.
- *
- * @param {Object} piece Piece to add/update.
- * @param {String} selectId ID of piece to select after update.
- */
-function setItem (piece, selectId) {
-  switch (piece.layer) {
-    case 'tile':
-    case 'token':
-    case 'overlay':
-    case 'other':
-      setPiece(piece, selectId === piece.id)
-      break
-    default:
-  }
 }

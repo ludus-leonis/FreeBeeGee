@@ -26,7 +26,7 @@ Per default, FreeBeeGee comes with a simple `.htaccess` file with the same conte
 
 `.htaccess_full` also contains rules how to enforce https and to supress 'www.', but they are disabled by default. Enable them if needed.
 
-Finally, review the `terms.html` and don't forget to add your GDPR / privacy statement to `privacy.html`. ;)
+Finally, review the `terms.html` and don't forget to update your GDPR / privacy statement in `privacy.html`. Consider neither of them as legal advice - if in doubt, consult a lawyer.
 
 ## Configuration
 

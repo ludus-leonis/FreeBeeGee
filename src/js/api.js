@@ -98,10 +98,11 @@ export function apiDeleteTable (tableName) {
  * API GET /tables/:tableName/state/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetState (tableName) {
-  return getJson([200], 'api/tables/' + tableName + '/state/')
+export function apiGetState (tableName, headers = false) {
+  return getJson([200], 'api/tables/' + tableName + '/state/', headers)
 }
 
 /**
@@ -189,34 +190,35 @@ export function apiPostPiece (tableName, piece) {
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
  * @param {Object} data Optional playload for request.
+ * @param {Boolean} headers If true, the HTTP headers will be added as '_headers'
+ *                          to the JSON reply.
  * @return {Promse} Promise of a JSON object.
  * @throw {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
-function fetchOrThrow (expectedStatus, path, data = null) {
+function fetchOrThrow (expectedStatus, path, data = null, headers = false) {
   return globalThis.fetch(path, data)
     .then(response => {
       return response.text()
-        .then(text => {
+        .then(text => { // manually parse payload so we can handle parse errors
           try {
             if (response.status === 204) { // no-content
               return {}
             } else {
               return JSON.parse(text)
             }
-          } catch (error) {
+          } catch (error) { // JSON parsing error
             throw new UnexpectedStatus(response.status, text)
           }
         })
         .then(json => {
-          // we now have response code + json paylod, but don't know yet if it
+          // we now have response code + json payload, but don't know yet if it
           // was an error
           if (expectedStatus.includes(response.status)) {
-            if (response.status === 204) { // no content
-              return {}
-            } else {
-              return json
+            if (headers) {
+              return { headers: response.headers, body: json }
             }
-          } else {
+            return json
+          } else { // unexpected status code
             throw new UnexpectedStatus(response.status, json)
           }
         })
@@ -254,10 +256,11 @@ function head (path) {
  *
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
+ * @param {Boolean} headers If true, reply with a headers/payload object.
  * @return {Promse} Promise of a JSON object.
  */
-function getJson (expectedStatus, path) {
-  return fetchOrThrow(expectedStatus, path)
+function getJson (expectedStatus, path, headers = false) {
+  return fetchOrThrow(expectedStatus, path, null, headers)
 }
 
 /**

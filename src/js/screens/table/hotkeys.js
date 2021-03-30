@@ -31,6 +31,7 @@ import {
   toggleLayer
 } from '.'
 import { isDragging, getMouseTileX, getMouseTileY } from './mouse.js'
+import { touch } from './sync.js'
 import {
   modalActive,
   modalClose
@@ -51,7 +52,9 @@ document.addEventListener('keydown', keydown => handleTableKeys(keydown))
 function handleTableKeys (keydown) {
   if (!_('#tabletop').exists()) return
 
-  if (keydown.key === 'Escape') {
+  touch()
+
+  if (keydown.key === 'Escape') { // close modals on ESC
     if (modalActive()) {
       modalClose()
       keydown.stopPropagation()

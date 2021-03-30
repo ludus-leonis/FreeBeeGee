@@ -18,6 +18,7 @@
  */
 
 import { getTemplate, stateMovePiece } from './state.js'
+import { touch } from './sync.js'
 import { getScrollPosition, setScrollPosition, unselectPieces, popupPiece } from '.'
 import { clamp } from '../../utils.js'
 import _ from '../../FreeDOM.js'
@@ -149,6 +150,7 @@ function mouseDown (mousedown) {
  * @param {MouseEvent} mousemove The triggering mouse event.
  */
 function mouseMove (mousemove) {
+  touch()
   touchMousePosition(mousemove.clientX, mousemove.clientY)
 
   // delegate the move, or end it if the button is no longer pressed. could

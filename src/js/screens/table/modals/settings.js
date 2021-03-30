@@ -31,10 +31,9 @@ import {
   getTable,
   deleteTable,
   stateGetTablePref,
-  stateSetTablePref,
-  pollTimes,
-  syncTimes
+  stateSetTablePref
 } from '../state.js'
+import { pollTimes, syncTimes } from '../sync.js'
 import { navigateToJoin } from '../../../nav.js'
 
 // --- public ------------------------------------------------------------------
