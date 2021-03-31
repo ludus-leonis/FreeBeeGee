@@ -37,11 +37,16 @@ export const pollTimes = [25]
 
 /**
  * Do a sync and start the automatic polling in the background.
+ *
+ * @param {Function} handler Optonal handler / callback to run after first sync.
  */
-export function startAutoSync () {
+export function startAutoSync (handler = null) {
   stopAutoSync()
   syncNow()
-    .then(() => scheduleSync(calculateNextSyncTime()))
+    .then(() => {
+      if (handler) handler()
+      scheduleSync(calculateNextSyncTime())
+    })
 }
 
 /**

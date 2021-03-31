@@ -726,19 +726,54 @@ function setupTable (table) {
 
   _('body').on('contextmenu', e => e.preventDefault())
 
+  // load + setup content
+  startAutoSync(() => { setAutoScrollPosition() })
+
   // setup scroller + keep reference for scroll-tracking
   scroller = _('#scroller')
   scroller.css({ // this is for moz://a
     scrollbarColor: `${tabletop.background.scroller} ${tabletop.background.color}`
   })
-  scroller = scroller.node() // and this for the webkits out there
+  scroller = scroller.node()
   scroller.style.setProperty('--fbg-color-scroll-fg', tabletop.background.scroller)
   scroller.style.setProperty('--fbg-color-scroll-bg', tabletop.background.color)
 
-  // setup content
-  startAutoSync()
-
   enableDragAndDrop('#tabletop')
+}
+
+let scrollFetcherTimeout = -1
+
+/**
+ * Scroll to the last open scroll position.
+ *
+ * Defaults to the center of the setup if no last scroll position ist known. Will
+ * also install an event handler to capture scroll events & record them.
+ */
+function setAutoScrollPosition () {
+  const scroller = _('#scroller')
+  const lastX = stateGetTablePref('scrollX')
+  const lastY = stateGetTablePref('scrollY')
+  if (lastX && lastY) {
+    scroller.node().scrollTo(
+      lastX - Math.floor(scroller.clientWidth / 2),
+      lastY - Math.floor(scroller.clientHeight / 2)
+    )
+  } else {
+    const center = getSetupCenter()
+    const template = getTemplate()
+    console.log('scroll to autocenter', center, template.gridSize)
+    scroller.node().scrollTo(
+      Math.floor(center.x * template.gridSize - scroller.clientWidth / 2),
+      Math.floor(center.y * template.gridSize - scroller.clientHeight / 2)
+    )
+  }
+  scroller.on('scroll', () => {
+    clearTimeout(scrollFetcherTimeout)
+    scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
+      stateSetTablePref('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
+      stateSetTablePref('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
+    }, 1000)
+  })
 }
 
 /**
@@ -818,6 +853,26 @@ function createInvalidAsset (type) {
     backgroundImage: `url('api/data/tables/${getTable().name}/invalid.svg')`,
     backgroundColor: '#40bfbf'
   })
+}
+
+/**
+ * Calculate the center of the setup on the table.
+ *
+ * Iterates over all pieces and averages their centers.
+ *
+ * @return {Object} Object with x and y.
+ */
+function getSetupCenter () {
+  const x = []
+  const y = []
+  _('.piece').each(piece => {
+    x.push(Number(piece.dataset.x) + Number(piece.dataset.w) / 2)
+    y.push(Number(piece.dataset.y) + Number(piece.dataset.h) / 2)
+  })
+  return {
+    x: x.length > 0 ? Math.ceil(x.reduce((a, b) => a + b) / x.length) : 0,
+    y: y.length > 0 ? Math.ceil(y.reduce((a, b) => a + b) / y.length) : 0
+  }
 }
 
 const iconDice = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
