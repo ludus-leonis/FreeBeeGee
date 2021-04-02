@@ -388,8 +388,8 @@ function compensateOffsetY (y) {
  * Move a dragging piece to the current mouse position.
  *
  * @param {Element} element The HTML node to update.
- * @param {Number} x New x coordinate.
- * @param {Number} y New y coordinate.
+ * @param {Number} x New x coordinate in px.
+ * @param {Number} y New y coordinate in px.
  * @param {Number} snap Grid/snap size. Defaults to the tilesize.
  */
 function setPosition (element, x, y, snap = getTemplate().gridSize) {
@@ -398,10 +398,16 @@ function setPosition (element, x, y, snap = getTemplate().gridSize) {
   y = clamp(0, y, (template.height - element.dataset.h) * template.gridSize - 1)
   x += Math.floor(snap / 2)
   y += Math.floor(snap / 2)
-  element.dataset.x = Math.floor(x / template.gridSize)
-  element.dataset.y = Math.floor(y / template.gridSize)
-  element.style.left = Math.max(0, (Math.floor(x / snap) * snap)) + 'px'
-  element.style.top = Math.max(0, (Math.floor(y / snap) * snap)) + 'px'
+
+  // element.dataset.x = Math.floor(x / template.gridSize)
+  // element.dataset.y = Math.floor(y / template.gridSize)
+  // element.style.left = Math.max(0, (Math.floor(x / snap) * snap)) + 'px'
+  // element.style.top = Math.max(0, (Math.floor(y / snap) * snap)) + 'px'
+
+  element.dataset.x = Math.max(0, (Math.floor(x / snap) * snap))
+  element.dataset.y = Math.max(0, (Math.floor(y / snap) * snap))
+  element.style.left = element.dataset.x + 'px'
+  element.style.top = element.dataset.y + 'px'
 }
 
 /**

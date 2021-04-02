@@ -150,9 +150,10 @@ export function editSelected () {
  */
 export function cloneSelected (x, y) {
   _('#tabletop .is-selected').each(node => {
+    const template = getTemplate()
     const piece = nodeToPiece(node)
-    piece.x = x
-    piece.y = y
+    piece.x = x * template.gridSize
+    piece.y = y * template.gridSize
     piece.z = getMaxZ(piece.layer) + 1
     if (piece.no > 0) { // increase piece letter (if it has one)
       piece.no = piece.no + 1
@@ -260,6 +261,13 @@ export function randomSelected () {
 export function setPiece (pieceJson, select = false) {
   pieceJson.height = pieceJson.height < 0 ? pieceJson.width : pieceJson.height
 
+  // // interim solution to scale old templates in the transition phase
+  // // TODO remove afterwards
+  // if (pieceJson.x <= 63 && pieceJson.y <= 63) {
+  //   pieceJson.x *= 64
+  //   pieceJson.y *= 64
+  // }
+
   let selection = []
 
   // get the DOM node for the piece or (re)create it if major changes happened
@@ -284,8 +292,8 @@ export function setPiece (pieceJson, select = false) {
   const template = getTemplate()
   div = _('#' + pieceJson.id) // fresh query
     .css({
-      left: pieceJson.x * template.gridSize + 'px',
-      top: pieceJson.y * template.gridSize + 'px',
+      left: pieceJson.x + 'px',
+      top: pieceJson.y + 'px',
       zIndex: pieceJson.z
     })
     .remove('.is-rotate-0', '.is-rotate-90', '.is-rotate-180', '.is-rotate-270')
@@ -760,11 +768,9 @@ function setAutoScrollPosition () {
     )
   } else {
     const center = getSetupCenter()
-    const template = getTemplate()
-    console.log('scroll to autocenter', center, template.gridSize)
     scroller.node().scrollTo(
-      Math.floor(center.x * template.gridSize - scroller.clientWidth / 2),
-      Math.floor(center.y * template.gridSize - scroller.clientHeight / 2)
+      Math.floor(center.x - scroller.clientWidth / 2),
+      Math.floor(center.y - scroller.clientHeight / 2)
     )
   }
   scroller.on('scroll', () => {

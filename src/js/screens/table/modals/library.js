@@ -19,6 +19,7 @@
 
 import {
   getLibrary,
+  getTemplate,
   stateCreatePiece,
   stateGetTablePref,
   stateSetTablePref
@@ -162,10 +163,11 @@ function prettyName (assetName) {
 function modalOk () {
   const selected = document.querySelectorAll('#tabs-library .is-selected .piece')
   if (selected.length > 0) {
+    const template = getTemplate()
     const m = document.getElementById('modal')
     const piece = nodeToPiece(selected[0])
-    piece.x = Number(m.x)
-    piece.y = Number(m.y)
+    piece.x = Number(m.x * template.gridSize)
+    piece.y = Number(m.y * template.gridSize)
     piece.z = getMaxZ(piece.layer) + 1
     stateCreatePiece(piece, true)
 
