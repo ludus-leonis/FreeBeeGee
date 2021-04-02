@@ -61,7 +61,7 @@ export function modalSettings () {
             <p>This tab only affects your browser, not the other players.</p>
 
             <h2 class="h3">Statistics</h2>
-            <p>Table: ${getTemplate().width}x${getTemplate().height} spaces, ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile, ${_('.piece.piece-other').nodes().length}x other</p>
+            <p>Table: ${getTemplate().gridWidth}x${getTemplate().gridHeight} spaces, ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile, ${_('.piece.piece-other').nodes().length}x other</p>
             <p>Refresh time: ${Math.ceil(pollTimes.reduce((a, b) => a + b) / pollTimes.length)}ms server + ${Math.ceil(syncTimes.reduce((a, b) => a + b) / syncTimes.length)}ms browser</p>
 
             <h2 class="h3">Render quality</h2>

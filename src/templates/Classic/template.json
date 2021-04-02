@@ -1,10 +1,13 @@
 {
   "type": "grid-square",
-  "gridSize": 64,
   "version": "$VERSION$",
   "engine": "^$ENGINE$",
-  "width": 32,
-  "height": 32,
+
+  "gridSize": 64,
+  "gridWidth": 32,
+  "gridHeight": 32,
+  "snapSize": 64,
+
   "colors": [
     { "name": "black", "value": "#0d0d0d" },
     { "name": "white", "value": "#ffffff" }

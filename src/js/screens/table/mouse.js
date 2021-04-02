@@ -46,7 +46,7 @@ export function isDragging () {
 export function getMouseTileX () {
   const template = getTemplate()
   const mouseTileX = Math.floor(compensateOffsetX(mouseX) / template.gridSize)
-  return clamp(0, mouseTileX, template.width - 1)
+  return clamp(0, mouseTileX, template.gridWidth - 1)
 }
 
 /**
@@ -57,7 +57,7 @@ export function getMouseTileX () {
 export function getMouseTileY () {
   const template = getTemplate()
   const mouseTileY = Math.floor(compensateOffsetY(mouseY) / template.gridSize)
-  return clamp(0, mouseTileY, template.height - 1)
+  return clamp(0, mouseTileY, template.gridHeight - 1)
 }
 
 /**
@@ -392,18 +392,12 @@ function compensateOffsetY (y) {
  * @param {Number} y New y coordinate in px.
  * @param {Number} snap Grid/snap size. Defaults to the tilesize.
  */
-function setPosition (element, x, y, snap = getTemplate().gridSize) {
+function setPosition (element, x, y, snap = getTemplate().snapSize) {
   const template = getTemplate()
-  x = clamp(0, x, (template.width - element.dataset.w) * template.gridSize - 1)
-  y = clamp(0, y, (template.height - element.dataset.h) * template.gridSize - 1)
+  x = clamp(0, x, (template.gridWidth - element.dataset.w) * template.gridSize - 1)
+  y = clamp(0, y, (template.gridHeight - element.dataset.h) * template.gridSize - 1)
   x += Math.floor(snap / 2)
   y += Math.floor(snap / 2)
-
-  // element.dataset.x = Math.floor(x / template.gridSize)
-  // element.dataset.y = Math.floor(y / template.gridSize)
-  // element.style.left = Math.max(0, (Math.floor(x / snap) * snap)) + 'px'
-  // element.style.top = Math.max(0, (Math.floor(y / snap) * snap)) + 'px'
-
   element.dataset.x = Math.max(0, (Math.floor(x / snap) * snap))
   element.dataset.y = Math.max(0, (Math.floor(y / snap) * snap))
   element.style.left = element.dataset.x + 'px'

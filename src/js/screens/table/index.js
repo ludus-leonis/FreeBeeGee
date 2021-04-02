@@ -261,12 +261,12 @@ export function randomSelected () {
 export function setPiece (pieceJson, select = false) {
   pieceJson.height = pieceJson.height < 0 ? pieceJson.width : pieceJson.height
 
-  // // interim solution to scale old templates in the transition phase
-  // // TODO remove afterwards
-  // if (pieceJson.x <= 63 && pieceJson.y <= 63) {
-  //   pieceJson.x *= 64
-  //   pieceJson.y *= 64
-  // }
+  // interim solution to scale old templates in the transition phase
+  // TODO remove afterwards
+  if (pieceJson.x <= 63 && pieceJson.y <= 63) {
+    pieceJson.x *= 64
+    pieceJson.y *= 64
+  }
 
   let selection = []
 

@@ -390,7 +390,7 @@ class FreeBeeGeeAPI
         $this->api->assertHasProperties(
             'template.json',
             $template,
-            ['type', 'gridSize', 'version', 'engine', 'width', 'height', 'colors']
+            ['type', 'gridSize', 'snapSize', 'version', 'engine', 'gridWidth', 'gridHeight', 'colors']
         );
         foreach ($template as $property => $value) {
             switch ($property) {
@@ -399,17 +399,20 @@ class FreeBeeGeeAPI
                 case 'type':
                     $this->api->assertString('type', $value, 'grid-square');
                     break;
-                case 'gridSize':
-                    $this->api->assertInteger('gridSize', $value, 64, 64);
+                case 'snapSize':
+                    $this->api->assertInteger('snapSize', $value, 1, 64);
                     break;
                 case 'version':
                     $this->api->assertSemver('version', $value);
                     break;
-                case 'width':
-                    $this->api->assertInteger('width', $value, $this->minTableGridSize, $this->maxTableGridSize);
+                case 'gridSize':
+                    $this->api->assertInteger('gridSize', $value, 64, 64);
                     break;
-                case 'height':
-                    $this->api->assertInteger('height', $value, $this->minTableGridSize, $this->maxTableGridSize);
+                case 'gridWidth':
+                    $this->api->assertInteger('gridWidth', $value, $this->minTableGridSize, $this->maxTableGridSize);
+                    break;
+                case 'gridHeight':
+                    $this->api->assertInteger('gridHeight', $value, $this->minTableGridSize, $this->maxTableGridSize);
                     break;
                 case 'colors':
                     $this->api->assertObjectArray('colors', $value, 1);
@@ -956,8 +959,8 @@ class FreeBeeGeeAPI
             } else {
                 $table->credits = 'Your template does not provide license information.';
             }
-            $table->width = $table->template->width * $table->template->gridSize; // specific for 'grid-square'
-            $table->height = $table->template->height * $table->template->gridSize; // specific for 'grid-square'
+            $table->width = $table->template->gridWidth * $table->template->gridSize; // specific for 'grid-square'
+            $table->height = $table->template->gridHeight * $table->template->gridSize; // specific for 'grid-square'
 
             $this->writeAsJsonAndDigest($folder . 'table.json', $newTable);
             $this->api->unlockLock($lock);
