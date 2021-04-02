@@ -174,7 +174,7 @@ function checkForSync (
   const table = getTable()
   const start = Date.now()
   lastNetworkActivity = Date.now()
-  return apiHeadState(table.name)
+  return apiHeadState(table.name, 1)
     .then(headers => {
       const digest = headers.get('digest')
       recordTime(pollTimes, Date.now() - start)
@@ -209,7 +209,7 @@ function doTheSync (
   const start = Date.now()
 
   lastNetworkActivity = start
-  return apiGetState(table.name, true)
+  return apiGetState(table.name, 1, true)
     .then(state => {
       lastDigest = state.headers.get('digest')
       const keepIds = []

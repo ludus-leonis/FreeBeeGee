@@ -26,6 +26,7 @@ Here is a list what might happen next. However, priorities can change.
 ## v0.7 - Mobile Monkey
 
 * better tablet / touch support
+* reuse pieces' DOM elements more
 * table passwords
 * docs how to make table/template `.zip`s
 
@@ -72,12 +73,14 @@ Here is a list what might happen next. However, priorities can change.
 * tour / first-time-tutorial
 * API Docs
 * randomize button on dicemat
+* cycle border colors
 
 ### rather later
 
 * point-somewhere feature
 * detail-pane to the right for selected item
 * move stuff via cursor keys
+* in-game clock
 * rename table
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals

@@ -121,7 +121,7 @@ function testJsonPut (path, payload, payloadTests, status = 200) {
  *                     further checking.
  */
 function testJsonPatch (path, payload, payloadTests, status = 200) {
-  it(`PUT ${API_URL}${path()}`, function (done) {
+  it(`PATCH ${API_URL}${path()}`, function (done) {
     chai.request(API_URL)
       .patch(path())
       .set('content-type', 'application/json')
@@ -272,26 +272,26 @@ describe('CRUD state', function () {
   }, 201)
 
   // get state
-  testJsonGet(() => '/tables/crudState/state/', body => {
+  testJsonGet(() => '/tables/crudState/states/1/', body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.gt(5)
     data = body
   })
 
   // get initial state
-  testJsonGet(() => '/tables/crudState/state/save/0/', save => {
+  testJsonGet(() => '/tables/crudState/states/0/', save => {
     expect(save).to.be.eql(data)
     data = save
   })
 
   // reset table
-  testJsonPut(() => '/tables/crudState/state/', () => [], body => {
+  testJsonPut(() => '/tables/crudState/states/1/', () => [], body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
 
   // get state again - still empty
-  testJsonGet(() => '/tables/crudState/state/', body => {
+  testJsonGet(() => '/tables/crudState/states/1/', body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
@@ -313,7 +313,7 @@ describe('CRUD piece', function () {
   }, 201)
 
   // create piece
-  testJsonPost(() => '/tables/crudPiece/pieces/', () => {
+  testJsonPost(() => '/tables/crudPiece/states/1/pieces/', () => {
     return { // add letter-token
       layer: 'token',
       asset: 'dd74249373740cdf',
@@ -345,7 +345,7 @@ describe('CRUD piece', function () {
   }, 201)
 
   // get & compare piece
-  testJsonGet(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
@@ -362,7 +362,7 @@ describe('CRUD piece', function () {
   })
 
   // update piece (patch)
-  testJsonPatch(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
+  testJsonPatch(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', () => {
     return {
       x: 19
     }
@@ -383,7 +383,7 @@ describe('CRUD piece', function () {
   })
 
   // get & compare piece
-  testJsonGet(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
@@ -400,7 +400,7 @@ describe('CRUD piece', function () {
   })
 
   // update/replace piece (put)
-  testJsonPut(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
+  testJsonPut(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', () => {
     return {
       layer: 'tile',
       asset: '0d74249373740cdf',
@@ -431,7 +431,7 @@ describe('CRUD piece', function () {
   })
 
   // get & compare piece
-  testJsonGet(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('tile')
@@ -448,8 +448,8 @@ describe('CRUD piece', function () {
   })
 
   // delete piece
-  testJsonDelete(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/')
+  testJsonDelete(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/')
 
   // get - should be gone
-  testJsonGet(() => '/tables/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {}, 404)
+  testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {}, 404)
 })

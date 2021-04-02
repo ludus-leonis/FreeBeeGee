@@ -24,7 +24,7 @@ import {
   setStoreValue
 } from '../../utils.js'
 import {
-  apiGetStateSave,
+  apiGetState,
   apiPutState,
   apiGetTable,
   apiPostTable,
@@ -260,7 +260,7 @@ export function statePieceEdit (pieceID, updates) {
  * @param {String} pieceId ID of piece to remove.
  */
 export function stateDeletePiece (id) {
-  apiDeletePiece(table.name, id)
+  apiDeletePiece(table.name, 1, id)
     .catch(error => {
       runError('UNEXPECTED', error)
     })
@@ -281,7 +281,7 @@ export function stateDeletePiece (id) {
  */
 export function stateCreatePiece (piece, selected = false) {
   let selectid = null
-  apiPostPiece(table.name, piece)
+  apiPostPiece(table.name, 1, piece)
     .then(piece => {
       selectid = piece.id
     })
@@ -301,7 +301,7 @@ export function stateCreatePiece (piece, selected = false) {
  * @param {Array} state Array of pieces (table state).
  */
 export function updateState (state) {
-  apiPutState(table.name, state)
+  apiPutState(table.name, 1, state)
     .catch(error => {
       runError('UNEXPECTED', error)
     })
@@ -316,9 +316,9 @@ export function updateState (state) {
  * @param {Number} index Integer index of state, 0 = initial.
  */
 export function restoreState (index) {
-  apiGetStateSave(table.name, index)
+  apiGetState(table.name, index)
     .then(state => {
-      apiPutState(table.name, state)
+      apiPutState(table.name, 1, state)
         .catch(error => {
           runError('UNEXPECTED', error)
         })
@@ -370,7 +370,7 @@ export function deleteTable () {
  * @return {Object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, poll = true) {
-  return apiPatchPiece(table.name, pieceId, patch)
+  return apiPatchPiece(table.name, 1, pieceId, patch)
     .catch(error => {
       if (error instanceof UnexpectedStatus && error.status === 404) {
         // we somewhat expected this situation. silently ignore it.

@@ -95,91 +95,87 @@ export function apiDeleteTable (tableName) {
 }
 
 /**
- * API GET /tables/:tableName/state/
+ * API GET /tables/:tableName/states/:stateId/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetState (tableName, headers = false) {
-  return getJson([200], 'api/tables/' + tableName + '/state/', headers)
+export function apiGetState (tableName, stateId, headers = false) {
+  return getJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/', headers)
 }
 
 /**
- * API PUT /tables/:tableName/state/
+ * API PUT /tables/:tableName/states/:stateId/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Array} state The new table state (array of pieces).
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutState (tableName, state) {
-  return putJson([200], 'api/tables/' + tableName + '/state/', state)
+export function apiPutState (tableName, stateId, state) {
+  return putJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/', state)
 }
 
 /**
- * API HEAD /tables/:tableName/state/
+ * API HEAD /tables/:tableName/states/:stateId/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiHeadState (tableName) {
-  return head('api/tables/' + tableName + '/state/')
+export function apiHeadState (tableName, stateId) {
+  return head('api/tables/' + tableName + '/states/' + stateId + '/')
 }
 
 /**
- * API GET /tables/:tableName/state/initial/
+ * API PUT /tables/:tableName/states/:stateId/pieces/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
- * @param {Number} index The number of the save state to fetch, 0 = initial.
- * @return {Promise} Promise containing JSON/Object payload.
- */
-export function apiGetStateSave (tableName, index) {
-  return getJson([200], 'api/tables/' + tableName + '/state/save/' + index + '/')
-}
-
-/**
- * API PUT /tables/:tableName/pieces/
- *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Object} piece Piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutPiece (tableName, piece) {
-  return putJson([200], 'api/tables/' + tableName + '/pieces/' + piece.id + '/', piece)
+export function apiPutPiece (tableName, stateId, piece) {
+  return putJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + piece.id + '/', piece)
 }
 
 /**
- * API PATCH /tables/:tableName/pieces/:pieceId/
+ * API PATCH /tables/:tableName/states/:stateId/pieces/:pieceId/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {String} pieceId Piece-ID (ID) of piece to patch.
  * @param {Object} patch Partial piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPiece (tableName, pieceId, patch) {
-  return patchJson([200], 'api/tables/' + tableName + '/pieces/' + pieceId + '/', patch)
+export function apiPatchPiece (tableName, stateId, pieceId, patch) {
+  return patchJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + pieceId + '/', patch)
 }
 
 /**
- * API DELETE /tables/:tableName/pieces/:pieceId/
+ * API DELETE /tables/:tableName/states/:stateId/pieces/:pieceId/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {String} pieceId Piece-ID (ID) of piece to delete.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeletePiece (tableName, pieceId) {
-  return deleteJson([204], 'api/tables/' + tableName + '/pieces/' + pieceId + '/')
+export function apiDeletePiece (tableName, stateId, pieceId) {
+  return deleteJson([204], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + pieceId + '/')
 }
 
 /**
- * API POST /tables/:tableName/pieces/
+ * API POST /tables/:tableName/states/:stateId/pieces/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Object} piece Piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostPiece (tableName, piece) {
-  return postJson([201], 'api/tables/' + tableName + '/pieces/', piece)
+export function apiPostPiece (tableName, stateId, piece) {
+  return postJson([201], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/', piece)
 }
 
 // --- internal methods --------------------------------------------------------

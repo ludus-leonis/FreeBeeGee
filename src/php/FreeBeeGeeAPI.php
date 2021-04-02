@@ -45,9 +45,9 @@ class FreeBeeGeeAPI
 
         // --- HEAD ---
 
-        $this->api->register('HEAD', '/tables/:tid/state/?', function ($fbg, $data) {
+        $this->api->register('HEAD', '/tables/:tid/states/:sid/?', function ($fbg, $data) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->getStateHead($data['tid']);
+                $fbg->headState($data['tid'], $data['sid']);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
@@ -61,9 +61,9 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
 
-        $this->api->register('GET', '/tables/:tid/state/?', function ($fbg, $data) {
+        $this->api->register('GET', '/tables/:tid/states/:sid/?', function ($fbg, $data) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->getState($data['tid']);
+                $fbg->getState($data['tid'], $data['sid']);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
@@ -83,25 +83,18 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
 
-        $this->api->register('GET', '/tables/:tid/state/save/0/?', function ($fbg, $data) {
+        $this->api->register('GET', '/tables/:tid/states/:sid/pieces/:pid/?', function ($fbg, $data) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->getStateSave($data['tid'], 0);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
-        });
-
-        $this->api->register('GET', '/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
-            if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->getPiece($data['tid'], $data['pid']);
+                $fbg->getPiece($data['tid'], $data['sid'], $data['pid']);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
 
         // --- POST ---
 
-        $this->api->register('POST', '/tables/:tid/pieces/?', function ($fbg, $data, $payload) {
+        $this->api->register('POST', '/tables/:tid/states/:sid/pieces/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->createPiece($data['tid'], $payload);
+                $fbg->createPiece($data['tid'], $data['sid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
@@ -117,34 +110,34 @@ class FreeBeeGeeAPI
 
         // --- PUT ---
 
-        $this->api->register('PUT', '/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
+        $this->api->register('PUT', '/tables/:tid/states/:sid/pieces/:pid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->updatePiece($data['tid'], $data['pid'], $payload);
+                $fbg->updatePiece($data['tid'], $data['sid'], $data['pid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
 
-        $this->api->register('PUT', '/tables/:tid/state/?', function ($fbg, $data, $payload) {
+        $this->api->register('PUT', '/tables/:tid/states/:sid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->replaceState($data['tid'], $payload);
+                $fbg->putState($data['tid'], $data['sid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
 
         // --- PATCH ---
 
-        $this->api->register('PATCH', '/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
+        $this->api->register('PATCH', '/tables/:tid/states/:sid/pieces/:pid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->updatePiece($data['tid'], $data['pid'], $payload);
+                $fbg->updatePiece($data['tid'], $data['sid'], $data['pid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
 
         // --- DELETE ---
 
-        $this->api->register('DELETE', '/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
+        $this->api->register('DELETE', '/tables/:tid/states/:sid/pieces/:pid/?', function ($fbg, $data) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->deletePiece($data['tid'], $data['pid']);
+                $fbg->deletePiece($data['tid'], $data['sid'], $data['pid']);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
@@ -288,7 +281,7 @@ class FreeBeeGeeAPI
         $size = 0;
         $mandatory = [
             'LICENSE.md' => 'LICENSE.md',
-            'state.json' => 'state.json',
+            'states/1.json' => 'states/1.json',
             'template.json' => 'template.json',
         ];
         $optional = [
@@ -297,6 +290,16 @@ class FreeBeeGeeAPI
             'assets/token/' => 'assets/token/',
             'assets/overlay/' => 'assets/overlay/',
             'assets/other/' => 'assets/other/',
+            'states/' => 'states/',
+            'states/0.json' => 'states/0.json',
+            'states/2.json' => 'states/2.json',
+            'states/3.json' => 'states/3.json',
+            'states/4.json' => 'states/4.json',
+            'states/5.json' => 'states/5.json',
+            'states/6.json' => 'states/6.json',
+            'states/7.json' => 'states/7.json',
+            'states/8.json' => 'states/8.json',
+            'states/9.json' => 'states/9.json',
         ];
         $issues = [];
         $maxSize = $this->getServerConfig()->maxTableSizeMB;
@@ -354,7 +357,12 @@ class FreeBeeGeeAPI
 
         // at this point the zip is formally ok, but now we look into individual files
         $this->validateTemplateJson(file_get_contents('zip://' . $zipPath . '#template.json'));
-        $this->validateStateJson(file_get_contents('zip://' . $zipPath . '#state.json'));
+        for ($i = 0; $i <= 9; $i++) {
+            $json = @file_get_contents('zip://' . $zipPath . '#states/' . $i . '.json');
+            if ($json !== false) {
+                $this->validateStateJson($i, $json);
+            }
+        }
     }
 
     /**
@@ -417,9 +425,11 @@ class FreeBeeGeeAPI
      *
      * Will termiante execution and send a 400 in case of invalid JSON.
      *
+     * @param string $sid State ID for error messages.
      * @param string $json JSON string.
      */
     private function validateStateJson(
+        string $sid,
         string $json
     ) {
         $msg = 'validating template.json failed';
@@ -432,7 +442,7 @@ class FreeBeeGeeAPI
         }
 
         // check for more stuff
-        $this->api->assertObjectArray('state.json', $state, 0);
+        $this->api->assertObjectArray($sid . '.json', $state, 0);
         foreach ($state as $piece) {
             $validated[] = $this->validatePiece($piece, true);
         }
@@ -471,19 +481,24 @@ class FreeBeeGeeAPI
      * corresponding JSON Array item with the new one via ID reference.
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param string $sid State id / number, e.g. 2.
      * @param object $piece The parsed & validated piece to update.
      * @param bool $create If true, this piece must not exist.
      * @return object The updated piece.
      */
     private function updatePieceState(
         string $tableName,
+        string $sid,
         object $piece,
         bool $create
     ): object {
         $folder = $this->getTableFolder($tableName);
         $lock = $this->api->waitForWriteLock($folder . '.flock');
 
-        $oldState = json_decode(file_get_contents($folder . 'state.json'));
+        $oldState = '[]';
+        if (is_file($folder . 'states/' . $sid . '.json')) {
+            $oldState = json_decode(file_get_contents($folder . 'states/' . $sid . '.json'));
+        }
         $result = $piece;
 
         // rewrite state, starting with new item
@@ -526,7 +541,7 @@ class FreeBeeGeeAPI
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
         }
-        $this->writeAsJsonAndDigest($folder . 'state.json', $newState);
+        $this->writeAsJsonAndDigest($folder . 'states/' . $sid . '.json', $newState);
         $this->api->unlockLock($lock);
 
         return $result;
@@ -916,12 +931,20 @@ class FreeBeeGeeAPI
             $lock = $this->api->waitForWriteLock($folder . '.flock');
             $table->library = $this->installSnapshot($newTable->name, $zipPath);
 
-            // keep original state for table resets
-            $state = file_get_contents($folder . 'state.json');
-            $statecrc = crc32($state);
-            file_put_contents($folder . 'state-0.json', $state);
-            file_put_contents($folder . 'state-0.json.digest', 'crc32:' . $statecrc);
-            file_put_contents($folder . 'state.json.digest', 'crc32:' . $statecrc);
+            // keep original state for table resets, if game does not have a 0-state
+            if (!is_file($folder . 'states/0.json')) {
+                $state = file_get_contents($folder . 'states/1.json');
+                file_put_contents($folder . 'states/0.json', $state);
+            }
+
+            // generate digests
+            for ($i = 0; $i <= 9; $i++) {
+                if (is_file($folder . 'states/' . $i . '.json')) {
+                    $state = file_get_contents($folder . 'states/' . $i . '.json');
+                    $statecrc = crc32($state);
+                    file_put_contents($folder . 'states/' . $i . '.json.digest', 'crc32:' . $statecrc);
+                }
+            }
 
             // add invalid.svg to table | @codingStandardsIgnoreLine
             file_put_contents($folder . 'invalid.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.4 25.4" height="96" width="96"><path fill="#40bfbf" d="M0 0h25.4v25.4H0z"/><g fill="#fff" stroke="#fff" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M1.9 1.9l21.6 21.6M23.5 1.9L1.9 23.5" stroke-width="1.1"/></g></svg>');
@@ -978,22 +1001,41 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Get the head of the state of a table.
+     * Validate a state ID.
+     *
+     * Will stop execution with a 400 error if the value is not an int 0-9.
+     *
+     * @param mixed $value Hopefully a state ID, e.g. 2.
+     */
+    public function assertStateNo(
+        $value
+    ) {
+        $value = intval($value);
+        if ($value < 0 || $value > 9) {
+            $this->api->sendError(400, 'invalid state: ' . $value);
+        }
+    }
+
+    /**
+     * Get the head of a state of a table.
      *
      * Returns a Digest HTTP header so the client can check if it's worth to
      * download the rest.
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param int $sid State id / number, e.g. 2.
      */
-    public function getStateHead(
-        string $tableName
+    public function headState(
+        string $tableName,
+        string $sid
     ) {
+        $this->assertStateNo($sid);
         $folder = $this->getTableFolder($tableName);
         if (is_dir($folder)) {
             $digest = 'crc32:0';
-            if (is_file($folder . 'state.json.digest')) {
+            if (is_file($folder . 'states/' . $sid . '.json.digest')) {
                 $digest = $this->api->fileGetContentsLocked(
-                    $folder . 'state.json.digest',
+                    $folder . 'states/' . $sid . '.json.digest',
                     $folder . '.flock'
                 );
             }
@@ -1008,45 +1050,26 @@ class FreeBeeGeeAPI
      * Returns the state.json containing all pieces on the table.
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param int $sid State id / number, e.g. 2.
      */
     public function getState(
-        string $tableName
-    ) {
-        $folder = $this->getTableFolder($tableName);
-        if (is_dir($folder)) {
-            $body = $this->api->fileGetContentsLocked(
-                $folder . 'state.json',
-                $folder . '.flock'
-            );
-            $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
-        }
-        $this->api->sendError(404, 'not found: ' . $tableName);
-    }
-
-    /**
-     * Get a saved state of the table.
-     *
-     * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
-     * @param int $slot Number between 0 and 9 of save slot, 0 = initial.
-     */
-    public function getStateSave(
         string $tableName,
-        int $slot
+        string $sid
     ) {
-        if (!is_int($slot) || $slot < 0 || $slot > 9) {
-            $this->api->sendError(404, 'save not found: ' . $tableName . ' / #' . $slot);
-        }
+        $this->assertStateNo($sid);
         $folder = $this->getTableFolder($tableName);
         if (is_dir($folder)) {
-            $body = $this->api->fileGetContentsLocked(
-                $folder . 'state-' . $slot . '.json',
-                $folder . '.flock'
-            );
+            $body = '[]';
+            if (is_file($folder . 'states/' . $sid . '.json')) {
+                $body = $this->api->fileGetContentsLocked(
+                    $folder . 'states/' . $sid . '.json',
+                    $folder . '.flock'
+                );
+            }
             $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
         }
         $this->api->sendError(404, 'not found: ' . $tableName);
     }
-
 
     /**
      * Replace the internal state with a new one.
@@ -1054,17 +1077,20 @@ class FreeBeeGeeAPI
      * Can be used to reset a table or to revert to a save.
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param int $sid State id / number, e.g. 2.
      * @param string $json New state JSON from client.
      */
-    public function replaceState(
+    public function putState(
         string $tableName,
+        string $sid,
         string $json
     ) {
+        $this->assertStateNo($sid);
         $folder = $this->getTableFolder($tableName);
-        $newState = $this->validateStateJson($json);
+        $newState = $this->validateStateJson($sid, $json);
 
         $lock = $this->api->waitForWriteLock($folder . '.flock');
-        $this->writeAsJsonAndDigest($folder . 'state.json', $newState);
+        $this->writeAsJsonAndDigest($folder . 'states/' . $sid . '.json', $newState);
         $this->api->unlockLock($lock);
 
         $this->api->sendReply(200, json_encode($newState));
@@ -1074,15 +1100,18 @@ class FreeBeeGeeAPI
      * Add a new piece to a table.
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param string $sid State id / number, e.g. 2.
      * @param string $json Full piece JSON from client.
      */
     public function createPiece(
         string $tableName,
+        string $sid,
         string $json
     ) {
+        $this->assertStateNo($sid);
         $piece = $this->validatePieceJson($json, true);
         $piece->id = $this->generateId();
-        $this->updatePieceState($tableName, $piece, true);
+        $this->updatePieceState($tableName, $sid, $piece, true);
         $this->api->sendReply(201, json_encode($piece));
     }
 
@@ -1092,25 +1121,31 @@ class FreeBeeGeeAPI
      * Not very performant, but also not needed very often ;)
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param string $sid State id / number, e.g. 2.
      * @param string $pieceId Id of piece.
      */
     public function getPiece(
         string $tableName,
+        string $sid,
         string $pieceId
     ) {
+        $this->assertStateNo($sid);
         $folder = $this->getTableFolder($tableName);
-        $state = json_decode($this->api->fileGetContentsLocked(
-            $folder . 'state.json',
-            $folder . '.flock'
-        ));
 
-        foreach ($state as $piece) {
-            if ($piece->id === $pieceId) {
-                $this->api->sendReply(200, json_encode($piece));
+        if (is_file($folder . 'states/' . $sid . '.json')) {
+            $state = json_decode($this->api->fileGetContentsLocked(
+                $folder . 'states/' . $sid . '.json',
+                $folder . '.flock'
+            ));
+
+            foreach ($state as $piece) {
+                if ($piece->id === $pieceId) {
+                    $this->api->sendReply(200, json_encode($piece));
+                }
             }
         }
 
-        $this->api->sendError(404, 'not found: piece ' . $pieceId . ' on table ' . $tableName);
+        $this->api->sendError(404, 'not found: piece ' . $pieceId . ' on table ' . $tableName . ' in state ' . $sid);
     }
 
     /**
@@ -1119,17 +1154,20 @@ class FreeBeeGeeAPI
      * Can overwrite the whole piece or only patch a few fields.
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param string $sid State id / number, e.g. 2.
      * @param string $pieceID ID of the piece to update.
      * @param string $json Full or parcial piece JSON from client.
      */
     public function updatePiece(
         string $tableName,
+        string $sid,
         string $pieceId,
         string $json
     ) {
+        $this->assertStateNo($sid);
         $patch = $this->validatePieceJson($json, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $updatedPiece = $this->updatePieceState($tableName, $patch, false);
+        $updatedPiece = $this->updatePieceState($tableName, $sid, $patch, false);
         $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
@@ -1139,18 +1177,22 @@ class FreeBeeGeeAPI
      * Will not remove it from the library.
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param string $sid State id / number, e.g. 2.
      * @param string $pieceID ID of the piece to delete.
      */
     public function deletePiece(
         string $tableName,
+        string $sid,
         string $pieceId
     ) {
+        $this->assertStateNo($sid);
+
         // create a dummy 'delete' object to represent deletion
         $piece = new \stdClass(); // sanitize item by recreating it
         $piece->layer = 'delete';
         $piece->id = $pieceId;
 
-        $this->updatePieceState($tableName, $piece, false);
+        $this->updatePieceState($tableName, $sid, $piece, false);
         $this->api->sendReply(204, '');
     }
 
@@ -1181,16 +1223,6 @@ class FreeBeeGeeAPI
                     case 'snapshot.zip':
                     case 'invalid.svg':
                     case 'table.json':
-                    case 'state-0.json':
-                    case 'state-1.json':
-                    case 'state-2.json':
-                    case 'state-3.json':
-                    case 'state-4.json':
-                    case 'state-5.json':
-                    case 'state-6.json':
-                    case 'state-7.json':
-                    case 'state-8.json':
-                    case 'state-9.json':
                         break; // they don't go into the zip
                     default:
                         if (! preg_match('/\.digest$/', $relativePath)) {
