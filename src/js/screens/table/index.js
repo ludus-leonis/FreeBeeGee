@@ -196,6 +196,7 @@ export function numberSelected (delta) {
  * is a visual difference even if the same side randomly comes up.
  */
 export function randomSelected () {
+  const template = getTemplate()
   _('#tabletop .is-selected').each(node => {
     const coords = []
     const pieces = []
@@ -206,8 +207,8 @@ export function randomSelected () {
         for (let x = 0; x < Math.min(Number(node.dataset.w), 4); x++) {
           for (let y = 0; y < Math.min(Number(node.dataset.h), 4); y++) {
             coords.push({ // a max. 4x4 area in the center of the dicemat
-              x: Math.max(0, Math.floor((Number(node.dataset.w) - 4) / 2)) + x,
-              y: Math.max(0, Math.floor((Number(node.dataset.h) - 4) / 2)) + y
+              x: (Math.max(0, Math.floor((Number(node.dataset.w) - 4) / 2)) + x) * template.gridSize,
+              y: (Math.max(0, Math.floor((Number(node.dataset.h) - 4) / 2)) + y) * template.gridSize
             })
           }
         }
@@ -215,8 +216,8 @@ export function randomSelected () {
         for (const piece of getPiecesWithin({
           left: Number(node.dataset.x),
           top: Number(node.dataset.y),
-          right: Number(node.dataset.x) + Number(node.dataset.w) - 1,
-          bottom: Number(node.dataset.y) + Number(node.dataset.h) - 1
+          right: Number(node.dataset.x) + Number(node.dataset.w * template.gridSize) - 1,
+          bottom: Number(node.dataset.y) + Number(node.dataset.h * template.gridSize) - 1
         }, 'other')) {
           if (piece.dataset.feature === 'DICEMAT') continue // don't touch the dicemat
 
@@ -235,7 +236,6 @@ export function randomSelected () {
             side: Math.floor(Math.random() * Number(piece.dataset.sides)),
             x: Number(node.dataset.x) + coord.x,
             y: Number(node.dataset.y) + coord.y
-            // r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
           })
         }
         updatePieces(pieces)
@@ -819,14 +819,19 @@ function updateNode (node, piece) {
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
 function getPiecesWithin (rect, layer = 'all') {
+  const template = getTemplate()
   const pieces = []
   const filter = layer === 'all' ? '.piece' : '.layer-' + layer + ' .piece'
   _('#tabletop ' + filter).each(node => {
     if (intersect(rect, {
       left: Number(node.dataset.x),
       top: Number(node.dataset.y),
-      right: Number(node.dataset.x) + (node.dataset.r === '0' || node.dataset.r === '180' ? Number(node.dataset.w) : Number(node.dataset.h)) - 1,
-      bottom: Number(node.dataset.y) + (node.dataset.r === '0' || node.dataset.r === '180' ? Number(node.dataset.h) : Number(node.dataset.w)) - 1
+      right: Number(node.dataset.x) + (node.dataset.r === '0' || node.dataset.r === '180'
+        ? Number(node.dataset.w) * template.gridSize
+        : Number(node.dataset.h) * template.gridSize) - 1,
+      bottom: Number(node.dataset.y) + (node.dataset.r === '0' || node.dataset.r === '180'
+        ? Number(node.dataset.h) * template.gridSize
+        : Number(node.dataset.w) * template.gridSize) - 1
     })) {
       pieces.push(node)
     }

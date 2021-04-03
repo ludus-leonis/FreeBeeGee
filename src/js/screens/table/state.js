@@ -339,6 +339,7 @@ export function restoreState (index) {
  * @param {Array} pieces (Partial) pieces to patch.
  */
 export function updatePieces (pieces) {
+  if (!pieces || pieces.length <= 0) return
   const piece = pieces.shift()
   patchPiece(piece.id, piece, false)
     .then(() => {
