@@ -566,7 +566,7 @@ class FreeBeeGeeAPI
         $asset->assets = [$filename];
         if (
             preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6})\.[a-zA-Z0-9]+$/',
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent)\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
@@ -575,7 +575,11 @@ class FreeBeeGeeAPI
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
             $asset->side = $matches[4];
-            $asset->color = $matches[5];
+            if ($matches[5] === 'transparent') {
+                $asset->color = $matches[5];
+            } else {
+                $asset->color = '#' . $matches[5];
+            }
             $asset->alias = $matches[1];
         } elseif (
             preg_match(
@@ -588,14 +592,14 @@ class FreeBeeGeeAPI
             $asset->width = (int)$matches[2];
             $asset->height = (int)$matches[3];
             $asset->side = $matches[4];
-            $asset->color = '808080';
+            $asset->color = '#808080';
             $asset->alias = $matches[1];
         } elseif (preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
             // group.name.png
             $asset->width = 1;
             $asset->height = 1;
             $asset->side = 1;
-            $asset->color = '808080';
+            $asset->color = '#808080';
             $asset->alias = $matches[1];
         }
         return $asset;

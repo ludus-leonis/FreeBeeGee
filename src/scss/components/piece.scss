@@ -30,18 +30,18 @@ $piece-border-radius: 2px;
 $piece-margin-size: 4px;
 $piece-rotate: 1deg;
 
-$piece-shadow: 2px 2px 2px $color-black-75a;
-$piece-shadow-90: 2px -2px 2px $color-black-75a;
-$piece-shadow-180: -2px -2px 2px $color-black-75a;
-$piece-shadow-270: -2px 2px 2px $color-black-75a;
+$piece-shadow: 3px 2px 2px $color-black-65a;
+$piece-shadow-90: 2px -3px 2px $color-black-65a;
+$piece-shadow-180: -3px -2px 2px $color-black-65a;
+$piece-shadow-270: -2px 3px 2px $color-black-65a;
 
 $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
-$piece-shadow-flat: 2px 2px 0 $color-black-25a;
-$piece-shadow-flat-90: 2px -2px 0 $color-black-25a;
-$piece-shadow-flat-180: -2px -2px 0 $color-black-25a;
-$piece-shadow-flat-270: -2px 2px 0 $color-black-25a;
-$piece-shadow-flat-overlay: 2px 2px 0 $color-black-25a;
+$piece-shadow-flat: 3px 2px 0 $color-black-25a;
+$piece-shadow-flat-90: 2px -3px 0 $color-black-25a;
+$piece-shadow-flat-180: -3px -2px 0 $color-black-25a;
+$piece-shadow-flat-270: -2px 3px 0 $color-black-25a;
+$piece-shadow-flat-overlay: 3px 2px 0 $color-black-25a;
 
 @mixin piece-rotate($r, $amount, $pre: '', $post: '') {
   &[id^='0'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 0) #{$post}; }
@@ -304,21 +304,17 @@ $label-offset: 8px;
 
   .is-quality-ultra & {
     @include piece-rotate(0deg, $piece-rotate);
-    box-shadow: 3px 3px 1px -2px $color-white-15a inset, -3px -3px 1px -2px $color-black-20a inset;
 
     &.is-rotate-90 {
       @include piece-rotate(90deg, $piece-rotate);
-      box-shadow: 3px -3px 1px -2px $color-white-15a inset, -3px 3px 1px -2px $color-black-20a inset;
     }
 
     &.is-rotate-180 {
       @include piece-rotate(180deg, $piece-rotate);
-      box-shadow: -3px -3px 1px -2px $color-white-15a inset, 3px 3px 1px -2px $color-black-20a inset;
     }
 
     &.is-rotate-270 {
       @include piece-rotate(270deg, $piece-rotate);
-      box-shadow: -3px 3px 1px -2px $color-white-15a inset, 3px -3px 1px -2px $color-black-20a inset;
     }
   }
 }

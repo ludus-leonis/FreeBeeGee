@@ -495,18 +495,18 @@ export function assetToNode (assetJson, side = 0) {
   } else {
     if (assetJson.base) { // layered asset
       node = _(`.piece.piece-${assetJson.type}.has-layer`).create().css({
-        backgroundImage: `url('api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.base}')`,
-        '--fbg-layer-image': `url('api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`
+        backgroundImage: 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.base}`) + '")',
+        '--fbg-layer-image': 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`) + '")'
       })
     } else { // regular asset
       node = _(`.piece.piece-${assetJson.type}`).create().css({
-        backgroundImage: `url('api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}')`
+        backgroundImage: 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`) + '")'
       })
     }
   }
   if (assetJson.type !== 'overlay' && assetJson.type !== 'other') {
     node.css({
-      backgroundColor: '#' + (assetJson.color ?? '808080')
+      backgroundColor: (assetJson.color ?? '#808080')
     })
   }
 
