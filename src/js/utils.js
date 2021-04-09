@@ -141,6 +141,18 @@ export function generateName () {
   animals[Math.floor(Math.random() * animals.length)]
 }
 
+/**
+ * Shuffle an array using Durstenfeld shuffle.
+ *
+ * @param {Array} array Array to shuffle. Will be modified!
+ */
+export function shuffle (array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]
+  }
+}
+
 /** An array of all the letters A-Z. */
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 

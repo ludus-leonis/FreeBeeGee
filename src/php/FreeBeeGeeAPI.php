@@ -761,7 +761,7 @@ class FreeBeeGeeAPI
             $this->api->assertHasProperties(
                 'piece',
                 $validated,
-                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z', 'side', 'border'] // no
+                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z'] // no
             );
         }
 

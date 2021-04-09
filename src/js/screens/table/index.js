@@ -37,7 +37,10 @@ import {
 import { startAutoSync } from './sync.js'
 import { enableDragAndDrop, getMouseTileX, getMouseTileY } from './mouse.js'
 import _ from '../../FreeDOM.js'
-import { clamp } from '../../utils.js'
+import {
+  clamp,
+  shuffle
+} from '../../utils.js'
 import { navigateToJoin } from '../../nav.js'
 
 import { modalLibrary } from './modals/library.js'
@@ -196,49 +199,13 @@ export function numberSelected (delta) {
  * is a visual difference even if the same side randomly comes up.
  */
 export function randomSelected () {
-  const template = getTemplate()
   _('#tabletop .is-selected').each(node => {
-    const coords = []
-    const pieces = []
     switch (node.dataset.feature) {
       case 'DICEMAT': // dicemat: randomize all pieces on it
-        pieces.length = 0
-        coords.length = 0
-        for (let x = 0; x < Math.min(Number(node.dataset.w), 4); x++) {
-          for (let y = 0; y < Math.min(Number(node.dataset.h), 4); y++) {
-            coords.push({ // a max. 4x4 area in the center of the dicemat
-              x: (Math.max(0, Math.floor((Number(node.dataset.w) - 4) / 2)) + x) * template.gridSize,
-              y: (Math.max(0, Math.floor((Number(node.dataset.h) - 4) / 2)) + y) * template.gridSize
-            })
-          }
-        }
-
-        for (const piece of getPiecesWithin({
-          left: Number(node.dataset.x),
-          top: Number(node.dataset.y),
-          right: Number(node.dataset.x) + Number(node.dataset.w * template.gridSize) - 1,
-          bottom: Number(node.dataset.y) + Number(node.dataset.h * template.gridSize) - 1
-        }, 'other')) {
-          if (piece.dataset.feature === 'DICEMAT') continue // don't touch the dicemat
-
-          // pick one random position
-          let coord = { x: 0, y: 0 }
-          let index = Math.floor(Math.random() * coords.length)
-          if (coords[index].x === Number(piece.dataset.x) && coords[index].y === Number(piece.dataset.y)) {
-            index = (index + 1) % coords.length
-          }
-          coord = coords[index]
-          coords.splice(index, 1)
-
-          // update the piece
-          pieces.push({
-            id: piece.id,
-            side: Math.floor(Math.random() * Number(piece.dataset.sides)),
-            x: Number(node.dataset.x) + coord.x,
-            y: Number(node.dataset.y) + coord.y
-          })
-        }
-        updatePieces(pieces)
+        randomDicemat(node)
+        break
+      case 'DISCARD': // dicard pile: randomize & center & flip all pieces on it
+        randomDiscard(node)
         break
       default: // ordinary piece
         if (Number(node.dataset.sides) > 1) { // only randomize multi-sided tokens
@@ -356,9 +323,7 @@ export function getMinZ (layer) {
   let minZ = 999999999
   _(`.layer-${layer} .piece`).each(piece => {
     const z = Number(piece.dataset.z)
-    if (z === minZ) {
-      minZ = z - 1 // make sure this duplicate creates an even lower z
-    } else if (z < minZ) {
+    if (z < minZ) {
       minZ = z
     }
   })
@@ -375,9 +340,7 @@ export function getMaxZ (layer) {
   let maxZ = -999999999
   _(`.layer-${layer} .piece`).each(piece => {
     const z = Number(piece.dataset.z)
-    if (z === maxZ) {
-      maxZ = z + 1 // make sure this duplicate creates an even higher z
-    } else if (z > maxZ) {
+    if (z > maxZ) {
       maxZ = z
     }
   })
@@ -525,10 +488,13 @@ export function assetToNode (assetJson, side = 0) {
   })
 
   // add feature hook to piece (if it has one)
-  if (assetJson.alias === 'dicemat') {
-    node.data({
-      feature: 'DICEMAT'
-    })
+  switch (assetJson.alias) {
+    case 'dicemat':
+      node.data({ feature: 'DICEMAT' })
+      break
+    case 'discard':
+      node.data({ feature: 'DISCARD' })
+      break
   }
 
   return node
@@ -884,6 +850,113 @@ function getSetupCenter () {
     x: x.length > 0 ? Math.ceil(x.reduce((a, b) => a + b) / x.length) : 0,
     y: y.length > 0 ? Math.ceil(y.reduce((a, b) => a + b) / y.length) : 0
   }
+}
+
+/**
+ * Randomice the items (dice) on a dicemat node.
+ *
+ * @param {FreeDOM} dicemat Dicemat node.
+ */
+function randomDicemat (dicemat) {
+  const template = getTemplate()
+  const coords = []
+  const pieces = []
+  for (let x = 0; x < Math.min(Number(dicemat.dataset.w), 4); x++) {
+    for (let y = 0; y < Math.min(Number(dicemat.dataset.h), 4); y++) {
+      coords.push({ // a max. 4x4 area in the center of the dicemat
+        x: (Math.max(0, Math.floor((Number(dicemat.dataset.w) - 4) / 2)) + x) * template.gridSize,
+        y: (Math.max(0, Math.floor((Number(dicemat.dataset.h) - 4) / 2)) + y) * template.gridSize
+      })
+    }
+  }
+
+  for (const piece of getPiecesWithin({
+    left: Number(dicemat.dataset.x),
+    top: Number(dicemat.dataset.y),
+    right: Number(dicemat.dataset.x) + Number(dicemat.dataset.w * template.gridSize) - 1,
+    bottom: Number(dicemat.dataset.y) + Number(dicemat.dataset.h * template.gridSize) - 1
+  }, dicemat.dataset.layer)) {
+    if (piece.dataset.feature === 'DICEMAT') continue // don't touch the dicemat
+
+    // pick one random position
+    let coord = { x: 0, y: 0 }
+    let index = Math.floor(Math.random() * coords.length)
+    if (coords[index].x === Number(piece.dataset.x) && coords[index].y === Number(piece.dataset.y)) {
+      index = (index + 1) % coords.length
+    }
+    coord = coords[index]
+    coords.splice(index, 1)
+
+    // update the piece
+    pieces.push({
+      id: piece.id,
+      side: Math.floor(Math.random() * Number(piece.dataset.sides)),
+      x: Number(dicemat.dataset.x) + coord.x,
+      y: Number(dicemat.dataset.y) + coord.y
+    })
+  }
+  updatePieces(pieces)
+}
+
+/**
+ * Randomice the pieces on a discard pile node.
+ *
+ * @param {FreeDOM} discard Discard pile node.
+ */
+function randomDiscard (discard) {
+  const template = getTemplate()
+  const pieces = []
+  const centerX = Number(discard.dataset.x) + Number(discard.dataset.w) * template.gridSize / 2
+  const centerY = Number(discard.dataset.y) + Number(discard.dataset.h) * template.gridSize / 2
+  let stackSide = -1
+
+  const stack = getPiecesWithin({
+    left: Number(discard.dataset.x),
+    top: Number(discard.dataset.y),
+    right: Number(discard.dataset.x) + Number(discard.dataset.w * template.gridSize) - 1,
+    bottom: Number(discard.dataset.y) + Number(discard.dataset.h * template.gridSize) - 1
+  }, discard.dataset.layer)
+
+  // shuffle z positions above the dicard pile piece
+  const discardZ = Number(discard.dataset.z)
+  const z = []
+  for (let i = 0; i < stack.length; i++) {
+    z.push(discardZ + i + 1)
+  }
+  console.log('order a', z)
+  shuffle(z)
+  console.log('order b', z)
+
+  for (const piece of stack) {
+    if (piece.dataset.feature === 'DISCARD') continue // don't touch the discard pile piece
+
+    // detect the side to flip them to
+    if (stackSide < 0) {
+      // fip all pices, based on the state of the first one
+      if (Number(piece.dataset.side) === 0) {
+        stackSide = Math.max(0, Number(piece.dataset.sides) - 1)
+      } else {
+        stackSide = 0
+      }
+    }
+
+    const w = piece.dataset.r === '90' || piece.dataset.r === '270'
+      ? Number(piece.dataset.h)
+      : Number(piece.dataset.w)
+    const h = piece.dataset.r === '90' || piece.dataset.r === '270'
+      ? Number(piece.dataset.w)
+      : Number(piece.dataset.h)
+
+    // update the piece
+    pieces.push({
+      id: piece.id,
+      side: stackSide,
+      x: Math.floor(centerX - Number(w * template.gridSize) / 2),
+      y: Math.floor(centerY - Number(h * template.gridSize) / 2),
+      z: z.pop()
+    })
+  }
+  updatePieces(pieces)
 }
 
 const iconDice = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
