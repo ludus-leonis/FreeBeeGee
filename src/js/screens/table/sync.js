@@ -262,7 +262,7 @@ function calculateNextSyncTime () {
   const remote = Date.now() - lastRemoteActivity
   const local = Date.now() - lastLocalActivity
 
-  if (local > 10 * 60 * 1000) { // 10min
+  if (local > 15 * 60 * 1000) { // 15min
     modalInactive()
   }
 

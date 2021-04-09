@@ -17,9 +17,18 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getTemplate, stateMovePiece } from './state.js'
+import {
+  getTemplate,
+  stateMovePiece
+} from './state.js'
 import { touch } from './sync.js'
-import { getScrollPosition, setScrollPosition, unselectPieces, popupPiece } from '.'
+import {
+  getScrollPosition,
+  setScrollPosition,
+  unselectPieces,
+  popupPiece,
+  getMaxZ
+} from '.'
 import { clamp } from '../../utils.js'
 import _ from '../../FreeDOM.js'
 
@@ -211,6 +220,7 @@ function dragStart (mousedown) {
   dragging = piece.cloneNode(true)
   dragging.id = dragging.id + '-drag'
   dragging.origin = piece
+  dragging.style.zIndex = 999999999 // drag visually on top of everything
   dragging.classList.add('dragging')
   dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
   piece.parentNode.appendChild(dragging)
@@ -264,7 +274,19 @@ function dragEnd (mouseup, cancel = false) {
       // only record state if there was a change in position
       if (dragging.origin.dataset.x !== dragging.dataset.x ||
         dragging.origin.dataset.y !== dragging.dataset.y) {
-        stateMovePiece(dragging.origin.id, dragging.dataset.x, dragging.dataset.y)
+        const template = getTemplate()
+        const maxZ = getMaxZ(dragging.dataset.layer, {
+          top: Number(dragging.dataset.y),
+          left: Number(dragging.dataset.x),
+          bottom: Number(dragging.dataset.y) + Number(dragging.dataset.h) * template.gridSize,
+          right: Number(dragging.dataset.x) + Number(dragging.dataset.w) * template.gridSize
+        })
+        stateMovePiece(
+          dragging.origin.id,
+          dragging.dataset.x,
+          dragging.dataset.y,
+          Number(dragging.dataset.z) === maxZ ? dragging.dataset.z : getMaxZ(dragging.dataset.layer) + 1
+        )
       }
     }
 

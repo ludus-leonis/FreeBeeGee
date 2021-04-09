@@ -316,34 +316,47 @@ export function rotateSelected () {
 /**
  * Determine the lowest z-index in use by the pieces in a layer.
  *
- * @param {String} layer Either 'tile', 'overlay' or 'token'.
+ * @param {String} layer Name of a layer, e.g. 'tile'.
+ * @param {Object} area Bounding rect in px to check pieces at least partly within.
  * @return {Number} Lowest CSS z-index, or 0 if layer is empty.
  */
-export function getMinZ (layer) {
+export function getMinZ (layer, area = {
+  left: 0,
+  top: 0,
+  right: 999999999,
+  bottom: 999999999
+}) {
   let minZ = 999999999
-  _(`.layer-${layer} .piece`).each(piece => {
+  for (const piece of getPiecesWithin(area, layer)) {
     const z = Number(piece.dataset.z)
     if (z < minZ) {
       minZ = z
     }
-  })
+  }
   return minZ === 999999999 ? 0 : minZ // start at 0
 }
 
 /**
  * Determine the highest z-index in use by the pieces in a layer.
  *
- * @param {String} layer Either 'tile', 'overlay' or 'token'.
- * @return {Number} Highest CSS z-index, or 0 if layer is empty.
+ * @param {String} layer Name of a layer, e.g. 'tile'.
+ * @param {Object} area Bounding rect in px to check pieces at least partly within.
+ * @return {Number} Highest CSS z-index, or 0 if area in layer is empty.
  */
-export function getMaxZ (layer) {
+export function getMaxZ (layer, area = {
+  left: 0,
+  top: 0,
+  right: 999999999,
+  bottom: 999999999
+}) {
   let maxZ = -999999999
-  _(`.layer-${layer} .piece`).each(piece => {
+  for (const piece of getPiecesWithin(area, layer)) {
     const z = Number(piece.dataset.z)
     if (z > maxZ) {
       maxZ = z
     }
-  })
+  }
+
   return maxZ === -999999999 ? 0 : maxZ // start at 0
 }
 
