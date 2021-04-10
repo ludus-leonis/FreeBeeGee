@@ -30,6 +30,7 @@ import {
   stateNumberPiece,
   stateFlipPiece,
   stateMovePiece,
+  stateBorderPiece,
   stateRotatePiece,
   stateSetTablePref,
   stateGetTablePref
@@ -176,6 +177,21 @@ export function flipSelected () {
     const sides = Number(node.dataset.sides)
     if (sides > 1) {
       stateFlipPiece(node.id, (Number(node.dataset.side) + 1) % sides)
+    }
+  })
+}
+
+/**
+ * Switch the outline color of the currently selected piece.
+ *
+ * Will cycle through all available colors and silently fail if nothing is selected.
+ */
+export function outlineSelected () {
+  const borders = getTemplate().colors.length
+
+  _('#tabletop .is-selected').each(node => {
+    if (borders > 1) {
+      stateBorderPiece(node.id, (Number(node.dataset.border) + 1) % borders)
     }
   })
 }

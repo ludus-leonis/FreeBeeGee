@@ -20,8 +20,9 @@ Here is a list what might happen next. However, priorities can change.
 * [ ] generic marker overlay (X, ?, ...)
 * [X] don't rotate 8+ sized tiles
 * [ ] concurrent drag-n-drop - first mover wins
-* [ ] cycle borders hotkey
+* [X] cycle borders hotkey
 * [ ] show small clock
+* [ ] multi-select in add dialog
 * [X] loading indicators / create-game
 * [ ] add nicer default tiles
 * [ ] pre-release

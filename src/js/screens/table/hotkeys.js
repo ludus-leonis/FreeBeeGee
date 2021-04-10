@@ -27,6 +27,7 @@ import {
   toTopSelected,
   randomSelected,
   numberSelected,
+  outlineSelected,
   toBottomSelected,
   toggleLayer
 } from '.'
@@ -97,6 +98,9 @@ function handleTableKeys (keydown) {
         break
       case 'f': // flip
         flipSelected()
+        break
+      case 'o': // color/outline selected
+        outlineSelected()
         break
       case 'h': // help
       case 'H':

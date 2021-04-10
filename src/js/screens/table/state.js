@@ -236,6 +236,21 @@ export function stateFlipPiece (pieceId, side) {
 }
 
 /**
+ * Change the outline/border color.
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {String} pieceId ID of piece to change.
+ * @param {Number} border New border. Zero-based.
+ */
+export function stateBorderPiece (pieceId, border) {
+  patchPiece(pieceId, {
+    border: border
+  })
+}
+
+/**
  * Edit multiple properties of a piece of the current table.
  *
  * Will only do an API call and rely on later sync to get the change back to the

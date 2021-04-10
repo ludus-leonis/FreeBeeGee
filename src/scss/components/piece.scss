@@ -157,8 +157,13 @@ $label-offset: 8px;
   $piece-tile-half: $piece-tile-size / 2;
 
   &.is-selected {
-    #{'--fbg-border-color'}: $color-secondary !important; // sass-lint:disable-line no-important
-    box-shadow: 0 0 0 $piece-border-size $color-secondary inset !important; // sass-lint:disable-line no-important
+    $selected-color: $color-secondary;
+    filter:
+    drop-shadow(0 0 1.5px $selected-color)
+    drop-shadow(0 0 0 $selected-color)
+    drop-shadow(0 0 0 $selected-color)
+    drop-shadow(0 0 0 $selected-color)
+    drop-shadow(0 0 0 $selected-color) !important; // sass-lint:disable-line no-important
   }
 
   // --- size ------------------------------------------------------------------
@@ -526,12 +531,12 @@ $label-offset: 8px;
 
   > .is-max-1,
   > .is-max-2 {
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) !important; // sass-lint:disable-line no-important
   }
 
   @for $x from 3 through 32 {
     > .is-max-#{$x} {
-      transform: scale(2 / $x) translate(-50%, -50%);
+      transform: scale(2 / $x) translate(-50%, -50%) !important; // sass-lint:disable-line no-important
       transform-origin: top left;
     }
   }
