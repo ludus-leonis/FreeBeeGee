@@ -43,23 +43,23 @@ $piece-shadow-flat-180: -3px -2px 0 $color-black-25a;
 $piece-shadow-flat-270: -2px 3px 0 $color-black-25a;
 $piece-shadow-flat-overlay: 3px 2px 0 $color-black-25a;
 
-@mixin piece-rotate($r, $amount, $pre: '', $post: '') {
-  &[id^='0'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 0) #{$post}; }
-  &[id^='1'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 1) #{$post}; }
-  &[id^='2'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 2) #{$post}; }
-  &[id^='3'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 3) #{$post}; }
-  &[id^='4'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 4) #{$post}; }
-  &[id^='5'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 5) #{$post}; }
-  &[id^='6'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 6) #{$post}; }
-  &[id^='7'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 7) #{$post}; }
-  &[id^='8'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 8) #{$post}; }
-  &[id^='9'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 9) #{$post}; }
-  &[id^='a'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 10) #{$post}; }
-  &[id^='b'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 11) #{$post}; }
-  &[id^='c'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 12) #{$post}; }
-  &[id^='d'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 13) #{$post}; }
-  &[id^='e'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 14) #{$post}; }
-  &[id^='f'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 15) #{$post}; }
+@mixin piece-rotate($r, $amount) {
+  &[id^='0'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 0); }
+  &[id^='1'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 1); }
+  &[id^='2'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 2); }
+  &[id^='3'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 3); }
+  &[id^='4'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 4); }
+  &[id^='5'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 5); }
+  &[id^='6'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 6); }
+  &[id^='7'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 7); }
+  &[id^='8'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 8); }
+  &[id^='9'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 9); }
+  &[id^='a'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 10); }
+  &[id^='b'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 11); }
+  &[id^='c'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 12); }
+  &[id^='d'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 13); }
+  &[id^='e'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 14); }
+  &[id^='f'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 15); }
 }
 
 @mixin piece-translate($amount) {
@@ -304,17 +304,33 @@ $label-offset: 8px;
 
   .is-quality-ultra & {
     @include piece-rotate(0deg, $piece-rotate);
+    @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+      &.is-w-#{$x} { transform: none; }
+      &.is-y-#{$x} { transform: none; }
+    }
 
     &.is-rotate-90 {
       @include piece-rotate(90deg, $piece-rotate);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(90deg); }
+        &.is-y-#{$x} { transform: rotate(90deg); }
+      }
     }
 
     &.is-rotate-180 {
       @include piece-rotate(180deg, $piece-rotate);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(180deg); }
+        &.is-y-#{$x} { transform: rotate(180deg); }
+      }
     }
 
     &.is-rotate-270 {
       @include piece-rotate(270deg, $piece-rotate);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(270deg); }
+        &.is-y-#{$x} { transform: rotate(270deg); }
+      }
     }
   }
 }
@@ -454,21 +470,36 @@ $label-offset: 8px;
   }
 
   .is-quality-ultra & {
-    @include piece-rotate(0deg, $piece-rotate * 2);
+    @include piece-rotate(0deg, $piece-rotate * 4);
+    @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+      &.is-w-#{$x} { transform: none; }
+      &.is-y-#{$x} { transform: none; }
+    }
 
     &.is-rotate-90 {
-      @include piece-rotate(0deg, $piece-rotate * 2);
+      @include piece-rotate(0deg, $piece-rotate * 4);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(90deg); }
+        &.is-y-#{$x} { transform: rotate(90deg); }
+      }
     }
 
     &.is-rotate-180 {
-      @include piece-rotate(0deg, $piece-rotate * 2);
+      @include piece-rotate(0deg, $piece-rotate * 4);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(180deg); }
+        &.is-y-#{$x} { transform: rotate(180deg); }
+      }
     }
 
     &.is-rotate-270 {
-      @include piece-rotate(0deg, $piece-rotate * 2);
+      @include piece-rotate(0deg, $piece-rotate * 4);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(270deg); }
+        &.is-y-#{$x} { transform: rotate(270deg); }
+      }
     }
   }
-
 }
 
 // --- helpers -----------------------------------------------------------------

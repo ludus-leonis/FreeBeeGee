@@ -4,7 +4,7 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.6 - Mixing Mink
 
-* [X] notes tile
+* [ ] notes tile
 * [X] fancier implementation for dynamic poll intervalls
   * [X] show "you have been inactive" dialog after 10min
   * [X] increase poll interval for inactive tabs/windows
@@ -18,7 +18,7 @@ Here is a list what might happen next. However, priorities can change.
 * [X] fix drag-n-drop z position
 * [X] meta-piece: discard pile
 * [ ] generic marker overlay (X, ?, ...)
-* [ ] don't rotate 8+ sized tiles
+* [X] don't rotate 8+ sized tiles
 * [ ] concurrent drag-n-drop - first mover wins
 * [ ] cycle borders hotkey
 * [ ] show small clock
