@@ -124,16 +124,16 @@ export function modalLibrary (x, y) {
  */
 function assetToPreview (assetJson) {
   const asset = assetToNode(assetJson).add(
-    '.is-w-' + assetJson.width,
-    '.is-h-' + assetJson.height
+    '.is-w-' + assetJson.w,
+    '.is-h-' + assetJson.h
   )
 
   const max = _('.is-scale-2').create(asset)
   const card = _('.col-6.col-sm-4.col-md-3.col-lg-2.col-card').create(max)
-  asset.add('.is-max-' + Math.max(assetJson.width, assetJson.height))
+  asset.add('.is-max-' + Math.max(assetJson.w, assetJson.h))
   let tag = ''
-  if (assetJson.width > 2 || assetJson.height > 2) {
-    tag = `${assetJson.width}x${assetJson.height}`
+  if (assetJson.w > 2 || assetJson.h > 2) {
+    tag = `${assetJson.w}x${assetJson.h}`
   }
   if (assetJson.assets.length > 1) {
     tag += `:${assetJson.assets.length}`

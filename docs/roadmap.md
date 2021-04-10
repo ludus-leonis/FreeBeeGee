@@ -21,8 +21,8 @@ Here is a list what might happen next. However, priorities can change.
 * [X] don't rotate 8+ sized tiles
 * [ ] concurrent drag-n-drop - first mover wins
 * [X] cycle borders hotkey
-* [ ] show small clock
 * [ ] multi-select in add dialog
+* [ ] tabs fully clickable
 * [X] loading indicators / create-game
 * [ ] add nicer default tiles
 * [ ] pre-release
@@ -92,6 +92,7 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather later
 
+* in-game clock
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
 * point-somewhere feature

@@ -94,7 +94,7 @@ export function modalEdit (piece) {
     for (let w = 1; w <= 32; w++) {
       const option = _('option').create(w)
       option.value = w
-      if (w === piece.width) option.selected = true
+      if (w === piece.w) option.selected = true
       pieceW.add(option)
     }
 
@@ -103,7 +103,7 @@ export function modalEdit (piece) {
     for (let h = 1; h <= 32; h++) {
       const option = _('option').create(h)
       option.value = h
-      if (h === piece.height) option.selected = true
+      if (h === piece.h) option.selected = true
       pieceH.add(option)
     }
 
@@ -177,10 +177,10 @@ function modalOk () {
   if (value !== piece.label) updates.label = value
 
   value = Number(_('#piece-w').value)
-  if (value !== piece.width) updates.width = value
+  if (value !== piece.w) updates.w = value
 
   value = Number(_('#piece-h').value)
-  if (value !== piece.height) updates.height = value
+  if (value !== piece.h) updates.h = value
 
   value = Number(_('#piece-r').value)
   if (value !== piece.r) updates.r = value

@@ -380,10 +380,10 @@ class FreeBeeGeeAPI
 
         // check the basics and abort on error
         if ($template === null) {
-            $this->api->sendError(400, $msg, 'TEMPLATE_JSON_INVALID');
+            $this->api->sendError(400, $msg . ' - syntax error', 'TEMPLATE_JSON_INVALID');
         }
         if (!property_exists($template, 'engine') || !$this->api->semverSatisfies($this->engine, $template->engine)) {
-            $this->api->sendError(400, $msg, 'TEMPLATE_JSON_INVALID_ENGINE', [$template->engine, $this->engine]);
+            $this->api->sendError(400, 'template.json: game engine mismatch', 'TEMPLATE_JSON_INVALID_ENGINE', [$template->engine, $this->engine]);
         }
 
         // check for more stuff
@@ -435,13 +435,13 @@ class FreeBeeGeeAPI
         string $sid,
         string $json
     ) {
-        $msg = 'validating template.json failed';
+        $msg = 'validating state ' . $sid . '.json failed';
         $state = json_decode($json);
         $validated = [];
 
         // check the basics and abort on error
         if ($state === null) {
-            $this->api->sendError(400, $msg, 'STATE_JSON_INVALID');
+            $this->api->sendError(400, $msg . ' - syntax error', 'STATE_JSON_INVALID');
         }
 
         // check for more stuff
@@ -572,8 +572,8 @@ class FreeBeeGeeAPI
             )
         ) {
             // group.name.1x2x3.808080.png
-            $asset->width = (int)$matches[2];
-            $asset->height = (int)$matches[3];
+            $asset->w = (int)$matches[2];
+            $asset->h = (int)$matches[3];
             $asset->side = $matches[4];
             if ($matches[5] === 'transparent') {
                 $asset->color = $matches[5];
@@ -589,15 +589,15 @@ class FreeBeeGeeAPI
             )
         ) {
             // group.name.1x2x3.png
-            $asset->width = (int)$matches[2];
-            $asset->height = (int)$matches[3];
+            $asset->w = (int)$matches[2];
+            $asset->h = (int)$matches[3];
             $asset->side = $matches[4];
             $asset->color = '#808080';
             $asset->alias = $matches[1];
         } elseif (preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
             // group.name.png
-            $asset->width = 1;
-            $asset->height = 1;
+            $asset->w = 1;
+            $asset->h = 1;
             $asset->side = 1;
             $asset->color = '#808080';
             $asset->alias = $matches[1];
@@ -628,14 +628,14 @@ class FreeBeeGeeAPI
 
                 // this ID only has to be unique within the table, but should be reproducable
                 // therefore we use a fast hash and even only use parts of it
-                $idBase = $type . '/' . $asset->alias . '.' . $asset->width . 'x' . $asset->height . 'x' . $asset->side;
+                $idBase = $type . '/' . $asset->alias . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->side;
                 $asset->id = substr(hash('md5', $idBase), -16);
 
                 if (
                     $lastAsset === null
                     || $lastAsset->alias !== $asset->alias
-                    || $lastAsset->width !== $asset->width
-                    || $lastAsset->height !== $asset->height
+                    || $lastAsset->w !== $asset->w
+                    || $lastAsset->h !== $asset->h
                 ) {
                     // this is a new asset. write out the old.
                     if ($lastAsset !== null) {
@@ -722,11 +722,17 @@ class FreeBeeGeeAPI
                 case 'asset':
                     $validated->asset = $this->api->assertString('asset', $value, '[a-z0-9]+');
                     break;
-                case 'width':
-                    $validated->width = $this->api->assertInteger('width', $value, 1, 32);
+                case 'w':
+                    $val = $this->api->assertInteger('w', $value, 1, 32);
+                    if ($val !== 1) {
+                        $validated->w = $val;
+                    }
                     break;
-                case 'height':
-                    $validated->height = $this->api->assertInteger('height', $value, 1, 32);
+                case 'h':
+                    $val = $this->api->assertInteger('h', $value, 1, 32);
+                    if ($val !== 1) {
+                        $validated->h = $val;
+                    }
                     break;
                 case 'x':
                     $validated->x = $this->api->assertInteger('x', $value, -100000, 100000);
@@ -738,19 +744,34 @@ class FreeBeeGeeAPI
                     $validated->z = $this->api->assertInteger('z', $value, -100000, 100000);
                     break;
                 case 'side':
-                    $validated->side = $this->api->assertInteger('side', $value, 0, 128);
+                    $val = $this->api->assertInteger('side', $value, 0, 128);
+                    if ($val !== 0) {
+                        $validated->side = $val;
+                    }
                     break;
                 case 'border':
-                    $validated->border = $this->api->assertInteger('border', $value, 0, 7);
+                    $val = $this->api->assertInteger('border', $value, 0, 7);
+                    if ($val !== 0) {
+                        $validated->border = $val;
+                    }
                     break;
                 case 'no':
-                    $validated->no = $this->api->assertInteger('no', $value, 0, 15);
+                    $val = $this->api->assertInteger('no', $value, 0, 15);
+                    if ($val !== 0) {
+                        $validated->no = $val;
+                    }
                     break;
                 case 'r':
-                    $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
+                    $val = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
+                    if ($val !== 0) {
+                        $validated->r = $val;
+                    }
                     break;
                 case 'label':
-                    $validated->label = $this->api->assertString('label', $value, '^[^\n\r]{0,32}$');
+                    $val = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
+                    if ($val !== '') {
+                        $validated->label = $val;
+                    }
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -761,7 +782,7 @@ class FreeBeeGeeAPI
             $this->api->assertHasProperties(
                 'piece',
                 $validated,
-                ['layer', 'asset', 'width', 'height', 'x', 'y', 'z'] // no
+                ['layer', 'asset', 'x', 'y', 'z'] // no
             );
         }
 
@@ -954,7 +975,7 @@ class FreeBeeGeeAPI
             }
 
             // add invalid.svg to table | @codingStandardsIgnoreLine
-            file_put_contents($folder . 'invalid.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.4 25.4" height="96" width="96"><path fill="#40bfbf" d="M0 0h25.4v25.4H0z"/><g fill="#fff" stroke="#fff" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M1.9 1.9l21.6 21.6M23.5 1.9L1.9 23.5" stroke-width="1.1"/></g></svg>');
+            file_put_contents($folder . 'invalid.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.4 25.4" ="96" width="96"><path fill="#40bfbf" d="M0 0h25.4v25.4H0z"/><g fill="#fff" stroke="#fff" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M1.9 1.9l21.6 21.6M23.5 1.9L1.9 23.5" stroke-width="1.1"/></g></svg>');
 
             // add/overrule some template.json infos into the table.json
             $table->template = json_decode(file_get_contents($folder . 'template.json'));

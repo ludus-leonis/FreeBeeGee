@@ -242,7 +242,7 @@ export function randomSelected () {
  * @param {Boolean} select If true, the piece will also get selected. Defaults to false.
  */
 export function setPiece (pieceJson, select = false) {
-  pieceJson.height = pieceJson.height < 0 ? pieceJson.width : pieceJson.height
+  pieceJson.h = pieceJson.h < 0 ? pieceJson.w : pieceJson.h
 
   // interim solution to scale old templates in the transition phase
   // TODO remove afterwards
@@ -257,8 +257,8 @@ export function setPiece (pieceJson, select = false) {
   let div = _('#' + pieceJson.id)
   if (div.unique() && (
     div.dataset.layer !== pieceJson.layer ||
-    Number(div.dataset.w) !== pieceJson.width ||
-    Number(div.dataset.h) !== pieceJson.height ||
+    Number(div.dataset.w) !== pieceJson.w ||
+    Number(div.dataset.h) !== pieceJson.h ||
     Number(div.dataset.side) !== pieceJson.side
   )) {
     selection = _('#tabletop .is-selected').id
@@ -455,8 +455,8 @@ export function nodeToPiece (node) {
   if (node.id && node.id !== '') piece.id = node.id
   piece.layer = node.dataset.layer
   piece.asset = node.dataset.asset
-  piece.width = Number(node.dataset.w)
-  piece.height = Number(node.dataset.h)
+  piece.w = Number(node.dataset.w)
+  piece.h = Number(node.dataset.h)
   piece.x = Number(node.dataset.x)
   piece.y = Number(node.dataset.y)
   piece.z = Number(node.dataset.z)
@@ -506,8 +506,8 @@ export function assetToNode (assetJson, side = 0) {
   node.data({
     asset: assetJson.id,
     layer: assetJson.type,
-    w: assetJson.width,
-    h: assetJson.height,
+    w: assetJson.w,
+    h: assetJson.h,
     side: side,
     sides: assetJson.assets.length,
     r: 0,
@@ -537,14 +537,15 @@ export function assetToNode (assetJson, side = 0) {
  */
 export function pieceToNode (pieceJson) {
   const node = assetToNode(getAsset(pieceJson.asset), pieceJson.side ?? 0)
-  node.add(`.is-w-${pieceJson.width}`, `.is-h-${pieceJson.height}`, `.is-wh-${pieceJson.width - pieceJson.height}`)
+  updateNode(node, pieceJson)
 
-  if (pieceJson.layer === 'token' && pieceJson.no !== 0) {
-    node.add('.is-n', '.is-n-' + pieceJson.no)
+  node.add(`.is-w-${node.dataset.w}`, `.is-h-${node.dataset.h}`, `.is-wh-${Number(node.dataset.w) - Number(node.dataset.h)}`)
+
+  if (pieceJson.layer === 'token' && node.dataset.no !== '0') {
+    node.add('.is-n', '.is-n-' + node.dataset.no)
   }
 
-  const ret = updateNode(node, pieceJson)
-  return ret
+  return node
 }
 
 export function popupPiece (id) {
@@ -792,8 +793,8 @@ function updateNode (node, piece) {
   node.data({
     asset: piece.asset,
     layer: piece.layer ?? 'tile',
-    w: piece.width ?? 1,
-    h: piece.height ?? 1,
+    w: piece.w ?? 1,
+    h: piece.h ?? 1,
     x: piece.x ?? 0,
     y: piece.y ?? 0,
     z: piece.z ?? 0,
