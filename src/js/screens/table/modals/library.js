@@ -52,7 +52,7 @@ export function modalLibrary (x, y) {
       <h3 class="modal-title">Add piece</h3>
     `
     _('#modal-body').innerHTML = `
-      <div class="spinner">Loading</div>
+      <div class="has-spinner">Loading</div>
     `
     _('#modal-footer').innerHTML = `
       <button id='btn-close' type="button" class="btn">Cancel</button>

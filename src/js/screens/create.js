@@ -116,6 +116,8 @@ function validate () {
  * Initiates actual table-create after user clicks OK.
  */
 function ok (name) {
+  _('#ok').add('.is-spinner')
+
   const table = {
     name: name
   }
@@ -141,6 +143,7 @@ function ok (name) {
     })
     .catch((error) => {
       console.error(error)
+      _('#ok').remove('.is-spinner')
       if (error instanceof UnexpectedStatus) {
         switch (error.status) {
           case 400:

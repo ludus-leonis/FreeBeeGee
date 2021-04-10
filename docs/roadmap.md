@@ -22,9 +22,7 @@ Here is a list what might happen next. However, priorities can change.
 * [ ] concurrent drag-n-drop - first mover wins
 * [ ] cycle borders hotkey
 * [ ] show small clock
-* [ ] loading indicators
-  * [ ] create-game
-  * [ ] init/load table
+* [X] loading indicators / create-game
 * [ ] add nicer default tiles
 * [ ] pre-release
   * [ ] bugfixing

@@ -28,15 +28,35 @@
   100% { transform: rotate(360deg); }
 }
 
-.spinner {
+@mixin spinner ($spinner-size) {
+  animation: infinite-rotate 1s linear infinite;
+  border-color: transparent transparent $color-white-100 $color-white-100;
+  border-radius: $spinner-size;
+  border-style: solid;
+  border-width: 2px;
+  content: '';
+  height: $spinner-size;
+  width: $spinner-size;
+}
+
+.has-spinner {
   &::after {
-    animation: infinite-rotate 2s linear infinite;
-    content: '\f130';
-    display: inline-block;
-    font-family: bootstrap-icons;
-    font-weight: 900;
+    @include spinner(1em);
     margin-left: .25em;
-    position: relative;
-    top: .2em;
+  }
+}
+
+.btn.is-spinner {
+  color: transparent;
+  cursor: not-allowed;
+  pointer-events: none;
+  position: relative;
+
+  &::after {
+    @include spinner(1em);
+
+    left: calc(50% - .5em);
+    position: absolute;
+    top: calc(50% - .5em);
   }
 }
