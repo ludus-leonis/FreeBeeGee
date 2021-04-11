@@ -37,10 +37,21 @@ $piece-note-glue: rgba(0, 0, 0, .02);
   box-shadow: 0 4px 4px -4px $color-black-85a, 0 46px 2px -2px inset $piece-note-glue; // corner shadow + glue band
   color: $color-bw-fg;
   font-variant-ligatures: none;
+  overflow: hidden;
   padding: $spacing-small;
   position: relative;
   text-align: center;
+  word-break: break-word;
 
+  &::after {
+    bottom: 0;
+    box-shadow: 0 0 32px 3px $color-white-100;
+    content: '';
+    height: 1px;
+    position: absolute;
+    right: 0;
+    width: 15%;
+  }
 
   // --- quality settings ---
 
