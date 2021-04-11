@@ -55,122 +55,127 @@ export function apiGetTemplates () {
 }
 
 /**
- * API GET /games/:gameName/
+ * API GET /tables/:tableName/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetGame (gameName) {
-  return getJson([200], 'api/games/' + gameName + '/')
+export function apiGetTable (tableName) {
+  return getJson([200], 'api/tables/' + tableName + '/')
 }
 
 /**
- * API POST /games/
+ * API POST /tables/
  *
- * @param {Object} game Game meta-JSON/Object to send.
+ * @param {Object} table Table meta-JSON/Object to send.
  * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostGame (game, snapshot) {
+export function apiPostTable (table, snapshot) {
   const formData = new FormData()
-  formData.append('name', game.name)
-  if (game.template) formData.append('template', game.template)
-  if (game.auth) formData.append('auth', game.auth)
+  formData.append('name', table.name)
+  if (table.template) formData.append('template', table.template)
+  if (table.auth) formData.append('auth', table.auth)
   if (snapshot) formData.append('snapshot', snapshot)
 
-  return fetchOrThrow([201], 'api/games/', {
+  return fetchOrThrow([201], 'api/tables/', {
     method: 'POST',
     body: formData
   })
-
-  // return postJson([201], 'api/games/', game) // 409 = existing game
 }
 
 /**
- * API GET /games/:gameName/state/
+ * API DELETE /tables/:tableName/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetState (gameName) {
-  return getJson([200], 'api/games/' + gameName + '/state/')
+export function apiDeleteTable (tableName) {
+  return deleteJson([204], 'api/tables/' + tableName + '/')
 }
 
 /**
- * API PUT /games/:gameName/state/
+ * API GET /tables/:tableName/states/:stateId/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @param {Array} state The new game state (array of pieces).
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
+ * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutState (gameName, state) {
-  return putJson([200], 'api/games/' + gameName + '/state/', state)
+export function apiGetState (tableName, stateId, headers = false) {
+  return getJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/', headers)
 }
 
 /**
- * API HEAD /games/:gameName/state/
+ * API PUT /tables/:tableName/states/:stateId/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
+ * @param {Array} state The new table state (array of pieces).
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiHeadState (gameName) {
-  return head('api/games/' + gameName + '/state/')
+export function apiPutState (tableName, stateId, state) {
+  return putJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/', state)
 }
 
 /**
- * API GET /games/:gameName/state/initial/
+ * API HEAD /tables/:tableName/states/:stateId/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
- * @param {Number} index The number of the save state to fetch, 0 = initial.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetStateSave (gameName, index) {
-  return getJson([200], 'api/games/' + gameName + '/state/save/' + index + '/')
+export function apiHeadState (tableName, stateId) {
+  return head('api/tables/' + tableName + '/states/' + stateId + '/')
 }
 
 /**
- * API PUT /games/:gameName/pieces/
+ * API PUT /tables/:tableName/states/:stateId/pieces/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Object} piece Piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutPiece (gameName, piece) {
-  return putJson([200], 'api/games/' + gameName + '/pieces/' + piece.id + '/', piece)
+export function apiPutPiece (tableName, stateId, piece) {
+  return putJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + piece.id + '/', piece)
 }
 
 /**
- * API PATCH /games/:gameName/pieces/:pieceId/
+ * API PATCH /tables/:tableName/states/:stateId/pieces/:pieceId/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {String} pieceId Piece-ID (ID) of piece to patch.
  * @param {Object} patch Partial piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPiece (gameName, pieceId, patch) {
-  return patchJson([200], 'api/games/' + gameName + '/pieces/' + pieceId + '/', patch)
+export function apiPatchPiece (tableName, stateId, pieceId, patch) {
+  return patchJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + pieceId + '/', patch)
 }
 
 /**
- * API DELETE /games/:gameName/pieces/:pieceId/
+ * API DELETE /tables/:tableName/states/:stateId/pieces/:pieceId/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {String} pieceId Piece-ID (ID) of piece to delete.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeletePiece (gameName, pieceId) {
-  return deleteJson([204], 'api/games/' + gameName + '/pieces/' + pieceId + '/')
+export function apiDeletePiece (tableName, stateId, pieceId) {
+  return deleteJson([204], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + pieceId + '/')
 }
 
 /**
- * API POST /games/:gameName/pieces/
+ * API POST /tables/:tableName/states/:stateId/pieces/
  *
- * @param {String} gameName Name of game, e.g. 'funnyLovingWhale'.
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Object} piece Piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostPiece (gameName, piece) {
-  return postJson([201], 'api/games/' + gameName + '/pieces/', piece)
+export function apiPostPiece (tableName, stateId, piece) {
+  return postJson([201], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/', piece)
 }
 
 // --- internal methods --------------------------------------------------------
@@ -181,34 +186,35 @@ export function apiPostPiece (gameName, piece) {
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
  * @param {Object} data Optional playload for request.
+ * @param {Boolean} headers If true, the HTTP headers will be added as '_headers'
+ *                          to the JSON reply.
  * @return {Promse} Promise of a JSON object.
  * @throw {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
-function fetchOrThrow (expectedStatus, path, data = null) {
+function fetchOrThrow (expectedStatus, path, data = null, headers = false) {
   return globalThis.fetch(path, data)
     .then(response => {
       return response.text()
-        .then(text => {
+        .then(text => { // manually parse payload so we can handle parse errors
           try {
             if (response.status === 204) { // no-content
               return {}
             } else {
               return JSON.parse(text)
             }
-          } catch (error) {
+          } catch (error) { // JSON parsing error
             throw new UnexpectedStatus(response.status, text)
           }
         })
         .then(json => {
-          // we now have response code + json paylod, but don't know yet if it
+          // we now have response code + json payload, but don't know yet if it
           // was an error
           if (expectedStatus.includes(response.status)) {
-            if (response.status === 204) { // no content
-              return {}
-            } else {
-              return json
+            if (headers) {
+              return { headers: response.headers, body: json }
             }
-          } else {
+            return json
+          } else { // unexpected status code
             throw new UnexpectedStatus(response.status, json)
           }
         })
@@ -246,10 +252,11 @@ function head (path) {
  *
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
+ * @param {Boolean} headers If true, reply with a headers/payload object.
  * @return {Promse} Promise of a JSON object.
  */
-function getJson (expectedStatus, path) {
-  return fetchOrThrow(expectedStatus, path)
+function getJson (expectedStatus, path, headers = false) {
+  return fetchOrThrow(expectedStatus, path, null, headers)
 }
 
 /**

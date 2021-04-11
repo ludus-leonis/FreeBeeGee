@@ -1,0 +1,73 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Sticky notes.
+///
+/// @access public
+////
+
+$piece-note-glue: rgba(0, 0, 0, .02);
+
+.piece.piece-note {
+  @extend %flex-center-center;
+  @include typography-font($typography-font-list-hand, 400, px(32), 1.15em, .025em);
+
+  $note-rotate: 10deg;
+
+  background-color: $color-08;
+  border-bottom-left-radius: 1px 90%;
+  border-bottom-right-radius: 50% 4px;
+  box-shadow: 0 4px 4px -4px $color-black-85a, 0 46px 2px -2px inset $piece-note-glue; // corner shadow + glue band
+  color: $color-bw-fg;
+  font-variant-ligatures: none;
+  overflow: hidden;
+  padding: $spacing-small;
+  position: relative;
+  text-align: center;
+  word-break: break-word;
+
+  &::after {
+    bottom: 0;
+    box-shadow: 0 0 32px 3px $color-white-100;
+    content: '';
+    height: 1px;
+    position: absolute;
+    right: 0;
+    width: 15%;
+  }
+
+  // --- quality settings ---
+
+  .is-quality-ultra & {
+    @include piece-rotate(0deg, $note-rotate);
+
+    &.is-rotate-90 {
+      @include piece-rotate(0deg, $note-rotate);
+    }
+
+    &.is-rotate-180 {
+      @include piece-rotate(0deg, $note-rotate);
+    }
+
+    &.is-rotate-270 {
+      @include piece-rotate(0deg, $note-rotate);
+    }
+  }
+}

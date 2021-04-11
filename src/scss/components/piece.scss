@@ -26,40 +26,40 @@
 $piece-color: $color-gray-95;
 $piece-tile-size: 64px;
 $piece-border-size: 3px;
-$piece-border-radius: 3px;
+$piece-border-radius: 2px;
 $piece-margin-size: 4px;
 $piece-rotate: 1deg;
 
-$piece-shadow: 2px 2px 2px $color-black-75a;
-$piece-shadow-90: 2px -2px 2px $color-black-75a;
-$piece-shadow-180: -2px -2px 2px $color-black-75a;
-$piece-shadow-270: -2px 2px 2px $color-black-75a;
+$piece-shadow: 3px 2px 2px $color-black-65a;
+$piece-shadow-90: 2px -3px 2px $color-black-65a;
+$piece-shadow-180: -3px -2px 2px $color-black-65a;
+$piece-shadow-270: -2px 3px 2px $color-black-65a;
 
 $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
-$piece-shadow-flat: 2px 2px 0 $color-black-25a;
-$piece-shadow-flat-90: 2px -2px 0 $color-black-25a;
-$piece-shadow-flat-180: -2px -2px 0 $color-black-25a;
-$piece-shadow-flat-270: -2px 2px 0 $color-black-25a;
-$piece-shadow-flat-overlay: 2px 2px 0 $color-black-25a;
+$piece-shadow-flat: 3px 2px 0 $color-black-25a;
+$piece-shadow-flat-90: 2px -3px 0 $color-black-25a;
+$piece-shadow-flat-180: -3px -2px 0 $color-black-25a;
+$piece-shadow-flat-270: -2px 3px 0 $color-black-25a;
+$piece-shadow-flat-overlay: 3px 2px 0 $color-black-25a;
 
-@mixin piece-rotate($r, $amount, $pre: '', $post: '') {
-  &[id^='0'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 0) #{$post}; }
-  &[id^='1'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 1) #{$post}; }
-  &[id^='2'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 2) #{$post}; }
-  &[id^='3'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 3) #{$post}; }
-  &[id^='4'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 4) #{$post}; }
-  &[id^='5'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 5) #{$post}; }
-  &[id^='6'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 6) #{$post}; }
-  &[id^='7'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 7) #{$post}; }
-  &[id^='8'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 8) #{$post}; }
-  &[id^='9'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 9) #{$post}; }
-  &[id^='a'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 10) #{$post}; }
-  &[id^='b'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 11) #{$post}; }
-  &[id^='c'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 12) #{$post}; }
-  &[id^='d'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 13) #{$post}; }
-  &[id^='e'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 14) #{$post}; }
-  &[id^='f'] { transform: #{$pre} rotate($r + ($amount / 2) - $amount / 16 * 15) #{$post}; }
+@mixin piece-rotate($r, $amount) {
+  &[id^='0'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 0); }
+  &[id^='1'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 1); }
+  &[id^='2'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 2); }
+  &[id^='3'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 3); }
+  &[id^='4'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 4); }
+  &[id^='5'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 5); }
+  &[id^='6'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 6); }
+  &[id^='7'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 7); }
+  &[id^='8'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 8); }
+  &[id^='9'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 9); }
+  &[id^='a'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 10); }
+  &[id^='b'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 11); }
+  &[id^='c'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 12); }
+  &[id^='d'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 13); }
+  &[id^='e'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 14); }
+  &[id^='f'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 15); }
 }
 
 @mixin piece-translate($amount) {
@@ -157,8 +157,13 @@ $label-offset: 8px;
   $piece-tile-half: $piece-tile-size / 2;
 
   &.is-selected {
-    #{'--fbg-border-color'}: $color-secondary !important; // sass-lint:disable-line no-important
-    box-shadow: 0 0 0 $piece-border-size $color-secondary inset !important; // sass-lint:disable-line no-important
+    $selected-color: $color-secondary;
+    filter:
+    drop-shadow(0 0 1.5px $selected-color)
+    drop-shadow(0 0 0 $selected-color)
+    drop-shadow(0 0 0 $selected-color)
+    drop-shadow(0 0 0 $selected-color)
+    drop-shadow(0 0 0 $selected-color) !important; // sass-lint:disable-line no-important
   }
 
   // --- size ------------------------------------------------------------------
@@ -167,7 +172,7 @@ $label-offset: 8px;
     &.is-w-#{$x} {
       width: $x * $piece-tile-size;
       &.is-rotate-270 { transform-origin: $piece-tile-half * $x $piece-tile-half * $x; }
-      &.piece-token.is-rotate-270 { transform-origin: $piece-tile-half * $x - $piece-border-radius $piece-tile-half * $x - $piece-border-radius; }
+      &.piece-token.is-rotate-270 { transform-origin: $piece-tile-half * $x - $piece-border-size $piece-tile-half * $x - $piece-border-size; }
     }
   }
 
@@ -175,7 +180,7 @@ $label-offset: 8px;
     &.is-h-#{$y} {
       height: $y * $piece-tile-size;
       &.is-rotate-90 { transform-origin: $piece-tile-half * $y $piece-tile-half * $y; }
-      &.piece-token.is-rotate-90 { transform-origin: $piece-tile-half * $y - $piece-border-radius $piece-tile-half * $y - $piece-border-radius; }
+      &.piece-token.is-rotate-90 { transform-origin: $piece-tile-half * $y - $piece-border-size $piece-tile-half * $y - $piece-border-size; }
     }
   }
 
@@ -304,21 +309,33 @@ $label-offset: 8px;
 
   .is-quality-ultra & {
     @include piece-rotate(0deg, $piece-rotate);
-    box-shadow: 3px 3px 1px -2px $color-white-15a inset, -3px -3px 1px -2px $color-black-20a inset;
+    @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+      &.is-w-#{$x} { transform: none; }
+      &.is-y-#{$x} { transform: none; }
+    }
 
     &.is-rotate-90 {
       @include piece-rotate(90deg, $piece-rotate);
-      box-shadow: 3px -3px 1px -2px $color-white-15a inset, -3px 3px 1px -2px $color-black-20a inset;
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(90deg); }
+        &.is-y-#{$x} { transform: rotate(90deg); }
+      }
     }
 
     &.is-rotate-180 {
       @include piece-rotate(180deg, $piece-rotate);
-      box-shadow: -3px -3px 1px -2px $color-white-15a inset, 3px 3px 1px -2px $color-black-20a inset;
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(180deg); }
+        &.is-y-#{$x} { transform: rotate(180deg); }
+      }
     }
 
     &.is-rotate-270 {
       @include piece-rotate(270deg, $piece-rotate);
-      box-shadow: -3px 3px 1px -2px $color-white-15a inset, 3px -3px 1px -2px $color-black-20a inset;
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(270deg); }
+        &.is-y-#{$x} { transform: rotate(270deg); }
+      }
     }
   }
 }
@@ -333,6 +350,8 @@ $label-offset: 8px;
   border-radius: $piece-tile-size;
   margin: $piece-border-size;
 
+  $is-n-size: 1rem;
+
   &.is-n::after {
     align-items: center;
     background-color: var(--fbg-border-color);
@@ -341,14 +360,39 @@ $label-offset: 8px;
     flex-direction: row;
     font-size: .85em;
     font-weight: 600;
-    height: 1rem;
+    height: $is-n-size;
     justify-content: center;
-    margin-top: -.5rem;
+    margin-top: $is-n-size / -2;
     position: absolute;
-    right: -3px;
+    right: -$piece-border-size;
     top: 50%;
-    width: 1rem;
+    width: $is-n-size;
   }
+
+  &.is-n.is-rotate-90::after {
+    left: 50%;
+    margin-left: $is-n-size / -2;
+    margin-top: 0;
+    right: initial;
+    top: -$piece-border-size;
+    transform: rotate(-90deg);
+  }
+
+  &.is-n.is-rotate-180::after {
+    left: -$piece-border-size;
+    right: initial;
+    transform: rotate(-180deg);
+  }
+
+  &.is-n.is-rotate-270::after {
+    left: 50%;
+    margin-left: $is-n-size / -2;
+    margin-top: 0;
+    right: initial;
+    top: calc(100% - #{$is-n-size} + #{$piece-border-size});
+    transform: rotate(-270deg);
+  }
+
   &.is-n-1::after { content: '1'; }
   &.is-n-2::after { content: '2'; }
   &.is-n-3::after { content: '3'; }
@@ -431,21 +475,36 @@ $label-offset: 8px;
   }
 
   .is-quality-ultra & {
-    @include piece-rotate(0deg, $piece-rotate * 2);
+    @include piece-rotate(0deg, $piece-rotate * 4);
+    @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+      &.is-w-#{$x} { transform: none; }
+      &.is-y-#{$x} { transform: none; }
+    }
 
     &.is-rotate-90 {
-      @include piece-rotate(0deg, $piece-rotate * 2);
+      @include piece-rotate(0deg, $piece-rotate * 4);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(90deg); }
+        &.is-y-#{$x} { transform: rotate(90deg); }
+      }
     }
 
     &.is-rotate-180 {
-      @include piece-rotate(0deg, $piece-rotate * 2);
+      @include piece-rotate(0deg, $piece-rotate * 4);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(180deg); }
+        &.is-y-#{$x} { transform: rotate(180deg); }
+      }
     }
 
     &.is-rotate-270 {
-      @include piece-rotate(0deg, $piece-rotate * 2);
+      @include piece-rotate(0deg, $piece-rotate * 4);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate(270deg); }
+        &.is-y-#{$x} { transform: rotate(270deg); }
+      }
     }
   }
-
 }
 
 // --- helpers -----------------------------------------------------------------
@@ -472,12 +531,12 @@ $label-offset: 8px;
 
   > .is-max-1,
   > .is-max-2 {
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) !important; // sass-lint:disable-line no-important
   }
 
   @for $x from 3 through 32 {
     > .is-max-#{$x} {
-      transform: scale(2 / $x) translate(-50%, -50%);
+      transform: scale(2 / $x) translate(-50%, -50%) !important; // sass-lint:disable-line no-important
       transform-origin: top left;
     }
   }

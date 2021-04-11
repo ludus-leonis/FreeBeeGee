@@ -27,10 +27,13 @@ import {
   toTopSelected,
   randomSelected,
   numberSelected,
+  createNote,
+  outlineSelected,
   toBottomSelected,
   toggleLayer
 } from '.'
 import { isDragging, getMouseTileX, getMouseTileY } from './mouse.js'
+import { touch } from './sync.js'
 import {
   modalActive,
   modalClose
@@ -40,7 +43,7 @@ import { modalHelp } from './modals/help.js'
 import _ from '../../FreeDOM.js'
 
 /** register the keyboard handler on document load */
-document.addEventListener('keydown', keydown => handleGameKeys(keydown))
+document.addEventListener('keydown', keydown => handleTableKeys(keydown))
 
 /**
  * Call proper functions after certain keys are pressed.
@@ -48,10 +51,12 @@ document.addEventListener('keydown', keydown => handleGameKeys(keydown))
  * @param {KeyboardEvent} keydown The triggering event.
  * @return {Boolean} True if we could handle the event, false if it should bubble.
  */
-function handleGameKeys (keydown) {
+function handleTableKeys (keydown) {
   if (!_('#tabletop').exists()) return
 
-  if (keydown.key === 'Escape') {
+  touch()
+
+  if (keydown.key === 'Escape') { // close modals on ESC
     if (modalActive()) {
       modalClose()
       keydown.stopPropagation()
@@ -76,8 +81,11 @@ function handleGameKeys (keydown) {
       case '4': // toggle layer
         toggleLayer('tile')
         break
-      case 'a': // add pice
+      case 'l': // library / add piece
         modalLibrary(getMouseTileX(), getMouseTileY())
+        break
+      case 'n': // library / add piece
+        createNote(getMouseTileX(), getMouseTileY())
         break
       case 'b': // to-bottom
         toBottomSelected()
@@ -94,6 +102,9 @@ function handleGameKeys (keydown) {
         break
       case 'f': // flip
         flipSelected()
+        break
+      case 'o': // color/outline selected
+        outlineSelected()
         break
       case 'h': // help
       case 'H':

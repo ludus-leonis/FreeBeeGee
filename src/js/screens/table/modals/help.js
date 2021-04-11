@@ -20,7 +20,7 @@
 import _ from '../../../FreeDOM.js'
 
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
-import { getTable, stateGetGamePref, stateSetGamePref } from '../state.js'
+import { getTabletop, stateGetTablePref, stateSetTablePref } from '../state.js'
 import marked from 'marked'
 
 // --- public ------------------------------------------------------------------
@@ -49,13 +49,13 @@ export function modalHelp () {
         </div>
         <div class="tabs-content">
           <div class="primer">
-            <p>FreeBeeGee is a shared, virtual gaming tabletop. Everyone who joins a game will see the same table and all the gaming pieces on it. If someone adds, moves or removes pieces, the other players will see this immediately.</p>
+            <p>FreeBeeGee is a shared, virtual gaming tabletop. Everyone who joins a table will see the same gaming pieces on it. If someone adds, moves or removes pieces, the other players will see this immediately.</p>
 
             <p>On our table, everyone is equal. There is no game master or superuser. Everyone can manipulate what's there. Please be polite.</p>
 
             <h2 class="h3">Layers</h2>
 
-            <p>Your game has different layers, containing pieces of a specific type each. From top to bottom the layers are:</p>
+            <p>Your table has different layers, containing pieces of a specific type each. From top to bottom the layers are:</p>
             <ul>
               <li><strong>Dice</strong> are your friendly random number generators.</li>
               <li><strong>Tokens</strong> are round player figures, usually heroes and monsters.</li>
@@ -87,13 +87,15 @@ export function modalHelp () {
           <div class="hotkeys">
             <p>The following hotkeys are available on the <strong>table</strong>:</p>
             <p><span class="key">1</span> / <span class="key">2</span> / <span class="key">3</span> / <span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
-            <p><span class="key">a</span> Add a new piece / show library. Hint: The new piece will be added at the position your mouse cursor was before the library window opened.</p>
+            <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library window opened.</p>
+            <p><span class="key">n</span> Add a new sticky note. Hint: The note will be added at the position the mouse cursor is.</p>
             <p><span class="key">S</span> Show the table statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
             <p><span class="key">r</span> Rotate piece.</p>
             <p><span class="key">f</span> Flip over piece. Some pieces have more than two sides.</p>
+            <p><span class="key">o</span> Change outline/border color (token only).</p>
             <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
             <p><span class="key">t</span> Move selected piece to the top of its layer.</p>
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
@@ -115,9 +117,9 @@ export function modalHelp () {
 
             <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more table background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
 
-            <h3>Game assets</h3>
+            <h3>Table assets</h3>
 
-            ${marked(getTable().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+            ${marked(getTabletop().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
           </div>
         </div>
       </div>
@@ -128,10 +130,10 @@ export function modalHelp () {
     `
 
     _('input[name="tabs"]').on('change', change => {
-      stateSetGamePref('modalHelpTab', change.target.id)
+      stateSetTablePref('modalHelpTab', change.target.id)
     })
 
-    const preselect = stateGetGamePref('modalHelpTab') ?? 'tab-1'
+    const preselect = stateGetTablePref('modalHelpTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 
     _('#btn-close').on('click', () => getModal().hide())

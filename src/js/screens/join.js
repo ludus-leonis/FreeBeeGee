@@ -1,5 +1,5 @@
 /**
- * @file The join-game screen.
+ * @file The join-table screen.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -18,7 +18,8 @@
  */
 
 import { createScreen } from '../screen.js'
-import { createGame } from './create.js'
+import { createTable } from './create.js'
+import { runTable } from './table'
 
 import { stateGetServerInfo } from '../state.js'
 import _ from '../FreeDOM.js'
@@ -27,20 +28,36 @@ import {
   generateName,
   generateUsername
 } from '../utils.js'
-import { apiGetGame } from '../api.js'
+import { apiGetTable } from '../api.js'
+import { navigateToTable } from '../nav.js'
 
-/** Limit game names like hilariousGazingPenguin */
-const gameNameMaxLength = 48
+/** Limit table names like hilariousGazingPenguin */
+const tableNameMaxLength = 48
 
 /**
- * Show a join-game dialog.
+ * Show the enter-name dialog or skip it if name was already given.
+ *
+ * @param {String} tableName Table name.
  */
-export function runJoin () {
+export function runJoin (tableName) {
+  if (tableName) {
+    openOrCreate(tableName)
+  } else {
+    showJoinDialog()
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+/**
+ * Show a join-table dialog.
+ */
+function showJoinDialog () {
   createScreen(
     'Pick a table',
     `
-      <label for="game">Table name</label>
-      <input id="game" name="game" type="text" placeholder="DustyDish" maxlength="${gameNameMaxLength}" pattern="[a-zA-Z0-9]{8,${gameNameMaxLength}}">
+      <label for="name">Table name</label>
+      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${tableNameMaxLength}" pattern="[a-zA-Z0-9]{8,${tableNameMaxLength}}">
       <p class="p-small spacing-tiny">Min. 8 characters - no spaces or funky letters, please.</p>
 
       <!--label for="user">Your name</label-->
@@ -53,8 +70,8 @@ export function runJoin () {
     `This server deletes tables after ${stateGetServerInfo().ttl}h of inactivity.`
   )
 
-  const game = _('#game')
-  game.on('keydown', keydown => {
+  const name = _('#name')
+  name.on('keydown', keydown => {
     var key = keydown.keyCode
 
     // allow letters + digits
@@ -94,15 +111,15 @@ export function runJoin () {
     // deny rest
     keydown.preventDefault()
   })
-  game.on('paste', paste => {
+  name.on('paste', paste => {
     setTimeout(() => {
-      const input = _('#game')
-      input.value = input.value.replace(/[^a-zA-Z0-9]/gi, '').substr(0, gameNameMaxLength)
+      const input = _('#name')
+      input.value = input.value.replace(/[^a-zA-Z0-9]/gi, '').substr(0, tableNameMaxLength)
     })
   })
-  game.value = getGetParameter('game').replace(/[^a-zA-Z0-9]/gi, '').substr(0, gameNameMaxLength)
-  game.placeholder = generateName()
-  game.focus()
+  name.value = getGetParameter('table').replace(/[^a-zA-Z0-9]/gi, '').substr(0, tableNameMaxLength)
+  name.placeholder = generateName()
+  name.focus()
 
   const user = _('#user')
   user.value = getGetParameter('user').trim()
@@ -112,18 +129,26 @@ export function runJoin () {
 }
 
 /**
- * Initiates actual game-join after user clicks OK.
+ * Initiates actual table-join after user clicks OK.
  */
 function ok () {
   const invalid = document.querySelector('input:invalid')
   if (invalid) {
     invalid.focus()
   } else {
-    const name = _('#game').valueOrPlaceholder()
-    apiGetGame(name)
-      .then((game) => {
-        document.location = './#/game/' + game.name
-      })
-      .catch(() => createGame(name))
+    navigateToTable(_('#name').valueOrPlaceholder())
   }
+}
+
+/**
+ * Try to open/init a table. If it does not exist, show the create screen.
+ *
+ * @param {String} tableName Table name.
+ */
+function openOrCreate (name) {
+  apiGetTable(name)
+    .then((table) => {
+      runTable(name)
+    })
+    .catch(() => createTable(name))
 }

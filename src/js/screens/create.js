@@ -1,5 +1,5 @@
 /**
- * @file The create-a-game screen.
+ * @file The create-a-table screen.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -20,25 +20,26 @@
 import { createScreen, serverFeedback } from '../screen.js'
 import { runError } from './error.js'
 
-import { createGame as stateCreateGame } from './game/state.js'
+import { createTable as stateCreateTable } from './table/state.js'
 import { stateGetServerInfo } from '../state.js'
 import _ from '../FreeDOM.js'
 import { apiGetTemplates, UnexpectedStatus } from '../api.js'
+import { navigateToTable } from '../nav.js'
 
 /**
- * Show a create-game dialog.
+ * Show a create-table dialog.
  *
- * @param {String} name The game name the user entered in the join dialog.
+ * @param {String} name The table name the user entered in the join dialog.
  */
-export function createGame (name) {
-  if (stateGetServerInfo().openSlots <= 0) {
+export function createTable (name) {
+  if (stateGetServerInfo().freeTables <= 0) {
     runError('NO_SLOT')
     return
   }
 
   const templateHelp = stateGetServerInfo().snapshotUploads
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
-    : 'Let us know what kind of game we may prepare for you.'
+    : 'Let us know what kind of table we may prepare for you.'
 
   createScreen(
     'Setup your table',
@@ -112,16 +113,18 @@ function validate () {
 }
 
 /**
- * Initiates actual game-create after user clicks OK.
+ * Initiates actual table-create after user clicks OK.
  */
 function ok (name) {
-  const game = {
+  _('#ok').add('.is-spinner')
+
+  const table = {
     name: name
   }
 
   const password = _('#password').value ?? null
   if (password !== null) {
-    game.auth = password
+    table.auth = password
   }
 
   let snapshot = null
@@ -131,15 +134,16 @@ function ok (name) {
       snapshot = file.files[0]
     }
   } else { // exisiting template mode
-    game.template = _('#template').value
+    table.template = _('#template').value
   }
 
-  stateCreateGame(game, snapshot)
-    .then((remoteGame) => {
-      document.location = './#/game/' + remoteGame.name
+  stateCreateTable(table, snapshot)
+    .then((remoteTable) => {
+      navigateToTable(remoteTable.name)
     })
     .catch((error) => {
       console.error(error)
+      _('#ok').remove('.is-spinner')
       if (error instanceof UnexpectedStatus) {
         switch (error.status) {
           case 400:

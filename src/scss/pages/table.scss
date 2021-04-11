@@ -23,7 +23,7 @@
 /// @access public
 ////
 
-.game {
+.table {
   $menu-icon-size: 32px;
   $menu-shadow: rgba(0, 0, 0, .5);
 
@@ -46,7 +46,7 @@
     position: fixed;
     top: 0;
     width: $menu-icon-size;
-    z-index: 100;
+    z-index: $z-index-menu;
 
     .menu-brand {
       background-color: $color-gray-85;

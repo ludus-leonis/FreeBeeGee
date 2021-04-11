@@ -23,8 +23,6 @@
 /// @access public
 ////
 
-$modal-zindex: 1000;
-
 .modal {
   align-items: center;
   display: none;
@@ -36,7 +34,7 @@ $modal-zindex: 1000;
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: $modal-zindex + 50;
+  z-index: $z-index-modal + 50;
 
   &.show {
     display: flex !important; // sass-lint:disable-line no-important
@@ -53,6 +51,12 @@ $modal-zindex: 1000;
   &-large {
     .modal-dialog {
       @extend %is-large;
+    }
+  }
+
+  &-small {
+    .modal-dialog {
+      @extend %is-small;
     }
   }
 }
@@ -102,17 +106,23 @@ $modal-zindex: 1000;
   margin: 0;
   max-height: 70vh;
   overflow-y: auto;
-  padding: $spacing-medium;
+  padding: $spacing-medium $spacing-medium $spacing-small;
 
   .piece {
     pointer-events: none;
     position: relative;
   }
 
-  .col-card p {
-    margin: $spacing-tiny auto $spacing-small;
-    text-align: center;
-    width: 128px;
+  .col-card {
+    .is-scale-2 {
+      cursor: pointer;
+    }
+
+    p {
+      margin: $spacing-tiny auto $spacing-small;
+      text-align: center;
+      width: 128px;
+    }
   }
 }
 
@@ -139,5 +149,5 @@ $modal-zindex: 1000;
   position: fixed;
   top: 0;
   width: 100vw;
-  z-index: $modal-zindex + 40;
+  z-index: $z-index-modal + 40;
 }

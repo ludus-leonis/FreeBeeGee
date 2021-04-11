@@ -2,43 +2,45 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.6 - Uploading Unicorn
+## v0.7 - Uploading Unicorn
 
 * [ ] upload custom images for tiles & tokens via web UI
-* [ ] fancier implementation for dynamic poll intervalls
-  * [ ] show "you have been inactive" dialog after 10min
-  * [ ] decrease poll intervall on mouse/keyboard activity
-* [ ] rename "game" to "table"
-* [ ] scroll to last position/center of setup/table when opening new tables
-* [ ] remove default entries from json files before save (e.g. side=0)
-* [ ] reduce impact of "back" button
-* [ ] delete table
-* [ ] template GDRP privacy statement
-* [ ] fix Firefox reset-table bug
+* [ ] table passwords
+* [ ] add nicer default tiles
+* [ ] concurrent drag-n-drop - first mover wins
+* [ ] make zip upload more robust
+  * [ ] ignore unknown files instead rejecting them
+  * [ ] auto-create missing state json
+  * [ ] auto-create missing license
 * [ ] pre-release
   * [ ] bugfixing
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
-  * [ ] bump version & update CHANGELOG
+  * [ ] bump version/codename & update CHANGELOG
 
-## v0.7 - Mobile Monkey
+## v0.8 - Mobile Monkey
 
 * better tablet / touch support
+* reuse pieces' DOM elements more
+* generic marker overlay (X, ?, ...)
+* docs how to make table/template `.zip`s
+
+## v0.9 - Clean Cat
+
+* reduce impact of "back" button
+* remove default entries from json files before save (e.g. side=0)
+* add template version to asset urls
 * catch all unhandled warnings/exceptions in PHP API and return 500
-* URL mapping for example.org/roomname -> example.org/#/game/roomname
-* docs how to make game/template `.zip`s
-* update screenshots
 
 ## Backlog (unsorted)
 
 ### rather sooner
 
-* add template version to asset urls
+* protect pieces (no-delete, no-move)
+* meta-piece: supply heap
 * overlay-grid-on-tile option
 * hide .../data/... from URLs (via .htaccess)
-* distinct select-token look from outline
-* persist scroll position between page refresh
 * change table size
 * support for stacks/decks of cards
   * shuffle deck/stack
@@ -69,13 +71,18 @@ Here is a list what might happen next. However, priorities can change.
 * tour / first-time-tutorial
 * API Docs
 * randomize button on dicemat
+* cycle border colors
 
 ### rather later
 
+* in-game clock
+* game rules / metainfos (pdf) links in help
+* send to previous position for pieces
 * point-somewhere feature
 * detail-pane to the right for selected item
 * move stuff via cursor keys
-* rename game
+* in-game clock
+* rename table
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals
 * arbitrary snap (e.g. 1px)
@@ -96,7 +103,7 @@ Here is a list what might happen next. However, priorities can change.
 * users + roles
   * admins, players, spectators
   * vote for new admin / gm
-* cache/resuse/symlink same assets in different game folders (via sha256?)
+* cache/resuse/symlink same assets in different table folders (via sha256?)
 * common shadow layer for tile layer
 * download map/table as PDF for printing
 * cutcenes / message panels

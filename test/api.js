@@ -121,7 +121,7 @@ function testJsonPut (path, payload, payloadTests, status = 200) {
  *                     further checking.
  */
 function testJsonPatch (path, payload, payloadTests, status = 200) {
-  it(`PUT ${API_URL}${path()}`, function (done) {
+  it(`PATCH ${API_URL}${path()}`, function (done) {
     chai.request(API_URL)
       .patch(path())
       .set('content-type', 'application/json')
@@ -168,7 +168,7 @@ describe('API Server-Info', function () {
   testJsonGet(() => '/', body => {
     expect(body).to.be.an('object')
     expect(body.createPassword).to.be.eql(true)
-    expect(body.openSlots).to.be.eql(16)
+    expect(body.freeTables).to.be.eql(16)
     expect(body.ttl).to.be.eql(48)
     expect(body.version).to.match(/^[0-9]+\.[0-9]+\.[0-9]+/)
   })
@@ -182,24 +182,24 @@ describe('API Templates', function () {
   })
 })
 
-describe('CRUD game', function () {
-  // get game - should not be there yet
-  testJsonGet(() => '/games/crudGame/', body => {
+describe('CRUD table', function () {
+  // get table - should not be there yet
+  testJsonGet(() => '/tables/crudTable/', body => {
     expect(body).to.be.an('object')
-    expect(body._messages).to.include('not found: crudGame')
+    expect(body._messages).to.include('not found: crudTable')
   }, 404)
 
-  // create game
-  testJsonPost(() => '/games/', () => {
+  // create table
+  testJsonPost(() => '/tables/', () => {
     return {
-      name: 'crudGame',
+      name: 'crudTable',
       template: 'RPG',
       auth: 'apitests'
     }
   }, body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
-    expect(body.name).to.be.eql('crudGame')
+    expect(body.name).to.be.eql('crudTable')
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.tables).to.be.an('array')
     expect(body.tables[0].name).to.be.eql('Main')
@@ -215,19 +215,20 @@ describe('CRUD game', function () {
     expect(body.tables[0].library.token).to.be.an('array')
     expect(body.tables[0].template).to.be.an('object')
     expect(body.tables[0].template.type).to.be.eql('grid-square')
+    expect(body.tables[0].template.snapSize).to.be.eql(32)
     expect(body.tables[0].template.gridSize).to.be.eql(64)
-    expect(body.tables[0].template.width).to.be.eql(48)
-    expect(body.tables[0].template.height).to.be.eql(32)
+    expect(body.tables[0].template.gridWidth).to.be.eql(48)
+    expect(body.tables[0].template.gridHeight).to.be.eql(32)
     expect(body.tables[0].template.version).to.be.eql(p.version)
     expect(body.tables[0].template.engine).to.be.eql('^' + p.versionEngine)
     expect(body.tables[0].template.colors).to.be.an('array')
   }, 201)
 
-  // read game
-  testJsonGet(() => '/games/crudGame/', body => {
+  // read table
+  testJsonGet(() => '/tables/crudTable/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
-    expect(body.name).to.be.eql('crudGame')
+    expect(body.name).to.be.eql('crudTable')
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.tables).to.be.an('array')
     expect(body.tables[0].name).to.be.eql('Main')
@@ -243,24 +244,25 @@ describe('CRUD game', function () {
     expect(body.tables[0].library.token).to.be.an('array')
     expect(body.tables[0].template).to.be.an('object')
     expect(body.tables[0].template.type).to.be.eql('grid-square')
+    expect(body.tables[0].template.snapSize).to.be.eql(32)
     expect(body.tables[0].template.gridSize).to.be.eql(64)
-    expect(body.tables[0].template.width).to.be.eql(48)
-    expect(body.tables[0].template.height).to.be.eql(32)
+    expect(body.tables[0].template.gridWidth).to.be.eql(48)
+    expect(body.tables[0].template.gridHeight).to.be.eql(32)
     expect(body.tables[0].template.version).to.be.eql(p.version)
     expect(body.tables[0].template.engine).to.be.eql('^' + p.versionEngine)
     expect(body.tables[0].template.colors).to.be.an('array')
   }, 200)
 
-  // update game
+  // update table
   // [not possible yet]
 
-  // delete game
+  // delete table
   // [not possible yet]
 })
 
 describe('CRUD state', function () {
-  // create game
-  testJsonPost(() => '/games/', () => {
+  // create table
+  testJsonPost(() => '/tables/', () => {
     return {
       name: 'crudState',
       template: 'RPG',
@@ -272,26 +274,26 @@ describe('CRUD state', function () {
   }, 201)
 
   // get state
-  testJsonGet(() => '/games/crudState/state/', body => {
+  testJsonGet(() => '/tables/crudState/states/1/', body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.gt(5)
     data = body
   })
 
   // get initial state
-  testJsonGet(() => '/games/crudState/state/save/0/', save => {
+  testJsonGet(() => '/tables/crudState/states/0/', save => {
     expect(save).to.be.eql(data)
     data = save
   })
 
-  // reset game
-  testJsonPut(() => '/games/crudState/state/', () => [], body => {
+  // reset table
+  testJsonPut(() => '/tables/crudState/states/1/', () => [], body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
 
   // get state again - still empty
-  testJsonGet(() => '/games/crudState/state/', body => {
+  testJsonGet(() => '/tables/crudState/states/1/', body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
@@ -300,8 +302,8 @@ describe('CRUD state', function () {
 })
 
 describe('CRUD piece', function () {
-  // create game
-  testJsonPost(() => '/games/', () => {
+  // create table
+  testJsonPost(() => '/tables/', () => {
     return {
       name: 'crudPiece',
       template: 'RPG',
@@ -313,12 +315,12 @@ describe('CRUD piece', function () {
   }, 201)
 
   // create piece
-  testJsonPost(() => '/games/crudPiece/pieces/', () => {
+  testJsonPost(() => '/tables/crudPiece/states/1/pieces/', () => {
     return { // add letter-token
       layer: 'token',
       asset: 'dd74249373740cdf',
-      width: 1,
-      height: 1,
+      w: 1,
+      h: 1,
       x: 18,
       y: 8,
       z: 10,
@@ -332,37 +334,37 @@ describe('CRUD piece', function () {
     expect(body.id).to.match(/^[0-9a-f]+$/)
     expect(body.layer).to.be.eql('token')
     expect(body.asset).to.be.eql('dd74249373740cdf')
-    expect(body.width).to.be.eql(1)
-    expect(body.height).to.be.eql(1)
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
     expect(body.x).to.be.eql(18)
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
-    expect(body.r).to.be.eql(0)
+    expect(body.r).to.not.exist
     expect(body.no).to.be.eql(2)
-    expect(body.side).to.be.eql(0)
+    expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
     data = body
   }, 201)
 
   // get & compare piece
-  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
     expect(body.asset).to.be.eql('dd74249373740cdf')
-    expect(body.width).to.be.eql(1)
-    expect(body.height).to.be.eql(1)
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
     expect(body.x).to.be.eql(18)
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
-    expect(body.r).to.be.eql(0)
+    expect(body.r).to.not.exist
     expect(body.no).to.be.eql(2)
-    expect(body.side).to.be.eql(0)
+    expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
 
   // update piece (patch)
-  testJsonPatch(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
+  testJsonPatch(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', () => {
     return {
       x: 19
     }
@@ -371,41 +373,41 @@ describe('CRUD piece', function () {
     expect(body.id).to.match(/^[0-9a-f]+$/)
     expect(body.layer).to.be.eql('token')
     expect(body.asset).to.be.eql('dd74249373740cdf')
-    expect(body.width).to.be.eql(1)
-    expect(body.height).to.be.eql(1)
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
     expect(body.x).to.be.eql(19)
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
-    expect(body.r).to.be.eql(0)
+    expect(body.r).to.not.exist
     expect(body.no).to.be.eql(2)
-    expect(body.side).to.be.eql(0)
+    expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
 
   // get & compare piece
-  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
     expect(body.asset).to.be.eql('dd74249373740cdf')
-    expect(body.width).to.be.eql(1)
-    expect(body.height).to.be.eql(1)
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
     expect(body.x).to.be.eql(19)
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
-    expect(body.r).to.be.eql(0)
+    expect(body.r).to.not.exist
     expect(body.no).to.be.eql(2)
-    expect(body.side).to.be.eql(0)
+    expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
 
   // update/replace piece (put)
-  testJsonPut(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', () => {
+  testJsonPut(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', () => {
     return {
       layer: 'tile',
       asset: '0d74249373740cdf',
-      width: 2,
-      height: 3,
+      w: 2,
+      h: 3,
       x: 17,
       y: 7,
       z: 27,
@@ -419,8 +421,8 @@ describe('CRUD piece', function () {
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('tile')
     expect(body.asset).to.be.eql('0d74249373740cdf')
-    expect(body.width).to.be.eql(2)
-    expect(body.height).to.be.eql(3)
+    expect(body.w).to.be.eql(2)
+    expect(body.h).to.be.eql(3)
     expect(body.x).to.be.eql(17)
     expect(body.y).to.be.eql(7)
     expect(body.z).to.be.eql(27)
@@ -431,13 +433,13 @@ describe('CRUD piece', function () {
   })
 
   // get & compare piece
-  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('tile')
     expect(body.asset).to.be.eql('0d74249373740cdf')
-    expect(body.width).to.be.eql(2)
-    expect(body.height).to.be.eql(3)
+    expect(body.w).to.be.eql(2)
+    expect(body.h).to.be.eql(3)
     expect(body.x).to.be.eql(17)
     expect(body.y).to.be.eql(7)
     expect(body.z).to.be.eql(27)
@@ -448,8 +450,8 @@ describe('CRUD piece', function () {
   })
 
   // delete piece
-  testJsonDelete(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/')
+  testJsonDelete(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/')
 
   // get - should be gone
-  testJsonGet(() => '/games/crudPiece/pieces/' + (data ? data.id : 'ID') + '/', body => {}, 404)
+  testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {}, 404)
 })

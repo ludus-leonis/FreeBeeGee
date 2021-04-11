@@ -26,7 +26,7 @@ Per default, FreeBeeGee comes with a simple `.htaccess` file with the same conte
 
 `.htaccess_full` also contains rules how to enforce https and to supress 'www.', but they are disabled by default. Enable them if needed.
 
-Finally, review the `terms.html` and don't forget to add your GDPR / privacy statement to `privacy.html`. ;)
+Finally, review the `terms.html` and don't forget to update your GDPR / privacy statement in `privacy.html`. Consider neither of them as legal advice - if in doubt, consult a lawyer.
 
 ## Configuration
 
@@ -35,8 +35,8 @@ The server config file is found in `api/data/server.json`:
 ```
 {
   "ttl": 48,                // hours of inactivity after a table gets deleted
-  "maxGames": 128,          // maximum concurrent tables allowed
-  "maxGameSizeMB": 4,       // maximum size per table folder / snapshot / template
+  "maxTables": 128,          // maximum concurrent tables allowed
+  "maxTableSizeMB": 4,       // maximum size per table folder / snapshot / template
   "snapshotUploads": false, // set to true to enable snapshot upload on table create
   "passwordCreate": "................."
 }
@@ -44,13 +44,13 @@ The server config file is found in `api/data/server.json`:
 
 ### Passwords
 
-`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join games. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
+`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join tables. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
 
 ```
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
 ```
 
-FreeBeeGee ships with an unkown password. No games can be created until you either set one or explicitly disable it.
+FreeBeeGee ships with an unkown password. No tables can be created until you either set one or explicitly disable it.
 
 ### Uploads
 
@@ -60,7 +60,7 @@ You can change the maximum upload file size via the `server.json` (see above). Y
 
 ## Upgrading
 
-While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change any time, even games will break between versions. Start with a fresh install till we reach v1.0.
+While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even tables will break between versions. Start with a fresh install till we reach v1.0.
 
 ## Build from source
 

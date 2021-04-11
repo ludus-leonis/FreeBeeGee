@@ -127,6 +127,7 @@ function svg2png (svg, outname, size) {
     }))
 }
 
+// convert -background none icon.svg -define icon:auto-resize=32,16 favicon.ico
 gulp.task('favicon', gulp.parallel(() => {
   return gulp.src([
     'src/favicon/icon.svg',
@@ -149,7 +150,6 @@ gulp.task('js-vendor', () => {
   const concat = require('gulp-concat')
 
   return replace(gulp.src([
-    'node_modules/navigo/lib/navigo.min.js',
     'node_modules/@popperjs/core/dist/umd/popper.min.js',
     'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
   ]))
@@ -173,13 +173,15 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/screens/create.js',
     'src/js/screens/error.js',
     'src/js/screens/join.js',
-    'src/js/screens/game/index.js',
-    'src/js/screens/game/hotkeys.js',
-    'src/js/screens/game/mouse.js',
-    'src/js/screens/game/state.js',
-    'src/js/screens/game/modals/edit.js',
-    'src/js/screens/game/modals/help.js',
-    'src/js/screens/game/modals/library.js'
+    'src/js/screens/table/index.js',
+    'src/js/screens/table/hotkeys.js',
+    'src/js/screens/table/mouse.js',
+    'src/js/screens/table/state.js',
+    'src/js/screens/table/sync.js',
+    'src/js/screens/table/modals/edit.js',
+    'src/js/screens/table/modals/help.js',
+    'src/js/screens/table/modals/inactive.js',
+    'src/js/screens/table/modals/library.js'
   ]).transform(babelify.configure({
     presets: ['@babel/preset-env']
   })).bundle()
@@ -252,7 +254,7 @@ function template (name) {
 
   return replace(gulp.src('src/templates/' + name + '/**/*'))
     .pipe(zip(name + '.zip'))
-    .pipe(gulp.dest(dirs.site + '/templates'))
+    .pipe(gulp.dest(dirs.site + '/api/data/templates'))
 }
 
 // function template (name) {
@@ -270,7 +272,7 @@ function template (name) {
 //       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
 //     }))
 //     .pipe(zip(name + '.zip'))
-//     .pipe(gulp.dest(dirs.site + '/templates'))
+//     .pipe(gulp.dest(dirs.site + '/api/data/templates'))
 // }
 
 gulp.task('template-RPG', () => template('RPG'))

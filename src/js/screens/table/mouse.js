@@ -17,8 +17,18 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getTemplate, stateMovePiece } from './state.js'
-import { getScrollPosition, setScrollPosition, unselectPieces, popupPiece } from '.'
+import {
+  getTemplate,
+  stateMovePiece
+} from './state.js'
+import { touch } from './sync.js'
+import {
+  getScrollPosition,
+  setScrollPosition,
+  unselectPieces,
+  popupPiece,
+  getMaxZ
+} from '.'
 import { clamp } from '../../utils.js'
 import _ from '../../FreeDOM.js'
 
@@ -45,7 +55,7 @@ export function isDragging () {
 export function getMouseTileX () {
   const template = getTemplate()
   const mouseTileX = Math.floor(compensateOffsetX(mouseX) / template.gridSize)
-  return clamp(0, mouseTileX, template.width - 1)
+  return clamp(0, mouseTileX, template.gridWidth - 1)
 }
 
 /**
@@ -56,11 +66,11 @@ export function getMouseTileX () {
 export function getMouseTileY () {
   const template = getTemplate()
   const mouseTileY = Math.floor(compensateOffsetY(mouseY) / template.gridSize)
-  return clamp(0, mouseTileY, template.height - 1)
+  return clamp(0, mouseTileY, template.gridHeight - 1)
 }
 
 /**
- * Enable the game area drag'n'drop handling by registering the event handlers.
+ * Enable the table area drag'n'drop handling by registering the event handlers.
  *
  * @param {String} tabletop Selector/ID for tabletop div.
  */
@@ -149,6 +159,7 @@ function mouseDown (mousedown) {
  * @param {MouseEvent} mousemove The triggering mouse event.
  */
 function mouseMove (mousemove) {
+  touch()
   touchMousePosition(mousemove.clientX, mousemove.clientY)
 
   // delegate the move, or end it if the button is no longer pressed. could
@@ -209,6 +220,7 @@ function dragStart (mousedown) {
   dragging = piece.cloneNode(true)
   dragging.id = dragging.id + '-drag'
   dragging.origin = piece
+  dragging.style.zIndex = 999999999 // drag visually on top of everything
   dragging.classList.add('dragging')
   dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
   piece.parentNode.appendChild(dragging)
@@ -262,7 +274,19 @@ function dragEnd (mouseup, cancel = false) {
       // only record state if there was a change in position
       if (dragging.origin.dataset.x !== dragging.dataset.x ||
         dragging.origin.dataset.y !== dragging.dataset.y) {
-        stateMovePiece(dragging.origin.id, dragging.dataset.x, dragging.dataset.y)
+        const template = getTemplate()
+        const maxZ = getMaxZ(dragging.dataset.layer, {
+          top: Number(dragging.dataset.y),
+          left: Number(dragging.dataset.x),
+          bottom: Number(dragging.dataset.y) + Number(dragging.dataset.h) * template.gridSize,
+          right: Number(dragging.dataset.x) + Number(dragging.dataset.w) * template.gridSize
+        })
+        stateMovePiece(
+          dragging.origin.id,
+          dragging.dataset.x,
+          dragging.dataset.y,
+          Number(dragging.dataset.z) === maxZ ? dragging.dataset.z : getMaxZ(dragging.dataset.layer) + 1
+        )
       }
     }
 
@@ -386,20 +410,20 @@ function compensateOffsetY (y) {
  * Move a dragging piece to the current mouse position.
  *
  * @param {Element} element The HTML node to update.
- * @param {Number} x New x coordinate.
- * @param {Number} y New y coordinate.
+ * @param {Number} x New x coordinate in px.
+ * @param {Number} y New y coordinate in px.
  * @param {Number} snap Grid/snap size. Defaults to the tilesize.
  */
-function setPosition (element, x, y, snap = getTemplate().gridSize) {
+function setPosition (element, x, y, snap = getTemplate().snapSize) {
   const template = getTemplate()
-  x = clamp(0, x, (template.width - element.dataset.w) * template.gridSize - 1)
-  y = clamp(0, y, (template.height - element.dataset.h) * template.gridSize - 1)
+  x = clamp(0, x, (template.gridWidth - element.dataset.w) * template.gridSize - 1)
+  y = clamp(0, y, (template.gridHeight - element.dataset.h) * template.gridSize - 1)
   x += Math.floor(snap / 2)
   y += Math.floor(snap / 2)
-  element.dataset.x = Math.floor(x / template.gridSize)
-  element.dataset.y = Math.floor(y / template.gridSize)
-  element.style.left = Math.max(0, (Math.floor(x / snap) * snap)) + 'px'
-  element.style.top = Math.max(0, (Math.floor(y / snap) * snap)) + 'px'
+  element.dataset.x = Math.max(0, (Math.floor(x / snap) * snap))
+  element.dataset.y = Math.max(0, (Math.floor(y / snap) * snap))
+  element.style.left = element.dataset.x + 'px'
+  element.style.top = element.dataset.y + 'px'
 }
 
 /**

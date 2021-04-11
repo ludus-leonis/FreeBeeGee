@@ -1,13 +1,18 @@
 RewriteEngine On
 
+# no slashes
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} (.+)/$
+RewriteRule ^ %1 [R=301,L]
+
 # serve ".html" files if called without extension
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+)$ $1.html [L,QSA]
 
-# redirect to remove "/index..."
-RewriteRule ^index / [R=301,L]
+# serve index.html if called with a room name as (root)folder
+RewriteRule ^[A-Za-z0-9]{8,48}$ index.html [NC,L,QSA]
 
 # Block access to all hidden files and directories
 RewriteCond %{SCRIPT_FILENAME} -d [OR]

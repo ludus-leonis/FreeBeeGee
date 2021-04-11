@@ -41,7 +41,7 @@ We use `gulp` as build tool and `npm` as dependency tool.
   /misc      # supplementary server files like robots.txt
   /php       # backend / API - faceless JSON/Rest server
   /scss      # frontend styles
-  /templates # ready-to-use games
+  /templates # ready-to-use tables
 /test        # testing code for src
 /tools       # scripts/tools/helpers
 ```

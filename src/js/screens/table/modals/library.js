@@ -19,9 +19,10 @@
 
 import {
   getLibrary,
-  stateCreatePiece,
-  stateGetGamePref,
-  stateSetGamePref
+  getTemplate,
+  createPieces,
+  stateGetTablePref,
+  stateSetTablePref
 } from '../state.js'
 
 import {
@@ -51,7 +52,7 @@ export function modalLibrary (x, y) {
       <h3 class="modal-title">Add piece</h3>
     `
     _('#modal-body').innerHTML = `
-      <div class="spinner">Loading</div>
+      <div class="has-spinner">Loading</div>
     `
     _('#modal-footer').innerHTML = `
       <button id='btn-close' type="button" class="btn">Cancel</button>
@@ -85,11 +86,11 @@ export function modalLibrary (x, y) {
       </div>
     `
 
+    // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
-      stateSetGamePref('modalLibraryTab', change.target.id)
+      stateSetTablePref('modalLibraryTab', change.target.id)
     })
-
-    const preselect = stateGetGamePref('modalLibraryTab') ?? 'tab-1'
+    const preselect = stateGetTablePref('modalLibraryTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 
     // add items to their tab
@@ -104,7 +105,7 @@ export function modalLibrary (x, y) {
 
     // enable selection
     _('#tabs-library .col-6').on('click', click => {
-      _('#tabs-library .is-selected').remove('.is-selected')
+      // _('#tabs-library .is-selected').remove('.is-selected')
       _(click.target).toggle('.is-selected')
       click.preventDefault()
     })
@@ -123,16 +124,16 @@ export function modalLibrary (x, y) {
  */
 function assetToPreview (assetJson) {
   const asset = assetToNode(assetJson).add(
-    '.is-w-' + assetJson.width,
-    '.is-h-' + assetJson.height
+    '.is-w-' + assetJson.w,
+    '.is-h-' + assetJson.h
   )
 
   const max = _('.is-scale-2').create(asset)
   const card = _('.col-6.col-sm-4.col-md-3.col-lg-2.col-card').create(max)
-  asset.add('.is-max-' + Math.max(assetJson.width, assetJson.height))
+  asset.add('.is-max-' + Math.max(assetJson.w, assetJson.h))
   let tag = ''
-  if (assetJson.width > 2 || assetJson.height > 2) {
-    tag = `${assetJson.width}x${assetJson.height}`
+  if (assetJson.w > 2 || assetJson.h > 2) {
+    tag = `${assetJson.w}x${assetJson.h}`
   }
   if (assetJson.assets.length > 1) {
     tag += `:${assetJson.assets.length}`
@@ -160,15 +161,20 @@ function prettyName (assetName) {
  * Hides modal and adds the selected piece after user clicks OK.
  */
 function modalOk () {
-  const selected = document.querySelectorAll('#tabs-library .is-selected .piece')
-  if (selected.length > 0) {
-    const m = document.getElementById('modal')
-    const piece = nodeToPiece(selected[0])
-    piece.x = Number(m.x)
-    piece.y = Number(m.y)
-    piece.z = getMaxZ(piece.layer) + 1
-    stateCreatePiece(piece, true)
-
+  const template = getTemplate()
+  const modal = document.getElementById('modal')
+  const pieces = []
+  let offsetZ = 1
+  _('#tabs-library .is-selected .piece').each(item => {
+    const piece = nodeToPiece(item)
+    piece.x = Number(modal.x * template.gridSize)
+    piece.y = Number(modal.y * template.gridSize)
+    piece.z = getMaxZ(piece.layer) + offsetZ
+    pieces.push(piece)
+    offsetZ += 1
+  })
+  if (pieces.length > 0) {
+    createPieces(pieces, true)
     getModal().hide()
   }
 }
