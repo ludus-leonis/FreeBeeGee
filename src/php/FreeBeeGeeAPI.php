@@ -32,6 +32,7 @@ class FreeBeeGeeAPI
     private $api = null; // JSONRestAPI instance
     private $minTableGridSize = 16;
     private $maxTableGridSize = 128;
+    private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
 
     /**
      * Constructor - setup our routes.
@@ -510,7 +511,7 @@ class FreeBeeGeeAPI
         $newState = [];
         $ids = [];
         if ($create) { // in create mode we inject the new piece
-            $newState[] = $piece;
+            $newState[] = $this->removeDefaultsFromPiece($piece);
             foreach ($oldState as $stateItem) {
                 if (!in_array($stateItem->id, $ids)) {
                     // for newly created items we just copy the current state of the others
@@ -532,7 +533,7 @@ class FreeBeeGeeAPI
                         if ($piece->layer === 'delete') {
                             continue;
                         }
-                        $stateItem = $this->merge($stateItem, $piece);
+                        $stateItem = $this->removeDefaultsFromPiece($this->merge($stateItem, $piece));
                         $result = $stateItem;
                     }
                     $newState[] = $stateItem;
@@ -619,7 +620,7 @@ class FreeBeeGeeAPI
         // generate json data
         $tableFolder = $this->getTableFolder($tableName);
         $assets = [];
-        foreach (['overlay', 'tile', 'token', 'other'] as $type) {
+        foreach ($this->layers as $type) {
             $assets[$type] = [];
             $lastAsset = null;
             foreach (glob($tableFolder . 'assets/' . $type . '/' . '*') as $filename) {
@@ -699,6 +700,41 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Remove properties that are at their default values from a piece.
+     *
+     * Saves some space in the JSON later on.
+     *
+     * @param object $piece Full piece.
+     * @return object New, reduced object.
+     */
+    private function removeDefaultsFromPiece(
+        object $piece
+    ): object {
+        if ($piece->w === 1) {
+            unset($piece->w);
+        }
+        if ($piece->h === 1) {
+            unset($piece->h);
+        }
+        if ($piece->r === 0) {
+            unset($piece->r);
+        }
+        if ($piece->side === 0) {
+            unset($piece->side);
+        }
+        if ($piece->no === 0) {
+            unset($piece->no);
+        }
+        if ($piece->border === 0) {
+            unset($piece->border);
+        }
+        if ($piece->label === '') {
+            unset($piece->label);
+        }
+        return $piece;
+    }
+
+    /**
      * Sanity check for pieces.
      *
      * @param object $piece Full or partial piece.
@@ -717,22 +753,16 @@ class FreeBeeGeeAPI
                     $validated->id = $this->api->assertString('id', $value, '^[0-9a-f]{16}$');
                     break;
                 case 'layer':
-                    $validated->layer = $this->api->assertEnum('layer', $value, ['tile', 'token', 'overlay', 'other']);
+                    $validated->layer = $this->api->assertEnum('layer', $value, $this->layers);
                     break;
                 case 'asset':
                     $validated->asset = $this->api->assertString('asset', $value, '[a-z0-9]+');
                     break;
                 case 'w':
-                    $val = $this->api->assertInteger('w', $value, 1, 32);
-                    if ($val !== 1) {
-                        $validated->w = $val;
-                    }
+                    $validated->w = $this->api->assertInteger('w', $value, 1, 32);
                     break;
                 case 'h':
-                    $val = $this->api->assertInteger('h', $value, 1, 32);
-                    if ($val !== 1) {
-                        $validated->h = $val;
-                    }
+                    $validated->h = $this->api->assertInteger('h', $value, 1, 32);
                     break;
                 case 'x':
                     $validated->x = $this->api->assertInteger('x', $value, -100000, 100000);
@@ -744,34 +774,19 @@ class FreeBeeGeeAPI
                     $validated->z = $this->api->assertInteger('z', $value, -100000, 100000);
                     break;
                 case 'side':
-                    $val = $this->api->assertInteger('side', $value, 0, 128);
-                    if ($val !== 0) {
-                        $validated->side = $val;
-                    }
+                    $validated->side = $this->api->assertInteger('side', $value, 0, 128);
                     break;
                 case 'border':
-                    $val = $this->api->assertInteger('border', $value, 0, 7);
-                    if ($val !== 0) {
-                        $validated->border = $val;
-                    }
+                    $validated->border = $val = $this->api->assertInteger('border', $value, 0, 7);
                     break;
                 case 'no':
-                    $val = $this->api->assertInteger('no', $value, 0, 15);
-                    if ($val !== 0) {
-                        $validated->no = $val;
-                    }
+                    $validated->no = $this->api->assertInteger('no', $value, 0, 15);
                     break;
                 case 'r':
-                    $val = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
-                    if ($val !== 0) {
-                        $validated->r = $val;
-                    }
+                    $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
                     break;
                 case 'label':
-                    $val = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
-                    if ($val !== '') {
-                        $validated->label = $val;
-                    }
+                    $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -779,11 +794,14 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            $this->api->assertHasProperties(
-                'piece',
-                $validated,
-                ['layer', 'asset', 'x', 'y', 'z'] // no
-            );
+            switch ($validated->layer) {
+                case 'note':
+                    $mandatory = ['layer', 'x', 'y', 'z'];
+                    break;
+                default:
+                    $mandatory = ['layer', 'asset', 'x', 'y', 'z'];
+            }
+            $this->api->assertHasProperties('piece', $validated, $mandatory);
         }
 
         return $validated;

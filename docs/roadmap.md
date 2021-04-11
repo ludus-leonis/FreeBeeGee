@@ -17,11 +17,9 @@ Here is a list what might happen next. However, priorities can change.
 * [X] URL mapping for example.org/roomname -> example.org/#/table/roomname
 * [X] fix drag-n-drop z position
 * [X] meta-piece: discard pile
-* [ ] generic marker overlay (X, ?, ...)
 * [X] don't rotate 8+ sized tiles
-* [ ] concurrent drag-n-drop - first mover wins
 * [X] cycle borders hotkey
-* [ ] multi-select in add dialog
+* [X] multi-select in add dialog
 * [X] loading indicators / create-game
 * [ ] add nicer default tiles
 * [ ] pre-release
@@ -34,6 +32,12 @@ Here is a list what might happen next. However, priorities can change.
 ## v0.7 - Uploading Unicorn
 
 * upload custom images for tiles & tokens via web UI
+* concurrent drag-n-drop - first mover wins
+* generic marker overlay (X, ?, ...)
+* make zip upload more robust
+  * ignore unknown files instead rejecting them
+  * auto-create missing state json
+  * auto-create missing license
 
 ## v0.8 - Mobile Monkey
 

@@ -24,6 +24,7 @@
 ////
 
 @import '../../fonts/Poppins/Poppins';
+@import '../../fonts/PatrickHand/PatrickHand';
 
 $typography-font-list-fallback:
 -apple-system,
@@ -38,6 +39,7 @@ sans-serif,
 'Segoe UI Symbol';
 
 $typography-font-list-sans: Poppins, $typography-font-list-fallback;
+$typography-font-list-hand: 'Patrick Hand', $typography-font-list-sans;
 
 $typography-font-list-monospace:
 SFMono-Regular,
