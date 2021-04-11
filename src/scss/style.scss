@@ -34,20 +34,21 @@
 
 @import 'components/button';
 @import 'components/card';
-@import 'components/form';
-@import 'components/modal';
 @import 'components/footer';
+@import 'components/form';
+@import 'components/key';
+@import 'components/modal';
+@import 'components/piece';
+@import 'components/piece-note';
 @import 'components/scrollbar';
 @import 'components/spinner';
-@import 'components/piece';
 @import 'components/tabletop';
 @import 'components/tabs';
 @import 'components/tag';
-@import 'components/key';
 @import 'components/popup';
 
-@import 'pages/page';
 @import 'pages/create';
+@import 'pages/page';
 @import 'pages/table';
 
 @import 'themes/animations';

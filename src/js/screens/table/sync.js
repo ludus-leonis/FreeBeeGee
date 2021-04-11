@@ -18,7 +18,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { setPiece, deletePiece, getAllPiecesIds } from '.'
+import { setNote, setPiece, deletePiece, getAllPiecesIds } from '.'
 import { updateMenu } from './mouse.js'
 import { getTable } from './state.js'
 import {
@@ -244,6 +244,9 @@ function setItem (piece, selected) {
     case 'overlay':
     case 'other':
       setPiece(piece, selected)
+      break
+    case 'note':
+      setNote(piece, selected)
       break
     default:
       // ignore unkown piece type

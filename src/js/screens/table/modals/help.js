@@ -87,7 +87,8 @@ export function modalHelp () {
           <div class="hotkeys">
             <p>The following hotkeys are available on the <strong>table</strong>:</p>
             <p><span class="key">1</span> / <span class="key">2</span> / <span class="key">3</span> / <span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
-            <p><span class="key">a</span> Add a new piece / show library. Hint: The new piece will be added at the position your mouse cursor was before the library window opened.</p>
+            <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library window opened.</p>
+            <p><span class="key">n</span> Add a new sticky note. Hint: The note will be added at the position the mouse cursor is.</p>
             <p><span class="key">S</span> Show the table statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>

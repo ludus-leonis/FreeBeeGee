@@ -1,8 +1,8 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.6.0-dev",
-  "versionEngine": "0.2.0",
-  "codename": "Mixing Mink",
+  "version": "0.6.0",
+  "versionEngine": "0.3.0",
+  "codename": "Sticky Starling",
   "description": "A virtual gaming tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=6.5.0"

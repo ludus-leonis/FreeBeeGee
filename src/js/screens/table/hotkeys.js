@@ -27,6 +27,7 @@ import {
   toTopSelected,
   randomSelected,
   numberSelected,
+  createNote,
   outlineSelected,
   toBottomSelected,
   toggleLayer
@@ -80,8 +81,11 @@ function handleTableKeys (keydown) {
       case '4': // toggle layer
         toggleLayer('tile')
         break
-      case 'a': // add pice
+      case 'l': // library / add piece
         modalLibrary(getMouseTileX(), getMouseTileY())
+        break
+      case 'n': // library / add piece
+        createNote(getMouseTileX(), getMouseTileY())
         break
       case 'b': // to-bottom
         toBottomSelected()

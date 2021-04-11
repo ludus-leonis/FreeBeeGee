@@ -52,6 +52,10 @@
       position: absolute;
     }
 
+    &-note {
+      z-index: 5;
+    }
+
     &-other {
       z-index: 4;
     }
@@ -73,7 +77,7 @@
     }
   }
 
-  @each $layer in (tile, overlay, token, other) {
+  @each $layer in (tile, overlay, token, other, note) {
     &.layer-#{$layer}-enabled {
       .layer-#{$layer} > * {
         pointer-events: all;

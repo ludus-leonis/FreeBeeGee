@@ -235,22 +235,7 @@ export function randomSelected () {
   })
 }
 
-/**
- * Add or re-set a piece.
- *
- * @param {Object} pieceJson The piece's full data object.
- * @param {Boolean} select If true, the piece will also get selected. Defaults to false.
- */
-export function setPiece (pieceJson, select = false) {
-  pieceJson.h = pieceJson.h < 0 ? pieceJson.w : pieceJson.h
-
-  // interim solution to scale old templates in the transition phase
-  // TODO remove afterwards
-  if (pieceJson.x <= 63 && pieceJson.y <= 63) {
-    pieceJson.x *= 64
-    pieceJson.y *= 64
-  }
-
+function updatePieceDOM (pieceJson, select) {
   let selection = []
 
   // get the DOM node for the piece or (re)create it if major changes happened
@@ -266,7 +251,7 @@ export function setPiece (pieceJson, select = false) {
     div.delete()
   }
   if (!div.unique()) {
-    const node = pieceToNode(pieceJson)
+    const node = pieceJson.layer === 'note' ? noteToNode(pieceJson) : pieceToNode(pieceJson)
     if (selection.includes(pieceJson.id)) node.add('.is-selected')
     _('#layer-' + pieceJson.layer).add(node)
   }
@@ -293,6 +278,26 @@ export function setPiece (pieceJson, select = false) {
     })
   }
 
+  // update select status
+  if (select && _('#tabletop.layer-' + pieceJson.layer + '-enabled').exists()) {
+    unselectPieces()
+    div.add('.is-selected')
+  }
+
+  return div
+}
+
+/**
+ * Add or re-set a piece.
+ *
+ * @param {Object} pieceJson The piece's full data object.
+ * @param {Boolean} select If true, the piece will also get selected. Defaults to false.
+ */
+export function setPiece (pieceJson, select = false) {
+  pieceJson.h = pieceJson.h < 0 ? pieceJson.w : pieceJson.h
+
+  const div = updatePieceDOM(pieceJson, select)
+
   // update label
   if (Number(div.dataset.label) !== pieceJson.label) {
     _('#' + pieceJson.id + ' .label').delete()
@@ -309,13 +314,22 @@ export function setPiece (pieceJson, select = false) {
     }
   }
 
-  // update select status
-  if (select && _('#tabletop.layer-' + pieceJson.layer + '-enabled').exists()) {
-    unselectPieces()
-    div.add('.is-selected')
-  }
-
   updateNode(div, pieceJson)
+}
+
+/**
+ * Add or re-set a sticky note.
+ *
+ * @param {Object} pieceJson The note's full data object.
+ * @param {Boolean} select If true, the note will also get selected. Defaults to false.
+ */
+export function setNote (noteJson, select = false) {
+  const note = updatePieceDOM(noteJson, select)
+
+  // update note on change
+  note.node().innerHTML = noteJson.label ?? ''
+
+  updateNode(note, noteJson)
 }
 
 /**
@@ -384,7 +398,7 @@ export function getMaxZ (layer, area = {
 export function toTopSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
     const maxZ = getMaxZ(node.dataset.layer)
-    if (Number(node.dataset.z) !== maxZ) {
+    if (Number(node.dataset.z) < maxZ) {
       stateMovePiece(node.id, null, null, maxZ + 1)
     }
   }
@@ -398,7 +412,7 @@ export function toTopSelected () {
 export function toBottomSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
     const minZ = getMinZ(node.dataset.layer)
-    if (Number(node.dataset.z) !== minZ) {
+    if (Number(node.dataset.z) > minZ) {
       stateMovePiece(node.id, null, null, minZ - 1)
     }
   }
@@ -532,7 +546,7 @@ export function assetToNode (assetJson, side = 0) {
 /**
 * Convert a piece data object to a DOM node.
  *
- * @param {Object} Full piece data object.
+ * @param {Object} pieceJson Full piece data object.
  * @return {HTMLElement} Converted node (not added to DOM yet).
  */
 export function pieceToNode (pieceJson) {
@@ -546,6 +560,50 @@ export function pieceToNode (pieceJson) {
   }
 
   return node
+}
+
+/**
+* Convert a sticky note to a DOM node.
+ *
+ * @param {Object} noteJson Full note data object.
+ * @return {HTMLElement} Converted node (not added to DOM yet).
+ */
+export function noteToNode (noteJson) {
+  const node = _('.piece.piece-note').create()
+
+  // set default metadata
+  node.data({
+    sides: 1,
+    color: 'none'
+  })
+
+  updateNode(node, noteJson)
+
+  node.add(`.is-w-${node.dataset.w}`, `.is-h-${node.dataset.h}`, `.is-wh-${Number(node.dataset.w) - Number(node.dataset.h)}`)
+
+  node.node().innerHTML = noteJson.label ?? ''
+
+  return node
+}
+
+/**
+ * Add a new sticky note to the cursor position.
+ *
+ * This adds a enirely new note to the table via a call to the state.
+ *
+ * @param {Number} x X-tile to add pice to.
+ * @param {Number} y Y-tile to add pice to.
+ */
+export function createNote (tileX, tileY) {
+  const template = getTemplate()
+  createPieces([{
+    layer: 'note',
+    w: 3,
+    h: 3,
+    x: tileX * template.gridSize,
+    y: tileY * template.gridSize,
+    z: getMaxZ('note') + 1
+  }], true)
 }
 
 export function popupPiece (id) {
@@ -644,7 +702,7 @@ function setupTable (table) {
           </div>
 
           <div class="spacing-medium">
-            <button id="btn-a" class="btn-icon" title="Add piece [a]">${iconAdd}</button>
+            <button id="btn-a" class="btn-icon" title="Open library [l]">${iconAdd}</button>
           </div>
 
           <div class="menu-selected disabled spacing-medium">
@@ -674,7 +732,8 @@ function setupTable (table) {
         </div>
       </div>
       <div id="scroller" class="scroller">
-        <div id="tabletop" class="tabletop">
+        <div id="tabletop" class="tabletop layer-note-enabled">
+          <div id="layer-note" class="layer layer-note"></div>
           <div id="layer-other" class="layer layer-other"></div>
           <div id="layer-token" class="layer layer-token"></div>
           <div id="layer-overlay" class="layer layer-overlay"></div>

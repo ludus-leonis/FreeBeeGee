@@ -2,6 +2,45 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.6 - Sticky Starling
+
+### Notable changes
+
+* added sticky notes (hotkey: n)
+* added FATE dice to RPG template
+* added multiselect in library window (add multiple pieces)
+* added customizable snap positions (& RPG template snaps to half-grid now)
+* added auto-scroll-to-action after joining/reloading a table
+* added border-color hotkey "o"
+* added delete-table button to settings
+* added support for discard piles (shuffle tile stacks)
+* added GDRP template
+* changed table URLs from anchors to folders (example.org/#/fancyPony -> example.org/fancyPony)
+
+### Other changes
+
+* changed wording game->table
+* added tabs to settings dialog
+* improved polling logic & interval
+* improved mouse cursor in modals
+* improved piece select indicator
+* disabled random UQ rotation for big tiles (8+)
+* changed library hotkey to l
+* added loading indicator to create game
+* added support for partially transparent tiles (PNG alpha)
+* fixed drag-n-drop z position
+* changed state json for more optional fields
+* changed state json x/y coordinates to px
+* refactored state / slot handling, added multiple states to templates
+* fixed integration tests
+* fixed same z-index when multiple pieces are added
+* fixed dicemat bug
+* reduced border radius for pieces
+* fixed popup hidden behind tiles in low quality mode
+* fixed no-badge for tokens
+* moved some filters to ultra quality
+* fixed reset/clean table bug in Firefox
+
 ## v0.5 - Random Rabbit
 
 ### Notable changes
