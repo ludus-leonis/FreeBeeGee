@@ -284,30 +284,6 @@ export function stateDeletePiece (id) {
     })
 }
 
-// /**
-//  * Edit multiple properties of a piece of the current table.
-//  *
-//  * Will only do an API call and rely on later sync to get the change back to the
-//  * data model.
-//  *
-//  * @param {Object} piece Full piece to be created.
-//  * @param {Boolean} selected If true, the piece should be selected after
-//  *                           creating it. Defaults to false.
-//  */
-// export function stateCreatePiece (piece, selected = false) {
-//   let selectid = null
-//   apiPostPiece(table.name, 1, piece)
-//     .then(piece => {
-//       selectid = piece.id
-//     })
-//     .catch(error => {
-//       runError('UNEXPECTED', error)
-//     })
-//     .finally(() => {
-//       syncNow(selected ? [selectid] : [])
-//     })
-// }
-
 /**
  * Update the table state to the a new one.
  *

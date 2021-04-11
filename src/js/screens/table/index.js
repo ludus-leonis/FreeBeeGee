@@ -398,7 +398,7 @@ export function getMaxZ (layer, area = {
 export function toTopSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
     const maxZ = getMaxZ(node.dataset.layer)
-    if (Number(node.dataset.z) !== maxZ) {
+    if (Number(node.dataset.z) < maxZ) {
       stateMovePiece(node.id, null, null, maxZ + 1)
     }
   }
@@ -412,7 +412,7 @@ export function toTopSelected () {
 export function toBottomSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
     const minZ = getMinZ(node.dataset.layer)
-    if (Number(node.dataset.z) !== minZ) {
+    if (Number(node.dataset.z) > minZ) {
       stateMovePiece(node.id, null, null, minZ - 1)
     }
   }
@@ -586,6 +586,26 @@ export function noteToNode (noteJson) {
   return node
 }
 
+/**
+ * Add a new sticky note to the cursor position.
+ *
+ * This adds a enirely new note to the table via a call to the state.
+ *
+ * @param {Number} x X-tile to add pice to.
+ * @param {Number} y Y-tile to add pice to.
+ */
+export function createNote (tileX, tileY) {
+  const template = getTemplate()
+  createPieces([{
+    layer: 'note',
+    w: 3,
+    h: 3,
+    x: tileX * template.gridSize,
+    y: tileY * template.gridSize,
+    z: getMaxZ('note') + 1
+  }], true)
+}
+
 export function popupPiece (id) {
   const piece = _('#' + id)
   const popup = _('#popper')
@@ -682,7 +702,7 @@ function setupTable (table) {
           </div>
 
           <div class="spacing-medium">
-            <button id="btn-a" class="btn-icon" title="Add piece [a]">${iconAdd}</button>
+            <button id="btn-a" class="btn-icon" title="Open library [l]">${iconAdd}</button>
           </div>
 
           <div class="menu-selected disabled spacing-medium">
