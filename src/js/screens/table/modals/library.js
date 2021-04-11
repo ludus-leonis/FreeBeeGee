@@ -164,12 +164,14 @@ function modalOk () {
   const template = getTemplate()
   const modal = document.getElementById('modal')
   const pieces = []
+  let offsetZ = 1
   _('#tabs-library .is-selected .piece').each(item => {
     const piece = nodeToPiece(item)
     piece.x = Number(modal.x * template.gridSize)
     piece.y = Number(modal.y * template.gridSize)
-    piece.z = getMaxZ(piece.layer) + 1
+    piece.z = getMaxZ(piece.layer) + offsetZ
     pieces.push(piece)
+    offsetZ += 1
   })
   if (pieces.length > 0) {
     createPieces(pieces, true)
