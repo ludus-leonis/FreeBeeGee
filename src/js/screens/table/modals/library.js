@@ -20,7 +20,7 @@
 import {
   getLibrary,
   getTemplate,
-  stateCreatePiece,
+  createPieces,
   stateGetTablePref,
   stateSetTablePref
 } from '../state.js'
@@ -105,7 +105,7 @@ export function modalLibrary (x, y) {
 
     // enable selection
     _('#tabs-library .col-6').on('click', click => {
-      _('#tabs-library .is-selected').remove('.is-selected')
+      // _('#tabs-library .is-selected').remove('.is-selected')
       _(click.target).toggle('.is-selected')
       click.preventDefault()
     })
@@ -161,16 +161,18 @@ function prettyName (assetName) {
  * Hides modal and adds the selected piece after user clicks OK.
  */
 function modalOk () {
-  const selected = document.querySelectorAll('#tabs-library .is-selected .piece')
-  if (selected.length > 0) {
-    const template = getTemplate()
-    const m = document.getElementById('modal')
-    const piece = nodeToPiece(selected[0])
-    piece.x = Number(m.x * template.gridSize)
-    piece.y = Number(m.y * template.gridSize)
+  const template = getTemplate()
+  const modal = document.getElementById('modal')
+  const pieces = []
+  _('#tabs-library .is-selected .piece').each(item => {
+    const piece = nodeToPiece(item)
+    piece.x = Number(modal.x * template.gridSize)
+    piece.y = Number(modal.y * template.gridSize)
     piece.z = getMaxZ(piece.layer) + 1
-    stateCreatePiece(piece, true)
-
+    pieces.push(piece)
+  })
+  if (pieces.length > 0) {
+    createPieces(pieces, true)
     getModal().hide()
   }
 }

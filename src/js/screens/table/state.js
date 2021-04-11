@@ -284,29 +284,29 @@ export function stateDeletePiece (id) {
     })
 }
 
-/**
- * Edit multiple properties of a piece of the current table.
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {Object} piece Full piece to be created.
- * @param {Boolean} selected If true, the piece should be selected after
- *                           creating it. Defaults to false.
- */
-export function stateCreatePiece (piece, selected = false) {
-  let selectid = null
-  apiPostPiece(table.name, 1, piece)
-    .then(piece => {
-      selectid = piece.id
-    })
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
-    .finally(() => {
-      syncNow(selected ? [selectid] : [])
-    })
-}
+// /**
+//  * Edit multiple properties of a piece of the current table.
+//  *
+//  * Will only do an API call and rely on later sync to get the change back to the
+//  * data model.
+//  *
+//  * @param {Object} piece Full piece to be created.
+//  * @param {Boolean} selected If true, the piece should be selected after
+//  *                           creating it. Defaults to false.
+//  */
+// export function stateCreatePiece (piece, selected = false) {
+//   let selectid = null
+//   apiPostPiece(table.name, 1, piece)
+//     .then(piece => {
+//       selectid = piece.id
+//     })
+//     .catch(error => {
+//       runError('UNEXPECTED', error)
+//     })
+//     .finally(() => {
+//       syncNow(selected ? [selectid] : [])
+//     })
+// }
 
 /**
  * Update the table state to the a new one.
@@ -356,12 +356,41 @@ export function restoreState (index) {
 export function updatePieces (pieces) {
   if (!pieces || pieces.length <= 0) return
   const piece = pieces.shift()
+  let final = false
   patchPiece(piece.id, piece, false)
     .then(() => {
+      if (pieces.length === 0) final = true
       if (pieces.length > 0) updatePieces(pieces)
     })
     .finally(() => {
-      if (pieces.length === 0) syncNow()
+      if (final) syncNow()
+    })
+}
+
+/**
+ * Create (post) a series of pieces.
+ *
+ * Will do only one state refresh after creating all items in the list.
+ *
+ * @param {Array} pieces (Full) pieces to crate.
+ * @param {Boolean} selected If true, the pieces should be selected after
+ *                           creating them. Defaults to false.
+ */
+export function createPieces (pieces, selected = false, selectIds = []) {
+  let final = false
+
+  if (!pieces || pieces.length <= 0) return
+  const piece = pieces.shift()
+  return createPiece(piece, false)
+    .then(id => {
+      selectIds.push(id)
+      if (pieces.length === 0) final = true
+      if (pieces.length > 0) return createPieces(pieces, selected, selectIds)
+    })
+    .finally(() => {
+      if (final) {
+        syncNow(selected ? selectIds : [])
+      }
     })
 }
 
@@ -394,6 +423,27 @@ function patchPiece (pieceId, patch, poll = true) {
       } else {
         runError('UNEXPECTED', error) // *that* was unexpected
       }
+    })
+    .finally(() => {
+      if (poll) syncNow()
+    })
+}
+
+/**
+ * Create a piece on the server.
+ *
+ * @param {Object} piece The full piece to send to the server.
+ * @param {Object} poll Optional. If true (default), the table state will be
+ *                 polled after the create.
+ * @return {Object} Promise of the ID of the new piece.
+ */
+function createPiece (piece, poll = true) {
+  return apiPostPiece(table.name, 1, piece)
+    .then(piece => {
+      return piece.id
+    })
+    .catch(error => {
+      runError('UNEXPECTED', error)
     })
     .finally(() => {
       if (poll) syncNow()

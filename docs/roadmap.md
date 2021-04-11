@@ -22,7 +22,6 @@ Here is a list what might happen next. However, priorities can change.
 * [ ] concurrent drag-n-drop - first mover wins
 * [X] cycle borders hotkey
 * [ ] multi-select in add dialog
-* [ ] tabs fully clickable
 * [X] loading indicators / create-game
 * [ ] add nicer default tiles
 * [ ] pre-release

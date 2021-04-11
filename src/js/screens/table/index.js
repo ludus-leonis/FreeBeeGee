@@ -25,7 +25,7 @@ import {
   getAsset,
   loadTable,
   updatePieces,
-  stateCreatePiece,
+  createPieces,
   stateDeletePiece,
   stateNumberPiece,
   stateFlipPiece,
@@ -163,7 +163,7 @@ export function cloneSelected (x, y) {
       piece.no = piece.no + 1
       if (piece.no >= 16) piece.no = 1
     }
-    stateCreatePiece(piece, true)
+    createPieces([piece], true)
   })
 }
 
@@ -953,9 +953,7 @@ function randomDiscard (discard) {
   for (let i = 0; i < stack.length; i++) {
     z.push(discardZ + i + 1)
   }
-  console.log('order a', z)
   shuffle(z)
-  console.log('order b', z)
 
   for (const piece of stack) {
     if (piece.dataset.feature === 'DISCARD') continue // don't touch the discard pile piece
