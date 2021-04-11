@@ -215,7 +215,7 @@ describe('CRUD table', function () {
     expect(body.tables[0].library.token).to.be.an('array')
     expect(body.tables[0].template).to.be.an('object')
     expect(body.tables[0].template.type).to.be.eql('grid-square')
-    expect(body.tables[0].template.snapSize).to.be.eql(64)
+    expect(body.tables[0].template.snapSize).to.be.eql(32)
     expect(body.tables[0].template.gridSize).to.be.eql(64)
     expect(body.tables[0].template.gridWidth).to.be.eql(48)
     expect(body.tables[0].template.gridHeight).to.be.eql(32)
@@ -244,7 +244,7 @@ describe('CRUD table', function () {
     expect(body.tables[0].library.token).to.be.an('array')
     expect(body.tables[0].template).to.be.an('object')
     expect(body.tables[0].template.type).to.be.eql('grid-square')
-    expect(body.tables[0].template.snapSize).to.be.eql(64)
+    expect(body.tables[0].template.snapSize).to.be.eql(32)
     expect(body.tables[0].template.gridSize).to.be.eql(64)
     expect(body.tables[0].template.gridWidth).to.be.eql(48)
     expect(body.tables[0].template.gridHeight).to.be.eql(32)
@@ -319,8 +319,8 @@ describe('CRUD piece', function () {
     return { // add letter-token
       layer: 'token',
       asset: 'dd74249373740cdf',
-      width: 1,
-      height: 1,
+      w: 1,
+      h: 1,
       x: 18,
       y: 8,
       z: 10,
@@ -334,14 +334,14 @@ describe('CRUD piece', function () {
     expect(body.id).to.match(/^[0-9a-f]+$/)
     expect(body.layer).to.be.eql('token')
     expect(body.asset).to.be.eql('dd74249373740cdf')
-    expect(body.w).to.be.eql(1)
-    expect(body.h).to.be.eql(1)
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
     expect(body.x).to.be.eql(18)
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
-    expect(body.r).to.be.eql(0)
+    expect(body.r).to.not.exist
     expect(body.no).to.be.eql(2)
-    expect(body.side).to.be.eql(0)
+    expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
     data = body
   }, 201)
@@ -352,14 +352,14 @@ describe('CRUD piece', function () {
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
     expect(body.asset).to.be.eql('dd74249373740cdf')
-    expect(body.w).to.be.eql(1)
-    expect(body.h).to.be.eql(1)
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
     expect(body.x).to.be.eql(18)
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
-    expect(body.r).to.be.eql(0)
+    expect(body.r).to.not.exist
     expect(body.no).to.be.eql(2)
-    expect(body.side).to.be.eql(0)
+    expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
 
@@ -373,14 +373,14 @@ describe('CRUD piece', function () {
     expect(body.id).to.match(/^[0-9a-f]+$/)
     expect(body.layer).to.be.eql('token')
     expect(body.asset).to.be.eql('dd74249373740cdf')
-    expect(body.w).to.be.eql(1)
-    expect(body.h).to.be.eql(1)
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
     expect(body.x).to.be.eql(19)
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
-    expect(body.r).to.be.eql(0)
+    expect(body.r).to.not.exist
     expect(body.no).to.be.eql(2)
-    expect(body.side).to.be.eql(0)
+    expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
 
@@ -390,14 +390,14 @@ describe('CRUD piece', function () {
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
     expect(body.asset).to.be.eql('dd74249373740cdf')
-    expect(body.w).to.be.eql(1)
-    expect(body.h).to.be.eql(1)
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
     expect(body.x).to.be.eql(19)
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
-    expect(body.r).to.be.eql(0)
+    expect(body.r).to.not.exist
     expect(body.no).to.be.eql(2)
-    expect(body.side).to.be.eql(0)
+    expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
 
@@ -406,8 +406,8 @@ describe('CRUD piece', function () {
     return {
       layer: 'tile',
       asset: '0d74249373740cdf',
-      width: 2,
-      height: 3,
+      w: 2,
+      h: 3,
       x: 17,
       y: 7,
       z: 27,

@@ -4,7 +4,7 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.6 - Mixing Mink
 
-* [ ] notes tile
+* [X] sticky notes
 * [X] fancier implementation for dynamic poll intervalls
   * [X] show "you have been inactive" dialog after 10min
   * [X] increase poll interval for inactive tabs/windows
@@ -21,9 +21,8 @@ Here is a list what might happen next. However, priorities can change.
 * [X] cycle borders hotkey
 * [X] multi-select in add dialog
 * [X] loading indicators / create-game
-* [ ] add nicer default tiles
 * [ ] pre-release
-  * [ ] bugfixing
+  * [X] bugfixing
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
@@ -32,6 +31,7 @@ Here is a list what might happen next. However, priorities can change.
 ## v0.7 - Uploading Unicorn
 
 * upload custom images for tiles & tokens via web UI
+* add nicer default tiles
 * concurrent drag-n-drop - first mover wins
 * generic marker overlay (X, ?, ...)
 * make zip upload more robust
