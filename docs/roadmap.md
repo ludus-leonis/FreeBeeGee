@@ -2,48 +2,28 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.6 - Mixing Mink
+## v0.7 - Uploading Unicorn
 
-* [X] sticky notes
-* [X] fancier implementation for dynamic poll intervalls
-  * [X] show "you have been inactive" dialog after 10min
-  * [X] increase poll interval for inactive tabs/windows
-  * [X] decrease poll interval on mouse/keyboard activity
-* [X] fully rename "game" to "table"
-* [X] scroll to last position/center of setup/table when opening new tables
-* [X] delete table
-* [X] template GDRP privacy statement
-* [X] fix Firefox reset-table bug
-* [X] URL mapping for example.org/roomname -> example.org/#/table/roomname
-* [X] fix drag-n-drop z position
-* [X] meta-piece: discard pile
-* [X] don't rotate 8+ sized tiles
-* [X] cycle borders hotkey
-* [X] multi-select in add dialog
-* [X] loading indicators / create-game
+* [ ] upload custom images for tiles & tokens via web UI
+* [ ] table passwords
+* [ ] add nicer default tiles
+* [ ] concurrent drag-n-drop - first mover wins
+* [ ] make zip upload more robust
+  * [ ] ignore unknown files instead rejecting them
+  * [ ] auto-create missing state json
+  * [ ] auto-create missing license
 * [ ] pre-release
-  * [X] bugfixing
+  * [ ] bugfixing
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG
 
-## v0.7 - Uploading Unicorn
-
-* upload custom images for tiles & tokens via web UI
-* add nicer default tiles
-* concurrent drag-n-drop - first mover wins
-* generic marker overlay (X, ?, ...)
-* make zip upload more robust
-  * ignore unknown files instead rejecting them
-  * auto-create missing state json
-  * auto-create missing license
-
 ## v0.8 - Mobile Monkey
 
 * better tablet / touch support
 * reuse pieces' DOM elements more
-* table passwords
+* generic marker overlay (X, ?, ...)
 * docs how to make table/template `.zip`s
 
 ## v0.9 - Clean Cat
