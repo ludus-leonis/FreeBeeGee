@@ -567,7 +567,7 @@ class FreeBeeGeeAPI
         $asset->assets = [$filename];
         if (
             preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent)\.[a-zA-Z0-9]+$/',
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
@@ -576,10 +576,13 @@ class FreeBeeGeeAPI
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->side = $matches[4];
-            if ($matches[5] === 'transparent') {
-                $asset->color = $matches[5];
-            } else {
-                $asset->color = '#' . $matches[5];
+            switch ($matches[5]) {
+                case 'transparent':
+                case 'border':
+                    $asset->color = $matches[5];
+                    break;
+                default:
+                    $asset->color = '#' . $matches[5];
             }
             $asset->alias = $matches[1];
         } elseif (
@@ -777,7 +780,7 @@ class FreeBeeGeeAPI
                     $validated->side = $this->api->assertInteger('side', $value, 0, 128);
                     break;
                 case 'border':
-                    $validated->border = $val = $this->api->assertInteger('border', $value, 0, 7);
+                    $validated->border = $val = $this->api->assertInteger('border', $value, 0, 15);
                     break;
                 case 'no':
                     $validated->no = $this->api->assertInteger('no', $value, 0, 15);

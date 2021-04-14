@@ -131,6 +131,7 @@ function assetToPreview (assetJson) {
   const max = _('.is-scale-2').create(asset)
   const card = _('.col-6.col-sm-4.col-md-3.col-lg-2.col-card').create(max)
   asset.add('.is-max-' + Math.max(assetJson.w, assetJson.h))
+  max.add('.is-max-' + Math.max(assetJson.w, assetJson.h))
   let tag = ''
   if (assetJson.w > 2 || assetJson.h > 2) {
     tag = `${assetJson.w}x${assetJson.h}`

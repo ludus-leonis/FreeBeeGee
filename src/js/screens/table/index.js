@@ -515,9 +515,11 @@ export function assetToNode (assetJson, side = 0) {
     }
   }
   if (assetJson.type !== 'overlay' && assetJson.type !== 'other') {
-    node.css({
-      backgroundColor: (assetJson.color ?? '#808080')
-    })
+    if (assetJson.color === 'border') {
+      node.css({ backgroundColor: 'var(--fbg-border-color)' })
+    } else {
+      node.css({ backgroundColor: (assetJson.color ?? '#808080') })
+    }
   }
 
   // set default metadata from asset
