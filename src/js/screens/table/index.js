@@ -290,31 +290,35 @@ function updatePieceDOM (pieceJson, select) {
 /**
  * Add or re-set a piece.
  *
- * @param {Object} pieceJson The piece's full data object.
+ * @param {Object} piece The piece's full data object.
  * @param {Boolean} select If true, the piece will also get selected. Defaults to false.
  */
-export function setPiece (pieceJson, select = false) {
-  pieceJson.h = pieceJson.h < 0 ? pieceJson.w : pieceJson.h
+export function setPiece (piece, select = false) {
+  // set defaults that are allowed to be missing in json
+  piece.w = piece.w ?? 1
+  piece.h = piece.h ?? 1
+  piece.side = piece.side ?? 0
+  piece.h = piece.h < 0 ? piece.w : piece.h
 
-  const div = updatePieceDOM(pieceJson, select)
+  const div = updatePieceDOM(piece, select)
 
   // update label
-  if (Number(div.dataset.label) !== pieceJson.label) {
-    _('#' + pieceJson.id + ' .label').delete()
-    if (pieceJson.label && pieceJson.label !== '') {
-      div.add(_('.label').create(pieceJson.label))
+  if (Number(div.dataset.label) !== piece.label) {
+    _('#' + piece.id + ' .label').delete()
+    if (piece.label && piece.label !== '') {
+      div.add(_('.label').create(piece.label))
     }
   }
 
   // update piece number
-  if (Number(div.dataset.no) !== pieceJson.no) {
+  if (Number(div.dataset.no) !== piece.no) {
     div.remove('.is-n', '.is-n-*')
-    if (pieceJson.layer === 'token' && pieceJson.no !== 0) {
-      div.add('.is-n', '.is-n-' + pieceJson.no)
+    if (piece.layer === 'token' && piece.no !== 0) {
+      div.add('.is-n', '.is-n-' + piece.no)
     }
   }
 
-  updateNode(div, pieceJson)
+  updateNode(div, piece)
 }
 
 /**
