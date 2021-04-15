@@ -2,6 +2,10 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.6.1
+
+* fixed missing animation for moving pieces
+
 ## v0.6 - Sticky Starling
 
 ### Notable changes
