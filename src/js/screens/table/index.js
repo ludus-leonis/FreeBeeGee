@@ -300,6 +300,13 @@ export function setPiece (piece, select = false) {
   piece.side = piece.side ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
 
+  // interim solution to scale old templates in the transition phase
+  // TODO remove afterwards
+  if (piece.x <= 63 && piece.y <= 63) {
+    piece.x *= 64
+    piece.y *= 64
+  }
+
   const div = updatePieceDOM(piece, select)
 
   // update label

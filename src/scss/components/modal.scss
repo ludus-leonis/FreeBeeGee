@@ -105,6 +105,7 @@
   flex-shrink: 1;
   margin: 0;
   max-height: 70vh;
+  min-height: 70vh;
   overflow-y: auto;
   padding: $spacing-medium $spacing-medium $spacing-small;
 
@@ -121,7 +122,7 @@
     p {
       margin: $spacing-tiny auto $spacing-small;
       text-align: center;
-      width: 128px;
+      width: 96px;
     }
   }
 }
@@ -134,6 +135,31 @@
   justify-content: space-between;
   margin: 0;
   padding: $spacing-medium;
+
+  .search {
+    $search-size: px(16);
+
+    svg {
+      height: $search-size;
+      width: $search-size;
+    }
+
+    input {
+      background: transparent;
+      margin-left: -$search-size;
+      margin-top: 0;
+      padding-left: $search-size + px(8);
+      width: px(256);
+
+      @include media-breakpoint-only(sm) {
+        width: px(192);
+      }
+    }
+
+    @include media-breakpoint-only(xs) {
+      display: none;
+    }
+  }
 
   > *:first-child:last-child { // center single buttons/items
     margin-left: auto;

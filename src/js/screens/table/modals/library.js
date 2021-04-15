@@ -56,11 +56,15 @@ export function modalLibrary (x, y) {
     `
     _('#modal-footer').innerHTML = `
       <button id='btn-close' type="button" class="btn">Cancel</button>
+
+      <span class="search">${iconSearch}<input id='input-search' type="text" class="search" placeholder="search ..." maxlength="8"></span>
+
       <button id='btn-ok' type="button" class="btn btn-primary">Add</button>
     `
 
     _('#btn-close').on('click', () => getModal().hide())
     _('#btn-ok').on('click', () => modalOk())
+    _('#input-search').on('keyup', () => filter())
     _('#modal').on('hidden.bs.modal', () => modalClose())
 
     const library = getLibrary()
@@ -105,8 +109,20 @@ export function modalLibrary (x, y) {
 
     // enable selection
     _('#tabs-library .col-6').on('click', click => {
-      // _('#tabs-library .is-selected').remove('.is-selected')
       _(click.target).toggle('.is-selected')
+
+      // update add button
+      const count = _('#tabs-library .is-selected').count()
+      let label = 'Add'
+      switch (count) {
+        case 1:
+          label = 'Add 1'
+          break
+        default:
+          label = 'Add ' + count
+      }
+      _('#btn-ok').innerHTML = label
+
       click.preventDefault()
     })
 
@@ -179,3 +195,20 @@ function modalOk () {
     getModal().hide()
   }
 }
+
+/**
+ * Filter items in the library by string entered in the bottom input field.
+ */
+function filter () {
+  const filter = _('#input-search').value.trim().toLowerCase()
+
+  _('#tabs-library .col-card p').each(p => {
+    if (!p.innerText.toLowerCase().includes(filter)) {
+      p.parentNode.classList.add('is-gone')
+    } else {
+      p.parentNode.classList.remove('is-gone')
+    }
+  })
+}
+
+const iconSearch = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'
