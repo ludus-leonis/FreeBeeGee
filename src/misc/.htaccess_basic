@@ -24,5 +24,7 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.+)-([0-9\.]+)(-dev)?\.(css|js)$ $1.$4 [L]
 
 # PHP tweaks
-php_value post_max_size 24M
-php_value upload_max_filesize 16M
+<IfModule mod_php7.c>
+  php_value post_max_size 24M
+  php_value upload_max_filesize 16M
+</IfModule>
