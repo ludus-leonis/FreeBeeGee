@@ -298,6 +298,8 @@ export function setPiece (piece, select = false) {
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? 1
   piece.side = piece.side ?? 0
+  piece.border = piece.border ?? 0
+  piece.r = piece.r ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
 
   // interim solution to scale old templates in the transition phase
