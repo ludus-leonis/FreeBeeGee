@@ -4,10 +4,10 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.7 - Uploading Unicorn
 
+* [X] search in library
 * [ ] upload custom images for tiles & tokens via web UI
 * [ ] table passwords
 * [ ] add nicer default tiles
-* [ ] concurrent drag-n-drop - first mover wins
 * [ ] make zip upload more robust
   * [ ] ignore unknown files instead rejecting them
   * [ ] auto-create missing state json
@@ -23,6 +23,7 @@ Here is a list what might happen next. However, priorities can change.
 
 * better tablet / touch support
 * reuse pieces' DOM elements more
+* concurrent drag-n-drop - first mover wins
 * generic marker overlay (X, ?, ...)
 * docs how to make table/template `.zip`s
 

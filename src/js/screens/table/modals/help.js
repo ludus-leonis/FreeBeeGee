@@ -37,7 +37,7 @@ export function modalHelp () {
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">FreeBeeGee v$VERSION$ “$CODENAME$”</h3>
     `
-    _('#modal-body').innerHTML = `
+    _('#modal-body').add('.is-maximizied').innerHTML = `
       <div id="tabs-library" class="tabs">
         <input id="tab-1" type="radio" name="tabs">
         <input id="tab-2" type="radio" name="tabs">

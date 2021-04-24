@@ -31,7 +31,10 @@ import {
   assetToNode
 } from '..'
 import _ from '../../../FreeDOM.js'
-import { toTitleCase } from '../../../utils.js'
+import {
+  toTitleCase,
+  sortByString
+} from '../../../utils.js'
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
 
 // --- public ------------------------------------------------------------------
@@ -49,9 +52,9 @@ export function modalLibrary (x, y) {
     node.y = y
 
     _('#modal-header').innerHTML = `
-      <h3 class="modal-title">Add piece</h3>
+      <h3 class="modal-title">Library</h3>
     `
-    _('#modal-body').innerHTML = `
+    _('#modal-body').add('.is-maximizied').innerHTML = `
       <div class="has-spinner">Loading</div>
     `
     _('#modal-footer').innerHTML = `
@@ -75,17 +78,20 @@ export function modalLibrary (x, y) {
         <input id="tab-2" type="radio" name="tabs">
         <input id="tab-3" type="radio" name="tabs">
         <input id="tab-4" type="radio" name="tabs">
+        <input id="tab-5" type="radio" name="tabs">
         <div class="tabs-tabs">
           <label for="tab-1" class="tabs-tab">Tiles</label>
           <label for="tab-2" class="tabs-tab">Overlays</label>
           <label for="tab-3" class="tabs-tab">Token</label>
           <label for="tab-4" class="tabs-tab">Dice &amp; Cards</label>
+          <label for="tab-5" class="tabs-tab">Upload</label>
         </div>
         <div class="tabs-content">
           <div class="container"><div id="tab-tiles" class="row"></div></div>
           <div class="container"><div id="tab-overlays" class="row"></div></div>
           <div class="container"><div id="tab-tokens" class="row"></div></div>
           <div class="container"><div id="tab-other" class="row"></div></div>
+          <div class="container"><div id="tab-upload" class="row"></div></div>
         </div>
       </div>
     `
@@ -99,13 +105,21 @@ export function modalLibrary (x, y) {
 
     // add items to their tab
     const tiles = _('#tab-tiles')
-    for (const asset of library.tile ?? []) { tiles.add(assetToPreview(asset)) }
+    for (const asset of sortByString(library.tile ?? [], 'alias')) {
+      tiles.add(assetToPreview(asset))
+    }
     const overlays = _('#tab-overlays')
-    for (const asset of library.overlay ?? []) { overlays.add(assetToPreview(asset)) }
+    for (const asset of sortByString(library.overlay ?? [], 'alias')) {
+      overlays.add(assetToPreview(asset))
+    }
     const tokens = _('#tab-tokens')
-    for (const asset of library.token ?? []) { tokens.add(assetToPreview(asset)) }
+    for (const asset of sortByString(library.token ?? [], 'alias')) {
+      tokens.add(assetToPreview(asset))
+    }
     const other = _('#tab-other')
-    for (const asset of library.other ?? []) { other.add(assetToPreview(asset)) }
+    for (const asset of sortByString(library.other ?? [], 'alias')) {
+      other.add(assetToPreview(asset))
+    }
 
     // enable selection
     _('#tabs-library .col-6').on('click', click => {
@@ -113,8 +127,11 @@ export function modalLibrary (x, y) {
 
       // update add button
       const count = _('#tabs-library .is-selected').count()
-      let label = 'Add'
+      let label
       switch (count) {
+        case 0:
+          label = 'Add'
+          break
         case 1:
           label = 'Add 1'
           break
@@ -156,7 +173,7 @@ function assetToPreview (assetJson) {
     tag += `:${assetJson.assets.length}`
   }
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
-  card.add(_('p').create().add(`${prettyName(assetJson.alias)}`))
+  card.add(_('p').create().add(prettyName(assetJson.alias)))
   return card
 }
 
@@ -168,10 +185,14 @@ function assetToPreview (assetJson) {
  * @param {String} assetName Name to convert, e.g. 'dungeon.ironDoor'.
  * @return {String} Improved name, e.g. 'Iron Door'.
  */
-function prettyName (assetName) {
+function prettyName (assetName = '') {
   const split = assetName.split('.')
-  if (split.length <= 1) return toTitleCase(split[0])
-  return toTitleCase(split[1].replace(/([A-Z]+)/, ' $1').trim())
+  if (split.length <= 1) {
+    return toTitleCase(split[0].replace(/([A-Z]+)/g, ' $1').trim())
+  } else {
+    return toTitleCase(split[0].replace(/([A-Z]+)/g, ' $1').trim()) +
+    ', ' + toTitleCase(split[1].replace(/([A-Z]+)/g, ' $1').trim())
+  }
 }
 
 /**

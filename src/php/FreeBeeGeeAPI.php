@@ -554,7 +554,7 @@ class FreeBeeGeeAPI
     /**
      * Convert an asset's filename into JSON metadata.
      *
-     * Will parse files named group.myName.1x2x3.ff0000.jpg and split those
+     * Will parse files named .myName.1x2x3.ff0000.jpg and split those
      * properties into JSON metadata.
      *
      * @param string $filename Filename to parse
@@ -566,13 +566,13 @@ class FreeBeeGeeAPI
         $asset = new \stdClass();
         $asset->assets = [$filename];
         if (
+            // group.name.1x2x3.808080.png
             preg_match(
                 '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
         ) {
-            // group.name.1x2x3.808080.png
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->side = $matches[4];
@@ -586,20 +586,22 @@ class FreeBeeGeeAPI
             }
             $asset->alias = $matches[1];
         } elseif (
+            // group.name.1x2x3.png
             preg_match(
                 '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
         ) {
-            // group.name.1x2x3.png
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->side = $matches[4];
             $asset->color = '#808080';
             $asset->alias = $matches[1];
-        } elseif (preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)) {
+        } elseif (
             // group.name.png
+            preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)
+        ) {
             $asset->w = 1;
             $asset->h = 1;
             $asset->side = 1;

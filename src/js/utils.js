@@ -153,6 +153,21 @@ export function shuffle (array) {
   }
 }
 
+/**
+ * Sort an array of objects by string property.
+ *
+ * @param {Array} pieces Pieces to sort.
+ * @param {String} property Property to sort.
+ * @return Sorted array.
+ */
+export function sortByString (pieces, property) {
+  return pieces.sort((a, b) => {
+    const valueA = (a[property] ?? '').toLowerCase()
+    const valueB = (b[property] ?? '').toLowerCase()
+    return valueA < valueB ? -1 : +(valueA > valueB)
+  })
+}
+
 /** An array of all the letters A-Z. */
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
