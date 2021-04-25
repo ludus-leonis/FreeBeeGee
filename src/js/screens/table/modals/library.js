@@ -122,7 +122,7 @@ export function modalLibrary (x, y) {
     }
 
     // enable selection
-    _('#tabs-library .col-6').on('click', click => {
+    _('#tabs-library .is-scale-2').on('click', click => {
       _(click.target).toggle('.is-selected')
 
       // update add button
@@ -144,6 +144,10 @@ export function modalLibrary (x, y) {
     })
 
     getModal().show()
+
+    // focus inputfield and keep it focused on tab change
+    _('#input-search').focus()
+    _('[name="tabs"]').on('change', click => _('#input-search').focus())
   }
 }
 
@@ -188,10 +192,10 @@ function assetToPreview (assetJson) {
 function prettyName (assetName = '') {
   const split = assetName.split('.')
   if (split.length <= 1) {
-    return toTitleCase(split[0].replace(/([A-Z]+)/g, ' $1').trim())
+    return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim())
   } else {
-    return toTitleCase(split[0].replace(/([A-Z]+)/g, ' $1').trim()) +
-    ', ' + toTitleCase(split[1].replace(/([A-Z]+)/g, ' $1').trim())
+    return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim()) +
+    ', ' + toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
   }
 }
 
