@@ -37,11 +37,11 @@ $piece-shadow-270: -2px 3px 2px $color-black-65a;
 
 $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
-$piece-shadow-flat: 3px 2px 0 $color-black-25a;
-$piece-shadow-flat-90: 2px -3px 0 $color-black-25a;
-$piece-shadow-flat-180: -3px -2px 0 $color-black-25a;
-$piece-shadow-flat-270: -2px 3px 0 $color-black-25a;
-$piece-shadow-flat-overlay: 3px 2px 0 $color-black-25a;
+$piece-shadow-flat: 3px 2px 0 $color-black-35a;
+$piece-shadow-flat-90: 2px -3px 0 $color-black-35a;
+$piece-shadow-flat-180: -3px -2px 0 $color-black-35a;
+$piece-shadow-flat-270: -2px 3px 0 $color-black-35a;
+$piece-shadow-flat-overlay: 3px 2px 0 $color-black-35a;
 
 @mixin piece-rotate($r, $amount) {
   &[id^='0'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 0); }
