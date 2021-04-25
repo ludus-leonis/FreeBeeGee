@@ -525,9 +525,14 @@ export function assetToNode (assetJson, side = 0) {
   }
   if (assetJson.type !== 'overlay' && assetJson.type !== 'other') {
     if (assetJson.color === 'border') {
-      node.css({ backgroundColor: 'var(--fbg-border-color)' })
+      node.css({
+        backgroundColor: 'var(--fbg-border-color)',
+        borderColor: '#202020'
+      })
     } else {
-      node.css({ backgroundColor: (assetJson.color ?? '#808080') })
+      node.css({
+        backgroundColor: (assetJson.color ?? '#808080')
+      })
     }
   }
 

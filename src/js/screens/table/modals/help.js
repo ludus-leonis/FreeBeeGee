@@ -105,6 +105,14 @@ export function modalHelp () {
 
           </div>
           <div class="copyright">
+            <h3>Table assets</h3>
+
+            ${marked(getTabletop().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+
+            <h3>UI assets</h3>
+
+            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more table background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
+
             <h3>FreeBeeGee</h3>
 
             <p>Copyright 2021 Markus Leupold-Löwenthal</p>
@@ -113,13 +121,6 @@ export function modalHelp () {
 
             <p>FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://www.gnu.org/licenses/">GNU Affero General Public License</a> for more details.</p>
 
-            <h3>UI assets</h3>
-
-            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more table background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
-
-            <h3>Table assets</h3>
-
-            ${marked(getTabletop().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
           </div>
         </div>
       </div>
