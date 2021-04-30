@@ -2,18 +2,6 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.7 - Uploading Unicorn
-
-* [X] search in library
-* [X] upload custom images for tiles & tokens via web UI
-* [X] add nicer default tiles
-* [ ] pre-release
-  * [X] bugfixing
-  * [ ] review+run unit+integration tests
-  * [ ] update screenshots
-  * [ ] review docs
-  * [ ] bump version/codename & update CHANGELOG
-
 ## v0.8 - Mobile Monkey
 
 * [ ] better tablet / touch support

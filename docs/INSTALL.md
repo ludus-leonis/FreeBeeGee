@@ -1,6 +1,6 @@
 # Setup
 
-This guide covers FreeBeeGee v$VERSION$.
+This guide covers the installation of FreeBeeGee.
 
 ## Requirements
 

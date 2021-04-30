@@ -1,8 +1,8 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.7.0-dev",
+  "version": "0.7.0",
   "versionEngine": "0.3.0",
-  "codename": "Sticky Starling",
+  "codename": "Uploading Unicorn",
   "description": "A virtual gaming tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=6.5.0"
