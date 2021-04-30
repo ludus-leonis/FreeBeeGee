@@ -33,6 +33,7 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.10 - Clean Cat
 
+* empty template table
 * reduce impact of "back" button
 * concurrent drag-n-drop - first mover wins
 * bulk manipulation of assets (delete, edit)
@@ -44,6 +45,8 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather sooner
 
+* different edit modals per piece type (hide useless fields)
+* click thru / don't drag on transparent parts of images
 * protect pieces (no-delete, no-move)
 * meta-piece: supply heap
 * overlay-grid-on-tile option
@@ -54,12 +57,12 @@ Here is a list what might happen next. However, priorities can change.
 * option to force-install templates with invalid versions
 * color.sh: detect dominant piece color instead of average color
 * rightclick on desk -> add piece popup
-* generate average piece color during build
+* generate average piece color during build and upload
 * multi-select stuff
-* join-passwords
 * add more classic game boards: go, backgammon, mills, solitaire
 * "layer not active" hint when dragging nothing
 * I18N
+* obfuscate/hash room name
 * show backside/all sides in tile browser
 * show even more infos in media browser
 * full-screen key
