@@ -299,7 +299,7 @@ function updatePieceDOM (piece, select) {
     case 270:
       div.add('.is-rotate-' + piece.r)
   }
-  if (piece.border >= 0 && piece.border <= 7) {
+  if (piece.border >= 0 && template.colors.length) {
     _(`#${piece.id}`).css({
       '--fbg-border-color': template.colors[piece.border].value
     })
