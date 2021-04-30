@@ -363,7 +363,6 @@ function updatePreview (parseImage = false) {
   if (parseImage) {
     // take over
     const parts = splitAsset(file.name)
-    console.log(parts)
     if (_('#upload-name').value.length <= 0) {
       _('#upload-w').value = parts.w
       _('#upload-h').value = parts.h

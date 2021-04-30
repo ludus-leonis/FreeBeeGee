@@ -216,6 +216,7 @@ export function numberSelected (delta) {
  * is a visual difference even if the same side randomly comes up.
  */
 export function randomSelected () {
+  const template = getTemplate()
   _('#tabletop .is-selected').each(node => {
     switch (node.dataset.feature) {
       case 'DICEMAT': // dicemat: randomize all pieces on it
@@ -226,61 +227,86 @@ export function randomSelected () {
         break
       default: // ordinary piece
         if (Number(node.dataset.sides) > 1) { // only randomize multi-sided tokens
+          // slide token around
+          let slideX = Math.floor(Math.random() * 3) - 1
+          let slideY = Math.floor(Math.random() * 3) - 1
+          if (slideX === 0 && slideY === 0) {
+            slideX = 1
+            slideY = 1
+          }
+          const x = Math.abs(clamp(
+            -template.snapSize,
+            Number(node.dataset.x) + slideX * template.snapSize,
+            (template.gridWidth - 1) * template.gridSize
+          ))
+          const y = Math.abs(clamp(
+            -template.snapSize,
+            Number(node.dataset.y) + slideY * template.snapSize,
+            (template.gridHeight - 1) * template.gridSize
+          ))
+          // send to server
           updatePieces([{
             id: node.id,
-            side: Math.floor(Math.random() * Number(node.dataset.sides))
-            // r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
+            side: Math.floor(Math.random() * Number(node.dataset.sides)),
+            x: x,
+            y: y
           }])
         }
     }
   })
 }
 
-function updatePieceDOM (pieceJson, select) {
+/**
+ * Update or recreate the DOM node of a piece.
+ *
+ * @param {Object} piece The piece's full data object.
+ * @param {Boolean} select If true, the piece should be get selected.
+ */
+function updatePieceDOM (piece, select) {
   let selection = []
 
   // get the DOM node for the piece or (re)create it if major changes happened
-  let div = _('#' + pieceJson.id)
+  let div = _('#' + piece.id)
   if (div.unique() && (
-    div.dataset.layer !== pieceJson.layer ||
-    Number(div.dataset.w) !== pieceJson.w ||
-    Number(div.dataset.h) !== pieceJson.h ||
-    Number(div.dataset.side) !== pieceJson.side
+    div.dataset.layer !== piece.layer ||
+    Number(div.dataset.w) !== piece.w ||
+    Number(div.dataset.h) !== piece.h ||
+    Number(div.dataset.side) !== piece.side
   )) {
     selection = _('#tabletop .is-selected').id
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
   }
   if (!div.unique()) { // (re)create
-    const node = pieceJson.layer === 'note' ? noteToNode(pieceJson) : pieceToNode(pieceJson)
-    if (selection.includes(pieceJson.id)) node.add('.is-selected')
-    _('#layer-' + pieceJson.layer).add(node)
+    const node = piece.layer === 'note' ? noteToNode(piece) : pieceToNode(piece)
+    if (selection.includes(piece.id)) node.add('.is-selected')
+    _('#layer-' + piece.layer).add(node)
   }
 
   // update dom infos (position, rotation ...)
   const template = getTemplate()
-  div = _('#' + pieceJson.id) // fresh query
+  div = _('#' + piece.id) // fresh query
     .css({
-      left: pieceJson.x + 'px',
-      top: pieceJson.y + 'px',
-      zIndex: pieceJson.z
+      left: piece.x + 'px',
+      top: piece.y + 'px',
+      zIndex: piece.z
     })
     .remove('.is-rotate-0', '.is-rotate-90', '.is-rotate-180', '.is-rotate-270')
-  switch (pieceJson.r) {
+  switch (piece.r) {
     case 0:
     case 90:
     case 180:
     case 270:
-      div.add('.is-rotate-' + pieceJson.r)
+      div.add('.is-rotate-' + piece.r)
   }
-  if (pieceJson.border >= 0 && pieceJson.border <= 7) {
-    _(`#${pieceJson.id}`).css({
-      '--fbg-border-color': template.colors[pieceJson.border].value
+  if (piece.border >= 0 && piece.border <= 7) {
+    _(`#${piece.id}`).css({
+      '--fbg-border-color': template.colors[piece.border].value
     })
   }
 
   // update select status
-  if (select && _('#tabletop.layer-' + pieceJson.layer + '-enabled').exists()) {
+  if (select && _('#tabletop.layer-' + piece.layer + '-enabled').exists()) {
     unselectPieces()
     div.add('.is-selected')
   }
@@ -303,13 +329,6 @@ export function setPiece (piece, select = false) {
   piece.r = piece.r ?? 0
   piece.no = piece.no ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
-
-  // interim solution to scale old templates in the transition phase
-  // TODO remove afterwards
-  if (piece.x <= 63 && piece.y <= 63) {
-    piece.x *= 64
-    piece.y *= 64
-  }
 
   const div = updatePieceDOM(piece, select)
 
@@ -703,7 +722,6 @@ export function popupPiece (id) {
  * Usually called during library sync.
  */
 export function cleanupTable () {
-  console.log('cleaning table', _('#tabletop .piece.is-invalid').nodes())
   _('#tabletop .piece.is-invalid').delete()
 }
 

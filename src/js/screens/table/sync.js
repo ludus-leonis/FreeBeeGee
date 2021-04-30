@@ -182,7 +182,6 @@ function checkForSync (
   selectIds = []
 ) {
   if (isTableDirty()) { // sync table first if it's dirty/changed
-    console.log('syncing dirty table!')
     return reloadTable()
       .then(changed => {
         if (changed) {

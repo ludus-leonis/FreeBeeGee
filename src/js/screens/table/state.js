@@ -394,7 +394,6 @@ export function deleteTable () {
  * Sync will try to refresh it next time it runs.
  */
 export function markTableDirty () {
-  console.log('mark table dirty')
   tableExpires = Date.now() - 10
 }
 
@@ -404,7 +403,6 @@ export function markTableDirty () {
  * @return {Boolean} True if table should be refreshed asap.
  */
 export function isTableDirty () {
-  console.log('isTableDirty', tableExpires < Date.now())
   return tableExpires < Date.now()
 }
 
@@ -418,7 +416,6 @@ let tableExpires = Date.now() - 10 /** ms when the table metadata should be sync
  * Will set it to sync again in 1 minute.
  */
 function markTableClean () {
-  console.log('mark table clean')
   tableExpires = Date.now() + 1 * 60 * 1000
 }
 
