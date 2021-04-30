@@ -37,7 +37,8 @@ import {
   toTitleCase,
   toCamelCase,
   sortByString,
-  splitAsset
+  splitAsset,
+  clamp
 } from '../../../utils.js'
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
 
@@ -475,8 +476,13 @@ function modalOk () {
   let offsetZ = 1
   _('#tabs-library .is-selected .piece').each(item => {
     const piece = nodeToPiece(item)
-    piece.x = Number(modal.x * template.gridSize)
-    piece.y = Number(modal.y * template.gridSize)
+
+    // don't place stuff outside table
+    const x = clamp(0, modal.x, template.gridWidth - piece.w)
+    const y = clamp(0, modal.y, template.gridHeight - piece.h)
+
+    piece.x = Number(x * template.gridSize)
+    piece.y = Number(y * template.gridSize)
     piece.z = getMaxZ(piece.layer) + offsetZ
     pieces.push(piece)
     offsetZ += 1
