@@ -8,7 +8,7 @@ Here is a list what might happen next. However, priorities can change.
 * [X] upload custom images for tiles & tokens via web UI
 * [X] add nicer default tiles
 * [ ] pre-release
-  * [ ] bugfixing
+  * [X] bugfixing
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
@@ -36,7 +36,7 @@ Here is a list what might happen next. However, priorities can change.
 * empty template table
 * reduce impact of "back" button
 * concurrent drag-n-drop - first mover wins
-* bulk manipulation of assets (delete, edit)
+* (bulk) manipulation of assets (delete, edit, change type)
 * remove default entries from json files before save (e.g. side=0)
 * add template version to asset urls
 * catch all unhandled warnings/exceptions in PHP API and return 500
@@ -87,12 +87,12 @@ Here is a list what might happen next. However, priorities can change.
 
 * compile js for older browsers (<globalThis)
 * in-game clock
+* arbitrary layers
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
 * point-somewhere feature
 * detail-pane to the right for selected item
 * move stuff via cursor keys
-* in-game clock
 * rename table
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals

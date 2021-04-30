@@ -356,18 +356,22 @@ function setupTabUpload () {
  * Update the upload WYSIWYG preview based on the selected infos.
  */
 function updatePreview (parseImage = false) {
-  const preview = _('.modal-library .upload-preview')
+  const preview = _('.modal-library .upload-preview').remove('.is-*')
   preview.innerHTML = ''
 
   const file = _('#upload-file').files[0]
   if (parseImage) {
-    // take over
     const parts = splitAsset(file.name)
-    if (_('#upload-name').value.length <= 0) {
+    if (_('#upload-name').value.length <= 0) { // guess defaults for form
       _('#upload-w').value = parts.w
       _('#upload-h').value = parts.h
       if (parts.alias !== 'unknown') {
         _('#upload-name').value = prettyName(parts.alias)
+      }
+      if (parts.w > 2 || parts.h > 2) {
+        _('#upload-type').value = 'tile'
+      } else {
+        _('#upload-type').value = 'token'
       }
     }
   }
@@ -375,6 +379,17 @@ function updatePreview (parseImage = false) {
   const type = _('#upload-type').value
   const w = _('#upload-w').value
   const h = _('#upload-h').value
+
+  if (w > 16 || h > 16) {
+    preview.add('.is-deflate-4x')
+  } else if (w > 12 || h > 12) {
+    preview.add('.is-deflate-3x')
+  } else if (w > 8 || h > 8) {
+    preview.add('.is-deflate-2x')
+  } else if (w > 2 || h > 2) {
+  } else {
+    preview.add('.is-inflate-2x')
+  }
 
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
@@ -399,7 +414,7 @@ function updatePreview (parseImage = false) {
   } else {
     piece.css({
       backgroundImage: 'url("img/upload.svg")',
-      backgroundSize: '2em'
+      backgroundSize: '25%'
     })
   }
 }

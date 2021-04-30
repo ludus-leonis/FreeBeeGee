@@ -200,17 +200,17 @@ export function splitAsset (assetName) {
   let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.alias = match[1]
-    data.w = match[2]
-    data.h = match[3]
-    data.side = match[4]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.side = Number(match[4])
     data.color = match[5]
     return data
   }
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.alias = match[1]
-    data.w = match[2]
-    data.h = match[3]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
     data.side = match[4]
     return data
   }

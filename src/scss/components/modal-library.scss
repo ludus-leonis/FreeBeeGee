@@ -23,6 +23,14 @@
 /// @access public
 ////
 
+@mixin modal-library-flate($bg-size, $scale) {
+  background-size: $bg-size;
+
+  > * {
+    transform: scale($scale);
+  }
+}
+
 .modal-library {
   .modal-body {
     .piece {
@@ -50,7 +58,18 @@
       background-position: center;
       background-size: 64px;
       cursor: pointer;
+      max-height: 50vh;
       min-height: 50vh;
+
+      > * {
+        flex-grow: 0;
+        flex-shrink: 0;
+      }
+
+      &.is-inflate-2x { @include modal-library-flate(128px, 2) }
+      &.is-deflate-2x { @include modal-library-flate(32px, .5) }
+      &.is-deflate-3x { @include modal-library-flate(24px, .375) }
+      &.is-deflate-4x { @include modal-library-flate(16px, .25) }
     }
   }
 
