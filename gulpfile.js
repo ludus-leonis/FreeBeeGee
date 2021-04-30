@@ -260,6 +260,7 @@ function template (name) {
 // function template (name) {
 //   const zip = require('gulp-zip')
 //   const image = require('gulp-image')
+//   const svgo = require('gulp-svgo')
 //
 //   return replace(gulp.src('src/templates/' + name + '/**/*'))
 //     .pipe(image({
@@ -268,9 +269,9 @@ function template (name) {
 //       zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
 //       jpegRecompress: ['--strip', '--quality', 'medium', '--min', 40, '--max', 80],
 //       mozjpeg: ['-optimize', '-progressive'],
-//       gifsicle: ['--optimize'],
-//       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+//       gifsicle: ['--optimize']
 //     }))
+//     .pipe(svgo())
 //     .pipe(zip(name + '.zip'))
 //     .pipe(gulp.dest(dirs.site + '/api/data/templates'))
 // }

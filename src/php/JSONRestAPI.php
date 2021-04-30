@@ -379,6 +379,28 @@ class JSONRestAPI
     }
 
     /**
+     * Check Base64 JSON field.
+     *
+     * Accepts any datatype that can be cast properly to a string.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $value The value to check.
+     * @return int The parsed value.
+     */
+    public function assertBase64(
+        string $field,
+        $value
+    ): string {
+        if (base64_encode(base64_decode($value, true)) === $value) {
+            return $value;
+        }
+        $this->sendError(400, 'invalid JSON: ' . $field . ' not valid base64-encoded data.');
+    }
+
+    /**
      * Check if an object has a set of fields.
      *
      * @param string $field Field name for error message.

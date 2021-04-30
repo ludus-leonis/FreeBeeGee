@@ -37,11 +37,11 @@ $piece-shadow-270: -2px 3px 2px $color-black-65a;
 
 $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
-$piece-shadow-flat: 3px 2px 0 $color-black-25a;
-$piece-shadow-flat-90: 2px -3px 0 $color-black-25a;
-$piece-shadow-flat-180: -3px -2px 0 $color-black-25a;
-$piece-shadow-flat-270: -2px 3px 0 $color-black-25a;
-$piece-shadow-flat-overlay: 3px 2px 0 $color-black-25a;
+$piece-shadow-flat: 3px 2px 0 $color-black-35a;
+$piece-shadow-flat-90: 2px -3px 0 $color-black-35a;
+$piece-shadow-flat-180: -3px -2px 0 $color-black-35a;
+$piece-shadow-flat-270: -2px 3px 0 $color-black-35a;
+$piece-shadow-flat-overlay: 3px 2px 0 $color-black-35a;
 
 @mixin piece-rotate($r, $amount) {
   &[id^='0'] { transform: rotate($r + ($amount / 2) - $amount / 16 * 0); }
@@ -148,6 +148,7 @@ $label-offset: 8px;
   align-items: flex-end;
   background-color: transparent;
   background-position: center;
+  background-repeat: no-repeat;
   background-size: cover;
   display: flex;
   height: $piece-tile-size;
@@ -164,6 +165,12 @@ $label-offset: 8px;
     drop-shadow(0 0 0 $selected-color)
     drop-shadow(0 0 0 $selected-color)
     drop-shadow(0 0 0 $selected-color) !important; // sass-lint:disable-line no-important
+  }
+
+  &.is-invalid {
+    background-image: url('img/invalid.svg');
+    background-size: contain;
+    display: none;
   }
 
   // --- size ------------------------------------------------------------------
@@ -509,14 +516,45 @@ $label-offset: 8px;
 
 // --- helpers -----------------------------------------------------------------
 
-.is-scale-2 {
+.is-scale-2 { // fixed maximum size for preview in modals
   background-color: $color-gray-05;
+  background-repeat: repeat;
   height: $piece-tile-size * 2;
   margin: 0 auto;
   position: relative;
   width: $piece-tile-size * 2;
 
   &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary; }
+
+  &.is-max-1 {
+    background-image: url('img/checkers-black.png');
+    background-position: center;
+    background-size: 64px;
+  }
+
+  &.is-max-2 {
+    background-image: url('img/checkers-black.png');
+    background-position: top left;
+    background-size: 64px;
+  }
+
+  &.is-max-3 {
+    background-image: url('img/checkers-black.png');
+    background-position: center;
+    background-size: 48px;
+  }
+
+  &.is-max-4 {
+    background-image: url('img/checkers-black.png');
+    background-position: top left;
+    background-size: 32px;
+  }
+
+  &.is-max-5 {
+    background-image: url('img/checkers-black.png');
+    background-position: center;
+    background-size: 25px;
+  }
 
   > .piece {
     left: 50%;

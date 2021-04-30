@@ -163,6 +163,15 @@ class FreeDOM {
   }
 
   /**
+   * Count the currently selected nodes.
+   *
+   * @return {Number} Number of items matched by selector.
+   */
+  count () {
+    return this._getNodes().length
+  }
+
+  /**
    * Add css/style declarations to all selected nodes
    *
    * Will set HTMLElement.style.* properties provided as flat object.
@@ -315,7 +324,7 @@ class FreeDOM {
    * @return {Boolean} True, if selector selects at least one node in DOM tree.
    */
   exists () {
-    return this._getNodes().length > 0
+    return this.count() > 0
   }
 
   /**
@@ -420,7 +429,7 @@ class FreeDOM {
    * @return {Boolean} True, if exactly one node matches. False otherwise.
    */
   unique () {
-    return this._getNodes().length === 1
+    return this.count() === 1
   }
 
   // --- input/form stuff ------------------------------------------------------

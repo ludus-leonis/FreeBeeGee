@@ -19,8 +19,17 @@
 
 import _ from '../../../FreeDOM.js'
 
-import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
-import { getTabletop, stateGetTablePref, stateSetTablePref } from '../state.js'
+import {
+  createModal,
+  getModal,
+  modalActive,
+  modalClose
+} from '../../../modal.js'
+import {
+  getTable,
+  stateGetTablePref,
+  stateSetTablePref
+} from '../state.js'
 import marked from 'marked'
 
 // --- public ------------------------------------------------------------------
@@ -37,7 +46,7 @@ export function modalHelp () {
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">FreeBeeGee v$VERSION$ “$CODENAME$”</h3>
     `
-    _('#modal-body').innerHTML = `
+    _('#modal-body').add('.is-maximizied').innerHTML = `
       <div id="tabs-library" class="tabs">
         <input id="tab-1" type="radio" name="tabs">
         <input id="tab-2" type="radio" name="tabs">
@@ -105,6 +114,14 @@ export function modalHelp () {
 
           </div>
           <div class="copyright">
+            <h3>Table assets</h3>
+
+            ${marked(getTable().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+
+            <h3>UI assets</h3>
+
+            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more table background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
+
             <h3>FreeBeeGee</h3>
 
             <p>Copyright 2021 Markus Leupold-Löwenthal</p>
@@ -113,13 +130,6 @@ export function modalHelp () {
 
             <p>FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://www.gnu.org/licenses/">GNU Affero General Public License</a> for more details.</p>
 
-            <h3>UI assets</h3>
-
-            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more table background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
-
-            <h3>Table assets</h3>
-
-            ${marked(getTabletop().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
           </div>
         </div>
       </div>

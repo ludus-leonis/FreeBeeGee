@@ -75,7 +75,7 @@ RewriteRule ^(.+)-([0-9\.]+)(-dev)?\.(css|js)$ $1.$4 [L]
   </FilesMatch>
 
   # Mitigate the risk of cross-site scripting: http://cspisawesome.com/
-  Header set Content-Security-Policy "default-src 'self'"
+  Header set Content-Security-Policy "default-src 'self' data:; img-src 'self' data:;"
   <FilesMatch "\.(appcache|atom|bbaw|bmp|br|crx|css|cur|eot|f4[abpv]|flv|geojson|gif|gz|htc|ic[os]|jpe?g|m?js|json(ld)?|m4[av]|manifest|map|markdown|md|mp4|oex|og[agv]|opus|otf|pdf|png|rdf|rss|safariextz|svgz?|swf|topojson|tt[cf]|txt|vcard|vcf|vtt|wasm|webapp|web[mp]|webmanifest|woff2?|xloc|xml|xpi)$">
     Header unset Content-Security-Policy
   </FilesMatch>

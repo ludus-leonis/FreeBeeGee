@@ -178,6 +178,17 @@ export function apiPostPiece (tableName, stateId, piece) {
   return postJson([201], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/', piece)
 }
 
+/**
+ * API POST /tables/:tableName/states/:stateId/pieces/
+ *
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Object} asset Asset JSON/Object to send.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPostAsset (tableName, asset) {
+  return postJson([201], 'api/tables/' + tableName + '/assets/', asset)
+}
+
 // --- internal methods --------------------------------------------------------
 
 /**

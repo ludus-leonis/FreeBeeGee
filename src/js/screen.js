@@ -40,7 +40,7 @@ export function createScreen (headline, content, footer = '') {
             <div id="content" class="card-body">${content}</div>
           </form>
           <p id="footer" class="p-small is-faded is-center">${footer}</p>
-          <p class="p-tiny is-faded spacing-medium copyright">$NAME$ v$VERSION$, ©2021 Ludus Leonis · <a href="terms">Terms of use</a> · <a href="privacy">Privacy Policy</a></p>
+          <p class="p-tiny is-faded spacing-medium copyright"><a href="https://freebeegee.org/">FreeBeeGee</a> v$VERSION$, ©2021 Ludus Leonis · <a href="terms">Terms of use</a> · <a href="privacy">Privacy Policy</a></p>
         </div>
       </div>
     </div>

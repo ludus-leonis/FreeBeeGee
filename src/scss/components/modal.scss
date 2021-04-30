@@ -59,6 +59,10 @@
       @extend %is-small;
     }
   }
+
+  .fbg-error {
+    color: $color-bad;
+  }
 }
 
 .modal-dialog {
@@ -105,24 +109,12 @@
   flex-shrink: 1;
   margin: 0;
   max-height: 70vh;
+  overflow-x: hidden;
   overflow-y: auto;
   padding: $spacing-medium $spacing-medium $spacing-small;
 
-  .piece {
-    pointer-events: none;
-    position: relative;
-  }
-
-  .col-card {
-    .is-scale-2 {
-      cursor: pointer;
-    }
-
-    p {
-      margin: $spacing-tiny auto $spacing-small;
-      text-align: center;
-      width: 128px;
-    }
+  &.is-maximizied {
+    min-height: 70vh;
   }
 }
 

@@ -22,6 +22,7 @@ import { createPopper } from '@popperjs/core'
 import {
   getTable,
   getTemplate,
+  markTableDirty,
   getAsset,
   loadTable,
   updatePieces,
@@ -84,7 +85,7 @@ export function runTable (name) {
   console.info('$NAME$ v$VERSION$, table ' + name)
 
   loadTable(name)
-    .then(table => { if (table) setupTable(table) })
+    .then(() => setupTable())
 }
 
 /**
@@ -215,6 +216,7 @@ export function numberSelected (delta) {
  * is a visual difference even if the same side randomly comes up.
  */
 export function randomSelected () {
+  const template = getTemplate()
   _('#tabletop .is-selected').each(node => {
     switch (node.dataset.feature) {
       case 'DICEMAT': // dicemat: randomize all pieces on it
@@ -225,61 +227,86 @@ export function randomSelected () {
         break
       default: // ordinary piece
         if (Number(node.dataset.sides) > 1) { // only randomize multi-sided tokens
+          // slide token around
+          let slideX = Math.floor(Math.random() * 3) - 1
+          let slideY = Math.floor(Math.random() * 3) - 1
+          if (slideX === 0 && slideY === 0) {
+            slideX = 1
+            slideY = 1
+          }
+          const x = Math.abs(clamp(
+            -template.snapSize,
+            Number(node.dataset.x) + slideX * template.snapSize,
+            (template.gridWidth - 1) * template.gridSize
+          ))
+          const y = Math.abs(clamp(
+            -template.snapSize,
+            Number(node.dataset.y) + slideY * template.snapSize,
+            (template.gridHeight - 1) * template.gridSize
+          ))
+          // send to server
           updatePieces([{
             id: node.id,
-            side: Math.floor(Math.random() * Number(node.dataset.sides))
-            // r: (Number(node.dataset.r) + 90 + 90 * Math.floor(Math.random() * 3)) % 360
+            side: Math.floor(Math.random() * Number(node.dataset.sides)),
+            x: x,
+            y: y
           }])
         }
     }
   })
 }
 
-function updatePieceDOM (pieceJson, select) {
+/**
+ * Update or recreate the DOM node of a piece.
+ *
+ * @param {Object} piece The piece's full data object.
+ * @param {Boolean} select If true, the piece should be get selected.
+ */
+function updatePieceDOM (piece, select) {
   let selection = []
 
   // get the DOM node for the piece or (re)create it if major changes happened
-  let div = _('#' + pieceJson.id)
+  let div = _('#' + piece.id)
   if (div.unique() && (
-    div.dataset.layer !== pieceJson.layer ||
-    Number(div.dataset.w) !== pieceJson.w ||
-    Number(div.dataset.h) !== pieceJson.h ||
-    Number(div.dataset.side) !== pieceJson.side
+    div.dataset.layer !== piece.layer ||
+    Number(div.dataset.w) !== piece.w ||
+    Number(div.dataset.h) !== piece.h ||
+    Number(div.dataset.side) !== piece.side
   )) {
     selection = _('#tabletop .is-selected').id
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
   }
-  if (!div.unique()) {
-    const node = pieceJson.layer === 'note' ? noteToNode(pieceJson) : pieceToNode(pieceJson)
-    if (selection.includes(pieceJson.id)) node.add('.is-selected')
-    _('#layer-' + pieceJson.layer).add(node)
+  if (!div.unique()) { // (re)create
+    const node = piece.layer === 'note' ? noteToNode(piece) : pieceToNode(piece)
+    if (selection.includes(piece.id)) node.add('.is-selected')
+    _('#layer-' + piece.layer).add(node)
   }
 
   // update dom infos (position, rotation ...)
   const template = getTemplate()
-  div = _('#' + pieceJson.id) // fresh query
+  div = _('#' + piece.id) // fresh query
     .css({
-      left: pieceJson.x + 'px',
-      top: pieceJson.y + 'px',
-      zIndex: pieceJson.z
+      left: piece.x + 'px',
+      top: piece.y + 'px',
+      zIndex: piece.z
     })
     .remove('.is-rotate-0', '.is-rotate-90', '.is-rotate-180', '.is-rotate-270')
-  switch (pieceJson.r) {
+  switch (piece.r) {
     case 0:
     case 90:
     case 180:
     case 270:
-      div.add('.is-rotate-' + pieceJson.r)
+      div.add('.is-rotate-' + piece.r)
   }
-  if (pieceJson.border >= 0 && pieceJson.border <= 7) {
-    _(`#${pieceJson.id}`).css({
-      '--fbg-border-color': template.colors[pieceJson.border].value
+  if (piece.border >= 0 && template.colors.length) {
+    _(`#${piece.id}`).css({
+      '--fbg-border-color': template.colors[piece.border].value
     })
   }
 
   // update select status
-  if (select && _('#tabletop.layer-' + pieceJson.layer + '-enabled').exists()) {
+  if (select && _('#tabletop.layer-' + piece.layer + '-enabled').exists()) {
     unselectPieces()
     div.add('.is-selected')
   }
@@ -298,6 +325,9 @@ export function setPiece (piece, select = false) {
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? 1
   piece.side = piece.side ?? 0
+  piece.border = piece.border ?? 0
+  piece.r = piece.r ?? 0
+  piece.no = piece.no ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
 
   const div = updatePieceDOM(piece, select)
@@ -515,9 +545,16 @@ export function assetToNode (assetJson, side = 0) {
     }
   }
   if (assetJson.type !== 'overlay' && assetJson.type !== 'other') {
-    node.css({
-      backgroundColor: (assetJson.color ?? '#808080')
-    })
+    if (assetJson.color === 'border') {
+      node.css({
+        backgroundColor: 'var(--fbg-border-color)',
+        borderColor: '#202020'
+      })
+    } else {
+      node.css({
+        backgroundColor: (assetJson.color ?? '#808080')
+      })
+    }
   }
 
   // set default metadata from asset
@@ -679,6 +716,15 @@ export function popupPiece (id) {
   popup.add('.show')
 }
 
+/**
+ * Remove dirty / obsolete / bad pieces from table.
+ *
+ * Usually called during library sync.
+ */
+export function cleanupTable () {
+  _('#tabletop .piece.is-invalid').delete()
+}
+
 // --- internal ----------------------------------------------------------------
 
 /**
@@ -686,7 +732,9 @@ export function popupPiece (id) {
  *
  * @param {Object} table Table data object.
  */
-function setupTable (table) {
+function setupTable () {
+  const table = getTable()
+
   _('body').remove('.page-boxed').innerHTML = `
     <div id="table" class="table is-fullscreen is-noselect">
       <div class="menu">
@@ -781,14 +829,12 @@ function setupTable (table) {
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => navigateToJoin(getTable().name))
 
-  const tabletop = table.tables[0] // assume one table for now
-
   _('#tabletop').css({
-    width: tabletop.width + 'px',
-    height: tabletop.height + 'px',
-    backgroundColor: tabletop.background.color,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + tabletop.background.image + '?v=$CACHE$")',
-    backgroundSize: tabletop.template.gridSize + 'px,1152px 768px'
+    width: table.width + 'px',
+    height: table.height + 'px',
+    backgroundColor: table.background.color,
+    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
+    backgroundSize: table.template.gridSize + 'px,1152px 768px'
   })
 
   _('body').on('contextmenu', e => e.preventDefault())
@@ -799,11 +845,11 @@ function setupTable (table) {
   // setup scroller + keep reference for scroll-tracking
   scroller = _('#scroller')
   scroller.css({ // this is for moz://a
-    scrollbarColor: `${tabletop.background.scroller} ${tabletop.background.color}`
+    scrollbarColor: `${table.background.scroller} ${table.background.color}`
   })
   scroller = scroller.node()
-  scroller.style.setProperty('--fbg-color-scroll-fg', tabletop.background.scroller)
-  scroller.style.setProperty('--fbg-color-scroll-bg', tabletop.background.color)
+  scroller.style.setProperty('--fbg-color-scroll-fg', table.background.scroller)
+  scroller.style.setProperty('--fbg-color-scroll-bg', table.background.color)
 
   enableDragAndDrop('#tabletop')
 }
@@ -919,10 +965,8 @@ function intersect (rect1, rect2) {
  * @return {FreeDOM} dummy node.
  */
 function createInvalidAsset (type) {
-  return _(`.piece.piece-${type}`).create().css({
-    backgroundImage: `url('api/data/tables/${getTable().name}/invalid.svg')`,
-    backgroundColor: '#40bfbf'
-  })
+  markTableDirty()
+  return _(`.piece.piece-${type}.is-invalid`).create()
 }
 
 /**

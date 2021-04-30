@@ -98,6 +98,8 @@ export function createTable (name) {
     .on('blur', blur => { _('#password').remove('.invalid') })
     .on('keydown', keydown => { if (keydown.keyCode === 13) validate() && ok(name) })
   _('#ok').on('click', click => { click.preventDefault(); validate() && ok(name) })
+
+  _('#template').focus()
 }
 
 function validate () {

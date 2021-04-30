@@ -5,11 +5,11 @@
    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
-   id="svg8"
-   version="1.1"
-   viewBox="0 0 25.4 25.4"
+   width="25.4mm"
    height="25.4mm"
-   width="25.4mm">
+   viewBox="0 0 25.4 25.4"
+   version="1.1"
+   id="svg8">
   <defs
      id="defs2" />
   <metadata
@@ -25,26 +25,16 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(-21.349136,-63.016724)"
-     id="layer1">
-    <rect
-       y="63.016724"
-       x="21.349136"
-       height="25.4"
-       width="25.4"
-       id="rect815"
-       style="opacity:1;vector-effect:none;fill:#40bfbf;fill-opacity:1;stroke:none;stroke-width:0.23249379;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-    <g
-       transform="matrix(0.85211836,0,0,0.85211836,5.0352423,11.197113)"
-       id="g823">
-      <path
-         style="fill:#ffffff;stroke:#ffffff;stroke-width:1.26999998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 21.349137,63.016722 46.749136,88.416724"
-         id="path817" />
-      <path
-         style="fill:#ffffff;stroke:#ffffff;stroke-width:1.26999998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         d="M 46.749136,63.016722 21.349137,88.416724"
-         id="path819" />
-    </g>
+     style="fill:none;fill-opacity:1;stroke:#f2f2f2;stroke-opacity:1"
+     transform="matrix(0.85211836,0,0,0.85211836,-16.313894,-51.819611)"
+     id="g823">
+    <path
+       style="fill:none;stroke:#f2f2f2;stroke-width:1.26999998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="M 21.349137,63.016722 46.749136,88.416724"
+       id="path817" />
+    <path
+       style="fill:none;stroke:#f2f2f2;stroke-width:1.26999998;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;fill-opacity:1"
+       d="M 46.749136,63.016722 21.349137,88.416724"
+       id="path819" />
   </g>
 </svg>

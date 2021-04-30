@@ -50,7 +50,9 @@ export function uuid () {
  * @return {Number} Clamped value within [min, max].
  */
 export function clamp (min, value, max) {
-  return Math.min(Math.max(value, min), max)
+  if (value < min) return min
+  if (value > max) return max
+  return value
 }
 
 /**
@@ -80,6 +82,19 @@ export function toTitleCase (string) {
   return string.replace(/\w\S*/g, txt =>
     txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   )
+}
+
+/**
+ * Convert a string to camel-case (no spaces, parts starting with uppercase).
+ *
+ * @param {String} string String to camel-case.
+ * @return {String} Camel-cased string.
+ */
+export function toCamelCase (string) {
+  return string.replace(/[a-zA-Z0-9-]+/g, function (match, index) {
+    const lower = match.toLowerCase()
+    return index === 0 ? lower : (lower.charAt(0).toUpperCase() + lower.slice(1))
+  }).replace(/[^a-zA-Z0-9-]+/g, '')
 }
 
 /**
@@ -151,6 +166,60 @@ export function shuffle (array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]]
   }
+}
+
+/**
+ * Sort an array of objects by string property.
+ *
+ * @param {Array} pieces Pieces to sort.
+ * @param {String} property Property to sort.
+ * @return Sorted array.
+ */
+export function sortByString (pieces, property) {
+  return pieces.sort((a, b) => {
+    const valueA = (a[property] ?? '').toLowerCase()
+    const valueB = (b[property] ?? '').toLowerCase()
+    return valueA < valueB ? -1 : +(valueA > valueB)
+  })
+}
+
+/**
+ * Extract parts (group, name, size, etc.) from an asset filename.
+ *
+ * @param {String} assetName Asset filename.
+ * @return {Object} Parsed elements.
+ */
+export function splitAsset (assetName) {
+  const data = {
+    alias: 'unknown',
+    w: 1,
+    h: 1,
+    side: 1,
+    color: '808080'
+  }
+  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.side = Number(match[4])
+    data.color = match[5]
+    return data
+  }
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.side = match[4]
+    return data
+  }
+  match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    return data
+  }
+  return data
 }
 
 /** An array of all the letters A-Z. */

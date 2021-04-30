@@ -53,6 +53,27 @@ $piece-note-glue: rgba(0, 0, 0, .02);
     width: 15%;
   }
 
+  // --- reduce text size on small notes ---
+
+  &.is-w-1 {
+    font-size: px(6);
+    padding: $spacing-micro;
+  }
+
+  &.is-w-2 {
+    font-size: px(12);
+    padding: $spacing-tiny;
+  }
+
+  &.is-w-3 {
+    font-size: px(18);
+    padding: $spacing-tiny;
+  }
+
+  &.is-w-4 {
+    font-size: 1.5em;
+  }
+
   // --- quality settings ---
 
   .is-quality-ultra & {
