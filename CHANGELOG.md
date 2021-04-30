@@ -2,6 +2,31 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.7 - Uploading Unicorn
+
+### Noteable changes
+
+* added image upload tab in library modal
+* added search/filter to library
+* added new dungeon tiles by 2minutetabletop.com to RPG template
+* added 200+ monster token by game-icons.net to RPG template
+* added Go boards by github.com/svenja to Classic template
+
+### Other changes
+
+* added random movement to single die rolls
+* added piece size indicator backgrounds in library modal
+* improved sticky note text sizes
+* improved cyan dice
+* improved piece shadows
+* improved navigating create-screen via keyboard
+* fixed invalid new-piece placement outside table bounds
+* fixed missing colors when cycling borders
+* fixed token-border bug
+* added draft of snapshot docs
+* updated docs & screenshots
+* updated unit tests
+
 ## v0.6.1
 
 * fixed missing animation for moving pieces
@@ -13,7 +38,7 @@ Download current and old versions from [https://github.com/ludus-leonis/FreeBeeG
 
 * added sticky notes (hotkey: n)
 * added FATE dice to RPG template
-* added multiselect in library window (add multiple pieces)
+* added multiselect in library modal (add multiple pieces)
 * added customizable snap positions (& RPG template snaps to half-grid now)
 * added auto-scroll-to-action after joining/reloading a table
 * added border-color hotkey "o"
@@ -80,7 +105,7 @@ Download current and old versions from [https://github.com/ludus-leonis/FreeBeeG
 * added clear-table feature
 * added snapshot uploads
 * disabled flip menu for single-sided pieces
-* added template credits / license information to about window
+* added template credits / license information to about modal
 * replaced png assets with svgs in default templates
 * improved handling of missing assets
 * added settings dialog

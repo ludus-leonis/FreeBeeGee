@@ -2,22 +2,28 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.8 - Mobile Monkey
+## v0.8 - Content Cobra
 
-* [ ] better tablet / touch support
-  * [ ] zooming
-  * [ ] moving pieces
-* [ ] table passwords
-* [ ] reuse pieces' DOM elements more
+* [ ] make zip upload more robust
+  * [ ] ignore unknown files instead rejecting them
+  * [ ] auto-create missing state json
+  * [ ] auto-create missing license
+* [ ] generic marker overlay (X, ?, ...)
+* [ ] docs how to make table/template `.zip`s
+* [ ] pre-release
+  * [ ] bugfixing
+  * [ ] review+run unit+integration tests
+  * [ ] update screenshots
+  * [ ] review docs
+  * [ ] bump version/codename & update CHANGELOG
 
-## v0.10 - Content Cobra
+## v0.9 - Mobile Monkey
 
-* make zip upload more robust
-  * ignore unknown files instead rejecting them
-  * auto-create missing state json
-  * auto-create missing license
-* generic marker overlay (X, ?, ...)
-* docs how to make table/template `.zip`s
+* better tablet / touch support
+  * zooming
+  * moving pieces
+* table passwords
+* reuse pieces' DOM elements more
 
 ## v0.10 - Clean Cat
 
@@ -33,46 +39,42 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather sooner
 
-* different edit modals per piece type (hide useless fields)
+* change table size
+  * re-center button
+  * re-size desk if needed
 * click thru / don't drag on transparent parts of images
+* LOS-ruler
+* tabletop settings (e.g. change background, size, grid)
+* undo (limited)
+* show backside/all sides in tile browser
+* different edit modals per piece type (hide useless fields)
+* better sticky notes (more text, auto-size text)
 * protect pieces (no-delete, no-move)
 * meta-piece: supply heap
 * overlay-grid-on-tile option
 * hide .../data/... from URLs (via .htaccess)
-* change table size
 * support for stacks/decks of cards
   * shuffle deck/stack
 * option to force-install templates with invalid versions
-* color.sh: detect dominant piece color instead of average color
 * rightclick on desk -> add piece popup
-* generate average piece color during build and upload
 * multi-select stuff
 * add more classic game boards: go, backgammon, mills, solitaire
 * "layer not active" hint when dragging nothing
 * I18N
-* obfuscate/hash room name
-* show backside/all sides in tile browser
 * show even more infos in media browser
 * full-screen key
 * dedicated HP/Mana/Value field(s)
-* LOS-ruler
-* tabletop settings (e.g. change background, size, grid)
-* snap-to-borders
 * token status (blind, poison, prone, dazed, ...)
-* auto-center
-  * re-center button
-  * origin 0/0 = middle
-  * re-size desk if needed
-* undo (limited)
+* obfuscate/hash room name
 * pinboard for handouts
-* full set of mm1/bestiary1 monsters in RPG template
 * tour / first-time-tutorial
 * API Docs
 * randomize button on dicemat
-* cycle border colors
+* generate average piece color during build and upload
 
 ### rather later
 
+* color.sh: detect dominant piece color instead of average color
 * compile js for older browsers (<globalThis)
 * in-game clock
 * arbitrary layers
