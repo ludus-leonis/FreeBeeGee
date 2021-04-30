@@ -22,6 +22,7 @@ import { createPopper } from '@popperjs/core'
 import {
   getTable,
   getTemplate,
+  markTableDirty,
   getAsset,
   loadTable,
   updatePieces,
@@ -84,7 +85,7 @@ export function runTable (name) {
   console.info('$NAME$ v$VERSION$, table ' + name)
 
   loadTable(name)
-    .then(table => { if (table) setupTable(table) })
+    .then(() => setupTable())
 }
 
 /**
@@ -250,7 +251,7 @@ function updatePieceDOM (pieceJson, select) {
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
   }
-  if (!div.unique()) {
+  if (!div.unique()) { // (re)create
     const node = pieceJson.layer === 'note' ? noteToNode(pieceJson) : pieceToNode(pieceJson)
     if (selection.includes(pieceJson.id)) node.add('.is-selected')
     _('#layer-' + pieceJson.layer).add(node)
@@ -300,6 +301,7 @@ export function setPiece (piece, select = false) {
   piece.side = piece.side ?? 0
   piece.border = piece.border ?? 0
   piece.r = piece.r ?? 0
+  piece.no = piece.no ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
 
   // interim solution to scale old templates in the transition phase
@@ -695,6 +697,16 @@ export function popupPiece (id) {
   popup.add('.show')
 }
 
+/**
+ * Remove dirty / obsolete / bad pieces from table.
+ *
+ * Usually called during library sync.
+ */
+export function cleanupTable () {
+  console.log('cleaning table', _('#tabletop .piece.is-invalid').nodes())
+  _('#tabletop .piece.is-invalid').delete()
+}
+
 // --- internal ----------------------------------------------------------------
 
 /**
@@ -702,7 +714,9 @@ export function popupPiece (id) {
  *
  * @param {Object} table Table data object.
  */
-function setupTable (table) {
+function setupTable () {
+  const table = getTable()
+
   _('body').remove('.page-boxed').innerHTML = `
     <div id="table" class="table is-fullscreen is-noselect">
       <div class="menu">
@@ -797,14 +811,12 @@ function setupTable (table) {
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => navigateToJoin(getTable().name))
 
-  const tabletop = table.tables[0] // assume one table for now
-
   _('#tabletop').css({
-    width: tabletop.width + 'px',
-    height: tabletop.height + 'px',
-    backgroundColor: tabletop.background.color,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + tabletop.background.image + '?v=$CACHE$")',
-    backgroundSize: tabletop.template.gridSize + 'px,1152px 768px'
+    width: table.width + 'px',
+    height: table.height + 'px',
+    backgroundColor: table.background.color,
+    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
+    backgroundSize: table.template.gridSize + 'px,1152px 768px'
   })
 
   _('body').on('contextmenu', e => e.preventDefault())
@@ -815,11 +827,11 @@ function setupTable (table) {
   // setup scroller + keep reference for scroll-tracking
   scroller = _('#scroller')
   scroller.css({ // this is for moz://a
-    scrollbarColor: `${tabletop.background.scroller} ${tabletop.background.color}`
+    scrollbarColor: `${table.background.scroller} ${table.background.color}`
   })
   scroller = scroller.node()
-  scroller.style.setProperty('--fbg-color-scroll-fg', tabletop.background.scroller)
-  scroller.style.setProperty('--fbg-color-scroll-bg', tabletop.background.color)
+  scroller.style.setProperty('--fbg-color-scroll-fg', table.background.scroller)
+  scroller.style.setProperty('--fbg-color-scroll-bg', table.background.color)
 
   enableDragAndDrop('#tabletop')
 }
@@ -935,10 +947,8 @@ function intersect (rect1, rect2) {
  * @return {FreeDOM} dummy node.
  */
 function createInvalidAsset (type) {
-  return _(`.piece.piece-${type}`).create().css({
-    backgroundImage: `url('api/data/tables/${getTable().name}/invalid.svg')`,
-    backgroundColor: '#40bfbf'
-  })
+  markTableDirty()
+  return _(`.piece.piece-${type}.is-invalid`).create()
 }
 
 /**

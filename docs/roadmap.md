@@ -5,13 +5,8 @@ Here is a list what might happen next. However, priorities can change.
 ## v0.7 - Uploading Unicorn
 
 * [X] search in library
-* [ ] upload custom images for tiles & tokens via web UI
-* [ ] table passwords
-* [ ] add nicer default tiles
-* [ ] make zip upload more robust
-  * [ ] ignore unknown files instead rejecting them
-  * [ ] auto-create missing state json
-  * [ ] auto-create missing license
+* [X] upload custom images for tiles & tokens via web UI
+* [X] add nicer default tiles
 * [ ] pre-release
   * [ ] bugfixing
   * [ ] review+run unit+integration tests
@@ -21,15 +16,26 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.8 - Mobile Monkey
 
-* better tablet / touch support
-* reuse pieces' DOM elements more
-* concurrent drag-n-drop - first mover wins
+* [ ] better tablet / touch support
+  * [ ] zooming
+  * [ ] moving pieces
+* [ ] table passwords
+* [ ] reuse pieces' DOM elements more
+
+## v0.10 - Content Cobra
+
+* make zip upload more robust
+  * ignore unknown files instead rejecting them
+  * auto-create missing state json
+  * auto-create missing license
 * generic marker overlay (X, ?, ...)
 * docs how to make table/template `.zip`s
 
-## v0.9 - Clean Cat
+## v0.10 - Clean Cat
 
 * reduce impact of "back" button
+* concurrent drag-n-drop - first mover wins
+* bulk manipulation of assets (delete, edit)
 * remove default entries from json files before save (e.g. side=0)
 * add template version to asset urls
 * catch all unhandled warnings/exceptions in PHP API and return 500
@@ -76,6 +82,7 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather later
 
+* compile js for older browsers (<globalThis)
 * in-game clock
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces

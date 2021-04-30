@@ -32,6 +32,7 @@ import {
   apiPatchPiece,
   apiDeletePiece,
   apiPostPiece,
+  apiPostAsset,
   UnexpectedStatus
 } from '../../api.js'
 import { syncNow } from './sync.js'
@@ -42,21 +43,34 @@ let table = {} /** stores the table meta info JSON */
 // --- public ------------------------------------------------------------------
 
 /**
- * (Re)Fetch the table's state from the API and trigger the UI update.
+ * (Re)Fetch the table's state from the API and cache it
  *
  * @param {String} name The current table name.
- * @return {Object} Promise of table metadata object.
+ * @return {Promise} Promise of a boolean, true if table content changed.
  */
 export function loadTable (name) {
   return apiGetTable(name)
     .then(remoteTable => {
+      const changed = table !== remoteTable
       table = remoteTable
-      return table
+      markTableClean()
+      return changed
     })
     .catch((error) => { // invalid table
       runError('TABLE_GONE', name, error)
       return null
     })
+}
+
+/**
+ * Reload the current table information.
+ *
+ * Usefull to update the asset library.
+ *
+ * @return {Promise} Promise of a boolean, true if table state changed on server.
+ */
+export function reloadTable () {
+  return loadTable(table.name)
 }
 
 /**
@@ -69,17 +83,6 @@ export function getTable () {
 }
 
 /**
- * Get the current table's table (cached).
- *
- * Until we support multiple tables, this is always table 0.
- *
- * @return {Object} Current table's template metadata.
- */
-export function getTabletop () {
-  return getTable()?.tables[0]
-}
-
-/**
  * Get the current table's template (cached).
  *
  * Until we support multiple tables, this is always the template of table 0.
@@ -87,7 +90,7 @@ export function getTabletop () {
  * @return {Object} Current table's template metadata.
  */
 export function getTemplate () {
-  return getTabletop()?.template
+  return getTable()?.template
 }
 
 /**
@@ -98,7 +101,7 @@ export function getTemplate () {
  * @return {Object} Current table's template metadata.
  */
 export function getLibrary () {
-  return getTabletop()?.library
+  return getTable()?.library
 }
 
 /**
@@ -117,7 +120,9 @@ export function getAsset (id) {
   if (asset) return asset
   asset = getLibrary()?.other?.find(asset => asset.id === id)
   if (asset) return asset
-  return { // create dummy asset
+
+  // create dummy asset
+  return {
     assets: ['invalid.svg'],
     width: 1,
     height: 1,
@@ -370,6 +375,10 @@ export function createPieces (pieces, selected = false, selectIds = []) {
     })
 }
 
+export function addAsset (data) {
+  return apiPostAsset(table.name, data)
+}
+
 /**
  * Delete the current table for good.
  *
@@ -379,7 +388,39 @@ export function deleteTable () {
   return apiDeleteTable(table.name)
 }
 
+/**
+ * Mark the table dirty/inconsistent.
+ *
+ * Sync will try to refresh it next time it runs.
+ */
+export function markTableDirty () {
+  console.log('mark table dirty')
+  tableExpires = Date.now() - 10
+}
+
+/**
+ * Check if the current table data is dirty/inconsistent with the state.
+ *
+ * @return {Boolean} True if table should be refreshed asap.
+ */
+export function isTableDirty () {
+  console.log('isTableDirty', tableExpires < Date.now())
+  return tableExpires < Date.now()
+}
+
 // --- internal ----------------------------------------------------------------
+
+let tableExpires = Date.now() - 10 /** ms when the table metadata should be synced */
+
+/**
+ * Mark the table clean/consistent.
+ *
+ * Will set it to sync again in 1 minute.
+ */
+function markTableClean () {
+  console.log('mark table clean')
+  tableExpires = Date.now() + 1 * 60 * 1000
+}
 
 /**
  * Update a piece on the server.
@@ -394,8 +435,7 @@ function patchPiece (pieceId, patch, poll = true) {
   return apiPatchPiece(table.name, 1, pieceId, patch)
     .catch(error => {
       if (error instanceof UnexpectedStatus && error.status === 404) {
-        // we somewhat expected this situation. silently ignore it.
-        console.info('Piece ' + pieceId + ' got deleted - no need to PATCH it.')
+        // no need to patch already deleted pieces - silently ignore
       } else {
         runError('UNEXPECTED', error) // *that* was unexpected
       }

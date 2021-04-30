@@ -19,8 +19,17 @@
 
 import _ from '../../../FreeDOM.js'
 
-import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
-import { getTabletop, stateGetTablePref, stateSetTablePref } from '../state.js'
+import {
+  createModal,
+  getModal,
+  modalActive,
+  modalClose
+} from '../../../modal.js'
+import {
+  getTable,
+  stateGetTablePref,
+  stateSetTablePref
+} from '../state.js'
 import marked from 'marked'
 
 // --- public ------------------------------------------------------------------
@@ -107,7 +116,7 @@ export function modalHelp () {
           <div class="copyright">
             <h3>Table assets</h3>
 
-            ${marked(getTabletop().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+            ${marked(getTable().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
 
             <h3>UI assets</h3>
 

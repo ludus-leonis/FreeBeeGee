@@ -1,0 +1,83 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Specfics for the pieces library modal.
+///
+/// @access public
+////
+
+.modal-library {
+  .modal-body {
+    .piece {
+      pointer-events: none;
+      position: relative;
+    }
+
+    .col-card {
+      .is-scale-2 {
+        cursor: pointer;
+      }
+
+      p {
+        @extend %p-small;
+        margin: $spacing-tiny auto $spacing-small;
+        text-align: center;
+      }
+    }
+
+    .upload-preview {
+      @extend %flex-center-center;
+
+      background-color: $color-gray-05;
+      background-image: url('img/checkers-black.png');
+      background-position: center;
+      background-size: 64px;
+      cursor: pointer;
+      min-height: 50vh;
+    }
+  }
+
+  .modal-footer {
+    .search {
+      $search-size: px(16);
+
+      svg {
+        height: $search-size;
+        width: $search-size;
+      }
+
+      input {
+        background: transparent;
+        margin-left: -$search-size;
+        margin-top: 0;
+        padding-left: $search-size + px(8);
+        width: px(256);
+
+        @include media-breakpoint-only(sm) {
+          width: px(192);
+        }
+      }
+
+      @include media-breakpoint-only(xs) {
+        display: none;
+      }
+    }
+  }
+}

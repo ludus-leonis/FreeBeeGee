@@ -18,9 +18,19 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { setNote, setPiece, deletePiece, getAllPiecesIds } from '.'
+import {
+  setNote,
+  setPiece,
+  deletePiece,
+  getAllPiecesIds,
+  cleanupTable
+} from '.'
 import { updateMenu } from './mouse.js'
-import { getTable } from './state.js'
+import {
+  getTable,
+  isTableDirty,
+  reloadTable
+} from './state.js'
 import {
   apiHeadState,
   apiGetState,
@@ -166,11 +176,23 @@ function removeObsoletePieces (keepIds) {
 /**
  * Check via HEAD call if we need to sync, and sync afterwards if necessary.
  *
- *
+ * @return {Promise} Promise of a boolean. True if a refresh is needed.
  */
 function checkForSync (
   selectIds = []
 ) {
+  if (isTableDirty()) { // sync table first if it's dirty/changed
+    console.log('syncing dirty table!')
+    return reloadTable()
+      .then(changed => {
+        if (changed) {
+          lastDigest = 'none' // enforce state refresh
+        }
+        return checkForSync(selectIds)
+      })
+  }
+
+  // check for a dirty state
   const table = getTable()
   const start = Date.now()
   lastNetworkActivity = Date.now()
@@ -213,6 +235,7 @@ function doTheSync (
     .then(state => {
       lastDigest = state.headers.get('digest')
       const keepIds = []
+      cleanupTable()
       for (const item of state.body) {
         setItem(item, selectIds.includes(item.id))
         keepIds.push(item.id)

@@ -100,6 +100,13 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
 
+        $this->api->register('POST', '/tables/:tid/assets/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getTableFolder($data['tid']))) {
+                $fbg->createAsset($data['tid'], $payload);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['tid']);
+        });
+
         $this->api->register('POST', '/tables/', function ($fbg, $data, $payload) {
             $formData = $this->api->multipartToJson();
             if ($formData) { // client sent us multipart
@@ -384,7 +391,9 @@ class FreeBeeGeeAPI
             $this->api->sendError(400, $msg . ' - syntax error', 'TEMPLATE_JSON_INVALID');
         }
         if (!property_exists($template, 'engine') || !$this->api->semverSatisfies($this->engine, $template->engine)) {
-            $this->api->sendError(400, 'template.json: game engine mismatch', 'TEMPLATE_JSON_INVALID_ENGINE', [$template->engine, $this->engine]);
+            $this->api->sendError(400, 'template.json: game engine mismatch', 'TEMPLATE_JSON_INVALID_ENGINE', [
+                $template->engine, $this->engine
+            ]);
         }
 
         // check for more stuff
@@ -853,6 +862,53 @@ class FreeBeeGeeAPI
         return $validated;
     }
 
+    /**
+     * Parse incoming JSON for (new) assets.
+     *
+     * @param string $json JSON string from the client.
+     * @return object Validated JSON, convertet to an object.
+     */
+    private function validateAsset(
+        string $json
+    ): object {
+        $incoming = $this->api->assertJson($json);
+        $validated = new \stdClass();
+
+        if ($checkMandatory) {
+            $this->api->assertHasProperties('asset', $incoming, ['name', 'format', 'type', 'w', 'h', 'base64', 'color']);
+        }
+
+        foreach ($incoming as $property => $value) {
+            switch ($property) {
+                case 'name':
+                    $validated->name = $this->api->assertString('name', $value, '[A-Za-z0-9-]{1,64}(.[A-Za-z0-9-]{1,64})?');
+                    break;
+                case 'format':
+                    $validated->format = $this->api->assertEnum('format', $value, ['jpg', 'png']);
+                    break;
+                case 'layer':
+                    $validated->layer = $this->api->assertEnum('layer', $value, $this->layers);
+                    break;
+                case 'w':
+                    $validated->w = $this->api->assertInteger('w', $value, 1, 32);
+                    break;
+                case 'h':
+                    $validated->h = $this->api->assertInteger('h', $value, 1, 32);
+                    break;
+                case 'base64':
+                    $validated->base64 = $this->api->assertBase64('base64', $value);
+                    break;
+                case 'color':
+                    $validated->color = $this->api->assertString('color', $value, '[a-fA-F0-9]{6}|transparent|border');
+                    break;
+                default:
+                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
+            }
+        }
+
+        return $validated;
+    }
+
     // --- meta / server endpoints ---------------------------------------------
 
     /**
@@ -964,23 +1020,27 @@ class FreeBeeGeeAPI
         $newTable->id = $this->generateId();
         $newTable->name = $validated->name;
         $newTable->engine = $this->engine;
-        $newTable->tables = [new \stdClass()];
-
-        $table = $newTable->tables[0];
-        $table->name = 'Main';
-        $table->background = new \stdClass();
-        $table->background->color = '#423e3d';
-        $table->background->scroller = '#2b2929';
-        $table->background->image = 'img/desktop-wood.jpg';
+        $newTable->background = new \stdClass();
+        $newTable->background->color = '#423e3d';
+        $newTable->background->scroller = '#2b2929';
+        $newTable->background->image = 'img/desktop-wood.jpg';
 
         $folder = $this->getTableFolder($newTable->name);
         if (!is_dir($folder)) {
-            if (!mkdir($folder, 0777, true)) {
+            // create folder structure
+            if (
+                !mkdir($folder, 0777, true)
+                || !mkdir($folder . 'states', 0777, true)
+                || !mkdir($folder . 'assets/other', 0777, true)
+                || !mkdir($folder . 'assets/overlay', 0777, true)
+                || !mkdir($folder . 'assets/tile', 0777, true)
+                || !mkdir($folder . 'assets/token', 0777, true)
+            ) {
                 $this->api->sendError(500, 'can\'t write on server');
             }
 
             $lock = $this->api->waitForWriteLock($folder . '.flock');
-            $table->library = $this->installSnapshot($newTable->name, $zipPath);
+            $newTable->library = $this->installSnapshot($newTable->name, $zipPath);
 
             // keep original state for table resets, if game does not have a 0-state
             if (!is_file($folder . 'states/0.json')) {
@@ -997,18 +1057,15 @@ class FreeBeeGeeAPI
                 }
             }
 
-            // add invalid.svg to table | @codingStandardsIgnoreLine
-            file_put_contents($folder . 'invalid.svg', '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25.4 25.4" ="96" width="96"><path fill="#40bfbf" d="M0 0h25.4v25.4H0z"/><g fill="#fff" stroke="#fff" stroke-width="1.27" stroke-linecap="round" stroke-linejoin="round"><path d="M1.9 1.9l21.6 21.6M23.5 1.9L1.9 23.5" stroke-width="1.1"/></g></svg>');
-
             // add/overrule some template.json infos into the table.json
-            $table->template = json_decode(file_get_contents($folder . 'template.json'));
+            $newTable->template = json_decode(file_get_contents($folder . 'template.json'));
             if (is_file($folder . 'LICENSE.md')) {
-                $table->credits = file_get_contents($folder . 'LICENSE.md');
+                $newTable->credits = file_get_contents($folder . 'LICENSE.md');
             } else {
-                $table->credits = 'Your template does not provide license information.';
+                $newTable->credits = 'Your template does not provide license information.';
             }
-            $table->width = $table->template->gridWidth * $table->template->gridSize; // specific for 'grid-square'
-            $table->height = $table->template->gridHeight * $table->template->gridSize; // specific for 'grid-square'
+            $newTable->width = $newTable->template->gridWidth * $newTable->template->gridSize; // specific for 'grid-square'
+            $newTable->height = $newTable->template->gridHeight * $newTable->template->gridSize; // specific for 'grid-square'
 
             $this->writeAsJsonAndDigest($folder . 'table.json', $newTable);
             $this->api->unlockLock($lock);
@@ -1248,6 +1305,37 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Add a new asset to the library of a table.
+     *
+     * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param string $json Full asset JSON from client.
+     */
+    public function createAsset(
+        string $tableName,
+        string $json
+    ) {
+        $asset = $this->validateAsset($json);
+
+        // determine asset path elements
+        $tableFolder = $this->getTableFolder($tableName);
+        $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' . $asset->color . '.' . $asset->format;
+
+        // output file data
+        $lock = $this->api->waitForWriteLock($tableFolder . '.flock');
+        file_put_contents($tableFolder . 'assets/' . $asset->layer . '/' . $filename, base64_decode($asset->base64));
+
+        // regenerate library json
+        $table = json_decode(file_get_contents($tableFolder . 'table.json'));
+        $table->library = $this->generateLibraryJson($tableName);
+        $this->writeAsJsonAndDigest($tableFolder . 'table.json', $table);
+
+        // return asset (without large blob)
+        $this->api->unlockLock($lock);
+        unset($asset->base64);
+        $this->api->sendReply(201, json_encode($asset));
+    }
+
+    /**
      * Download a table's snapshot.
      *
      * Will zip the table folder and provide that zip.
@@ -1272,7 +1360,6 @@ class FreeBeeGeeAPI
                 switch ($relativePath) { // filter those files away
                     case '.flock':
                     case 'snapshot.zip':
-                    case 'invalid.svg':
                     case 'table.json':
                         break; // they don't go into the zip
                     default:

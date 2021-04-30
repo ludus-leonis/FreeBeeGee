@@ -83,6 +83,19 @@ export function toTitleCase (string) {
 }
 
 /**
+ * Convert a string to camel-case (no spaces, parts starting with uppercase).
+ *
+ * @param {String} string String to camel-case.
+ * @return {String} Camel-cased string.
+ */
+export function toCamelCase (string) {
+  return string.replace(/[a-zA-Z0-9-]+/g, function (match, index) {
+    const lower = match.toLowerCase()
+    return index === 0 ? lower : (lower.charAt(0).toUpperCase() + lower.slice(1))
+  }).replace(/[^a-zA-Z0-9-]+/g, '')
+}
+
+/**
  * Get a value from an HTML5 browser store.
  *
  * Assumes there is a stringified JSON with sub-entries in the store.
@@ -166,6 +179,45 @@ export function sortByString (pieces, property) {
     const valueB = (b[property] ?? '').toLowerCase()
     return valueA < valueB ? -1 : +(valueA > valueB)
   })
+}
+
+/**
+ * Extract parts (group, name, size, etc.) from an asset filename.
+ *
+ * @param {String} assetName Asset filename.
+ * @return {Object} Parsed elements.
+ */
+export function splitAsset (assetName) {
+  const data = {
+    alias: 'unknown',
+    w: 1,
+    h: 1,
+    side: 1,
+    color: '808080'
+  }
+  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    data.w = match[2]
+    data.h = match[3]
+    data.side = match[4]
+    data.color = match[5]
+    return data
+  }
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    data.w = match[2]
+    data.h = match[3]
+    data.side = match[4]
+    return data
+  }
+  match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    return data
+  }
+  return data
 }
 
 /** An array of all the letters A-Z. */

@@ -167,6 +167,12 @@ $label-offset: 8px;
     drop-shadow(0 0 0 $selected-color) !important; // sass-lint:disable-line no-important
   }
 
+  &.is-invalid {
+    background-image: url('img/invalid.svg');
+    background-size: contain;
+    display: none;
+  }
+
   // --- size ------------------------------------------------------------------
 
   @for $x from 1 through 32 {

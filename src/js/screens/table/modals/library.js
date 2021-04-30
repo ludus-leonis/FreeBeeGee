@@ -22,9 +22,11 @@ import {
   getTemplate,
   createPieces,
   stateGetTablePref,
-  stateSetTablePref
+  stateSetTablePref,
+  addAsset,
+  reloadTable
 } from '../state.js'
-
+import { UnexpectedStatus } from '../../../api.js'
 import {
   getMaxZ,
   nodeToPiece,
@@ -33,7 +35,9 @@ import {
 import _ from '../../../FreeDOM.js'
 import {
   toTitleCase,
-  sortByString
+  toCamelCase,
+  sortByString,
+  splitAsset
 } from '../../../utils.js'
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
 
@@ -65,20 +69,15 @@ export function modalLibrary (x, y) {
       <button id='btn-ok' type="button" class="btn btn-primary">Add</button>
     `
 
-    _('#btn-close').on('click', () => getModal().hide())
-    _('#btn-ok').on('click', () => modalOk())
-    _('#input-search').on('keyup', () => filter())
-    _('#modal').on('hidden.bs.modal', () => modalClose())
-
-    const library = getLibrary()
+    _('#modal').add('.modal-library').on('hidden.bs.modal', () => modalClose())
 
     _('#modal-body').innerHTML = `
       <div id="tabs-library" class="tabs">
-        <input id="tab-1" type="radio" name="tabs">
-        <input id="tab-2" type="radio" name="tabs">
-        <input id="tab-3" type="radio" name="tabs">
-        <input id="tab-4" type="radio" name="tabs">
-        <input id="tab-5" type="radio" name="tabs">
+        <input id="tab-1" type="radio" name="tabs" value="tile">
+        <input id="tab-2" type="radio" name="tabs" value="overlay">
+        <input id="tab-3" type="radio" name="tabs" value="token">
+        <input id="tab-4" type="radio" name="tabs" value="other">
+        <input id="tab-5" type="radio" name="tabs" value="upload">
         <div class="tabs-tabs">
           <label for="tab-1" class="tabs-tab">Tiles</label>
           <label for="tab-2" class="tabs-tab">Overlays</label>
@@ -91,7 +90,37 @@ export function modalLibrary (x, y) {
           <div class="container"><div id="tab-overlays" class="row"></div></div>
           <div class="container"><div id="tab-tokens" class="row"></div></div>
           <div class="container"><div id="tab-other" class="row"></div></div>
-          <div class="container"><div id="tab-upload" class="row"></div></div>
+          <form class="container"><div id="tab-upload" class="row">
+            <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
+            <div class="col-12">
+              <h3>Upload piece</h3>
+            </div>
+            <div class="col-12 col-lg-6">
+              <label for="upload-name">Name</label>
+              <input id="upload-name" name="name" type="text" placeholder="custom" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9-]+( [a-zA-Z0-9-]+)*(, [a-zA-Z0-9-]+)?( [a-zA-Z0-9-]+)*$">
+            </div>
+            <div class="col-12 col-lg-2">
+              <label for="upload-type">Type</label>
+              <select id="upload-type" name="type"></select>
+            </div>
+            <div class="col-6 col-lg-2">
+              <label for="upload-w">Width</label>
+              <select id="upload-w" name="width"></select>
+            </div>
+            <div class="col-6 col-lg-2">
+              <label for="upload-h">Height</label>
+              <select id="upload-h" name="height"></select>
+            </div>
+            <div class="col-12">
+              <label class="upload-group" for="upload-file">
+                <div class="upload-preview" title="Click to upload"></div>
+                <input id="upload-file" type="file" accept=".jpg,.jpeg,.png", class="is-hidden">
+              </label>
+            </div>
+            <div class="col-6">
+              <p class="fbg-error"></p>
+            </div>
+          </div></form>
         </div>
       </div>
     `
@@ -103,55 +132,277 @@ export function modalLibrary (x, y) {
     const preselect = stateGetTablePref('modalLibraryTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 
-    // add items to their tab
-    const tiles = _('#tab-tiles')
-    for (const asset of sortByString(library.tile ?? [], 'alias')) {
-      tiles.add(assetToPreview(asset))
-    }
-    const overlays = _('#tab-overlays')
-    for (const asset of sortByString(library.overlay ?? [], 'alias')) {
-      overlays.add(assetToPreview(asset))
-    }
-    const tokens = _('#tab-tokens')
-    for (const asset of sortByString(library.token ?? [], 'alias')) {
-      tokens.add(assetToPreview(asset))
-    }
-    const other = _('#tab-other')
-    for (const asset of sortByString(library.other ?? [], 'alias')) {
-      other.add(assetToPreview(asset))
-    }
+    refreshTabs()
 
-    // enable selection
-    _('#tabs-library .is-scale-2').on('click', click => {
-      _(click.target).toggle('.is-selected')
-
-      // update add button
-      const count = _('#tabs-library .is-selected').count()
-      let label
-      switch (count) {
-        case 0:
-          label = 'Add'
-          break
-        case 1:
-          label = 'Add 1'
-          break
-        default:
-          label = 'Add ' + count
-      }
-      _('#btn-ok').innerHTML = label
-
-      click.preventDefault()
-    })
+    // enable upload tab
+    setupFooter()
+    setupTabUpload()
 
     getModal().show()
 
-    // focus inputfield and keep it focused on tab change
-    _('#input-search').focus()
-    _('[name="tabs"]').on('change', click => _('#input-search').focus())
+    // adapt footer on change
+    _('[name="tabs"]').on('change', click => {
+      setupFooter()
+    })
   }
 }
 
 // --- internal ----------------------------------------------------------------
+
+let prevSearch = ''
+
+/**
+ * Get a fresh dataset from the state and populate the tabs with the items.
+ */
+function refreshTabs () {
+  const library = getLibrary()
+
+  // add items to their tab
+  const tiles = _('#tab-tiles').empty()
+  for (const asset of sortByString(library.tile ?? [], 'alias')) {
+    tiles.add(assetToPreview(asset))
+  }
+  const overlays = _('#tab-overlays').empty()
+  for (const asset of sortByString(library.overlay ?? [], 'alias')) {
+    overlays.add(assetToPreview(asset))
+  }
+  const tokens = _('#tab-tokens').empty()
+  for (const asset of sortByString(library.token ?? [], 'alias')) {
+    tokens.add(assetToPreview(asset))
+  }
+  const other = _('#tab-other').empty()
+  for (const asset of sortByString(library.other ?? [], 'alias')) {
+    other.add(assetToPreview(asset))
+  }
+
+  // enable selection
+  _('#tabs-library .is-scale-2').on('click', click => {
+    _(click.target).toggle('.is-selected')
+
+    // update add button
+    const count = _('#tabs-library .is-selected').count()
+    let label
+    switch (count) {
+      case 0:
+        label = 'Add'
+        break
+      case 1:
+        label = 'Add 1'
+        break
+      default:
+        label = 'Add ' + count
+    }
+    _('#btn-ok').innerHTML = label
+
+    click.preventDefault()
+  })
+}
+
+/**
+ * Setup the footer / buttons.
+ *
+ * Varies between upload form and all the other tabs.
+ */
+function setupFooter () {
+  prevSearch = _('#input-search').value ?? prevSearch
+
+  if (_('input[name="tabs"]:checked').value === 'upload') {
+    _('#modal-footer').innerHTML = `
+      <button id='btn-close' type="button" class="btn">Cancel</button>
+      <button id='btn-ok' type="button" class="btn btn-primary">Upload</button>
+    `
+    _('#btn-close').on('click', () => getModal().hide())
+    _('#btn-ok').on('click', () => modalUpload())
+  } else {
+    _('#modal-footer').innerHTML = `
+      <button id='btn-close' type="button" class="btn">Cancel</button>
+      <span class="search">${iconSearch}<input id='input-search' type="text" class="search" placeholder="search ..." maxlength="8"></span>
+      <button id='btn-ok' type="button" class="btn btn-primary">Add</button>
+    `
+    _('#input-search').on('keyup', () => filter()).value = prevSearch
+    filter()
+    _('#input-search').focus()
+
+    _('#btn-close').on('click', () => getModal().hide())
+    _('#btn-ok').on('click', () => modalOk())
+  }
+}
+
+/**
+ * Execute the upload form.
+ */
+function modalUpload () {
+  _('#btn-ok').add('.is-spinner')
+
+  // reset error
+  const errorMessage = _('#modal-body .fbg-error')
+  errorMessage.innerHTML = ''
+
+  // do sanity checks
+  const name = _('#upload-name')
+  if (name.value.length <= 0 || _('#upload-name:invalid').exists()) {
+    errorMessage.innerHTML += 'Invalid name. '
+    name.focus()
+  }
+  const file = _('#upload-file').files[0]
+  if (file) {
+    if (file.size > 512 * 1024 * 1024) {
+      errorMessage.innerHTML += 'Image filesize too large (> 512kB). '
+    }
+    switch (file.type) {
+      case 'image/jpeg':
+      case 'image/png':
+        // whitelisted ok
+        break
+      default:
+        errorMessage.innerHTML += 'Unsupported file format. '
+    }
+  } else {
+    errorMessage.innerHTML += 'No image selected. '
+  }
+
+  // upload stuff if checks were ok
+  if (errorMessage.innerHTML === '') {
+    const layer = _('#upload-type').value
+    const data = {
+      name: unprettyName(name.value),
+      format: file.type === 'image/png' ? 'png' : 'jpg',
+      layer: layer,
+      w: Number(_('#upload-w').value),
+      h: Number(_('#upload-h').value),
+      base64: _('.upload-preview .piece').node().style.backgroundImage
+        .replace(/^[^,]*,/, '')
+        .replace(/".*/, ''),
+      color: layer === 'token' ? 'border' : 'transparent'
+    }
+
+    addAsset(data)
+      .then(remoteImage => {
+        reloadTable()
+          .then(() => {
+            refreshTabs()
+            switch (data.layer) {
+              case 'tile':
+                _('#tab-1').checked = true
+                break
+              case 'overlay':
+                _('#tab-2').checked = true
+                break
+              case 'token':
+                _('#tab-3').checked = true
+                break
+              default:
+            }
+            setupFooter()
+          })
+      })
+      .catch(error => {
+        console.error(error)
+        _('#ok').remove('.is-spinner')
+        if (error instanceof UnexpectedStatus) {
+          switch (error.status) {
+            default:
+              errorMessage.innerHTML = 'Upload failed. '
+          }
+        }
+        _('#btn-ok').remove('.is-spinner')
+      })
+  } else {
+    _('#btn-ok').remove('.is-spinner')
+  }
+}
+
+/**
+ * Add everything needed to the upload tab.
+ */
+function setupTabUpload () {
+  // width
+  const layer = _('#upload-type')
+  for (const l of ['token', 'overlay', 'tile']) {
+    const option = _('option').create(toTitleCase(l))
+    option.value = l
+    if (l === 'token') option.selected = true
+    layer.add(option)
+  }
+  layer.on('change', change => updatePreview())
+
+  // width
+  const width = _('#upload-w')
+  for (let w = 1; w <= 32; w++) {
+    const option = _('option').create(w)
+    option.value = w
+    if (w === 1) option.selected = true
+    width.add(option)
+  }
+  width.on('change', change => updatePreview())
+
+  // height
+  const height = _('#upload-h')
+  for (let h = 1; h <= 32; h++) {
+    const option = _('option').create(h)
+    option.value = h
+    if (h === 1) option.selected = true
+    height.add(option)
+  }
+  height.on('change', change => updatePreview())
+
+  _('#upload-file').on('change', change => updatePreview(true))
+
+  updatePreview()
+}
+
+/**
+ * Update the upload WYSIWYG preview based on the selected infos.
+ */
+function updatePreview (parseImage = false) {
+  const preview = _('.modal-library .upload-preview')
+  preview.innerHTML = ''
+
+  const file = _('#upload-file').files[0]
+  if (parseImage) {
+    // take over
+    const parts = splitAsset(file.name)
+    console.log(parts)
+    if (_('#upload-name').value.length <= 0) {
+      _('#upload-w').value = parts.w
+      _('#upload-h').value = parts.h
+      if (parts.alias !== 'unknown') {
+        _('#upload-name').value = prettyName(parts.alias)
+      }
+    }
+  }
+
+  const type = _('#upload-type').value
+  const w = _('#upload-w').value
+  const h = _('#upload-h').value
+
+  // add piece to DOM
+  const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
+  if (type === 'overlay' || type === 'tile') {
+    piece.css({
+      backgroundColor: 'rgba(0,0,0,.05)'
+    })
+  } else {
+    piece.css({
+      backgroundColor: 'var(--fbg-border-color)'
+    })
+  }
+  preview.add(piece)
+
+  // set preview background image
+  if (file) {
+    const reader = new FileReader()
+    reader.addEventListener('load', event => {
+      _('.upload-preview .piece').css({ backgroundImage: `url("${event.target.result}")` })
+    }, false)
+    reader.readAsDataURL(file)
+  } else {
+    piece.css({
+      backgroundImage: 'url("img/upload.svg")',
+      backgroundSize: '2em'
+    })
+  }
+}
 
 /**
  * Convert a library entry to a preview DOM element.
@@ -196,6 +447,21 @@ function prettyName (assetName = '') {
   } else {
     return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim()) +
     ', ' + toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
+  }
+}
+
+/**
+ * Convert an asset's readable name back into an alias.
+ *
+ * @param {String} assetName Name to convert, e.g. 'Iron Door'.
+ * @return {String} Alias for filename, e.g. 'ironDoor'.
+ */
+function unprettyName (assetName = '') {
+  const split = assetName.split(',')
+  if (split.length <= 1) {
+    return toCamelCase(split[0].trim())
+  } else {
+    return toCamelCase(split[0].trim()) + '.' + toCamelCase(split[1].trim())
   }
 }
 
