@@ -459,6 +459,8 @@ function prettyName (assetName = '') {
   const split = assetName.split('.')
   if (split.length <= 1) {
     return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim())
+  } else if (split[0] === '_') { // sort-first character
+    return toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
   } else {
     return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim()) +
     ', ' + toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())

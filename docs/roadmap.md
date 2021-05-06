@@ -42,10 +42,12 @@ Here is a list what might happen next. However, priorities can change.
 * change table size
   * re-center button
   * re-size desk if needed
+* default backside for all 1-sided pieces
 * click thru / don't drag on transparent parts of images
 * LOS-ruler
 * tabletop settings (e.g. change background, size, grid)
 * undo (limited)
+* demo mode (serverless?)
 * show backside/all sides in tile browser
 * different edit modals per piece type (hide useless fields)
 * better sticky notes (more text, auto-size text)

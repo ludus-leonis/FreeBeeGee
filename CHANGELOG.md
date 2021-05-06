@@ -2,7 +2,7 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.7 - Uploading Unicorn
+## v0.7.0 - Uploading Unicorn
 
 ### Noteable changes
 
