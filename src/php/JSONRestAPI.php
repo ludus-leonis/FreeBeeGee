@@ -498,7 +498,9 @@ class JSONRestAPI
         foreach ($otherMessages as $message) {
             $errors[] = $message;
         }
-        $this->sendReply($code, '{"_error": "' . $appErrorCode . '","_messages":' . json_encode($errors) . '}');
+        $error = '{"_error": "' . $appErrorCode . '","_messages":' . json_encode($errors) . '}';
+        error_log($code . ': ' . $error);
+        $this->sendReply($code, $error);
     }
 
     /**

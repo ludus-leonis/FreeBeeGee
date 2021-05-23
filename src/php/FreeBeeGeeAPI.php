@@ -32,6 +32,7 @@ class FreeBeeGeeAPI
     private $api = null; // JSONRestAPI instance
     private $minTableGridSize = 16;
     private $maxTableGridSize = 128;
+    private $maxAssetSize = 1024 * 1024;
     private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
 
     /**
@@ -206,6 +207,7 @@ class FreeBeeGeeAPI
         $config = json_decode(file_get_contents($this->api->getDataDir() . 'server.json'));
         $config->version = '$VERSION$';
         $config->engine = '$ENGINE$';
+        $config->maxAssetSize = $maxAssetSize;
         return $config;
     }
 
@@ -282,95 +284,72 @@ class FreeBeeGeeAPI
      * termiante execution and send a 400 in case of invalid zips.
      *
      * @param string $zipPath Full path to the zip to check.
+     * @param array Array of strings / paths of all valid zip entries to extract.
      */
     private function validateSnapshot(
         string $zipPath
-    ) {
-        $size = 0;
-        $mandatory = [
-            'LICENSE.md' => 'LICENSE.md',
-            'states/1.json' => 'states/1.json',
-            'template.json' => 'template.json',
-        ];
-        $optional = [
-            'assets/' => 'assets/',
-            'assets/tile/' => 'assets/tile/',
-            'assets/token/' => 'assets/token/',
-            'assets/overlay/' => 'assets/overlay/',
-            'assets/other/' => 'assets/other/',
-            'states/' => 'states/',
-            'states/0.json' => 'states/0.json',
-            'states/2.json' => 'states/2.json',
-            'states/3.json' => 'states/3.json',
-            'states/4.json' => 'states/4.json',
-            'states/5.json' => 'states/5.json',
-            'states/6.json' => 'states/6.json',
-            'states/7.json' => 'states/7.json',
-            'states/8.json' => 'states/8.json',
-            'states/9.json' => 'states/9.json',
-        ];
+    ): array {
         $issues = [];
-        $maxSize = $this->getServerConfig()->maxTableSizeMB;
+        $valid = [];
+        $sizeLeft = $this->getServerConfig()->maxTableSizeMB  * 1024 * 1024;
 
-        // basic tests
-        if (filesize($zipPath) > $maxSize * 1024 * 1024) {
-            // if the zip itself is too large, then so probably is its content
+        // basic sanity tests
+        if (filesize($zipPath) > $sizeLeft) {
+            // if the zip itself is too large, then it's content is probably too
             $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
         }
 
-        // more detailed tests
+        // iterate over zip entries
         $zip = new \ZipArchive();
         if (!$zip->open($zipPath)) {
-            return ['invalid zip'];
+            $this->api->sendError(400, 'can\'t open zip', 'ZIP_INVALID', $issues);
         }
-        $assetCount = 0;
         for ($i = 0; $i < $zip->numFiles; $i++) {
+            // note: the checks below will just 'continue' for invalid/ignored items
             $entry = $zip->statIndex($i);
 
-            // filename checks
-            $entryName = $entry['name'];
-            if (array_key_exists($entryName, $mandatory)) {
-                unset($mandatory[$entryName]);
-            } elseif (array_key_exists($entryName, $optional)) {
-                // just ignore
-            } else {
-                if (preg_match('/^assets\/(overlay|tile|token|other)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/', $entryName)) {
-                    $assetCount++;
-                } else {
-                    $issues[] = 'unexpected ' . $entryName;
-                }
+            switch ($entry['name']) { // filename checks
+                case 'LICENSE.md':
+                    break; // known, unchecked file
+                case 'template.json':
+                    $this->validateTemplateJson(file_get_contents('zip://' . $zipPath . '#template.json'));
+                    break;
+                case 'states/0.json':
+                case 'states/1.json':
+                case 'states/2.json':
+                case 'states/3.json':
+                case 'states/4.json':
+                case 'states/5.json':
+                case 'states/6.json':
+                case 'states/7.json':
+                case 'states/8.json':
+                case 'states/9.json':
+                    $this->validateStateJson('', file_get_contents('zip://' . $zipPath . '#' . $entry['name']));
+                    break;
+                default: // scan for asset filenames
+                    if (
+                        !preg_match(
+                            '/^assets\/(overlay|tile|token|other)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
+                            $entry['name']
+                        )
+                    ) {
+                        continue 2; // for
+                    }
             }
-            // filesize checks
-            $entrySize = $entry['size'];
-            if ($entrySize > 1024 * 1024) {
-                $issues[] = $entryName . ' exceeded 1024kB';
+
+            if ($entry['size'] > $this->maxAssetSize) { // filesize checks
+                continue; // for
             }
-            $size += $entrySize;
-        }
-        if ($assetCount <= 0) {
-            $issues[] = 'no assets found in snapshot';
-        }
-        foreach ($mandatory as $missing) {
-            $issues[] = 'missing ' . $missing;
-        }
-        if ($size > $maxSize * 1024 * 1024) {
-            $issues[] = 'total size exceeded server maximum of ' . $maxSize . 'MB';
-            $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
+            $sizeLeft -= $entry['size'];
+            if ($sizeLeft < 0) {
+                $this->api->sendError(400, 'zip content too large', 'SIZE_EXCEEDED', $issues);
+            }
+
+            // if we got here, no check failed, so the entry is ok!
+            $valid[] = $entry['name'];
         }
 
-        // report any findings so far back
-        if ($issues !== []) {
-            $this->api->sendError(400, 'validating snapshot failed', 'ZIP_INVALID', $issues);
-        }
-
-        // at this point the zip is formally ok, but now we look into individual files
-        $this->validateTemplateJson(file_get_contents('zip://' . $zipPath . '#template.json'));
-        for ($i = 0; $i <= 9; $i++) {
-            $json = @file_get_contents('zip://' . $zipPath . '#states/' . $i . '.json');
-            if ($json !== false) {
-                $this->validateStateJson($i, $json);
-            }
-        }
+        return $valid;
     }
 
     /**
@@ -467,24 +446,74 @@ class FreeBeeGeeAPI
      * Install a template/snapshot into a table.
      *
      * Will unpack the template .zip into the table folder. Terminates execution
-     * on errors.
+     * on errors. Expects the caller to handle FS locking.
      *
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
      * @param string $zipPath Path to snapshot/template zip to install.
-     * @return array The library Json for this template.
+     * @param array $validEntries Array of path names (strings) to extract from zip.
      */
     private function installSnapshot(
         string $tableName,
-        string $zipPath
-    ): array {
+        string $zipPath,
+        array $validEntries
+    ) {
+        $folder = $this->getTableFolder($tableName);
+
+        // create mandatory folder structure
+        if (
+            !mkdir($folder . 'states', 0777, true)
+            || !mkdir($folder . 'assets/other', 0777, true)
+            || !mkdir($folder . 'assets/overlay', 0777, true)
+            || !mkdir($folder . 'assets/tile', 0777, true)
+            || !mkdir($folder . 'assets/token', 0777, true)
+        ) {
+            $this->api->sendError(500, 'can\'t write on server');
+        }
+
+        // unzip all validated files
         $zip = new \ZipArchive();
         if ($zip->open($zipPath) === true) {
-            $zip->extractTo($this->getTableFolder($tableName));
+            $zip->extractTo($folder, $validEntries);
             $zip->close();
-            return $this->generateLibraryJson($tableName);
         } else {
             $this->api->sendError(500, 'can\'t setup template ' . $zipPath);
         }
+
+        // recreate potential nonexisting files as fallback
+        if (!is_file($folder . 'template.json')) {
+            $this->writeAsJsonAndDigest($folder . 'template.json', $this->getTemplateDefault());
+        }
+        if (!is_file($folder . 'states/1.json')) {
+            $this->writeAsJsonAndDigest($folder . 'states/1.json', []);
+        }
+        if (!is_file($folder . 'states/0.json')) { // recreate from 1.json, ignore digest
+            file_put_contents($folder . 'states/0.json', file_get_contents($folder . 'states/1.json'));
+        }
+        if (!is_file($folder . 'LICENSE.md')) {
+            file_put_contents($folder . 'LICENSE.md', 'This snapshot does not provide license information.');
+        }
+    }
+
+    /**
+     * Assemble a default template file.
+     *
+     * @return object Template PHP object.
+     */
+    private function getTemplateDefault(): object
+    {
+        return (object) [
+            'type' => 'grid-square',
+            'version' => $this->version,
+            'engine' => '^' . $this->engine,
+            'gridSize' => 64,
+            'gridWidth' => 48,
+            'gridHeight' => 32,
+            'snapSize' => 32,
+            'colors' => [
+                (object) [ 'name ' => 'black', 'value' => '#0d0d0d' ],
+                (object) [ 'name ' => 'white', 'value' => '#ffffff' ],
+            ]
+        ];
     }
 
     /**
@@ -1013,7 +1042,7 @@ class FreeBeeGeeAPI
         if (!is_file($zipPath)) {
             $this->api->sendError(400, 'template not available');
         }
-        $this->validateSnapshot($zipPath);
+        $validEntries = $this->validateSnapshot($zipPath);
 
         // create a new table
         $newTable = new \stdClass();
@@ -1027,20 +1056,13 @@ class FreeBeeGeeAPI
 
         $folder = $this->getTableFolder($newTable->name);
         if (!is_dir($folder)) {
-            // create folder structure
-            if (
-                !mkdir($folder, 0777, true)
-                || !mkdir($folder . 'states', 0777, true)
-                || !mkdir($folder . 'assets/other', 0777, true)
-                || !mkdir($folder . 'assets/overlay', 0777, true)
-                || !mkdir($folder . 'assets/tile', 0777, true)
-                || !mkdir($folder . 'assets/token', 0777, true)
-            ) {
+            if (!mkdir($folder, 0777, true)) { // create table folder
                 $this->api->sendError(500, 'can\'t write on server');
             }
 
             $lock = $this->api->waitForWriteLock($folder . '.flock');
-            $newTable->library = $this->installSnapshot($newTable->name, $zipPath);
+            $this->installSnapshot($newTable->name, $zipPath, $validEntries);
+            $newTable->library = $this->generateLibraryJson($newTable->name);
 
             // keep original state for table resets, if game does not have a 0-state
             if (!is_file($folder . 'states/0.json')) {
@@ -1064,8 +1086,10 @@ class FreeBeeGeeAPI
             } else {
                 $newTable->credits = 'Your template does not provide license information.';
             }
-            $newTable->width = $newTable->template->gridWidth * $newTable->template->gridSize; // specific for 'grid-square'
-            $newTable->height = $newTable->template->gridHeight * $newTable->template->gridSize; // specific for 'grid-square'
+
+            // specific for 'grid-square'
+            $newTable->width = $newTable->template->gridWidth * $newTable->template->gridSize;
+            $newTable->height = $newTable->template->gridHeight * $newTable->template->gridSize;
 
             $this->writeAsJsonAndDigest($folder . 'table.json', $newTable);
             $this->api->unlockLock($lock);

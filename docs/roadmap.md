@@ -4,10 +4,11 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.8 - Content Cobra
 
-* [ ] make zip upload more robust
-  * [ ] ignore unknown files instead rejecting them
-  * [ ] auto-create missing state json
-  * [ ] auto-create missing license
+* [X] make zip upload more robust
+  * [X] ignore unknown files
+  * [X] auto-create missing state json
+  * [X] auto-create missing template json
+  * [X] auto-create missing license
 * [ ] pointer feature
 * [ ] status icons
 * [ ] change table size

@@ -296,7 +296,7 @@ gulp.task('dist', gulp.parallel('build'))
 
 gulp.task('dist-test', gulp.series('dist', () => {
   return replace(gulp.src([
-    'test/data/**/*'
+    'test/data/server.json'
   ]))
     .pipe(gulp.dest(dirs.site + '/api/data'))
 }))
