@@ -8,6 +8,12 @@ Here is a list what might happen next. However, priorities can change.
   * [ ] ignore unknown files instead rejecting them
   * [ ] auto-create missing state json
   * [ ] auto-create missing license
+* [ ] pointer feature
+* [ ] status icons
+* [ ] change table size
+  * [ ] re-center button
+  * [ ] re-size desk if needed
+* [ ] default backside for all 1-sided pieces
 * [ ] generic marker overlay (X, ?, ...)
 * [ ] docs how to make table/template `.zip`s
 * [ ] pre-release
@@ -39,10 +45,6 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather sooner
 
-* change table size
-  * re-center button
-  * re-size desk if needed
-* default backside for all 1-sided pieces
 * click thru / don't drag on transparent parts of images
 * LOS-ruler
 * tabletop settings (e.g. change background, size, grid)
