@@ -26,6 +26,22 @@
 @import '../../node_modules/bootstrap/scss/bootstrap-grid';
 @import '../../node_modules/bootstrap/scss/mixins/breakpoints';
 
+// mimick bs visibility helpers
+$fbg-breakpoints: sm, md, lg, xl, xxl;
+$fbg-visibility: none, inline, inline-block, block;
+
+@each $fbg-vis in $fbg-visibility {
+  .d-#{$fbg-vis} {
+    display: $fbg-vis;
+  }
+
+  @each $fbg-break in $fbg-breakpoints {
+    .d-#{$fbg-break}-#{$fbg-vis} {
+      display: $fbg-vis;
+    }
+  }
+}
+
 .is-fullscreen {
   align-items: center;
   display: flex;

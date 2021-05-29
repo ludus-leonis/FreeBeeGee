@@ -425,6 +425,53 @@ export function getMaxZ (layer, area = {
 }
 
 /**
+ * Determine rectancle all items on the table are within in px.
+ *
+ * @return {Object} Object with top/left/bottom/right property of main content.
+ */
+export function getContentRect () {
+  const rect = {
+    top: 999999999,
+    left: 999999999,
+    bottom: -999999999,
+    right: -999999999
+  }
+  const gridSize = getTemplate().gridSize
+
+  _('#tabletop .piece').each(node => {
+    const top = Number(node.dataset.y)
+    const left = Number(node.dataset.x)
+    const bottom = top + Number(node.dataset.h) * gridSize - 1
+    const right = left + Number(node.dataset.w) * gridSize - 1
+    rect.top = rect.top < top ? rect.top : top
+    rect.left = rect.left < left ? rect.left : left
+    rect.bottom = rect.bottom > bottom ? rect.bottom : bottom
+    rect.right = rect.right > right ? rect.right : right
+  })
+
+  return rect
+}
+
+/**
+ * Determine rectancle all items on the table are within in grid units.
+ *
+ * @return {Object} Object with top/left/bottom/right property of main content.
+ */
+export function getContentRectGrid () {
+  const gridSize = getTemplate().gridSize
+  const rect = getContentRect()
+
+  rect.left = Math.floor(rect.left / gridSize)
+  rect.top = Math.floor(rect.top / gridSize)
+  rect.right = Math.floor(rect.right / gridSize)
+  rect.bottom = Math.floor(rect.bottom / gridSize)
+  rect.width = rect.right - rect.left + 1
+  rect.height = rect.bottom - rect.top + 1
+
+  return rect
+}
+
+/**
  * Move the currently selected piece to the top within it's layer.
  *
  * Will silently fail if nothing is selected.
@@ -723,6 +770,32 @@ export function popupPiece (id) {
  */
 export function cleanupTable () {
   _('#tabletop .piece.is-invalid').delete()
+}
+
+/**
+ * Move the table content to the given x/y position.
+ *
+ * Will determine the content-box and move each item relative to its top/left
+ * corner.
+ *
+ * @param Number toX New x position.
+ * @param Number toY New y position.
+ */
+export function moveContent (toX, toY) {
+  const template = getTemplate()
+  const rect = getContentRectGrid()
+  const offsetX = (toX - rect.left) * template.gridSize
+  const offsetY = (toY - rect.top) * template.gridSize
+
+  const pieces = []
+  _('#tabletop .piece').each(piece => {
+    pieces.push({
+      id: piece.id,
+      x: Number(piece.dataset.x) + offsetX,
+      y: Number(piece.dataset.y) + offsetY
+    })
+  })
+  updatePieces(pieces)
 }
 
 // --- internal ----------------------------------------------------------------

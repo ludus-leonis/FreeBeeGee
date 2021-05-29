@@ -30,6 +30,7 @@ import {
   apiPostTable,
   apiDeleteTable,
   apiPatchPiece,
+  apiPatchPieces,
   apiDeletePiece,
   apiPostPiece,
   apiPostAsset,
@@ -335,17 +336,7 @@ export function restoreState (index) {
  * @param {Array} pieces (Partial) pieces to patch.
  */
 export function updatePieces (pieces) {
-  if (!pieces || pieces.length <= 0) return
-  const piece = pieces.shift()
-  let final = false
-  patchPiece(piece.id, piece, false)
-    .then(() => {
-      if (pieces.length === 0) final = true
-      if (pieces.length > 0) updatePieces(pieces)
-    })
-    .finally(() => {
-      if (final) syncNow()
-    })
+  patchPieces(pieces, true)
 }
 
 /**
@@ -430,6 +421,28 @@ function markTableClean () {
  */
 function patchPiece (pieceId, patch, poll = true) {
   return apiPatchPiece(table.name, 1, pieceId, patch)
+    .catch(error => {
+      if (error instanceof UnexpectedStatus && error.status === 404) {
+        // no need to patch already deleted pieces - silently ignore
+      } else {
+        runError('UNEXPECTED', error) // *that* was unexpected
+      }
+    })
+    .finally(() => {
+      if (poll) syncNow()
+    })
+}
+
+/**
+ * Update a piece on the server.
+ *
+ * @param {Object} patch Array of partial object of fields to send. Must include ids!
+ * @param {Object} poll Optional. If true (default), the table state will be
+ *                 polled after the patch.
+ * @return {Object} Promise of the API request.
+ */
+function patchPieces (patches, poll = true) {
+  return apiPatchPieces(table.name, 1, patches)
     .catch(error => {
       if (error instanceof UnexpectedStatus && error.status === 404) {
         // no need to patch already deleted pieces - silently ignore

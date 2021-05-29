@@ -155,6 +155,18 @@ export function apiPatchPiece (tableName, stateId, pieceId, patch) {
 }
 
 /**
+ * API PATCH /tables/:tableName/states/:stateId/pieces/
+ *
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
+ * @param {Array} patches Array of partial pieces to send.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPatchPieces (tableName, stateId, patches) {
+  return patchJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/', patches)
+}
+
+/**
  * API DELETE /tables/:tableName/states/:stateId/pieces/:pieceId/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.

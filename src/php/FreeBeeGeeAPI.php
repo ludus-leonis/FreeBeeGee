@@ -31,7 +31,7 @@ class FreeBeeGeeAPI
     private $engine = '$ENGINE$';
     private $api = null; // JSONRestAPI instance
     private $minTableGridSize = 16;
-    private $maxTableGridSize = 128;
+    private $maxTableGridSize = 256;
     private $maxAssetSize = 1024 * 1024;
     private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
 
@@ -103,7 +103,7 @@ class FreeBeeGeeAPI
 
         $this->api->register('POST', '/tables/:tid/assets/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->createAsset($data['tid'], $payload);
+                $fbg->createAssetLocked($data['tid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
@@ -111,9 +111,9 @@ class FreeBeeGeeAPI
         $this->api->register('POST', '/tables/', function ($fbg, $data, $payload) {
             $formData = $this->api->multipartToJson();
             if ($formData) { // client sent us multipart
-                $fbg->createTable($formData);
+                $fbg->createTableLocked($formData);
             } else { // client sent us regular json
-                $fbg->createTable($payload);
+                $fbg->createTableLocked($payload);
             }
         });
 
@@ -128,7 +128,7 @@ class FreeBeeGeeAPI
 
         $this->api->register('PUT', '/tables/:tid/states/:sid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->putState($data['tid'], $data['sid'], $payload);
+                $fbg->putStateLocked($data['tid'], $data['sid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
@@ -138,6 +138,13 @@ class FreeBeeGeeAPI
         $this->api->register('PATCH', '/tables/:tid/states/:sid/pieces/:pid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getTableFolder($data['tid']))) {
                 $fbg->updatePiece($data['tid'], $data['sid'], $data['pid'], $payload);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['tid']);
+        });
+
+        $this->api->register('PATCH', '/tables/:tid/states/:sid/pieces/', function ($fbg, $data, $payload) {
+            if (is_dir($this->getTableFolder($data['tid']))) {
+                $fbg->updatePieces($data['tid'], $data['sid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
@@ -358,10 +365,14 @@ class FreeBeeGeeAPI
      * Will termiante execution and send a 400 in case of invalid JSON.
      *
      * @param string $json JSON string.
+     * @param boolean $checkMandatory If true, this function will also ensure all
+     *                mandatory fields are present.
+     * @param Object The parsed template object.
      */
     private function validateTemplateJson(
-        string $json
-    ) {
+        string $json,
+        bool $checkMandatory = true
+    ): object {
         $msg = 'validating template.json failed';
         $template = json_decode($json);
 
@@ -369,18 +380,21 @@ class FreeBeeGeeAPI
         if ($template === null) {
             $this->api->sendError(400, $msg . ' - syntax error', 'TEMPLATE_JSON_INVALID');
         }
-        if (!property_exists($template, 'engine') || !$this->api->semverSatisfies($this->engine, $template->engine)) {
-            $this->api->sendError(400, 'template.json: game engine mismatch', 'TEMPLATE_JSON_INVALID_ENGINE', [
-                $template->engine, $this->engine
-            ]);
+
+        if ($checkMandatory) {
+            if (!property_exists($template, 'engine') || !$this->api->semverSatisfies($this->engine, $template->engine)) {
+                $this->api->sendError(400, 'template.json: game engine mismatch', 'TEMPLATE_JSON_INVALID_ENGINE', [
+                    $template->engine, $this->engine
+                ]);
+            }
+            $this->api->assertHasProperties(
+                'template.json',
+                $template,
+                ['type', 'gridSize', 'snapSize', 'version', 'engine', 'gridWidth', 'gridHeight', 'colors']
+            );
         }
 
         // check for more stuff
-        $this->api->assertHasProperties(
-            'template.json',
-            $template,
-            ['type', 'gridSize', 'snapSize', 'version', 'engine', 'gridWidth', 'gridHeight', 'colors']
-        );
         foreach ($template as $property => $value) {
             switch ($property) {
                 case 'engine':
@@ -410,6 +424,8 @@ class FreeBeeGeeAPI
                     $this->api->sendError(400, 'invalid template.json: ' . $property . ' unkown');
             }
         }
+
+        return $template;
     }
 
     /**
@@ -528,7 +544,7 @@ class FreeBeeGeeAPI
      * @param bool $create If true, this piece must not exist.
      * @return object The updated piece.
      */
-    private function updatePieceState(
+    private function updatePieceStateLocked(
         string $tableName,
         string $sid,
         object $piece,
@@ -994,7 +1010,7 @@ class FreeBeeGeeAPI
      *
      * @param string $payload Table JSON from client.
      */
-    public function createTable(
+    public function createTableLocked(
         string $payload
     ) {
         $item = $this->api->assertJson($payload);
@@ -1212,7 +1228,7 @@ class FreeBeeGeeAPI
      * @param int $sid State id / number, e.g. 2.
      * @param string $json New state JSON from client.
      */
-    public function putState(
+    public function putStateLocked(
         string $tableName,
         string $sid,
         string $json
@@ -1243,7 +1259,7 @@ class FreeBeeGeeAPI
         $this->assertStateNo($sid);
         $piece = $this->validatePieceJson($json, true);
         $piece->id = $this->generateId();
-        $this->updatePieceState($tableName, $sid, $piece, true);
+        $this->updatePieceStateLocked($tableName, $sid, $piece, true);
         $this->api->sendReply(201, json_encode($piece));
     }
 
@@ -1299,8 +1315,40 @@ class FreeBeeGeeAPI
         $this->assertStateNo($sid);
         $patch = $this->validatePieceJson($json, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $updatedPiece = $this->updatePieceState($tableName, $sid, $patch, false);
+        $updatedPiece = $this->updatePieceStateLocked($tableName, $sid, $patch, false);
         $this->api->sendReply(200, json_encode($updatedPiece));
+    }
+
+    /**
+     * Update multiple pieces.
+     *
+     * Can overwrite a whole piece or only patch a few fields.
+     *
+     * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param string $sid State id / number, e.g. 2.
+     * @param string $json Array of full or parcial pieces JSON from client.
+     */
+    public function updatePieces(
+        string $tableName,
+        string $sid,
+        string $json
+    ) {
+        $this->assertStateNo($sid);
+
+        // check if we got JSON array of valid piece-patches and IDs
+        $patches = $this->api->assertJsonArray($json);
+        $toPatch = [];
+        foreach ($patches as $patch) {
+            $piece = $this->validatePiece($patch, false);
+            $this->api->assertHasProperties('piece', $patch, ['id']);
+        }
+
+        // looks good. do the update(s).
+        foreach ($patches as $patch) {
+            $updatedPiece = $this->updatePieceStateLocked($tableName, $sid, $patch, false);
+        }
+
+        $this->api->sendReply(200, json_encode($patches));
     }
 
     /**
@@ -1324,7 +1372,7 @@ class FreeBeeGeeAPI
         $piece->layer = 'delete';
         $piece->id = $pieceId;
 
-        $this->updatePieceState($tableName, $sid, $piece, false);
+        $this->updatePieceStateLocked($tableName, $sid, $piece, false);
         $this->api->sendReply(204, '');
     }
 
@@ -1334,7 +1382,7 @@ class FreeBeeGeeAPI
      * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
      * @param string $json Full asset JSON from client.
      */
-    public function createAsset(
+    public function createAssetLocked(
         string $tableName,
         string $json
     ) {

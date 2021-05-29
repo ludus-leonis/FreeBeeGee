@@ -233,6 +233,7 @@ function doTheSync (
   return apiGetState(table.name, 1, true)
     .then(state => {
       lastDigest = state.headers.get('digest')
+
       const keepIds = []
       cleanupTable()
       for (const item of state.body) {
@@ -241,6 +242,7 @@ function doTheSync (
       }
       removeObsoletePieces(keepIds)
       updateMenu()
+
       recordTime(syncTimes, Date.now() - start)
     })
     .catch(error => {

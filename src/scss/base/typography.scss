@@ -238,6 +238,18 @@ strong {
   }
 }
 
+hr {
+  background-color: $color-gray-10;
+  border-top: 2px dashed $color-white-100;
+  height: 0;
+  margin-bottom: $spacing-small;
+  opacity: 1;
+
+  &:not([size]) {
+    height: 0;
+  }
+}
+
 // --- is-* modifiers ----------------------------------------------------------
 
 .is-link {

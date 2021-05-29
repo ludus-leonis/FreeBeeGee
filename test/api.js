@@ -27,7 +27,6 @@
 
 const API_URL = 'http://play.local/api'
 const p = require('../package.json')
-const fs = require('fs')
 
 // --- helpers -----------------------------------------------------------------
 

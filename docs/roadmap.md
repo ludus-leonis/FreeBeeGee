@@ -4,21 +4,22 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.8 - Content Cobra
 
-* [X] make zip upload more robust
+* [X] make ZIP upload more robust
   * [X] ignore unknown files
   * [X] auto-create missing state json
   * [X] auto-create missing template json
   * [X] auto-create missing license
-* [ ] pointer feature
-* [ ] status icons
+  * [X] ZIP upload integration tests
+* [X] align table content (top/bottom/left/right/center)
 * [ ] change table size
-  * [ ] re-center button
-  * [ ] re-size desk if needed
 * [ ] default backside for all 1-sided pieces
-* [ ] generic marker overlay (X, ?, ...)
-* [ ] docs how to make table/template `.zip`s
+* [ ] subtables / save-slots (alt-#)
 * [ ] pre-release
   * [ ] bugfixing
+    * [ ] popup sometimes out of current view
+    * [ ] custom token can't change border color
+    * [ ] disable sleep warning if outside game
+    * [ ] table sync interval too small
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
@@ -46,6 +47,10 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather sooner
 
+* generic marker overlay (X, ?, ...)
+* pointer feature
+* status icons
+* docs how to make table/template `.zip`s
 * click thru / don't drag on transparent parts of images
 * LOS-ruler
 * tabletop settings (e.g. change background, size, grid)
