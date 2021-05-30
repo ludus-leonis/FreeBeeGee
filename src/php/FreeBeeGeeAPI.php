@@ -45,16 +45,14 @@ class FreeBeeGeeAPI
         // best ordered by calling frequency within each method to reduce string
         // matching overhead
 
-        // --- HEAD ---
+        // --- GET ---
 
-        $this->api->register('HEAD', '/tables/:tid/states/:sid/?', function ($fbg, $data) {
+        $this->api->register('GET', '/tables/:tid/digest/?', function ($fbg, $data) {
             if (is_dir($this->getTableFolder($data['tid']))) {
-                $fbg->headState($data['tid'], $data['sid']);
+                $fbg->getTableDigest($data['tid']);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
-
-        // --- GET ---
 
         $this->api->register('GET', '/tables/:tid/?', function ($fbg, $data) {
             if (is_dir($this->getTableFolder($data['tid']))) {
@@ -145,6 +143,13 @@ class FreeBeeGeeAPI
         $this->api->register('PATCH', '/tables/:tid/states/:sid/pieces/', function ($fbg, $data, $payload) {
             if (is_dir($this->getTableFolder($data['tid']))) {
                 $fbg->updatePieces($data['tid'], $data['sid'], $payload);
+            }
+            $this->api->sendError(404, 'not found: ' . $data['tid']);
+        });
+
+        $this->api->register('PATCH', '/tables/:tid/template/', function ($fbg, $data, $payload) {
+            if (is_dir($this->getTableFolder($data['tid']))) {
+                $fbg->updateTableTemplateLocked($data['tid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['tid']);
         });
@@ -378,7 +383,7 @@ class FreeBeeGeeAPI
 
         // check the basics and abort on error
         if ($template === null) {
-            $this->api->sendError(400, $msg . ' - syntax error', 'TEMPLATE_JSON_INVALID');
+            $this->api->sendError(400, $json . ' - syntax error', 'TEMPLATE_JSON_INVALID');
         }
 
         if ($checkMandatory) {
@@ -497,10 +502,10 @@ class FreeBeeGeeAPI
 
         // recreate potential nonexisting files as fallback
         if (!is_file($folder . 'template.json')) {
-            $this->writeAsJsonAndDigest($folder . 'template.json', $this->getTemplateDefault());
+            $this->writeAsJsonAndDigest($folder, 'template.json', $this->getTemplateDefault());
         }
         if (!is_file($folder . 'states/1.json')) {
-            $this->writeAsJsonAndDigest($folder . 'states/1.json', []);
+            $this->writeAsJsonAndDigest($folder, 'states/1.json', []);
         }
         if (!is_file($folder . 'states/0.json')) { // recreate from 1.json, ignore digest
             file_put_contents($folder . 'states/0.json', file_get_contents($folder . 'states/1.json'));
@@ -599,7 +604,7 @@ class FreeBeeGeeAPI
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
         }
-        $this->writeAsJsonAndDigest($folder . 'states/' . $sid . '.json', $newState);
+        $this->writeAsJsonAndDigest($folder, 'states/' . $sid . '.json', $newState);
         $this->api->unlockLock($lock);
 
         return $result;
@@ -726,18 +731,25 @@ class FreeBeeGeeAPI
     /**
      * Write a data object as JSON to a file and generate a digest.
      *
-     * Digest will be in filename.digest. Does not do locking.
+     * Digest will be put into digest.json. Does not do locking.
      *
-     * @param $filename Path to file to write.
-     * @param $object PHP object to write.
+     * @param string $folder Root folder for file operations, ending in '/'.
+     * @param string $filename Relative path within root folder.
+     * @param object $object PHP object to write.
      */
     private function writeAsJsonAndDigest(
+        $folder,
         $filename,
         $object
     ) {
+        // handle data
         $data = json_encode($object);
-        file_put_contents($filename, $data);
-        file_put_contents($filename . '.digest', 'crc32:' . crc32($data));
+        file_put_contents($folder . $filename, $data);
+
+        // handle hash
+        $digests = json_decode(file_get_contents($folder . 'digest.json'));
+        $digests->$filename = 'crc32:' . crc32($data);
+        file_put_contents($folder . 'digest.json', json_encode($digests));
     }
 
     // --- validators ----------------------------------------------------------
@@ -1086,14 +1098,7 @@ class FreeBeeGeeAPI
                 file_put_contents($folder . 'states/0.json', $state);
             }
 
-            // generate digests
-            for ($i = 0; $i <= 9; $i++) {
-                if (is_file($folder . 'states/' . $i . '.json')) {
-                    $state = file_get_contents($folder . 'states/' . $i . '.json');
-                    $statecrc = crc32($state);
-                    file_put_contents($folder . 'states/' . $i . '.json.digest', 'crc32:' . $statecrc);
-                }
-            }
+            $this->regenerateDigests($folder);
 
             // add/overrule some template.json infos into the table.json
             $newTable->template = json_decode(file_get_contents($folder . 'template.json'));
@@ -1107,12 +1112,83 @@ class FreeBeeGeeAPI
             $newTable->width = $newTable->template->gridWidth * $newTable->template->gridSize;
             $newTable->height = $newTable->template->gridHeight * $newTable->template->gridSize;
 
-            $this->writeAsJsonAndDigest($folder . 'table.json', $newTable);
+            $this->writeAsJsonAndDigest($folder, 'table.json', $newTable);
             $this->api->unlockLock($lock);
 
             $this->api->sendReply(201, json_encode($newTable), '/api/tables/' . $newTable->name);
         }
         $this->api->sendReply(409, json_encode($newTable));
+    }
+
+    /**
+     * Populate digest.json with up-to-date crc32 hashes.
+     *
+     * @param string $folder Table folder to work in.
+     */
+    public function regenerateDigests(
+        string $folder
+    ) {
+        $digests = new \stdClass();
+        foreach (
+            [
+                'states/template.json',
+                'states/table.json',
+                'states/0.json',
+                'states/1.json',
+                'states/2.json',
+                'states/3.json',
+                'states/4.json',
+                'states/5.json',
+                'states/6.json',
+                'states/7.json',
+                'states/8.json',
+                'states/9.json',
+            ] as $filename
+        ) {
+            if (is_file($folder . $filename)) {
+                $state = file_get_contents($folder . $filename);
+                $digests->$filename = 'crc32:' . crc32($state);
+            }
+        }
+        file_put_contents($folder . 'digest.json', json_encode($digests));
+    }
+
+    /**
+     * Change table template values.
+     *
+     * Will terminate with 201 or an error.
+     *
+     * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     * @param string $payload Parcial template JSON from client.
+     */
+    public function updateTableTemplateLocked(
+        string $tableName,
+        string $payload
+    ) {
+        $template = $this->validateTemplateJson($payload, false);
+
+        $folder = $this->getTableFolder($tableName);
+        $lock = $this->api->waitForWriteLock($folder . '.flock');
+
+        // update template.json
+        $templateFS = json_decode(file_get_contents($folder . 'template.json'));
+        if (\property_exists($template, 'gridWidth')) {
+            $templateFS->gridWidth = $template->gridWidth;
+        }
+        if (\property_exists($template, 'gridHeight')) {
+            $templateFS->gridHeight = $template->gridHeight;
+        }
+        $this->writeAsJsonAndDigest($folder, 'template.json', $templateFS);
+
+        // update table.json
+        $tableFS = json_decode(file_get_contents($folder . 'table.json'));
+        $tableFS->template = $templateFS;
+        $tableFS->width = $templateFS->gridWidth * $templateFS->gridSize;
+        $tableFS->height = $templateFS->gridHeight * $templateFS->gridSize;
+        $this->writeAsJsonAndDigest($folder, 'table.json', $tableFS);
+
+        $this->api->unlockLock($lock);
+        $this->api->sendReply(201, json_encode($templateFS));
     }
 
     /**
@@ -1127,8 +1203,29 @@ class FreeBeeGeeAPI
     ) {
         $folder = $this->getTableFolder($tableName);
         if (is_dir($folder)) {
-            $this->api->sendReply(200, $this->api->fileGetContentsLocked(
+            $body = $this->api->fileGetContentsLocked(
                 $folder . 'table.json',
+                $folder . '.flock'
+            );
+            $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
+        }
+        $this->api->sendError(404, 'not found: ' . $tableName);
+    }
+
+    /**
+     * Get table digest / changelog.
+     *
+     * Will return the digest.json from a table's folder.
+     *
+     * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
+     */
+    public function getTableDigest(
+        string $tableName
+    ) {
+        $folder = $this->getTableFolder($tableName);
+        if (is_dir($folder)) {
+            $this->api->sendReply(200, $this->api->fileGetContentsLocked(
+                $folder . 'digest.json',
                 $folder . '.flock'
             ));
         }
@@ -1162,34 +1259,6 @@ class FreeBeeGeeAPI
         if ($value < 0 || $value > 9) {
             $this->api->sendError(400, 'invalid state: ' . $value);
         }
-    }
-
-    /**
-     * Get the head of a state of a table.
-     *
-     * Returns a Digest HTTP header so the client can check if it's worth to
-     * download the rest.
-     *
-     * @param string $tableName Name of the table, e.g. 'darkEscapingQuelea'
-     * @param int $sid State id / number, e.g. 2.
-     */
-    public function headState(
-        string $tableName,
-        string $sid
-    ) {
-        $this->assertStateNo($sid);
-        $folder = $this->getTableFolder($tableName);
-        if (is_dir($folder)) {
-            $digest = 'crc32:0';
-            if (is_file($folder . 'states/' . $sid . '.json.digest')) {
-                $digest = $this->api->fileGetContentsLocked(
-                    $folder . 'states/' . $sid . '.json.digest',
-                    $folder . '.flock'
-                );
-            }
-            $this->api->sendReply(200, null, null, $digest);
-        }
-        $this->api->sendError(404, 'not found: ' . $tableName);
     }
 
     /**
@@ -1238,7 +1307,7 @@ class FreeBeeGeeAPI
         $newState = $this->validateStateJson($sid, $json);
 
         $lock = $this->api->waitForWriteLock($folder . '.flock');
-        $this->writeAsJsonAndDigest($folder . 'states/' . $sid . '.json', $newState);
+        $this->writeAsJsonAndDigest($folder, 'states/' . $sid . '.json', $newState);
         $this->api->unlockLock($lock);
 
         $this->api->sendReply(200, json_encode($newState));
@@ -1389,17 +1458,17 @@ class FreeBeeGeeAPI
         $asset = $this->validateAsset($json);
 
         // determine asset path elements
-        $tableFolder = $this->getTableFolder($tableName);
+        $folder = $this->getTableFolder($tableName);
         $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' . $asset->color . '.' . $asset->format;
 
         // output file data
-        $lock = $this->api->waitForWriteLock($tableFolder . '.flock');
-        file_put_contents($tableFolder . 'assets/' . $asset->layer . '/' . $filename, base64_decode($asset->base64));
+        $lock = $this->api->waitForWriteLock($folder . '.flock');
+        file_put_contents($folder . 'assets/' . $asset->layer . '/' . $filename, base64_decode($asset->base64));
 
         // regenerate library json
-        $table = json_decode(file_get_contents($tableFolder . 'table.json'));
+        $table = json_decode(file_get_contents($folder . 'table.json'));
         $table->library = $this->generateLibraryJson($tableName);
-        $this->writeAsJsonAndDigest($tableFolder . 'table.json', $table);
+        $this->writeAsJsonAndDigest($folder, 'table.json', $table);
 
         // return asset (without large blob)
         $this->api->unlockLock($lock);
@@ -1417,34 +1486,33 @@ class FreeBeeGeeAPI
     public function getSnapshot(
         string $tableName
     ) {
-        $tableFolder = realpath($this->getTableFolder($tableName));
+        $folder = realpath($this->getTableFolder($tableName));
 
         // get all files to zip and sort them
         $toZip = [];
         $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($tableFolder),
+            new \RecursiveDirectoryIterator($folder),
             \RecursiveIteratorIterator::LEAVES_ONLY
         );
         foreach ($iterator as $filename => $file) {
             if (!$file->isDir()) {
                 $absolutePath = $file->getRealPath();
-                $relativePath = substr($absolutePath, strlen($tableFolder) + 1);
+                $relativePath = substr($absolutePath, strlen($folder) + 1);
                 switch ($relativePath) { // filter those files away
                     case '.flock':
                     case 'snapshot.zip':
                     case 'table.json':
+                    case 'digest.json':
                         break; // they don't go into the zip
                     default:
-                        if (! preg_match('/\.digest$/', $relativePath)) {
-                            $toZip[$relativePath] = $absolutePath; // keep all others except digests
-                        }
+                        $toZip[$relativePath] = $absolutePath; // keep all others
                 }
             }
         }
         ksort($toZip);
 
         // now zip them
-        $zipName = $tableFolder . '/snapshot.zip';
+        $zipName = $folder . '/snapshot.zip';
         $zip = new \ZipArchive();
         $zip->open($zipName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         foreach ($toZip as $relative => $absolute) {

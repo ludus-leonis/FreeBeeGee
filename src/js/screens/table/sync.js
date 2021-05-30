@@ -19,6 +19,7 @@
  */
 
 import {
+  updateTable,
   setNote,
   setPiece,
   deletePiece,
@@ -28,11 +29,10 @@ import {
 import { updateMenu } from './mouse.js'
 import {
   getTable,
-  isTableDirty,
   reloadTable
 } from './state.js'
 import {
-  apiHeadState,
+  apiGetTableDigest,
   apiGetState,
   UnexpectedStatus
 } from '../../api.js'
@@ -68,10 +68,10 @@ export function startAutoSync (handler = null) {
 export function syncNow (selectedIds = []) {
   if (isAutoSync()) {
     stopAutoSync()
-    return doTheSync(selectedIds)
+    return syncState(selectedIds)
       .then(() => scheduleSync(calculateNextSyncTime()))
   } else {
-    return doTheSync(selectedIds)
+    return syncState(selectedIds)
   }
 }
 
@@ -86,7 +86,7 @@ export function stopAutoSync () {
 }
 
 /**
- * Get the current table's metadata (cached).
+ * Record activity on the table.
  *
  * @param {?Boolean} remote If true, the remote timestamp is touched. Otherwise
  *                          the local is.
@@ -106,7 +106,20 @@ export function touch (remote = false) {
 
 // --- internal ----------------------------------------------------------------
 
-let lastDigest = '' /** last obtained hash/digest of state JSON */
+const lastDigests = {
+  'table.json': 'crc32:none',
+  'template.json': 'crc32:none',
+  'states/0.json': 'crc32:none',
+  'states/1.json': 'crc32:none',
+  'states/2.json': 'crc32:none',
+  'states/3.json': 'crc32:none',
+  'states/4.json': 'crc32:none',
+  'states/5.json': 'crc32:none',
+  'states/6.json': 'crc32:none',
+  'states/7.json': 'crc32:none',
+  'states/8.json': 'crc32:none',
+  'states/9.json': 'crc32:none'
+}
 
 const fastestSynctime = 800 /** minimum sync ever */
 const hidSyncMax = 1250 /** maximum sync when there is HID activity */
@@ -140,7 +153,7 @@ function scheduleSync (ms) {
     checkForSync()
       .then((dirty) => {
         if (dirty) {
-          return doTheSync()
+          return syncState()
         }
       })
       .finally(() => {
@@ -181,28 +194,22 @@ function removeObsoletePieces (keepIds) {
 function checkForSync (
   selectIds = []
 ) {
-  if (isTableDirty()) { // sync table first if it's dirty/changed
-    return reloadTable()
-      .then(changed => {
-        if (changed) {
-          lastDigest = 'none' // enforce state refresh
-        }
-        return checkForSync(selectIds)
-      })
-  }
-
-  // check for a dirty state
   const table = getTable()
   const start = Date.now()
   lastNetworkActivity = Date.now()
-  return apiHeadState(table.name, 1)
-    .then(headers => {
-      const digest = headers.get('digest')
+  return apiGetTableDigest(table.name)
+    .then(digest => {
       recordTime(pollTimes, Date.now() - start)
-      if (lastDigest !== digest) { // we need to refresh the state
+
+      console.log('digest', digest['table.json'], lastDigests['table.json'])
+      if (digest['table.json'] !== lastDigests['table.json']) {
+        return syncTable(selectIds).then(() => { touch(true); return true })
+      }
+      if (digest['states/1.json'] !== lastDigests['states/1.json']) {
         touch(true)
         return true
       }
+
       return false
     })
     .catch(error => {
@@ -216,14 +223,14 @@ function checkForSync (
 }
 
 /**
- * The acutal syncing code.
+ * The acutal state syncing code.
  *
  * Is in charge of updating the state once on changes, but not of (re)scheduling
  * itself.
  *
  * @param {String[]} selectIds IDs of items to (re)select after sync.
  */
-function doTheSync (
+function syncState (
   selectIds = []
 ) {
   const table = getTable()
@@ -232,7 +239,7 @@ function doTheSync (
   lastNetworkActivity = start
   return apiGetState(table.name, 1, true)
     .then(state => {
-      lastDigest = state.headers.get('digest')
+      lastDigests['states/1.json'] = state.headers.get('digest')
 
       const keepIds = []
       cleanupTable()
@@ -244,6 +251,36 @@ function doTheSync (
       updateMenu()
 
       recordTime(syncTimes, Date.now() - start)
+    })
+    .catch(error => {
+      if (error instanceof UnexpectedStatus) {
+        runError('TABLE_GONE', table.name, error)
+        stopAutoSync()
+      } else {
+        runError('UNEXPECTED', error)
+      }
+    })
+}
+
+/**
+ * The table (metadata) syncinc.
+ *
+ * Is in charge of fetching the current state and trigger data/UI updates, but
+ * not of scheduling itself.
+ *
+ * @param {String[]} selectIds IDs of items to (re)select after sync.
+ */
+function syncTable (
+  selectIds = []
+) {
+  const table = getTable()
+
+  lastNetworkActivity = Date.now()
+  return reloadTable()
+    .then(tabledata => {
+      lastDigests['table.json'] = tabledata.headers.get('digest')
+      updateTable()
+      return false
     })
     .catch(error => {
       if (error instanceof UnexpectedStatus) {

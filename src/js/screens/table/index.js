@@ -22,7 +22,6 @@ import { createPopper } from '@popperjs/core'
 import {
   getTable,
   getTemplate,
-  markTableDirty,
   getAsset,
   loadTable,
   updatePieces,
@@ -798,6 +797,22 @@ export function moveContent (toX, toY) {
   updatePieces(pieces)
 }
 
+/**
+ * Update DOM table to current table-data.
+ *
+ * e.g. for resizing the table.
+ *
+ * @return FreeDOM Table DOM element for further customization.
+ */
+export function updateTable () {
+  const table = getTable()
+
+  return _('#tabletop').css({
+    width: table.width + 'px',
+    height: table.height + 'px'
+  })
+}
+
 // --- internal ----------------------------------------------------------------
 
 /**
@@ -902,9 +917,7 @@ function setupTable () {
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => navigateToJoin(getTable().name))
 
-  _('#tabletop').css({
-    width: table.width + 'px',
-    height: table.height + 'px',
+  updateTable().css({
     backgroundColor: table.background.color,
     backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
     backgroundSize: table.template.gridSize + 'px,1152px 768px'
@@ -1038,7 +1051,6 @@ function intersect (rect1, rect2) {
  * @return {FreeDOM} dummy node.
  */
 function createInvalidAsset (type) {
-  markTableDirty()
   return _(`.piece.piece-${type}.is-invalid`).create()
 }
 

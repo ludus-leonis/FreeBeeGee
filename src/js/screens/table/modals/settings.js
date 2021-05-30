@@ -26,6 +26,7 @@ import {
 } from '../../../modal.js'
 import {
   getTemplate,
+  updateTemplate,
   updateState,
   restoreState,
   getTable,
@@ -114,6 +115,23 @@ export function modalSettings () {
           </div>
           <div class="col-12 col-sm-4">
             <button id="btn-table-br" class="btn btn-wide">Bottom-Right</button>
+          </div>
+
+          <div class="col-12 spacing-small">
+            <h2 class="h3">Table size</h2>
+          </div>
+
+          <div class="col-12 col-sm-4">
+            <label for="table-w">Width</label>
+            <select id="table-w" name="width"></select>
+          </div>
+          <div class="col-12 col-sm-4">
+            <label for="table-h">Height</label>
+            <select id="table-h" name="height"></select>
+          </div>
+          <div class="col-12 col-sm-4">
+            <label for="btn-table-resize d-none d-sm-block">&nbsp;</label>
+            <button id="btn-table-resize" class="btn btn-wide">Resize</button>
           </div>
 
         </div></form>
@@ -267,6 +285,11 @@ export function modalSettings () {
     )
   })
 
+  _('#btn-table-resize').on('click', click => {
+    click.preventDefault()
+    resizeTable()
+  })
+
   getModal().show()
 }
 
@@ -317,5 +340,20 @@ function populateSizes (id, tableSize, contentSize, increments = 16) {
       if (size === tableSize) option.selected = true
       select.add(option)
     }
+  }
+}
+
+/**
+ * Resize the table (if size actually changed)
+ */
+function resizeTable () {
+  const template = getTemplate()
+  const w = Number(_('#table-w').value)
+  const h = Number(_('#table-h').value)
+  if (w !== template.gridWidth || h !== template.gridHeight) {
+    updateTemplate({
+      gridWidth: w,
+      gridHeight: h
+    })
   }
 }

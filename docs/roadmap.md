@@ -11,15 +11,14 @@ Here is a list what might happen next. However, priorities can change.
   * [X] auto-create missing license
   * [X] ZIP upload integration tests
 * [X] align table content (top/bottom/left/right/center)
-* [ ] change table size
+* [X] change table size
 * [ ] default backside for all 1-sided pieces
-* [ ] subtables / save-slots (alt-#)
 * [ ] pre-release
   * [ ] bugfixing
     * [ ] popup sometimes out of current view
     * [ ] custom token can't change border color
     * [ ] disable sleep warning if outside game
-    * [ ] table sync interval too small
+    * [ ] rotated pieces can't be moved to the table border
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
@@ -47,6 +46,7 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather sooner
 
+* subtables / save-slots (alt-#)
 * generic marker overlay (X, ?, ...)
 * pointer feature
 * status icons

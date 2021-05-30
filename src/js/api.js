@@ -58,10 +58,21 @@ export function apiGetTemplates () {
  * API GET /tables/:tableName/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetTable (tableName) {
-  return getJson([200], 'api/tables/' + tableName + '/')
+export function apiGetTable (tableName, headers = false) {
+  return getJson([200], 'api/tables/' + tableName + '/', headers)
+}
+
+/**
+ * API GET /tables/:tableName/digest/
+ *
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiGetTableDigest (tableName) {
+  return getJson([200], 'api/tables/' + tableName + '/digest/')
 }
 
 /**
@@ -92,6 +103,17 @@ export function apiPostTable (table, snapshot) {
  */
 export function apiDeleteTable (tableName) {
   return deleteJson([204], 'api/tables/' + tableName + '/')
+}
+
+/**
+ * API PATCH /tables/:tableName/template/
+ *
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Object} patch Partial piece JSON/Object to send.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPatchTableTemplate (tableName, patch) {
+  return patchJson([200], 'api/tables/' + tableName + '/template/', patch)
 }
 
 /**
