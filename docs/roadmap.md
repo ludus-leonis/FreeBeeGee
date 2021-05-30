@@ -12,7 +12,7 @@ Here is a list what might happen next. However, priorities can change.
   * [X] ZIP upload integration tests
 * [X] align table content (top/bottom/left/right/center)
 * [X] change table size
-* [ ] default backside for all 1-sided pieces
+* [X] default backside for all 1-sided pieces
 * [ ] pre-release
   * [ ] bugfixing
     * [ ] popup sometimes out of current view

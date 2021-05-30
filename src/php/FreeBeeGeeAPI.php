@@ -704,6 +704,9 @@ class FreeBeeGeeAPI
                 ) {
                     // this is a new asset. write out the old.
                     if ($lastAsset !== null) {
+                        if (count($lastAsset->assets) === 1) { // add backside to 1-sided asset
+                            $lastAsset->assets[] = '##BACK##';
+                        }
                         array_push($assets[$type], $lastAsset);
                     }
                     if (preg_match('/^X+$/', $asset->side)) { // this is a back side
@@ -721,6 +724,9 @@ class FreeBeeGeeAPI
                 }
             }
             if ($lastAsset !== null) { // don't forget the last one!
+                if (count($lastAsset->assets) === 1) { // add backside to 1-sided asset
+                    $lastAsset->assets[] = '##BACK##';
+                }
                 array_push($assets[$type], $lastAsset);
             }
         }

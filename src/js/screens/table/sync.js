@@ -201,7 +201,6 @@ function checkForSync (
     .then(digest => {
       recordTime(pollTimes, Date.now() - start)
 
-      console.log('digest', digest['table.json'], lastDigests['table.json'])
       if (digest['table.json'] !== lastDigests['table.json']) {
         return syncTable(selectIds).then(() => { touch(true); return true })
       }

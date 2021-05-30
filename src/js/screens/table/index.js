@@ -579,14 +579,18 @@ export function assetToNode (assetJson, side = 0) {
   if (assetJson.id === '0000000000000000') {
     node = createInvalidAsset(assetJson.type)
   } else {
+    const uriSide = assetJson.assets[side] === '##BACK##'
+      ? 'img/backside.svg'
+      : `api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`
+    const uriBase = `api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.base}`
     if (assetJson.base) { // layered asset
       node = _(`.piece.piece-${assetJson.type}.has-layer`).create().css({
-        backgroundImage: 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.base}`) + '")',
-        '--fbg-layer-image': 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`) + '")'
+        backgroundImage: 'url("' + encodeURI(uriBase) + '")',
+        '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
       })
     } else { // regular asset
       node = _(`.piece.piece-${assetJson.type}`).create().css({
-        backgroundImage: 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`) + '")'
+        backgroundImage: 'url("' + encodeURI(uriSide) + '")'
       })
     }
   }
