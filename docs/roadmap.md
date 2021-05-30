@@ -18,7 +18,7 @@ Here is a list what might happen next. However, priorities can change.
     * [ ] popup sometimes out of current view
     * [X] custom token can't change border color
     * [ ] disable sleep warning if outside game
-    * [ ] rotated pieces can't be moved to the table border
+    * [X] rotated pieces can't be moved to the table border
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs

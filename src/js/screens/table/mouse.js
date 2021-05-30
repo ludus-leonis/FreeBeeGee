@@ -416,8 +416,16 @@ function compensateOffsetY (y) {
  */
 function setPosition (element, x, y, snap = getTemplate().snapSize) {
   const template = getTemplate()
-  x = clamp(0, x, (template.gridWidth - element.dataset.w) * template.gridSize - 1)
-  y = clamp(0, y, (template.gridHeight - element.dataset.h) * template.gridSize - 1)
+  switch (element.dataset.r) {
+    case '90':
+    case '270':
+      x = clamp(0, x, (template.gridWidth - element.dataset.h) * template.gridSize - 1)
+      y = clamp(0, y, (template.gridHeight - element.dataset.w) * template.gridSize - 1)
+      break
+    default:
+      x = clamp(0, x, (template.gridWidth - element.dataset.w) * template.gridSize - 1)
+      y = clamp(0, y, (template.gridHeight - element.dataset.h) * template.gridSize - 1)
+  }
   x += Math.floor(snap / 2)
   y += Math.floor(snap / 2)
   element.dataset.x = Math.max(0, (Math.floor(x / snap) * snap))

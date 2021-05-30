@@ -371,8 +371,24 @@ export function setNote (noteJson, select = false) {
  * Done in 90° increments.
  */
 export function rotateSelected () {
+  const template = getTemplate()
+
   _('#tabletop .is-selected').each(node => {
-    stateRotatePiece(node.id, (parseFloat(node.dataset.r ?? 0) + 90) % 360)
+    const r = (parseFloat(node.dataset.r ?? 0) + 90) % 360
+    let x = Number(node.dataset.x)
+    let y = Number(node.dataset.y)
+    switch (r) {
+      case 90:
+      case 270:
+        x = clamp(0, x, (template.gridWidth - node.dataset.h) * template.gridSize - 1)
+        y = clamp(0, y, (template.gridHeight - node.dataset.w) * template.gridSize - 1)
+        break
+      default:
+        x = clamp(0, x, (template.gridWidth - node.dataset.w) * template.gridSize - 1)
+        y = clamp(0, y, (template.gridHeight - node.dataset.h) * template.gridSize - 1)
+    }
+
+    stateRotatePiece(node.id, r, x, y)
   })
 }
 

@@ -228,9 +228,15 @@ export function stateMovePiece (pieceId, x = null, y = null, z = null) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Number} r New rotation (0, 90, 180, 270).
+ * @param {Number} x New x/rotation point.
+ * @param {Number} y New y/rotation point.
  */
-export function stateRotatePiece (pieceId, r) {
-  patchPiece(pieceId, { r: r })
+export function stateRotatePiece (pieceId, r, x, y) {
+  patchPiece(pieceId, {
+    r: r,
+    x: x,
+    y: y
+  })
 }
 
 /**
