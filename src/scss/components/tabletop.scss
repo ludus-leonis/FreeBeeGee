@@ -26,6 +26,7 @@
 .tabletop {
   $tile-size: 64px;
 
+  overflow: hidden;
   position: relative;
 
   .is-quality-low & {

@@ -2,22 +2,21 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.8 - Content Cobra
+## v0.9 - Happy Hamster
 
-* [ ] make zip upload more robust
-  * [ ] ignore unknown files instead rejecting them
-  * [ ] auto-create missing state json
-  * [ ] auto-create missing license
-* [ ] generic marker overlay (X, ?, ...)
-* [ ] docs how to make table/template `.zip`s
+* [ ] subtables / save-slots (alt-#)
+* [ ] pointer feature
+* [ ] different edit modals per piece type (hide useless fields)
+* [ ] token status (blind, poison, prone, dazed, ...)
 * [ ] pre-release
   * [ ] bugfixing
+    * [ ] disable sleep warning if outside game
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG
 
-## v0.9 - Mobile Monkey
+## v0.10 - Mobile Monkey
 
 * better tablet / touch support
   * zooming
@@ -25,7 +24,7 @@ Here is a list what might happen next. However, priorities can change.
 * table passwords
 * reuse pieces' DOM elements more
 
-## v0.10 - Clean Cat
+## v0.11 - Clean Cat
 
 * empty template table
 * reduce impact of "back" button
@@ -39,15 +38,15 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather sooner
 
-* change table size
-  * re-center button
-  * re-size desk if needed
+* generic marker overlay (X, ?, ...)
+* status icons
+* docs how to make table/template `.zip`s
 * click thru / don't drag on transparent parts of images
 * LOS-ruler
 * tabletop settings (e.g. change background, size, grid)
 * undo (limited)
+* demo mode (serverless?)
 * show backside/all sides in tile browser
-* different edit modals per piece type (hide useless fields)
 * better sticky notes (more text, auto-size text)
 * protect pieces (no-delete, no-move)
 * meta-piece: supply heap

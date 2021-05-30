@@ -58,10 +58,21 @@ export function apiGetTemplates () {
  * API GET /tables/:tableName/
  *
  * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetTable (tableName) {
-  return getJson([200], 'api/tables/' + tableName + '/')
+export function apiGetTable (tableName, headers = false) {
+  return getJson([200], 'api/tables/' + tableName + '/', headers)
+}
+
+/**
+ * API GET /tables/:tableName/digest/
+ *
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiGetTableDigest (tableName) {
+  return getJson([200], 'api/tables/' + tableName + '/digest/')
 }
 
 /**
@@ -92,6 +103,17 @@ export function apiPostTable (table, snapshot) {
  */
 export function apiDeleteTable (tableName) {
   return deleteJson([204], 'api/tables/' + tableName + '/')
+}
+
+/**
+ * API PATCH /tables/:tableName/template/
+ *
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Object} patch Partial piece JSON/Object to send.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPatchTableTemplate (tableName, patch) {
+  return patchJson([200], 'api/tables/' + tableName + '/template/', patch)
 }
 
 /**
@@ -152,6 +174,18 @@ export function apiPutPiece (tableName, stateId, piece) {
  */
 export function apiPatchPiece (tableName, stateId, pieceId, patch) {
   return patchJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + pieceId + '/', patch)
+}
+
+/**
+ * API PATCH /tables/:tableName/states/:stateId/pieces/
+ *
+ * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {Number} stateId Number of state (0-9), 1 = normal.
+ * @param {Array} patches Array of partial pieces to send.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPatchPieces (tableName, stateId, patches) {
+  return patchJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/', patches)
 }
 
 /**

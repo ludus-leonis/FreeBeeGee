@@ -29,7 +29,9 @@ import {
   apiGetTable,
   apiPostTable,
   apiDeleteTable,
+  apiPatchTableTemplate,
   apiPatchPiece,
+  apiPatchPieces,
   apiDeletePiece,
   apiPostPiece,
   apiPostAsset,
@@ -46,15 +48,13 @@ let table = {} /** stores the table meta info JSON */
  * (Re)Fetch the table's state from the API and cache it
  *
  * @param {String} name The current table name.
- * @return {Promise} Promise of a boolean, true if table content changed.
+ * @return {Promise} Promise of table data object.
  */
 export function loadTable (name) {
-  return apiGetTable(name)
+  return apiGetTable(name, true)
     .then(remoteTable => {
-      const changed = table !== remoteTable
-      table = remoteTable
-      markTableClean()
-      return changed
+      table = remoteTable.body
+      return remoteTable
     })
     .catch((error) => { // invalid table
       runError('TABLE_GONE', name, error)
@@ -67,7 +67,7 @@ export function loadTable (name) {
  *
  * Usefull to update the asset library.
  *
- * @return {Promise} Promise of a boolean, true if table state changed on server.
+ * @return {Promise} Promise of table data object.
  */
 export function reloadTable () {
   return loadTable(table.name)
@@ -91,6 +91,27 @@ export function getTable () {
  */
 export function getTemplate () {
   return getTable()?.template
+}
+
+/**
+ * Update the current template.
+ *
+ * Supports partial updates.
+ *
+ * @param {Object} template (Partial) new template data.
+ */
+export function updateTemplate (template) {
+  return apiPatchTableTemplate(table.name, template)
+    .catch(error => {
+      if (error instanceof UnexpectedStatus && error.status === 404) {
+        // no need to patch already deleted pieces - silently ignore
+      } else {
+        runError('UNEXPECTED', error) // *that* was unexpected
+      }
+    })
+    .finally(() => {
+      syncNow()
+    })
 }
 
 /**
@@ -207,9 +228,15 @@ export function stateMovePiece (pieceId, x = null, y = null, z = null) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Number} r New rotation (0, 90, 180, 270).
+ * @param {Number} x New x/rotation point.
+ * @param {Number} y New y/rotation point.
  */
-export function stateRotatePiece (pieceId, r) {
-  patchPiece(pieceId, { r: r })
+export function stateRotatePiece (pieceId, r, x, y) {
+  patchPiece(pieceId, {
+    r: r,
+    x: x,
+    y: y
+  })
 }
 
 /**
@@ -335,17 +362,7 @@ export function restoreState (index) {
  * @param {Array} pieces (Partial) pieces to patch.
  */
 export function updatePieces (pieces) {
-  if (!pieces || pieces.length <= 0) return
-  const piece = pieces.shift()
-  let final = false
-  patchPiece(piece.id, piece, false)
-    .then(() => {
-      if (pieces.length === 0) final = true
-      if (pieces.length > 0) updatePieces(pieces)
-    })
-    .finally(() => {
-      if (final) syncNow()
-    })
+  patchPieces(pieces, true)
 }
 
 /**
@@ -388,36 +405,7 @@ export function deleteTable () {
   return apiDeleteTable(table.name)
 }
 
-/**
- * Mark the table dirty/inconsistent.
- *
- * Sync will try to refresh it next time it runs.
- */
-export function markTableDirty () {
-  tableExpires = Date.now() - 10
-}
-
-/**
- * Check if the current table data is dirty/inconsistent with the state.
- *
- * @return {Boolean} True if table should be refreshed asap.
- */
-export function isTableDirty () {
-  return tableExpires < Date.now()
-}
-
 // --- internal ----------------------------------------------------------------
-
-let tableExpires = Date.now() - 10 /** ms when the table metadata should be synced */
-
-/**
- * Mark the table clean/consistent.
- *
- * Will set it to sync again in 1 minute.
- */
-function markTableClean () {
-  tableExpires = Date.now() + 1 * 60 * 1000
-}
 
 /**
  * Update a piece on the server.
@@ -430,6 +418,28 @@ function markTableClean () {
  */
 function patchPiece (pieceId, patch, poll = true) {
   return apiPatchPiece(table.name, 1, pieceId, patch)
+    .catch(error => {
+      if (error instanceof UnexpectedStatus && error.status === 404) {
+        // no need to patch already deleted pieces - silently ignore
+      } else {
+        runError('UNEXPECTED', error) // *that* was unexpected
+      }
+    })
+    .finally(() => {
+      if (poll) syncNow()
+    })
+}
+
+/**
+ * Update a piece on the server.
+ *
+ * @param {Object} patch Array of partial object of fields to send. Must include ids!
+ * @param {Object} poll Optional. If true (default), the table state will be
+ *                 polled after the patch.
+ * @return {Object} Promise of the API request.
+ */
+function patchPieces (patches, poll = true) {
+  return apiPatchPieces(table.name, 1, patches)
     .catch(error => {
       if (error instanceof UnexpectedStatus && error.status === 404) {
         // no need to patch already deleted pieces - silently ignore

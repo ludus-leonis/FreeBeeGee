@@ -7,7 +7,12 @@ This guide covers the installation of FreeBeeGee.
 ### Server
 
 * PHP 7.2+
-* Apache with `.htaccess` / `mod_rewrite` support
+  * required extensions: `zip`
+* Apache
+  * required: `.htaccess`, `mod_rewrite`
+  * recommended: `mod_headers`, `mod_expires`, `mod_deflate`
+
+Configuring your web-server & enabling the required extension/modules is beyond the scope of this guide. Please refer to your server/provider documentation how to do so.
 
 ### Client
 
@@ -50,7 +55,7 @@ The server config file is found in `api/data/server.json`:
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
 ```
 
-FreeBeeGee ships with an unkown password. No tables can be created until you either set one or explicitly disable it.
+FreeBeeGee ships with an unknown password. No tables can be created until you either set one or explicitly disable it.
 
 ### Uploads
 

@@ -472,6 +472,25 @@ class JSONRestAPI
     }
 
     /**
+     * Assert that user-data is in JSON format.
+     *
+     * To be used on JSON provided by the client to check for syntax errors. Will
+     * send an 400-error to the client and terminate further execution if invalid.
+     *
+     * @param string $data User-provided data/string.
+     * @return object Parsed JSON data if successfull.
+     */
+    public function assertJsonArray(
+        ?string $data
+    ): array {
+        $decoded = json_decode($data);
+        if ($decoded === null) {
+            $this->sendError(400, 'invalid JSON array');
+        }
+        return $this->assertObjectArray('array', $decoded, 1);
+    }
+
+    /**
      * Send an JSON error to the client.
      *
      * Will wrap the error in a simple JSON error object:
@@ -498,7 +517,8 @@ class JSONRestAPI
         foreach ($otherMessages as $message) {
             $errors[] = $message;
         }
-        $this->sendReply($code, '{"_error": "' . $appErrorCode . '","_messages":' . json_encode($errors) . '}');
+        $error = '{"_error": "' . $appErrorCode . '","_messages":' . json_encode($errors) . '}';
+        $this->sendReply($code, $error);
     }
 
     /**

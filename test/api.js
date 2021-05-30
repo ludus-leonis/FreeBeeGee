@@ -60,6 +60,35 @@ function testJsonGet (path, payloadTests, status = 200, forward = null) {
 }
 
 /**
+ * Upload a file to an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
+ * specific tests.
+ *
+ * @param path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param name Function to return (possibly dynamic) table name.
+ * @param upload Function to return (possibly dynamic) filename of file to upload.
+ * @param payloadTests Callback function. Will recieve the parsed payload for
+ *                     further checking.
+ */
+function testZIPUpload (path, name, auth, upload, payloadTests, status = 200) {
+  it(`POST ${API_URL}${path()}`, function (done) {
+    // const boundary = Math.random()
+    chai.request(API_URL)
+      .post(path())
+      .field('name', name())
+      .field('auth', auth())
+      .attach('snapshot', upload())
+      .end(function (err, res) {
+        expect(err).to.be.null
+        expect(res).to.have.status(status)
+        expect(res).to.be.json
+        expect(res.body).to.be.not.null
+        payloadTests(res.body)
+        done()
+      })
+  })
+}
+
+/**
  * POST an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
  * specific tests.
  *
@@ -450,4 +479,140 @@ describe('CRUD piece', function () {
 
   // get - should be gone
   testJsonGet(() => '/tables/crudPiece/states/1/pieces/' + (data ? data.id : 'ID') + '/', body => {}, 404)
+})
+
+describe('ZIP upload - minimal', function () {
+  testZIPUpload(
+    () => '/tables/',
+    () => { return 'minimalzip' },
+    () => { return 'apitests' },
+    () => { return 'test/data/empty.zip' },
+    body => {
+      expect(body).to.be.an('object')
+      expect(body.id).to.match(/^[0-9a-f]+$/)
+      expect(body.name).to.be.eql('minimalzip')
+      expect(body.engine).to.be.eql(p.versionEngine)
+      expect(body.background).to.be.an('object')
+      expect(body.background.color).to.be.eql('#423e3d')
+      expect(body.background.scroller).to.be.eql('#2b2929')
+      expect(body.background.image).to.be.eql('img/desktop-wood.jpg')
+      expect(body.width).to.be.eql(3072)
+      expect(body.height).to.be.eql(2048)
+      expect(body.library).to.be.an('object')
+      expect(body.library.other).to.be.an('array')
+      expect(body.library.other.length).to.be.eql(0)
+      expect(body.library.overlay).to.be.an('array')
+      expect(body.library.overlay.length).to.be.eql(0)
+      expect(body.library.tile).to.be.an('array')
+      expect(body.library.tile.length).to.be.eql(0)
+      expect(body.library.token).to.be.an('array')
+      expect(body.library.token.length).to.be.eql(0)
+      expect(body.template).to.be.an('object')
+      expect(body.template.type).to.be.eql('grid-square')
+      expect(body.template.snapSize).to.be.eql(32)
+      expect(body.template.gridSize).to.be.eql(64)
+      expect(body.template.gridWidth).to.be.eql(48)
+      expect(body.template.gridHeight).to.be.eql(32)
+      expect(body.template.version).to.be.eql(p.version)
+      expect(body.template.engine).to.be.eql('^' + p.versionEngine)
+      expect(body.template.colors).to.be.an('array')
+      expect(body.template.colors.length).to.be.eql(2)
+      expect(body.credits).to.be.eql('This snapshot does not provide license information.')
+    }, 201)
+
+  // get state 0
+  testJsonGet(() => '/tables/minimalzip/states/0/', body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(0)
+  })
+
+  // get state 1
+  testJsonGet(() => '/tables/minimalzip/states/1/', body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(0)
+  })
+
+  // get state 2
+  testJsonGet(() => '/tables/minimalzip/states/2/', body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(0)
+  })
+})
+
+describe('ZIP upload - full', function () {
+  testZIPUpload(
+    () => '/tables/',
+    () => { return 'fullziptest' },
+    () => { return 'apitests' },
+    () => { return 'test/data/full.zip' },
+    body => {
+      expect(body).to.be.an('object')
+      expect(body.id).to.match(/^[0-9a-f]+$/)
+      expect(body.name).to.be.eql('fullziptest')
+      expect(body.engine).to.be.eql(p.versionEngine)
+      expect(body.background).to.be.an('object')
+      expect(body.background.color).to.be.eql('#423e3d')
+      expect(body.background.scroller).to.be.eql('#2b2929')
+      expect(body.background.image).to.be.eql('img/desktop-wood.jpg')
+      expect(body.width).to.be.eql(3072)
+      expect(body.height).to.be.eql(2048)
+      expect(body.library).to.be.an('object')
+      expect(body.library.other).to.be.an('array')
+      expect(body.library.other.length).to.be.eql(1)
+      expect(body.library.other[0].alias).to.be.eql('dicemat')
+      expect(body.library.other[0].w).to.be.eql(4)
+      expect(body.library.overlay).to.be.an('array')
+      expect(body.library.overlay.length).to.be.eql(1)
+      expect(body.library.overlay[0].alias).to.be.eql('area.1x1')
+      expect(body.library.overlay[0].w).to.be.eql(1)
+      expect(body.library.tile).to.be.an('array')
+      expect(body.library.tile.length).to.be.eql(1)
+      expect(body.library.tile[0].alias).to.be.eql('go')
+      expect(body.library.tile[0].w).to.be.eql(9)
+      expect(body.library.token).to.be.an('array')
+      expect(body.library.token.length).to.be.eql(1)
+      expect(body.library.token[0].alias).to.be.eql('generic.plain')
+      expect(body.library.token[0].w).to.be.eql(1)
+      expect(body.template).to.be.an('object')
+      expect(body.template.type).to.be.eql('grid-square')
+      expect(body.template.snapSize).to.be.eql(16)
+      expect(body.template.gridSize).to.be.eql(64)
+      expect(body.template.gridWidth).to.be.eql(48)
+      expect(body.template.gridHeight).to.be.eql(32)
+      expect(body.template.version).to.be.eql('1.2.3')
+      expect(body.template.engine).to.be.eql('^0.1.0')
+      expect(body.template.colors).to.be.an('array')
+      expect(body.template.colors.length).to.be.eql(1)
+      expect(body.credits).to.contain('I am a license.')
+    }, 201)
+
+  // get state 0
+  testJsonGet(() => '/tables/fullziptest/states/0/', body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(4)
+    expect(body[0].asset).to.be.eql('bb07ac49818bc000')
+    expect(body[1].asset).to.be.eql('f628553dd1802f0a')
+    expect(body[2].asset).to.be.eql('7261fff0158e27bc')
+    expect(body[3].asset).to.be.eql('d04e9af5e03f9f58')
+  })
+
+  // get state 1
+  testJsonGet(() => '/tables/fullziptest/states/1/', body => {
+    expect(body.length).to.be.eql(2)
+    expect(body[0].asset).to.be.eql('bb07ac49818bc000')
+    expect(body[1].asset).to.be.eql('f628553dd1802f0a')
+  })
+
+  // get state 2
+  testJsonGet(() => '/tables/fullziptest/states/2/', body => {
+    expect(body.length).to.be.eql(2)
+    expect(body[0].asset).to.be.eql('7261fff0158e27bc')
+    expect(body[1].asset).to.be.eql('d04e9af5e03f9f58')
+  })
+
+  // get state 3
+  testJsonGet(() => '/tables/fullziptest/states/3/', body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(0)
+  })
 })

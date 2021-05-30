@@ -22,7 +22,6 @@ import { createPopper } from '@popperjs/core'
 import {
   getTable,
   getTemplate,
-  markTableDirty,
   getAsset,
   loadTable,
   updatePieces,
@@ -372,8 +371,24 @@ export function setNote (noteJson, select = false) {
  * Done in 90° increments.
  */
 export function rotateSelected () {
+  const template = getTemplate()
+
   _('#tabletop .is-selected').each(node => {
-    stateRotatePiece(node.id, (parseFloat(node.dataset.r ?? 0) + 90) % 360)
+    const r = (parseFloat(node.dataset.r ?? 0) + 90) % 360
+    let x = Number(node.dataset.x)
+    let y = Number(node.dataset.y)
+    switch (r) {
+      case 90:
+      case 270:
+        x = clamp(0, x, (template.gridWidth - node.dataset.h) * template.gridSize - 1)
+        y = clamp(0, y, (template.gridHeight - node.dataset.w) * template.gridSize - 1)
+        break
+      default:
+        x = clamp(0, x, (template.gridWidth - node.dataset.w) * template.gridSize - 1)
+        y = clamp(0, y, (template.gridHeight - node.dataset.h) * template.gridSize - 1)
+    }
+
+    stateRotatePiece(node.id, r, x, y)
   })
 }
 
@@ -425,6 +440,53 @@ export function getMaxZ (layer, area = {
 }
 
 /**
+ * Determine rectancle all items on the table are within in px.
+ *
+ * @return {Object} Object with top/left/bottom/right property of main content.
+ */
+export function getContentRect () {
+  const rect = {
+    top: 999999999,
+    left: 999999999,
+    bottom: -999999999,
+    right: -999999999
+  }
+  const gridSize = getTemplate().gridSize
+
+  _('#tabletop .piece').each(node => {
+    const top = Number(node.dataset.y)
+    const left = Number(node.dataset.x)
+    const bottom = top + Number(node.dataset.h) * gridSize - 1
+    const right = left + Number(node.dataset.w) * gridSize - 1
+    rect.top = rect.top < top ? rect.top : top
+    rect.left = rect.left < left ? rect.left : left
+    rect.bottom = rect.bottom > bottom ? rect.bottom : bottom
+    rect.right = rect.right > right ? rect.right : right
+  })
+
+  return rect
+}
+
+/**
+ * Determine rectancle all items on the table are within in grid units.
+ *
+ * @return {Object} Object with top/left/bottom/right property of main content.
+ */
+export function getContentRectGrid () {
+  const gridSize = getTemplate().gridSize
+  const rect = getContentRect()
+
+  rect.left = Math.floor(rect.left / gridSize)
+  rect.top = Math.floor(rect.top / gridSize)
+  rect.right = Math.floor(rect.right / gridSize)
+  rect.bottom = Math.floor(rect.bottom / gridSize)
+  rect.width = rect.right - rect.left + 1
+  rect.height = rect.bottom - rect.top + 1
+
+  return rect
+}
+
+/**
  * Move the currently selected piece to the top within it's layer.
  *
  * Will silently fail if nothing is selected.
@@ -463,7 +525,7 @@ export function unselectPieces (layer = 'all') {
   for (const node of document.querySelectorAll(filter + ' .piece.is-selected')) {
     node.classList.remove('is-selected')
   }
-  _('#popper').remove('.show') // make sure popup is gone
+  _('#popper').delete() // make sure popup is gone
 }
 
 /**
@@ -533,14 +595,18 @@ export function assetToNode (assetJson, side = 0) {
   if (assetJson.id === '0000000000000000') {
     node = createInvalidAsset(assetJson.type)
   } else {
+    const uriSide = assetJson.assets[side] === '##BACK##'
+      ? 'img/backside.svg'
+      : `api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`
+    const uriBase = `api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.base}`
     if (assetJson.base) { // layered asset
       node = _(`.piece.piece-${assetJson.type}.has-layer`).create().css({
-        backgroundImage: 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.base}`) + '")',
-        '--fbg-layer-image': 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`) + '")'
+        backgroundImage: 'url("' + encodeURI(uriBase) + '")',
+        '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
       })
     } else { // regular asset
       node = _(`.piece.piece-${assetJson.type}`).create().css({
-        backgroundImage: 'url("' + encodeURI(`api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`) + '")'
+        backgroundImage: 'url("' + encodeURI(uriSide) + '")'
       })
     }
   }
@@ -649,7 +715,7 @@ export function createNote (tileX, tileY) {
 
 export function popupPiece (id) {
   const piece = _('#' + id)
-  const popup = _('#popper')
+  const popup = _('#popper.popup.is-content').create()
 
   popup.innerHTML = `
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
@@ -661,6 +727,8 @@ export function popupPiece (id) {
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
     <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
   `
+
+  _('#tabletop').add(popup)
 
   _('#popper .edit').on('click', click => {
     click.preventDefault()
@@ -723,6 +791,48 @@ export function popupPiece (id) {
  */
 export function cleanupTable () {
   _('#tabletop .piece.is-invalid').delete()
+}
+
+/**
+ * Move the table content to the given x/y position.
+ *
+ * Will determine the content-box and move each item relative to its top/left
+ * corner.
+ *
+ * @param Number toX New x position.
+ * @param Number toY New y position.
+ */
+export function moveContent (toX, toY) {
+  const template = getTemplate()
+  const rect = getContentRectGrid()
+  const offsetX = (toX - rect.left) * template.gridSize
+  const offsetY = (toY - rect.top) * template.gridSize
+
+  const pieces = []
+  _('#tabletop .piece').each(piece => {
+    pieces.push({
+      id: piece.id,
+      x: Number(piece.dataset.x) + offsetX,
+      y: Number(piece.dataset.y) + offsetY
+    })
+  })
+  updatePieces(pieces)
+}
+
+/**
+ * Update DOM table to current table-data.
+ *
+ * e.g. for resizing the table.
+ *
+ * @return FreeDOM Table DOM element for further customization.
+ */
+export function updateTable () {
+  const table = getTable()
+
+  return _('#tabletop').css({
+    width: table.width + 'px',
+    height: table.height + 'px'
+  })
 }
 
 // --- internal ----------------------------------------------------------------
@@ -794,7 +904,6 @@ function setupTable () {
         </div>
       </div>
     </div>
-    <div id="popper" class="popup is-content"></div>
   `
 
   changeQuality(stateGetTablePref('renderQuality') ?? 3)
@@ -829,9 +938,7 @@ function setupTable () {
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => navigateToJoin(getTable().name))
 
-  _('#tabletop').css({
-    width: table.width + 'px',
-    height: table.height + 'px',
+  updateTable().css({
     backgroundColor: table.background.color,
     backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
     backgroundSize: table.template.gridSize + 'px,1152px 768px'
@@ -965,7 +1072,6 @@ function intersect (rect1, rect2) {
  * @return {FreeDOM} dummy node.
  */
 function createInvalidAsset (type) {
-  markTableDirty()
   return _(`.piece.piece-${type}.is-invalid`).create()
 }
 

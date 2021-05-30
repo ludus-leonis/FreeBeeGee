@@ -274,7 +274,7 @@ function modalUpload () {
       base64: _('.upload-preview .piece').node().style.backgroundImage
         .replace(/^[^,]*,/, '')
         .replace(/".*/, ''),
-      color: layer === 'token' ? 'border' : 'transparent'
+      color: layer === 'token' ? '#808080' : 'transparent'
     }
 
     addAsset(data)
@@ -459,6 +459,8 @@ function prettyName (assetName = '') {
   const split = assetName.split('.')
   if (split.length <= 1) {
     return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim())
+  } else if (split[0] === '_') { // sort-first character
+    return toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
   } else {
     return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim()) +
     ', ' + toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
