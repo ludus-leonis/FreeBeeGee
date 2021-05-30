@@ -962,7 +962,7 @@ class FreeBeeGeeAPI
                     $validated->base64 = $this->api->assertBase64('base64', $value);
                     break;
                 case 'color':
-                    $validated->color = $this->api->assertString('color', $value, '[a-fA-F0-9]{6}|transparent|border');
+                    $validated->color = $this->api->assertString('color', $value, '#[a-fA-F0-9]{6}|transparent|border');
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -1465,7 +1465,8 @@ class FreeBeeGeeAPI
 
         // determine asset path elements
         $folder = $this->getTableFolder($tableName);
-        $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' . $asset->color . '.' . $asset->format;
+        $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' .
+            str_replace('#', '', $asset->color) . '.' . $asset->format;
 
         // output file data
         $lock = $this->api->waitForWriteLock($folder . '.flock');

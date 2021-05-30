@@ -274,7 +274,7 @@ function modalUpload () {
       base64: _('.upload-preview .piece').node().style.backgroundImage
         .replace(/^[^,]*,/, '')
         .replace(/".*/, ''),
-      color: layer === 'token' ? 'border' : 'transparent'
+      color: layer === 'token' ? '#808080' : 'transparent'
     }
 
     addAsset(data)
