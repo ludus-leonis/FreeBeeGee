@@ -2,6 +2,23 @@
 
 Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.8.0 - Resizing Rhinoceros
+
+### Noteable changes
+
+* added table resize feature
+* added table content alignment feature
+* improved snapshot upload: ignore extra files in ZIP instead of rejecting them
+* added more room types and assets to RPG template
+
+### Other changes
+
+* added default back side for all 1-sided pieces
+* fixed popup menu sometimes cut-off
+* fixed rotated pieces placement next to table border
+* fixed uploaded token border color bug
+* docs/requirements update
+
 ## v0.7.0 - Uploading Unicorn
 
 ### Noteable changes

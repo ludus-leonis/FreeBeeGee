@@ -55,7 +55,7 @@ The server config file is found in `api/data/server.json`:
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
 ```
 
-FreeBeeGee ships with an unkown password. No tables can be created until you either set one or explicitly disable it.
+FreeBeeGee ships with an unknown password. No tables can be created until you either set one or explicitly disable it.
 
 ### Uploads
 

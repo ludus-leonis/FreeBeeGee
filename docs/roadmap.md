@@ -2,29 +2,21 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.8 - Content Cobra
+## v0.9 - Happy Hamster
 
-* [X] make ZIP upload more robust
-  * [X] ignore unknown files
-  * [X] auto-create missing state json
-  * [X] auto-create missing template json
-  * [X] auto-create missing license
-  * [X] ZIP upload integration tests
-* [X] align table content (top/bottom/left/right/center)
-* [X] change table size
-* [X] default backside for all 1-sided pieces
+* [ ] subtables / save-slots (alt-#)
+* [ ] pointer feature
+* [ ] different edit modals per piece type (hide useless fields)
+* [ ] token status (blind, poison, prone, dazed, ...)
 * [ ] pre-release
   * [ ] bugfixing
-    * [ ] popup sometimes out of current view
-    * [X] custom token can't change border color
     * [ ] disable sleep warning if outside game
-    * [X] rotated pieces can't be moved to the table border
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG
 
-## v0.9 - Mobile Monkey
+## v0.10 - Mobile Monkey
 
 * better tablet / touch support
   * zooming
@@ -32,7 +24,7 @@ Here is a list what might happen next. However, priorities can change.
 * table passwords
 * reuse pieces' DOM elements more
 
-## v0.10 - Clean Cat
+## v0.11 - Clean Cat
 
 * empty template table
 * reduce impact of "back" button
@@ -46,9 +38,7 @@ Here is a list what might happen next. However, priorities can change.
 
 ### rather sooner
 
-* subtables / save-slots (alt-#)
 * generic marker overlay (X, ?, ...)
-* pointer feature
 * status icons
 * docs how to make table/template `.zip`s
 * click thru / don't drag on transparent parts of images
@@ -57,7 +47,6 @@ Here is a list what might happen next. However, priorities can change.
 * undo (limited)
 * demo mode (serverless?)
 * show backside/all sides in tile browser
-* different edit modals per piece type (hide useless fields)
 * better sticky notes (more text, auto-size text)
 * protect pieces (no-delete, no-move)
 * meta-piece: supply heap

@@ -525,7 +525,7 @@ export function unselectPieces (layer = 'all') {
   for (const node of document.querySelectorAll(filter + ' .piece.is-selected')) {
     node.classList.remove('is-selected')
   }
-  _('#popper').remove('.show') // make sure popup is gone
+  _('#popper').delete() // make sure popup is gone
 }
 
 /**
@@ -715,7 +715,7 @@ export function createNote (tileX, tileY) {
 
 export function popupPiece (id) {
   const piece = _('#' + id)
-  const popup = _('#popper')
+  const popup = _('#popper.popup.is-content').create()
 
   popup.innerHTML = `
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
@@ -727,6 +727,8 @@ export function popupPiece (id) {
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
     <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
   `
+
+  _('#tabletop').add(popup)
 
   _('#popper .edit').on('click', click => {
     click.preventDefault()
@@ -902,7 +904,6 @@ function setupTable () {
         </div>
       </div>
     </div>
-    <div id="popper" class="popup is-content"></div>
   `
 
   changeQuality(stateGetTablePref('renderQuality') ?? 3)

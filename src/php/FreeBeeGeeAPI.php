@@ -502,10 +502,10 @@ class FreeBeeGeeAPI
 
         // recreate potential nonexisting files as fallback
         if (!is_file($folder . 'template.json')) {
-            $this->writeAsJsonAndDigest($folder, 'template.json', $this->getTemplateDefault());
+            file_put_contents($folder . 'template.json', json_encode($this->getTemplateDefault()));
         }
         if (!is_file($folder . 'states/1.json')) {
-            $this->writeAsJsonAndDigest($folder, 'states/1.json', []);
+            file_put_contents($folder . 'states/1.json', '[]');
         }
         if (!is_file($folder . 'states/0.json')) { // recreate from 1.json, ignore digest
             file_put_contents($folder . 'states/0.json', file_get_contents($folder . 'states/1.json'));
