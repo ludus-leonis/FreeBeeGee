@@ -160,11 +160,10 @@ $label-offset: 8px;
   &.is-selected {
     $selected-color: $color-secondary;
     filter:
-    drop-shadow(0 0 1.5px $selected-color)
-    drop-shadow(0 0 0 $selected-color)
-    drop-shadow(0 0 0 $selected-color)
-    drop-shadow(0 0 0 $selected-color)
-    drop-shadow(0 0 0 $selected-color) !important; // sass-lint:disable-line no-important
+    drop-shadow(2px 0 0 $selected-color)
+    drop-shadow(0 2px 0 $selected-color)
+    drop-shadow(-2px 0 0 $selected-color)
+    drop-shadow(0 -2px 0 $selected-color) !important; // sass-lint:disable-line no-important
   }
 
   &.is-invalid {
