@@ -18,9 +18,12 @@
  */
 
 import _ from '../../../FreeDOM.js'
-
-import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
-import { touch, stopAutoSync, startAutoSync } from '../sync.js'
+import {
+  createModal,
+  getModal,
+  modalActive,
+  modalClose
+} from '../../../modal.js'
 
 // --- public ------------------------------------------------------------------
 
@@ -29,7 +32,7 @@ import { touch, stopAutoSync, startAutoSync } from '../sync.js'
  *
  * Contains basis help, shortcuts and an About section.
  */
-export function modalInactive () {
+export function modalInactive (callback) {
   if (!modalActive()) {
     createModal()
 
@@ -47,20 +50,8 @@ export function modalInactive () {
     _('#btn-close').on('click', () => getModal().hide())
     _('#modal')
       .add('.modal-small')
-      .on('hidden.bs.modal', () => wakeup())
+      .on('hidden.bs.modal', () => { modalClose(); callback() })
 
     getModal().show()
-    stopAutoSync()
   }
-}
-
-// --- private ------------------------------------------------------------------
-
-/**
- * Wake up and start syncing again
- */
-function wakeup () {
-  touch()
-  modalClose()
-  startAutoSync()
 }

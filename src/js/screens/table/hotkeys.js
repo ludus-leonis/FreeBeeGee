@@ -32,14 +32,27 @@ import {
   toBottomSelected,
   toggleLayer
 } from '.'
-import { isDragging, getMouseTileX, getMouseTileY } from './mouse.js'
-import { touch } from './sync.js'
+import {
+  isDragging,
+  getMouseTileX,
+  getMouseTileY
+} from './mouse.js'
+import {
+  touch
+} from './sync.js'
+import {
+  setStateNo
+} from './state.js'
 import {
   modalActive,
   modalClose
 } from '../../modal.js'
-import { modalLibrary } from './modals/library.js'
-import { modalHelp } from './modals/help.js'
+import {
+  modalLibrary
+} from './modals/library.js'
+import {
+  modalHelp
+} from './modals/help.js'
 import _ from '../../FreeDOM.js'
 
 /** register the keyboard handler on document load */
@@ -70,16 +83,16 @@ function handleTableKeys (keydown) {
         deleteSelected()
         break
       case '1': // toggle layer
-        toggleLayer('other')
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(1); else toggleLayer('other')
         break
       case '2': // toggle layer
-        toggleLayer('token')
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(2); else toggleLayer('token')
         break
       case '3': // toggle layer
-        toggleLayer('overlay')
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(3); else toggleLayer('overlay')
         break
       case '4': // toggle layer
-        toggleLayer('tile')
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(4); else toggleLayer('tile')
         break
       case 'l': // library / add piece
         modalLibrary(getMouseTileX(), getMouseTileY())

@@ -37,10 +37,11 @@ import {
   apiPostAsset,
   UnexpectedStatus
 } from '../../api.js'
-import { syncNow } from './sync.js'
+import {
+  syncNow,
+  stopAutoSync
+} from './sync.js'
 import { runError } from '../error.js'
-
-let table = {} /** stores the table meta info JSON */
 
 // --- public ------------------------------------------------------------------
 
@@ -91,6 +92,38 @@ export function getTable () {
  */
 export function getTemplate () {
   return getTable()?.template
+}
+
+/**
+ * Get the currently visible (sub)table a.k.a. state number.
+ */
+export function getStateNo () {
+  return stateNo
+}
+
+/**
+ * Switch to another state.
+ *
+ * Triggers API fetch & updates table state.
+ *
+ * @param {Number} no State to set (1..9).
+ */
+export function setStateNo (no) {
+  if (no >= 1 && no <= 9) {
+    stateNo = no
+    stateSetTablePref('subtable', stateNo)
+    syncNow()
+  }
+}
+
+/**
+ * Get (cached) state for a given slot/subtable.
+ *
+ * @param {Number} no State slot 0..9.
+ * @return {Object} State array.
+ */
+export function getState (no) {
+  return states[no]
 }
 
 /**
@@ -307,7 +340,7 @@ export function statePieceEdit (pieceID, updates) {
  * @param {String} pieceId ID of piece to remove.
  */
 export function stateDeletePiece (id) {
-  apiDeletePiece(table.name, 1, id)
+  apiDeletePiece(table.name, getStateNo(), id)
     .catch(error => {
       runError('UNEXPECTED', error)
     })
@@ -324,7 +357,7 @@ export function stateDeletePiece (id) {
  * @param {Array} state Array of pieces (table state).
  */
 export function updateState (state) {
-  apiPutState(table.name, 1, state)
+  apiPutState(table.name, getStateNo(), state)
     .catch(error => {
       runError('UNEXPECTED', error)
     })
@@ -341,7 +374,7 @@ export function updateState (state) {
 export function restoreState (index) {
   apiGetState(table.name, index)
     .then(state => {
-      apiPutState(table.name, 1, state)
+      apiPutState(table.name, getStateNo(), state)
         .catch(error => {
           runError('UNEXPECTED', error)
         })
@@ -405,7 +438,33 @@ export function deleteTable () {
   return apiDeleteTable(table.name)
 }
 
+/**
+ * Fetch a server state and cache it for future use.
+ *
+ * @param {Number} no Number of state 0..9.
+ * @return {Promise} Promise of a state object.
+ */
+export function fetchTableState (no) {
+  return apiGetState(table.name, no, true)
+    .then(state => {
+      states[no] = state.body
+      return state
+    })
+    .catch(error => {
+      if (error instanceof UnexpectedStatus) {
+        runError('TABLE_GONE', table.name, error)
+        stopAutoSync()
+      } else {
+        runError('UNEXPECTED', error)
+      }
+    })
+}
+
 // --- internal ----------------------------------------------------------------
+
+let table = {} /** stores the table meta info JSON */
+let stateNo = 1 /** stores the currently visible sub-table */
+const states = [[], [], [], [], [], [], [], [], [], []] /** caches the states 0..9 **/
 
 /**
  * Update a piece on the server.
@@ -417,7 +476,7 @@ export function deleteTable () {
  * @return {Object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, poll = true) {
-  return apiPatchPiece(table.name, 1, pieceId, patch)
+  return apiPatchPiece(table.name, getStateNo(), pieceId, patch)
     .catch(error => {
       if (error instanceof UnexpectedStatus && error.status === 404) {
         // no need to patch already deleted pieces - silently ignore
@@ -439,7 +498,7 @@ function patchPiece (pieceId, patch, poll = true) {
  * @return {Object} Promise of the API request.
  */
 function patchPieces (patches, poll = true) {
-  return apiPatchPieces(table.name, 1, patches)
+  return apiPatchPieces(table.name, getStateNo(), patches)
     .catch(error => {
       if (error instanceof UnexpectedStatus && error.status === 404) {
         // no need to patch already deleted pieces - silently ignore
@@ -461,7 +520,7 @@ function patchPieces (patches, poll = true) {
  * @return {Object} Promise of the ID of the new piece.
  */
 function createPiece (piece, poll = true) {
-  return apiPostPiece(table.name, 1, piece)
+  return apiPostPiece(table.name, getStateNo(), piece)
     .then(piece => {
       return piece.id
     })

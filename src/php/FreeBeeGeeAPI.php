@@ -558,7 +558,7 @@ class FreeBeeGeeAPI
         $folder = $this->getTableFolder($tableName);
         $lock = $this->api->waitForWriteLock($folder . '.flock');
 
-        $oldState = '[]';
+        $oldState = [];
         if (is_file($folder . 'states/' . $sid . '.json')) {
             $oldState = json_decode(file_get_contents($folder . 'states/' . $sid . '.json'));
         }
@@ -1139,6 +1139,17 @@ class FreeBeeGeeAPI
             [
                 'states/template.json',
                 'states/table.json',
+            ] as $filename
+        ) {
+            if (is_file($folder . $filename)) {
+                $state = file_get_contents($folder . $filename);
+            } else {
+                $state = '{}';
+            }
+            $digests->$filename = 'crc32:' . crc32($state);
+        }
+        foreach (
+            [
                 'states/0.json',
                 'states/1.json',
                 'states/2.json',
@@ -1153,8 +1164,10 @@ class FreeBeeGeeAPI
         ) {
             if (is_file($folder . $filename)) {
                 $state = file_get_contents($folder . $filename);
-                $digests->$filename = 'crc32:' . crc32($state);
+            } else {
+                $state = '[]';
             }
+            $digests->$filename = 'crc32:' . crc32($state);
         }
         file_put_contents($folder . 'digest.json', json_encode($digests));
     }

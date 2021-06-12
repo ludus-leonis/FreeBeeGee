@@ -72,6 +72,22 @@ export function hash (string) {
   return hash
 }
 
+export const timeRecords = []
+
+/**
+ * Record an execution time in a stats array.
+ *
+ * Will keep up to 10 values.
+ *
+ * @param {String} record Named record to add this time.
+ * @param {Object} value Value to add, if > 0.
+ */
+export function recordTime (data, value) {
+  timeRecords[data] = timeRecords[data] ?? [0]
+  while (timeRecords[data].length >= 10) timeRecords[data].shift()
+  if (value > 0) timeRecords[data].push(value)
+}
+
 /**
  * Convert a string to title-case (each word starts with an uppercase letter).
  *

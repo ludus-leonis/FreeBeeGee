@@ -26,6 +26,7 @@ import {
   loadTable,
   updatePieces,
   createPieces,
+  setStateNo,
   stateDeletePiece,
   stateNumberPiece,
   stateFlipPiece,
@@ -36,11 +37,17 @@ import {
   stateGetTablePref
 } from './state.js'
 import { startAutoSync } from './sync.js'
-import { enableDragAndDrop, getMouseTileX, getMouseTileY } from './mouse.js'
+import {
+  enableDragAndDrop,
+  getMouseTileX,
+  getMouseTileY,
+  updateMenu
+} from './mouse.js'
 import _ from '../../FreeDOM.js'
 import {
   clamp,
-  shuffle
+  shuffle,
+  recordTime
 } from '../../utils.js'
 import { navigateToJoin } from '../../nav.js'
 
@@ -835,6 +842,21 @@ export function updateTable () {
   })
 }
 
+export function updateTabletop (state, selectIds) {
+  const start = Date.now()
+
+  const keepIds = []
+  cleanupTable()
+  for (const item of state) {
+    setItem(item, selectIds.includes(item.id))
+    keepIds.push(item.id)
+  }
+  removeObsoletePieces(keepIds)
+  updateMenu()
+
+  recordTime('sync-ui', Date.now() - start)
+}
+
 // --- internal ----------------------------------------------------------------
 
 /**
@@ -906,7 +928,9 @@ function setupTable () {
     </div>
   `
 
+  // load preferences
   changeQuality(stateGetTablePref('renderQuality') ?? 3)
+  setStateNo(stateGetTablePref('subtable') ?? 1)
 
   // setup menu for layers
   let undefinedCount = 0
@@ -1198,6 +1222,52 @@ function randomDiscard (discard) {
     })
   }
   updatePieces(pieces)
+}
+
+/**
+ * Detect deleted pieces and remove them from the table.
+ *
+ * @param {String[]} keepIds IDs of pieces to keep.
+ */
+function removeObsoletePieces (keepIds) {
+  // get all piece IDs from dom
+  let ids = getAllPiecesIds()
+  ids = Array.isArray(ids) ? ids : [ids]
+
+  // remove ids from list that are still there
+  for (const id of keepIds) {
+    ids = ids.filter(item => item !== id)
+  }
+
+  // remove ids from list that are dragndrop targets
+  ids = ids.filter(item => !item.endsWith('-drag'))
+
+  // delete ids that are still left
+  for (const id of ids) {
+    deletePiece(id)
+  }
+}
+
+/**
+ * Trigger UI update for new/changed server items.
+ *
+ * @param {Object} piece Piece to add/update.
+ * @param {Boolean} selected If true, this item will be selected.
+ */
+function setItem (piece, selected) {
+  switch (piece.layer) {
+    case 'tile':
+    case 'token':
+    case 'overlay':
+    case 'other':
+      setPiece(piece, selected)
+      break
+    case 'note':
+      setNote(piece, selected)
+      break
+    default:
+      // ignore unkown piece type
+  }
 }
 
 const iconDice = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'

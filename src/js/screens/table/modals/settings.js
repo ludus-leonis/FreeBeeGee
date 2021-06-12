@@ -31,10 +31,12 @@ import {
   restoreState,
   getTable,
   deleteTable,
+  getStateNo,
+  setStateNo,
   stateGetTablePref,
   stateSetTablePref
 } from '../state.js'
-import { pollTimes, syncTimes } from '../sync.js'
+import { timeRecords } from '../../../utils.js'
 import { navigateToJoin } from '../../../nav.js'
 import {
   moveContent,
@@ -78,11 +80,25 @@ export function modalSettings () {
 
             <h2 class="h3">Statistics</h2>
             <p>Table: ${getTemplate().gridWidth}x${getTemplate().gridHeight} spaces, ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile, ${_('.piece.piece-other').nodes().length}x other</p>
-            <p>Refresh time: ${Math.ceil(pollTimes.reduce((a, b) => a + b) / pollTimes.length)}ms server + ${Math.ceil(syncTimes.reduce((a, b) => a + b) / syncTimes.length)}ms browser</p>
+            <p>Refresh time: ${Math.ceil(timeRecords['sync-network'].reduce((a, b) => a + b) / timeRecords['sync-network'].length)}ms network + ${Math.ceil(timeRecords['sync-ui'].reduce((a, b) => a + b) / timeRecords['sync-ui'].length)}ms browser</p>
           </div>
         </div></form>
         <form class="container"><div id="tab-my" class="row">
           <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
+
+          <div class="col-12 spacing-small">
+            <h2 class="h3">Subtable</h2>
+            <p>Switch to a different view/setup on the current table:</p>
+          </div>
+
+          <div class="col-6 col-sm-8">
+            <label for="table-sub">Subtable</label>
+            <select id="table-sub" name="subtable"></select>
+          </div>
+          <div class="col-6 col-sm-4">
+            <label for="btn-table-sub d-none d-sm-block">&nbsp;</label>
+            <button id="btn-table-sub" class="btn btn-wide">Switch</button>
+          </div>
 
           <div class="col-12 spacing-small">
             <h2 class="h3">Table content</h2>
@@ -190,6 +206,14 @@ export function modalSettings () {
     }
   })
 
+  const select = _('#table-sub')
+  for (let i = 1; i <= 9; i++) {
+    const option = _('option').create(i)
+    option.value = i
+    if (i === getStateNo()) option.selected = true
+    select.add(option)
+  }
+
   const rect = getContentRectGrid()
   populateSizes('#table-w', getTemplate().gridWidth, rect.right)
   populateSizes('#table-h', getTemplate().gridHeight, rect.bottom)
@@ -208,6 +232,11 @@ export function modalSettings () {
   _('#btn-table-delete').on('click', click => {
     click.preventDefault()
     deleteTable().then(() => navigateToJoin(getTable().name))
+  })
+
+  _('#btn-table-sub').on('click', click => {
+    click.preventDefault()
+    setStateNo(Number(_('#table-sub').value))
   })
 
   _('#btn-table-tl').on('click', click => {
