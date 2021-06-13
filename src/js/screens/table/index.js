@@ -1,5 +1,6 @@
 /**
- * @file The actual table / tabletop stuff.
+ * @file The actual table / tabletop stuff. Mainly in charge of state -> DOM
+ *       propagation. Does not manipulate data nor does it do API calls.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -22,20 +23,27 @@ import { createPopper } from '@popperjs/core'
 import {
   getTable,
   getTemplate,
-  getAsset,
   loadTable,
   updatePieces,
   createPieces,
   setStateNo,
-  stateDeletePiece,
-  stateNumberPiece,
-  stateFlipPiece,
-  stateMovePiece,
-  stateBorderPiece,
-  stateRotatePiece,
-  stateSetTablePref,
-  stateGetTablePref
+  deletePiece,
+  numberPiece,
+  flipPiece,
+  movePiece,
+  borderPiece,
+  rotatePiece,
+  setTablePreference,
+  getTablePreference
 } from './state.js'
+import {
+  findAsset,
+  findPiece,
+  findPiecesWithin,
+  getMinZ,
+  getMaxZ,
+  getContentRectGrid
+} from './tabledata.js'
 import { startAutoSync } from './sync.js'
 import {
   enableDragAndDrop,
@@ -103,11 +111,20 @@ export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
   _('#tabletop').toggle('.layer-' + layer + '-enabled')
   if (_('#btn-' + layer + '.active').exists()) {
-    stateSetTablePref('layer' + layer, true)
+    setTablePreference('layer' + layer, true)
   } else {
     unselectPieces(layer)
-    stateSetTablePref('layer' + layer, false)
+    setTablePreference('layer' + layer, false)
   }
+}
+
+/**
+ * Get all currently selected pieces.
+ *
+ * @return {FreeDOM} Selected DOM nodes.
+ */
+export function getSelected () {
+  return _('#tabletop .is-selected')
 }
 
 /**
@@ -116,18 +133,7 @@ export function toggleLayer (layer) {
  * Will silently fail if nothing is selected.
  */
 export function deleteSelected () {
-  _('#tabletop .is-selected').each(node => stateDeletePiece(node.id))
-}
-
-/**
- * Delete a piece from the table.
- *
- * Will silently fail if this piece does not exist.
- *
- * @param {String} id ID of piece.
- */
-export function deletePiece (id) {
-  _('#' + id).delete()
+  getSelected().each(node => deletePiece(node.id))
 }
 
 /**
@@ -143,11 +149,9 @@ export function settings () {
  * Will silently fail if nothing is selected.
  */
 export function editSelected () {
-  const selected = _('#tabletop .is-selected')
+  const selected = getSelected()
   if (selected.exists()) {
-    modalEdit(nodeToPiece(
-      selected.node()
-    ))
+    modalEdit(findPiece(selected.node().id))
   }
 }
 
@@ -160,9 +164,9 @@ export function editSelected () {
  * @param {Number} y y position (in tiles).
  */
 export function cloneSelected (x, y) {
-  _('#tabletop .is-selected').each(node => {
+  getSelected().each(node => {
     const template = getTemplate()
-    const piece = nodeToPiece(node)
+    const piece = findPiece(node.id)
     piece.x = x * template.gridSize
     piece.y = y * template.gridSize
     piece.z = getMaxZ(piece.layer) + 1
@@ -180,10 +184,10 @@ export function cloneSelected (x, y) {
  * Will cycle the sides and silently fail if nothing is selected.
  */
 export function flipSelected () {
-  _('#tabletop .is-selected').each(node => {
-    const sides = Number(node.dataset.sides)
-    if (sides > 1) {
-      stateFlipPiece(node.id, (Number(node.dataset.side) + 1) % sides)
+  getSelected().each(node => {
+    const piece = findPiece(node.id)
+    if (piece._sides > 1) {
+      flipPiece(piece.id, (piece.side + 1) % piece._sides)
     }
   })
 }
@@ -196,9 +200,10 @@ export function flipSelected () {
 export function outlineSelected () {
   const borders = getTemplate().colors.length
 
-  _('#tabletop .is-selected').each(node => {
+  getSelected().each(node => {
+    const piece = findPiece(node.id)
     if (borders > 1) {
-      stateBorderPiece(node.id, (Number(node.dataset.border) + 1) % borders)
+      borderPiece(piece.id, (piece.border + 1) % borders)
     }
   })
 }
@@ -210,7 +215,8 @@ export function outlineSelected () {
  */
 export function numberSelected (delta) {
   _('#tabletop .piece-token.is-selected').each(node => {
-    stateNumberPiece(node.id, (Number(node.dataset.no) + 16 + delta) % 16) // 0=nothing, 1-9, A-F
+    const piece = findPiece(node.id)
+    numberPiece(piece.id, (piece.no + 16 + delta) % 16) // 0=nothing, 1-9, A-F
   })
 }
 
@@ -223,16 +229,17 @@ export function numberSelected (delta) {
  */
 export function randomSelected () {
   const template = getTemplate()
-  _('#tabletop .is-selected').each(node => {
-    switch (node.dataset.feature) {
+  getSelected().each(node => {
+    const piece = findPiece(node.id)
+    switch (piece._feature) {
       case 'DICEMAT': // dicemat: randomize all pieces on it
-        randomDicemat(node)
+        randomDicemat(piece)
         break
       case 'DISCARD': // dicard pile: randomize & center & flip all pieces on it
-        randomDiscard(node)
+        randomDiscard(piece)
         break
       default: // ordinary piece
-        if (Number(node.dataset.sides) > 1) { // only randomize multi-sided tokens
+        if (piece._sides > 1) { // only randomize multi-sided tokens
           // slide token around
           let slideX = Math.floor(Math.random() * 3) - 1
           let slideY = Math.floor(Math.random() * 3) - 1
@@ -242,18 +249,18 @@ export function randomSelected () {
           }
           const x = Math.abs(clamp(
             -template.snapSize,
-            Number(node.dataset.x) + slideX * template.snapSize,
+            piece.x + slideX * template.snapSize,
             (template.gridWidth - 1) * template.gridSize
           ))
           const y = Math.abs(clamp(
             -template.snapSize,
-            Number(node.dataset.y) + slideY * template.snapSize,
+            piece.y + slideY * template.snapSize,
             (template.gridHeight - 1) * template.gridSize
           ))
           // send to server
           updatePieces([{
             id: node.id,
-            side: Math.floor(Math.random() * Number(node.dataset.sides)),
+            side: Math.floor(Math.random() * piece._sides),
             x: x,
             y: y
           }])
@@ -265,50 +272,68 @@ export function randomSelected () {
 /**
  * Update or recreate the DOM node of a piece.
  *
+ * Will try to minimize recreation of objects and tries to only update it's
+ * properties/classes if possible.
+ *
+ * Assumes that the caller will add a 'piece' property to the node so we can
+ * detect necessary changes.
+ *
  * @param {Object} piece The piece's full data object.
  * @param {Boolean} select If true, the piece should be get selected.
+ * @return {FreeDOM} Created or updated node.
  */
-function updatePieceDOM (piece, select) {
+function createOrUpdatePieceDOM (piece, select) {
   let selection = []
 
-  // get the DOM node for the piece or (re)create it if major changes happened
+  // reuse existing DOM node if possible, only (re)create on major changes
   let div = _('#' + piece.id)
-  if (div.unique() && (
-    div.dataset.layer !== piece.layer ||
-    Number(div.dataset.w) !== piece.w ||
-    Number(div.dataset.h) !== piece.h ||
-    Number(div.dataset.side) !== piece.side
-  )) {
+  let _piece = div.unique() ? div.piece : {} // get old piece out of old node
+  if (_piece.layer !== piece.layer || _piece.side !== piece.side) {
     selection = _('#tabletop .is-selected').id
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
   }
   if (!div.unique()) { // (re)create
     const node = piece.layer === 'note' ? noteToNode(piece) : pieceToNode(piece)
+    node.piece = {}
+    _piece = {}
     if (selection.includes(piece.id)) node.add('.is-selected')
     _('#layer-' + piece.layer).add(node)
   }
 
-  // update dom infos (position, rotation ...)
+  // update dom infos + classes (position, rotation ...)
   const template = getTemplate()
   div = _('#' + piece.id) // fresh query
-    .css({
+
+  if (_piece.x !== piece.x || _piece.y !== piece.y || _piece.z !== piece.z) {
+    div.css({
       left: piece.x + 'px',
       top: piece.y + 'px',
       zIndex: piece.z
     })
-    .remove('.is-rotate-0', '.is-rotate-90', '.is-rotate-180', '.is-rotate-270')
-  switch (piece.r) {
-    case 0:
-    case 90:
-    case 180:
-    case 270:
-      div.add('.is-rotate-' + piece.r)
   }
-  if (piece.border >= 0 && template.colors.length) {
-    _(`#${piece.id}`).css({
-      '--fbg-border-color': template.colors[piece.border].value
-    })
+  if (_piece.r !== piece.r) {
+    div
+      .remove('.is-rotate-*')
+      .add('.is-rotate-' + piece.r)
+  }
+  if (_piece.w !== piece.w || _piece.h !== piece.h) {
+    div
+      .remove('.is-w-*', '.is-h-*', '.is-wh-*')
+      .add(`.is-w-${piece.w}`, `.is-h-${piece.h}`, `.is-wh-${piece.w - piece.h}`)
+  }
+  if (_piece.no !== piece.no) {
+    div.remove('.is-n', '.is-n-*')
+    if (piece.layer === 'token' && piece.no !== 0) {
+      div.add('.is-n', '.is-n-' + piece.no)
+    }
+  }
+  if (_piece.border !== piece.border) {
+    if (piece.border >= 0 && template.colors.length) {
+      _(`#${piece.id}`).css({
+        '--fbg-border-color': template.colors[piece.border].value
+      })
+    }
   }
 
   // update select status
@@ -327,34 +352,16 @@ function updatePieceDOM (piece, select) {
  * @param {Boolean} select If true, the piece will also get selected. Defaults to false.
  */
 export function setPiece (piece, select = false) {
-  // set defaults that are allowed to be missing in json
-  piece.w = piece.w ?? 1
-  piece.h = piece.h ?? 1
-  piece.side = piece.side ?? 0
-  piece.border = piece.border ?? 0
-  piece.r = piece.r ?? 0
-  piece.no = piece.no ?? 0
-  piece.h = piece.h < 0 ? piece.w : piece.h
+  const node = createOrUpdatePieceDOM(piece, select)
 
-  const div = updatePieceDOM(piece, select)
-
-  // update label
-  if (Number(div.dataset.label) !== piece.label) {
+  if (node.piece.label !== piece.label) { // update label on change
     _('#' + piece.id + ' .label').delete()
-    if (piece.label && piece.label !== '') {
-      div.add(_('.label').create(piece.label))
+    if (piece.label !== '') {
+      node.add(_('.label').create(piece.label))
     }
   }
 
-  // update piece number
-  if (Number(div.dataset.no) !== piece.no) {
-    div.remove('.is-n', '.is-n-*')
-    if (piece.layer === 'token' && piece.no !== 0) {
-      div.add('.is-n', '.is-n-' + piece.no)
-    }
-  }
-
-  updateNode(div, piece)
+  node.piece = piece // store piece for future delta-checking
 }
 
 /**
@@ -363,13 +370,14 @@ export function setPiece (piece, select = false) {
  * @param {Object} pieceJson The note's full data object.
  * @param {Boolean} select If true, the note will also get selected. Defaults to false.
  */
-export function setNote (noteJson, select = false) {
-  const note = updatePieceDOM(noteJson, select)
+export function setNote (note, select = false) {
+  const node = createOrUpdatePieceDOM(note, select)
 
-  // update note on change
-  note.node().innerHTML = noteJson.label ?? ''
+  if (node.piece.label !== note.label) { // update note on change
+    node.node().innerHTML = note.label ?? ''
+  }
 
-  updateNode(note, noteJson)
+  node.piece = note // store piece for future delta-checking
 }
 
 /**
@@ -380,117 +388,24 @@ export function setNote (noteJson, select = false) {
 export function rotateSelected () {
   const template = getTemplate()
 
-  _('#tabletop .is-selected').each(node => {
-    const r = (parseFloat(node.dataset.r ?? 0) + 90) % 360
-    let x = Number(node.dataset.x)
-    let y = Number(node.dataset.y)
+  getSelected().each(node => {
+    const piece = findPiece(node.id)
+    const r = (piece.r + 90) % 360
+    let x = piece.x
+    let y = piece.y
     switch (r) {
       case 90:
       case 270:
-        x = clamp(0, x, (template.gridWidth - node.dataset.h) * template.gridSize - 1)
-        y = clamp(0, y, (template.gridHeight - node.dataset.w) * template.gridSize - 1)
+        x = clamp(0, x, (template.gridWidth - piece.h) * template.gridSize - 1)
+        y = clamp(0, y, (template.gridHeight - piece.w) * template.gridSize - 1)
         break
       default:
-        x = clamp(0, x, (template.gridWidth - node.dataset.w) * template.gridSize - 1)
-        y = clamp(0, y, (template.gridHeight - node.dataset.h) * template.gridSize - 1)
+        x = clamp(0, x, (template.gridWidth - piece.w) * template.gridSize - 1)
+        y = clamp(0, y, (template.gridHeight - piece.h) * template.gridSize - 1)
     }
 
-    stateRotatePiece(node.id, r, x, y)
+    rotatePiece(piece.id, r, x, y)
   })
-}
-
-/**
- * Determine the lowest z-index in use by the pieces in a layer.
- *
- * @param {String} layer Name of a layer, e.g. 'tile'.
- * @param {Object} area Bounding rect in px to check pieces at least partly within.
- * @return {Number} Lowest CSS z-index, or 0 if layer is empty.
- */
-export function getMinZ (layer, area = {
-  left: 0,
-  top: 0,
-  right: 999999999,
-  bottom: 999999999
-}) {
-  let minZ = 999999999
-  for (const piece of getPiecesWithin(area, layer)) {
-    const z = Number(piece.dataset.z)
-    if (z < minZ) {
-      minZ = z
-    }
-  }
-  return minZ === 999999999 ? 0 : minZ // start at 0
-}
-
-/**
- * Determine the highest z-index in use by the pieces in a layer.
- *
- * @param {String} layer Name of a layer, e.g. 'tile'.
- * @param {Object} area Bounding rect in px to check pieces at least partly within.
- * @return {Number} Highest CSS z-index, or 0 if area in layer is empty.
- */
-export function getMaxZ (layer, area = {
-  left: 0,
-  top: 0,
-  right: 999999999,
-  bottom: 999999999
-}) {
-  let maxZ = -999999999
-  for (const piece of getPiecesWithin(area, layer)) {
-    const z = Number(piece.dataset.z)
-    if (z > maxZ) {
-      maxZ = z
-    }
-  }
-
-  return maxZ === -999999999 ? 0 : maxZ // start at 0
-}
-
-/**
- * Determine rectancle all items on the table are within in px.
- *
- * @return {Object} Object with top/left/bottom/right property of main content.
- */
-export function getContentRect () {
-  const rect = {
-    top: 999999999,
-    left: 999999999,
-    bottom: -999999999,
-    right: -999999999
-  }
-  const gridSize = getTemplate().gridSize
-
-  _('#tabletop .piece').each(node => {
-    const top = Number(node.dataset.y)
-    const left = Number(node.dataset.x)
-    const bottom = top + Number(node.dataset.h) * gridSize - 1
-    const right = left + Number(node.dataset.w) * gridSize - 1
-    rect.top = rect.top < top ? rect.top : top
-    rect.left = rect.left < left ? rect.left : left
-    rect.bottom = rect.bottom > bottom ? rect.bottom : bottom
-    rect.right = rect.right > right ? rect.right : right
-  })
-
-  return rect
-}
-
-/**
- * Determine rectancle all items on the table are within in grid units.
- *
- * @return {Object} Object with top/left/bottom/right property of main content.
- */
-export function getContentRectGrid () {
-  const gridSize = getTemplate().gridSize
-  const rect = getContentRect()
-
-  rect.left = Math.floor(rect.left / gridSize)
-  rect.top = Math.floor(rect.top / gridSize)
-  rect.right = Math.floor(rect.right / gridSize)
-  rect.bottom = Math.floor(rect.bottom / gridSize)
-  rect.width = rect.right - rect.left + 1
-  rect.height = rect.bottom - rect.top + 1
-
-  return rect
 }
 
 /**
@@ -500,9 +415,10 @@ export function getContentRectGrid () {
  */
 export function toTopSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
-    const maxZ = getMaxZ(node.dataset.layer)
-    if (Number(node.dataset.z) < maxZ) {
-      stateMovePiece(node.id, null, null, maxZ + 1)
+    const piece = findPiece(node.id)
+    const maxZ = getMaxZ(piece.layer)
+    if (piece.z < maxZ) {
+      movePiece(piece.id, null, null, maxZ + 1)
     }
   }
 }
@@ -514,9 +430,10 @@ export function toTopSelected () {
  */
 export function toBottomSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
-    const minZ = getMinZ(node.dataset.layer)
-    if (Number(node.dataset.z) > minZ) {
-      stateMovePiece(node.id, null, null, minZ - 1)
+    const piece = findPiece(node.id)
+    const minZ = getMinZ(piece.layer)
+    if (piece.z > minZ) {
+      movePiece(piece.id, null, null, minZ - 1)
     }
   }
 }
@@ -549,153 +466,66 @@ export function getAllPiecesIds () {
 }
 
 /**
- * Get the piece data object for a piece via it's ID.
+* Convert a piece data object to a DOM node.
  *
- * @param {String} id ID of piece.
- * @return {Object} Full piece data object.
+ * @param {Object} pieceJson Full piece data object.
+ * @return {FreeDOM} Converted node (not added to DOM yet).
  */
-export function nodeIdToPiece (id) {
-  const node = document.getElementById(id)
-  return nodeToPiece(node)
-}
-
-/**
- * Convert a DOM node to a piece data object.
- *
- * Most of the data is stored in data-* attributes.
- *
- * @param {HTMLElement} node Node to convert.
- * @return {Object} Full piece data object.
- */
-export function nodeToPiece (node) {
-  const piece = {}
-  if (node.id && node.id !== '') piece.id = node.id
-  piece.layer = node.dataset.layer
-  piece.asset = node.dataset.asset
-  piece.w = Number(node.dataset.w)
-  piece.h = Number(node.dataset.h)
-  piece.x = Number(node.dataset.x)
-  piece.y = Number(node.dataset.y)
-  piece.z = Number(node.dataset.z)
-  piece.r = Number(node.dataset.r)
-  piece.no = Number(node.dataset.no)
-  piece.side = Number(node.dataset.side)
-  piece.label = node.dataset.label
-  piece.border = Number(node.dataset.border)
-  return piece
-}
-
-/**
- * Convert an asset data object to a DOM node.
- *
- * If we get an invalid asset (null or invalid propierties), we create and
- * return a dummy entry on screen.
- *
- * @param {Object} assetJson Full asset data object.
- * @param {Number} side Side to show (zero-based).
- * @return {HTMLElement} Converted node (not added to DOM yet).
- */
-export function assetToNode (assetJson, side = 0) {
+export function pieceToNode (piece) {
   let node
 
   // create the dom node
-  if (assetJson.id === '0000000000000000') {
-    node = createInvalidAsset(assetJson.type)
+  const asset = findAsset(piece.asset)
+  if (piece.asset === '0000000000000000') {
+    node = createInvalidAsset(piece.layer)
   } else {
-    const uriSide = assetJson.assets[side] === '##BACK##'
+    const uriSide = asset.assets[piece.side] === '##BACK##'
       ? 'img/backside.svg'
-      : `api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.assets[side]}`
-    const uriBase = `api/data/tables/${getTable().name}/assets/${assetJson.type}/${assetJson.base}`
-    if (assetJson.base) { // layered asset
-      node = _(`.piece.piece-${assetJson.type}.has-layer`).create().css({
+      : `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.assets[piece.side]}`
+    const uriBase = `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.base}`
+    if (asset.base) { // layered asset
+      node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
         backgroundImage: 'url("' + encodeURI(uriBase) + '")',
         '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
       })
     } else { // regular asset
-      node = _(`.piece.piece-${assetJson.type}`).create().css({
+      node = _(`.piece.piece-${asset.type}`).create().css({
         backgroundImage: 'url("' + encodeURI(uriSide) + '")'
       })
     }
   }
-  if (assetJson.type !== 'overlay' && assetJson.type !== 'other') {
-    if (assetJson.color === 'border') {
+  if (asset.type !== 'overlay' && asset.type !== 'other') {
+    if (asset.color === 'border') {
       node.css({
         backgroundColor: 'var(--fbg-border-color)',
         borderColor: '#202020'
       })
     } else {
       node.css({
-        backgroundColor: (assetJson.color ?? '#808080')
+        backgroundColor: (asset.color ?? '#808080')
       })
     }
   }
 
-  // set default metadata from asset
-  node.data({
-    asset: assetJson.id,
-    layer: assetJson.type,
-    w: assetJson.w,
-    h: assetJson.h,
-    side: side,
-    sides: assetJson.assets.length,
-    r: 0,
-    no: 0,
-    color: assetJson.color,
-    border: 0
-  })
-
-  // add feature hook to piece (if it has one)
-  switch (assetJson.alias) {
-    case 'dicemat':
-      node.data({ feature: 'DICEMAT' })
-      break
-    case 'discard':
-      node.data({ feature: 'DISCARD' })
-      break
-  }
+  // set meta-classes on node
+  node.id = piece.id
+  node.add(`.is-side-${piece.side}`)
 
   return node
 }
 
 /**
-* Convert a piece data object to a DOM node.
+ * Convert a sticky note to a DOM node.
  *
- * @param {Object} pieceJson Full piece data object.
- * @return {HTMLElement} Converted node (not added to DOM yet).
+ * @param {Object} note Full note data object.
+ * @return {FreeDOM} Converted node (not added to DOM yet).
  */
-export function pieceToNode (pieceJson) {
-  const node = assetToNode(getAsset(pieceJson.asset), pieceJson.side ?? 0)
-  updateNode(node, pieceJson)
-
-  node.add(`.is-w-${node.dataset.w}`, `.is-h-${node.dataset.h}`, `.is-wh-${Number(node.dataset.w) - Number(node.dataset.h)}`)
-
-  if (pieceJson.layer === 'token' && node.dataset.no !== '0') {
-    node.add('.is-n', '.is-n-' + node.dataset.no)
-  }
-
-  return node
-}
-
-/**
-* Convert a sticky note to a DOM node.
- *
- * @param {Object} noteJson Full note data object.
- * @return {HTMLElement} Converted node (not added to DOM yet).
- */
-export function noteToNode (noteJson) {
+export function noteToNode (note) {
   const node = _('.piece.piece-note').create()
 
-  // set default metadata
-  node.data({
-    sides: 1,
-    color: 'none'
-  })
-
-  updateNode(node, noteJson)
-
-  node.add(`.is-w-${node.dataset.w}`, `.is-h-${node.dataset.h}`, `.is-wh-${Number(node.dataset.w) - Number(node.dataset.h)}`)
-
-  node.node().innerHTML = noteJson.label ?? ''
+  node.id = note.id
+  node.add('.is-side-0')
+  node.node().innerHTML = note.label ?? ''
 
   return node
 }
@@ -721,14 +551,14 @@ export function createNote (tileX, tileY) {
 }
 
 export function popupPiece (id) {
-  const piece = _('#' + id)
+  const piece = findPiece(id)
   const popup = _('#popper.popup.is-content').create()
 
   popup.innerHTML = `
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
-    <a class="popup-menu flip ${piece.dataset.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
-    <a class="popup-menu random ${(piece.dataset.sides > 2 || piece.dataset.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
+    <a class="popup-menu flip ${piece._sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
+    <a class="popup-menu random ${(piece._sides > 2 || piece._feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
@@ -785,7 +615,7 @@ export function popupPiece (id) {
     cloneSelected(getMouseTileX(), getMouseTileY())
   })
 
-  createPopper(piece.node(), popup.node(), {
+  createPopper(_('#' + id).node(), popup.node(), {
     placement: 'right'
   })
   popup.add('.show')
@@ -816,11 +646,12 @@ export function moveContent (toX, toY) {
   const offsetY = (toY - rect.top) * template.gridSize
 
   const pieces = []
-  _('#tabletop .piece').each(piece => {
+  _('#tabletop .piece').each(node => {
+    const piece = findPiece(node.id)
     pieces.push({
       id: piece.id,
-      x: Number(piece.dataset.x) + offsetX,
-      y: Number(piece.dataset.y) + offsetY
+      x: piece.x + offsetX,
+      y: piece.y + offsetY
     })
   })
   updatePieces(pieces)
@@ -929,14 +760,14 @@ function setupTable () {
   `
 
   // load preferences
-  changeQuality(stateGetTablePref('renderQuality') ?? 3)
-  setStateNo(stateGetTablePref('subtable') ?? 1)
+  changeQuality(getTablePreference('renderQuality') ?? 3)
+  setStateNo(getTablePreference('subtable') ?? 1)
 
   // setup menu for layers
   let undefinedCount = 0
   for (const layer of ['token', 'overlay', 'tile', 'other']) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
-    const prop = stateGetTablePref('layer' + layer)
+    const prop = getTablePreference('layer' + layer)
     if (prop === true) toggleLayer(layer) // stored enabled
     if (prop === undefined) undefinedCount++
   }
@@ -995,8 +826,8 @@ let scrollFetcherTimeout = -1
  */
 function setAutoScrollPosition () {
   const scroller = _('#scroller')
-  const lastX = stateGetTablePref('scrollX')
-  const lastY = stateGetTablePref('scrollY')
+  const lastX = getTablePreference('scrollX')
+  const lastY = getTablePreference('scrollY')
   if (lastX && lastY) {
     scroller.node().scrollTo(
       lastX - Math.floor(scroller.clientWidth / 2),
@@ -1012,81 +843,10 @@ function setAutoScrollPosition () {
   scroller.on('scroll', () => {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
-      stateSetTablePref('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
-      stateSetTablePref('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
+      setTablePreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
+      setTablePreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
     }, 1000)
   })
-}
-
-/**
- * Update a piece's DOM node with a piece data object.
- *
- * Will only set meta-fields (data-*), but not change styles.
- *
- * @param {FreeDOM} node DOM element to update.
- * @param {Object} piece Piece data.
- * @return {HTMLElement} Updated node.
- */
-function updateNode (node, piece) {
-  piece.sides = piece.sides ?? getAsset(piece.asset).assets.length // server pieces don't have this yet
-  node.id = piece.id
-  node.data({
-    asset: piece.asset,
-    layer: piece.layer ?? 'tile',
-    w: piece.w ?? 1,
-    h: piece.h ?? 1,
-    x: piece.x ?? 0,
-    y: piece.y ?? 0,
-    z: piece.z ?? 0,
-    r: piece.r ?? 0,
-    no: piece.no ?? 0,
-    border: piece.border ?? 0,
-    side: clamp(0, piece.side ?? 0, piece.sides - 1),
-    label: piece.label ?? ''
-  })
-  return node
-}
-
-/**
- * Find all pieces within a grid area.
- *
- * @param {Object} rect Rectangle object, containing top/left/bottom/right.
- * @param {String} layer Optional name of layer to search within. Defaults to 'all'.
- * @returns {Array} Array of nodes/pieces that are in or touch that area.
- */
-function getPiecesWithin (rect, layer = 'all') {
-  const template = getTemplate()
-  const pieces = []
-  const filter = layer === 'all' ? '.piece' : '.layer-' + layer + ' .piece'
-  _('#tabletop ' + filter).each(node => {
-    if (intersect(rect, {
-      left: Number(node.dataset.x),
-      top: Number(node.dataset.y),
-      right: Number(node.dataset.x) + (node.dataset.r === '0' || node.dataset.r === '180'
-        ? Number(node.dataset.w) * template.gridSize
-        : Number(node.dataset.h) * template.gridSize) - 1,
-      bottom: Number(node.dataset.y) + (node.dataset.r === '0' || node.dataset.r === '180'
-        ? Number(node.dataset.h) * template.gridSize
-        : Number(node.dataset.w) * template.gridSize) - 1
-    })) {
-      pieces.push(node)
-    }
-  })
-  return pieces
-}
-
-/**
- * Determine if two rectacles intersect / overlap.
- *
- * @param {Object} rect1 First rect, containing of top/left/bottom/right.
- * @param {Object} rect2 Second rect, containing of top/left/bottom/right.
- * @returns {Boolean} True if they intersect.
- */
-function intersect (rect1, rect2) {
-  return (rect1.left <= rect2.right &&
-    rect2.left <= rect1.right &&
-    rect1.top <= rect2.bottom &&
-    rect2.top <= rect1.bottom)
 }
 
 /**
@@ -1109,9 +869,10 @@ function createInvalidAsset (type) {
 function getSetupCenter () {
   const x = []
   const y = []
-  _('.piece').each(piece => {
-    x.push(Number(piece.dataset.x) + Number(piece.dataset.w) / 2)
-    y.push(Number(piece.dataset.y) + Number(piece.dataset.h) / 2)
+  _('.piece').each(node => {
+    const piece = findPiece(node.id)
+    x.push((piece.x + piece.w) / 2)
+    y.push((piece.y + piece.h) / 2)
   })
   return {
     x: x.length > 0 ? Math.ceil(x.reduce((a, b) => a + b) / x.length) : 0,
@@ -1122,33 +883,33 @@ function getSetupCenter () {
 /**
  * Randomice the items (dice) on a dicemat node.
  *
- * @param {FreeDOM} dicemat Dicemat node.
+ * @param {Object} dicemat Dicemat object.
  */
 function randomDicemat (dicemat) {
   const template = getTemplate()
   const coords = []
   const pieces = []
-  for (let x = 0; x < Math.min(Number(dicemat.dataset.w), 4); x++) {
-    for (let y = 0; y < Math.min(Number(dicemat.dataset.h), 4); y++) {
+  for (let x = 0; x < Math.min(dicemat.w, 4); x++) {
+    for (let y = 0; y < Math.min(dicemat.h, 4); y++) {
       coords.push({ // a max. 4x4 area in the center of the dicemat
-        x: (Math.max(0, Math.floor((Number(dicemat.dataset.w) - 4) / 2)) + x) * template.gridSize,
-        y: (Math.max(0, Math.floor((Number(dicemat.dataset.h) - 4) / 2)) + y) * template.gridSize
+        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x) * template.gridSize,
+        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y) * template.gridSize
       })
     }
   }
 
-  for (const piece of getPiecesWithin({
-    left: Number(dicemat.dataset.x),
-    top: Number(dicemat.dataset.y),
-    right: Number(dicemat.dataset.x) + Number(dicemat.dataset.w * template.gridSize) - 1,
-    bottom: Number(dicemat.dataset.y) + Number(dicemat.dataset.h * template.gridSize) - 1
-  }, dicemat.dataset.layer)) {
-    if (piece.dataset.feature === 'DICEMAT') continue // don't touch the dicemat
+  for (const piece of findPiecesWithin({
+    left: dicemat.x,
+    top: dicemat.y,
+    right: dicemat.x + dicemat.w * template.gridSize - 1,
+    bottom: dicemat.y + dicemat.h * template.gridSize - 1
+  }, dicemat.layer)) {
+    if (piece._feature === 'DICEMAT') continue // don't touch the dicemat
 
     // pick one random position
     let coord = { x: 0, y: 0 }
     let index = Math.floor(Math.random() * coords.length)
-    if (coords[index].x === Number(piece.dataset.x) && coords[index].y === Number(piece.dataset.y)) {
+    if (coords[index].x === piece.x && coords[index].y === piece.y) {
       index = (index + 1) % coords.length
     }
     coord = coords[index]
@@ -1157,9 +918,9 @@ function randomDicemat (dicemat) {
     // update the piece
     pieces.push({
       id: piece.id,
-      side: Math.floor(Math.random() * Number(piece.dataset.sides)),
-      x: Number(dicemat.dataset.x) + coord.x,
-      y: Number(dicemat.dataset.y) + coord.y
+      side: Math.floor(Math.random() * piece._sides),
+      x: dicemat.x + coord.x,
+      y: dicemat.y + coord.y
     })
   }
   updatePieces(pieces)
@@ -1168,24 +929,24 @@ function randomDicemat (dicemat) {
 /**
  * Randomice the pieces on a discard pile node.
  *
- * @param {FreeDOM} discard Discard pile node.
+ * @param {Object} discard Discard pile object.
  */
 function randomDiscard (discard) {
   const template = getTemplate()
   const pieces = []
-  const centerX = Number(discard.dataset.x) + Number(discard.dataset.w) * template.gridSize / 2
-  const centerY = Number(discard.dataset.y) + Number(discard.dataset.h) * template.gridSize / 2
+  const centerX = discard.x + discard.w * template.gridSize / 2
+  const centerY = discard.y + discard.h * template.gridSize / 2
   let stackSide = -1
 
-  const stack = getPiecesWithin({
-    left: Number(discard.dataset.x),
-    top: Number(discard.dataset.y),
-    right: Number(discard.dataset.x) + Number(discard.dataset.w * template.gridSize) - 1,
-    bottom: Number(discard.dataset.y) + Number(discard.dataset.h * template.gridSize) - 1
-  }, discard.dataset.layer)
+  const stack = findPiecesWithin({
+    left: discard.x,
+    top: discard.y,
+    right: discard.x + discard.w * template.gridSize - 1,
+    bottom: discard.y + discard.h * template.gridSize - 1
+  }, discard.layer)
 
   // shuffle z positions above the dicard pile piece
-  const discardZ = Number(discard.dataset.z)
+  const discardZ = discard.z
   const z = []
   for (let i = 0; i < stack.length; i++) {
     z.push(discardZ + i + 1)
@@ -1193,31 +954,27 @@ function randomDiscard (discard) {
   shuffle(z)
 
   for (const piece of stack) {
-    if (piece.dataset.feature === 'DISCARD') continue // don't touch the discard pile piece
+    if (piece._feature === 'DISCARD') continue // don't touch the discard pile piece
 
     // detect the side to flip them to
     if (stackSide < 0) {
       // fip all pices, based on the state of the first one
-      if (Number(piece.dataset.side) === 0) {
-        stackSide = Math.max(0, Number(piece.dataset.sides) - 1)
+      if (piece.side === 0) {
+        stackSide = Math.max(0, piece._sides - 1)
       } else {
         stackSide = 0
       }
     }
 
-    const w = piece.dataset.r === '90' || piece.dataset.r === '270'
-      ? Number(piece.dataset.h)
-      : Number(piece.dataset.w)
-    const h = piece.dataset.r === '90' || piece.dataset.r === '270'
-      ? Number(piece.dataset.w)
-      : Number(piece.dataset.h)
+    const w = piece.r === 90 || piece.r === 270 ? piece.h : piece.w
+    const h = piece.r === 90 || piece.r === 270 ? piece.w : piece.h
 
     // update the piece
     pieces.push({
       id: piece.id,
       side: stackSide,
-      x: Math.floor(centerX - Number(w * template.gridSize) / 2),
-      y: Math.floor(centerY - Number(h * template.gridSize) / 2),
+      x: Math.floor(centerX - (w * template.gridSize) / 2),
+      y: Math.floor(centerY - (h * template.gridSize) / 2),
       z: z.pop()
     })
   }
@@ -1244,7 +1001,7 @@ function removeObsoletePieces (keepIds) {
 
   // delete ids that are still left
   for (const id of ids) {
-    deletePiece(id)
+    _('#' + id).delete()
   }
 }
 

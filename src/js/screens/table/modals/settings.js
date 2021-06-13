@@ -33,8 +33,8 @@ import {
   deleteTable,
   getStateNo,
   setStateNo,
-  stateGetTablePref,
-  stateSetTablePref
+  getTablePreference,
+  setTablePreference
 } from '../state.js'
 import { timeRecords } from '../../../utils.js'
 import { navigateToJoin } from '../../../nav.js'
@@ -72,7 +72,7 @@ export function modalSettings () {
 
             <h2 class="h3">Render quality</h2>
             <p>If your table seems to be slow, you can change the render quality here:</p>
-            <input type="range" min="0" max="3" value="${stateGetTablePref('renderQuality') ?? 3}" class="slider" id="quality">
+            <input type="range" min="0" max="3" value="${getTablePreference('renderQuality') ?? 3}" class="slider" id="quality">
             <p class="if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
             <p class="if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
             <p class="if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
@@ -187,9 +187,9 @@ export function modalSettings () {
 
   // store/retrieve selected tab
   _('input[name="tabs"]').on('change', change => {
-    stateSetTablePref('modalSettingsTab', change.target.id)
+    setTablePreference('modalSettingsTab', change.target.id)
   })
-  const preselect = stateGetTablePref('modalSettingsTab') ?? 'tab-1'
+  const preselect = getTablePreference('modalSettingsTab') ?? 'tab-1'
   _('#' + preselect).checked = true
 
   _('#quality').on('change', () => changeQuality(Number(_('#quality').value)))
@@ -331,7 +331,7 @@ export function modalSettings () {
  */
 export function changeQuality (value) {
   const body = _('body').remove('.is-quality-low', '.is-quality-medium', '.is-quality-high', '.is-quality-ultra')
-  stateSetTablePref('renderQuality', value)
+  setTablePreference('renderQuality', value)
   switch (value) {
     case 0:
       body.add('.is-quality-low')

@@ -27,8 +27,8 @@ import {
 } from '../../../modal.js'
 import {
   getTable,
-  stateGetTablePref,
-  stateSetTablePref
+  getTablePreference,
+  setTablePreference
 } from '../state.js'
 import marked from 'marked'
 
@@ -140,10 +140,10 @@ export function modalHelp () {
     `
 
     _('input[name="tabs"]').on('change', change => {
-      stateSetTablePref('modalHelpTab', change.target.id)
+      setTablePreference('modalHelpTab', change.target.id)
     })
 
-    const preselect = stateGetTablePref('modalHelpTab') ?? 'tab-1'
+    const preselect = getTablePreference('modalHelpTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 
     _('#btn-close').on('click', () => getModal().hide())

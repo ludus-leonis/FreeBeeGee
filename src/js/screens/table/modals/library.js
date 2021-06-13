@@ -21,15 +21,17 @@ import {
   getLibrary,
   getTemplate,
   createPieces,
-  stateGetTablePref,
-  stateSetTablePref,
+  getTablePreference,
+  setTablePreference,
   addAsset,
   reloadTable
 } from '../state.js'
-import { UnexpectedStatus } from '../../../api.js'
 import {
   getMaxZ,
-  nodeToPiece,
+  findPiece
+} from '../tabledata.js'
+import { UnexpectedStatus } from '../../../api.js'
+import {
   assetToNode
 } from '..'
 import _ from '../../../FreeDOM.js'
@@ -128,9 +130,9 @@ export function modalLibrary (x, y) {
 
     // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
-      stateSetTablePref('modalLibraryTab', change.target.id)
+      setTablePreference('modalLibraryTab', change.target.id)
     })
-    const preselect = stateGetTablePref('modalLibraryTab') ?? 'tab-1'
+    const preselect = getTablePreference('modalLibraryTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 
     refreshTabs()
@@ -491,7 +493,8 @@ function modalOk () {
   const pieces = []
   let offsetZ = 1
   _('#tabs-library .is-selected .piece').each(item => {
-    const piece = nodeToPiece(item)
+    console.log('ok', item)
+    const piece = findPiece(item.id)
 
     // don't place stuff outside table
     const x = clamp(0, modal.x, template.gridWidth - piece.w)

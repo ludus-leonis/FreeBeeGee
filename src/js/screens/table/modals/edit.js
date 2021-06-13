@@ -17,7 +17,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getTemplate, statePieceEdit, getAsset } from '../state.js'
+import { getTemplate, statePieceEdit } from '../state.js'
 import _ from '../../../FreeDOM.js'
 
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
@@ -62,7 +62,7 @@ export function modalEdit (piece) {
             <select id="piece-side" name="piece-side"></select>
           </div>
           <div class="col-6">
-            <label for="piece-border">Border</label>
+            <label for="piece-border">Color</label>
             <select id="piece-border" name="piece-color"></select>
           </div>
           <div class="col-6">
@@ -117,11 +117,11 @@ export function modalEdit (piece) {
     }
 
     // side
-    const asset = getAsset(piece.asset)
     const pieceSide = _('#piece-side')
-    for (let s = 1; s <= asset.assets.length; s++) {
+    console.log('edit', piece)
+    for (let s = 1; s <= piece._sides; s++) {
       let label = s
-      if (s === asset.assets.length) label = 'back'
+      if (s === piece._sides) label = 'back'
       if (s === 1) label = 'front'
       const option = _('option').create(label)
       option.value = s - 1

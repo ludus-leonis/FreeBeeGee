@@ -4,9 +4,11 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.9 - Happy Hamster
 
-* [ ] subtables / save-slots (alt-#)
-* [ ] pointer feature
+* [X] subtables / save-slots (alt-#)
+* [X] move frontend data model from dataset to objects
+* [X] reuse pieces' DOM elements more
 * [ ] different edit modals per piece type (hide useless fields)
+* [ ] pointer feature
 * [ ] token status (blind, poison, prone, dazed, ...)
 * [ ] pre-release
   * [ ] bugfixing
@@ -22,7 +24,6 @@ Here is a list what might happen next. However, priorities can change.
   * zooming
   * moving pieces
 * table passwords
-* reuse pieces' DOM elements more
 
 ## v0.11 - Clean Cat
 

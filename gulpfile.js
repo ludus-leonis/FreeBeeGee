@@ -178,6 +178,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/screens/table/mouse.js',
     'src/js/screens/table/state.js',
     'src/js/screens/table/sync.js',
+    'src/js/screens/table/tabledata.js',
     'src/js/screens/table/modals/edit.js',
     'src/js/screens/table/modals/help.js',
     'src/js/screens/table/modals/inactive.js',
