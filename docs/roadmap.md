@@ -7,6 +7,7 @@ Here is a list what might happen next. However, priorities can change.
 * [X] subtables / save-slots (alt-#)
 * [X] move frontend data model from dataset to objects
 * [X] reuse pieces' DOM elements more
+* [X] moved note layer below token layer
 * [ ] different edit modals per piece type (hide useless fields)
 * [ ] pointer feature
 * [ ] token status (blind, poison, prone, dazed, ...)

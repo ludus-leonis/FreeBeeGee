@@ -748,9 +748,9 @@ function setupTable () {
       </div>
       <div id="scroller" class="scroller">
         <div id="tabletop" class="tabletop layer-note-enabled">
-          <div id="layer-note" class="layer layer-note"></div>
           <div id="layer-other" class="layer layer-other"></div>
           <div id="layer-token" class="layer layer-token"></div>
+          <div id="layer-note" class="layer layer-note"></div>
           <div id="layer-overlay" class="layer layer-overlay"></div>
           <div id="layer-tile" class="layer layer-tile"></div>
           <div id="layer-table" class="layer layer-table"></div>
