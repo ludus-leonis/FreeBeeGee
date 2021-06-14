@@ -39,9 +39,12 @@ import {
 import { timeRecords } from '../../../utils.js'
 import { navigateToJoin } from '../../../nav.js'
 import {
-  moveContent,
-  getContentRectGrid
+  moveContent
 } from '../index.js'
+import {
+  getContentRectGrid,
+  getContentRectGridAll
+} from '../tabledata.js'
 
 // --- public ------------------------------------------------------------------
 
@@ -214,110 +217,105 @@ export function modalSettings () {
     select.add(option)
   }
 
-  const rect = getContentRectGrid()
+  const rect = getContentRectGridAll()
   populateSizes('#table-w', getTemplate().gridWidth, rect.right)
   populateSizes('#table-h', getTemplate().gridHeight, rect.bottom)
 
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())
 
+  // ---------------------------------------------------------------------------
+
   _('#btn-table-clear').on('click', click => {
     click.preventDefault()
     updateState([])
+    getModal().hide()
   })
   _('#btn-table-reset').on('click', click => {
     click.preventDefault()
     restoreState(0)
+    getModal().hide()
   })
   _('#btn-table-delete').on('click', click => {
     click.preventDefault()
     deleteTable().then(() => navigateToJoin(getTable().name))
   })
 
+  // ---------------------------------------------------------------------------
+
   _('#btn-table-sub').on('click', click => {
     click.preventDefault()
     setStateNo(Number(_('#table-sub').value))
+    getModal().hide()
   })
 
   _('#btn-table-tl').on('click', click => {
-    click.preventDefault()
-    moveContent(
-      1,
-      1
-    )
+    handleAlign(click, 1, 1)
   })
 
   _('#btn-table-tc').on('click', click => {
-    click.preventDefault()
-
-    moveContent(
-      Math.floor(getTemplate().gridWidth / 2 - getContentRectGrid().width / 2),
-      1
-    )
+    handleAlign(click, getTemplate().gridWidth / 2 - getContentRectGrid().width / 2, 1)
   })
 
   _('#btn-table-tr').on('click', click => {
-    click.preventDefault()
-    moveContent(
-      Math.floor(getTemplate().gridWidth - 1 - getContentRectGrid().width),
-      1
-    )
+    handleAlign(click, getTemplate().gridWidth - 1 - getContentRectGrid().width, 1)
   })
 
   _('#btn-table-cl').on('click', click => {
-    click.preventDefault()
-    moveContent(
+    handleAlign(
+      click,
       1,
-      Math.floor(getTemplate().gridHeight / 2 - getContentRectGrid().height / 2)
+      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
     )
   })
 
   _('#btn-table-cc').on('click', click => {
-    click.preventDefault()
-
-    moveContent(
-      Math.floor(getTemplate().gridWidth / 2 - getContentRectGrid().width / 2),
-      Math.floor(getTemplate().gridHeight / 2 - getContentRectGrid().height / 2)
+    handleAlign(
+      click,
+      getTemplate().gridWidth / 2 - getContentRectGrid().width / 2,
+      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
     )
   })
 
   _('#btn-table-cr').on('click', click => {
-    click.preventDefault()
-    moveContent(
-      Math.floor(getTemplate().gridWidth - 1 - getContentRectGrid().width),
-      Math.floor(getTemplate().gridHeight / 2 - getContentRectGrid().height / 2)
+    handleAlign(
+      click,
+      getTemplate().gridWidth - 1 - getContentRectGrid().width,
+      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
     )
   })
 
   _('#btn-table-bl').on('click', click => {
-    click.preventDefault()
-    moveContent(
+    handleAlign(
+      click,
       1,
-      Math.floor(getTemplate().gridHeight - 1 - getContentRectGrid().height)
+      getTemplate().gridHeight - 1 - getContentRectGrid().height
     )
   })
 
   _('#btn-table-bc').on('click', click => {
-    click.preventDefault()
-
-    moveContent(
-      Math.floor(getTemplate().gridWidth / 2 - getContentRectGrid().width / 2),
-      Math.floor(getTemplate().gridHeight - 1 - getContentRectGrid().height)
+    handleAlign(
+      click,
+      getTemplate().gridWidth / 2 - getContentRectGrid().width / 2,
+      getTemplate().gridHeight - 1 - getContentRectGrid().height
     )
   })
 
   _('#btn-table-br').on('click', click => {
-    click.preventDefault()
-    moveContent(
-      Math.floor(getTemplate().gridWidth - 1 - getContentRectGrid().width),
-      Math.floor(getTemplate().gridHeight - 1 - getContentRectGrid().height)
+    handleAlign(
+      click,
+      getTemplate().gridWidth - 1 - getContentRectGrid().width,
+      getTemplate().gridHeight - 1 - getContentRectGrid().height
     )
   })
 
   _('#btn-table-resize').on('click', click => {
     click.preventDefault()
     resizeTable()
+    getModal().hide()
   })
+
+  // ---------------------------------------------------------------------------
 
   getModal().show()
 }
@@ -385,4 +383,15 @@ function resizeTable () {
       gridHeight: h
     })
   }
+}
+
+/**
+ * Handle the alignment click event.
+ *
+ * @param {Event} click Click-event.
+ */
+function handleAlign (click, x, y) {
+  click.preventDefault()
+  moveContent(Math.floor(x), Math.floor(y))
+  getModal().hide()
 }

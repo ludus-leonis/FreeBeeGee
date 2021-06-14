@@ -95,10 +95,10 @@ export function setScrollPosition (x, y) {
  *
  * @param {String} name Name of table, e.g. hilariousGazingPenguin.
  */
-export function runTable (name) {
-  console.info('$NAME$ v$VERSION$, table ' + name)
+export function runTable (table) {
+  console.info('$NAME$ v$VERSION$, table ' + table.name)
 
-  loadTable(name)
+  loadTable(table.name)
     .then(() => setupTable())
 }
 
@@ -761,7 +761,6 @@ function setupTable () {
 
   // load preferences
   changeQuality(getTablePreference('renderQuality') ?? 3)
-  setStateNo(getTablePreference('subtable') ?? 1)
 
   // setup menu for layers
   let undefinedCount = 0
@@ -801,9 +800,6 @@ function setupTable () {
 
   _('body').on('contextmenu', e => e.preventDefault())
 
-  // load + setup content
-  startAutoSync(() => { setAutoScrollPosition() })
-
   // setup scroller + keep reference for scroll-tracking
   scroller = _('#scroller')
   scroller.css({ // this is for moz://a
@@ -814,6 +810,10 @@ function setupTable () {
   scroller.style.setProperty('--fbg-color-scroll-bg', table.background.color)
 
   enableDragAndDrop('#tabletop')
+
+  // load + setup content
+  setStateNo(getTablePreference('subtable') ?? 1, false)
+  startAutoSync(() => { setAutoScrollPosition() })
 }
 
 let scrollFetcherTimeout = -1

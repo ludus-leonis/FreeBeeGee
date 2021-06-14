@@ -44,15 +44,10 @@ import { modalInactive } from './modals/inactive.js'
 /**
  * Do a sync and start the automatic polling in the background.
  *
- * @param {Function} handler Optonal handler / callback to run after first sync.
+ * @param {Function} callback Function to call after first sync.
  */
-export function startAutoSync (handler = null) {
-  stopAutoSync()
-  syncNow()
-    .then(() => {
-      if (handler) handler()
-      scheduleSync(calculateNextSyncTime())
-    })
+export function startAutoSync (callback = null) {
+  scheduleSync(0, callback)
 }
 
 /**
@@ -63,11 +58,9 @@ export function startAutoSync (handler = null) {
  */
 export function syncNow (selectedIds = []) {
   if (isAutoSync()) {
-    stopAutoSync()
-    return syncState(getStateNo(), selectedIds)
-      .then(() => scheduleSync(calculateNextSyncTime()))
+    scheduleSync()
   } else {
-    return syncState(getStateNo(), selectedIds)
+    syncState(getStateNo(), selectedIds)
   }
 }
 
@@ -121,7 +114,7 @@ const fastestSynctime = 800 /** minimum sync ever */
 const hidSyncMax = 1250 /** maximum sync when there is HID activity */
 
 let syncTimeout = -1 /** getTimeout handler for sync job */
-let syncNextMs = fastestSynctime /** ms when to run again, or -1 for off */
+let syncNextMs = -1 /** ms when to run again, or -1 for off */
 let tabActive = true /** is the current tab/window active/maximized? */
 
 let lastLocalActivity = Date.now() /** ms when last time user moved the mouse or clicked */
@@ -141,8 +134,11 @@ function isAutoSync () {
  * Execute one autosync interation in the future.
  *
  * Will re-schedule the next iteration, too.
+ *
+ * @param {Number} ms Milliseconds to wait till execution, defaults to 0.
+ * @param {Function} callback Function to call after first sync.
  */
-function scheduleSync (ms) {
+function scheduleSync (ms = 0, callback = null) {
   clearTimeout(syncTimeout) // safety
   syncTimeout = setTimeout(() => {
     clearTimeout(syncTimeout)
@@ -154,6 +150,7 @@ function scheduleSync (ms) {
       })
       .finally(() => {
         scheduleSync(calculateNextSyncTime())
+        if (callback) callback()
       })
   }, ms)
 }

@@ -26,6 +26,10 @@ import {
   getStateNo
 } from './state.js'
 
+import {
+  clamp
+} from '../../utils.js'
+
 export const assetTypes = ['tile', 'token', 'overlay', 'other']
 
 /**
@@ -198,14 +202,26 @@ export function getMaxZ (layer, area = {
  */
 export function getContentRect (no = getStateNo()) {
   const rect = {
-    top: 999999999,
-    left: 999999999,
-    bottom: -999999999,
-    right: -999999999
+    top: Number.MAX_VALUE,
+    left: Number.MAX_VALUE,
+    bottom: Number.MIN_VALUE,
+    right: Number.MIN_VALUE
   }
   const gridSize = getTemplate().gridSize
+  const state = getState(no)
 
-  for (const piece of getState(no)) {
+  // provide default for empty tables
+  if (!state || state.length < 1) {
+    return {
+      top: 0,
+      left: 0,
+      bottom: 0,
+      right: 0
+    }
+  }
+
+  // calculate values for non-empty tables
+  for (const piece of state) {
     const top = piece.y
     const left = piece.x
     const bottom = top + piece.h * gridSize - 1
@@ -239,7 +255,59 @@ export function getContentRectGrid (no = getStateNo()) {
   return rect
 }
 
+export function getContentRectGridAll () {
+  const rect = {
+    top: Number.MAX_VALUE,
+    left: Number.MAX_VALUE,
+    bottom: Number.MIN_VALUE,
+    right: Number.MIN_VALUE
+  }
+  for (let i = 0; i <= 9; i++) {
+    const rect2 = getContentRectGrid(i)
+    rect.left = Math.min(rect.left, rect2.left)
+    rect.top = Math.min(rect.top, rect2.top)
+    rect.right = Math.max(rect.right, rect2.right)
+    rect.bottom = Math.max(rect.bottom, rect2.bottom)
+  }
+  return rect
+}
+
+/**
+ * Create a new piece from an asset.
+ *
+ * @param {Number} assetId ID of asset.
+ * @param {Number} x X-position (tile).
+ * @param {Number} y Y-position (tile).
+ * @return {Object} Piece data object.
+ */
+export function createPieceFromAsset (assetId, x = 0, y = 0) {
+  const asset = findAsset(assetId)
+
+  return clampToTablesize({
+    asset: asset.id,
+    layer: asset.type,
+    w: asset.w,
+    h: asset.h,
+    x: x,
+    y: y,
+    z: getMaxZ(asset.layer) + 1
+  })
+}
+
 // -----------------------------------------------------------------------------
+
+/**
+ * Make sure a piece is full on the table by clipping x/y based on it's size.
+ *
+ * @param {Object} item Piece to clamp.
+ * @return {Object} Clamped piece.
+ */
+function clampToTablesize (piece) {
+  const template = getTemplate()
+  piece.x = clamp(0, piece.x, template.gridWidth - piece.w) * template.gridSize
+  piece.y = clamp(0, piece.y, template.gridHeight - piece.h) * template.gridSize
+  return piece
+}
 
 /**
  * Determine if two rectacles intersect / overlap.

@@ -110,12 +110,13 @@ export function getStateNo () {
  * Triggers API fetch & updates table state.
  *
  * @param {Number} no State to set (1..9).
+ * @param {Boolean} sync Force sync after setting status.
  */
-export function setStateNo (no) {
+export function setStateNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     stateNo = no
     setTablePreference('subtable', stateNo)
-    syncNow()
+    if (sync) syncNow()
   }
 }
 
@@ -367,7 +368,7 @@ export function restoreState (index) {
  * @param {Array} pieces (Partial) pieces to patch.
  */
 export function updatePieces (pieces) {
-  patchPieces(pieces, true)
+  if (pieces && pieces.length > 0) patchPieces(pieces, true)
 }
 
 /**

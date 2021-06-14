@@ -118,7 +118,6 @@ export function modalEdit (piece) {
 
     // side
     const pieceSide = _('#piece-side')
-    console.log('edit', piece)
     for (let s = 1; s <= piece._sides; s++) {
       let label = s
       if (s === piece._sides) label = 'back'
