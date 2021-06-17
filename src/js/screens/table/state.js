@@ -41,7 +41,9 @@ import {
   syncNow,
   stopAutoSync
 } from './sync.js'
-import { runError } from '../error.js'
+import {
+  runError
+} from '../error.js'
 import {
   populatePiecesDefaults
 } from './tabledata.js'
@@ -60,10 +62,7 @@ export function loadTable (name) {
       table = remoteTable.body
       return remoteTable
     })
-    .catch((error) => { // invalid table
-      runError('TABLE_GONE', name, error)
-      return null
-    })
+    .catch(error => errorTableGone(error))
 }
 
 /**
@@ -139,13 +138,7 @@ export function getState (no) {
  */
 export function updateTemplate (template) {
   return apiPatchTableTemplate(table.name, template)
-    .catch(error => {
-      if (error instanceof UnexpectedStatus && error.status === 404) {
-        // no need to patch already deleted pieces - silently ignore
-      } else {
-        runError('UNEXPECTED', error) // *that* was unexpected
-      }
-    })
+    .catch(error => errorUnexpected404(error))
     .finally(() => {
       syncNow()
     })
@@ -314,9 +307,7 @@ export function statePieceEdit (pieceID, updates) {
  */
 export function deletePiece (id) {
   apiDeletePiece(table.name, getStateNo(), id)
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
+    .catch(error => errorUnexpected(error))
     .finally(() => {
       syncNow()
     })
@@ -331,9 +322,7 @@ export function deletePiece (id) {
  */
 export function updateState (state) {
   apiPutState(table.name, getStateNo(), state)
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
+    .catch(error => errorUnexpected(error))
     .finally(() => {
       syncNow()
     })
@@ -348,16 +337,12 @@ export function restoreState (index) {
   apiGetState(table.name, index)
     .then(state => {
       apiPutState(table.name, getStateNo(), state)
-        .catch(error => {
-          runError('UNEXPECTED', error)
-        })
+        .catch(error => errorUnexpected(error))
         .finally(() => {
           syncNow()
         })
     })
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
+    .catch(error => errorUnexpected(error))
 }
 
 /**
@@ -423,14 +408,33 @@ export function fetchTableState (no) {
       states[no] = populatePiecesDefaults(state.body)
       return state
     })
-    .catch(error => {
-      if (error instanceof UnexpectedStatus) {
-        runError('TABLE_GONE', table.name, error)
-        stopAutoSync()
-      } else {
-        runError('UNEXPECTED', error)
-      }
-    })
+    .catch(error => errorTableGone(error))
+}
+
+// --- HTTP error handling -----------------------------------------------------
+
+export function errorUnexpected (error) {
+  runError('UNEXPECTED', error)
+  return null
+}
+
+export function errorUnexpected404 (error) {
+  if (error instanceof UnexpectedStatus && error.status === 404) {
+    // 404 are semi-expected, silently ignore them
+  } else {
+    errorUnexpected(error)
+  }
+  return null
+}
+
+export function errorTableGone (error) {
+  if (error instanceof UnexpectedStatus) {
+    runError('TABLE_GONE', table.name, error)
+    stopAutoSync()
+  } else {
+    errorUnexpected(error)
+  }
+  return null
 }
 
 // --- internal ----------------------------------------------------------------
@@ -470,13 +474,7 @@ function stripPiece (piece) {
  */
 function patchPiece (pieceId, patch, poll = true) {
   return apiPatchPiece(table.name, getStateNo(), pieceId, patch)
-    .catch(error => {
-      if (error instanceof UnexpectedStatus && error.status === 404) {
-        // no need to patch already deleted pieces - silently ignore
-      } else {
-        runError('UNEXPECTED', error) // *that* was unexpected
-      }
-    })
+    .catch(error => errorUnexpected404(error))
     .finally(() => {
       if (poll) syncNow()
     })
@@ -492,13 +490,7 @@ function patchPiece (pieceId, patch, poll = true) {
  */
 function patchPieces (patches, poll = true) {
   return apiPatchPieces(table.name, getStateNo(), patches)
-    .catch(error => {
-      if (error instanceof UnexpectedStatus && error.status === 404) {
-        // no need to patch already deleted pieces - silently ignore
-      } else {
-        runError('UNEXPECTED', error) // *that* was unexpected
-      }
-    })
+    .catch(error => errorUnexpected404(error))
     .finally(() => {
       if (poll) syncNow()
     })
@@ -517,9 +509,7 @@ function createPiece (piece, poll = true) {
     .then(piece => {
       return piece.id
     })
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
+    .catch(error => errorUnexpected(error))
     .finally(() => {
       if (poll) syncNow()
     })

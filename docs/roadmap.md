@@ -41,13 +41,13 @@ Here is a list what might happen next. However, priorities can change.
 ### rather sooner
 
 * generic marker overlay (X, ?, ...)
-* status icons
 * docs how to make table/template `.zip`s
 * click thru / don't drag on transparent parts of images
 * LOS-ruler
 * tabletop settings (e.g. change background, size, grid)
 * undo (limited)
 * demo mode (serverless?)
+* use image masks for png backsides
 * show backside/all sides in tile browser
 * better sticky notes (more text, auto-size text)
 * protect pieces (no-delete, no-move)

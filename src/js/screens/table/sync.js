@@ -26,18 +26,19 @@ import {
   getTable,
   reloadTable,
   getStateNo,
-  fetchTableState
+  fetchTableState,
+  errorTableGone
 } from './state.js'
 import {
-  apiGetTableDigest,
-  UnexpectedStatus
+  apiGetTableDigest
 } from '../../api.js'
-import { runError } from '../error.js'
 import {
   clamp,
   recordTime
 } from '../../utils.js'
-import { modalInactive } from './modals/inactive.js'
+import {
+  modalInactive
+} from './modals/inactive.js'
 
 // --- public ------------------------------------------------------------------
 
@@ -192,14 +193,7 @@ function checkForSync (
 
       return 0
     })
-    .catch(error => {
-      if (error instanceof UnexpectedStatus) {
-        runError('TABLE_GONE', table.name, error)
-        stopAutoSync()
-      } else {
-        runError('UNEXPECTED', error)
-      }
-    })
+    .catch(error => errorTableGone(error))
 }
 
 /**
@@ -236,8 +230,6 @@ function syncState (
 function syncTable (
   selectIds = []
 ) {
-  const table = getTable()
-
   lastNetworkActivity = Date.now()
   return reloadTable()
     .then(tabledata => {
@@ -245,14 +237,7 @@ function syncTable (
       updateTable()
       return false
     })
-    .catch(error => {
-      if (error instanceof UnexpectedStatus) {
-        runError('TABLE_GONE', table.name, error)
-        stopAutoSync()
-      } else {
-        runError('UNEXPECTED', error)
-      }
-    })
+    .catch(error => errorTableGone(error))
 }
 
 /**
