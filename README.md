@@ -12,7 +12,7 @@ Your game. Your data.
 
 ## Key features
 
-* Browser-based 2D virtual desktop for board- and role-playing games.
+* Browser-based 2D virtual tabletop for board- and role-playing games.
 * Easy-to-use drag'n'drop interface. Keyboard hotkeys for power-users.
 * Invite friends by sending them a table's unique URL.
 * Tile-/grid-based, with snapping. Classic dungeon tiles and 200+ monster token included.

@@ -25,6 +25,7 @@ import {
 import {
   getTable,
   reloadTable,
+  getState,
   getStateNo,
   fetchTableState,
   errorTableGone
@@ -45,7 +46,7 @@ import {
 /**
  * Do a sync and start the automatic polling in the background.
  *
- * @param {Function} callback Function to call after first sync.
+ * @param {Function} callback Optional function to call after first sync.
  */
 export function startAutoSync (callback = null) {
   scheduleSync(0, callback)
@@ -56,12 +57,19 @@ export function startAutoSync (callback = null) {
  *
  * @param {String[]} selectId List of IDs to be re-selected after successfull
  *                            update.
+ * @param {Function} forceUIUpdate Do UI update even if digest didn't change.
  */
-export function syncNow (selectedIds = []) {
+export function syncNow (selectedIds = [], forceUIUpdate = false) {
   if (isAutoSync()) {
-    scheduleSync()
+    if (forceUIUpdate) {
+      scheduleSync(0, () => {
+        updateTabletop(getState(getStateNo()))
+      })
+    } else {
+      scheduleSync(0)
+    }
   } else {
-    syncState(getStateNo(), selectedIds)
+    fetchAndUpdateState(getStateNo(), selectedIds)
   }
 }
 
@@ -143,10 +151,10 @@ function scheduleSync (ms = 0, callback = null) {
   clearTimeout(syncTimeout) // safety
   syncTimeout = setTimeout(() => {
     clearTimeout(syncTimeout)
-    checkForSync()
+    checkDigests()
       .then((dirtyState) => {
         if (dirtyState > 0) {
-          return syncState(dirtyState)
+          return fetchAndUpdateState(dirtyState)
         }
       })
       .finally(() => {
@@ -161,7 +169,7 @@ function scheduleSync (ms = 0, callback = null) {
  *
  * @return {Promise} Promise of an integer. 0 = no sync, 1+ = state to sync.
  */
-function checkForSync (
+function checkDigests (
   selectIds = []
 ) {
   const table = getTable()
@@ -204,7 +212,7 @@ function checkForSync (
  *
  * @param {String[]} selectIds IDs of items to (re)select after sync.
  */
-function syncState (
+function fetchAndUpdateState (
   dirtyState,
   selectIds = []
 ) {

@@ -98,6 +98,7 @@ export function modalHelp () {
             <p><span class="key">1</span> / <span class="key">2</span> / <span class="key">3</span> / <span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
             <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library window opened.</p>
             <p><span class="key">n</span> Add a new sticky note. Hint: The note will be added at the position the mouse cursor is.</p>
+            <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to subtable 1 to 9.</p>
             <p><span class="key">S</span> Show the table statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>

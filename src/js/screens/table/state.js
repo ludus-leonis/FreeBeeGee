@@ -115,7 +115,7 @@ export function setStateNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     stateNo = no
     setTablePreference('subtable', stateNo)
-    if (sync) syncNow()
+    if (sync) syncNow([], true)
   }
 }
 

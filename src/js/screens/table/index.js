@@ -662,7 +662,10 @@ export function moveContent (toX, toY) {
  *
  * e.g. for resizing the table.
  *
- * @return FreeDOM Table DOM element for further customization.
+ * @param {Array} state State to update to.
+ * @param {Array} selectIds Optional, possibly empty array of IDs to select
+ *                          after update.
+ * @return {FreeDOM} Table DOM element for further customization.
  */
 export function updateTable () {
   const table = getTable()
@@ -673,7 +676,7 @@ export function updateTable () {
   })
 }
 
-export function updateTabletop (state, selectIds) {
+export function updateTabletop (state, selectIds = []) {
   const start = Date.now()
 
   const keepIds = []

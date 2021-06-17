@@ -82,17 +82,32 @@ function handleTableKeys (keydown) {
       case 'Delete': // delete selected
         deleteSelected()
         break
-      case '1': // toggle layer
+      case '1': // toggle layer, switch subtable
         if (keydown.ctrlKey | keydown.altKey) setStateNo(1); else toggleLayer('other')
         break
-      case '2': // toggle layer
+      case '2': // toggle layer, switch subtable
         if (keydown.ctrlKey | keydown.altKey) setStateNo(2); else toggleLayer('token')
         break
-      case '3': // toggle layer
+      case '3': // toggle layer, switch subtable
         if (keydown.ctrlKey | keydown.altKey) setStateNo(3); else toggleLayer('overlay')
         break
-      case '4': // toggle layer
+      case '4': // toggle layer, switch subtable
         if (keydown.ctrlKey | keydown.altKey) setStateNo(4); else toggleLayer('tile')
+        break
+      case '5': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(5)
+        break
+      case '6': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(6)
+        break
+      case '7': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(7)
+        break
+      case '8': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(8)
+        break
+      case '9': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(9)
         break
       case 'l': // library / add piece
         modalLibrary(getMouseTileX(), getMouseTileY())
