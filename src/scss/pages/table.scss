@@ -91,6 +91,15 @@
       }
     }
   }
+
+  .status {
+    bottom: $spacing-small;
+    font-weight: 500;
+    opacity: .75;
+    position: absolute;
+    right: $spacing-small;
+    text-shadow: 1px 1px 1px $color-black-100;
+  }
 }
 
 .if-quality-low,

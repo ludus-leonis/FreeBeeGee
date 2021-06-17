@@ -296,3 +296,9 @@ hr {
 .is-wrapping {
   word-wrap: break-word;
 }
+
+.is-tabular {
+  display: inline-block;
+  text-align: center;
+  width: .65em;
+}
