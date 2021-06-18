@@ -219,7 +219,7 @@ class FreeBeeGeeAPI
         $config = json_decode(file_get_contents($this->api->getDataDir() . 'server.json'));
         $config->version = '$VERSION$';
         $config->engine = '$ENGINE$';
-        $config->maxAssetSize = $maxAssetSize;
+        $config->maxAssetSize = $this->maxAssetSize;
         return $config;
     }
 
@@ -589,7 +589,7 @@ class FreeBeeGeeAPI
                     // this is an update, and we have to patch the item if the ID matches
                     if ($stateItem->id === $piece->id) {
                         // just skip deleted piece
-                        if ($piece->layer === 'delete') {
+                        if (property_exists($piece, 'layer') && $piece->layer === 'delete') {
                             continue;
                         }
                         $stateItem = $this->removeDefaultsFromPiece($this->merge($stateItem, $piece));
@@ -599,7 +599,7 @@ class FreeBeeGeeAPI
                     $ids[] = $stateItem->id;
                 }
             }
-            if (!in_array($piece->id, $ids) && $piece->layer !== 'delete') {
+            if (!in_array($piece->id, $ids) && (!property_exists($piece, 'layer') || $piece->layer !== 'delete')) {
                 $this->api->unlockLock($lock);
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
@@ -787,25 +787,25 @@ class FreeBeeGeeAPI
     private function removeDefaultsFromPiece(
         object $piece
     ): object {
-        if ($piece->w === 1) {
+        if (property_exists($piece, 'w') && $piece->w === 1) {
             unset($piece->w);
         }
-        if ($piece->h === 1) {
+        if (property_exists($piece, 'h') && $piece->h === 1) {
             unset($piece->h);
         }
-        if ($piece->r === 0) {
+        if (property_exists($piece, 'r') && $piece->r === 0) {
             unset($piece->r);
         }
-        if ($piece->side === 0) {
+        if (property_exists($piece, 'side') && $piece->side === 0) {
             unset($piece->side);
         }
-        if ($piece->no === 0) {
+        if (property_exists($piece, 'no') && $piece->no === 0) {
             unset($piece->no);
         }
-        if ($piece->border === 0) {
+        if (property_exists($piece, 'border') && $piece->border === 0) {
             unset($piece->border);
         }
-        if ($piece->label === '') {
+        if (property_exists($piece, 'label') && $piece->label === '') {
             unset($piece->label);
         }
         return $piece;
@@ -1051,28 +1051,28 @@ class FreeBeeGeeAPI
 
         // we need either a template name or an uploaded snapshot
         if (
-            $validated->template && $validated->_files
-            || (!$validated->template && !$validated->_files )
+            property_exists($validated, 'template') && property_exists($validated, '_files')
+            || (!property_exists($validated, 'template') && !property_exists($validated, '_files'))
         ) {
             $this->api->sendError(400, 'you need to either specify a template or upload a snapshot');
         }
-        if ($validated->_files && !$server->snapshotUploads) {
-            $this->api->sendError(400, 'snapshot upload is not enabled on this server');
-        }
 
         // check if upload (if any) was ok
-        if ($validated->_files) {
+        if (property_exists($validated, '_files')) {
+            if (!$server->snapshotUploads) {
+                $this->api->sendError(400, 'snapshot upload is not enabled on this server');
+            }
             if ($_FILES[$validated->_files[0]]['error'] > 0) {
                 $this->api->sendError(400, 'PHP upload failed', JSONRestAPI::UPLOAD_ERR[
                     $_FILES[$validated->_files[0]]['error']
                 ]);
             }
+            $zipPath = $_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid';
+        } else {
+            $zipPath = $this->api->getDataDir() . 'templates/' . $validated->template . '.zip';
         }
 
         // doublecheck template / snapshot
-        $zipPath = ($validated->_files ?? null)
-            ? ($_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid')
-            : ($this->api->getDataDir() . 'templates/' . $validated->template . '.zip');
         if (!is_file($zipPath)) {
             $this->api->sendError(400, 'template not available');
         }

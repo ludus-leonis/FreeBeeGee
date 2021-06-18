@@ -1046,7 +1046,6 @@ function updateStatusline () {
   const message = fakeTabularNums(`${time} • Table ${getStateNo()}`)
   const status = _('#table .status')
   if (status.innerHTML !== message) {
-    console.log('replacing')
     status.innerHTML = message
   }
 }

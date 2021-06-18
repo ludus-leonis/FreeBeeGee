@@ -4,29 +4,35 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.9 - Happy Hamster
 
-* [X] subtables / save-slots (alt-#)
+* [X] add support for subtables / save-slots (alt-#, ctrl-#)
 * [X] move frontend data model from dataset to objects
 * [X] reuse pieces' DOM elements more
 * [X] moved note layer below token layer
-* [ ] different edit modals per piece type (hide useless fields)
-* [ ] pointer feature
-* [ ] token status (blind, poison, prone, dazed, ...)
+* [X] added clock
 * [ ] pre-release
   * [ ] bugfixing
-    * [ ] disable sleep warning if outside game
+    * [X] fix php8 issues
+    * [ ] fix clone outside table
+    * [ ] fix token no color
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG
 
-## v0.10 - Mobile Monkey
+## v0.10 - Pointing Pony
+
+* pointer feature
+* different edit modals per piece type (hide useless fields)
+* token status (blind, poison, prone, dazed, ...)
+
+## v0.xx - Mobile Monkey
 
 * better tablet / touch support
   * zooming
   * moving pieces
 * table passwords
 
-## v0.11 - Clean Cat
+## v0.yy - Clean Cat
 
 * empty template table
 * reduce impact of "back" button
