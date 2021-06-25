@@ -15,6 +15,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
 
+@use 'sass:math';
+
 // --- vendor stuff ------------------------------------------------------------
 
 @import '../../node_modules/bootstrap/scss/bootstrap-reboot';

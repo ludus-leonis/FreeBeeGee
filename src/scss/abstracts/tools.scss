@@ -37,7 +37,7 @@
     @return $px * 1px;
   }
 
-  @return((1rem / 16) * $px); // based on 16px = 1rem
+  @return(math.div(1rem, 16) * $px); // based on 16px = 1rem
 }
 
 /// Set a property only if it is not equal to another value.

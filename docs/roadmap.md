@@ -10,7 +10,7 @@ Here is a list what might happen next. However, priorities can change.
 * [X] moved note layer below token layer
 * [X] added clock
 * [ ] pre-release
-  * [ ] bugfixing
+  * [X] bugfixing
     * [X] fix php8 issues
     * [X] fix clone outside table
     * [X] fix token number color for transparent tokens

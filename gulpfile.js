@@ -191,7 +191,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
 }))
 
 gulp.task('sass', gulp.series('test-sass', () => {
-  const sass = require('gulp-sass')
+  const sass = require('gulp-sass')(require('sass'))
   const concat = require('gulp-concat')
   const autoprefixer = require('gulp-autoprefixer')
   const sourcemaps = require('gulp-sourcemaps')
