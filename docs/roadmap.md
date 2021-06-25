@@ -12,7 +12,7 @@ Here is a list what might happen next. However, priorities can change.
 * [ ] pre-release
   * [ ] bugfixing
     * [X] fix php8 issues
-    * [ ] fix clone outside table
+    * [X] fix clone outside table
     * [ ] fix token number color for transparent tokens
     * [X] remove reset table feature
   * [ ] review+run unit+integration tests

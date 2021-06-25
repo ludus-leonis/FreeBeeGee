@@ -45,7 +45,8 @@ import {
   runError
 } from '../error.js'
 import {
-  populatePiecesDefaults
+  populatePiecesDefaults,
+  clampToTablesize
 } from './tabledata.js'
 
 // --- public ------------------------------------------------------------------
@@ -370,7 +371,7 @@ export function createPieces (pieces, selected = false, selectIds = []) {
 
   if (!pieces || pieces.length <= 0) return
   const piece = pieces.shift()
-  return createPiece(piece, false)
+  return createPiece(clampToTablesize(piece), false)
     .then(id => {
       selectIds.push(id)
       if (pieces.length === 0) final = true

@@ -276,25 +276,24 @@ export function getContentRectGridAll () {
  * Create a new piece from an asset.
  *
  * @param {Number} assetId ID of asset.
- * @param {Number} x X-position (tile).
- * @param {Number} y Y-position (tile).
+ * @param {Number} gridX X-position (grid).
+ * @param {Number} gridY Y-position (grid).
  * @return {Object} Piece data object.
  */
-export function createPieceFromAsset (assetId, x = 0, y = 0) {
+export function createPieceFromAsset (assetId, gridX = 0, gridY = 0) {
   const asset = findAsset(assetId)
+  const template = getTemplate()
 
   return clampToTablesize({
     asset: asset.id,
     layer: asset.type,
     w: asset.w,
     h: asset.h,
-    x: x,
-    y: y,
+    x: gridX * template.gridSize,
+    y: gridY * template.gridSize,
     z: getMaxZ(asset.layer) + 1
   })
 }
-
-// -----------------------------------------------------------------------------
 
 /**
  * Make sure a piece is full on the table by clipping x/y based on it's size.
@@ -302,12 +301,14 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
  * @param {Object} item Piece to clamp.
  * @return {Object} Clamped piece.
  */
-function clampToTablesize (piece) {
+export function clampToTablesize (piece) {
   const template = getTemplate()
-  piece.x = clamp(0, piece.x, template.gridWidth - piece.w) * template.gridSize
-  piece.y = clamp(0, piece.y, template.gridHeight - piece.h) * template.gridSize
+  piece.x = clamp(0, piece.x, (template.gridWidth - piece.w) * template.gridSize)
+  piece.y = clamp(0, piece.y, (template.gridHeight - piece.h) * template.gridSize)
   return piece
 }
+
+// -----------------------------------------------------------------------------
 
 /**
  * Determine if two rectacles intersect / overlap.
