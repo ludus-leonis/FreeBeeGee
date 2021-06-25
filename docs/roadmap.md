@@ -13,7 +13,8 @@ Here is a list what might happen next. However, priorities can change.
   * [ ] bugfixing
     * [X] fix php8 issues
     * [ ] fix clone outside table
-    * [ ] fix token no color
+    * [ ] fix token number color for transparent tokens
+    * [X] remove reset table feature
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
@@ -83,8 +84,8 @@ Here is a list what might happen next. However, priorities can change.
 
 * color.sh: detect dominant piece color instead of average color
 * compile js for older browsers (<globalThis)
-* in-game clock
 * arbitrary layers
+* link to subtable in url via /roomname#1
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
 * point-somewhere feature

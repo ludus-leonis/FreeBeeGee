@@ -28,7 +28,6 @@ import {
   getTemplate,
   updateTemplate,
   updateState,
-  restoreState,
   getTable,
   deleteTable,
   getStateNo,
@@ -169,12 +168,6 @@ export function modalSettings () {
             <button id="btn-table-clear" class="btn btn-wide" disabled>Clear table</button>
           </div>
           <div class="col-12 col-sm-8">
-            <p>Resetting the table will revert it to the initial setup. The library will not be changed.</p>
-          </div>
-          <div class="col-12 col-sm-4">
-            <button id="btn-table-reset" class="btn btn-wide" disabled>Reset table</button>
-          </div>
-          <div class="col-12 col-sm-8">
             <p>Deleting your table will permanently erase it and it's library.</p>
           </div>
           <div class="col-12 col-sm-4">
@@ -200,11 +193,9 @@ export function modalSettings () {
   _('#danger').on('click', () => {
     if (_('#danger').checked) {
       _('#btn-table-clear').disabled = false
-      _('#btn-table-reset').disabled = false
       _('#btn-table-delete').disabled = false
     } else {
       _('#btn-table-clear').disabled = true
-      _('#btn-table-reset').disabled = true
       _('#btn-table-delete').disabled = true
     }
   })
@@ -229,11 +220,6 @@ export function modalSettings () {
   _('#btn-table-clear').on('click', click => {
     click.preventDefault()
     updateState([])
-    getModal().hide()
-  })
-  _('#btn-table-reset').on('click', click => {
-    click.preventDefault()
-    restoreState(0)
     getModal().hide()
   })
   _('#btn-table-delete').on('click', click => {
