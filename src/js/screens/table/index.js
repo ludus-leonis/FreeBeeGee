@@ -171,9 +171,9 @@ export function cloneSelected (x, y) {
     piece.x = x * template.gridSize
     piece.y = y * template.gridSize
     piece.z = getMaxZ(piece.layer) + 1
-    if (piece.no > 0) { // increase piece letter (if it has one)
-      piece.no = piece.no + 1
-      if (piece.no >= 16) piece.no = 1
+    if (piece.n > 0) { // increase piece letter (if it has one)
+      piece.n = piece.n + 1
+      if (piece.n >= 16) piece.n = 1
     }
     createPieces([piece], true)
   })
@@ -217,7 +217,7 @@ export function outlineSelected () {
 export function numberSelected (delta) {
   _('#tabletop .piece-token.is-selected').each(node => {
     const piece = findPiece(node.id)
-    numberPiece(piece.id, (piece.no + 16 + delta) % 16) // 0=nothing, 1-9, A-F
+    numberPiece(piece.id, (piece.n + 16 + delta) % 16) // 0=nothing, 1-9, A-F
   })
 }
 
@@ -323,10 +323,10 @@ function createOrUpdatePieceDOM (piece, select) {
       .remove('.is-w-*', '.is-h-*', '.is-wh-*')
       .add(`.is-w-${piece.w}`, `.is-h-${piece.h}`, `.is-wh-${piece.w - piece.h}`)
   }
-  if (_piece.no !== piece.no) {
+  if (_piece.n !== piece.n) {
     div.remove('.is-n', '.is-n-*')
-    if (piece.layer === 'token' && piece.no !== 0) {
-      div.add('.is-n', '.is-n-' + piece.no)
+    if (piece.layer === 'token' && piece.n !== 0) {
+      div.add('.is-n', '.is-n-' + piece.n)
     }
   }
   if (_piece.border !== piece.border) {
@@ -496,21 +496,15 @@ export function pieceToNode (piece) {
     }
   }
   if (asset.type !== 'overlay' && asset.type !== 'other') {
-    if (asset.color === 'border') {
-      node.css({
-        backgroundColor: 'var(--fbg-border-color)',
-        borderColor: '#202020'
-      })
-    } else {
-      node.css({
-        backgroundColor: (asset.color ?? '#808080')
-      })
-    }
+    node.css({
+      backgroundColor: asset.color ?? '#808080'
+    })
   }
 
   // set meta-classes on node
   node.id = piece.id
   node.add(`.is-side-${piece.side}`)
+  if (asset.color === 'border') node.add('.is-bordercolor')
 
   return node
 }

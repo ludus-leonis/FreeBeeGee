@@ -799,8 +799,8 @@ class FreeBeeGeeAPI
         if (property_exists($piece, 'side') && $piece->side === 0) {
             unset($piece->side);
         }
-        if (property_exists($piece, 'no') && $piece->no === 0) {
-            unset($piece->no);
+        if (property_exists($piece, 'n') && $piece->n === 0) {
+            unset($piece->n);
         }
         if (property_exists($piece, 'border') && $piece->border === 0) {
             unset($piece->border);
@@ -856,8 +856,8 @@ class FreeBeeGeeAPI
                 case 'border':
                     $validated->border = $val = $this->api->assertInteger('border', $value, 0, 15);
                     break;
-                case 'no':
-                    $validated->no = $this->api->assertInteger('no', $value, 0, 15);
+                case 'n':
+                    $validated->n = $this->api->assertInteger('n', $value, 0, 15);
                     break;
                 case 'r':
                     $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);

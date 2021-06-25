@@ -351,12 +351,20 @@ $label-offset: 8px;
 .piece-token {
   #{'--fbg-border-color'}: $piece-color;
 
-  background-color: $piece-color; // tile background
+  background-color: var(--fbg-border-color); // tile background
   border: $piece-border-size solid var(--fbg-border-color);
   border-radius: $piece-tile-size;
   margin: $piece-border-size;
 
   $is-n-size: 1rem;
+
+  &.is-bordercolor {
+    border-color: $color-gray-95;
+
+    &.is-n::after {
+      background-color: $color-gray-95;
+    }
+  }
 
   &.is-n::after {
     align-items: center;

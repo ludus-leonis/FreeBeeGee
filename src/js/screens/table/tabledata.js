@@ -120,31 +120,43 @@ export function assetToPiece (id) {
 /**
  * Add default values to all properties that the API might omit.
  *
+ * @param {Object} piece Data object to populate.
+ * @return {Array} Pieces array for chaining.
+ */
+export function populatePieceDefaults (piece) {
+  piece.w = piece.w ?? 1
+  piece.h = piece.h ?? 1
+  piece.side = piece.side ?? 0
+  piece.border = piece.border ?? 0
+  piece.r = piece.r ?? 0
+  piece.n = piece.n ?? 0
+  piece.h = piece.h < 0 ? piece.w : piece.h
+  piece.label = piece.label ?? ''
+
+  // add client-side meta information
+  const asset = findAsset(piece.asset)
+  piece._sides = asset?.assets.length ?? 1
+  switch (asset?.alias) {
+    case 'dicemat':
+      piece._feature = 'DICEMAT'
+      break
+    case 'discard':
+      piece._feature = 'DISCARD'
+      break
+  }
+
+  return piece
+}
+
+/**
+ * Add default values to all properties that the API might omit.
+ *
  * @param {Array} pieces Data objects to populate.
  * @return {Array} Pieces array for chaining.
  */
 export function populatePiecesDefaults (pieces) {
   for (const piece of pieces) {
-    piece.w = piece.w ?? 1
-    piece.h = piece.h ?? 1
-    piece.side = piece.side ?? 0
-    piece.border = piece.border ?? 0
-    piece.r = piece.r ?? 0
-    piece.no = piece.no ?? 0
-    piece.h = piece.h < 0 ? piece.w : piece.h
-    piece.label = piece.label ?? ''
-
-    // add client-side meta information
-    const asset = findAsset(piece.asset)
-    piece._sides = asset?.assets.length ?? 1
-    switch (asset?.alias) {
-      case 'dicemat':
-        piece._feature = 'DICEMAT'
-        break
-      case 'discard':
-        piece._feature = 'DISCARD'
-        break
-    }
+    populatePieceDefaults(piece)
   }
   return pieces
 }

@@ -350,7 +350,7 @@ describe('CRUD piece', function () {
       y: 8,
       z: 10,
       r: 0,
-      no: 2,
+      n: 2,
       side: 0,
       border: 1
     }
@@ -365,7 +365,7 @@ describe('CRUD piece', function () {
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
     expect(body.r).to.not.exist
-    expect(body.no).to.be.eql(2)
+    expect(body.n).to.be.eql(2)
     expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
     data = body
@@ -383,7 +383,7 @@ describe('CRUD piece', function () {
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
     expect(body.r).to.not.exist
-    expect(body.no).to.be.eql(2)
+    expect(body.n).to.be.eql(2)
     expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
@@ -404,7 +404,7 @@ describe('CRUD piece', function () {
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
     expect(body.r).to.not.exist
-    expect(body.no).to.be.eql(2)
+    expect(body.n).to.be.eql(2)
     expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
@@ -421,7 +421,7 @@ describe('CRUD piece', function () {
     expect(body.y).to.be.eql(8)
     expect(body.z).to.be.eql(10)
     expect(body.r).to.not.exist
-    expect(body.no).to.be.eql(2)
+    expect(body.n).to.be.eql(2)
     expect(body.side).to.not.exist
     expect(body.border).to.be.eql(1)
   })
@@ -437,7 +437,7 @@ describe('CRUD piece', function () {
       y: 7,
       z: 27,
       r: 90,
-      no: 5,
+      n: 5,
       side: 3,
       border: 2
     }
@@ -452,7 +452,7 @@ describe('CRUD piece', function () {
     expect(body.y).to.be.eql(7)
     expect(body.z).to.be.eql(27)
     expect(body.r).to.be.eql(90)
-    expect(body.no).to.be.eql(5)
+    expect(body.n).to.be.eql(5)
     expect(body.side).to.be.eql(3)
     expect(body.border).to.be.eql(2)
   })
@@ -469,7 +469,7 @@ describe('CRUD piece', function () {
     expect(body.y).to.be.eql(7)
     expect(body.z).to.be.eql(27)
     expect(body.r).to.be.eql(90)
-    expect(body.no).to.be.eql(5)
+    expect(body.n).to.be.eql(5)
     expect(body.side).to.be.eql(3)
     expect(body.border).to.be.eql(2)
   })

@@ -249,7 +249,7 @@ export function rotatePiece (pieceId, r, x, y) {
  * @param {Number} no New number (0..27).
  */
 export function numberPiece (pieceId, no) {
-  patchPiece(pieceId, { no: no })
+  patchPiece(pieceId, { n: no })
 }
 
 /**

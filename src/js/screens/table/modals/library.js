@@ -26,7 +26,8 @@ import {
   reloadTable
 } from '../state.js'
 import {
-  createPieceFromAsset
+  createPieceFromAsset,
+  populatePieceDefaults
 } from '../tabledata.js'
 import { UnexpectedStatus } from '../../../api.js'
 import {
@@ -425,11 +426,11 @@ function updatePreview (parseImage = false) {
  * @return {HTMLElement} Node for the modal.
  */
 function assetToPreview (asset) {
-  const node = pieceToNode({
+  const node = pieceToNode(populatePieceDefaults({
     id: 'x' + asset.id,
     asset: asset.id,
     side: 0
-  }).add(
+  })).add(
     '.is-w-' + asset.w,
     '.is-h-' + asset.h
   )
