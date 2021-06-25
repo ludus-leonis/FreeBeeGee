@@ -72,6 +72,20 @@ export function modalSettings () {
           <div class="col-12">
             <p>This tab only affects your browser, not the other players.</p>
 
+            <h2 class="h3">Subtable</h2>
+            <p>Switch to a different view/setup on the current table:</p>
+
+            <div class="container">
+              <div class="row">
+                <div class="col-6 col-sm-8">
+                  <select id="table-sub" name="subtable"></select>
+                </div>
+                <div class="col-6 col-sm-4">
+                  <button id="btn-table-sub" class="btn btn-wide">Switch</button>
+                </div>
+              </div>
+            </div>
+
             <h2 class="h3">Render quality</h2>
             <p>If your table seems to be slow, you can change the render quality here:</p>
             <input type="range" min="0" max="3" value="${getTablePreference('renderQuality') ?? 3}" class="slider" id="quality">
@@ -88,19 +102,7 @@ export function modalSettings () {
         <form class="container"><div id="tab-my" class="row">
           <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
 
-          <div class="col-12 spacing-small">
-            <h2 class="h3">Subtable</h2>
-            <p>Switch to a different view/setup on the current table:</p>
-          </div>
-
-          <div class="col-6 col-sm-8">
-            <label for="table-sub">Subtable</label>
-            <select id="table-sub" name="subtable"></select>
-          </div>
-          <div class="col-6 col-sm-4">
-            <label for="btn-table-sub d-none d-sm-block">&nbsp;</label>
-            <button id="btn-table-sub" class="btn btn-wide">Switch</button>
-          </div>
+          <p>The following settings will affect the whole table and all players.</p>
 
           <div class="col-12 spacing-small">
             <h2 class="h3">Table content</h2>
