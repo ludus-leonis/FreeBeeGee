@@ -365,6 +365,7 @@ export function updatePieces (pieces) {
  * @param {Array} pieces (Full) pieces to crate.
  * @param {Boolean} selected If true, the pieces should be selected after
  *                           creating them. Defaults to false.
+ * @param {Array} selectIds Ids to select when done. Auto-populated in recursion.
  */
 export function createPieces (pieces, selected = false, selectIds = []) {
   let final = false
@@ -374,12 +375,13 @@ export function createPieces (pieces, selected = false, selectIds = []) {
   return createPiece(clampToTablesize(piece), false)
     .then(id => {
       selectIds.push(id)
+      console.log('createPieces', selected, selectIds)
       if (pieces.length === 0) final = true
       if (pieces.length > 0) return createPieces(pieces, selected, selectIds)
     })
     .finally(() => {
       if (final) {
-        syncNow(selected ? selectIds : [])
+        syncNow(selected ? selectIds : [], true)
       }
     })
 }

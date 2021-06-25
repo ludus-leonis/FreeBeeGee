@@ -15,6 +15,7 @@ Here is a list what might happen next. However, priorities can change.
     * [X] fix clone outside table
     * [X] fix token number color for transparent tokens
     * [X] remove reset table feature
+    * [X] clone-focus-lost
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs

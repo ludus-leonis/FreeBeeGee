@@ -63,7 +63,7 @@ export function syncNow (selectedIds = [], forceUIUpdate = false) {
   if (isAutoSync()) {
     if (forceUIUpdate) {
       scheduleSync(0, () => {
-        updateTabletop(getState(getStateNo()))
+        updateTabletop(getState(getStateNo()), selectedIds)
       })
     } else {
       scheduleSync(0)
