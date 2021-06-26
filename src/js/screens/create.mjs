@@ -17,14 +17,14 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createScreen, serverFeedback } from '../screen.js'
-import { runError } from './error.js'
+import { createScreen, serverFeedback } from '../screen.mjs'
+import { runError } from './error.mjs'
 
-import { createTable as stateCreateTable } from './table/state.js'
-import { stateGetServerInfo } from '../state.js'
-import _ from '../FreeDOM.js'
-import { apiGetTemplates, UnexpectedStatus } from '../api.js'
-import { navigateToTable } from '../nav.js'
+import { createTable as stateCreateTable } from './table/state.mjs'
+import { stateGetServerInfo } from '../state.mjs'
+import _ from '../FreeDOM.mjs'
+import { apiGetTemplates, UnexpectedStatus } from '../api.mjs'
+import { navigateToTable } from '../nav.mjs'
 
 /**
  * Show a create-table dialog.

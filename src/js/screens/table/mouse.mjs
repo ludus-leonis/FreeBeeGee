@@ -20,20 +20,20 @@
 import {
   getTemplate,
   movePiece
-} from './state.js'
+} from './state.mjs'
 import {
   getMaxZ,
   findPiece
-} from './tabledata.js'
-import { touch } from './sync.js'
+} from './tabledata.mjs'
+import { touch } from './sync.mjs'
 import {
   getScrollPosition,
   setScrollPosition,
   unselectPieces,
   popupPiece
-} from '.'
-import { clamp } from '../../utils.js'
-import _ from '../../FreeDOM.js'
+} from './table.mjs'
+import { clamp } from '../../utils.mjs'
+import _ from '../../FreeDOM.mjs'
 
 let scroller = null // the tabletop wrapper
 let mouseX = 0

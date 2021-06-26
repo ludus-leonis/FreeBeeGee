@@ -18,7 +18,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from './FreeDOM.js'
+import _ from './FreeDOM.mjs'
 
 let modal = null /** Currently open Bootstrap modal instance */
 

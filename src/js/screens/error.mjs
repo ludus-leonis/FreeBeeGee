@@ -17,13 +17,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createScreen } from '../screen.js'
-import _ from '../FreeDOM.js'
-import { UnexpectedStatus } from '../api.js'
+import { createScreen } from '../screen.mjs'
+import _ from '../FreeDOM.mjs'
+import { UnexpectedStatus } from '../api.mjs'
 import {
   navigateToJoin,
   navigateReload
-} from '../nav.js'
+} from '../nav.mjs'
 
 /**
  * Show an error dialog.

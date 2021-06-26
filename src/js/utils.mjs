@@ -25,7 +25,7 @@
  */
 export function getGetParameter (name) {
   const urlParams = new URLSearchParams(globalThis.location.search)
-  return urlParams.get(name) || ''
+  return urlParams.get(name) || '' // no ||
 }
 
 /**
@@ -83,7 +83,7 @@ export const timeRecords = []
  * @param {Object} value Value to add, if > 0.
  */
 export function recordTime (data, value) {
-  timeRecords[data] = timeRecords[data] ?? [0]
+  timeRecords[data] = timeRecords[data] || [0]
   while (timeRecords[data].length >= 10) timeRecords[data].shift()
   if (value > 0) timeRecords[data].push(value)
 }
@@ -127,7 +127,7 @@ export function toCamelCase (string) {
 export function getStoreValue (key, property, local = true) {
   if (typeof Storage !== 'undefined') {
     const store = local ? globalThis.localStorage : globalThis.sessionStorage
-    return JSON.parse(store.getItem(key) ?? '{}')[property]
+    return JSON.parse(store.getItem(key) || '{}')[property]
   } else {
     return undefined
   }
@@ -145,7 +145,7 @@ export function getStoreValue (key, property, local = true) {
 export function setStoreValue (key, property, value, local = true) {
   if (typeof Storage !== 'undefined') {
     const store = local ? globalThis.localStorage : globalThis.sessionStorage
-    const prefs = JSON.parse(store.getItem(key) ?? '{}')
+    const prefs = JSON.parse(store.getItem(key) || '{}')
     prefs[property] = value
     store.setItem(key, JSON.stringify(prefs))
   }
@@ -193,8 +193,8 @@ export function shuffle (array) {
  */
 export function sortByString (pieces, property) {
   return pieces.sort((a, b) => {
-    const valueA = (a[property] ?? '').toLowerCase()
-    const valueB = (b[property] ?? '').toLowerCase()
+    const valueA = (a[property] || '').toLowerCase()
+    const valueB = (b[property] || '').toLowerCase()
     return valueA < valueB ? -1 : +(valueA > valueB)
   })
 }

@@ -17,10 +17,10 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { runError } from './screens/error.js'
-import { runJoin } from './screens/join.js'
-import { stateSetServerInfo } from './state.js'
-import { apiGetServerInfo } from './api.js'
+import { runError } from './screens/error.mjs'
+import { runJoin } from './screens/join.mjs'
+import { stateSetServerInfo } from './state.mjs'
+import { apiGetServerInfo } from './api.mjs'
 
 // --- public ------------------------------------------------------------------
 

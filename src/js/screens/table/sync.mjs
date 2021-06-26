@@ -21,7 +21,7 @@
 import {
   updateTable,
   updateTabletop
-} from '.'
+} from './table.mjs'
 import {
   getTable,
   reloadTable,
@@ -29,17 +29,17 @@ import {
   getStateNo,
   fetchTableState,
   errorTableGone
-} from './state.js'
+} from './state.mjs'
 import {
   apiGetTableDigest
-} from '../../api.js'
+} from '../../api.mjs'
 import {
   clamp,
   recordTime
-} from '../../utils.js'
+} from '../../utils.mjs'
 import {
   modalInactive
-} from './modals/inactive.js'
+} from './modals/inactive.mjs'
 
 // --- public ------------------------------------------------------------------
 

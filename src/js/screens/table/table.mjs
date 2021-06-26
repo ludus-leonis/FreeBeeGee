@@ -36,7 +36,7 @@ import {
   rotatePiece,
   setTablePreference,
   getTablePreference
-} from './state.js'
+} from './state.mjs'
 import {
   findAsset,
   findPiece,
@@ -44,26 +44,26 @@ import {
   getMinZ,
   getMaxZ,
   getContentRectGrid
-} from './tabledata.js'
-import { startAutoSync } from './sync.js'
+} from './tabledata.mjs'
+import { startAutoSync } from './sync.mjs'
 import {
   enableDragAndDrop,
   getMouseTileX,
   getMouseTileY,
   updateMenu
-} from './mouse.js'
-import _ from '../../FreeDOM.js'
+} from './mouse.mjs'
+import _ from '../../FreeDOM.mjs'
 import {
   clamp,
   shuffle,
   recordTime
-} from '../../utils.js'
-import { navigateToJoin } from '../../nav.js'
+} from '../../utils.mjs'
+import { navigateToJoin } from '../../nav.mjs'
 
-import { modalLibrary } from './modals/library.js'
-import { modalEdit } from './modals/edit.js'
-import { modalHelp } from './modals/help.js'
-import { modalSettings, changeQuality } from './modals/settings.js'
+import { modalLibrary } from './modals/library.mjs'
+import { modalEdit } from './modals/edit.mjs'
+import { modalHelp } from './modals/help.mjs'
+import { modalSettings, changeQuality } from './modals/settings.mjs'
 
 let scroller = null /** keep reference to scroller div - we need it often */
 

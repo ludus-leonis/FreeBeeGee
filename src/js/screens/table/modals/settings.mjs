@@ -17,13 +17,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../FreeDOM.js'
+import _ from '../../../FreeDOM.mjs'
 
 import {
   createModal,
   getModal,
   modalClose
-} from '../../../modal.js'
+} from '../../../modal.mjs'
 import {
   getTemplate,
   updateTemplate,
@@ -34,16 +34,16 @@ import {
   setStateNo,
   getTablePreference,
   setTablePreference
-} from '../state.js'
-import { timeRecords } from '../../../utils.js'
-import { navigateToJoin } from '../../../nav.js'
+} from '../state.mjs'
+import { timeRecords } from '../../../utils.mjs'
+import { navigateToJoin } from '../../../nav.mjs'
 import {
   moveContent
-} from '../index.js'
+} from '../table.mjs'
 import {
   getContentRectGrid,
   getContentRectGridAll
-} from '../tabledata.js'
+} from '../tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
 

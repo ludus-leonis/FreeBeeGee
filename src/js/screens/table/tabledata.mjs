@@ -24,11 +24,11 @@ import {
   getLibrary,
   getState,
   getStateNo
-} from './state.js'
+} from './state.mjs'
 
 import {
   clamp
-} from '../../utils.js'
+} from '../../utils.mjs'
 
 export const assetTypes = ['tile', 'token', 'overlay', 'other']
 

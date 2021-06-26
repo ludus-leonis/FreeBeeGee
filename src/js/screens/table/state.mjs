@@ -22,7 +22,7 @@
 import {
   getStoreValue,
   setStoreValue
-} from '../../utils.js'
+} from '../../utils.mjs'
 import {
   apiGetState,
   apiPutState,
@@ -36,18 +36,18 @@ import {
   apiPostPiece,
   apiPostAsset,
   UnexpectedStatus
-} from '../../api.js'
+} from '../../api.mjs'
 import {
   syncNow,
   stopAutoSync
-} from './sync.js'
+} from './sync.mjs'
 import {
   runError
-} from '../error.js'
+} from '../error.mjs'
 import {
   populatePiecesDefaults,
   clampToTablesize
-} from './tabledata.js'
+} from './tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
 

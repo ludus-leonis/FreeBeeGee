@@ -31,29 +31,29 @@ import {
   outlineSelected,
   toBottomSelected,
   toggleLayer
-} from '.'
+} from './table.mjs'
 import {
   isDragging,
   getMouseTileX,
   getMouseTileY
-} from './mouse.js'
+} from './mouse.mjs'
 import {
   touch
-} from './sync.js'
+} from './sync.mjs'
 import {
   setStateNo
-} from './state.js'
+} from './state.mjs'
 import {
   modalActive,
   modalClose
-} from '../../modal.js'
+} from '../../modal.mjs'
 import {
   modalLibrary
-} from './modals/library.js'
+} from './modals/library.mjs'
 import {
   modalHelp
-} from './modals/help.js'
-import _ from '../../FreeDOM.js'
+} from './modals/help.mjs'
+import _ from '../../FreeDOM.mjs'
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleTableKeys(keydown))

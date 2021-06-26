@@ -24,23 +24,23 @@ import {
   setTablePreference,
   addAsset,
   reloadTable
-} from '../state.js'
+} from '../state.mjs'
 import {
   createPieceFromAsset,
   populatePieceDefaults
-} from '../tabledata.js'
-import { UnexpectedStatus } from '../../../api.js'
+} from '../tabledata.mjs'
+import { UnexpectedStatus } from '../../../api.mjs'
 import {
   pieceToNode
-} from '..'
-import _ from '../../../FreeDOM.js'
+} from '../table.mjs'
+import _ from '../../../FreeDOM.mjs'
 import {
   toTitleCase,
   toCamelCase,
   sortByString,
   splitAsset
-} from '../../../utils.js'
-import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
+} from '../../../utils.mjs'
+import { createModal, getModal, modalActive, modalClose } from '../../../modal.mjs'
 
 // --- public ------------------------------------------------------------------
 

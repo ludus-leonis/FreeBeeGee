@@ -163,26 +163,26 @@ gulp.task('js-main', gulp.series('test-js', () => {
   const source = require('vinyl-source-stream')
 
   return replace(browserify([
-    'src/js/api.js',
-    'src/js/FreeDOM.js',
-    'src/js/modal.js',
-    'src/js/nav.js',
-    'src/js/screen.js',
-    'src/js/state.js',
-    'src/js/utils.js',
-    'src/js/screens/create.js',
-    'src/js/screens/error.js',
-    'src/js/screens/join.js',
-    'src/js/screens/table/index.js',
-    'src/js/screens/table/hotkeys.js',
-    'src/js/screens/table/mouse.js',
-    'src/js/screens/table/state.js',
-    'src/js/screens/table/sync.js',
-    'src/js/screens/table/tabledata.js',
-    'src/js/screens/table/modals/edit.js',
-    'src/js/screens/table/modals/help.js',
-    'src/js/screens/table/modals/inactive.js',
-    'src/js/screens/table/modals/library.js'
+    'src/js/api.mjs',
+    'src/js/FreeDOM.mjs',
+    'src/js/modal.mjs',
+    'src/js/nav.mjs',
+    'src/js/screen.mjs',
+    'src/js/state.mjs',
+    'src/js/utils.mjs',
+    'src/js/screens/create.mjs',
+    'src/js/screens/error.mjs',
+    'src/js/screens/join.mjs',
+    'src/js/screens/table/hotkeys.mjs',
+    'src/js/screens/table/mouse.mjs',
+    'src/js/screens/table/state.mjs',
+    'src/js/screens/table/sync.mjs',
+    'src/js/screens/table/table.mjs',
+    'src/js/screens/table/tabledata.mjs',
+    'src/js/screens/table/modals/edit.mjs',
+    'src/js/screens/table/modals/help.mjs',
+    'src/js/screens/table/modals/inactive.mjs',
+    'src/js/screens/table/modals/library.mjs'
   ]).transform(babelify.configure({
     presets: ['@babel/preset-env']
   })).bundle()

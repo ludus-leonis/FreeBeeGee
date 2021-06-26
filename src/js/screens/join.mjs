@@ -17,19 +17,19 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createScreen } from '../screen.js'
-import { createTable } from './create.js'
-import { runTable } from './table'
+import { createScreen } from '../screen.mjs'
+import { createTable } from './create.mjs'
+import { runTable } from './table/table.mjs'
 
-import { stateGetServerInfo } from '../state.js'
-import _ from '../FreeDOM.js'
+import { stateGetServerInfo } from '../state.mjs'
+import _ from '../FreeDOM.mjs'
 import {
   getGetParameter,
   generateName,
   generateUsername
-} from '../utils.js'
-import { apiGetTable } from '../api.js'
-import { navigateToTable } from '../nav.js'
+} from '../utils.mjs'
+import { apiGetTable } from '../api.mjs'
+import { navigateToTable } from '../nav.mjs'
 
 /** Limit table names like hilariousGazingPenguin */
 const tableNameMaxLength = 48
