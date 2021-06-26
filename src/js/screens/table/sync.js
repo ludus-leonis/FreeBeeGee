@@ -20,43 +20,36 @@
 
 import {
   updateTable,
-  setNote,
-  setPiece,
-  deletePiece,
-  getAllPiecesIds,
-  cleanupTable
+  updateTabletop
 } from '.'
-import { updateMenu } from './mouse.js'
 import {
   getTable,
-  reloadTable
+  reloadTable,
+  getState,
+  getStateNo,
+  fetchTableState,
+  errorTableGone
 } from './state.js'
 import {
-  apiGetTableDigest,
-  apiGetState,
-  UnexpectedStatus
+  apiGetTableDigest
 } from '../../api.js'
-import { runError } from '../error.js'
-import { clamp } from '../../utils.js'
-import { modalInactive } from './modals/inactive.js'
+import {
+  clamp,
+  recordTime
+} from '../../utils.js'
+import {
+  modalInactive
+} from './modals/inactive.js'
 
 // --- public ------------------------------------------------------------------
-
-export const syncTimes = [75]
-export const pollTimes = [25]
 
 /**
  * Do a sync and start the automatic polling in the background.
  *
- * @param {Function} handler Optonal handler / callback to run after first sync.
+ * @param {Function} callback Optional function to call after first sync.
  */
-export function startAutoSync (handler = null) {
-  stopAutoSync()
-  syncNow()
-    .then(() => {
-      if (handler) handler()
-      scheduleSync(calculateNextSyncTime())
-    })
+export function startAutoSync (callback = null) {
+  scheduleSync(0, callback)
 }
 
 /**
@@ -64,14 +57,19 @@ export function startAutoSync (handler = null) {
  *
  * @param {String[]} selectId List of IDs to be re-selected after successfull
  *                            update.
+ * @param {Function} forceUIUpdate Do UI update even if digest didn't change.
  */
-export function syncNow (selectedIds = []) {
+export function syncNow (selectedIds = [], forceUIUpdate = false) {
   if (isAutoSync()) {
-    stopAutoSync()
-    return syncState(selectedIds)
-      .then(() => scheduleSync(calculateNextSyncTime()))
+    if (forceUIUpdate) {
+      scheduleSync(0, () => {
+        updateTabletop(getState(getStateNo()), selectedIds)
+      })
+    } else {
+      scheduleSync(0)
+    }
   } else {
-    return syncState(selectedIds)
+    fetchAndUpdateState(getStateNo(), selectedIds)
   }
 }
 
@@ -125,7 +123,7 @@ const fastestSynctime = 800 /** minimum sync ever */
 const hidSyncMax = 1250 /** maximum sync when there is HID activity */
 
 let syncTimeout = -1 /** getTimeout handler for sync job */
-let syncNextMs = fastestSynctime /** ms when to run again, or -1 for off */
+let syncNextMs = -1 /** ms when to run again, or -1 for off */
 let tabActive = true /** is the current tab/window active/maximized? */
 
 let lastLocalActivity = Date.now() /** ms when last time user moved the mouse or clicked */
@@ -145,53 +143,33 @@ function isAutoSync () {
  * Execute one autosync interation in the future.
  *
  * Will re-schedule the next iteration, too.
+ *
+ * @param {Number} ms Milliseconds to wait till execution, defaults to 0.
+ * @param {Function} callback Function to call after first sync.
  */
-function scheduleSync (ms) {
+function scheduleSync (ms = 0, callback = null) {
   clearTimeout(syncTimeout) // safety
   syncTimeout = setTimeout(() => {
     clearTimeout(syncTimeout)
-    checkForSync()
-      .then((dirty) => {
-        if (dirty) {
-          return syncState()
+    checkDigests()
+      .then((dirtyState) => {
+        if (dirtyState > 0) {
+          return fetchAndUpdateState(dirtyState)
         }
       })
       .finally(() => {
         scheduleSync(calculateNextSyncTime())
+        if (callback) callback()
       })
   }, ms)
 }
 
 /**
- * Detect deleted pieces and remove them from the table.
+ * Check via digest call if we need to sync. Sync afterwards if necessary.
  *
- * @param {String[]} keepIds IDs of pieces to keep.
+ * @return {Promise} Promise of an integer. 0 = no sync, 1+ = state to sync.
  */
-function removeObsoletePieces (keepIds) {
-  // get all piece IDs from dom
-  let ids = getAllPiecesIds()
-  ids = Array.isArray(ids) ? ids : [ids]
-
-  // remove ids from list that are still there
-  for (const id of keepIds) {
-    ids = ids.filter(item => item !== id)
-  }
-
-  // remove ids from list that are dragndrop targets
-  ids = ids.filter(item => !item.endsWith('-drag'))
-
-  // delete ids that are still left
-  for (const id of ids) {
-    deletePiece(id)
-  }
-}
-
-/**
- * Check via HEAD call if we need to sync, and sync afterwards if necessary.
- *
- * @return {Promise} Promise of a boolean. True if a refresh is needed.
- */
-function checkForSync (
+function checkDigests (
   selectIds = []
 ) {
   const table = getTable()
@@ -199,26 +177,31 @@ function checkForSync (
   lastNetworkActivity = Date.now()
   return apiGetTableDigest(table.name)
     .then(digest => {
-      recordTime(pollTimes, Date.now() - start)
+      const state = getStateNo()
+      recordTime('sync-network', Date.now() - start)
 
+      // verify table metadata
       if (digest['table.json'] !== lastDigests['table.json']) {
-        return syncTable(selectIds).then(() => { touch(true); return true })
-      }
-      if (digest['states/1.json'] !== lastDigests['states/1.json']) {
-        touch(true)
-        return true
+        return syncTable(selectIds).then(() => { touch(true); return state })
       }
 
-      return false
-    })
-    .catch(error => {
-      if (error instanceof UnexpectedStatus) {
-        runError('TABLE_GONE', table.name, error)
-        stopAutoSync()
-      } else {
-        runError('UNEXPECTED', error)
+      // verify currently active state
+      if (digest[`states/${state}.json`] !== lastDigests[`states/${state}.json`]) {
+        touch(true)
+        return state
       }
+
+      // verify all (other) states and trigger sync for first wrong one
+      for (let i = 1; i <= 9; i++) {
+        if (digest[`states/${i}.json`] !== lastDigests[`states/${i}.json`]) {
+          touch(true)
+          return i
+        }
+      }
+
+      return 0
     })
+    .catch(error => errorTableGone(error))
 }
 
 /**
@@ -229,34 +212,17 @@ function checkForSync (
  *
  * @param {String[]} selectIds IDs of items to (re)select after sync.
  */
-function syncState (
+function fetchAndUpdateState (
+  dirtyState,
   selectIds = []
 ) {
-  const table = getTable()
-  const start = Date.now()
-
-  lastNetworkActivity = start
-  return apiGetState(table.name, 1, true)
+  lastNetworkActivity = Date.now()
+  return fetchTableState(dirtyState)
     .then(state => {
-      lastDigests['states/1.json'] = state.headers.get('digest')
+      lastDigests[`states/${dirtyState}.json`] = state.headers.get('digest')
 
-      const keepIds = []
-      cleanupTable()
-      for (const item of state.body) {
-        setItem(item, selectIds.includes(item.id))
-        keepIds.push(item.id)
-      }
-      removeObsoletePieces(keepIds)
-      updateMenu()
-
-      recordTime(syncTimes, Date.now() - start)
-    })
-    .catch(error => {
-      if (error instanceof UnexpectedStatus) {
-        runError('TABLE_GONE', table.name, error)
-        stopAutoSync()
-      } else {
-        runError('UNEXPECTED', error)
+      if (dirtyState === getStateNo()) {
+        updateTabletop(state.body, selectIds)
       }
     })
 }
@@ -272,8 +238,6 @@ function syncState (
 function syncTable (
   selectIds = []
 ) {
-  const table = getTable()
-
   lastNetworkActivity = Date.now()
   return reloadTable()
     .then(tabledata => {
@@ -281,36 +245,7 @@ function syncTable (
       updateTable()
       return false
     })
-    .catch(error => {
-      if (error instanceof UnexpectedStatus) {
-        runError('TABLE_GONE', table.name, error)
-        stopAutoSync()
-      } else {
-        runError('UNEXPECTED', error)
-      }
-    })
-}
-
-/**
- * Trigger UI update for new/changed items.
- *
- * @param {Object} piece Piece to add/update.
- * @param {Boolean} selected If true, this item will be selected.
- */
-function setItem (piece, selected) {
-  switch (piece.layer) {
-    case 'tile':
-    case 'token':
-    case 'overlay':
-    case 'other':
-      setPiece(piece, selected)
-      break
-    case 'note':
-      setNote(piece, selected)
-      break
-    default:
-      // ignore unkown piece type
-  }
+    .catch(error => errorTableGone(error))
 }
 
 /**
@@ -326,7 +261,11 @@ function calculateNextSyncTime () {
   const local = Date.now() - lastLocalActivity
 
   if (local > 15 * 60 * 1000) { // 15min
-    modalInactive()
+    stopAutoSync()
+    modalInactive(() => {
+      touch()
+      startAutoSync()
+    })
   }
 
   let maxTime = tabActive
@@ -347,19 +286,6 @@ function calculateNextSyncTime () {
   // add a little jitter to distribute load / avoid perfect sync
   const jitter = 200 // ms
   return syncNextMs - jitter / 2 + Math.random() * jitter
-}
-
-/**
- * Record an execution time in a stats array.
- *
- * Will keep up to 10 values.
- *
- * @param {Array} data Array to add to.
- * @param {Object} value Value to add, if > 0.
- */
-function recordTime (data, value) {
-  while (data.length >= 10) data.shift()
-  if (value > 0) data.push(value)
 }
 
 // setup a visibility change listener

@@ -19,26 +19,26 @@
 
 import {
   getLibrary,
-  getTemplate,
   createPieces,
-  stateGetTablePref,
-  stateSetTablePref,
+  getTablePreference,
+  setTablePreference,
   addAsset,
   reloadTable
 } from '../state.js'
+import {
+  createPieceFromAsset,
+  populatePieceDefaults
+} from '../tabledata.js'
 import { UnexpectedStatus } from '../../../api.js'
 import {
-  getMaxZ,
-  nodeToPiece,
-  assetToNode
+  pieceToNode
 } from '..'
 import _ from '../../../FreeDOM.js'
 import {
   toTitleCase,
   toCamelCase,
   sortByString,
-  splitAsset,
-  clamp
+  splitAsset
 } from '../../../utils.js'
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
 
@@ -128,9 +128,9 @@ export function modalLibrary (x, y) {
 
     // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
-      stateSetTablePref('modalLibraryTab', change.target.id)
+      setTablePreference('modalLibraryTab', change.target.id)
     })
-    const preselect = stateGetTablePref('modalLibraryTab') ?? 'tab-1'
+    const preselect = getTablePreference('modalLibraryTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 
     refreshTabs()
@@ -425,25 +425,31 @@ function updatePreview (parseImage = false) {
  * @param {Object} assetJson The asset to convert.
  * @return {HTMLElement} Node for the modal.
  */
-function assetToPreview (assetJson) {
-  const asset = assetToNode(assetJson).add(
-    '.is-w-' + assetJson.w,
-    '.is-h-' + assetJson.h
+function assetToPreview (asset) {
+  const node = pieceToNode(populatePieceDefaults({
+    id: 'x' + asset.id,
+    asset: asset.id,
+    side: 0
+  })).add(
+    '.is-w-' + asset.w,
+    '.is-h-' + asset.h
   )
+  node.dataset.asset = asset.id
 
-  const max = _('.is-scale-2').create(asset)
+  const max = _('.is-scale-2').create(node)
+
   const card = _('.col-6.col-sm-4.col-md-3.col-lg-2.col-card').create(max)
-  asset.add('.is-max-' + Math.max(assetJson.w, assetJson.h))
-  max.add('.is-max-' + Math.max(assetJson.w, assetJson.h))
+  node.add('.is-max-' + Math.max(asset.w, asset.h))
+  max.add('.is-max-' + Math.max(asset.w, asset.h))
   let tag = ''
-  if (assetJson.w > 2 || assetJson.h > 2) {
-    tag = `${assetJson.w}x${assetJson.h}`
+  if (asset.w > 2 || asset.h > 2) {
+    tag = `${asset.w}x${asset.h}`
   }
-  if (assetJson.assets.length > 1) {
-    tag += `:${assetJson.assets.length}`
+  if (asset.assets.length > 1) {
+    tag += `:${asset.assets.length}`
   }
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
-  card.add(_('p').create().add(prettyName(assetJson.alias)))
+  card.add(_('p').create().add(prettyName(asset.alias)))
   return card
 }
 
@@ -486,20 +492,13 @@ function unprettyName (assetName = '') {
  * Hides modal and adds the selected piece after user clicks OK.
  */
 function modalOk () {
-  const template = getTemplate()
   const modal = document.getElementById('modal')
   const pieces = []
-  let offsetZ = 1
+  let offsetZ = 0
   _('#tabs-library .is-selected .piece').each(item => {
-    const piece = nodeToPiece(item)
+    const piece = createPieceFromAsset(item.dataset.asset, modal.x, modal.y)
 
-    // don't place stuff outside table
-    const x = clamp(0, modal.x, template.gridWidth - piece.w)
-    const y = clamp(0, modal.y, template.gridHeight - piece.h)
-
-    piece.x = Number(x * template.gridSize)
-    piece.y = Number(y * template.gridSize)
-    piece.z = getMaxZ(piece.layer) + offsetZ
+    piece.z = piece.z + offsetZ
     pieces.push(piece)
     offsetZ += 1
   })

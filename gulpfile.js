@@ -178,6 +178,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/screens/table/mouse.js',
     'src/js/screens/table/state.js',
     'src/js/screens/table/sync.js',
+    'src/js/screens/table/tabledata.js',
     'src/js/screens/table/modals/edit.js',
     'src/js/screens/table/modals/help.js',
     'src/js/screens/table/modals/inactive.js',
@@ -190,7 +191,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
 }))
 
 gulp.task('sass', gulp.series('test-sass', () => {
-  const sass = require('gulp-sass')
+  const sass = require('gulp-sass')(require('sass'))
   const concat = require('gulp-concat')
   const autoprefixer = require('gulp-autoprefixer')
   const sourcemaps = require('gulp-sourcemaps')

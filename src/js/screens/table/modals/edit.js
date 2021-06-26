@@ -17,7 +17,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getTemplate, statePieceEdit, getAsset } from '../state.js'
+import { getTemplate, statePieceEdit } from '../state.js'
 import _ from '../../../FreeDOM.js'
 
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.js'
@@ -62,12 +62,12 @@ export function modalEdit (piece) {
             <select id="piece-side" name="piece-side"></select>
           </div>
           <div class="col-6">
-            <label for="piece-border">Border</label>
+            <label for="piece-border">Color</label>
             <select id="piece-border" name="piece-color"></select>
           </div>
           <div class="col-6">
-            <label for="piece-no">No.</label>
-            <select id="piece-no" name="piece-no"></select>
+            <label for="piece-number">Number</label>
+            <select id="piece-number" name="piece-number"></select>
           </div>
         </div>
       </form>
@@ -76,16 +76,16 @@ export function modalEdit (piece) {
     _('#piece-label').value = piece.label
 
     // piece number
-    const pieceNo = _('#piece-no')
+    const pieceNo = _('#piece-number')
     const option = _('option').create('none')
     option.value = 0
-    if (piece.no === 0) option.selected = true
+    if (piece.n === 0) option.selected = true
     pieceNo.add(option)
     for (let w = 1; w <= 15; w++) {
       const letter = w <= 9 ? String.fromCharCode(48 + w) : String.fromCharCode(64 + w - 9)
       const option = _('option').create(letter)
       option.value = w
-      if (w === piece.no) option.selected = true
+      if (w === piece.n) option.selected = true
       pieceNo.add(option)
     }
 
@@ -117,11 +117,10 @@ export function modalEdit (piece) {
     }
 
     // side
-    const asset = getAsset(piece.asset)
     const pieceSide = _('#piece-side')
-    for (let s = 1; s <= asset.assets.length; s++) {
+    for (let s = 1; s <= piece._sides; s++) {
       let label = s
-      if (s === asset.assets.length) label = 'back'
+      if (s === piece._sides) label = 'back'
       if (s === 1) label = 'front'
       const option = _('option').create(label)
       option.value = s - 1
@@ -191,8 +190,8 @@ function modalOk () {
   value = Number(_('#piece-border').value)
   if (value !== piece.border) updates.border = value
 
-  value = Number(_('#piece-no').value)
-  if (value !== piece.no) updates.no = value
+  value = Number(_('#piece-number').value)
+  if (value !== piece.n) updates.no = value
 
   statePieceEdit(piece.id, updates)
   getModal().hide()

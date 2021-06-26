@@ -28,18 +28,22 @@ import {
   getTemplate,
   updateTemplate,
   updateState,
-  restoreState,
   getTable,
   deleteTable,
-  stateGetTablePref,
-  stateSetTablePref
+  getStateNo,
+  setStateNo,
+  getTablePreference,
+  setTablePreference
 } from '../state.js'
-import { pollTimes, syncTimes } from '../sync.js'
+import { timeRecords } from '../../../utils.js'
 import { navigateToJoin } from '../../../nav.js'
 import {
-  moveContent,
-  getContentRectGrid
+  moveContent
 } from '../index.js'
+import {
+  getContentRectGrid,
+  getContentRectGridAll
+} from '../tabledata.js'
 
 // --- public ------------------------------------------------------------------
 
@@ -68,9 +72,23 @@ export function modalSettings () {
           <div class="col-12">
             <p>This tab only affects your browser, not the other players.</p>
 
+            <h2 class="h3">Subtable</h2>
+            <p>Switch to a different view/setup on the current table:</p>
+
+            <div class="container">
+              <div class="row">
+                <div class="col-6 col-sm-8">
+                  <select id="table-sub" name="subtable"></select>
+                </div>
+                <div class="col-6 col-sm-4">
+                  <button id="btn-table-sub" class="btn btn-wide">Switch</button>
+                </div>
+              </div>
+            </div>
+
             <h2 class="h3">Render quality</h2>
             <p>If your table seems to be slow, you can change the render quality here:</p>
-            <input type="range" min="0" max="3" value="${stateGetTablePref('renderQuality') ?? 3}" class="slider" id="quality">
+            <input type="range" min="0" max="3" value="${getTablePreference('renderQuality') ?? 3}" class="slider" id="quality">
             <p class="if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
             <p class="if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
             <p class="if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
@@ -78,11 +96,13 @@ export function modalSettings () {
 
             <h2 class="h3">Statistics</h2>
             <p>Table: ${getTemplate().gridWidth}x${getTemplate().gridHeight} spaces, ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile, ${_('.piece.piece-other').nodes().length}x other</p>
-            <p>Refresh time: ${Math.ceil(pollTimes.reduce((a, b) => a + b) / pollTimes.length)}ms server + ${Math.ceil(syncTimes.reduce((a, b) => a + b) / syncTimes.length)}ms browser</p>
+            <p>Refresh time: ${Math.ceil(timeRecords['sync-network'].reduce((a, b) => a + b) / timeRecords['sync-network'].length)}ms network + ${Math.ceil(timeRecords['sync-ui'].reduce((a, b) => a + b) / timeRecords['sync-ui'].length)}ms browser</p>
           </div>
         </div></form>
         <form class="container"><div id="tab-my" class="row">
           <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
+
+          <p>The following settings will affect the whole table and all players.</p>
 
           <div class="col-12 spacing-small">
             <h2 class="h3">Table content</h2>
@@ -150,12 +170,6 @@ export function modalSettings () {
             <button id="btn-table-clear" class="btn btn-wide" disabled>Clear table</button>
           </div>
           <div class="col-12 col-sm-8">
-            <p>Resetting the table will revert it to the initial setup. The library will not be changed.</p>
-          </div>
-          <div class="col-12 col-sm-4">
-            <button id="btn-table-reset" class="btn btn-wide" disabled>Reset table</button>
-          </div>
-          <div class="col-12 col-sm-8">
             <p>Deleting your table will permanently erase it and it's library.</p>
           </div>
           <div class="col-12 col-sm-4">
@@ -171,9 +185,9 @@ export function modalSettings () {
 
   // store/retrieve selected tab
   _('input[name="tabs"]').on('change', change => {
-    stateSetTablePref('modalSettingsTab', change.target.id)
+    setTablePreference('modalSettingsTab', change.target.id)
   })
-  const preselect = stateGetTablePref('modalSettingsTab') ?? 'tab-1'
+  const preselect = getTablePreference('modalSettingsTab') ?? 'tab-1'
   _('#' + preselect).checked = true
 
   _('#quality').on('change', () => changeQuality(Number(_('#quality').value)))
@@ -181,114 +195,115 @@ export function modalSettings () {
   _('#danger').on('click', () => {
     if (_('#danger').checked) {
       _('#btn-table-clear').disabled = false
-      _('#btn-table-reset').disabled = false
       _('#btn-table-delete').disabled = false
     } else {
       _('#btn-table-clear').disabled = true
-      _('#btn-table-reset').disabled = true
       _('#btn-table-delete').disabled = true
     }
   })
 
-  const rect = getContentRectGrid()
+  const select = _('#table-sub')
+  for (let i = 1; i <= 9; i++) {
+    const option = _('option').create(i)
+    option.value = i
+    if (i === getStateNo()) option.selected = true
+    select.add(option)
+  }
+
+  const rect = getContentRectGridAll()
   populateSizes('#table-w', getTemplate().gridWidth, rect.right)
   populateSizes('#table-h', getTemplate().gridHeight, rect.bottom)
 
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())
 
+  // ---------------------------------------------------------------------------
+
   _('#btn-table-clear').on('click', click => {
     click.preventDefault()
     updateState([])
-  })
-  _('#btn-table-reset').on('click', click => {
-    click.preventDefault()
-    restoreState(0)
+    getModal().hide()
   })
   _('#btn-table-delete').on('click', click => {
     click.preventDefault()
     deleteTable().then(() => navigateToJoin(getTable().name))
   })
 
-  _('#btn-table-tl').on('click', click => {
+  // ---------------------------------------------------------------------------
+
+  _('#btn-table-sub').on('click', click => {
     click.preventDefault()
-    moveContent(
-      1,
-      1
-    )
+    setStateNo(Number(_('#table-sub').value))
+    getModal().hide()
+  })
+
+  _('#btn-table-tl').on('click', click => {
+    handleAlign(click, 1, 1)
   })
 
   _('#btn-table-tc').on('click', click => {
-    click.preventDefault()
-
-    moveContent(
-      Math.floor(getTemplate().gridWidth / 2 - getContentRectGrid().width / 2),
-      1
-    )
+    handleAlign(click, getTemplate().gridWidth / 2 - getContentRectGrid().width / 2, 1)
   })
 
   _('#btn-table-tr').on('click', click => {
-    click.preventDefault()
-    moveContent(
-      Math.floor(getTemplate().gridWidth - 1 - getContentRectGrid().width),
-      1
-    )
+    handleAlign(click, getTemplate().gridWidth - 1 - getContentRectGrid().width, 1)
   })
 
   _('#btn-table-cl').on('click', click => {
-    click.preventDefault()
-    moveContent(
+    handleAlign(
+      click,
       1,
-      Math.floor(getTemplate().gridHeight / 2 - getContentRectGrid().height / 2)
+      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
     )
   })
 
   _('#btn-table-cc').on('click', click => {
-    click.preventDefault()
-
-    moveContent(
-      Math.floor(getTemplate().gridWidth / 2 - getContentRectGrid().width / 2),
-      Math.floor(getTemplate().gridHeight / 2 - getContentRectGrid().height / 2)
+    handleAlign(
+      click,
+      getTemplate().gridWidth / 2 - getContentRectGrid().width / 2,
+      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
     )
   })
 
   _('#btn-table-cr').on('click', click => {
-    click.preventDefault()
-    moveContent(
-      Math.floor(getTemplate().gridWidth - 1 - getContentRectGrid().width),
-      Math.floor(getTemplate().gridHeight / 2 - getContentRectGrid().height / 2)
+    handleAlign(
+      click,
+      getTemplate().gridWidth - 1 - getContentRectGrid().width,
+      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
     )
   })
 
   _('#btn-table-bl').on('click', click => {
-    click.preventDefault()
-    moveContent(
+    handleAlign(
+      click,
       1,
-      Math.floor(getTemplate().gridHeight - 1 - getContentRectGrid().height)
+      getTemplate().gridHeight - 1 - getContentRectGrid().height
     )
   })
 
   _('#btn-table-bc').on('click', click => {
-    click.preventDefault()
-
-    moveContent(
-      Math.floor(getTemplate().gridWidth / 2 - getContentRectGrid().width / 2),
-      Math.floor(getTemplate().gridHeight - 1 - getContentRectGrid().height)
+    handleAlign(
+      click,
+      getTemplate().gridWidth / 2 - getContentRectGrid().width / 2,
+      getTemplate().gridHeight - 1 - getContentRectGrid().height
     )
   })
 
   _('#btn-table-br').on('click', click => {
-    click.preventDefault()
-    moveContent(
-      Math.floor(getTemplate().gridWidth - 1 - getContentRectGrid().width),
-      Math.floor(getTemplate().gridHeight - 1 - getContentRectGrid().height)
+    handleAlign(
+      click,
+      getTemplate().gridWidth - 1 - getContentRectGrid().width,
+      getTemplate().gridHeight - 1 - getContentRectGrid().height
     )
   })
 
   _('#btn-table-resize').on('click', click => {
     click.preventDefault()
     resizeTable()
+    getModal().hide()
   })
+
+  // ---------------------------------------------------------------------------
 
   getModal().show()
 }
@@ -302,7 +317,7 @@ export function modalSettings () {
  */
 export function changeQuality (value) {
   const body = _('body').remove('.is-quality-low', '.is-quality-medium', '.is-quality-high', '.is-quality-ultra')
-  stateSetTablePref('renderQuality', value)
+  setTablePreference('renderQuality', value)
   switch (value) {
     case 0:
       body.add('.is-quality-low')
@@ -356,4 +371,15 @@ function resizeTable () {
       gridHeight: h
     })
   }
+}
+
+/**
+ * Handle the alignment click event.
+ *
+ * @param {Event} click Click-event.
+ */
+function handleAlign (click, x, y) {
+  click.preventDefault()
+  moveContent(Math.floor(x), Math.floor(y))
+  getModal().hide()
 }

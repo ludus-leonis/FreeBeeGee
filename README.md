@@ -12,7 +12,7 @@ Your game. Your data.
 
 ## Key features
 
-* Browser-based 2D virtual desktop for board- and role-playing games.
+* Browser-based 2D virtual tabletop for board- and role-playing games.
 * Easy-to-use drag'n'drop interface. Keyboard hotkeys for power-users.
 * Invite friends by sending them a table's unique URL.
 * Tile-/grid-based, with snapping. Classic dungeon tiles and 200+ monster token included.
@@ -60,7 +60,7 @@ There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/li
 
 ### Server
 
-* PHP 7.2+
+* PHP 7.3 / 7.4 / 8.0 with `zip` extension
 * Apache with `.htaccess` / `mod_rewrite` support
 
 ### Client

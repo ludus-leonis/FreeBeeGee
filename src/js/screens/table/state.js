@@ -37,10 +37,17 @@ import {
   apiPostAsset,
   UnexpectedStatus
 } from '../../api.js'
-import { syncNow } from './sync.js'
-import { runError } from '../error.js'
-
-let table = {} /** stores the table meta info JSON */
+import {
+  syncNow,
+  stopAutoSync
+} from './sync.js'
+import {
+  runError
+} from '../error.js'
+import {
+  populatePiecesDefaults,
+  clampToTablesize
+} from './tabledata.js'
 
 // --- public ------------------------------------------------------------------
 
@@ -56,10 +63,7 @@ export function loadTable (name) {
       table = remoteTable.body
       return remoteTable
     })
-    .catch((error) => { // invalid table
-      runError('TABLE_GONE', name, error)
-      return null
-    })
+    .catch(error => errorTableGone(error))
 }
 
 /**
@@ -94,6 +98,39 @@ export function getTemplate () {
 }
 
 /**
+ * Get the currently visible (sub)table a.k.a. state number.
+ */
+export function getStateNo () {
+  return stateNo
+}
+
+/**
+ * Switch to another state.
+ *
+ * Triggers API fetch & updates table state.
+ *
+ * @param {Number} no State to set (1..9).
+ * @param {Boolean} sync Force sync after setting status.
+ */
+export function setStateNo (no, sync = true) {
+  if (no >= 1 && no <= 9) {
+    stateNo = no
+    setTablePreference('subtable', stateNo)
+    if (sync) syncNow([], true)
+  }
+}
+
+/**
+ * Get (cached) state for a given slot/subtable.
+ *
+ * @param {Number} no State slot 0..9.
+ * @return {Object} State array.
+ */
+export function getState (no) {
+  return states[no]
+}
+
+/**
  * Update the current template.
  *
  * Supports partial updates.
@@ -102,13 +139,7 @@ export function getTemplate () {
  */
 export function updateTemplate (template) {
   return apiPatchTableTemplate(table.name, template)
-    .catch(error => {
-      if (error instanceof UnexpectedStatus && error.status === 404) {
-        // no need to patch already deleted pieces - silently ignore
-      } else {
-        runError('UNEXPECTED', error) // *that* was unexpected
-      }
-    })
+    .catch(error => errorUnexpected404(error))
     .finally(() => {
       syncNow()
     })
@@ -117,41 +148,10 @@ export function updateTemplate (template) {
 /**
  * Get the current table's template (cached).
  *
- * Until we support multiple tables, this is always the template of table 0.
- *
  * @return {Object} Current table's template metadata.
  */
 export function getLibrary () {
   return getTable()?.library
-}
-
-/**
- * Get an asset from the asset cache.
- *
- * @param {String} id Asset ID.
- * @return {Object} Asset or null if it is unknown.
- */
-export function getAsset (id) {
-  let asset
-  asset = getLibrary()?.token?.find(asset => asset.id === id)
-  if (asset) return asset
-  asset = getLibrary()?.tile?.find(asset => asset.id === id)
-  if (asset) return asset
-  asset = getLibrary()?.overlay?.find(asset => asset.id === id)
-  if (asset) return asset
-  asset = getLibrary()?.other?.find(asset => asset.id === id)
-  if (asset) return asset
-
-  // create dummy asset
-  return {
-    assets: ['invalid.svg'],
-    width: 1,
-    height: 1,
-    color: '40bfbf',
-    alias: 'invalid',
-    type: 'tile',
-    id: '0000000000000000'
-  }
 }
 
 /**
@@ -172,7 +172,7 @@ export function createTable (table, snapshot) {
  * @param {String} pref Setting to obtain.
  * @return {String} The setting's value.
  */
-export function stateGetTablePref (pref) {
+export function getTablePreference (pref) {
   return getStoreValue('g' + table.id.substr(0, 8), pref)
 }
 
@@ -183,7 +183,7 @@ export function stateGetTablePref (pref) {
  * @param {String} pref Setting to set.
  * @param {String} value The value to set.
  */
-export function stateSetTablePref (pref, value) {
+export function setTablePreference (pref, value) {
   setStoreValue('g' + table.id.substr(0, 8), pref, value)
 }
 
@@ -211,7 +211,7 @@ export function stateLabelPiece (pieceId, label) {
  * @param {?Number} y New y. Will not be changed if null.
  * @param {?Number} z New z. Will not be changed if null.
  */
-export function stateMovePiece (pieceId, x = null, y = null, z = null) {
+export function movePiece (pieceId, x = null, y = null, z = null) {
   const patch = {
     x: x != null ? x : undefined,
     y: y != null ? y : undefined,
@@ -231,7 +231,7 @@ export function stateMovePiece (pieceId, x = null, y = null, z = null) {
  * @param {Number} x New x/rotation point.
  * @param {Number} y New y/rotation point.
  */
-export function stateRotatePiece (pieceId, r, x, y) {
+export function rotatePiece (pieceId, r, x, y) {
   patchPiece(pieceId, {
     r: r,
     x: x,
@@ -248,8 +248,8 @@ export function stateRotatePiece (pieceId, r, x, y) {
  * @param {String} pieceId ID of piece to change.
  * @param {Number} no New number (0..27).
  */
-export function stateNumberPiece (pieceId, no) {
-  patchPiece(pieceId, { no: no })
+export function numberPiece (pieceId, no) {
+  patchPiece(pieceId, { n: no })
 }
 
 /**
@@ -261,7 +261,7 @@ export function stateNumberPiece (pieceId, no) {
  * @param {String} pieceId ID of piece to change.
  * @param {Number} side New side. Zero-based.
  */
-export function stateFlipPiece (pieceId, side) {
+export function flipPiece (pieceId, side) {
   patchPiece(pieceId, {
     side: side
   })
@@ -276,7 +276,7 @@ export function stateFlipPiece (pieceId, side) {
  * @param {String} pieceId ID of piece to change.
  * @param {Number} border New border. Zero-based.
  */
-export function stateBorderPiece (pieceId, border) {
+export function borderPiece (pieceId, border) {
   patchPiece(pieceId, {
     border: border
   })
@@ -306,11 +306,9 @@ export function statePieceEdit (pieceID, updates) {
  *
  * @param {String} pieceId ID of piece to remove.
  */
-export function stateDeletePiece (id) {
-  apiDeletePiece(table.name, 1, id)
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
+export function deletePiece (id) {
+  apiDeletePiece(table.name, getStateNo(), id)
+    .catch(error => errorUnexpected(error))
     .finally(() => {
       syncNow()
     })
@@ -324,10 +322,8 @@ export function stateDeletePiece (id) {
  * @param {Array} state Array of pieces (table state).
  */
 export function updateState (state) {
-  apiPutState(table.name, 1, state)
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
+  apiPutState(table.name, getStateNo(), state)
+    .catch(error => errorUnexpected(error))
     .finally(() => {
       syncNow()
     })
@@ -341,17 +337,13 @@ export function updateState (state) {
 export function restoreState (index) {
   apiGetState(table.name, index)
     .then(state => {
-      apiPutState(table.name, 1, state)
-        .catch(error => {
-          runError('UNEXPECTED', error)
-        })
+      apiPutState(table.name, getStateNo(), state)
+        .catch(error => errorUnexpected(error))
         .finally(() => {
           syncNow()
         })
     })
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
+    .catch(error => errorUnexpected(error))
 }
 
 /**
@@ -362,7 +354,7 @@ export function restoreState (index) {
  * @param {Array} pieces (Partial) pieces to patch.
  */
 export function updatePieces (pieces) {
-  patchPieces(pieces, true)
+  if (pieces && pieces.length > 0) patchPieces(pieces, true)
 }
 
 /**
@@ -373,21 +365,23 @@ export function updatePieces (pieces) {
  * @param {Array} pieces (Full) pieces to crate.
  * @param {Boolean} selected If true, the pieces should be selected after
  *                           creating them. Defaults to false.
+ * @param {Array} selectIds Ids to select when done. Auto-populated in recursion.
  */
 export function createPieces (pieces, selected = false, selectIds = []) {
   let final = false
 
   if (!pieces || pieces.length <= 0) return
   const piece = pieces.shift()
-  return createPiece(piece, false)
+  return createPiece(clampToTablesize(piece), false)
     .then(id => {
       selectIds.push(id)
+      console.log('createPieces', selected, selectIds)
       if (pieces.length === 0) final = true
       if (pieces.length > 0) return createPieces(pieces, selected, selectIds)
     })
     .finally(() => {
       if (final) {
-        syncNow(selected ? selectIds : [])
+        syncNow(selected ? selectIds : [], true)
       }
     })
 }
@@ -405,7 +399,72 @@ export function deleteTable () {
   return apiDeleteTable(table.name)
 }
 
+/**
+ * Fetch a server state and cache it for future use.
+ *
+ * @param {Number} no Number of state 0..9.
+ * @return {Promise} Promise of a state object.
+ */
+export function fetchTableState (no) {
+  return apiGetState(table.name, no, true)
+    .then(state => {
+      states[no] = populatePiecesDefaults(state.body)
+      return state
+    })
+    .catch(error => errorTableGone(error))
+}
+
+// --- HTTP error handling -----------------------------------------------------
+
+export function errorUnexpected (error) {
+  runError('UNEXPECTED', error)
+  return null
+}
+
+export function errorUnexpected404 (error) {
+  if (error instanceof UnexpectedStatus && error.status === 404) {
+    // 404 are semi-expected, silently ignore them
+  } else {
+    errorUnexpected(error)
+  }
+  return null
+}
+
+export function errorTableGone (error) {
+  if (error instanceof UnexpectedStatus) {
+    runError('TABLE_GONE', table.name, error)
+    stopAutoSync()
+  } else {
+    errorUnexpected(error)
+  }
+  return null
+}
+
 // --- internal ----------------------------------------------------------------
+
+let table = {} /** stores the table meta info JSON */
+let stateNo = 1 /** stores the currently visible sub-table */
+const states = [[], [], [], [], [], [], [], [], [], []] /** caches the states 0..9 **/
+
+/**
+ * Strip client-side properties from pieces that would confuse the API.
+ *
+ * Removes all properties starting with '_'.
+ *
+ * @param {Object} piece A piece to cleanup.
+ * @return {Object} The stripped piece.
+ */
+function stripPiece (piece) {
+  const p = {}
+
+  for (const key in piece) {
+    if (key[0] !== '_') {
+      p[key] = piece[key]
+    }
+  }
+
+  return p
+}
 
 /**
  * Update a piece on the server.
@@ -417,14 +476,8 @@ export function deleteTable () {
  * @return {Object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, poll = true) {
-  return apiPatchPiece(table.name, 1, pieceId, patch)
-    .catch(error => {
-      if (error instanceof UnexpectedStatus && error.status === 404) {
-        // no need to patch already deleted pieces - silently ignore
-      } else {
-        runError('UNEXPECTED', error) // *that* was unexpected
-      }
-    })
+  return apiPatchPiece(table.name, getStateNo(), pieceId, patch)
+    .catch(error => errorUnexpected404(error))
     .finally(() => {
       if (poll) syncNow()
     })
@@ -439,14 +492,8 @@ function patchPiece (pieceId, patch, poll = true) {
  * @return {Object} Promise of the API request.
  */
 function patchPieces (patches, poll = true) {
-  return apiPatchPieces(table.name, 1, patches)
-    .catch(error => {
-      if (error instanceof UnexpectedStatus && error.status === 404) {
-        // no need to patch already deleted pieces - silently ignore
-      } else {
-        runError('UNEXPECTED', error) // *that* was unexpected
-      }
-    })
+  return apiPatchPieces(table.name, getStateNo(), patches)
+    .catch(error => errorUnexpected404(error))
     .finally(() => {
       if (poll) syncNow()
     })
@@ -461,13 +508,11 @@ function patchPieces (patches, poll = true) {
  * @return {Object} Promise of the ID of the new piece.
  */
 function createPiece (piece, poll = true) {
-  return apiPostPiece(table.name, 1, piece)
+  return apiPostPiece(table.name, getStateNo(), stripPiece(piece))
     .then(piece => {
       return piece.id
     })
-    .catch(error => {
-      runError('UNEXPECTED', error)
-    })
+    .catch(error => errorUnexpected(error))
     .finally(() => {
       if (poll) syncNow()
     })

@@ -2,29 +2,29 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.9 - Happy Hamster
+## v0.10 - Pointing Pony
 
-* [ ] subtables / save-slots (alt-#)
 * [ ] pointer feature
 * [ ] different edit modals per piece type (hide useless fields)
 * [ ] token status (blind, poison, prone, dazed, ...)
+* [ ] unit tests for client data model
 * [ ] pre-release
   * [ ] bugfixing
-    * [ ] disable sleep warning if outside game
+    * [ ] css cleanup
+    * [ ] library tab sometimes wrong size
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG
 
-## v0.10 - Mobile Monkey
+## v0.xx - Mobile Monkey
 
 * better tablet / touch support
   * zooming
   * moving pieces
 * table passwords
-* reuse pieces' DOM elements more
 
-## v0.11 - Clean Cat
+## v0.yy - Clean Cat
 
 * empty template table
 * reduce impact of "back" button
@@ -39,13 +39,13 @@ Here is a list what might happen next. However, priorities can change.
 ### rather sooner
 
 * generic marker overlay (X, ?, ...)
-* status icons
 * docs how to make table/template `.zip`s
 * click thru / don't drag on transparent parts of images
 * LOS-ruler
 * tabletop settings (e.g. change background, size, grid)
 * undo (limited)
 * demo mode (serverless?)
+* use image masks for png backsides
 * show backside/all sides in tile browser
 * better sticky notes (more text, auto-size text)
 * protect pieces (no-delete, no-move)
@@ -75,8 +75,8 @@ Here is a list what might happen next. However, priorities can change.
 
 * color.sh: detect dominant piece color instead of average color
 * compile js for older browsers (<globalThis)
-* in-game clock
 * arbitrary layers
+* link to subtable in url via /roomname#1
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
 * point-somewhere feature

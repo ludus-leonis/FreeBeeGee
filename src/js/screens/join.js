@@ -148,7 +148,7 @@ function ok () {
 function openOrCreate (name) {
   apiGetTable(name)
     .then((table) => {
-      runTable(name)
+      runTable(table)
     })
     .catch(() => createTable(name))
 }

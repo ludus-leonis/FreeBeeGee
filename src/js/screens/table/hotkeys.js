@@ -32,14 +32,27 @@ import {
   toBottomSelected,
   toggleLayer
 } from '.'
-import { isDragging, getMouseTileX, getMouseTileY } from './mouse.js'
-import { touch } from './sync.js'
+import {
+  isDragging,
+  getMouseTileX,
+  getMouseTileY
+} from './mouse.js'
+import {
+  touch
+} from './sync.js'
+import {
+  setStateNo
+} from './state.js'
 import {
   modalActive,
   modalClose
 } from '../../modal.js'
-import { modalLibrary } from './modals/library.js'
-import { modalHelp } from './modals/help.js'
+import {
+  modalLibrary
+} from './modals/library.js'
+import {
+  modalHelp
+} from './modals/help.js'
 import _ from '../../FreeDOM.js'
 
 /** register the keyboard handler on document load */
@@ -69,17 +82,32 @@ function handleTableKeys (keydown) {
       case 'Delete': // delete selected
         deleteSelected()
         break
-      case '1': // toggle layer
-        toggleLayer('other')
+      case '1': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(1); else toggleLayer('other')
         break
-      case '2': // toggle layer
-        toggleLayer('token')
+      case '2': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(2); else toggleLayer('token')
         break
-      case '3': // toggle layer
-        toggleLayer('overlay')
+      case '3': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(3); else toggleLayer('overlay')
         break
-      case '4': // toggle layer
-        toggleLayer('tile')
+      case '4': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(4); else toggleLayer('tile')
+        break
+      case '5': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(5)
+        break
+      case '6': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(6)
+        break
+      case '7': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(7)
+        break
+      case '8': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(8)
+        break
+      case '9': // toggle layer, switch subtable
+        if (keydown.ctrlKey | keydown.altKey) setStateNo(9)
         break
       case 'l': // library / add piece
         modalLibrary(getMouseTileX(), getMouseTileY())

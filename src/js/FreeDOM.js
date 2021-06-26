@@ -328,6 +328,53 @@ class FreeDOM {
   }
 
   /**
+   * Check if the selected nodes have some properties.
+   *
+   * Supports checking the following:
+   * - CSS classes (strings starting with '.')
+   *
+   * @param {...String} items Items to check for.
+   * @return {Boolean} True, if all items are found.
+   */
+  hasAll (...items) {
+    for (const item of items) {
+      if (typeof item === 'string' && item.charAt(0) === '.') { // check for class
+        const search = item.substr(1, item.length - 2) // remove dot
+        this.each(node => {
+          for (const cls of node.classList) {
+            if (cls.startsWith(search)) continue
+          }
+        })
+      }
+      return false
+    }
+    return true
+  }
+
+  /**
+   * Check if the selected nodes have some properties.
+   *
+   * Supports checking the following:
+   * - CSS classes (strings starting with '.')
+   *
+   * @param {...String} items Items to check for.
+   * @return {Boolean} True, if at least one item was found.
+   */
+  hasAny (...items) {
+    for (const item of items) {
+      if (typeof item === 'string' && item.charAt(0) === '.') { // check for class
+        const search = item.substr(1, item.length - 2) // remove dot
+        this.each(node => {
+          for (const cls of node.classList) {
+            if (cls.startsWith(search)) return true
+          }
+        })
+      }
+    }
+    return false
+  }
+
+  /**
    * Get the first matching node.
    *
    * @return {Element} First node.

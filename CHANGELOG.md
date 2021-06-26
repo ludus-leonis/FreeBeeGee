@@ -1,6 +1,28 @@
 # FreeBeeGee CHANGELOG
 
-Download current and old versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
+Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
+
+## v0.9.0 - Happy Hamster
+
+### Noteable changes
+
+* added subtable support (alt-1..9, ctrl-1..9)
+* added small clock in lower right corner
+* moved note layer below token layer (put token on notes now!)
+* added php8 support
+
+### Other changes
+
+* tweaked selected-piece outline
+* fixed clone-focus-lost bug
+* fixed svg-token-number-color bug
+* fixed clone-outside-table bug
+* tweaked settings dialog
+* refactored DOM handling to reuse elements a bit more
+* refactored frontend data model from dataset to objects
+* refactored fetch() error handlers
+* bumped dependencies & fixed scss deprecations
+* removed reset-table feature (now obsolete due to subtables)
 
 ## v0.8.0 - Resizing Rhinoceros
 

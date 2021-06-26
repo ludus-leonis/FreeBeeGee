@@ -19,15 +19,18 @@
 
 import {
   getTemplate,
-  stateMovePiece
+  movePiece
 } from './state.js'
+import {
+  getMaxZ,
+  findPiece
+} from './tabledata.js'
 import { touch } from './sync.js'
 import {
   getScrollPosition,
   setScrollPosition,
   unselectPieces,
-  popupPiece,
-  getMaxZ
+  popupPiece
 } from '.'
 import { clamp } from '../../utils.js'
 import _ from '../../FreeDOM.js'
@@ -97,15 +100,16 @@ export function updateMenu () {
   if (selected.length <= 0) {
     menu.add('.disabled')
   } else if (selected.length === 1) {
+    const piece = findPiece(selected[0].id)
     menu.remove('.disabled')
-    if (selected[0].dataset.sides <= 1) {
+    if (piece._sides <= 1) {
       _('#btn-f').add('.disabled')
       _('#btn-hash').add('.disabled')
     }
-    if (selected[0].dataset.sides <= 2) {
+    if (piece._sides <= 2) {
       _('#btn-hash').add('.disabled')
     }
-    if (selected[0].dataset.feature === 'DICEMAT') {
+    if (piece._feature === 'DICEMAT') {
       _('#btn-hash').remove('.disabled')
     }
   } else {
@@ -216,14 +220,14 @@ function dragStart (mousedown) {
   if (!mousedown.target.classList.contains('piece')) return // we only drag pieces
   scroller.classList.add('cursor-grab')
 
-  const piece = mousedown.target
-  dragging = piece.cloneNode(true)
+  const node = mousedown.target
+  dragging = node.cloneNode(true)
   dragging.id = dragging.id + '-drag'
-  dragging.origin = piece
+  dragging.piece = findPiece(node.id)
   dragging.style.zIndex = 999999999 // drag visually on top of everything
   dragging.classList.add('dragging')
   dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
-  piece.parentNode.appendChild(dragging)
+  node.parentNode.appendChild(dragging)
 
   // rect is relative to viewport, so we compensate for scrolling
   const rect = dragging.getBoundingClientRect()
@@ -272,8 +276,8 @@ function dragEnd (mouseup, cancel = false) {
       )
 
       // only record state if there was a change in position
-      if (dragging.origin.dataset.x !== dragging.dataset.x ||
-        dragging.origin.dataset.y !== dragging.dataset.y) {
+      if (dragging.piece.x !== Number(dragging.dataset.x) ||
+        dragging.piece.y !== Number(dragging.dataset.y)) {
         const template = getTemplate()
         const maxZ = getMaxZ(dragging.dataset.layer, {
           top: Number(dragging.dataset.y),
@@ -281,11 +285,11 @@ function dragEnd (mouseup, cancel = false) {
           bottom: Number(dragging.dataset.y) + Number(dragging.dataset.h) * template.gridSize,
           right: Number(dragging.dataset.x) + Number(dragging.dataset.w) * template.gridSize
         })
-        stateMovePiece(
-          dragging.origin.id,
-          dragging.dataset.x,
-          dragging.dataset.y,
-          Number(dragging.dataset.z) === maxZ ? dragging.dataset.z : getMaxZ(dragging.dataset.layer) + 1
+        movePiece(
+          dragging.piece.id,
+          Number(dragging.dataset.x),
+          Number(dragging.dataset.y),
+          dragging.piece.z === maxZ ? dragging.piece.z : getMaxZ(dragging.piece.layer) + 1
         )
       }
     }

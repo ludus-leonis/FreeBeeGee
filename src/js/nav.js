@@ -78,6 +78,6 @@ document.onreadystatechange = function (event) {
           }
         }
       })
-      .catch(() => runError('UNKNOWN'))
+      .catch(error => runError('UNKNOWN', error))
   }
 }
