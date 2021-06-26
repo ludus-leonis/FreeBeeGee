@@ -6,7 +6,7 @@ This guide covers the installation of FreeBeeGee.
 
 ### Server
 
-* PHP 7.2+
+* PHP 7.3 / 7.4 / 8.0
   * required extensions: `zip`
 * Apache
   * required: `.htaccess`, `mod_rewrite`
