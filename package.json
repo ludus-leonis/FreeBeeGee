@@ -1,8 +1,8 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.9.0-dev",
-  "versionEngine": "0.3.0",
-  "codename": "Resizing Rhinoceros",
+  "version": "0.9.0",
+  "versionEngine": "0.4.0",
+  "codename": "Pointing Pony",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=6.5.0"

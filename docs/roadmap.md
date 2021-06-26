@@ -2,30 +2,20 @@
 
 Here is a list what might happen next. However, priorities can change.
 
-## v0.9 - Happy Hamster
+## v0.10 - Pointing Pony
 
-* [X] add support for subtables / save-slots (alt-#, ctrl-#)
-* [X] move frontend data model from dataset to objects
-* [X] reuse pieces' DOM elements more
-* [X] moved note layer below token layer
-* [X] added clock
+* [ ] pointer feature
+* [ ] different edit modals per piece type (hide useless fields)
+* [ ] token status (blind, poison, prone, dazed, ...)
+* [ ] unit tests for client data model
 * [ ] pre-release
-  * [X] bugfixing
-    * [X] fix php8 issues
-    * [X] fix clone outside table
-    * [X] fix token number color for transparent tokens
-    * [X] remove reset table feature
-    * [X] clone-focus-lost
+  * [ ] bugfixing
+    * [ ] css cleanup
+    * [ ] library tab sometimes wrong size
   * [ ] review+run unit+integration tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG
-
-## v0.10 - Pointing Pony
-
-* pointer feature
-* different edit modals per piece type (hide useless fields)
-* token status (blind, poison, prone, dazed, ...)
 
 ## v0.xx - Mobile Monkey
 

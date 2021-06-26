@@ -38,7 +38,7 @@ Note that all files have to be in the root folder of the `ZIP`. Usually you want
    └─ 1.json
 ```
 
-To protect the server and the players, FreeBeeGee is very picky when validating snapshots. They **must not** include any additional files or they will be rejected. Be careful not to add (hidden) files or directories your operating system might automatically add, like `Thumbs.db`, `.DS_Store`  or `__MACOSX/`.
+To protect the server and the players, FreeBeeGee is picky when validating snapshots. Unknown or invalid files/folders will be ignored and silently dropped.
 
 ## `template.json`
 
@@ -72,7 +72,7 @@ TBD
 
 Assets are the images users can see in the library window.
 
-All assets must be placed in an `assets/` folder. Inside that folder there may be subfolders for each asset type: `token`, `overlay`, `tile` and `other`. Images within those subfolders will automatically be sorted in the corresponding library category. You can omit each of these folders if your snapshot does not need them. However, you **must not** add other types/subfolders.
+All assets must be placed in an `assets/` folder. Inside that folder there may be subfolders for each asset type: `token`, `overlay`, `tile` and `other`. Images within those subfolders (but not sub-subfolders) will automatically be sorted in the corresponding library category. You can omit each of these folders if your snapshot does not need them. 
 
 TBD
 

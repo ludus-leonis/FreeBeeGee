@@ -60,7 +60,7 @@ There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/li
 
 ### Server
 
-* PHP 7.2+
+* PHP 7.3 / 7.4 / 8.0 with `zip` extension
 * Apache with `.htaccess` / `mod_rewrite` support
 
 ### Client
