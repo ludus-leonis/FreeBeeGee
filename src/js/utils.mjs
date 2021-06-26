@@ -25,18 +25,20 @@
  */
 export function getGetParameter (name) {
   const urlParams = new URLSearchParams(globalThis.location.search)
-  return urlParams.get(name) || '' // no ||
+  return urlParams.get(name) || ''
 }
 
 /**
  * Generate a v4 UUID.
  *
+ * @param {Number} seed Optional seed for UUID, defaults to Math.random()
  * @return {String} UUID.
  */
-export function uuid () {
+export function uuid (seed = null) {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    var r = Math.random() * 16 | 0
-    var v = c === 'x' ? r : (r & 0x3 | 0x8)
+    const s = seed === null ? Math.random() : seed
+    const r = s * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
     return v.toString(16)
   })
 }
@@ -83,9 +85,10 @@ export const timeRecords = []
  * @param {Object} value Value to add, if > 0.
  */
 export function recordTime (data, value) {
-  timeRecords[data] = timeRecords[data] || [0]
+  timeRecords[data] = timeRecords[data] ?? [0]
   while (timeRecords[data].length >= 10) timeRecords[data].shift()
   if (value > 0) timeRecords[data].push(value)
+  return timeRecords[data]
 }
 
 /**
@@ -127,7 +130,7 @@ export function toCamelCase (string) {
 export function getStoreValue (key, property, local = true) {
   if (typeof Storage !== 'undefined') {
     const store = local ? globalThis.localStorage : globalThis.sessionStorage
-    return JSON.parse(store.getItem(key) || '{}')[property]
+    return JSON.parse(store.getItem(key) ?? '{}')[property]
   } else {
     return undefined
   }
@@ -145,7 +148,7 @@ export function getStoreValue (key, property, local = true) {
 export function setStoreValue (key, property, value, local = true) {
   if (typeof Storage !== 'undefined') {
     const store = local ? globalThis.localStorage : globalThis.sessionStorage
-    const prefs = JSON.parse(store.getItem(key) || '{}')
+    const prefs = JSON.parse(store.getItem(key) ?? '{}')
     prefs[property] = value
     store.setItem(key, JSON.stringify(prefs))
   }
@@ -193,8 +196,8 @@ export function shuffle (array) {
  */
 export function sortByString (pieces, property) {
   return pieces.sort((a, b) => {
-    const valueA = (a[property] || '').toLowerCase()
-    const valueB = (b[property] || '').toLowerCase()
+    const valueA = (a[property] ?? '').toLowerCase()
+    const valueB = (b[property] ?? '').toLowerCase()
     return valueA < valueB ? -1 : +(valueA > valueB)
   })
 }
@@ -227,7 +230,7 @@ export function splitAsset (assetName) {
     data.alias = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
-    data.side = match[4]
+    data.side = Number(match[4])
     return data
   }
   match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
@@ -236,6 +239,20 @@ export function splitAsset (assetName) {
     return data
   }
   return data
+}
+
+/**
+ * Determine if two rectacles intersect / overlap.
+ *
+ * @param {Object} rect1 First rect, containing of top/left/bottom/right.
+ * @param {Object} rect2 Second rect, containing of top/left/bottom/right.
+ * @returns {Boolean} True if they intersect.
+ */
+export function intersect (rect1, rect2) {
+  return (rect1.left <= rect2.right &&
+    rect2.left <= rect1.right &&
+    rect1.top <= rect2.bottom &&
+    rect2.top <= rect1.bottom)
 }
 
 /** An array of all the letters A-Z. */

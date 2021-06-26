@@ -27,7 +27,8 @@ import {
 } from './state.mjs'
 
 import {
-  clamp
+  clamp,
+  intersect
 } from '../../utils.mjs'
 
 export const assetTypes = ['tile', 'token', 'overlay', 'other']
@@ -107,12 +108,14 @@ export function findPiecesWithin (rect, layer = 'all', no = getStateNo()) {
 export function assetToPiece (id) {
   const asset = findAsset(id) ?? createInvalidAsset()
 
-  return populatePiecesDefaults({
+  return populatePieceDefaults({
     asset: asset.id,
     layer: asset.type,
     w: asset.w,
     h: asset.h,
-    sides: asset.assets.length,
+    x: 0,
+    y: 0,
+    z: 0,
     color: asset.color
   })
 }
@@ -214,10 +217,10 @@ export function getMaxZ (layer, area = {
  */
 export function getContentRect (no = getStateNo()) {
   const rect = {
-    top: Number.MAX_VALUE,
     left: Number.MAX_VALUE,
-    bottom: Number.MIN_VALUE,
-    right: Number.MIN_VALUE
+    top: Number.MAX_VALUE,
+    right: Number.MIN_VALUE,
+    bottom: Number.MIN_VALUE
   }
   const gridSize = getTemplate().gridSize
   const state = getState(no)
@@ -225,10 +228,10 @@ export function getContentRect (no = getStateNo()) {
   // provide default for empty tables
   if (!state || state.length < 1) {
     return {
-      top: 0,
       left: 0,
-      bottom: 0,
-      right: 0
+      top: 0,
+      right: 0,
+      bottom: 0
     }
   }
 
@@ -238,10 +241,10 @@ export function getContentRect (no = getStateNo()) {
     const left = piece.x
     const bottom = top + piece.h * gridSize - 1
     const right = left + piece.w * gridSize - 1
-    rect.top = rect.top < top ? rect.top : top
     rect.left = rect.left < left ? rect.left : left
-    rect.bottom = rect.bottom > bottom ? rect.bottom : bottom
+    rect.top = rect.top < top ? rect.top : top
     rect.right = rect.right > right ? rect.right : right
+    rect.bottom = rect.bottom > bottom ? rect.bottom : bottom
   }
 
   return rect
@@ -261,12 +264,25 @@ export function getContentRectGrid (no = getStateNo()) {
   rect.top = Math.floor(rect.top / gridSize)
   rect.right = Math.floor(rect.right / gridSize)
   rect.bottom = Math.floor(rect.bottom / gridSize)
-  rect.width = rect.right - rect.left + 1
-  rect.height = rect.bottom - rect.top + 1
+  if (rect.left === 0 && rect.right === 0) {
+    rect.width = 0
+  } else {
+    rect.width = rect.right - rect.left + 1
+  }
+  if (rect.top === 0 && rect.bottom === 0) {
+    rect.height = 0
+  } else {
+    rect.height = rect.bottom - rect.top + 1
+  }
 
   return rect
 }
 
+/**
+ * Determine rectancle all items in all subtables on the table are within in grid units.
+ *
+ * @return {Object} Object with top/left/bottom/right property of main content.
+ */
 export function getContentRectGridAll () {
   const rect = {
     top: Number.MAX_VALUE,
@@ -276,10 +292,14 @@ export function getContentRectGridAll () {
   }
   for (let i = 0; i <= 9; i++) {
     const rect2 = getContentRectGrid(i)
-    rect.left = Math.min(rect.left, rect2.left)
-    rect.top = Math.min(rect.top, rect2.top)
-    rect.right = Math.max(rect.right, rect2.right)
-    rect.bottom = Math.max(rect.bottom, rect2.bottom)
+    if (rect2.width > 0) {
+      rect.left = Math.min(rect.left, rect2.left)
+      rect.right = Math.max(rect.right, rect2.right)
+    }
+    if (rect2.height > 0) {
+      rect.top = Math.min(rect.top, rect2.top)
+      rect.bottom = Math.max(rect.bottom, rect2.bottom)
+    }
   }
   return rect
 }
@@ -296,7 +316,7 @@ export function createPieceFromAsset (assetId, gridX = 0, gridY = 0) {
   const asset = findAsset(assetId)
   const template = getTemplate()
 
-  return clampToTablesize({
+  return populatePieceDefaults(clampToTablesize({
     asset: asset.id,
     layer: asset.type,
     w: asset.w,
@@ -304,11 +324,11 @@ export function createPieceFromAsset (assetId, gridX = 0, gridY = 0) {
     x: gridX * template.gridSize,
     y: gridY * template.gridSize,
     z: getMaxZ(asset.layer) + 1
-  })
+  }))
 }
 
 /**
- * Make sure a piece is full on the table by clipping x/y based on it's size.
+ * Make sure a piece is fully on the table by clipping x/y based on it's size.
  *
  * @param {Object} item Piece to clamp.
  * @return {Object} Clamped piece.
@@ -321,20 +341,6 @@ export function clampToTablesize (piece) {
 }
 
 // -----------------------------------------------------------------------------
-
-/**
- * Determine if two rectacles intersect / overlap.
- *
- * @param {Object} rect1 First rect, containing of top/left/bottom/right.
- * @param {Object} rect2 Second rect, containing of top/left/bottom/right.
- * @returns {Boolean} True if they intersect.
- */
-function intersect (rect1, rect2) {
-  return (rect1.left <= rect2.right &&
-    rect2.left <= rect1.right &&
-    rect1.top <= rect2.bottom &&
-    rect2.top <= rect1.bottom)
-}
 
 /**
  * Create asset to be used for invalid asset references.

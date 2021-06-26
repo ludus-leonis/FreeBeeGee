@@ -164,6 +164,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
 
   return replace(browserify([
     'src/js/api.mjs',
+    'src/js/document.mjs',
     'src/js/FreeDOM.mjs',
     'src/js/modal.mjs',
     'src/js/nav.mjs',

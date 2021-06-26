@@ -28,7 +28,8 @@ import {
   getState,
   getStateNo,
   fetchTableState,
-  errorTableGone
+  errorTableGone,
+  isTabActive
 } from './state.mjs'
 import {
   apiGetTableDigest
@@ -124,7 +125,6 @@ const hidSyncMax = 1250 /** maximum sync when there is HID activity */
 
 let syncTimeout = -1 /** getTimeout handler for sync job */
 let syncNextMs = -1 /** ms when to run again, or -1 for off */
-let tabActive = true /** is the current tab/window active/maximized? */
 
 let lastLocalActivity = Date.now() /** ms when last time user moved the mouse or clicked */
 let lastRemoteActivity = Date.now() /** ms when last time something changed on the server */
@@ -268,7 +268,7 @@ function calculateNextSyncTime () {
     })
   }
 
-  let maxTime = tabActive
+  let maxTime = isTabActive()
     ? (remote < 1000 ? fastestSynctime : 5000) // max 5s
     : 60000 // max 60s
 
@@ -279,7 +279,7 @@ function calculateNextSyncTime () {
 
   syncNextMs = clamp(
     fastestSynctime,
-    Math.floor(syncNextMs * (tabActive ? 1.05 : 1.5)),
+    Math.floor(syncNextMs * (isTabActive() ? 1.05 : 1.5)),
     maxTime
   )
 
@@ -287,13 +287,3 @@ function calculateNextSyncTime () {
   const jitter = 200 // ms
   return syncNextMs - jitter / 2 + Math.random() * jitter
 }
-
-// setup a visibility change listener
-document.addEventListener('visibilitychange', (visibilitychange) => {
-  if (document.hidden) {
-    tabActive = false
-  } else {
-    tabActive = true
-    syncNow()
-  }
-})

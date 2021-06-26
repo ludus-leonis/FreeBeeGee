@@ -7,12 +7,12 @@ Here is a list what might happen next. However, priorities can change.
 * [ ] pointer feature
 * [ ] different edit modals per piece type (hide useless fields)
 * [ ] token status (blind, poison, prone, dazed, ...)
-* [ ] unit tests for client data model
+* [X] unit tests for client data model
 * [ ] pre-release
   * [ ] bugfixing
     * [ ] css cleanup
     * [ ] library tab sometimes wrong size
-  * [ ] review+run unit+integration tests
+  * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG

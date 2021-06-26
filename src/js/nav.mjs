@@ -17,11 +17,6 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { runError } from './screens/error.mjs'
-import { runJoin } from './screens/join.mjs'
-import { stateSetServerInfo } from './state.mjs'
-import { apiGetServerInfo } from './api.mjs'
-
 // --- public ------------------------------------------------------------------
 
 /**
@@ -51,33 +46,4 @@ export function navigateToJoin (tableName) {
  */
 export function navigateToTable (tableName) {
   globalThis.location = './' + tableName
-}
-
-// --- private -----------------------------------------------------------------
-
-document.onreadystatechange = function (event) {
-  if (document.readyState === 'complete') { // time to setup our routes
-    apiGetServerInfo()
-      .then(info => {
-        if (info.version !== '$VERSION$') {
-          console.info('update', info.version, '$VERSION$')
-          runError('UPDATE')
-        } else {
-          stateSetServerInfo(info)
-
-          // run the corresponding screen/dialog
-          const rootFolder = info.root.substr(0, info.root.length - '/api'.length)
-          let path = window.location.pathname
-          if (path[0] !== '/') path = '/' + path
-          if (path === rootFolder || path === rootFolder + '/') {
-            runJoin()
-          } else if (path.endsWith('/')) {
-            document.location = path.substr(0, path.length - 1)
-          } else {
-            runJoin(path.replace(/^.*\//, ''))
-          }
-        }
-      })
-      .catch(error => runError('UNKNOWN', error))
-  }
 }

@@ -4,7 +4,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ## v0.9.0 - Happy Hamster
 
-### Noteable changes
+### Notable changes
 
 * added subtable support (alt-1..9, ctrl-1..9)
 * added small clock in lower right corner

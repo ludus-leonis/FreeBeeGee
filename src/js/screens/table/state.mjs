@@ -60,7 +60,7 @@ import {
 export function loadTable (name) {
   return apiGetTable(name, true)
     .then(remoteTable => {
-      table = remoteTable.body
+      _setTable(remoteTable.body)
       return remoteTable
     })
     .catch(error => errorTableGone(error))
@@ -123,10 +123,10 @@ export function setStateNo (no, sync = true) {
 /**
  * Get (cached) state for a given slot/subtable.
  *
- * @param {Number} no State slot 0..9.
+ * @param {Number} no State slot 0..9. Defaults to current one.
  * @return {Object} State array.
  */
-export function getState (no) {
+export function getState (no = getStateNo()) {
   return states[no]
 }
 
@@ -212,12 +212,11 @@ export function stateLabelPiece (pieceId, label) {
  * @param {?Number} z New z. Will not be changed if null.
  */
 export function movePiece (pieceId, x = null, y = null, z = null) {
-  const patch = {
+  patchPiece(pieceId, {
     x: x != null ? x : undefined,
     y: y != null ? y : undefined,
     z: z != null ? z : undefined
-  }
-  patchPiece(pieceId, patch)
+  })
 }
 
 /**
@@ -249,7 +248,9 @@ export function rotatePiece (pieceId, r, x, y) {
  * @param {Number} no New number (0..27).
  */
 export function numberPiece (pieceId, no) {
-  patchPiece(pieceId, { n: no })
+  patchPiece(pieceId, {
+    n: no
+  })
 }
 
 /**
@@ -408,7 +409,7 @@ export function deleteTable () {
 export function fetchTableState (no) {
   return apiGetState(table.name, no, true)
     .then(state => {
-      states[no] = populatePiecesDefaults(state.body)
+      _setState(no, populatePiecesDefaults(state.body))
       return state
     })
     .catch(error => errorTableGone(error))
@@ -440,11 +441,53 @@ export function errorTableGone (error) {
   return null
 }
 
+/**
+ * Is the browser/tab currently active/visible?
+ *
+ * @return {Boolean} True if yes.
+ */
+export function isTabActive () {
+  return tabActive
+}
+
+/**
+ * Store the browser/tab activity state.
+ *
+ * Will trigger sync if tab became active.
+ *
+ * @return {Boolean} state True if yes.
+ */
+export function setTabActive (state) {
+  tabActive = state
+  if (state) syncNow()
+}
+
+// --- internal, but exposed for unit testing ----------------------------------
+
+/**
+ * Internal: Set a table state to given data.
+ *
+ * Only exposed for unit testing.
+ */
+export function _setState (no, data) {
+  states[no] = data
+}
+
+/**
+ * Internal: Set a table metadata to given data.
+ *
+ * Only exposed for unit testing.
+ */
+export function _setTable (data) {
+  table = data
+}
+
 // --- internal ----------------------------------------------------------------
 
 let table = {} /** stores the table meta info JSON */
 let stateNo = 1 /** stores the currently visible sub-table */
 const states = [[], [], [], [], [], [], [], [], [], []] /** caches the states 0..9 **/
+let tabActive = true /** is the current tab/window active/maximized? */
 
 /**
  * Strip client-side properties from pieces that would confuse the API.

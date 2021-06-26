@@ -19,6 +19,7 @@ Your game. Your data.
 * Separate layers for tiles, overlays and tokens.
 * Asset browser for your token/tiles. Individual libraries per game.
 * Sticky notes and dice trays.
+* Subtable support to easily switch between game setups or dungeon levels.
 * Templates to setup tables and populate your library from.
 * Transfer individual tables between servers. Or keep an offline backup.
 * Privacy friendly. No user tracking. No 3rd-party scripts. Tables are deleted after some (configurable) time, usually 48h.
