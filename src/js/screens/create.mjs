@@ -21,7 +21,7 @@ import { createScreen, serverFeedback } from '../screen.mjs'
 import { runError } from './error.mjs'
 
 import { createTable as stateCreateTable } from './table/state.mjs'
-import { stateGetServerInfo } from '../state.mjs'
+import { stateGetServerInfo } from '../server.mjs'
 import _ from '../FreeDOM.mjs'
 import { apiGetTemplates, UnexpectedStatus } from '../api.mjs'
 import { navigateToTable } from '../nav.mjs'

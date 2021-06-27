@@ -4,7 +4,7 @@ Here is a list what might happen next. However, priorities can change.
 
 ## v0.10 - Pointing Pony
 
-* [ ] pointer feature
+* [X] pointer feature
 * [ ] different edit modals per piece type (hide useless fields)
 * [ ] token status (blind, poison, prone, dazed, ...)
 * [X] unit tests for client data model
@@ -42,7 +42,7 @@ Here is a list what might happen next. However, priorities can change.
 * docs how to make table/template `.zip`s
 * click thru / don't drag on transparent parts of images
 * LOS-ruler
-* tabletop settings (e.g. change background, size, grid)
+* more tabletop settings (e.g. change background, grid)
 * undo (limited)
 * demo mode (serverless?)
 * use image masks for png backsides

@@ -21,7 +21,7 @@ import { createScreen } from '../screen.mjs'
 import { createTable } from './create.mjs'
 import { runTable } from './table/table.mjs'
 
-import { stateGetServerInfo } from '../state.mjs'
+import { stateGetServerInfo } from '../server.mjs'
 import _ from '../FreeDOM.mjs'
 import {
   getGetParameter,

@@ -30,12 +30,13 @@ import {
   createNote,
   outlineSelected,
   toBottomSelected,
-  toggleLayer
+  toggleLayer,
+  pointTo
 } from './table.mjs'
 import {
   isDragging,
-  getMouseTileX,
-  getMouseTileY
+  getMouseCoords,
+  getMouseTile
 } from './mouse.mjs'
 import {
   touch
@@ -82,6 +83,9 @@ function handleTableKeys (keydown) {
       case 'Delete': // delete selected
         deleteSelected()
         break
+      case ' ':
+        pointTo(getMouseCoords())
+        break
       case '1': // toggle layer, switch subtable
         if (keydown.ctrlKey | keydown.altKey) setStateNo(1); else toggleLayer('other')
         break
@@ -110,10 +114,10 @@ function handleTableKeys (keydown) {
         if (keydown.ctrlKey | keydown.altKey) setStateNo(9)
         break
       case 'l': // library / add piece
-        modalLibrary(getMouseTileX(), getMouseTileY())
+        modalLibrary(getMouseTile())
         break
       case 'n': // library / add piece
-        createNote(getMouseTileX(), getMouseTileY())
+        createNote(getMouseTile())
         break
       case 'b': // to-bottom
         toBottomSelected()
@@ -122,7 +126,7 @@ function handleTableKeys (keydown) {
         toTopSelected()
         break
       case 'c': // copy/clone
-        cloneSelected(getMouseTileX(), getMouseTileY())
+        cloneSelected(getMouseTile())
         break
       case 'e': // edit
       case 'F2':

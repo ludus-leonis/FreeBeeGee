@@ -24,7 +24,7 @@ import {
 } from './screens/join.mjs'
 import {
   stateSetServerInfo
-} from './state.mjs'
+} from './server.mjs'
 import {
   setTabActive
 } from './screens/table/state.mjs'

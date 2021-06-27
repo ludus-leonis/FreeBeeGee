@@ -27,6 +27,7 @@ namespace com\ludusleonis\freebeegee;
  */
 class FreeBeeGeeAPI
 {
+    private $ID_POINTER = 'ffffffffffffffff';
     private $version = '$VERSION$';
     private $engine = '$ENGINE$';
     private $api = null; // JSONRestAPI instance
@@ -567,8 +568,8 @@ class FreeBeeGeeAPI
         // rewrite state, starting with new item
         // only latest (first) state item per ID matters
         $now = time();
-        $newState = [];
-        $ids = [];
+        $newState = []; // will get the new, updated/rewritten state
+        $ids = []; // the IDs of all pieces that are still in $newState after all the updates
         if ($create) { // in create mode we inject the new piece
             $newState[] = $this->removeDefaultsFromPiece($piece);
             foreach ($oldState as $stateItem) {
@@ -595,8 +596,11 @@ class FreeBeeGeeAPI
                         $stateItem = $this->removeDefaultsFromPiece($this->merge($stateItem, $piece));
                         $result = $stateItem;
                     }
-                    $newState[] = $stateItem;
-                    $ids[] = $stateItem->id;
+                    if (!property_exists($stateItem, 'expires') || $stateItem->expires >= time()) {
+                        // only add if not expired
+                        $newState[] = $stateItem;
+                        $ids[] = $stateItem->id;
+                    }
                 }
             }
             if (!in_array($piece->id, $ids) && (!property_exists($piece, 'layer') || $piece->layer !== 'delete')) {
@@ -777,7 +781,8 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Remove properties that are at their default values from a piece.
+     * Remove properties that are at their default values from a piece. Add
+     * 'expires' fields for pieces that are short-lived.
      *
      * Saves some space in the JSON later on.
      *
@@ -808,6 +813,9 @@ class FreeBeeGeeAPI
         if (property_exists($piece, 'label') && $piece->label === '') {
             unset($piece->label);
         }
+        if ($piece->asset === $this->ID_POINTER) {
+            $piece->expires = time() + 8;
+        }
         return $piece;
     }
 
@@ -833,7 +841,7 @@ class FreeBeeGeeAPI
                     $validated->layer = $this->api->assertEnum('layer', $value, $this->layers);
                     break;
                 case 'asset':
-                    $validated->asset = $this->api->assertString('asset', $value, '[a-z0-9]+');
+                    $validated->asset = $this->api->assertString('asset', $value, '^[0-9a-f]{16}$');
                     break;
                 case 'w':
                     $validated->w = $this->api->assertInteger('w', $value, 1, 32);
@@ -1346,7 +1354,12 @@ class FreeBeeGeeAPI
     ) {
         $this->assertStateNo($sid);
         $piece = $this->validatePieceJson($json, true);
-        $piece->id = $this->generateId();
+        if ($piece->asset === $this->ID_POINTER) {
+            // there can only be one pointer and it has a fixed ID
+            $piece->id = $this->ID_POINTER;
+        } else {
+            $piece->id = $this->generateId();
+        }
         $this->updatePieceStateLocked($tableName, $sid, $piece, true);
         $this->api->sendReply(201, json_encode($piece));
     }

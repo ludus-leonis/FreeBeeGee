@@ -538,6 +538,7 @@ class JSONRestAPI
         string $digest = null
     ): void {
         http_response_code($code);
+        header('Servertime: ' . time());
         if ($location) {
             header('Location: ' . $location);
         }

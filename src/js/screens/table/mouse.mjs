@@ -30,7 +30,10 @@ import {
   getScrollPosition,
   setScrollPosition,
   unselectPieces,
-  popupPiece
+  popupPiece,
+  getTableCoordinates,
+  getTableTile,
+  pointTo
 } from './table.mjs'
 import { clamp } from '../../utils.mjs'
 import _ from '../../FreeDOM.mjs'
@@ -51,25 +54,19 @@ export function isDragging () {
 }
 
 /**
- * Calculate the grid/tile X coordinate based on mouse position.
- *
- * @return {Number} Current tile X.
+ * Get the current mouse cursor position.
+ * @return {Object} Object with x and y in pixels.
  */
-export function getMouseTileX () {
-  const template = getTemplate()
-  const mouseTileX = Math.floor(compensateOffsetX(mouseX) / template.gridSize)
-  return clamp(0, mouseTileX, template.gridWidth - 1)
+export function getMouseCoords () {
+  return getTableCoordinates(mouseX, mouseY)
 }
 
 /**
- * Calculate the grid/tile Y coordinate based on mouse position.
- *
- * @return {Number} Current tile Y.
+ * Get the current mouse cursor position.
+ * @return {Object} Object with x and y in tiles/grid.
  */
-export function getMouseTileY () {
-  const template = getTemplate()
-  const mouseTileY = Math.floor(compensateOffsetY(mouseY) / template.gridSize)
-  return clamp(0, mouseTileY, template.gridHeight - 1)
+export function getMouseTile () {
+  return getTableTile(mouseX, mouseY)
 }
 
 /**
@@ -140,8 +137,13 @@ function touchMousePosition (x, y) {
 function mouseDown (mousedown) {
   switch (mousedown.button) {
     case 0:
-      handleSelection(mousedown.target)
-      dragStart(mousedown)
+      if (mousedown.shiftKey) {
+        console.log('pointer')
+        pointTo(getTableCoordinates(mouseX, mouseY))
+      } else {
+        handleSelection(mousedown.target)
+        dragStart(mousedown)
+      }
       break
     case 1:
       grabStart(mousedown)
@@ -231,8 +233,9 @@ function dragStart (mousedown) {
 
   // rect is relative to viewport, so we compensate for scrolling
   const rect = dragging.getBoundingClientRect()
-  dragging.originX = compensateOffsetX(rect.left)
-  dragging.originY = compensateOffsetY(rect.top)
+  const absolute = getTableCoordinates(rect.left, rect.top)
+  dragging.originX = absolute.x
+  dragging.originY = absolute.y
 
   dragging.width = rect.right - rect.left
   dragging.height = rect.bottom - rect.top
@@ -381,34 +384,6 @@ function properties (mousedown) {
 }
 
 // --- other -------------------------------------------------------------------
-
-/**
- * Convert a window mouse-x position to a tabletop canvas x position.
- *
- * Takes position of canvas and scroll position of canvas into account.
- *
- * @param {Number} x A window x coordinate.
- * @return {Number} A canvas x coordinate.
- */
-function compensateOffsetX (x) {
-  x += getScrollPosition().x // compensate scroll position
-  x -= scroller.getBoundingClientRect().left // compensate container position
-  return x
-}
-
-/**
- * Convert a window mouse-y position to a tabletop canvas y position.
- *
- * Takes position of canvas and scroll position of canvas into account.
- *
- * @param {Number} y A window y coordinate.
- * @return {Number} A canvas y coordinate.
- */
-function compensateOffsetY (y) {
-  y += getScrollPosition().y // compensate scroll position
-  y -= scroller.getBoundingClientRect().top // compensate container position
-  return y
-}
 
 /**
  * Move a dragging piece to the current mouse position.

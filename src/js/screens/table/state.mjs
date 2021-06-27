@@ -376,7 +376,6 @@ export function createPieces (pieces, selected = false, selectIds = []) {
   return createPiece(clampToTablesize(piece), false)
     .then(id => {
       selectIds.push(id)
-      console.log('createPieces', selected, selectIds)
       if (pieces.length === 0) final = true
       if (pieces.length > 0) return createPieces(pieces, selected, selectIds)
     })
@@ -409,7 +408,7 @@ export function deleteTable () {
 export function fetchTableState (no) {
   return apiGetState(table.name, no, true)
     .then(state => {
-      _setState(no, populatePiecesDefaults(state.body))
+      _setState(no, populatePiecesDefaults(state.body, state.headers))
       return state
     })
     .catch(error => errorTableGone(error))

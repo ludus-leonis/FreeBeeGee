@@ -72,18 +72,6 @@ let scroller = null /** keep reference to scroller div - we need it often */
 /**
  * Get current tabletop scroll position.
  *
- * @return {Object} Contains x and y in pixel.
- */
-export function getScrollPosition () {
-  return {
-    x: scroller.scrollLeft,
-    y: scroller.scrollTop
-  }
-}
-
-/**
- * Get current tabletop scroll position.
- *
  * @return {Number} x X-coordinate.
  * @return {Number} y Y-coordinate.
  */
@@ -161,15 +149,14 @@ export function editSelected () {
  *
  * Will silently fail if nothing is selected.
  *
- * @param {Number} x x position (in tiles).
- * @param {Number} y y position (in tiles).
+ * @param {Object} tile Grid x/y position (in tiles).
  */
-export function cloneSelected (x, y) {
+export function cloneSelected (tile) {
   getSelected().each(node => {
     const template = getTemplate()
     const piece = findPiece(node.id)
-    piece.x = x * template.gridSize
-    piece.y = y * template.gridSize
+    piece.x = tile.x * template.gridSize
+    piece.y = tile.y * template.gridSize
     piece.z = getMaxZ(piece.layer) + 1
     if (piece.n > 0) { // increase piece letter (if it has one)
       piece.n = piece.n + 1
@@ -477,8 +464,12 @@ export function pieceToNode (piece) {
 
   // create the dom node
   const asset = findAsset(piece.asset)
-  if (piece.asset === '0000000000000000') {
-    node = createInvalidAsset(piece.layer)
+  if (asset === null) {
+    if (piece.asset === ID_POINTER) {
+      node = createPointerAsset(piece.layer)
+    } else {
+      node = createInvalidAsset(piece.layer)
+    }
   } else {
     const uriSide = asset.assets[piece.side] === '##BACK##'
       ? 'img/backside.svg'
@@ -494,17 +485,18 @@ export function pieceToNode (piece) {
         backgroundImage: 'url("' + encodeURI(uriSide) + '")'
       })
     }
-  }
-  if (asset.type !== 'overlay' && asset.type !== 'other') {
-    node.css({
-      backgroundColor: asset.color ?? '#808080'
-    })
+
+    if (asset.type !== 'overlay' && asset.type !== 'other') {
+      node.css({
+        backgroundColor: asset.color ?? '#808080'
+      })
+    }
   }
 
   // set meta-classes on node
   node.id = piece.id
   node.add(`.is-side-${piece.side}`)
-  if (asset.color === 'border') node.add('.is-bordercolor')
+  if (asset?.color === 'border') node.add('.is-bordercolor')
 
   return node
 }
@@ -530,17 +522,16 @@ export function noteToNode (note) {
  *
  * This adds a enirely new note to the table via a call to the state.
  *
- * @param {Number} x X-tile to add pice to.
- * @param {Number} y Y-tile to add pice to.
+ * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
-export function createNote (tileX, tileY) {
+export function createNote (tile) {
   const template = getTemplate()
   createPieces([{
     layer: 'note',
     w: 3,
     h: 3,
-    x: tileX * template.gridSize,
-    y: tileY * template.gridSize,
+    x: tile.x * template.gridSize,
+    y: tile.y * template.gridSize,
     z: getMaxZ('note') + 1
   }], true)
 }
@@ -685,6 +676,64 @@ export function updateTabletop (state, selectIds = []) {
   updateStatusline()
 
   recordTime('sync-ui', Date.now() - start)
+}
+
+/**
+ * Move the pointer to the given location.
+ *
+ * @param {Object} coords {x, y} object.
+ */
+export function pointTo (coords) {
+  const template = getTemplate()
+  const table = getTable()
+
+  coords.x = clamp(0, coords.x - template.gridSize / 2, table.width - template.gridSize)
+  coords.y = clamp(0, coords.y - template.gridSize / 2, table.height - template.gridSize)
+  const pointer = findPiece(ID_POINTER)
+  if (pointer) {
+    movePiece(pointer.id, coords.x, coords.y)
+  } else {
+    createPieces([{
+      asset: ID_POINTER,
+      layer: 'other',
+      w: 1,
+      h: 1,
+      x: coords.x,
+      y: coords.y,
+      z: getMaxZ('other') + 1
+    }])
+  }
+}
+
+/**
+ * Convert a window coordinates to a tabletop coordinates.
+ *
+ * Takes position of element and scroll position inside the element into account.
+ *
+ * @param {Number} clientX A window x coordinate e.g. from a click event.
+ * @param {Number} clientY A window y coordinate e.g. from a click event.
+ * @return {Object} The absolute table coordinate as {x, y}.
+ */
+export function getTableCoordinates (windowX, windowY) {
+  const origin = scroller.getBoundingClientRect()
+
+  return {
+    x: windowX + scroller.scrollLeft - origin.left,
+    y: windowY + scroller.scrollTop - origin.top
+  }
+}
+
+/**
+ * Calculate the grid/tile X coordinate based on mouse position.
+ *
+ * @return {Object} Current tile as {x, y}.
+ */
+export function getTableTile (windowX, windowY) {
+  const template = getTemplate()
+  const coords = getTableCoordinates(windowX, windowY)
+  coords.x = clamp(0, Math.floor(coords.x / template.gridSize), template.gridWidth - 1)
+  coords.y = clamp(0, Math.floor(coords.y / template.gridSize), template.gridHeight - 1)
+  return coords
 }
 
 // --- internal ----------------------------------------------------------------
@@ -861,6 +910,16 @@ function createInvalidAsset (type) {
 }
 
 /**
+ * Create an asset node for invalid assets / ids.
+ *
+ * @param {String} type Asset type (token, tile, ...).
+ * @return {FreeDOM} dummy node.
+ */
+function createPointerAsset () {
+  return _('.piece.piece-other.is-pointer').create()
+}
+
+/**
  * Calculate the center of the setup on the table.
  *
  * Iterates over all pieces and averages their centers.
@@ -1000,6 +1059,14 @@ function removeObsoletePieces (keepIds) {
   // remove ids from list that are dragndrop targets
   ids = ids.filter(item => !item.endsWith('-drag'))
 
+  // add ids for expired items (currently only pointers)
+  const now = new Date()
+  _('#tabletop .is-pointer').each(node => {
+    if (node.piece._expires < now) {
+      ids.push(node.id)
+    }
+  })
+
   // delete ids that are still left
   for (const id of ids) {
     _('#' + id).delete()
@@ -1013,6 +1080,7 @@ function removeObsoletePieces (keepIds) {
  * @param {Boolean} selected If true, this item will be selected.
  */
 function setItem (piece, selected) {
+  if (piece._expires < 0) return // do not add expired pieces
   switch (piece.layer) {
     case 'tile':
     case 'token':
@@ -1057,6 +1125,8 @@ function runStatuslineLoop () {
 function fakeTabularNums (text) {
   return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
 }
+
+const ID_POINTER = 'ffffffffffffffff'
 
 const iconDice = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
 

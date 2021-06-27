@@ -47,14 +47,12 @@ import { createModal, getModal, modalActive, modalClose } from '../../../modal.m
 /**
  * Show the pieces library modal.
  *
- * @param {Number} x X grid coordinate where to add items on close.
- * @param {Number} y Y grid coordinate where to add items on close.
+ * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
-export function modalLibrary (x, y) {
+export function modalLibrary (tile) {
   if (!modalActive()) {
     const node = createModal(true)
-    node.x = x
-    node.y = y
+    node.tile = tile
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Library</h3>
@@ -496,7 +494,7 @@ function modalOk () {
   const pieces = []
   let offsetZ = 0
   _('#tabs-library .is-selected .piece').each(item => {
-    const piece = createPieceFromAsset(item.dataset.asset, modal.x, modal.y)
+    const piece = createPieceFromAsset(item.dataset.asset, modal.tile.x, modal.tile.y)
 
     piece.z = piece.z + offsetZ
     pieces.push(piece)

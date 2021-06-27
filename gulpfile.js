@@ -169,7 +169,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/modal.mjs',
     'src/js/nav.mjs',
     'src/js/screen.mjs',
-    'src/js/state.mjs',
+    'src/js/server.mjs',
     'src/js/utils.mjs',
     'src/js/screens/create.mjs',
     'src/js/screens/error.mjs',
