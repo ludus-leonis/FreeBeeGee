@@ -35,43 +35,10 @@ export function modalEdit (piece) {
     node.piece = piece
 
     _('#modal-header').innerHTML = `
-      <h3 class="modal-title">Edit piece</h3>
+      <h3 class="modal-title">Edit</h3>
     `
-    _('#modal-body').innerHTML = `
-      <form class="container">
-        <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
-        <div class="row">
-          <div class="col-12">
-            <label for="piece-label">Label</label>
-            <input id="piece-label" name="piece-label" type="text" maxlength="32">
-          </div>
-          <div class="col-6 col-lg-3">
-            <label for="piece-w">Width</label>
-            <select id="piece-w" name="piece-w"></select>
-          </div>
-          <div class="col-6 col-lg-3">
-            <label for="piece-h">Height</label>
-            <select id="piece-h" name="piece-h"></select>
-          </div>
-          <div class="col-6 col-lg-3">
-            <label for="piece-r">Rotate</label>
-            <select id="piece-r" name="piece-r"></select>
-          </div>
-          <div class="col-6 col-lg-3">
-            <label for="piece-side">Side</label>
-            <select id="piece-side" name="piece-side"></select>
-          </div>
-          <div class="col-6">
-            <label for="piece-border">Color</label>
-            <select id="piece-border" name="piece-color"></select>
-          </div>
-          <div class="col-6">
-            <label for="piece-number">Number</label>
-            <select id="piece-number" name="piece-number"></select>
-          </div>
-        </div>
-      </form>
-    `
+    _('#modal-body').innerHTML = getModalBody(piece.layer)
+
     // label
     _('#piece-label').value = piece.label
 
@@ -166,6 +133,173 @@ export function modalEdit (piece) {
 
 // --- internal ----------------------------------------------------------------
 
+function getModalBody (layer) {
+  switch (layer) {
+    case 'note':
+      return getModalNote()
+    case 'tile':
+    case 'overlay':
+      return getModalTile()
+    case 'other':
+      return getModalOther()
+    case 'token':
+    default:
+      return getModalToken()
+  }
+}
+
+function getModalToken () {
+  return `
+    <form class="container">
+      <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
+      <div class="row">
+        <div class="col-12">
+          <label for="piece-label">Label</label>
+          <input id="piece-label" name="piece-label" type="text" maxlength="32">
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-w">Width</label>
+          <select id="piece-w" name="piece-w"></select>
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-h">Height</label>
+          <select id="piece-h" name="piece-h"></select>
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-r">Rotate</label>
+          <select id="piece-r" name="piece-r"></select>
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-side">Side</label>
+          <select id="piece-side" name="piece-side"></select>
+        </div>
+        <div class="col-6">
+          <label for="piece-border">Color</label>
+          <select id="piece-border" name="piece-color"></select>
+        </div>
+        <div class="col-6">
+          <label for="piece-number">Number</label>
+          <select id="piece-number" name="piece-number"></select>
+        </div>
+      </div>
+    </form>
+  `
+}
+
+function getModalOther () {
+  return `
+    <form class="container">
+      <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
+      <div class="row">
+        <div class="col-12">
+          <label for="piece-label">Label</label>
+          <input id="piece-label" name="piece-label" type="text" maxlength="32">
+        </div>
+        <div class="col-4">
+          <label for="piece-w">Width</label>
+          <select id="piece-w" name="piece-w"></select>
+        </div>
+        <div class="col-4">
+          <label for="piece-h">Height</label>
+          <select id="piece-h" name="piece-h"></select>
+        </div>
+        <div class="col-6 col-lg-3 is-hidden">
+          <label for="piece-r">Rotate</label>
+          <select id="piece-r" name="piece-r"></select>
+        </div>
+        <div class="col-4">
+          <label for="piece-side">Side</label>
+          <select id="piece-side" name="piece-side"></select>
+        </div>
+        <div class="col-6 is-hidden">
+          <label for="piece-border">Color</label>
+          <select id="piece-border" name="piece-color"></select>
+        </div>
+        <div class="col-6 is-hidden">
+          <label for="piece-number">Number</label>
+          <select id="piece-number" name="piece-number"></select>
+        </div>
+      </div>
+    </form>
+  `
+}
+
+function getModalTile () {
+  return `
+    <form class="container">
+      <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
+      <div class="row">
+        <div class="col-12">
+          <label for="piece-label">Label</label>
+          <input id="piece-label" name="piece-label" type="text" maxlength="32">
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-w">Width</label>
+          <select id="piece-w" name="piece-w"></select>
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-h">Height</label>
+          <select id="piece-h" name="piece-h"></select>
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-r">Rotate</label>
+          <select id="piece-r" name="piece-r"></select>
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-side">Side</label>
+          <select id="piece-side" name="piece-side"></select>
+        </div>
+        <div class="col-6 is-hidden">
+          <label for="piece-border">Color</label>
+          <select id="piece-border" name="piece-color"></select>
+        </div>
+        <div class="col-6 is-hidden">
+          <label for="piece-number">Number</label>
+          <select id="piece-number" name="piece-number"></select>
+        </div>
+      </div>
+    </form>
+  `
+}
+
+function getModalNote () {
+  return `
+    <form class="container">
+      <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
+      <div class="row">
+        <div class="col-12">
+          <label for="piece-label">Label</label>
+          <input id="piece-label" name="piece-label" type="text" maxlength="32">
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-w">Width</label>
+          <select id="piece-w" name="piece-w"></select>
+        </div>
+        <div class="col-6 col-lg-3">
+          <label for="piece-h">Height</label>
+          <select id="piece-h" name="piece-h"></select>
+        </div>
+        <div class="col-6 col-lg-3 is-hidden">
+          <label for="piece-r">Rotate</label>
+          <select id="piece-r" name="piece-r"></select>
+        </div -->
+        <div class="col-6 col-lg-3 is-hidden">
+          <label for="piece-side">Side</label>
+          <select id="piece-side" name="piece-side"></select>
+        </div>
+        <div class="col-12 col-lg-6">
+          <label for="piece-border">Color</label>
+          <select id="piece-border" name="piece-color"></select>
+        </div>
+        <div class="col-6 is-hidden">
+          <label for="piece-number">Number</label>
+          <select id="piece-number" name="piece-number"></select>
+        </div>
+      </div>
+    </form>
+  `
+}
+
 /**
  * Hides modal and pushes changes to the state.
  */
@@ -191,7 +325,7 @@ function modalOk () {
   if (value !== piece.border) updates.border = value
 
   value = Number(_('#piece-number').value)
-  if (value !== piece.n) updates.no = value
+  if (value !== piece.n) updates.n = value
 
   statePieceEdit(piece.id, updates)
   getModal().hide()

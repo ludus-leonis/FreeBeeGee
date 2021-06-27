@@ -5,12 +5,13 @@ Here is a list what might happen next. However, priorities can change.
 ## v0.10 - Pointing Pony
 
 * [X] pointer feature
-* [ ] different edit modals per piece type (hide useless fields)
+* [X] different edit modals per piece type (hide useless fields)
 * [ ] token status (blind, poison, prone, dazed, ...)
 * [X] unit tests for client data model
 * [ ] pre-release
   * [ ] bugfixing
     * [ ] css cleanup
+    * [ ] note rotation
     * [ ] library tab sometimes wrong size
   * [ ] review + run tests
   * [ ] update screenshots
