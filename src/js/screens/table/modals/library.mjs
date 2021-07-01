@@ -443,8 +443,8 @@ function assetToPreview (asset) {
   if (asset.w > 2 || asset.h > 2) {
     tag = `${asset.w}x${asset.h}`
   }
-  if (asset.assets.length > 1) {
-    tag += `:${asset.assets.length}`
+  if (asset.media.length > 1) {
+    tag += `:${asset.media.length}`
   }
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
   card.add(_('p').create().add(prettyName(asset.alias)))

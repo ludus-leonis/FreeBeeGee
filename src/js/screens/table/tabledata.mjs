@@ -139,7 +139,7 @@ export function populatePieceDefaults (piece, headers = null) {
 
   // add client-side meta information
   const asset = findAsset(piece.asset)
-  piece._sides = asset?.assets.length ?? 1
+  piece._sides = asset?.media.length ?? 1
   if (asset?.id === 'ffffffffffffffff') {
     piece._feature = 'POINTER'
   } else {
@@ -361,7 +361,7 @@ export function clampToTablesize (piece) {
  */
 function createInvalidAsset () {
   return {
-    assets: ['invalid.svg'],
+    media: ['invalid.svg'],
     width: 1,
     height: 1,
     color: '40bfbf',

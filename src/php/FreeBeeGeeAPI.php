@@ -627,7 +627,7 @@ class FreeBeeGeeAPI
         $filename
     ) {
         $asset = new \stdClass();
-        $asset->assets = [$filename];
+        $asset->media = [$filename];
         if (
             // group.name.1x2x3.808080.png
             preg_match(
@@ -708,28 +708,28 @@ class FreeBeeGeeAPI
                 ) {
                     // this is a new asset. write out the old.
                     if ($lastAsset !== null) {
-                        if (count($lastAsset->assets) === 1) { // add backside to 1-sided asset
-                            $lastAsset->assets[] = '##BACK##';
+                        if (count($lastAsset->media) === 1) { // add backside to 1-sided asset
+                            $lastAsset->media[] = '##BACK##';
                         }
                         array_push($assets[$type], $lastAsset);
                     }
                     if (preg_match('/^X+$/', $asset->side)) { // this is a back side
-                        $asset->back = $asset->assets[0];
-                        $asset->assets = [];
+                        $asset->back = $asset->media[0];
+                        $asset->media = [];
                     } elseif ((int)$asset->side === 0) { // this is a background layer
-                        $asset->base = $asset->assets[0];
-                        $asset->assets = [];
+                        $asset->base = $asset->media[0];
+                        $asset->media = [];
                     }
                     unset($asset->side); // we don't keep the side in the json data
                     $lastAsset = $asset;
                 } else {
                     // this is another side of the same asset. add it to the existing one.
-                    array_push($lastAsset->assets, $asset->assets[0]);
+                    array_push($lastAsset->media, $asset->media[0]);
                 }
             }
             if ($lastAsset !== null) { // don't forget the last one!
-                if (count($lastAsset->assets) === 1) { // add backside to 1-sided asset
-                    $lastAsset->assets[] = '##BACK##';
+                if (count($lastAsset->media) === 1) { // add backside to 1-sided asset
+                    $lastAsset->media[] = '##BACK##';
                 }
                 array_push($assets[$type], $lastAsset);
             }

@@ -48,8 +48,7 @@ import {
 import { startAutoSync } from './sync.mjs'
 import {
   enableDragAndDrop,
-  getMouseTileX,
-  getMouseTileY,
+  getMouseTile,
   updateMenu
 } from './mouse.mjs'
 import _ from '../../FreeDOM.mjs'
@@ -68,6 +67,18 @@ import { modalSettings, changeQuality } from './modals/settings.mjs'
 let scroller = null /** keep reference to scroller div - we need it often */
 
 // --- public ------------------------------------------------------------------
+
+/**
+ * Get current tabletop scroll position.
+ *
+ * @return {Object} Contains x and y in pixel.
+ */
+export function getScrollPosition () {
+  return {
+    x: scroller.scrollLeft,
+    y: scroller.scrollTop
+  }
+}
 
 /**
  * Get current tabletop scroll position.
@@ -471,9 +482,9 @@ export function pieceToNode (piece) {
       node = createInvalidAsset(piece.layer)
     }
   } else {
-    const uriSide = asset.assets[piece.side] === '##BACK##'
+    const uriSide = asset.media[piece.side] === '##BACK##'
       ? 'img/backside.svg'
-      : `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.assets[piece.side]}`
+      : `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.media[piece.side]}`
     const uriBase = `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.base}`
     if (asset.base) { // layered asset
       node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
@@ -598,7 +609,7 @@ export function popupPiece (id) {
   _('#popper .clone').on('click', click => {
     click.preventDefault()
     _('#popper').remove('.show')
-    cloneSelected(getMouseTileX(), getMouseTileY())
+    cloneSelected(getMouseTile())
   })
 
   createPopper(_('#' + id).node(), popup.node(), {
@@ -826,10 +837,10 @@ function setupTable () {
   }
 
   // setup menu for selection
-  _('#btn-a').on('click', () => modalLibrary(getMouseTileX(), getMouseTileY()))
+  _('#btn-a').on('click', () => modalLibrary(getMouseTile()))
   _('#btn-e').on('click', () => editSelected())
   _('#btn-r').on('click', () => rotateSelected())
-  _('#btn-c').on('click', () => cloneSelected(getMouseTileX(), getMouseTileY()))
+  _('#btn-c').on('click', () => cloneSelected(getMouseTile()))
   _('#btn-t').on('click', () => toTopSelected())
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())
