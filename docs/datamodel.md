@@ -1,6 +1,6 @@
 # FreeBeeGee datamodel
 
-This file describes the FreeBeeGee JSON data model.
+This document is part of the [FreeBeeGee documentation](DOCS.md). It describes the FreeBeeGee JSON data model.
 
 It is not necessary to read/understand this to create templates. This information is here for developers who would like to contribute code or extend FreeBeeGee.
 
@@ -170,7 +170,56 @@ In addition, pieces can have the following properties. If omitted, they default 
 
 ## Templates
 
-TBD
+A template, a.k.a. snapshot, describes a table setup for a particular game.
+
+```json
+{
+  "type": "grid-square",
+  "version": "1.0.1",
+  "engine": "^0.4.0",
+
+  "colors": {
+    "black": "#000000",
+    "white": "#ffffff"
+  },
+
+  "gridSize": 64,
+  "gridWidth": 48,
+  "gridHeight": 32,
+  "snapSize": 32
+}
+```
+
+`type`
+: The type of table this template uses. Currently only `grid-square` is supported.
+
+`version`
+: The version of the template / snapshot itself. Uses [Semantic Versioning](https://semver.org/). Saved templates will contain the same version as the FreeBeeGee version, but you can use your own version in custom templates.
+
+`engine`
+: The FreeBeeGee engine this template should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
+
+`colors`
+: A series of colors available as border-colors etc. on the table. Key-Value pairs with name and RGB hex code. Minimum 1 required.
+
+The remaining template properties depend on the game type.
+
+### `grid-square` entries
+
+Templates using the `grid-square` type also have the following properties:
+
+`gridSize`
+: The grid / minimum tile size in px.
+
+`gridHeight`
+: The height of this template/table in grid spaces.
+
+`gridWidth`
+: The width of this template/table in grid spaces.
+
+`snapSize`
+: The (invisible) grid size pieces will snap to. Usuall equal to the `gridSize` to allow only full-tile snapping, or half of the `gridSize` to allow snapping to border/corners.
+
 
 ## Tables
 

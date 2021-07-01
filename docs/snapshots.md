@@ -1,10 +1,16 @@
 # FreeBeeGee snapshot format
 
-This document explains how FreeBeeGee game snapshots are structured.
+This document is part of the [FreeBeeGee documentation](DOCS.md). It explains how FreeBeeGee game snapshots are structured.
+
+## About snapshots
+
+Snapshots are Save-Game `*.zip`s you can obtain by downloading them from any table you have joined. When creating a new table, you can provide such a snapshot to recreate and continue a game.
+
+Snapshots do not only serve as Save-Games and backups, but can also be used as pre-setup game templates and shared with other players/servers. While you can do most of the setup in the FreeBeeGee UI, there are some things that require you editing the `zip` file.
 
 ## Basic snapshot layout
 
-Snapshots are ordinary `*.zip` files with a strict following folder structure. A minimal working snapshot (without much content to play with) contains:
+Snapshots are ordinary `*.zip` files with a strict following folder structure. A minimal working snapshot (without any content to play) contains:
 
 ```
 /
@@ -12,7 +18,7 @@ Snapshots are ordinary `*.zip` files with a strict following folder structure. A
 └─ LICENSE.md
 ```
 
-Note that all files have to be in the root folder of the `ZIP`. Usually you want to also add assets (images) and states (table setups), so a more realistic example is:
+Note that all files have to be in the root folder of the `ZIP`! Usually you want to also add assets (media) and states (table setups), so a more realistic example contains:
 
 ```
 /
@@ -44,25 +50,7 @@ To protect the server and the players, FreeBeeGee is picky when validating snaps
 
 A contains `template.json` meta-information for the game engine in [JSON](https://en.wikipedia.org/wiki/JSON) format.
 
-```json
-{
-  "type": "grid-square",
-  "version": "$VERSION$",
-  "engine": "^$ENGINE$",
-
-  "gridSize": 64,
-  "gridWidth": 48,
-  "gridHeight": 32,
-  "snapSize": 32,
-
-  "colors": {
-    "black": "#000000",
-    "white": "#ffffff"
-  }
-}
-```
-
-TBD
+The content of this file is described in the [datamodel](datamodel.md#templates) documentation.
 
 ## `LICENSE.md`
 
@@ -72,7 +60,7 @@ TBD
 
 Assets are the images users can see in the library window.
 
-All assets must be placed in an `assets/` folder. Inside that folder there may be subfolders for each asset type: `token`, `overlay`, `tile` and `other`. Images within those subfolders (but not sub-subfolders) will automatically be sorted in the corresponding library category. You can omit each of these folders if your snapshot does not need them. 
+All assets must be placed in an `assets/` folder. Inside that folder there may be subfolders for each asset type: `token`, `overlay`, `tile` and `other`. Images within those subfolders (but not sub-subfolders) will automatically be sorted in the corresponding library category. You can omit folders if your snapshot does not need them.
 
 TBD
 

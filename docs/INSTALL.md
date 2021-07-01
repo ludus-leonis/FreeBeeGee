@@ -1,6 +1,6 @@
 # Setup
 
-This guide covers the installation of FreeBeeGee.
+This document is part of the [FreeBeeGee documentation](DOCS.md). It covers the installation of FreeBeeGee.
 
 ## Requirements
 

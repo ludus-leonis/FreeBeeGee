@@ -1,6 +1,6 @@
 # Roadmap
 
-Here is a list what might happen next. However, priorities can change.
+This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
 ## v0.10 - Pointing Pony
 
