@@ -388,7 +388,7 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            if (!property_exists($template, 'engine') || !$this->api->semverSatisfies($this->engine, $template->engine)) {
+            if (!isset($template->engine) || !$this->api->semverSatisfies($this->engine, $template->engine)) {
                 $this->api->sendError(400, 'template.json: game engine mismatch', 'TEMPLATE_JSON_INVALID_ENGINE', [
                     $template->engine, $this->engine
                 ]);
@@ -590,20 +590,20 @@ class FreeBeeGeeAPI
                     // this is an update, and we have to patch the item if the ID matches
                     if ($stateItem->id === $piece->id) {
                         // just skip deleted piece
-                        if (property_exists($piece, 'layer') && $piece->layer === 'delete') {
+                        if (isset($piece->layer) && $piece->layer === 'delete') {
                             continue;
                         }
                         $stateItem = $this->removeDefaultsFromPiece($this->merge($stateItem, $piece));
                         $result = $stateItem;
                     }
-                    if (!property_exists($stateItem, 'expires') || $stateItem->expires >= time()) {
+                    if (!isset($stateItem->expires) || $stateItem->expires >= time()) {
                         // only add if not expired
                         $newState[] = $stateItem;
                         $ids[] = $stateItem->id;
                     }
                 }
             }
-            if (!in_array($piece->id, $ids) && (!property_exists($piece, 'layer') || $piece->layer !== 'delete')) {
+            if (!in_array($piece->id, $ids) && (!isset($piece->layer) || $piece->layer !== 'delete')) {
                 $this->api->unlockLock($lock);
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
@@ -792,28 +792,28 @@ class FreeBeeGeeAPI
     private function removeDefaultsFromPiece(
         object $piece
     ): object {
-        if (property_exists($piece, 'w') && $piece->w === 1) {
+        if (isset($piece->w) && $piece->w === 1) {
             unset($piece->w);
         }
-        if (property_exists($piece, 'h') && $piece->h === 1) {
+        if (isset($piece->h) && $piece->h === 1) {
             unset($piece->h);
         }
-        if (property_exists($piece, 'r') && $piece->r === 0) {
+        if (isset($piece->r) && $piece->r === 0) {
             unset($piece->r);
         }
-        if (property_exists($piece, 'side') && $piece->side === 0) {
+        if (isset($piece->side) && $piece->side === 0) {
             unset($piece->side);
         }
-        if (property_exists($piece, 'n') && $piece->n === 0) {
+        if (isset($piece->n) && $piece->n === 0) {
             unset($piece->n);
         }
-        if (property_exists($piece, 'border') && $piece->border === 0) {
+        if (isset($piece->border) && $piece->border === 0) {
             unset($piece->border);
         }
-        if (property_exists($piece, 'label') && $piece->label === '') {
+        if (isset($piece->label) && $piece->label === '') {
             unset($piece->label);
         }
-        if ($piece->asset === $this->ID_POINTER) {
+        if (isset($piece->asset) && $piece->asset === $this->ID_POINTER) {
             $piece->expires = time() + 8;
         }
         return $piece;
@@ -1059,14 +1059,14 @@ class FreeBeeGeeAPI
 
         // we need either a template name or an uploaded snapshot
         if (
-            property_exists($validated, 'template') && property_exists($validated, '_files')
-            || (!property_exists($validated, 'template') && !property_exists($validated, '_files'))
+            isset($validated->template) && isset($validated->_files)
+            || (!isset($validated->template) && !isset($validated->_files))
         ) {
             $this->api->sendError(400, 'you need to either specify a template or upload a snapshot');
         }
 
         // check if upload (if any) was ok
-        if (property_exists($validated, '_files')) {
+        if (isset($validated->_files)) {
             if (!$server->snapshotUploads) {
                 $this->api->sendError(400, 'snapshot upload is not enabled on this server');
             }
@@ -1199,10 +1199,10 @@ class FreeBeeGeeAPI
 
         // update template.json
         $templateFS = json_decode(file_get_contents($folder . 'template.json'));
-        if (\property_exists($template, 'gridWidth')) {
+        if (isset($template->gridWidth)) {
             $templateFS->gridWidth = $template->gridWidth;
         }
-        if (\property_exists($template, 'gridHeight')) {
+        if (isset($template->gridHeight)) {
             $templateFS->gridHeight = $template->gridHeight;
         }
         $this->writeAsJsonAndDigest($folder, 'template.json', $templateFS);
@@ -1354,7 +1354,7 @@ class FreeBeeGeeAPI
     ) {
         $this->assertStateNo($sid);
         $piece = $this->validatePieceJson($json, true);
-        if ($piece->asset === $this->ID_POINTER) {
+        if (isset($piece->asset) && $piece->asset === $this->ID_POINTER) {
             // there can only be one pointer and it has a fixed ID
             $piece->id = $this->ID_POINTER;
         } else {
