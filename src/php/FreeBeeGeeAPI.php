@@ -689,6 +689,9 @@ class FreeBeeGeeAPI
         $tableFolder = $this->getTableFolder($tableName);
         $assets = [];
         foreach ($this->layers as $type) {
+            if ($type === 'note') {
+                continue; // notes are only pieces, not assets
+            }
             $assets[$type] = [];
             $lastAsset = null;
             foreach (glob($tableFolder . 'assets/' . $type . '/' . '*') as $filename) {
