@@ -39,8 +39,10 @@ import {
 } from './state.mjs'
 import {
   findAsset,
+  findAssetByAlias,
   findPiece,
   findPiecesWithin,
+  getAssetURL,
   getMinZ,
   getMaxZ,
   getContentRectGrid
@@ -353,10 +355,24 @@ function createOrUpdatePieceDOM (piece, select) {
 export function setPiece (piece, select = false) {
   const node = createOrUpdatePieceDOM(piece, select)
 
-  if (node.piece.label !== piece.label) { // update label on change
+  if (node.piece.label !== piece.label || node.piece.tag !== piece.tag) { // update label on change
     _('#' + piece.id + ' .label').delete()
-    if (piece.label !== '') {
-      node.add(_('.label').create(piece.label))
+    if (piece.label !== '' || piece.tag !== '') {
+      const label = _('.label').create()
+      if (piece.label !== '') {
+        const span = _('span').create(piece.label)
+        label.add(span)
+      }
+      if (piece.tag !== '') {
+        const asset = findAssetByAlias(piece.tag, 'tag')
+        console.log(piece.tag, asset)
+        if (asset) {
+          const img = _('img.icon').create()
+          img.src = getAssetURL(asset, 0)
+          label.add(img)
+        }
+      }
+      node.add(label)
     }
   }
 
@@ -484,8 +500,8 @@ export function pieceToNode (piece) {
   } else {
     const uriSide = asset.media[piece.side] === '##BACK##'
       ? 'img/backside.svg'
-      : `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.media[piece.side]}`
-    const uriBase = `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.base}`
+      : getAssetURL(asset, piece.side)
+    const uriBase = getAssetURL(asset, -1)
     if (asset.base) { // layered asset
       node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
         backgroundImage: 'url("' + encodeURI(uriBase) + '")',

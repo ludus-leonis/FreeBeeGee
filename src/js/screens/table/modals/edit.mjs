@@ -17,7 +17,11 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getTemplate, statePieceEdit } from '../state.mjs'
+import {
+  getLibrary,
+  getTemplate,
+  statePieceEdit
+} from '../state.mjs'
 import _ from '../../../FreeDOM.mjs'
 
 import { createModal, getModal, modalActive, modalClose } from '../../../modal.mjs'
@@ -41,6 +45,23 @@ export function modalEdit (piece) {
 
     // label
     _('#piece-label').value = piece.label
+
+    // tag
+    const pieceTag = _('#piece-tag')
+    const pieceTagNone = _('option').create('none')
+    pieceTagNone.value = ''
+    pieceTag.add(pieceTagNone)
+    let pieceTagFound = false
+    for (const tag of getLibrary().tag) {
+      const option = _('option').create(tag.alias)
+      option.value = tag.alias
+      if (tag.alias === piece.tag) {
+        pieceTagFound = true
+        option.selected = true
+      }
+      pieceTag.add(option)
+    }
+    if (!pieceTagFound) pieceTagNone.selected = true
 
     // piece number
     const pieceNo = _('#piece-number')
@@ -153,9 +174,13 @@ function getModalToken () {
     <form class="container">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
-        <div class="col-12">
+        <div class="col-12 col-lg-8">
           <label for="piece-label">Label</label>
           <input id="piece-label" name="piece-label" type="text" maxlength="32">
+        </div>
+        <div class="col-12 col-lg-4">
+          <label for="piece-tag">Icon</label>
+          <select id="piece-tag" name="piece-w"></select>
         </div>
         <div class="col-6 col-lg-3">
           <label for="piece-w">Width</label>
@@ -308,6 +333,9 @@ function modalOk () {
   const updates = {}
   let value = _('#piece-label').value.trim()
   if (value !== piece.label) updates.label = value
+
+  value = _('#piece-tag').value
+  if (value !== piece.tag) updates.tag = value
 
   value = Number(_('#piece-w').value)
   if (value !== piece.w) updates.w = value

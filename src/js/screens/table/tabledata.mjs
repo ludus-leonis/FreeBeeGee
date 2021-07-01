@@ -20,6 +20,7 @@
  */
 
 import {
+  getTable,
   getTemplate,
   getLibrary,
   getState,
@@ -31,7 +32,7 @@ import {
   intersect
 } from '../../utils.mjs'
 
-export const assetTypes = ['tile', 'token', 'overlay', 'other']
+export const assetTypes = ['tile', 'token', 'overlay', 'other', 'tag']
 
 /**
  * Find a piece by ID.
@@ -69,6 +70,42 @@ export function findAsset (id, layer = 'any') {
   }
 
   return null
+}
+
+/**
+ * Find an asset by ID.
+ *
+ * @param {String} alias Alias to lookup.
+ * @param {String} layer Optional layer to limit/speed up search.
+ * @return {Object} First found asset with the given alias.
+ */
+export function findAssetByAlias (alias, layer = 'any') {
+  const library = getLibrary()
+
+  for (const assetType of assetTypes) {
+    if (layer === assetType || layer === 'any') {
+      for (const asset of library[assetType]) {
+        if (asset.alias === alias) return asset
+      }
+    }
+  }
+
+  return null
+}
+
+/**
+ * Get the URL for an asset media.
+ *
+ * @param {Object} asset Asset to get URL for.
+ * @param {Number} side Side/media to get, -1 = base.
+ * @return {String} URL to be used in url() or img.src.
+ */
+export function getAssetURL (asset, side) {
+  if (side === -1) {
+    return `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.base}`
+  } else {
+    return `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.media[side]}`
+  }
 }
 
 /**
@@ -136,6 +173,7 @@ export function populatePieceDefaults (piece, headers = null) {
   piece.n = piece.n ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
   piece.label = piece.label ?? ''
+  piece.tag = piece.tag ?? ''
 
   // add client-side meta information
   const asset = findAsset(piece.asset)

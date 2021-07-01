@@ -178,10 +178,11 @@ A template, a.k.a. snapshot, describes a table setup for a particular game.
   "version": "1.0.1",
   "engine": "^0.4.0",
 
-  "colors": {
-    "black": "#000000",
-    "white": "#ffffff"
-  },
+  "colors": [{
+    "name":"black","value":"#000000"
+  }, {
+    "name":"white","value":"#ffffff"
+  }],
 
   "gridSize": 64,
   "gridWidth": 48,
@@ -200,7 +201,7 @@ A template, a.k.a. snapshot, describes a table setup for a particular game.
 : The FreeBeeGee engine this template should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
 
 `colors`
-: A series of colors available as border-colors etc. on the table. Key-Value pairs with name and RGB hex code. Minimum 1 required.
+: A series of colors available as border-colors etc. on the table. Key-Value pairs with `name` and a `value` / RGB hex code. Minimum 1 required.
 
 The remaining template properties depend on the game type.
 

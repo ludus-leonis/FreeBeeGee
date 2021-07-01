@@ -19,6 +19,10 @@ RewriteRule ^[A-Za-z0-9]{8,48}$ index.html [NC,L,QSA]
   php_value post_max_size 24M
   php_value upload_max_filesize 16M
 </IfModule>
+<IfModule mod_php.c>
+  php_value post_max_size 24M
+  php_value upload_max_filesize 16M
+</IfModule>
 
 # ---- more boilerplate stuff below -------------------------------------
 

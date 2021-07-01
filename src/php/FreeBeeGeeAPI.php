@@ -35,6 +35,7 @@ class FreeBeeGeeAPI
     private $maxTableGridSize = 256;
     private $maxAssetSize = 1024 * 1024;
     private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
+    private $assetTypes = ['overlay', 'tile', 'token', 'other', 'tag'];
 
     /**
      * Constructor - setup our routes.
@@ -342,7 +343,7 @@ class FreeBeeGeeAPI
                 default: // scan for asset filenames
                     if (
                         !preg_match(
-                            '/^assets\/(overlay|tile|token|other)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
+                            '/^assets\/(overlay|tile|token|other|tag)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
                             $entry['name']
                         )
                     ) {
@@ -688,13 +689,10 @@ class FreeBeeGeeAPI
         // generate json data
         $tableFolder = $this->getTableFolder($tableName);
         $assets = [];
-        foreach ($this->layers as $type) {
-            if ($type === 'note') {
-                continue; // notes are only pieces, not assets
-            }
+        foreach ($this->assetTypes as $type) {
             $assets[$type] = [];
             $lastAsset = null;
-            foreach (glob($tableFolder . 'assets/' . $type . '/' . '*') as $filename) {
+            foreach (glob($tableFolder . 'assets/' . $type . '/*') as $filename) {
                 $asset = $this->fileToAsset(basename($filename));
                 $asset->type = $type;
 
@@ -816,6 +814,9 @@ class FreeBeeGeeAPI
         if (isset($piece->label) && $piece->label === '') {
             unset($piece->label);
         }
+        if (isset($piece->tag) && $piece->tag === '') {
+            unset($piece->tag);
+        }
         if (isset($piece->asset) && $piece->asset === $this->ID_POINTER) {
             $piece->expires = time() + 8;
         }
@@ -875,6 +876,9 @@ class FreeBeeGeeAPI
                     break;
                 case 'label':
                     $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
+                    break;
+                case 'tag':
+                    $validated->tag = trim($this->api->assertString('tag', $value, '^[^\n\r]{0,32}$'));
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');

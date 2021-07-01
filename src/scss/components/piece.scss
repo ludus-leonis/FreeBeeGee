@@ -219,6 +219,16 @@ $label-offset: 8px;
     position: relative;
     top: $label-offset;
     white-space: nowrap;
+
+    .icon {
+      height: 1em;
+      margin-top: 0;
+      width: 1em;
+
+      &:not(:first-child) {
+        margin-left: $spacing-micro;
+      }
+    }
   }
 
   &:hover > .label {
