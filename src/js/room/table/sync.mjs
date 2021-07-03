@@ -19,7 +19,9 @@
  */
 
 import {
-  updateRoom,
+  updateRoom
+} from '../room.mjs'
+import {
   updateTabletop
 } from './table.mjs'
 import {
@@ -27,7 +29,7 @@ import {
   reloadRoom,
   getState,
   getStateNo,
-  fetchRoomState,
+  fetchTableState,
   errorRoomGone,
   isTabActive
 } from './state.mjs'
@@ -85,11 +87,10 @@ export function stopAutoSync () {
 }
 
 /**
- * Record activity on the room.
+ * Record activity in the room.
  *
  * @param {?Boolean} remote If true, the remote timestamp is touched. Otherwise
  *                          the local is.
- * @return {Object} Room's metadata.
  */
 export function touch (remote = false) {
   if (remote) {
@@ -217,7 +218,7 @@ function fetchAndUpdateState (
   selectIds = []
 ) {
   lastNetworkActivity = Date.now()
-  return fetchRoomState(dirtyState)
+  return fetchTableState(dirtyState)
     .then(state => {
       lastDigests[`states/${dirtyState}.json`] = state.headers.get('digest')
 
@@ -228,7 +229,7 @@ function fetchAndUpdateState (
 }
 
 /**
- * The room (metadata) syncinc.
+ * The (metadata) syncinc.
  *
  * Is in charge of fetching the current state and trigger data/UI updates, but
  * not of scheduling itself.

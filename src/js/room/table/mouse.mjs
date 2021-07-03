@@ -18,6 +18,12 @@
  */
 
 import {
+  getScrollPosition,
+  setScrollPosition,
+  getTableCoordinates,
+  popupPiece
+} from '../room.mjs'
+import {
   getTemplate,
   movePiece
 } from './state.mjs'
@@ -27,11 +33,7 @@ import {
 } from './tabledata.mjs'
 import { touch } from './sync.mjs'
 import {
-  getScrollPosition,
-  setScrollPosition,
   unselectPieces,
-  popupPiece,
-  getTableCoordinates,
   getTableTile,
   pointTo
 } from './table.mjs'
@@ -138,7 +140,6 @@ function mouseDown (mousedown) {
   switch (mousedown.button) {
     case 0:
       if (mousedown.shiftKey) {
-        console.log('pointer')
         pointTo(getTableCoordinates(mouseX, mouseY))
       } else {
         handleSelection(mousedown.target)

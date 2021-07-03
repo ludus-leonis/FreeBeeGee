@@ -19,7 +19,7 @@
 
 import { createScreen } from '../screen.mjs'
 import { createRoom } from './create.mjs'
-import { runRoom } from './table/table.mjs'
+import { runRoom } from './room.mjs'
 
 import { stateGetServerInfo } from '../server.mjs'
 import _ from '../FreeDOM.mjs'
@@ -62,9 +62,9 @@ function showJoinDialog () {
 
       <!--label for="user">Your name</label-->
       <input id="user" name="user" type="hidden" placeholder="Jolie Average">
-      <!--p class="p-small spacing-tiny">Will be visible to other players at this room.</p-->
+      <!--p class="p-small spacing-tiny">Will be visible to other players in this room.</p-->
 
-      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Take me there!</a>
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Enter</a>
     `,
 
     `This server deletes rooms after ${stateGetServerInfo().ttl}h of inactivity.`

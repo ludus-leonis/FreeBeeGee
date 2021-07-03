@@ -405,7 +405,7 @@ export function deleteRoom () {
  * @param {Number} no Number of state 0..9.
  * @return {Promise} Promise of a state object.
  */
-export function fetchRoomState (no) {
+export function fetchTableState (no) {
   return apiGetState(room.name, no, true)
     .then(state => {
       _setState(no, populatePiecesDefaults(state.body, state.headers))

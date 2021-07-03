@@ -30,7 +30,7 @@ import _ from './FreeDOM.mjs'
 export function createScreen (headline, content, footer = '') {
   const body = _('body')
   _('body').add('.page-boxed').innerHTML = `
-    <div class="container is-small">
+    <div class="container is-slim">
       <div class="row">
         <div class="col-12 is-content">
         <a class="a-invisible" href="./"><img src="img/freebeegee-logo.svg" alt="FreeBeeGee"></a>

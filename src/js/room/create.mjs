@@ -39,15 +39,15 @@ export function createRoom (name) {
 
   const templateHelp = stateGetServerInfo().snapshotUploads
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
-    : 'Let us know what kind of room we may prepare for you.'
+    : 'Let us know what game we may prepare for you.'
 
   createScreen(
-    'Setup your room',
+    'Open new room',
     `
       <div class="page-create">
         <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
         <input id="mode" class="mode is-hidden" type="checkbox">
-        <p class="is-wrapping">Room <strong>${name}</strong> does not exist yet. It is yours to claim!</p>
+        <p class="is-wrapping">Room <strong>${name}</strong> does not exist yet. Feel free to open it!</p>
 
         <p class="server-feedback"></p>
 
@@ -67,7 +67,8 @@ export function createRoom (name) {
         <input id="password" type="password" placeholder="* * * * * *">
         <p class="p-small spacing-tiny">This server requires a password to create rooms.</p>
       ` : '') + `
-        <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Let's play!</a>
+        <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Open &amp; enter!</a>
+        <p class="p-small is-faded is-center">Wrong room? <a href="./">Pick another</a>.</p>
       </div>
     `,
 

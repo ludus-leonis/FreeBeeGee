@@ -2,6 +2,11 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.10.0
+
+* added status icons for pieces
+* refactored wording table -> room, sub-table -> table
+
 ## v0.9.0 - Happy Hamster
 
 ### Notable changes

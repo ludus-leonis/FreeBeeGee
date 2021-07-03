@@ -58,18 +58,19 @@ export function modalHelp () {
         </div>
         <div class="tabs-content">
           <div class="primer">
-            <p>FreeBeeGee is a shared, virtual gaming tabletop. Everyone who joins a room will see the same gaming pieces on it. If someone adds, moves or removes pieces, the other players will see this immediately.</p>
+            <p>FreeBeeGee is a shared, virtual tabletop (VTT). Everyone who enters a room will see the same tables. If you add, move, edit or remove pieces, the other players will see this immediately.</p>
 
-            <p>On our room, everyone is equal. There is no game master or superuser. Everyone can manipulate what's there. Please be polite.</p>
+            <p>On our tables, everyone is equal. There is no game master or superuser. Everyone can manipulate what's there. Please be polite.</p>
 
             <h2 class="h3">Layers</h2>
 
-            <p>Your room has different layers, containing pieces of a specific type each. From top to bottom the layers are:</p>
+            <p>Each table has different layers, containing pieces of a specific type. From top to bottom the layers are:</p>
             <ul>
               <li><strong>Dice</strong> are your friendly random number generators.</li>
               <li><strong>Tokens</strong> are round player figures, usually heroes and monsters.</li>
               <li><strong>Overlays</strong> help you mark areas of interest.</li>
-              <li><strong>Tiles</strong> are assembled to form your game board. They can be rooms, caves and more.</li>
+              <li><strong>Notes</strong> contain sticky notes.</li>
+              <li><strong>Tiles</strong> are assembled to form your game board. They can be corridors, caves and more.</li>
             </ul>
 
             <p>Use your <strong>browser zoom</strong> buttons to zoom-in and zoom-out.</p>
@@ -78,29 +79,27 @@ export function modalHelp () {
 
             <p>To <strong>select</strong> a piece, left-click on it. It will get highlighted. However, you can only select pieces if their layer is currently active. Use the top three buttons in the menu to (de)activate layers. To <strong>move</strong> a selected piece, just drag'n'drop it.</p>
 
-            <p>To edit a piece, either select it and use the menu-icons on your left, or right-click the piece and use the context menu.</p>
+            <p>To <strong>edit</strong> a piece, either select it and use the menu-icons on your left, or right-click the piece and use the context menu. There you can <strong>rotate</strong>, <strong>flip</strong>, <strong>clone</strong> and <strong>delete</strong> a selected piece, as well as <strong>label</strong> it.</p>
 
-            <p>You can <strong>rotate</strong>, <strong>flip</strong>, <strong>clone</strong> and <strong>delete</strong> a selected piece. You can also open the <strong>edit</strong> window for a selected piece to change its properties as well as to <strong>set its label</strong>.</p>
-
-            <p>If a piece has only one side, flipping it will have no effect. Some pieces may have more than one side - in this case flipping will cycle through them.</p>
+            <p>Some pieces may have more than one side - in this case flipping will cycle through them.</p>
 
             <p>If a piece got hidden behind another piece, you can use the <strong>to&nbsp;top</strong> and <strong>to&nbsp;bottom</strong> buttons to change the order of pieces within their layer.</p>
 
             <h2 class="h3">Dice</h2>
 
-            <p>To roll dice, add them from the library to your room. Then <strong>select</strong> the die you want to roll and press <span class="key">#</span>.</p>
+            <p>To roll dice, add them from the library to your table. Then <strong>select</strong> the die you want to roll and press <span class="key">#</span>.</p>
 
-            <p>If you want to roll multiple dice at once, add a <strong>Dicemat</strong> from the library to your room. Then move your dice onto the dicemat, <strong>select</strong> the dicemat and press <span class="key">#</span>.</p>
+            <p>If you want to roll multiple dice at once, add a <strong>Dicemat</strong> from the library. Then move your dice onto the dicemat, <strong>select</strong> the dicemat and press <span class="key">#</span>.</p>
 
           </div>
           <div class="hotkeys">
-            <p>The following hotkeys are available on the <strong>room</strong>:</p>
+            <p>The following hotkeys are available:</p>
             <p><span class="key">1</span> / <span class="key">2</span> / <span class="key">3</span> / <span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
             <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library window opened.</p>
             <p><span class="key">n</span> Add a new sticky note at the current mouse cursor position.</p>
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>
-            <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to table 1 to 9.</p>
-            <p><span class="key">S</span> Show the room statistics &amp; settings.</p>
+            <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to another table (1 to 9).</p>
+            <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
@@ -122,7 +121,7 @@ export function modalHelp () {
 
             <h3>UI assets</h3>
 
-            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more room background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
+            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
 
             <h3>FreeBeeGee</h3>
 

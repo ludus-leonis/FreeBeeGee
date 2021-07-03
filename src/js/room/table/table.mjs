@@ -1,5 +1,5 @@
 /**
- * @file The actual room / tabletop stuff. Mainly in charge of state -> DOM
+ * @file The actual tabletop stuff. Mainly in charge of state -> DOM
  *       propagation. Does not manipulate data nor does it do API calls.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
@@ -18,24 +18,22 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createPopper } from '@popperjs/core'
+import {
+  updateStatusline,
+  getTableCoordinates
+} from '../room.mjs'
 
 import {
   getRoom,
   getTemplate,
-  getStateNo,
-  loadRoom,
   updatePieces,
   createPieces,
-  setStateNo,
   deletePiece,
   numberPiece,
   flipPiece,
   movePiece,
   borderPiece,
-  rotatePiece,
-  setRoomPreference,
-  getRoomPreference
+  rotatePiece
 } from './state.mjs'
 import {
   findAsset,
@@ -47,10 +45,7 @@ import {
   getMaxZ,
   getContentRectGrid
 } from './tabledata.mjs'
-import { startAutoSync } from './sync.mjs'
 import {
-  enableDragAndDrop,
-  getMouseTile,
   updateMenu
 } from './mouse.mjs'
 import _ from '../../FreeDOM.mjs'
@@ -59,66 +54,11 @@ import {
   shuffle,
   recordTime
 } from '../../utils.mjs'
-import { navigateToJoin } from '../../nav.mjs'
 
-import { modalLibrary } from './modals/library.mjs'
 import { modalEdit } from './modals/edit.mjs'
-import { modalHelp } from './modals/help.mjs'
-import { modalSettings, changeQuality } from './modals/settings.mjs'
-
-let scroller = null /** keep reference to scroller div - we need it often */
+import { modalSettings } from './modals/settings.mjs'
 
 // --- public ------------------------------------------------------------------
-
-/**
- * Get current tabletop scroll position.
- *
- * @return {Object} Contains x and y in pixel.
- */
-export function getScrollPosition () {
-  return {
-    x: scroller.scrollLeft,
-    y: scroller.scrollTop
-  }
-}
-
-/**
- * Get current tabletop scroll position.
- *
- * @return {Number} x X-coordinate.
- * @return {Number} y Y-coordinate.
- */
-export function setScrollPosition (x, y) {
-  scroller.scrollTo(x, y)
-}
-
-/**
- * Initialize and start the room/tabletop screen.
- *
- * @param {String} name Name of room, e.g. hilariousGazingPenguin.
- */
-export function runRoom (room) {
-  console.info('$NAME$ v$VERSION$, room ' + room.name)
-
-  loadRoom(room.name)
-    .then(() => setupRoom())
-}
-
-/**
- * Toggle one of the layers on/off for selection.
- *
- * @param {String} layer Either 'tile', 'overlay' or 'token'.
- */
-export function toggleLayer (layer) {
-  _('#btn-' + layer).toggle('.active')
-  _('#tabletop').toggle('.layer-' + layer + '-enabled')
-  if (_('#btn-' + layer + '.active').exists()) {
-    setRoomPreference('layer' + layer, true)
-  } else {
-    unselectPieces(layer)
-    setRoomPreference('layer' + layer, false)
-  }
-}
 
 /**
  * Get all currently selected pieces.
@@ -365,7 +305,6 @@ export function setPiece (piece, select = false) {
       }
       if (piece.tag !== '') {
         const asset = findAssetByAlias(piece.tag, 'tag')
-        console.log(piece.tag, asset)
         if (asset) {
           const img = _('img.icon').create()
           img.src = getAssetURL(asset, 0)
@@ -563,86 +502,6 @@ export function createNote (tile) {
   }], true)
 }
 
-export function popupPiece (id) {
-  const piece = findPiece(id)
-  const popup = _('#popper.popup.is-content').create()
-
-  popup.innerHTML = `
-    <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
-    <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
-    <a class="popup-menu flip ${piece._sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
-    <a class="popup-menu random ${(piece._sides > 2 || piece._feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
-    <a class="popup-menu top" href="#">${iconTop}To top</a>
-    <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
-    <a class="popup-menu clone" href="#">${iconClone}Clone</a>
-    <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
-  `
-
-  _('#tabletop').add(popup)
-
-  _('#popper .edit').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    editSelected()
-  })
-
-  _('#popper .rotate').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    rotateSelected()
-  })
-
-  _('#popper .flip').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    flipSelected()
-  })
-
-  _('#popper .random').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    randomSelected()
-  })
-
-  _('#popper .top').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    toTopSelected()
-  })
-
-  _('#popper .bottom').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    toBottomSelected()
-  })
-
-  _('#popper .delete').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    deleteSelected()
-  })
-
-  _('#popper .clone').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    cloneSelected(getMouseTile())
-  })
-
-  createPopper(_('#' + id).node(), popup.node(), {
-    placement: 'right'
-  })
-  popup.add('.show')
-}
-
-/**
- * Remove dirty / obsolete / bad pieces from room.
- *
- * Usually called during library sync.
- */
-export function cleanupRoom () {
-  _('#tabletop .piece.is-invalid').delete()
-}
-
 /**
  * Move the room content to the given x/y position.
  *
@@ -670,30 +529,11 @@ export function moveContent (toX, toY) {
   updatePieces(pieces)
 }
 
-/**
- * Update DOM room to current table-data.
- *
- * e.g. for resizing the room.
- *
- * @param {Array} state State to update to.
- * @param {Array} selectIds Optional, possibly empty array of IDs to select
- *                          after update.
- * @return {FreeDOM} Room DOM element for further customization.
- */
-export function updateRoom () {
-  const room = getRoom()
-
-  return _('#tabletop').css({
-    width: room.width + 'px',
-    height: room.height + 'px'
-  })
-}
-
 export function updateTabletop (state, selectIds = []) {
   const start = Date.now()
 
   const keepIds = []
-  cleanupRoom()
+  cleanupTable()
   for (const item of state) {
     setItem(item, selectIds.includes(item.id))
     keepIds.push(item.id)
@@ -733,24 +573,6 @@ export function pointTo (coords) {
 }
 
 /**
- * Convert a window coordinates to a tabletop coordinates.
- *
- * Takes position of element and scroll position inside the element into account.
- *
- * @param {Number} clientX A window x coordinate e.g. from a click event.
- * @param {Number} clientY A window y coordinate e.g. from a click event.
- * @return {Object} The absolute room coordinate as {x, y}.
- */
-export function getTableCoordinates (windowX, windowY) {
-  const origin = scroller.getBoundingClientRect()
-
-  return {
-    x: windowX + scroller.scrollLeft - origin.left,
-    y: windowY + scroller.scrollTop - origin.top
-  }
-}
-
-/**
  * Calculate the grid/tile X coordinate based on mouse position.
  *
  * @return {Object} Current tile as {x, y}.
@@ -765,165 +587,15 @@ export function getTableTile (windowX, windowY) {
 
 // --- internal ----------------------------------------------------------------
 
-/**
- * Setup the room screen / HTML.
- *
- * @param {Object} room Room data object.
- */
-function setupRoom () {
-  const room = getRoom()
-
-  _('body').remove('.page-boxed').innerHTML = `
-    <div id="room" class="room is-fullscreen is-noselect">
-      <div class="menu">
-        <div>
-          <div class="menu-brand is-content">
-            <button id="btn-s" class="btn-icon" title="Room settings [s]"><img src="icon.svg"></button>
-          </div>
-
-          <div>
-            <button id="btn-other" class="btn-icon" title="Toggle dice [1]">${iconDice}</button>
-
-            <button id="btn-token" class="btn-icon" title="Toggle tokens [2]">${iconToken}</button>
-
-            <button id="btn-overlay" class="btn-icon" title="Toggle overlays [3]">${iconOverlay}</button>
-
-            <button id="btn-tile" class="btn-icon" title="Toggle tiles [4]">${iconTile}</button>
-          </div>
-
-          <div class="spacing-medium">
-            <button id="btn-a" class="btn-icon" title="Open library [l]">${iconAdd}</button>
-          </div>
-
-          <div class="menu-selected disabled spacing-medium">
-            <button id="btn-e" class="btn-icon" title="Edit [e]">${iconEdit}</button>
-
-            <button id="btn-r" class="btn-icon" title="Rotate [r]">${iconRotate}</button>
-
-            <button id="btn-f" class="btn-icon" title="Flip [f]">${iconFlip}</button>
-
-            <button id="btn-hash" class="btn-icon" title="Random [#]">${iconShuffle}</button>
-
-            <button id="btn-t" class="btn-icon" title="To top [t]">${iconTop}</button>
-
-            <button id="btn-b" class="btn-icon" title="To bottom [b]">${iconBottom}</button>
-
-            <button id="btn-c" class="btn-icon" title="Clone [c]">${iconClone}</button>
-
-            <button id="btn-del" class="btn-icon" title="Delete [Del]">${iconDelete}</button>
-          </div>
-        </div>
-        <div>
-          <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
-
-          <a id="btn-snap" class="btn-icon" title="Download snapshot" href='./api/rooms/${room.name}/snapshot/'>${iconDownload}</a>
-
-          <button id="btn-q" class="btn-icon" title="Leave room">${iconQuit}</button>
-        </div>
-      </div>
-      <div id="scroller" class="scroller">
-        <div id="tabletop" class="tabletop layer-note-enabled">
-          <div id="layer-other" class="layer layer-other"></div>
-          <div id="layer-token" class="layer layer-token"></div>
-          <div id="layer-note" class="layer layer-note"></div>
-          <div id="layer-overlay" class="layer layer-overlay"></div>
-          <div id="layer-tile" class="layer layer-tile"></div>
-          <div id="layer-room" class="layer layer-room"></div>
-        </div>
-      </div>
-      <div class="status"></div>
-    </div>
-  `
-
-  // load preferences
-  changeQuality(getRoomPreference('renderQuality') ?? 3)
-
-  // setup menu for layers
-  let undefinedCount = 0
-  for (const layer of ['token', 'overlay', 'tile', 'other']) {
-    _('#btn-' + layer).on('click', () => toggleLayer(layer))
-    const prop = getRoomPreference('layer' + layer)
-    if (prop === true) toggleLayer(layer) // stored enabled
-    if (prop === undefined) undefinedCount++
-  }
-  if (undefinedCount >= 4) {
-    // default if store was empty
-    toggleLayer('other')
-    toggleLayer('token')
-  }
-
-  // setup menu for selection
-  _('#btn-a').on('click', () => modalLibrary(getMouseTile()))
-  _('#btn-e').on('click', () => editSelected())
-  _('#btn-r').on('click', () => rotateSelected())
-  _('#btn-c').on('click', () => cloneSelected(getMouseTile()))
-  _('#btn-t').on('click', () => toTopSelected())
-  _('#btn-b').on('click', () => toBottomSelected())
-  _('#btn-f').on('click', () => flipSelected())
-  _('#btn-s').on('click', () => settings())
-  _('#btn-hash').on('click', () => randomSelected())
-  _('#btn-del').on('click', () => deleteSelected())
-
-  // setup remaining menu
-  _('#btn-h').on('click', () => modalHelp())
-  _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
-
-  updateRoom().css({
-    backgroundColor: room.background.color,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + room.background.image + '?v=$CACHE$")',
-    backgroundSize: room.template.gridSize + 'px,1152px 768px'
-  })
-
-  _('body').on('contextmenu', e => e.preventDefault())
-
-  // setup scroller + keep reference for scroll-tracking
-  scroller = _('#scroller')
-  scroller.css({ // this is for moz://a
-    scrollbarColor: `${room.background.scroller} ${room.background.color}`
-  })
-  scroller = scroller.node()
-  scroller.style.setProperty('--fbg-color-scroll-fg', room.background.scroller)
-  scroller.style.setProperty('--fbg-color-scroll-bg', room.background.color)
-
-  enableDragAndDrop('#tabletop')
-
-  // load + setup content
-  setStateNo(getRoomPreference('table') ?? 1, false)
-  runStatuslineLoop()
-  startAutoSync(() => { setAutoScrollPosition() })
-}
-
-let scrollFetcherTimeout = -1
+const ID_POINTER = 'ffffffffffffffff'
 
 /**
- * Scroll to the last open scroll position.
+ * Remove dirty / obsolete / bad pieces from room.
  *
- * Defaults to the center of the setup if no last scroll position ist known. Will
- * also install an event handler to capture scroll events & record them.
+ * Usually called during library sync.
  */
-function setAutoScrollPosition () {
-  const scroller = _('#scroller')
-  const lastX = getRoomPreference('scrollX')
-  const lastY = getRoomPreference('scrollY')
-  if (lastX && lastY) {
-    scroller.node().scrollTo(
-      lastX - Math.floor(scroller.clientWidth / 2),
-      lastY - Math.floor(scroller.clientHeight / 2)
-    )
-  } else {
-    const center = getSetupCenter()
-    scroller.node().scrollTo(
-      Math.floor(center.x - scroller.clientWidth / 2),
-      Math.floor(center.y - scroller.clientHeight / 2)
-    )
-  }
-  scroller.on('scroll', () => {
-    clearTimeout(scrollFetcherTimeout)
-    scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
-      setRoomPreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
-      setRoomPreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
-    }, 1000)
-  })
+function cleanupTable () {
+  _('#tabletop .piece.is-invalid').delete()
 }
 
 /**
@@ -944,27 +616,6 @@ function createInvalidAsset (type) {
  */
 function createPointerAsset () {
   return _('.piece.piece-other.is-pointer').create()
-}
-
-/**
- * Calculate the center of the setup on the room.
- *
- * Iterates over all pieces and averages their centers.
- *
- * @return {Object} Object with x and y.
- */
-function getSetupCenter () {
-  const x = []
-  const y = []
-  _('.piece').each(node => {
-    const piece = findPiece(node.id)
-    x.push((piece.x + piece.w) / 2)
-    y.push((piece.y + piece.h) / 2)
-  })
-  return {
-    x: x.length > 0 ? Math.ceil(x.reduce((a, b) => a + b) / x.length) : 0,
-    y: y.length > 0 ? Math.ceil(y.reduce((a, b) => a + b) / y.length) : 0
-  }
 }
 
 /**
@@ -1122,67 +773,3 @@ function setItem (piece, selected) {
       // ignore unkown piece type
   }
 }
-
-/**
- * Update the status line (clock etc.).
- */
-function updateStatusline () {
-  const time = new Date().toLocaleTimeString('de', {
-    hour12: false,
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-  const message = fakeTabularNums(`${time} • Table ${getStateNo()}`)
-  const status = _('#table .status')
-  if (status.innerHTML !== message) {
-    status.innerHTML = message
-  }
-}
-
-let statuslineLoop = -1
-
-function runStatuslineLoop () {
-  clearTimeout(statuslineLoop)
-  updateStatusline()
-  statuslineLoop = setTimeout(() => {
-    runStatuslineLoop()
-  }, 5000)
-}
-
-function fakeTabularNums (text) {
-  return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
-}
-
-const ID_POINTER = 'ffffffffffffffff'
-
-const iconDice = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
-
-const iconToken = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>'
-
-const iconOverlay = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>'
-
-const iconTile = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>'
-
-const iconAdd = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>'
-
-const iconEdit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>'
-
-const iconRotate = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>'
-
-const iconFlip = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>'
-
-const iconTop = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>'
-
-const iconBottom = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>'
-
-const iconClone = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>'
-
-const iconDelete = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>'
-
-const iconShuffle = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>'
-
-const iconDownload = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>'
-
-const iconHelp = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
-
-const iconQuit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'

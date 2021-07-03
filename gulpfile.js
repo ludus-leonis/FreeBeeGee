@@ -174,6 +174,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/room/create.mjs',
     'src/js/room/error.mjs',
     'src/js/room/join.mjs',
+    'src/js/room/room.mjs',
     'src/js/room/table/hotkeys.mjs',
     'src/js/room/table/mouse.mjs',
     'src/js/room/table/state.mjs',

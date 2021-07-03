@@ -97,9 +97,9 @@ function runErrorNoSlotAvailable () {
     `
       <p>Your room does not exist yet.</p>
 
-      <p>Usually we would offer you to create it now, but our server is over capacity. You'll have to wait until a room gets free. Please try again later.</p>
+      <p>Usually we would offer you to create it now, but our server is over capacity. You'll have to wait until a room gets available. Please try again later.</p>
 
-      <p>However, you still can join existing rooms if you know their names.</p>
+      <p>However, you still can enter existing rooms if you know their names.</p>
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `
@@ -117,7 +117,7 @@ function runErrorOverCapacity () {
     `
       <p>It seems our server is curreontly over capacity. All available rooms are taken. Please try again later.</p>
 
-      <p>However, you still can join existing rooms if you know their names.</p>
+      <p>However, you still can enter existing rooms if you know their names.</p>
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `

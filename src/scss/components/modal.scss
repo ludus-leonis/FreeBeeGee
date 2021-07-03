@@ -50,13 +50,13 @@
 
   &-large {
     .modal-dialog {
-      @extend %is-large;
+      @extend %is-wide;
     }
   }
 
   &-small {
     .modal-dialog {
-      @extend %is-small;
+      @extend %is-slim;
     }
   }
 

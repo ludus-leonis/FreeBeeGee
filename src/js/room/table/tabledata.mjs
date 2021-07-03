@@ -390,6 +390,28 @@ export function clampToTableSize (piece) {
   return piece
 }
 
+/**
+ * Calculate the center of the setup on the room.
+ *
+ * Iterates over all pieces and averages their centers.
+ *
+ * @return {Object} Object with x and y.
+ */
+export function getSetupCenter (no = getStateNo()) {
+  const template = getTemplate()
+  const x = []
+  const y = []
+
+  for (const piece of getState(no)) {
+    x.push((piece.x + piece.w * template.gridSize) / 2)
+    y.push((piece.y + piece.h * template.gridSize) / 2)
+  }
+  return {
+    x: x.length > 0 ? Math.ceil(x.reduce((a, b) => a + b) / x.length) : 0,
+    y: y.length > 0 ? Math.ceil(y.reduce((a, b) => a + b) / y.length) : 0
+  }
+}
+
 // -----------------------------------------------------------------------------
 
 /**
