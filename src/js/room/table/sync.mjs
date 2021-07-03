@@ -27,9 +27,9 @@ import {
 import {
   getRoom,
   reloadRoom,
-  getState,
-  getStateNo,
-  fetchTableState,
+  getTable,
+  getTableNo,
+  fetchTable,
   errorRoomGone,
   isTabActive
 } from './state.mjs'
@@ -66,13 +66,13 @@ export function syncNow (selectedIds = [], forceUIUpdate = false) {
   if (isAutoSync()) {
     if (forceUIUpdate) {
       scheduleSync(0, () => {
-        updateTabletop(getState(getStateNo()), selectedIds)
+        updateTabletop(getTable(getTableNo()), selectedIds)
       })
     } else {
       scheduleSync(0)
     }
   } else {
-    fetchAndUpdateState(getStateNo(), selectedIds)
+    fetchAndUpdateTable(getTableNo(), selectedIds)
   }
 }
 
@@ -109,15 +109,15 @@ export function touch (remote = false) {
 const lastDigests = {
   'room.json': 'crc32:none',
   'template.json': 'crc32:none',
-  'states/1.json': 'crc32:none',
-  'states/2.json': 'crc32:none',
-  'states/3.json': 'crc32:none',
-  'states/4.json': 'crc32:none',
-  'states/5.json': 'crc32:none',
-  'states/6.json': 'crc32:none',
-  'states/7.json': 'crc32:none',
-  'states/8.json': 'crc32:none',
-  'states/9.json': 'crc32:none'
+  'tables/1.json': 'crc32:none',
+  'tables/2.json': 'crc32:none',
+  'tables/3.json': 'crc32:none',
+  'tables/4.json': 'crc32:none',
+  'tables/5.json': 'crc32:none',
+  'tables/6.json': 'crc32:none',
+  'tables/7.json': 'crc32:none',
+  'tables/8.json': 'crc32:none',
+  'tables/9.json': 'crc32:none'
 }
 
 const fastestSynctime = 800 /** minimum sync ever */
@@ -152,9 +152,9 @@ function scheduleSync (ms = 0, callback = null) {
   syncTimeout = setTimeout(() => {
     clearTimeout(syncTimeout)
     checkDigests()
-      .then((dirtyState) => {
-        if (dirtyState > 0) {
-          return fetchAndUpdateState(dirtyState)
+      .then((dirtyTable) => {
+        if (dirtyTable > 0) {
+          return fetchAndUpdateTable(dirtyTable)
         }
       })
       .finally(() => {
@@ -167,7 +167,7 @@ function scheduleSync (ms = 0, callback = null) {
 /**
  * Check via digest call if we need to sync. Sync afterwards if necessary.
  *
- * @return {Promise} Promise of an integer. 0 = no sync, 1+ = state to sync.
+ * @return {Promise} Promise of an integer. 0 = no sync, 1+ = table to sync.
  */
 function checkDigests (
   selectIds = []
@@ -177,23 +177,23 @@ function checkDigests (
   lastNetworkActivity = Date.now()
   return apiGetRoomDigest(room.name)
     .then(digest => {
-      const state = getStateNo()
+      const table = getTableNo()
       recordTime('sync-network', Date.now() - start)
 
       // verify room metadata
       if (digest['room.json'] !== lastDigests['room.json']) {
-        return syncRoom(selectIds).then(() => { touch(true); return state })
+        return syncRoom(selectIds).then(() => { touch(true); return table })
       }
 
-      // verify currently active state
-      if (digest[`states/${state}.json`] !== lastDigests[`states/${state}.json`]) {
+      // verify currently active table
+      if (digest[`tables/${table}.json`] !== lastDigests[`tables/${table}.json`]) {
         touch(true)
-        return state
+        return table
       }
 
-      // verify all (other) states and trigger sync for first wrong one
+      // verify all (other) tables and trigger sync for first wrong one
       for (let i = 1; i <= 9; i++) {
-        if (digest[`states/${i}.json`] !== lastDigests[`states/${i}.json`]) {
+        if (digest[`tables/${i}.json`] !== lastDigests[`tables/${i}.json`]) {
           touch(true)
           return i
         }
@@ -205,33 +205,33 @@ function checkDigests (
 }
 
 /**
- * The acutal state syncing code.
+ * The acutal table syncing code.
  *
- * Is in charge of updating the state once on changes, but not of (re)scheduling
+ * Is in charge of updating the table once on changes, but not of (re)scheduling
  * itself.
  *
  * @param {String[]} selectIds IDs of items to (re)select after sync.
  */
-function fetchAndUpdateState (
-  dirtyState,
+function fetchAndUpdateTable (
+  dirtyTable,
   selectIds = []
 ) {
   lastNetworkActivity = Date.now()
-  return fetchTableState(dirtyState)
-    .then(state => {
-      lastDigests[`states/${dirtyState}.json`] = state.headers.get('digest')
+  return fetchTable(dirtyTable)
+    .then(table => {
+      lastDigests[`tables/${dirtyTable}.json`] = table.headers.get('digest')
 
-      if (dirtyState === getStateNo()) {
-        updateTabletop(state.body, selectIds)
+      if (dirtyTable === getTableNo()) {
+        updateTabletop(table.body, selectIds)
       }
     })
 }
 
 /**
- * The (metadata) syncinc.
+ * The room syncinc.
  *
- * Is in charge of fetching the current state and trigger data/UI updates, but
- * not of scheduling itself.
+ * Is in charge of fetching the current room state and trigger data/UI updates,
+ * but not of scheduling itself.
  *
  * @param {String[]} selectIds IDs of items to (re)select after sync.
  */
@@ -240,8 +240,8 @@ function syncRoom (
 ) {
   lastNetworkActivity = Date.now()
   return reloadRoom()
-    .then(tabledata => {
-      lastDigests['room.json'] = tabledata.headers.get('digest')
+    .then(room => {
+      lastDigests['room.json'] = room.headers.get('digest')
       updateRoom()
       return false
     })

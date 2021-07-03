@@ -27,11 +27,11 @@ import {
 import {
   getTemplate,
   updateTemplate,
-  updateState,
+  updateTable,
   getRoom,
   deleteRoom,
-  getStateNo,
-  setStateNo,
+  getTableNo,
+  setTableNo,
   getRoomPreference,
   setRoomPreference
 } from '../state.mjs'
@@ -227,7 +227,7 @@ export function modalSettings () {
   for (let i = 1; i <= 9; i++) {
     const option = _('option').create(i)
     option.value = i
-    if (i === getStateNo()) option.selected = true
+    if (i === getTableNo()) option.selected = true
     select.add(option)
   }
 
@@ -242,7 +242,7 @@ export function modalSettings () {
 
   _('#btn-table-clear').on('click', click => {
     click.preventDefault()
-    updateState([])
+    updateTable([])
     getModal().hide()
   })
   _('#btn-table-delete').on('click', click => {
@@ -254,7 +254,7 @@ export function modalSettings () {
 
   _('#btn-table-sub').on('click', click => {
     click.preventDefault()
-    setStateNo(Number(_('#table-sub').value))
+    setTableNo(Number(_('#table-sub').value))
     getModal().hide()
   })
 

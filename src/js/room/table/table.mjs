@@ -486,7 +486,7 @@ export function noteToNode (note) {
 /**
  * Add a new sticky note to the cursor position.
  *
- * This adds a enirely new note to the room via a call to the state.
+ * This adds a enirely new note to the table via a call to the state.
  *
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
@@ -529,12 +529,20 @@ export function moveContent (toX, toY) {
   updatePieces(pieces)
 }
 
-export function updateTabletop (state, selectIds = []) {
+/**
+ * Update the DOM to reflect the given table data.
+ *
+ * Will add new, update existing and delete obsolte pieces.
+ *
+ * @param {Array} tableData Table's pieces.
+ * @param {Array} selectIds Optional array of IDs to re-select after update.
+ */
+export function updateTabletop (tableData, selectIds = []) {
   const start = Date.now()
 
   const keepIds = []
   cleanupTable()
-  for (const item of state) {
+  for (const item of tableData) {
     setItem(item, selectIds.includes(item.id))
     keepIds.push(item.id)
   }

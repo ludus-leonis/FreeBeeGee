@@ -45,7 +45,7 @@ import {
   touch
 } from './sync.mjs'
 import {
-  setStateNo
+  setTableNo
 } from './state.mjs'
 import {
   modalActive,
@@ -90,31 +90,31 @@ function handleRoomKeys (keydown) {
         pointTo(getMouseCoords())
         break
       case '1': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(1); else toggleLayer('other')
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(1); else toggleLayer('other')
         break
       case '2': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(2); else toggleLayer('token')
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(2); else toggleLayer('token')
         break
       case '3': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(3); else toggleLayer('overlay')
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(3); else toggleLayer('overlay')
         break
       case '4': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(4); else toggleLayer('tile')
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(4); else toggleLayer('tile')
         break
       case '5': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(5)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(5)
         break
       case '6': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(6)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(6)
         break
       case '7': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(7)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(7)
         break
       case '8': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(8)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(8)
         break
       case '9': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setStateNo(9)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(9)
         break
       case 'l': // library / add piece
         modalLibrary(getMouseTile())

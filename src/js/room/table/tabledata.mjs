@@ -1,5 +1,5 @@
 /**
- * @file Utility functions that operate on (cached) state data, e.g. searching
+ * @file Utility functions that operate on (cached) table data, e.g. searching
  *       pieces. Does not do any API calls, only operates on pre-downloaded
  *       data. Does not know about DOM/nodes.
  * @module
@@ -23,8 +23,8 @@ import {
   getRoom,
   getTemplate,
   getLibrary,
-  getState,
-  getStateNo
+  getTable,
+  getTableNo
 } from './state.mjs'
 
 import {
@@ -38,11 +38,11 @@ export const assetTypes = ['tile', 'token', 'overlay', 'other', 'tag']
  * Find a piece by ID.
  *
  * @param {String} id ID to lookup.
- * @param {Number} no State number, defaults to current state.
+ * @param {Number} no Table number, defaults to current one.
  * @return {Object} Piece, or null if not found.
  */
-export function findPiece (id, no = getStateNo()) {
-  for (const piece of getState(no)) {
+export function findPiece (id, no = getTableNo()) {
+  for (const piece of getTable(no)) {
     if (piece.id === id) {
       return piece
     }
@@ -113,14 +113,14 @@ export function getAssetURL (asset, side) {
  *
  * @param {Object} rect Rectangle object, containing top/left/bottom/right.
  * @param {String} layer Optional name of layer to search within. Defaults to 'all'.
- * @param {Number} no State number, defaults to current state.
+ * @param {Number} no Table number, defaults to current one.
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
-export function findPiecesWithin (rect, layer = 'all', no = getStateNo()) {
+export function findPiecesWithin (rect, layer = 'all', no = getTableNo()) {
   const template = getTemplate()
   const pieces = []
 
-  for (const piece of getState(no)) {
+  for (const piece of getTable(no)) {
     if (piece.layer === layer || layer === 'all') {
       if (intersect(rect, {
         left: piece.x,
@@ -262,10 +262,10 @@ export function getMaxZ (layer, area = {
 /**
  * Determine rectancle all items on the room are within in px.
  *
- * @param {Number} no State number to work on, defaults to current.
+ * @param {Number} no Table number to work on, defaults to current.
  * @return {Object} Object with top/left/bottom/right property of main content.
  */
-export function getContentRect (no = getStateNo()) {
+export function getContentRect (no = getTableNo()) {
   const rect = {
     left: Number.MAX_VALUE,
     top: Number.MAX_VALUE,
@@ -273,10 +273,10 @@ export function getContentRect (no = getStateNo()) {
     bottom: Number.MIN_VALUE
   }
   const gridSize = getTemplate().gridSize
-  const state = getState(no)
+  const tableData = getTable(no)
 
   // provide default for empty rooms
-  if (!state || state.length < 1) {
+  if (!tableData || tableData.length < 1) {
     return {
       left: 0,
       top: 0,
@@ -286,7 +286,7 @@ export function getContentRect (no = getStateNo()) {
   }
 
   // calculate values for non-empty rooms
-  for (const piece of state) {
+  for (const piece of tableData) {
     const top = piece.y
     const left = piece.x
     const bottom = top + piece.h * gridSize - 1
@@ -303,10 +303,10 @@ export function getContentRect (no = getStateNo()) {
 /**
  * Determine rectancle all items on the room are within in grid units.
  *
- * @param {Number} no State number to work on, defaults to current.
+ * @param {Number} no Table number to work on, defaults to current.
  * @return {Object} Object with top/left/bottom/right property of main content.
  */
-export function getContentRectGrid (no = getStateNo()) {
+export function getContentRectGrid (no = getTableNo()) {
   const gridSize = getTemplate().gridSize
   const rect = getContentRect(no)
 
@@ -397,12 +397,12 @@ export function clampToTableSize (piece) {
  *
  * @return {Object} Object with x and y.
  */
-export function getSetupCenter (no = getStateNo()) {
+export function getSetupCenter (no = getTableNo()) {
   const template = getTemplate()
   const x = []
   const y = []
 
-  for (const piece of getState(no)) {
+  for (const piece of getTable(no)) {
     x.push((piece.x + piece.w * template.gridSize) / 2)
     y.push((piece.y + piece.h * template.gridSize) / 2)
   }

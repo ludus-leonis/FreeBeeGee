@@ -20,11 +20,11 @@
 
 import { expect } from 'chai'
 import {
-  _setState,
+  _setTable,
   _setRoom,
-  getState,
-  getStateNo,
-  setStateNo,
+  getTable,
+  getTableNo,
+  setTableNo,
   getRoom,
   getTemplate,
   getLibrary,
@@ -50,37 +50,37 @@ describe('Frontend - state.mjs', function () {
     expect(getLibrary().token).to.be.an('array')
   })
 
-  it('getState()', function () {
-    _setState(1, [JSON.parse(pieceJSON)])
+  it('getTable()', function () {
+    _setTable(1, [JSON.parse(pieceJSON)])
 
-    expect(getState(1)).to.be.an('array')
-    expect(getState(1).length).to.be.eq(1)
-    expect(getState(1)[0].id).to.be.eq('fe008a4da3b2511e')
+    expect(getTable(1)).to.be.an('array')
+    expect(getTable(1).length).to.be.eq(1)
+    expect(getTable(1)[0].id).to.be.eq('fe008a4da3b2511e')
 
-    expect(getState(2)).to.be.eql([])
+    expect(getTable(2)).to.be.eql([])
   })
 
-  it('getStateNo() setStateNo()', function () {
-    _setState(1, [JSON.parse(pieceJSON)])
+  it('getTableNo() setTableNo()', function () {
+    _setTable(1, [JSON.parse(pieceJSON)])
     _setRoom(JSON.parse(roomJSON))
 
-    expect(getStateNo()).to.be.eq(1)
+    expect(getTableNo()).to.be.eq(1)
 
-    expect(getState()).to.be.an('array')
-    expect(getState().length).to.be.eq(1)
-    expect(getState()[0].id).to.be.eq('fe008a4da3b2511e')
+    expect(getTable()).to.be.an('array')
+    expect(getTable().length).to.be.eq(1)
+    expect(getTable()[0].id).to.be.eq('fe008a4da3b2511e')
 
-    setStateNo(2, false)
-    expect(getStateNo()).to.be.eq(2)
+    setTableNo(2, false)
+    expect(getTableNo()).to.be.eq(2)
 
-    expect(getState()).to.be.eql([])
+    expect(getTable()).to.be.eql([])
 
-    setStateNo(1, false)
-    expect(getStateNo()).to.be.eq(1)
+    setTableNo(1, false)
+    expect(getTableNo()).to.be.eq(1)
   })
 
   it('setTabActive() isTabActive', function () {
-    _setState(1, [JSON.parse(pieceJSON)])
+    _setTable(1, [JSON.parse(pieceJSON)])
 
     expect(isTabActive()).to.be.eq(true)
     setTabActive(false, false)

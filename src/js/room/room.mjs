@@ -23,8 +23,8 @@ import { // TODO roomstate.mjs?
   getRoom,
   getRoomPreference,
   setRoomPreference,
-  getStateNo,
-  setStateNo
+  getTableNo,
+  setTableNo
 } from './table/state.mjs'
 
 import {
@@ -192,9 +192,6 @@ export function popupPiece (id) {
  *
  * e.g. for resizing the room.
  *
- * @param {Array} state State to update to.
- * @param {Array} selectIds Optional, possibly empty array of IDs to select
- *                          after update.
  * @return {FreeDOM} Room DOM element for further customization.
  */
 export function updateRoom () {
@@ -233,7 +230,7 @@ export function updateStatusline () {
     hour: '2-digit',
     minute: '2-digit'
   })
-  const message = fakeTabularNums(`${time} • Table ${getStateNo()}`)
+  const message = fakeTabularNums(`${time} • Table ${getTableNo()}`)
   const status = _('#room .status')
   if (status.innerHTML !== message) {
     status.innerHTML = message
@@ -367,7 +364,7 @@ function setupRoom () {
   enableDragAndDrop('#tabletop')
 
   // load + setup content
-  setStateNo(getRoomPreference('table') ?? 1, false)
+  setTableNo(getRoomPreference('table') ?? 1, false)
   runStatuslineLoop()
   startAutoSync(() => { setAutoScrollPosition() })
 }

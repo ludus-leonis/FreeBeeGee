@@ -18,7 +18,7 @@ Snapshots are ordinary `*.zip` files with a strict following folder structure. A
 └─ LICENSE.md
 ```
 
-Note that all files have to be in the root folder of the `ZIP`! Usually you want to also add assets (media) and states (table setups), so a more realistic example contains:
+Note that all files have to be in the root folder of the `ZIP`! Usually you want to also add assets (media) and table states, so a more realistic example contains:
 
 ```
 /
@@ -40,7 +40,6 @@ Note that all files have to be in the root folder of the `ZIP`! Usually you want
 │     ├─ ...
 │     └─ d6.1x1x6.png
 └─ states/
-   ├─ 0.json
    └─ 1.json
 ```
 
@@ -64,6 +63,6 @@ All assets must be placed in an `assets/` folder. Inside that folder there may b
 
 TBD
 
-## States
+## Tables
 
 TBD

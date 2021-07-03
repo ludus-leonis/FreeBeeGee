@@ -24,8 +24,8 @@ import {
   setStoreValue
 } from '../../utils.mjs'
 import {
-  apiGetState,
-  apiPutState,
+  apiGetTable,
+  apiPutTable,
   apiGetRoom,
   apiPostRoom,
   apiDeleteRoom,
@@ -98,24 +98,24 @@ export function getTemplate () {
 }
 
 /**
- * Get the currently visible (sub)room a.k.a. state number.
+ * Get the currently visible table number.
  */
-export function getStateNo () {
-  return stateNo
+export function getTableNo () {
+  return tableNo
 }
 
 /**
- * Switch to another state.
+ * Switch to another table.
  *
- * Triggers API fetch & updates room state.
+ * Triggers API fetch & updates table.
  *
- * @param {Number} no State to set (1..9).
+ * @param {Number} no Table to set (1..9).
  * @param {Boolean} sync Force sync after setting status.
  */
-export function setStateNo (no, sync = true) {
+export function setTableNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
-    stateNo = no
-    setRoomPreference('table', stateNo)
+    tableNo = no
+    setRoomPreference('table', tableNo)
     if (sync) syncNow([], true)
   }
 }
@@ -123,11 +123,11 @@ export function setStateNo (no, sync = true) {
 /**
  * Get (cached) state for a given slot/table.
  *
- * @param {Number} no State slot 0..9. Defaults to current one.
- * @return {Object} State array.
+ * @param {Number} no Table slot 0..9. Defaults to current one.
+ * @return {Object} Table array.
  */
-export function getState (no = getStateNo()) {
-  return states[no]
+export function getTable (no = getTableNo()) {
+  return tables[no]
 }
 
 /**
@@ -308,7 +308,7 @@ export function statePieceEdit (pieceID, updates) {
  * @param {String} pieceId ID of piece to remove.
  */
 export function deletePiece (id) {
-  apiDeletePiece(room.name, getStateNo(), id)
+  apiDeletePiece(room.name, getTableNo(), id)
     .catch(error => errorUnexpected(error))
     .finally(() => {
       syncNow()
@@ -316,35 +316,18 @@ export function deletePiece (id) {
 }
 
 /**
- * Update the room state to the a new one.
+ * Update the table state to the a new one.
  *
- * Will replace the existing state.
+ * Will replace the existing table.
  *
- * @param {Array} state Array of pieces (room state).
+ * @param {Array} table Array of pieces.
  */
-export function updateState (state) {
-  apiPutState(room.name, getStateNo(), state)
+export function updateTable (table) {
+  apiPutTable(room.name, getTableNo(), table)
     .catch(error => errorUnexpected(error))
     .finally(() => {
       syncNow()
     })
-}
-
-/**
- * Restore a saved room state.
- *
- * @param {Number} index Integer index of state, 0 = initial.
- */
-export function restoreState (index) {
-  apiGetState(room.name, index)
-    .then(state => {
-      apiPutState(room.name, getStateNo(), state)
-        .catch(error => errorUnexpected(error))
-        .finally(() => {
-          syncNow()
-        })
-    })
-    .catch(error => errorUnexpected(error))
 }
 
 /**
@@ -400,16 +383,16 @@ export function deleteRoom () {
 }
 
 /**
- * Fetch a server state and cache it for future use.
+ * Fetch a table and cache it for future use.
  *
- * @param {Number} no Number of state 0..9.
- * @return {Promise} Promise of a state object.
+ * @param {Number} no Number of table 0..9.
+ * @return {Promise} Promise of a table object.
  */
-export function fetchTableState (no) {
-  return apiGetState(room.name, no, true)
-    .then(state => {
-      _setState(no, populatePiecesDefaults(state.body, state.headers))
-      return state
+export function fetchTable (no) {
+  return apiGetTable(room.name, no, true)
+    .then(table => {
+      _setTable(no, populatePiecesDefaults(table.body, table.headers))
+      return table
     })
     .catch(error => errorRoomGone(error))
 }
@@ -464,12 +447,12 @@ export function setTabActive (state) {
 // --- internal, but exposed for unit testing ----------------------------------
 
 /**
- * Internal: Set a room state to given data.
+ * Internal: Set a table to given data.
  *
  * Only exposed for unit testing.
  */
-export function _setState (no, data) {
-  states[no] = data
+export function _setTable (no, data) {
+  tables[no] = data
 }
 
 /**
@@ -484,8 +467,8 @@ export function _setRoom (data) {
 // --- internal ----------------------------------------------------------------
 
 let room = {} /** stores the room meta info JSON */
-let stateNo = 1 /** stores the currently visible sub-room */
-const states = [[], [], [], [], [], [], [], [], [], []] /** caches the states 0..9 **/
+let tableNo = 1 /** stores the currently visible table index */
+const tables = [[], [], [], [], [], [], [], [], [], []] /** caches the tables 0..9 **/
 let tabActive = true /** is the current tab/window active/maximized? */
 
 /**
@@ -513,12 +496,12 @@ function stripPiece (piece) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Object} patch Partial object of fields to send.
- * @param {Object} poll Optional. If true (default), the room state will be
+ * @param {Object} poll Optional. If true (default), the table will be
  *                 polled after the patch.
  * @return {Object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, poll = true) {
-  return apiPatchPiece(room.name, getStateNo(), pieceId, patch)
+  return apiPatchPiece(room.name, getTableNo(), pieceId, patch)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
       if (poll) syncNow()
@@ -529,12 +512,12 @@ function patchPiece (pieceId, patch, poll = true) {
  * Update a piece on the server.
  *
  * @param {Object} patch Array of partial object of fields to send. Must include ids!
- * @param {Object} poll Optional. If true (default), the room state will be
+ * @param {Object} poll Optional. If true (default), the table will be
  *                 polled after the patch.
  * @return {Object} Promise of the API request.
  */
 function patchPieces (patches, poll = true) {
-  return apiPatchPieces(room.name, getStateNo(), patches)
+  return apiPatchPieces(room.name, getTableNo(), patches)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
       if (poll) syncNow()
@@ -545,12 +528,12 @@ function patchPieces (patches, poll = true) {
  * Create a piece on the server.
  *
  * @param {Object} piece The full piece to send to the server.
- * @param {Object} poll Optional. If true (default), the room state will be
+ * @param {Object} poll Optional. If true (default), the table will be
  *                 polled after the create.
  * @return {Object} Promise of the ID of the new piece.
  */
 function createPiece (piece, poll = true) {
-  return apiPostPiece(room.name, getStateNo(), stripPiece(piece))
+  return apiPostPiece(room.name, getTableNo(), stripPiece(piece))
     .then(piece => {
       return piece.id
     })

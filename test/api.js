@@ -286,42 +286,40 @@ function testApiCrudRoom (version) {
   testJsonGet(() => `/rooms/crudRoom${version}/`, body => {}, 404)
 }
 
-function testApiCrudState (version) {
+function testApiCrudTable (version) {
   // create room
   testJsonPost(() => '/rooms/', () => {
     return {
-      name: `crudState${version}`,
+      name: `crudTable${version}`,
       template: 'RPG',
       auth: 'apitests'
     }
   }, body => {
     expect(body).to.be.an('object')
-    expect(body.name).to.be.eql(`crudState${version}`)
+    expect(body.name).to.be.eql(`crudTable${version}`)
   }, 201)
 
-  // get state
-  testJsonGet(() => `/rooms/crudState${version}/states/1/`, body => {
+  // get table
+  testJsonGet(() => `/rooms/crudTable${version}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.gt(5)
     data = body
   })
 
   // reset room
-  testJsonPut(() => `/rooms/crudState${version}/states/1/`, () => [], body => {
+  testJsonPut(() => `/rooms/crudTable${version}/tables/1/`, () => [], body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
 
-  // get state again - still empty
-  testJsonGet(() => `/rooms/crudState${version}/states/1/`, body => {
+  // get table again - still empty
+  testJsonGet(() => `/rooms/crudTable${version}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
-
-  // restore save
 
   // cleanup
-  testJsonDelete(() => `/rooms/crudState${version}/`)
+  testJsonDelete(() => `/rooms/crudTable${version}/`)
 }
 
 function testApiCrudPiece (version) {
@@ -338,7 +336,7 @@ function testApiCrudPiece (version) {
   }, 201)
 
   // create piece
-  testJsonPost(() => `/rooms/crudPiece${version}/states/1/pieces/`, () => {
+  testJsonPost(() => `/rooms/crudPiece${version}/tables/1/pieces/`, () => {
     return { // add letter-token
       layer: 'token',
       asset: 'dd74249373740cdf',
@@ -370,7 +368,7 @@ function testApiCrudPiece (version) {
   }, 201)
 
   // get & compare piece
-  testJsonGet(() => `/rooms/crudPiece${version}/states/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
@@ -387,7 +385,7 @@ function testApiCrudPiece (version) {
   })
 
   // update piece (patch)
-  testJsonPatch(() => `/rooms/crudPiece${version}/states/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
+  testJsonPatch(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
     return {
       x: 19
     }
@@ -408,7 +406,7 @@ function testApiCrudPiece (version) {
   })
 
   // get & compare piece
-  testJsonGet(() => `/rooms/crudPiece${version}/states/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
@@ -425,7 +423,7 @@ function testApiCrudPiece (version) {
   })
 
   // update/replace piece (put)
-  testJsonPut(() => `/rooms/crudPiece${version}/states/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
+  testJsonPut(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
     return {
       layer: 'tile',
       asset: '0d74249373740cdf',
@@ -456,7 +454,7 @@ function testApiCrudPiece (version) {
   })
 
   // get & compare piece
-  testJsonGet(() => `/rooms/crudPiece${version}/states/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('tile')
@@ -473,10 +471,10 @@ function testApiCrudPiece (version) {
   })
 
   // delete piece
-  testJsonDelete(() => `/rooms/crudPiece${version}/states/1/pieces/` + (data ? data.id : 'ID') + '/')
+  testJsonDelete(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/')
 
   // get - should be gone
-  testJsonGet(() => `/rooms/crudPiece${version}/states/1/pieces/` + (data ? data.id : 'ID') + '/', body => {}, 404)
+  testJsonGet(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {}, 404)
 
   // cleanup
   testJsonDelete(() => `/rooms/crudPiece${version}/`)
@@ -521,20 +519,20 @@ function testApiZipMinimal (version) {
       expect(body.credits).to.be.eql('This snapshot does not provide license information.')
     }, 201)
 
-  // get state 0
-  testJsonGet(() => `/rooms/minimalzip${version}/states/0/`, body => {
+  // get table 0
+  testJsonGet(() => `/rooms/minimalzip${version}/tables/0/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(0)
   })
 
-  // get state 1
-  testJsonGet(() => `/rooms/minimalzip${version}/states/1/`, body => {
+  // get table 1
+  testJsonGet(() => `/rooms/minimalzip${version}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(0)
   })
 
-  // get state 2
-  testJsonGet(() => `/rooms/minimalzip${version}/states/2/`, body => {
+  // get table 2
+  testJsonGet(() => `/rooms/minimalzip${version}/tables/2/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(0)
   })
@@ -590,22 +588,22 @@ function testApiZipFull (version) {
       expect(body.credits).to.contain('I am a license.')
     }, 201)
 
-  // get state 1
-  testJsonGet(() => `/rooms/fullziptest${version}/states/1/`, body => {
+  // get table 1
+  testJsonGet(() => `/rooms/fullziptest${version}/tables/1/`, body => {
     expect(body.length).to.be.eql(2)
     expect(body[0].asset).to.be.eql('bb07ac49818bc000')
     expect(body[1].asset).to.be.eql('f628553dd1802f0a')
   })
 
-  // get state 2
-  testJsonGet(() => `/rooms/fullziptest${version}/states/2/`, body => {
+  // get table 2
+  testJsonGet(() => `/rooms/fullziptest${version}/tables/2/`, body => {
     expect(body.length).to.be.eql(2)
     expect(body[0].asset).to.be.eql('7261fff0158e27bc')
     expect(body[1].asset).to.be.eql('d04e9af5e03f9f58')
   })
 
-  // get state 3
-  testJsonGet(() => `/rooms/fullziptest${version}/states/3/`, body => {
+  // get table 3
+  testJsonGet(() => `/rooms/fullziptest${version}/tables/3/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(0)
   })
@@ -621,7 +619,7 @@ function runTests (version) {
   describe('API Server-Info', () => testApiServerInfo())
   describe('API Templates', () => testApiTemplates())
   describe('CRUD room', () => testApiCrudRoom(version))
-  describe('CRUD state', () => testApiCrudState(version))
+  describe('CRUD table', () => testApiCrudTable(version))
   describe('CRUD piece', () => testApiCrudPiece(version))
   describe('ZIP upload - minimal', () => testApiZipMinimal(version))
   describe('ZIP upload - full', () => testApiZipFull(version))

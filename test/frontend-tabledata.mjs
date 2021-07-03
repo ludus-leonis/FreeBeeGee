@@ -20,9 +20,9 @@
 
 import { expect } from 'chai'
 import {
-  _setState,
+  _setTable,
   _setRoom,
-  setStateNo
+  setTableNo
 } from '../src/js/room/table/state.mjs'
 import {
   findPiece,
@@ -46,12 +46,12 @@ function setupTestData () {
   _setRoom(JSON.parse(roomJSON))
   for (let i = 1; i <= 9; i++) {
     if (i === TEST_STATE) {
-      _setState(i, populatePiecesDefaults([JSON.parse(pieceJSON)]))
+      _setTable(i, populatePiecesDefaults([JSON.parse(pieceJSON)]))
     } else {
-      _setState(i, [])
+      _setTable(i, [])
     }
   }
-  setStateNo(1, false)
+  setTableNo(1, false)
 }
 
 describe('Frontend - tabledata.mjs', function () {
@@ -61,14 +61,14 @@ describe('Frontend - tabledata.mjs', function () {
 
   it('findPiece()', function () {
     for (let i = 1; i <= 9; i++) {
-      setStateNo(i, false)
+      setTableNo(i, false)
       if (i === TEST_STATE) {
         expect(findPiece()).to.be.eq(null)
         expect(findPiece('f45f27b57498c3be')).to.be.eq(null)
         expect(findPiece('fe008a4da3b2511e')).to.be.an('object')
         expect(findPiece('fe008a4da3b2511e').id).to.be.eq('fe008a4da3b2511e')
       } else {
-        setStateNo(i, false)
+        setTableNo(i, false)
         expect(findPiece()).to.be.eq(null)
         expect(findPiece('f45f27b57498c3be')).to.be.eq(null)
         expect(findPiece('fe008a4da3b2511e')).to.be.eq(null)
@@ -78,7 +78,7 @@ describe('Frontend - tabledata.mjs', function () {
 
   it('findAsset()', function () {
     for (let i = 1; i <= 9; i++) {
-      setStateNo(i, false)
+      setTableNo(i, false)
 
       // invalid searches
       expect(findAsset()).to.be.eq(null)
@@ -101,7 +101,7 @@ describe('Frontend - tabledata.mjs', function () {
 
   it('findPiecesWithin()', function () {
     for (let i = 1; i <= 9; i++) {
-      setStateNo(i, false)
+      setTableNo(i, false)
 
       // always invalid searches
       expect(findPiecesWithin({ left: 0, top: 0, right: 0, bottom: 0 }).length).to.be.eq(0)
@@ -250,10 +250,10 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getMinZ()', function () {
-    _setState(TEST_STATE, populatePiecesDefaults(JSON.parse(stateJSON)))
+    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
 
     for (let i = 1; i <= 9; i++) {
-      setStateNo(i, false)
+      setTableNo(i, false)
       if (i === TEST_STATE) {
         expect(getMinZ('tile')).to.be.eq(56)
         expect(getMinZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(58)
@@ -279,10 +279,10 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getMaxZ()', function () {
-    _setState(TEST_STATE, populatePiecesDefaults(JSON.parse(stateJSON)))
+    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
 
     for (let i = 1; i <= 9; i++) {
-      setStateNo(i, false)
+      setTableNo(i, false)
       if (i === TEST_STATE) {
         expect(getMaxZ('tile')).to.be.eq(65)
         expect(getMaxZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(58)
@@ -308,10 +308,10 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getContentRect()', function () {
-    _setState(TEST_STATE, populatePiecesDefaults(JSON.parse(stateJSON)))
+    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
 
     for (let i = 1; i <= 9; i++) {
-      setStateNo(i, false)
+      setTableNo(i, false)
       if (i === TEST_STATE) {
         const r1 = getContentRect()
         expect(r1.left).to.be.eq(768)
@@ -335,10 +335,10 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getContentRectGrid()', function () {
-    _setState(TEST_STATE, populatePiecesDefaults(JSON.parse(stateJSON)))
+    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
 
     for (let i = 1; i <= 9; i++) {
-      setStateNo(i, false)
+      setTableNo(i, false)
       if (i === TEST_STATE) {
         const r1 = getContentRectGrid()
         expect(r1.left).to.be.eq(12)
@@ -368,10 +368,10 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getContentRectGridAll()', function () {
-    _setState(TEST_STATE, populatePiecesDefaults(JSON.parse(stateJSON)))
+    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
 
     for (let i = 1; i <= 9; i++) {
-      setStateNo(i, false)
+      setTableNo(i, false)
       const r1 = getContentRectGridAll()
       expect(r1.left).to.be.eq(12)
       expect(r1.top).to.be.eq(2)
@@ -431,6 +431,6 @@ describe('Frontend - tabledata.mjs', function () {
 
 const pieceJSON = '{"id":"fe008a4da3b2511e","layer":"other","asset":"f45f27b57498c3be","x":256,"y":192,"z":13,"side":4}'
 
-const stateJSON = '[{"layer":"tile","asset":"c065574908de7702","w":3,"h":2,"x":960,"y":128,"z":58,"id":"437e26b90281e34e"},{"id":"0e13b377e39574bc","layer":"tile","asset":"da30d95f34341fc0","x":768,"y":256,"z":65,"r":90},{"layer":"tile","asset":"89bd84cc218186eb","x":1344,"y":192,"z":56,"id":"9754d0c014e39cd9","r":90},{"layer":"token","asset":"b7662212e5f3c6f9","x":768,"y":704,"z":35,"w":2,"h":2,"id":"49d045e1712c4148"},{"layer":"token","asset":"b7662212e5f3c6f9","x":960,"y":640,"z":34,"id":"b785cb505677f977"}]'
+const tableJSON = '[{"layer":"tile","asset":"c065574908de7702","w":3,"h":2,"x":960,"y":128,"z":58,"id":"437e26b90281e34e"},{"id":"0e13b377e39574bc","layer":"tile","asset":"da30d95f34341fc0","x":768,"y":256,"z":65,"r":90},{"layer":"tile","asset":"89bd84cc218186eb","x":1344,"y":192,"z":56,"id":"9754d0c014e39cd9","r":90},{"layer":"token","asset":"b7662212e5f3c6f9","x":768,"y":704,"z":35,"w":2,"h":2,"id":"49d045e1712c4148"},{"layer":"token","asset":"b7662212e5f3c6f9","x":960,"y":640,"z":34,"id":"b785cb505677f977"}]'
 
 const roomJSON = '{"id":"f9d05a1ecec3ecb8","name":"selfishExaminingBaboon","engine":"0.3.0","background":{"color":"#423e3d","scroller":"#2b2929","image":"img/desktop-wood.jpg"},"library":{"overlay":[{"media":["area.1x1.1x1x1.svg","##BACK##"],"w":1,"h":1,"color":"#808080","alias":"area.1x1","type":"overlay","id":"7261fff0158e27bc"}],"tile":[{"media":["altar.3x2x1.transparent.png","##BACK##"],"w":3,"h":2,"color":"transparent","alias":"altar","type":"tile","id":"5b150d84cee577dc"}],"token":[{"media":["aasimar.1x1x1.border.svg","##BACK##"],"w":1,"h":1,"color":"border","alias":"aasimar","type":"token","id":"484d7d45fdc27afa"}],"other":[{"media":["classic.a.1x1x1.svg","classic.a.1x1x2.svg","classic.a.1x1x3.svg"],"w":1,"h":1,"color":"#808080","alias":"classic.a","type":"other","id":"f45f27b57498c3be","base":"classic.a.1x1x0.png"},{"media":["dicemat.4x4x1.jpg","##BACK##"],"w":4,"h":4,"color":"#808080","alias":"dicemat","type":"other","id":"bb07ac49818bc000"},{"media":["discard.4x4x1.jpg"],"w":4,"h":4,"color":"#808080","alias":"discard","type":"other","id":"dd07ac49818bc000"}],"tag":[]},"template":{"type":"grid-square","version":"0.9.0-dev","engine":"^0.3.0","gridSize":64,"gridWidth":48,"gridHeight":32,"snapSize":32,"colors":[{"name":"black","value":"#0d0d0d"},{"name":"blue","value":"#061862"},{"name":"white","value":"#ffffff"}]},"credits":"test template","width":3072,"height":2048}'
