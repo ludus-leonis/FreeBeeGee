@@ -37,7 +37,7 @@ export function runError (code, options) {
       runErrorUnexpected(options)
       break
     case 'TABLE_GONE': // 4
-      runErrorTableGone(options)
+      runErrorRoomGone(options)
       break
     case 'NO_SLOT': // 3
       runErrorNoSlotAvailable()
@@ -56,7 +56,7 @@ export function runError (code, options) {
 }
 
 /**
- * Error screen be shown when an existing table disappeared. Probably the admin
+ * Error screen be shown when an existing room disappeared. Probably the admin
  * deleted/closed it.
  */
 function runErrorUnexpected (error) {
@@ -68,38 +68,38 @@ function runErrorUnexpected (error) {
 }
 
 /**
- * Error screen be shown when an existing table disappeared. Probably the admin
+ * Error screen be shown when an existing room disappeared. Probably the admin
  * deleted/closed it.
  */
-function runErrorTableGone (tableName, error) {
+function runErrorRoomGone (roomName, error) {
   if (error instanceof UnexpectedStatus && error.status !== 404) {
-    console.error('table gone', error) // only log if error is serious
+    console.error('room gone', error) // only log if error is serious
   }
 
   createScreen(
-    'Table gone ...',
+    'Room gone ...',
     `
-      <p class="is-wrapping">Table <strong>${tableName}</strong> does not exist (any more).</p>
+      <p class="is-wrapping">Room <strong>${roomName}</strong> does not exist (any more).</p>
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Restart</a>
     `
   )
-  _('#ok').on('click', click => { navigateToJoin(tableName) })
+  _('#ok').on('click', click => { navigateToJoin(roomName) })
 }
 
 /**
- * Error screen be shown when no more slots are available for new tables and this
+ * Error screen be shown when no more slots are available for new rooms and this
  * is known in advance.
  */
 function runErrorNoSlotAvailable () {
   createScreen(
-    'Table not found ...',
+    'Room not found ...',
     `
-      <p>Your table does not exist yet.</p>
+      <p>Your room does not exist yet.</p>
 
-      <p>Usually we would offer you to create it now, but our server is over capacity. You'll have to wait until a table gets free. Please try again later.</p>
+      <p>Usually we would offer you to create it now, but our server is over capacity. You'll have to wait until a room gets free. Please try again later.</p>
 
-      <p>However, you still can join existing tables if you know their names.</p>
+      <p>However, you still can join existing rooms if you know their names.</p>
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `
@@ -108,16 +108,16 @@ function runErrorNoSlotAvailable () {
 }
 
 /**
- * Error screen be shown when no more slots are available for new tables and this
+ * Error screen be shown when no more slots are available for new rooms and this
  * is is discovered during a create-api call.
  */
 function runErrorOverCapacity () {
   createScreen(
     'We are out of space ...',
     `
-      <p>It seems our server is curreontly over capacity. All available tables are taken. Please try again later.</p>
+      <p>It seems our server is curreontly over capacity. All available rooms are taken. Please try again later.</p>
 
-      <p>However, you still can join existing tables if you know their names.</p>
+      <p>However, you still can join existing rooms if you know their names.</p>
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `

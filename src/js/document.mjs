@@ -18,16 +18,16 @@
 
 import {
   runError
-} from './screens/error.mjs'
+} from './room/error.mjs'
 import {
   runJoin
-} from './screens/join.mjs'
+} from './room/join.mjs'
 import {
   stateSetServerInfo
 } from './server.mjs'
 import {
   setTabActive
-} from './screens/table/state.mjs'
+} from './room/table/state.mjs'
 import {
   apiGetServerInfo
 } from './api.mjs'

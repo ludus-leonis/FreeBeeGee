@@ -171,19 +171,19 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/screen.mjs',
     'src/js/server.mjs',
     'src/js/utils.mjs',
-    'src/js/screens/create.mjs',
-    'src/js/screens/error.mjs',
-    'src/js/screens/join.mjs',
-    'src/js/screens/table/hotkeys.mjs',
-    'src/js/screens/table/mouse.mjs',
-    'src/js/screens/table/state.mjs',
-    'src/js/screens/table/sync.mjs',
-    'src/js/screens/table/table.mjs',
-    'src/js/screens/table/tabledata.mjs',
-    'src/js/screens/table/modals/edit.mjs',
-    'src/js/screens/table/modals/help.mjs',
-    'src/js/screens/table/modals/inactive.mjs',
-    'src/js/screens/table/modals/library.mjs'
+    'src/js/room/create.mjs',
+    'src/js/room/error.mjs',
+    'src/js/room/join.mjs',
+    'src/js/room/table/hotkeys.mjs',
+    'src/js/room/table/mouse.mjs',
+    'src/js/room/table/state.mjs',
+    'src/js/room/table/sync.mjs',
+    'src/js/room/table/table.mjs',
+    'src/js/room/table/tabledata.mjs',
+    'src/js/room/table/modals/edit.mjs',
+    'src/js/room/table/modals/help.mjs',
+    'src/js/room/table/modals/inactive.mjs',
+    'src/js/room/table/modals/library.mjs'
   ]).transform(babelify.configure({
     presets: ['@babel/preset-env']
   })).bundle()

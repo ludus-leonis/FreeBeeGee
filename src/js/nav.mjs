@@ -27,23 +27,23 @@ export function navigateReload () {
 }
 
 /**
- * Go back to the start/join screen. Remember table name if possible.
+ * Go back to the start/join screen. Remember room name if possible.
  *
- * @param {?String} tableName Optional name of table to add in redirect.
+ * @param {?String} roomName Optional name of room to add in redirect.
  */
-export function navigateToJoin (tableName) {
-  if (tableName) {
-    globalThis.location = './?table=' + tableName
+export function navigateToJoin (roomName) {
+  if (roomName) {
+    globalThis.location = './?room=' + roomName
   } else {
     globalThis.location = './'
   }
 }
 
 /**
- * Go back to a table screen.
+ * Go back to a room screen.
  *
- * @param {String} tableName Name of table to go to.
+ * @param {String} roomName Name of room to go to.
  */
-export function navigateToTable (tableName) {
-  globalThis.location = './' + tableName
+export function navigateToRoom (roomName) {
+  globalThis.location = './' + roomName
 }

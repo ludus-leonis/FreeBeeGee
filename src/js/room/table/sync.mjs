@@ -19,20 +19,20 @@
  */
 
 import {
-  updateTable,
+  updateRoom,
   updateTabletop
 } from './table.mjs'
 import {
-  getTable,
-  reloadTable,
+  getRoom,
+  reloadRoom,
   getState,
   getStateNo,
-  fetchTableState,
-  errorTableGone,
+  fetchRoomState,
+  errorRoomGone,
   isTabActive
 } from './state.mjs'
 import {
-  apiGetTableDigest
+  apiGetRoomDigest
 } from '../../api.mjs'
 import {
   clamp,
@@ -85,11 +85,11 @@ export function stopAutoSync () {
 }
 
 /**
- * Record activity on the table.
+ * Record activity on the room.
  *
  * @param {?Boolean} remote If true, the remote timestamp is touched. Otherwise
  *                          the local is.
- * @return {Object} Table's metadata.
+ * @return {Object} Room's metadata.
  */
 export function touch (remote = false) {
   if (remote) {
@@ -106,7 +106,7 @@ export function touch (remote = false) {
 // --- internal ----------------------------------------------------------------
 
 const lastDigests = {
-  'table.json': 'crc32:none',
+  'room.json': 'crc32:none',
   'template.json': 'crc32:none',
   'states/0.json': 'crc32:none',
   'states/1.json': 'crc32:none',
@@ -172,17 +172,17 @@ function scheduleSync (ms = 0, callback = null) {
 function checkDigests (
   selectIds = []
 ) {
-  const table = getTable()
+  const room = getRoom()
   const start = Date.now()
   lastNetworkActivity = Date.now()
-  return apiGetTableDigest(table.name)
+  return apiGetRoomDigest(room.name)
     .then(digest => {
       const state = getStateNo()
       recordTime('sync-network', Date.now() - start)
 
-      // verify table metadata
-      if (digest['table.json'] !== lastDigests['table.json']) {
-        return syncTable(selectIds).then(() => { touch(true); return state })
+      // verify room metadata
+      if (digest['room.json'] !== lastDigests['room.json']) {
+        return syncRoom(selectIds).then(() => { touch(true); return state })
       }
 
       // verify currently active state
@@ -201,7 +201,7 @@ function checkDigests (
 
       return 0
     })
-    .catch(error => errorTableGone(error))
+    .catch(error => errorRoomGone(error))
 }
 
 /**
@@ -217,7 +217,7 @@ function fetchAndUpdateState (
   selectIds = []
 ) {
   lastNetworkActivity = Date.now()
-  return fetchTableState(dirtyState)
+  return fetchRoomState(dirtyState)
     .then(state => {
       lastDigests[`states/${dirtyState}.json`] = state.headers.get('digest')
 
@@ -228,24 +228,24 @@ function fetchAndUpdateState (
 }
 
 /**
- * The table (metadata) syncinc.
+ * The room (metadata) syncinc.
  *
  * Is in charge of fetching the current state and trigger data/UI updates, but
  * not of scheduling itself.
  *
  * @param {String[]} selectIds IDs of items to (re)select after sync.
  */
-function syncTable (
+function syncRoom (
   selectIds = []
 ) {
   lastNetworkActivity = Date.now()
-  return reloadTable()
+  return reloadRoom()
     .then(tabledata => {
-      lastDigests['table.json'] = tabledata.headers.get('digest')
-      updateTable()
+      lastDigests['room.json'] = tabledata.headers.get('digest')
+      updateRoom()
       return false
     })
-    .catch(error => errorTableGone(error))
+    .catch(error => errorRoomGone(error))
 }
 
 /**

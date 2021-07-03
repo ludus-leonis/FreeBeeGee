@@ -40,8 +40,8 @@ The server config file is found in `api/data/server.json`:
 ```
 {
   "ttl": 48,                // hours of inactivity after a table gets deleted
-  "maxTables": 128,          // maximum concurrent tables allowed
-  "maxTableSizeMB": 4,       // maximum size per table folder / snapshot / template
+  "maxRooms": 128,          // maximum concurrent tables allowed
+  "maxRoomSizeMB": 4,       // maximum size per table folder / snapshot / template
   "snapshotUploads": false, // set to true to enable snapshot upload on table create
   "passwordCreate": "................."
 }

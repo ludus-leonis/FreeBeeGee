@@ -55,172 +55,172 @@ export function apiGetTemplates () {
 }
 
 /**
- * API GET /tables/:tableName/
+ * API GET /rooms/:roomName/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetTable (tableName, headers = false) {
-  return getJson([200], 'api/tables/' + tableName + '/', headers)
+export function apiGetRoom (roomName, headers = false) {
+  return getJson([200], 'api/rooms/' + roomName + '/', headers)
 }
 
 /**
- * API GET /tables/:tableName/digest/
+ * API GET /rooms/:roomName/digest/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetTableDigest (tableName) {
-  return getJson([200], 'api/tables/' + tableName + '/digest/')
+export function apiGetRoomDigest (roomName) {
+  return getJson([200], 'api/rooms/' + roomName + '/digest/')
 }
 
 /**
- * API POST /tables/
+ * API POST /rooms/
  *
- * @param {Object} table Table meta-JSON/Object to send.
+ * @param {Object} room Room meta-JSON/Object to send.
  * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostTable (table, snapshot) {
+export function apiPostRoom (room, snapshot) {
   const formData = new FormData()
-  formData.append('name', table.name)
-  if (table.template) formData.append('template', table.template)
-  if (table.auth) formData.append('auth', table.auth)
+  formData.append('name', room.name)
+  if (room.template) formData.append('template', room.template)
+  if (room.auth) formData.append('auth', room.auth)
   if (snapshot) formData.append('snapshot', snapshot)
 
-  return fetchOrThrow([201], 'api/tables/', {
+  return fetchOrThrow([201], 'api/rooms/', {
     method: 'POST',
     body: formData
   })
 }
 
 /**
- * API DELETE /tables/:tableName/
+ * API DELETE /rooms/:roomName/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeleteTable (tableName) {
-  return deleteJson([204], 'api/tables/' + tableName + '/')
+export function apiDeleteRoom (roomName) {
+  return deleteJson([204], 'api/rooms/' + roomName + '/')
 }
 
 /**
- * API PATCH /tables/:tableName/template/
+ * API PATCH /rooms/:roomName/template/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Object} patch Partial piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchTableTemplate (tableName, patch) {
-  return patchJson([200], 'api/tables/' + tableName + '/template/', patch)
+export function apiPatchRoomTemplate (roomName, patch) {
+  return patchJson([200], 'api/rooms/' + roomName + '/template/', patch)
 }
 
 /**
- * API GET /tables/:tableName/states/:stateId/
+ * API GET /rooms/:roomName/states/:stateId/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetState (tableName, stateId, headers = false) {
-  return getJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/', headers)
+export function apiGetState (roomName, stateId, headers = false) {
+  return getJson([200], 'api/rooms/' + roomName + '/states/' + stateId + '/', headers)
 }
 
 /**
- * API PUT /tables/:tableName/states/:stateId/
+ * API PUT /rooms/:roomName/states/:stateId/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} stateId Number of state (0-9), 1 = normal.
- * @param {Array} state The new table state (array of pieces).
+ * @param {Array} state The new room state (array of pieces).
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutState (tableName, stateId, state) {
-  return putJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/', state)
+export function apiPutState (roomName, stateId, state) {
+  return putJson([200], 'api/rooms/' + roomName + '/states/' + stateId + '/', state)
 }
 
 /**
- * API HEAD /tables/:tableName/states/:stateId/
+ * API HEAD /rooms/:roomName/states/:stateId/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiHeadState (tableName, stateId) {
-  return head('api/tables/' + tableName + '/states/' + stateId + '/')
+export function apiHeadState (roomName, stateId) {
+  return head('api/rooms/' + roomName + '/states/' + stateId + '/')
 }
 
 /**
- * API PUT /tables/:tableName/states/:stateId/pieces/
+ * API PUT /rooms/:roomName/states/:stateId/pieces/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Object} piece Piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutPiece (tableName, stateId, piece) {
-  return putJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + piece.id + '/', piece)
+export function apiPutPiece (roomName, stateId, piece) {
+  return putJson([200], 'api/rooms/' + roomName + '/states/' + stateId + '/pieces/' + piece.id + '/', piece)
 }
 
 /**
- * API PATCH /tables/:tableName/states/:stateId/pieces/:pieceId/
+ * API PATCH /rooms/:roomName/states/:stateId/pieces/:pieceId/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {String} pieceId Piece-ID (ID) of piece to patch.
  * @param {Object} patch Partial piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPiece (tableName, stateId, pieceId, patch) {
-  return patchJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + pieceId + '/', patch)
+export function apiPatchPiece (roomName, stateId, pieceId, patch) {
+  return patchJson([200], 'api/rooms/' + roomName + '/states/' + stateId + '/pieces/' + pieceId + '/', patch)
 }
 
 /**
- * API PATCH /tables/:tableName/states/:stateId/pieces/
+ * API PATCH /rooms/:roomName/states/:stateId/pieces/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Array} patches Array of partial pieces to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPieces (tableName, stateId, patches) {
-  return patchJson([200], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/', patches)
+export function apiPatchPieces (roomName, stateId, patches) {
+  return patchJson([200], 'api/rooms/' + roomName + '/states/' + stateId + '/pieces/', patches)
 }
 
 /**
- * API DELETE /tables/:tableName/states/:stateId/pieces/:pieceId/
+ * API DELETE /rooms/:roomName/states/:stateId/pieces/:pieceId/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {String} pieceId Piece-ID (ID) of piece to delete.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeletePiece (tableName, stateId, pieceId) {
-  return deleteJson([204], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/' + pieceId + '/')
+export function apiDeletePiece (roomName, stateId, pieceId) {
+  return deleteJson([204], 'api/rooms/' + roomName + '/states/' + stateId + '/pieces/' + pieceId + '/')
 }
 
 /**
- * API POST /tables/:tableName/states/:stateId/pieces/
+ * API POST /rooms/:roomName/states/:stateId/pieces/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} stateId Number of state (0-9), 1 = normal.
  * @param {Object} piece Piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostPiece (tableName, stateId, piece) {
-  return postJson([201], 'api/tables/' + tableName + '/states/' + stateId + '/pieces/', piece)
+export function apiPostPiece (roomName, stateId, piece) {
+  return postJson([201], 'api/rooms/' + roomName + '/states/' + stateId + '/pieces/', piece)
 }
 
 /**
- * API POST /tables/:tableName/states/:stateId/pieces/
+ * API POST /rooms/:roomName/states/:stateId/pieces/
  *
- * @param {String} tableName Name of table, e.g. 'funnyLovingWhale'.
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Object} asset Asset JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostAsset (tableName, asset) {
-  return postJson([201], 'api/tables/' + tableName + '/assets/', asset)
+export function apiPostAsset (roomName, asset) {
+  return postJson([201], 'api/rooms/' + roomName + '/assets/', asset)
 }
 
 // --- internal methods --------------------------------------------------------

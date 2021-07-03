@@ -20,7 +20,7 @@
  */
 
 import {
-  getTable,
+  getRoom,
   getTemplate,
   getLibrary,
   getState,
@@ -102,9 +102,9 @@ export function findAssetByAlias (alias, layer = 'any') {
  */
 export function getAssetURL (asset, side) {
   if (side === -1) {
-    return `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.base}`
+    return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
   } else {
-    return `api/data/tables/${getTable().name}/assets/${asset.type}/${asset.media[side]}`
+    return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
   }
 }
 
@@ -260,7 +260,7 @@ export function getMaxZ (layer, area = {
 }
 
 /**
- * Determine rectancle all items on the table are within in px.
+ * Determine rectancle all items on the room are within in px.
  *
  * @param {Number} no State number to work on, defaults to current.
  * @return {Object} Object with top/left/bottom/right property of main content.
@@ -275,7 +275,7 @@ export function getContentRect (no = getStateNo()) {
   const gridSize = getTemplate().gridSize
   const state = getState(no)
 
-  // provide default for empty tables
+  // provide default for empty rooms
   if (!state || state.length < 1) {
     return {
       left: 0,
@@ -285,7 +285,7 @@ export function getContentRect (no = getStateNo()) {
     }
   }
 
-  // calculate values for non-empty tables
+  // calculate values for non-empty rooms
   for (const piece of state) {
     const top = piece.y
     const left = piece.x
@@ -301,7 +301,7 @@ export function getContentRect (no = getStateNo()) {
 }
 
 /**
- * Determine rectancle all items on the table are within in grid units.
+ * Determine rectancle all items on the room are within in grid units.
  *
  * @param {Number} no State number to work on, defaults to current.
  * @return {Object} Object with top/left/bottom/right property of main content.
@@ -329,7 +329,7 @@ export function getContentRectGrid (no = getStateNo()) {
 }
 
 /**
- * Determine rectancle all items in all subtables on the table are within in grid units.
+ * Determine rectancle all items in all tables on the room are within in grid units.
  *
  * @return {Object} Object with top/left/bottom/right property of main content.
  */
@@ -366,7 +366,7 @@ export function createPieceFromAsset (assetId, gridX = 0, gridY = 0) {
   const asset = findAsset(assetId)
   const template = getTemplate()
 
-  return populatePieceDefaults(clampToTablesize({
+  return populatePieceDefaults(clampToTableSize({
     asset: asset.id,
     layer: asset.type,
     w: asset.w,
@@ -378,12 +378,12 @@ export function createPieceFromAsset (assetId, gridX = 0, gridY = 0) {
 }
 
 /**
- * Make sure a piece is fully on the table by clipping x/y based on it's size.
+ * Make sure a piece is fully on the room by clipping x/y based on it's size.
  *
  * @param {Object} item Piece to clamp.
  * @return {Object} Clamped piece.
  */
-export function clampToTablesize (piece) {
+export function clampToTableSize (piece) {
   const template = getTemplate()
   piece.x = clamp(0, piece.x, (template.gridWidth - piece.w) * template.gridSize)
   piece.y = clamp(0, piece.y, (template.gridHeight - piece.h) * template.gridSize)

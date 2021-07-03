@@ -1,5 +1,5 @@
 /**
- * @file Holds and manages a table's data objects, a.k.a. state. Propagates
+ * @file Holds and manages a room's data objects, a.k.a. state. Propagates
  *       changes to the API but is not in charge of syncing the state back.
  *       Might cache some values in the browser store.
  * @module
@@ -26,10 +26,10 @@ import {
 import {
   apiGetState,
   apiPutState,
-  apiGetTable,
-  apiPostTable,
-  apiDeleteTable,
-  apiPatchTableTemplate,
+  apiGetRoom,
+  apiPostRoom,
+  apiDeleteRoom,
+  apiPatchRoomTemplate,
   apiPatchPiece,
   apiPatchPieces,
   apiDeletePiece,
@@ -46,24 +46,24 @@ import {
 } from '../error.mjs'
 import {
   populatePiecesDefaults,
-  clampToTablesize
+  clampToTableSize
 } from './tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
 
 /**
- * (Re)Fetch the table's state from the API and cache it
+ * (Re)Fetch the room's state from the API and cache it
  *
  * @param {String} name The current table name.
- * @return {Promise} Promise of table data object.
+ * @return {Promise} Promise of room data object.
  */
-export function loadTable (name) {
-  return apiGetTable(name, true)
-    .then(remoteTable => {
-      _setTable(remoteTable.body)
-      return remoteTable
+export function loadRoom (name) {
+  return apiGetRoom(name, true)
+    .then(remoteRoom => {
+      _setRoom(remoteRoom.body)
+      return remoteRoom
     })
-    .catch(error => errorTableGone(error))
+    .catch(error => errorRoomGone(error))
 }
 
 /**
@@ -71,34 +71,34 @@ export function loadTable (name) {
  *
  * Usefull to update the asset library.
  *
- * @return {Promise} Promise of table data object.
+ * @return {Promise} Promise of room data object.
  */
-export function reloadTable () {
-  return loadTable(table.name)
+export function reloadRoom () {
+  return loadRoom(room.name)
 }
 
 /**
  * Get the current table's metadata (cached).
  *
- * @return {Object} Table's metadata.
+ * @return {Object} Room's metadata.
  */
-export function getTable () {
-  return table
+export function getRoom () {
+  return room
 }
 
 /**
  * Get the current table's template (cached).
  *
- * Until we support multiple tables, this is always the template of table 0.
+ * Until we support multiple rooms, this is always the template of room 0.
  *
- * @return {Object} Current table's template metadata.
+ * @return {Object} Current room's template metadata.
  */
 export function getTemplate () {
-  return getTable()?.template
+  return getRoom()?.template
 }
 
 /**
- * Get the currently visible (sub)table a.k.a. state number.
+ * Get the currently visible (sub)room a.k.a. state number.
  */
 export function getStateNo () {
   return stateNo
@@ -107,7 +107,7 @@ export function getStateNo () {
 /**
  * Switch to another state.
  *
- * Triggers API fetch & updates table state.
+ * Triggers API fetch & updates room state.
  *
  * @param {Number} no State to set (1..9).
  * @param {Boolean} sync Force sync after setting status.
@@ -115,13 +115,13 @@ export function getStateNo () {
 export function setStateNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     stateNo = no
-    setTablePreference('subtable', stateNo)
+    setRoomPreference('table', stateNo)
     if (sync) syncNow([], true)
   }
 }
 
 /**
- * Get (cached) state for a given slot/subtable.
+ * Get (cached) state for a given slot/table.
  *
  * @param {Number} no State slot 0..9. Defaults to current one.
  * @return {Object} State array.
@@ -138,7 +138,7 @@ export function getState (no = getStateNo()) {
  * @param {Object} template (Partial) new template data.
  */
 export function updateTemplate (template) {
-  return apiPatchTableTemplate(table.name, template)
+  return apiPatchRoomTemplate(room.name, template)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
       syncNow()
@@ -148,43 +148,43 @@ export function updateTemplate (template) {
 /**
  * Get the current table's template (cached).
  *
- * @return {Object} Current table's template metadata.
+ * @return {Object} Current room's template metadata.
  */
 export function getLibrary () {
-  return getTable()?.library
+  return getRoom()?.library
 }
 
 /**
- * Create a new table on the server.
+ * Create a new room on the server.
  *
- * @param {Object} table The table object to send to the API.
+ * @param {Object} room The room object to send to the API.
  * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
- * @return {Object} Promise of created table metadata object.
+ * @return {Object} Promise of created room metadata object.
  */
-export function createTable (table, snapshot) {
-  return apiPostTable(table, snapshot)
+export function createRoom (room, snapshot) {
+  return apiPostRoom(room, snapshot)
 }
 
 /**
  * Get a setting from the browser HTML5 store. Automatically scoped to active
- * table.
+ * room.
  *
  * @param {String} pref Setting to obtain.
  * @return {String} The setting's value.
  */
-export function getTablePreference (pref) {
-  return getStoreValue('g' + table.id.substr(0, 8), pref)
+export function getRoomPreference (pref) {
+  return getStoreValue('g' + room.id.substr(0, 8), pref)
 }
 
 /**
  * Set a setting in the browser HTML5 store. Automatically scoped to active
- * table.
+ * room.
  *
  * @param {String} pref Setting to set.
  * @param {String} value The value to set.
  */
-export function setTablePreference (pref, value) {
-  setStoreValue('g' + table.id.substr(0, 8), pref, value)
+export function setRoomPreference (pref, value) {
+  setStoreValue('g' + room.id.substr(0, 8), pref, value)
 }
 
 /**
@@ -300,7 +300,7 @@ export function statePieceEdit (pieceID, updates) {
 }
 
 /**
- * Remove a piece from the current table (from the table, not from the library).
+ * Remove a piece from the current table (from the room, not from the library).
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
@@ -308,7 +308,7 @@ export function statePieceEdit (pieceID, updates) {
  * @param {String} pieceId ID of piece to remove.
  */
 export function deletePiece (id) {
-  apiDeletePiece(table.name, getStateNo(), id)
+  apiDeletePiece(room.name, getStateNo(), id)
     .catch(error => errorUnexpected(error))
     .finally(() => {
       syncNow()
@@ -316,14 +316,14 @@ export function deletePiece (id) {
 }
 
 /**
- * Update the table state to the a new one.
+ * Update the room state to the a new one.
  *
  * Will replace the existing state.
  *
- * @param {Array} state Array of pieces (table state).
+ * @param {Array} state Array of pieces (room state).
  */
 export function updateState (state) {
-  apiPutState(table.name, getStateNo(), state)
+  apiPutState(room.name, getStateNo(), state)
     .catch(error => errorUnexpected(error))
     .finally(() => {
       syncNow()
@@ -331,14 +331,14 @@ export function updateState (state) {
 }
 
 /**
- * Restore a saved table state.
+ * Restore a saved room state.
  *
  * @param {Number} index Integer index of state, 0 = initial.
  */
 export function restoreState (index) {
-  apiGetState(table.name, index)
+  apiGetState(room.name, index)
     .then(state => {
-      apiPutState(table.name, getStateNo(), state)
+      apiPutState(room.name, getStateNo(), state)
         .catch(error => errorUnexpected(error))
         .finally(() => {
           syncNow()
@@ -373,7 +373,7 @@ export function createPieces (pieces, selected = false, selectIds = []) {
 
   if (!pieces || pieces.length <= 0) return
   const piece = pieces.shift()
-  return createPiece(clampToTablesize(piece), false)
+  return createPiece(clampToTableSize(piece), false)
     .then(id => {
       selectIds.push(id)
       if (pieces.length === 0) final = true
@@ -387,7 +387,7 @@ export function createPieces (pieces, selected = false, selectIds = []) {
 }
 
 export function addAsset (data) {
-  return apiPostAsset(table.name, data)
+  return apiPostAsset(room.name, data)
 }
 
 /**
@@ -395,8 +395,8 @@ export function addAsset (data) {
  *
  * @return {Promise} Promise of deletion to wait for.
  */
-export function deleteTable () {
-  return apiDeleteTable(table.name)
+export function deleteRoom () {
+  return apiDeleteRoom(room.name)
 }
 
 /**
@@ -405,13 +405,13 @@ export function deleteTable () {
  * @param {Number} no Number of state 0..9.
  * @return {Promise} Promise of a state object.
  */
-export function fetchTableState (no) {
-  return apiGetState(table.name, no, true)
+export function fetchRoomState (no) {
+  return apiGetState(room.name, no, true)
     .then(state => {
       _setState(no, populatePiecesDefaults(state.body, state.headers))
       return state
     })
-    .catch(error => errorTableGone(error))
+    .catch(error => errorRoomGone(error))
 }
 
 // --- HTTP error handling -----------------------------------------------------
@@ -430,9 +430,9 @@ export function errorUnexpected404 (error) {
   return null
 }
 
-export function errorTableGone (error) {
+export function errorRoomGone (error) {
   if (error instanceof UnexpectedStatus) {
-    runError('TABLE_GONE', table.name, error)
+    runError('TABLE_GONE', room.name, error)
     stopAutoSync()
   } else {
     errorUnexpected(error)
@@ -464,7 +464,7 @@ export function setTabActive (state) {
 // --- internal, but exposed for unit testing ----------------------------------
 
 /**
- * Internal: Set a table state to given data.
+ * Internal: Set a room state to given data.
  *
  * Only exposed for unit testing.
  */
@@ -473,18 +473,18 @@ export function _setState (no, data) {
 }
 
 /**
- * Internal: Set a table metadata to given data.
+ * Internal: Set a room metadata to given data.
  *
  * Only exposed for unit testing.
  */
-export function _setTable (data) {
-  table = data
+export function _setRoom (data) {
+  room = data
 }
 
 // --- internal ----------------------------------------------------------------
 
-let table = {} /** stores the table meta info JSON */
-let stateNo = 1 /** stores the currently visible sub-table */
+let room = {} /** stores the room meta info JSON */
+let stateNo = 1 /** stores the currently visible sub-room */
 const states = [[], [], [], [], [], [], [], [], [], []] /** caches the states 0..9 **/
 let tabActive = true /** is the current tab/window active/maximized? */
 
@@ -513,12 +513,12 @@ function stripPiece (piece) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Object} patch Partial object of fields to send.
- * @param {Object} poll Optional. If true (default), the table state will be
+ * @param {Object} poll Optional. If true (default), the room state will be
  *                 polled after the patch.
  * @return {Object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, poll = true) {
-  return apiPatchPiece(table.name, getStateNo(), pieceId, patch)
+  return apiPatchPiece(room.name, getStateNo(), pieceId, patch)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
       if (poll) syncNow()
@@ -529,12 +529,12 @@ function patchPiece (pieceId, patch, poll = true) {
  * Update a piece on the server.
  *
  * @param {Object} patch Array of partial object of fields to send. Must include ids!
- * @param {Object} poll Optional. If true (default), the table state will be
+ * @param {Object} poll Optional. If true (default), the room state will be
  *                 polled after the patch.
  * @return {Object} Promise of the API request.
  */
 function patchPieces (patches, poll = true) {
-  return apiPatchPieces(table.name, getStateNo(), patches)
+  return apiPatchPieces(room.name, getStateNo(), patches)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
       if (poll) syncNow()
@@ -545,12 +545,12 @@ function patchPieces (patches, poll = true) {
  * Create a piece on the server.
  *
  * @param {Object} piece The full piece to send to the server.
- * @param {Object} poll Optional. If true (default), the table state will be
+ * @param {Object} poll Optional. If true (default), the room state will be
  *                 polled after the create.
  * @return {Object} Promise of the ID of the new piece.
  */
 function createPiece (piece, poll = true) {
-  return apiPostPiece(table.name, getStateNo(), stripPiece(piece))
+  return apiPostPiece(room.name, getStateNo(), stripPiece(piece))
     .then(piece => {
       return piece.id
     })

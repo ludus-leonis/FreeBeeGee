@@ -1,5 +1,5 @@
 /**
- * @file The join-table screen.
+ * @file The join-room screen.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -18,8 +18,8 @@
  */
 
 import { createScreen } from '../screen.mjs'
-import { createTable } from './create.mjs'
-import { runTable } from './table/table.mjs'
+import { createRoom } from './create.mjs'
+import { runRoom } from './table/table.mjs'
 
 import { stateGetServerInfo } from '../server.mjs'
 import _ from '../FreeDOM.mjs'
@@ -28,20 +28,20 @@ import {
   generateName,
   generateUsername
 } from '../utils.mjs'
-import { apiGetTable } from '../api.mjs'
-import { navigateToTable } from '../nav.mjs'
+import { apiGetRoom } from '../api.mjs'
+import { navigateToRoom } from '../nav.mjs'
 
-/** Limit table names like hilariousGazingPenguin */
-const tableNameMaxLength = 48
+/** Limit room names like hilariousGazingPenguin */
+const roomNameMaxLength = 48
 
 /**
  * Show the enter-name dialog or skip it if name was already given.
  *
- * @param {String} tableName Table name.
+ * @param {String} roomName Room name.
  */
-export function runJoin (tableName) {
-  if (tableName) {
-    openOrCreate(tableName)
+export function runJoin (roomName) {
+  if (roomName) {
+    openOrCreate(roomName)
   } else {
     showJoinDialog()
   }
@@ -50,24 +50,24 @@ export function runJoin (tableName) {
 // -----------------------------------------------------------------------------
 
 /**
- * Show a join-table dialog.
+ * Show a join-room dialog.
  */
 function showJoinDialog () {
   createScreen(
-    'Pick a table',
+    'Pick a room',
     `
-      <label for="name">Table name</label>
-      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${tableNameMaxLength}" pattern="[a-zA-Z0-9]{8,${tableNameMaxLength}}">
+      <label for="name">Room name</label>
+      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${roomNameMaxLength}" pattern="[a-zA-Z0-9]{8,${roomNameMaxLength}}">
       <p class="p-small spacing-tiny">Min. 8 characters - no spaces or funky letters, please.</p>
 
       <!--label for="user">Your name</label-->
       <input id="user" name="user" type="hidden" placeholder="Jolie Average">
-      <!--p class="p-small spacing-tiny">Will be visible to other players at this table.</p-->
+      <!--p class="p-small spacing-tiny">Will be visible to other players at this room.</p-->
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Take me there!</a>
     `,
 
-    `This server deletes tables after ${stateGetServerInfo().ttl}h of inactivity.`
+    `This server deletes rooms after ${stateGetServerInfo().ttl}h of inactivity.`
   )
 
   const name = _('#name')
@@ -114,10 +114,10 @@ function showJoinDialog () {
   name.on('paste', paste => {
     setTimeout(() => {
       const input = _('#name')
-      input.value = input.value.replace(/[^a-zA-Z0-9]/gi, '').substr(0, tableNameMaxLength)
+      input.value = input.value.replace(/[^a-zA-Z0-9]/gi, '').substr(0, roomNameMaxLength)
     })
   })
-  name.value = getGetParameter('table').replace(/[^a-zA-Z0-9]/gi, '').substr(0, tableNameMaxLength)
+  name.value = getGetParameter('room').replace(/[^a-zA-Z0-9]/gi, '').substr(0, roomNameMaxLength)
   name.placeholder = generateName()
   name.focus()
 
@@ -129,26 +129,26 @@ function showJoinDialog () {
 }
 
 /**
- * Initiates actual table-join after user clicks OK.
+ * Initiates actual room-join after user clicks OK.
  */
 function ok () {
   const invalid = document.querySelector('input:invalid')
   if (invalid) {
     invalid.focus()
   } else {
-    navigateToTable(_('#name').valueOrPlaceholder())
+    navigateToRoom(_('#name').valueOrPlaceholder())
   }
 }
 
 /**
- * Try to open/init a table. If it does not exist, show the create screen.
+ * Try to open/init a room. If it does not exist, show the create screen.
  *
- * @param {String} tableName Table name.
+ * @param {String} roomName Room name.
  */
 function openOrCreate (name) {
-  apiGetTable(name)
-    .then((table) => {
-      runTable(table)
+  apiGetRoom(name)
+    .then((room) => {
+      runRoom(room)
     })
-    .catch(() => createTable(name))
+    .catch(() => createRoom(name))
 }

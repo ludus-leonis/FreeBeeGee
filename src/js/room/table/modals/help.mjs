@@ -26,9 +26,9 @@ import {
   modalClose
 } from '../../../modal.mjs'
 import {
-  getTable,
-  getTablePreference,
-  setTablePreference
+  getRoom,
+  getRoomPreference,
+  setRoomPreference
 } from '../state.mjs'
 import marked from 'marked'
 
@@ -58,13 +58,13 @@ export function modalHelp () {
         </div>
         <div class="tabs-content">
           <div class="primer">
-            <p>FreeBeeGee is a shared, virtual gaming tabletop. Everyone who joins a table will see the same gaming pieces on it. If someone adds, moves or removes pieces, the other players will see this immediately.</p>
+            <p>FreeBeeGee is a shared, virtual gaming tabletop. Everyone who joins a room will see the same gaming pieces on it. If someone adds, moves or removes pieces, the other players will see this immediately.</p>
 
-            <p>On our table, everyone is equal. There is no game master or superuser. Everyone can manipulate what's there. Please be polite.</p>
+            <p>On our room, everyone is equal. There is no game master or superuser. Everyone can manipulate what's there. Please be polite.</p>
 
             <h2 class="h3">Layers</h2>
 
-            <p>Your table has different layers, containing pieces of a specific type each. From top to bottom the layers are:</p>
+            <p>Your room has different layers, containing pieces of a specific type each. From top to bottom the layers are:</p>
             <ul>
               <li><strong>Dice</strong> are your friendly random number generators.</li>
               <li><strong>Tokens</strong> are round player figures, usually heroes and monsters.</li>
@@ -88,19 +88,19 @@ export function modalHelp () {
 
             <h2 class="h3">Dice</h2>
 
-            <p>To roll dice, add them from the library to your table. Then <strong>select</strong> the die you want to roll and press <span class="key">#</span>.</p>
+            <p>To roll dice, add them from the library to your room. Then <strong>select</strong> the die you want to roll and press <span class="key">#</span>.</p>
 
-            <p>If you want to roll multiple dice at once, add a <strong>Dicemat</strong> from the library to your table. Then move your dice onto the dicemat, <strong>select</strong> the dicemat and press <span class="key">#</span>.</p>
+            <p>If you want to roll multiple dice at once, add a <strong>Dicemat</strong> from the library to your room. Then move your dice onto the dicemat, <strong>select</strong> the dicemat and press <span class="key">#</span>.</p>
 
           </div>
           <div class="hotkeys">
-            <p>The following hotkeys are available on the <strong>table</strong>:</p>
+            <p>The following hotkeys are available on the <strong>room</strong>:</p>
             <p><span class="key">1</span> / <span class="key">2</span> / <span class="key">3</span> / <span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
             <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library window opened.</p>
             <p><span class="key">n</span> Add a new sticky note at the current mouse cursor position.</p>
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>
-            <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to subtable 1 to 9.</p>
-            <p><span class="key">S</span> Show the table statistics &amp; settings.</p>
+            <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to table 1 to 9.</p>
+            <p><span class="key">S</span> Show the room statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
@@ -116,13 +116,13 @@ export function modalHelp () {
 
           </div>
           <div class="copyright">
-            <h3>Table assets</h3>
+            <h3>Room assets</h3>
 
-            ${marked(getTable().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+            ${marked(getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
 
             <h3>UI assets</h3>
 
-            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more table background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
+            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more room background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
 
             <h3>FreeBeeGee</h3>
 
@@ -142,10 +142,10 @@ export function modalHelp () {
     `
 
     _('input[name="tabs"]').on('change', change => {
-      setTablePreference('modalHelpTab', change.target.id)
+      setRoomPreference('modalHelpTab', change.target.id)
     })
 
-    const preselect = getTablePreference('modalHelpTab') ?? 'tab-1'
+    const preselect = getRoomPreference('modalHelpTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 
     _('#btn-close').on('click', () => getModal().hide())

@@ -20,10 +20,10 @@
 import {
   getLibrary,
   createPieces,
-  getTablePreference,
-  setTablePreference,
+  getRoomPreference,
+  setRoomPreference,
   addAsset,
-  reloadTable
+  reloadRoom
 } from '../state.mjs'
 import {
   createPieceFromAsset,
@@ -126,9 +126,9 @@ export function modalLibrary (tile) {
 
     // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
-      setTablePreference('modalLibraryTab', change.target.id)
+      setRoomPreference('modalLibraryTab', change.target.id)
     })
-    const preselect = getTablePreference('modalLibraryTab') ?? 'tab-1'
+    const preselect = getRoomPreference('modalLibraryTab') ?? 'tab-1'
     _('#' + preselect).checked = true
 
     refreshTabs()
@@ -277,7 +277,7 @@ function modalUpload () {
 
     addAsset(data)
       .then(remoteImage => {
-        reloadTable()
+        reloadRoom()
           .then(() => {
             refreshTabs()
             switch (data.layer) {

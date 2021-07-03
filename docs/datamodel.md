@@ -222,6 +222,6 @@ Templates using the `grid-square` type also have the following properties:
 : The (invisible) grid size pieces will snap to. Usuall equal to the `gridSize` to allow only full-tile snapping, or half of the `gridSize` to allow snapping to border/corners.
 
 
-## Tables
+## Rooms
 
 TBD

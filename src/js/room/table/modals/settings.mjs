@@ -1,5 +1,5 @@
 /**
- * @file Handles the table settings modal.
+ * @file Handles the room settings modal.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -28,12 +28,12 @@ import {
   getTemplate,
   updateTemplate,
   updateState,
-  getTable,
-  deleteTable,
+  getRoom,
+  deleteRoom,
   getStateNo,
   setStateNo,
-  getTablePreference,
-  setTablePreference
+  getRoomPreference,
+  setRoomPreference
 } from '../state.mjs'
 import { timeRecords } from '../../../utils.mjs'
 import { navigateToJoin } from '../../../nav.mjs'
@@ -63,7 +63,7 @@ export function modalSettings () {
       <input id="tab-3" type="radio" name="tabs">
       <div class="tabs-tabs">
         <label for="tab-1" class="tabs-tab">Preferences</label>
-        <label for="tab-2" class="tabs-tab">Table</label>
+        <label for="tab-2" class="tabs-tab">Room</label>
         <label for="tab-3" class="tabs-tab">Danger Zone</label>
       </div>
       <div class="tabs-content">
@@ -72,13 +72,13 @@ export function modalSettings () {
           <div class="col-12">
             <p>This tab only affects your browser, not the other players.</p>
 
-            <h2 class="h3">Subtable</h2>
+            <h2 class="h3">Subroom</h2>
             <p>Switch to a different view/setup on the current table:</p>
 
             <div class="container">
               <div class="row">
                 <div class="col-6 col-sm-8">
-                  <select id="table-sub" name="subtable"></select>
+                  <select id="table-sub" name="table"></select>
                 </div>
                 <div class="col-6 col-sm-4">
                   <button id="btn-table-sub" class="btn btn-wide">Switch</button>
@@ -87,26 +87,26 @@ export function modalSettings () {
             </div>
 
             <h2 class="h3">Render quality</h2>
-            <p>If your table seems to be slow, you can change the render quality here:</p>
-            <input type="range" min="0" max="3" value="${getTablePreference('renderQuality') ?? 3}" class="slider" id="quality">
+            <p>If your room seems to be slow, you can change the render quality here:</p>
+            <input type="range" min="0" max="3" value="${getRoomPreference('renderQuality') ?? 3}" class="slider" id="quality">
             <p class="if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
             <p class="if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
             <p class="if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
             <p class="if-quality-ultra"><strong>Ultra:</strong> Full details and random piece rotation are enabled.</p>
 
             <h2 class="h3">Statistics</h2>
-            <p>Table: ${getTemplate().gridWidth}x${getTemplate().gridHeight} spaces, ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile, ${_('.piece.piece-other').nodes().length}x other</p>
+            <p>Room: ${getTemplate().gridWidth}x${getTemplate().gridHeight} spaces, ${_('.piece.piece-token').nodes().length}x token, ${_('.piece.piece-overlay').nodes().length}x overlay, ${_('.piece.piece-tile').nodes().length}x tile, ${_('.piece.piece-other').nodes().length}x other</p>
             <p>Refresh time: ${Math.ceil(timeRecords['sync-network'].reduce((a, b) => a + b) / timeRecords['sync-network'].length)}ms network + ${Math.ceil(timeRecords['sync-ui'].reduce((a, b) => a + b) / timeRecords['sync-ui'].length)}ms browser</p>
           </div>
         </div></form>
         <form class="container"><div id="tab-my" class="row">
           <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
 
-          <p>The following settings will affect the whole table and all players.</p>
+          <p>The following settings will affect the whole room and all players.</p>
 
           <div class="col-12 spacing-small">
-            <h2 class="h3">Table content</h2>
-            <p>Move all the content on the table to a corner/side of your choice:</p>
+            <h2 class="h3">Room content</h2>
+            <p>Move all the content on the room to a corner/side of your choice:</p>
           </div>
 
           <div class="col-12 col-sm-4">
@@ -138,7 +138,7 @@ export function modalSettings () {
           </div>
 
           <div class="col-12 spacing-small">
-            <h2 class="h3">Table size</h2>
+            <h2 class="h3">Room size</h2>
           </div>
 
           <div class="col-12 col-sm-4">
@@ -159,21 +159,21 @@ export function modalSettings () {
           <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
 
           <div class="col-12 spacing-small">
-            <p>The following settings will affect the whole table and all players. There will be <strong>no&nbsp;undo</strong> if you push any of those buttons!</p>
+            <p>The following settings will affect the whole room and all players. There will be <strong>no&nbsp;undo</strong> if you push any of those buttons!</p>
             <p><input id="danger" type="checkbox"><label for="danger">Enable danger zone.</label></p>
           </div>
 
           <div class="col-12 col-sm-8">
-            <p>Clearing the table will remove all pieces from it. The library will not be changed.</p>
+            <p>Clearing the room will remove all pieces from it. The library will not be changed.</p>
           </div>
           <div class="col-12 col-sm-4">
-            <button id="btn-table-clear" class="btn btn-wide" disabled>Clear table</button>
+            <button id="btn-table-clear" class="btn btn-wide" disabled>Clear room</button>
           </div>
           <div class="col-12 col-sm-8">
-            <p>Deleting your table will permanently erase it and it's library.</p>
+            <p>Deleting your room will permanently erase it and it's library.</p>
           </div>
           <div class="col-12 col-sm-4">
-            <button id="btn-table-delete" class="btn btn-wide" disabled>Delete table</button>
+            <button id="btn-table-delete" class="btn btn-wide" disabled>Delete room</button>
           </div>
         </div></form>
       </div>
@@ -185,9 +185,9 @@ export function modalSettings () {
 
   // store/retrieve selected tab
   _('input[name="tabs"]').on('change', change => {
-    setTablePreference('modalSettingsTab', change.target.id)
+    setRoomPreference('modalSettingsTab', change.target.id)
   })
-  const preselect = getTablePreference('modalSettingsTab') ?? 'tab-1'
+  const preselect = getRoomPreference('modalSettingsTab') ?? 'tab-1'
   _('#' + preselect).checked = true
 
   _('#quality').on('change', () => changeQuality(Number(_('#quality').value)))
@@ -226,7 +226,7 @@ export function modalSettings () {
   })
   _('#btn-table-delete').on('click', click => {
     click.preventDefault()
-    deleteTable().then(() => navigateToJoin(getTable().name))
+    deleteRoom().then(() => navigateToJoin(getRoom().name))
   })
 
   // ---------------------------------------------------------------------------
@@ -299,7 +299,7 @@ export function modalSettings () {
 
   _('#btn-table-resize').on('click', click => {
     click.preventDefault()
-    resizeTable()
+    resizeRoom()
     getModal().hide()
   })
 
@@ -317,7 +317,7 @@ export function modalSettings () {
  */
 export function changeQuality (value) {
   const body = _('body').remove('.is-quality-low', '.is-quality-medium', '.is-quality-high', '.is-quality-ultra')
-  setTablePreference('renderQuality', value)
+  setRoomPreference('renderQuality', value)
   switch (value) {
     case 0:
       body.add('.is-quality-low')
@@ -340,28 +340,28 @@ export function changeQuality (value) {
  * Populate a grid-size <select> with appropriate entries.
  *
  * @param {String} id DOM-ID of select.
- * @param {Number} tableSize Current table size in tiles.
+ * @param {Number} roomSize Current room size in tiles.
  * @param {Number} contentSize Current right-most content size, in tiles.
  * @param {Number} increments (Optional) Increment size, defaults to 16.
  */
-function populateSizes (id, tableSize, contentSize, increments = 16) {
+function populateSizes (id, roomSize, contentSize, increments = 16) {
   const select = _(id)
 
   for (let i = -2; i <= 2; i++) {
-    const size = tableSize + increments * i
+    const size = roomSize + increments * i
     if (size > 0 && size <= 256 && size >= contentSize + 1) {
       const option = _('option').create(size)
       option.value = size
-      if (size === tableSize) option.selected = true
+      if (size === roomSize) option.selected = true
       select.add(option)
     }
   }
 }
 
 /**
- * Resize the table (if size actually changed)
+ * Resize the room (if size actually changed)
  */
-function resizeTable () {
+function resizeRoom () {
   const template = getTemplate()
   const w = Number(_('#table-w').value)
   const h = Number(_('#table-h').value)

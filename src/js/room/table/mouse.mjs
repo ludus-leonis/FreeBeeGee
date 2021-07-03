@@ -70,7 +70,7 @@ export function getMouseTile () {
 }
 
 /**
- * Enable the table area drag'n'drop handling by registering the event handlers.
+ * Enable the room area drag'n'drop handling by registering the event handlers.
  *
  * @param {String} tabletop Selector/ID for tabletop div.
  */

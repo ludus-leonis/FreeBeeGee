@@ -1,5 +1,5 @@
 /**
- * @file The actual table / tabletop stuff. Mainly in charge of state -> DOM
+ * @file The actual room / tabletop stuff. Mainly in charge of state -> DOM
  *       propagation. Does not manipulate data nor does it do API calls.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
@@ -21,10 +21,10 @@
 import { createPopper } from '@popperjs/core'
 
 import {
-  getTable,
+  getRoom,
   getTemplate,
   getStateNo,
-  loadTable,
+  loadRoom,
   updatePieces,
   createPieces,
   setStateNo,
@@ -34,8 +34,8 @@ import {
   movePiece,
   borderPiece,
   rotatePiece,
-  setTablePreference,
-  getTablePreference
+  setRoomPreference,
+  getRoomPreference
 } from './state.mjs'
 import {
   findAsset,
@@ -93,15 +93,15 @@ export function setScrollPosition (x, y) {
 }
 
 /**
- * Initialize and start the table/tabletop screen.
+ * Initialize and start the room/tabletop screen.
  *
- * @param {String} name Name of table, e.g. hilariousGazingPenguin.
+ * @param {String} name Name of room, e.g. hilariousGazingPenguin.
  */
-export function runTable (table) {
-  console.info('$NAME$ v$VERSION$, table ' + table.name)
+export function runRoom (room) {
+  console.info('$NAME$ v$VERSION$, room ' + room.name)
 
-  loadTable(table.name)
-    .then(() => setupTable())
+  loadRoom(room.name)
+    .then(() => setupRoom())
 }
 
 /**
@@ -113,10 +113,10 @@ export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
   _('#tabletop').toggle('.layer-' + layer + '-enabled')
   if (_('#btn-' + layer + '.active').exists()) {
-    setTablePreference('layer' + layer, true)
+    setRoomPreference('layer' + layer, true)
   } else {
     unselectPieces(layer)
-    setTablePreference('layer' + layer, false)
+    setRoomPreference('layer' + layer, false)
   }
 }
 
@@ -130,7 +130,7 @@ export function getSelected () {
 }
 
 /**
- * Delete the currently selected piece from the table.
+ * Delete the currently selected piece from the room.
  *
  * Will silently fail if nothing is selected.
  */
@@ -139,7 +139,7 @@ export function deleteSelected () {
 }
 
 /**
- * Show settings dialog for the current table/table.
+ * Show settings dialog for the current table/room.
  */
 export function settings () {
   modalSettings()
@@ -547,7 +547,7 @@ export function noteToNode (note) {
 /**
  * Add a new sticky note to the cursor position.
  *
- * This adds a enirely new note to the table via a call to the state.
+ * This adds a enirely new note to the room via a call to the state.
  *
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
@@ -635,16 +635,16 @@ export function popupPiece (id) {
 }
 
 /**
- * Remove dirty / obsolete / bad pieces from table.
+ * Remove dirty / obsolete / bad pieces from room.
  *
  * Usually called during library sync.
  */
-export function cleanupTable () {
+export function cleanupRoom () {
   _('#tabletop .piece.is-invalid').delete()
 }
 
 /**
- * Move the table content to the given x/y position.
+ * Move the room content to the given x/y position.
  *
  * Will determine the content-box and move each item relative to its top/left
  * corner.
@@ -671,21 +671,21 @@ export function moveContent (toX, toY) {
 }
 
 /**
- * Update DOM table to current table-data.
+ * Update DOM room to current table-data.
  *
- * e.g. for resizing the table.
+ * e.g. for resizing the room.
  *
  * @param {Array} state State to update to.
  * @param {Array} selectIds Optional, possibly empty array of IDs to select
  *                          after update.
- * @return {FreeDOM} Table DOM element for further customization.
+ * @return {FreeDOM} Room DOM element for further customization.
  */
-export function updateTable () {
-  const table = getTable()
+export function updateRoom () {
+  const room = getRoom()
 
   return _('#tabletop').css({
-    width: table.width + 'px',
-    height: table.height + 'px'
+    width: room.width + 'px',
+    height: room.height + 'px'
   })
 }
 
@@ -693,7 +693,7 @@ export function updateTabletop (state, selectIds = []) {
   const start = Date.now()
 
   const keepIds = []
-  cleanupTable()
+  cleanupRoom()
   for (const item of state) {
     setItem(item, selectIds.includes(item.id))
     keepIds.push(item.id)
@@ -712,10 +712,10 @@ export function updateTabletop (state, selectIds = []) {
  */
 export function pointTo (coords) {
   const template = getTemplate()
-  const table = getTable()
+  const room = getRoom()
 
-  coords.x = clamp(0, coords.x - template.gridSize / 2, table.width - template.gridSize)
-  coords.y = clamp(0, coords.y - template.gridSize / 2, table.height - template.gridSize)
+  coords.x = clamp(0, coords.x - template.gridSize / 2, room.width - template.gridSize)
+  coords.y = clamp(0, coords.y - template.gridSize / 2, room.height - template.gridSize)
   const pointer = findPiece(ID_POINTER)
   if (pointer) {
     movePiece(pointer.id, coords.x, coords.y)
@@ -739,7 +739,7 @@ export function pointTo (coords) {
  *
  * @param {Number} clientX A window x coordinate e.g. from a click event.
  * @param {Number} clientY A window y coordinate e.g. from a click event.
- * @return {Object} The absolute table coordinate as {x, y}.
+ * @return {Object} The absolute room coordinate as {x, y}.
  */
 export function getTableCoordinates (windowX, windowY) {
   const origin = scroller.getBoundingClientRect()
@@ -766,19 +766,19 @@ export function getTableTile (windowX, windowY) {
 // --- internal ----------------------------------------------------------------
 
 /**
- * Setup the table screen / HTML.
+ * Setup the room screen / HTML.
  *
- * @param {Object} table Table data object.
+ * @param {Object} room Room data object.
  */
-function setupTable () {
-  const table = getTable()
+function setupRoom () {
+  const room = getRoom()
 
   _('body').remove('.page-boxed').innerHTML = `
-    <div id="table" class="table is-fullscreen is-noselect">
+    <div id="room" class="room is-fullscreen is-noselect">
       <div class="menu">
         <div>
           <div class="menu-brand is-content">
-            <button id="btn-s" class="btn-icon" title="Table settings [s]"><img src="icon.svg"></button>
+            <button id="btn-s" class="btn-icon" title="Room settings [s]"><img src="icon.svg"></button>
           </div>
 
           <div>
@@ -816,9 +816,9 @@ function setupTable () {
         <div>
           <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
 
-          <a id="btn-snap" class="btn-icon" title="Download snapshot" href='./api/tables/${table.name}/snapshot/'>${iconDownload}</a>
+          <a id="btn-snap" class="btn-icon" title="Download snapshot" href='./api/rooms/${room.name}/snapshot/'>${iconDownload}</a>
 
-          <button id="btn-q" class="btn-icon" title="Leave table">${iconQuit}</button>
+          <button id="btn-q" class="btn-icon" title="Leave room">${iconQuit}</button>
         </div>
       </div>
       <div id="scroller" class="scroller">
@@ -828,7 +828,7 @@ function setupTable () {
           <div id="layer-note" class="layer layer-note"></div>
           <div id="layer-overlay" class="layer layer-overlay"></div>
           <div id="layer-tile" class="layer layer-tile"></div>
-          <div id="layer-table" class="layer layer-table"></div>
+          <div id="layer-room" class="layer layer-room"></div>
         </div>
       </div>
       <div class="status"></div>
@@ -836,13 +836,13 @@ function setupTable () {
   `
 
   // load preferences
-  changeQuality(getTablePreference('renderQuality') ?? 3)
+  changeQuality(getRoomPreference('renderQuality') ?? 3)
 
   // setup menu for layers
   let undefinedCount = 0
   for (const layer of ['token', 'overlay', 'tile', 'other']) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
-    const prop = getTablePreference('layer' + layer)
+    const prop = getRoomPreference('layer' + layer)
     if (prop === true) toggleLayer(layer) // stored enabled
     if (prop === undefined) undefinedCount++
   }
@@ -866,12 +866,12 @@ function setupTable () {
 
   // setup remaining menu
   _('#btn-h').on('click', () => modalHelp())
-  _('#btn-q').on('click', () => navigateToJoin(getTable().name))
+  _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
 
-  updateTable().css({
-    backgroundColor: table.background.color,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + table.background.image + '?v=$CACHE$")',
-    backgroundSize: table.template.gridSize + 'px,1152px 768px'
+  updateRoom().css({
+    backgroundColor: room.background.color,
+    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + room.background.image + '?v=$CACHE$")',
+    backgroundSize: room.template.gridSize + 'px,1152px 768px'
   })
 
   _('body').on('contextmenu', e => e.preventDefault())
@@ -879,16 +879,16 @@ function setupTable () {
   // setup scroller + keep reference for scroll-tracking
   scroller = _('#scroller')
   scroller.css({ // this is for moz://a
-    scrollbarColor: `${table.background.scroller} ${table.background.color}`
+    scrollbarColor: `${room.background.scroller} ${room.background.color}`
   })
   scroller = scroller.node()
-  scroller.style.setProperty('--fbg-color-scroll-fg', table.background.scroller)
-  scroller.style.setProperty('--fbg-color-scroll-bg', table.background.color)
+  scroller.style.setProperty('--fbg-color-scroll-fg', room.background.scroller)
+  scroller.style.setProperty('--fbg-color-scroll-bg', room.background.color)
 
   enableDragAndDrop('#tabletop')
 
   // load + setup content
-  setStateNo(getTablePreference('subtable') ?? 1, false)
+  setStateNo(getRoomPreference('table') ?? 1, false)
   runStatuslineLoop()
   startAutoSync(() => { setAutoScrollPosition() })
 }
@@ -903,8 +903,8 @@ let scrollFetcherTimeout = -1
  */
 function setAutoScrollPosition () {
   const scroller = _('#scroller')
-  const lastX = getTablePreference('scrollX')
-  const lastY = getTablePreference('scrollY')
+  const lastX = getRoomPreference('scrollX')
+  const lastY = getRoomPreference('scrollY')
   if (lastX && lastY) {
     scroller.node().scrollTo(
       lastX - Math.floor(scroller.clientWidth / 2),
@@ -920,8 +920,8 @@ function setAutoScrollPosition () {
   scroller.on('scroll', () => {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
-      setTablePreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
-      setTablePreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
+      setRoomPreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
+      setRoomPreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
     }, 1000)
   })
 }
@@ -947,7 +947,7 @@ function createPointerAsset () {
 }
 
 /**
- * Calculate the center of the setup on the table.
+ * Calculate the center of the setup on the room.
  *
  * Iterates over all pieces and averages their centers.
  *
@@ -1069,7 +1069,7 @@ function randomDiscard (discard) {
 }
 
 /**
- * Detect deleted pieces and remove them from the table.
+ * Detect deleted pieces and remove them from the room.
  *
  * @param {String[]} keepIds IDs of pieces to keep.
  */

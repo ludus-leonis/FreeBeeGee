@@ -1,5 +1,5 @@
 /**
- * @file The create-a-table screen.
+ * @file The create-a-room screen.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -20,34 +20,34 @@
 import { createScreen, serverFeedback } from '../screen.mjs'
 import { runError } from './error.mjs'
 
-import { createTable as stateCreateTable } from './table/state.mjs'
+import { createRoom as stateCreateRoom } from './table/state.mjs'
 import { stateGetServerInfo } from '../server.mjs'
 import _ from '../FreeDOM.mjs'
 import { apiGetTemplates, UnexpectedStatus } from '../api.mjs'
-import { navigateToTable } from '../nav.mjs'
+import { navigateToRoom } from '../nav.mjs'
 
 /**
- * Show a create-table dialog.
+ * Show a create-room dialog.
  *
- * @param {String} name The table name the user entered in the join dialog.
+ * @param {String} name The room name the user entered in the join dialog.
  */
-export function createTable (name) {
-  if (stateGetServerInfo().freeTables <= 0) {
+export function createRoom (name) {
+  if (stateGetServerInfo().freeRooms <= 0) {
     runError('NO_SLOT')
     return
   }
 
   const templateHelp = stateGetServerInfo().snapshotUploads
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
-    : 'Let us know what kind of table we may prepare for you.'
+    : 'Let us know what kind of room we may prepare for you.'
 
   createScreen(
-    'Setup your table',
+    'Setup your room',
     `
       <div class="page-create">
         <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
         <input id="mode" class="mode is-hidden" type="checkbox">
-        <p class="is-wrapping">Table <strong>${name}</strong> does not exist yet. It is yours to claim!</p>
+        <p class="is-wrapping">Room <strong>${name}</strong> does not exist yet. It is yours to claim!</p>
 
         <p class="server-feedback"></p>
 
@@ -65,13 +65,13 @@ export function createTable (name) {
       ` + (stateGetServerInfo().createPassword ? `
         <label for="password">Password</label>
         <input id="password" type="password" placeholder="* * * * * *">
-        <p class="p-small spacing-tiny">This server requires a password to create tables.</p>
+        <p class="p-small spacing-tiny">This server requires a password to create rooms.</p>
       ` : '') + `
         <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Let's play!</a>
       </div>
     `,
 
-    `This server deletes tables after ${stateGetServerInfo().ttl}h of inactivity.`
+    `This server deletes rooms after ${stateGetServerInfo().ttl}h of inactivity.`
   )
 
   apiGetTemplates()
@@ -115,18 +115,18 @@ function validate () {
 }
 
 /**
- * Initiates actual table-create after user clicks OK.
+ * Initiates actual room-create after user clicks OK.
  */
 function ok (name) {
   _('#ok').add('.is-spinner')
 
-  const table = {
+  const room = {
     name: name
   }
 
   const password = _('#password').value ?? null
   if (password !== null) {
-    table.auth = password
+    room.auth = password
   }
 
   let snapshot = null
@@ -136,12 +136,12 @@ function ok (name) {
       snapshot = file.files[0]
     }
   } else { // exisiting template mode
-    table.template = _('#template').value
+    room.template = _('#template').value
   }
 
-  stateCreateTable(table, snapshot)
-    .then((remoteTable) => {
-      navigateToTable(remoteTable.name)
+  stateCreateRoom(room, snapshot)
+    .then((remoteRoom) => {
+      navigateToRoom(remoteRoom.name)
     })
     .catch((error) => {
       console.error(error)
@@ -164,7 +164,7 @@ function ok (name) {
               case 'TEMPLATE_JSON_INVALID':
               case 'STATE_JSON_INVALID':
               default:
-                serverFeedback('This template contains errors and can\'t be added to your table. Please choose another template.')
+                serverFeedback('This template contains errors and can\'t be added to your room. Please choose another template.')
                 console.error(error.body._messages)
                 _('#uploadInput').add('.invalid')
                 _('#template').add('.invalid').focus()
