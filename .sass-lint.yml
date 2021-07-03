@@ -2,6 +2,7 @@ rules:
   force-element-nesting: 0
   force-pseudo-nesting: 0
   mixins-before-declarations: 0
+  no-qualifying-elements: 0
   nesting-depth:
     - 1
     - max-depth: 4

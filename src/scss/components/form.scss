@@ -180,20 +180,24 @@ select {
   }
 }
 
-form {
-  &.container,
-  .row,
-  [class^='col-'] {
-    margin: 0;
-    padding: 0;
-  }
+// form {
+//   &.container,
+//   &.container > .row {
+//     margin: 0;
+//     padding: 0;
+//   }
+//
+//   &.container > .row > [class^='col-'] {
+//     margin-top: $spacing-small;
+//   }
+// }
 
-  &.container,
-  &.container:first-child {
-    margin: calc(var(--fbg-spacing) / -2);
-  }
-
-  [class^='col-'] {
-    padding: calc(var(--fbg-spacing) / 2);
-  }
-}
+// &.container,
+// &.container:first-child {
+//   margin: calc(var(--fbg-spacing) / -2);
+// }
+//
+// [class^='col-'] {
+//   padding: calc(var(--fbg-spacing) / 2);
+// }
+//}

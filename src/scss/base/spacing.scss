@@ -43,6 +43,12 @@ $spacing-huge: calc(var(--fbg-spacing) * 4);
   margin-top: $margin-top;
 }
 
+@mixin spacing-first-none {
+  > :first-child {
+    margin-top: 0;
+  }
+}
+
 // --- we want spacings applied to top, not bottom of stuff --------------------
 
 address,
@@ -77,11 +83,11 @@ hgroup,
 hr,
 li,
 // main,
-nav,
+// nav,
 ol,
 p,
 pre,
-section,
+// section,
 table,
 ul,
 img,

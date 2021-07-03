@@ -1,0 +1,108 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group layout
+///
+/// Our basic page grid / spacing rules. Based on Bootstrap v5.
+///
+/// @access public
+////
+
+@import '../../node_modules/bootstrap/scss/bootstrap-grid';
+@import '../../node_modules/bootstrap/scss/mixins/breakpoints';
+
+// mimick bs visibility helpers
+$fbg-breakpoints: sm, md, lg, xl, xxl;
+$fbg-visibility: none, inline, inline-block, block;
+
+@each $fbg-vis in $fbg-visibility {
+  .d-#{$fbg-vis} {
+    display: $fbg-vis;
+  }
+
+  @each $fbg-break in $fbg-breakpoints {
+    .d-#{$fbg-break}-#{$fbg-vis} {
+      display: $fbg-vis;
+    }
+  }
+}
+
+.is-fullscreen {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+  overflow: hidden;
+  width: 100%;
+}
+
+* {
+  margin-bottom: 0;
+}
+
+// --- grid fixes -------------------------------------------------------
+
+$grid-spacing: $spacing-small;
+
+.container { // all / top-level containers
+  padding: $grid-spacing 0;
+
+  > .row {
+    margin: 0;
+    padding: 0;
+
+    > * {
+      margin-top: $grid-spacing;
+      padding-left: calc(#{$spacing-small} * .5);
+      padding-right: calc(#{$spacing-small} * .5);
+
+      &:last-child {
+        margin-bottom: $grid-spacing;
+      }
+
+      > :first-child {
+        margin-top: 0;
+      }
+    }
+  }
+}
+
+form.container,
+.container .container { // nested container
+  max-width: inherit; // nested container always use full width
+  padding-bottom: 0;
+  padding-top: 0;
+
+  > .row {
+    margin-left: calc(#{$spacing-small} * -.5);
+    margin-right: calc(#{$spacing-small} * -.5);
+
+    &:first-of-type {
+      margin-top: calc(#{$spacing-small} * -1); // pin to row as form-container might have hidden field
+    }
+
+    > :first-child {
+      margin-top: $grid-spacing;
+    }
+
+    > :last-child  {
+      margin-bottom: 0;
+    }
+  }
+}

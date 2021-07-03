@@ -29,6 +29,8 @@
   overflow: hidden;
 
   &-header {
+    @include spacing-first-none;
+
     background-color: $color-secondary;
     color: $color-white-100;
     padding: $spacing-tiny $spacing-medium;
@@ -45,6 +47,8 @@
   }
 
   &-body {
+    @include spacing-first-none;
+
     background-color: $color-bw-bg;
     margin: 0;
     padding: $spacing-medium;

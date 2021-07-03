@@ -131,7 +131,7 @@ h3,
 .h3,
 %h3 {
   @extend %spacing-medium;
-  @include typography-font($typography-font-list-sans, 400, px(24), 1.25em);
+  @include typography-font($typography-font-list-sans, 400, px(20), 1.25em);
   color: inherit;
 }
 
@@ -212,7 +212,8 @@ body {
   background-color: var(--fbg-color-bg);
   color: var(--fbg-color-text);
 
-  p > a {
+  p > a,
+  li > a {
     @include typography-links(inherit, inherit, 2px, $color-primary, var(--fbg-color-text));
   }
 }

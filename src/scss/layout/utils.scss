@@ -43,7 +43,9 @@
 
 .is-hidden + *,
 .is-content .is-hidden + * {
-  margin-top: 0;
+  &:not([class^='col-']) {
+    margin-top: 0;
+  }
 }
 
 %is-wide,

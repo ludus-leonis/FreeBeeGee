@@ -41,18 +41,10 @@
     color: $color-secondary;
   }
 
-  .container {
-    max-width: inherit; // content container always use full width
-  }
-
   // the following items, if used directly in a .is-content, should have
   // paragraph spacing
   > .btn {
     @include spacing-margin-top($spacing-small);
-  }
-
-  *:first-child {
-    margin-top: 0;
   }
 
   ul {
@@ -76,9 +68,12 @@
       width: $content-ul-indent;
     }
 
-    ul li::before {
-      content: '›';
+    ul {
+      margin-top: $spacing-tiny;
+
+      li::before {
+        content: '›';
+      }
     }
   }
-
 }
