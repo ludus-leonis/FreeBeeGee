@@ -1,6 +1,5 @@
 /**
- * @file Handles various modal windows but only keeps one modal instance at a
- *       time.
+ * @file Common modal handling. Keeps one modal instance at a time.
  * @module
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -18,7 +17,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from './FreeDOM.mjs'
+import _ from '../lib/FreeDOM.mjs'
 
 let modal = null /** Currently open Bootstrap modal instance */
 

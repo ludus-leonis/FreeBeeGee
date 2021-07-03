@@ -23,7 +23,7 @@ import {
   _setTable,
   _setRoom,
   setTableNo
-} from '../src/js/room/table/state.mjs'
+} from '../src/js/state/index.mjs'
 import {
   findPiece,
   findAsset,
@@ -37,8 +37,9 @@ import {
   getContentRectGrid,
   getContentRectGridAll,
   clampToTableSize,
-  createPieceFromAsset
-} from '../src/js/room/table/tabledata.mjs'
+  createPieceFromAsset,
+  splitAssetFilename
+} from '../src/js/view/room/tabletop/tabledata.mjs'
 
 const TEST_STATE = 5
 
@@ -426,6 +427,50 @@ describe('Frontend - tabledata.mjs', function () {
     expect(piece.label).to.be.eq('')
     expect(piece._sides).to.be.eq(2)
     expect(piece._feature).to.be.eq('DICEMAT')
+  })
+
+  it('splitAssetFilename()', function () {
+    const a1 = splitAssetFilename('door.1x2x3.jpg')
+    expect(a1.alias).to.be.eql('door')
+    expect(a1.w).to.be.eql(1)
+    expect(a1.h).to.be.eql(2)
+    expect(a1.side).to.be.eql(3)
+    expect(a1.color).to.be.eql('808080')
+
+    const b1 = splitAssetFilename('door.1x2x3.123456.jpg')
+    expect(b1.alias).to.be.eql('door')
+    expect(b1.w).to.be.eql(1)
+    expect(b1.h).to.be.eql(2)
+    expect(b1.side).to.be.eql(3)
+    expect(b1.color).to.be.eql('123456')
+
+    const a2 = splitAssetFilename('dungeon.doorOpen.3x2x1.png')
+    expect(a2.alias).to.be.eql('dungeon.doorOpen')
+    expect(a2.w).to.be.eql(3)
+    expect(a2.h).to.be.eql(2)
+    expect(a2.side).to.be.eql(1)
+    expect(a2.color).to.be.eql('808080')
+
+    const b2 = splitAssetFilename('dungeon.doorOpen.3x2x1.transparent.png')
+    expect(b2.alias).to.be.eql('dungeon.doorOpen')
+    expect(b2.w).to.be.eql(3)
+    expect(b2.h).to.be.eql(2)
+    expect(b2.side).to.be.eql(1)
+    expect(b2.color).to.be.eql('transparent')
+
+    const c1 = splitAssetFilename('tile.svg')
+    expect(c1.alias).to.be.eql('tile')
+    expect(c1.w).to.be.eql(1)
+    expect(c1.h).to.be.eql(1)
+    expect(c1.side).to.be.eql(1)
+    expect(c1.color).to.be.eql('808080')
+
+    const a0 = splitAssetFilename('invalid')
+    expect(a0.alias).to.be.eql('unknown')
+    expect(a0.w).to.be.eql(1)
+    expect(a0.h).to.be.eql(1)
+    expect(a0.side).to.be.eql(1)
+    expect(a0.color).to.be.eql('808080')
   })
 })
 

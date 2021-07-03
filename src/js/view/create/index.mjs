@@ -17,14 +17,27 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createScreen, serverFeedback } from '../screen.mjs'
-import { runError } from './error.mjs'
+import {
+  createScreen,
+  serverFeedback
+} from '../../view/screen.mjs'
+import {
+  runError
+} from '../../view/error/index.mjs'
 
-import { createRoom as stateCreateRoom } from './table/state.mjs'
-import { stateGetServerInfo } from '../server.mjs'
-import _ from '../FreeDOM.mjs'
-import { apiGetTemplates, UnexpectedStatus } from '../api.mjs'
-import { navigateToRoom } from '../nav.mjs'
+import {
+  createRoom as stateCreateRoom,
+  getServerInfo
+} from '../../state/index.mjs'
+
+import _ from '../../lib/FreeDOM.mjs'
+import {
+  apiGetTemplates,
+  UnexpectedStatus
+} from '../../api/index.mjs'
+import {
+  navigateToRoom
+} from '../../app.mjs'
 
 /**
  * Show a create-room dialog.
@@ -32,12 +45,12 @@ import { navigateToRoom } from '../nav.mjs'
  * @param {String} name The room name the user entered in the join dialog.
  */
 export function createRoom (name) {
-  if (stateGetServerInfo().freeRooms <= 0) {
+  if (getServerInfo().freeRooms <= 0) {
     runError('NO_SLOT')
     return
   }
 
-  const templateHelp = stateGetServerInfo().snapshotUploads
+  const templateHelp = getServerInfo().snapshotUploads
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
     : 'Let us know what game we may prepare for you.'
 
@@ -62,7 +75,7 @@ export function createRoom (name) {
           <option value="RPG" selected>RPG</option>
         </select>
         <p class="template-text p-small spacing-tiny">${templateHelp}</p>
-      ` + (stateGetServerInfo().createPassword ? `
+      ` + (getServerInfo().createPassword ? `
         <label for="password">Password</label>
         <input id="password" type="password" placeholder="* * * * * *">
         <p class="p-small spacing-tiny">This server requires a password to create rooms.</p>
@@ -72,7 +85,7 @@ export function createRoom (name) {
       </div>
     `,
 
-    `This server deletes rooms after ${stateGetServerInfo().ttl}h of inactivity.`
+    `This server deletes rooms after ${getServerInfo().ttl}h of inactivity.`
   )
 
   apiGetTemplates()

@@ -22,7 +22,7 @@
 import {
   getStoreValue,
   setStoreValue
-} from '../../utils.mjs'
+} from '../lib/utils.mjs'
 import {
   apiGetTable,
   apiPutTable,
@@ -36,20 +36,38 @@ import {
   apiPostPiece,
   apiPostAsset,
   UnexpectedStatus
-} from '../../api.mjs'
+} from '../api/index.mjs'
 import {
   syncNow,
   stopAutoSync
-} from './sync.mjs'
+} from '../view/room/sync.mjs'
 import {
   runError
-} from '../error.mjs'
+} from '../view/error/index.mjs'
 import {
   populatePiecesDefaults,
   clampToTableSize
-} from './tabledata.mjs'
+} from '../view/room/tabletop/tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
+
+/**
+ * Get the current serverInfo object from the client cache.
+ *
+ * @return {Object} The cached server metadata object.
+ */
+export function getServerInfo () {
+  return serverInfo
+}
+
+/**
+ * Set the current serverInfo object in the client cache.
+ *
+ * @param {object} info The serverInfo meta object.
+ */
+export function setServerInfo (info) {
+  serverInfo = info
+}
 
 /**
  * (Re)Fetch the room's state from the API and cache it
@@ -466,6 +484,7 @@ export function _setRoom (data) {
 
 // --- internal ----------------------------------------------------------------
 
+let serverInfo = {} /** stores the server meta info JSON */
 let room = {} /** stores the room meta info JSON */
 let tableNo = 1 /** stores the currently visible table index */
 const tables = [[], [], [], [], [], [], [], [], [], []] /** caches the tables 0..9 **/

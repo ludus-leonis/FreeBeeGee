@@ -17,14 +17,20 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from '../../../lib/FreeDOM.mjs'
+
 import {
   getLibrary,
   getTemplate,
   statePieceEdit
-} from '../state.mjs'
-import _ from '../../../FreeDOM.mjs'
+} from '../../../state/index.mjs'
 
-import { createModal, getModal, modalActive, modalClose } from '../../../modal.mjs'
+import {
+  createModal,
+  getModal,
+  modalActive,
+  modalClose
+} from '../../../view/modal.mjs'
 
 // --- public ------------------------------------------------------------------
 

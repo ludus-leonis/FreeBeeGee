@@ -17,10 +17,18 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from '../../lib/FreeDOM.mjs'
+import {
+  setTableNo
+} from '../../state/index.mjs'
+import {
+  modalActive,
+  modalClose
+} from '../../view/modal.mjs'
+
 import {
   toggleLayer
-} from '../room.mjs'
-
+} from './index.mjs'
 import {
   settings,
   rotateSelected,
@@ -35,7 +43,7 @@ import {
   outlineSelected,
   toBottomSelected,
   pointTo
-} from './table.mjs'
+} from './tabletop/index.mjs'
 import {
   isDragging,
   getMouseCoords,
@@ -45,19 +53,11 @@ import {
   touch
 } from './sync.mjs'
 import {
-  setTableNo
-} from './state.mjs'
-import {
-  modalActive,
-  modalClose
-} from '../../modal.mjs'
-import {
   modalLibrary
-} from './modals/library.mjs'
+} from './modal/library.mjs'
 import {
   modalHelp
-} from './modals/help.mjs'
-import _ from '../../FreeDOM.mjs'
+} from './modal/help.mjs'
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleRoomKeys(keydown))

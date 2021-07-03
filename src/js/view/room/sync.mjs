@@ -19,12 +19,6 @@
  */
 
 import {
-  updateRoom
-} from '../room.mjs'
-import {
-  updateTabletop
-} from './table.mjs'
-import {
   getRoom,
   reloadRoom,
   getTable,
@@ -32,17 +26,24 @@ import {
   fetchTable,
   errorRoomGone,
   isTabActive
-} from './state.mjs'
+} from '../../state/index.mjs'
 import {
   apiGetRoomDigest
-} from '../../api.mjs'
+} from '../../api/index.mjs'
 import {
   clamp,
   recordTime
-} from '../../utils.mjs'
+} from '../../lib/utils.mjs'
+
+import {
+  updateRoom
+} from './index.mjs'
+import {
+  updateTabletop
+} from './tabletop/index.mjs'
 import {
   modalInactive
-} from './modals/inactive.mjs'
+} from './modal/inactive.mjs'
 
 // --- public ------------------------------------------------------------------
 

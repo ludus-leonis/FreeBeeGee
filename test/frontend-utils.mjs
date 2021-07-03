@@ -23,12 +23,11 @@ import {
   clamp,
   hash,
   recordTime,
-  splitAsset,
   toCamelCase,
   toTitleCase,
   intersect,
   uuid
-} from '../src/js/utils.mjs'
+} from '../src/js/lib/utils.mjs'
 
 describe('Frontend - utils.mjs', function () {
   it('clamp()', function () {
@@ -98,50 +97,6 @@ describe('Frontend - utils.mjs', function () {
     expect(toCamelCase('HELLO WORLD')).to.be.eql('helloWorld')
     expect(toCamelCase(' hello   world ')).to.be.eql('HelloWorld')
     expect(toCamelCase('hello.world')).to.be.eql('helloWorld')
-  })
-
-  it('splitAsset()', function () {
-    const a1 = splitAsset('door.1x2x3.jpg')
-    expect(a1.alias).to.be.eql('door')
-    expect(a1.w).to.be.eql(1)
-    expect(a1.h).to.be.eql(2)
-    expect(a1.side).to.be.eql(3)
-    expect(a1.color).to.be.eql('808080')
-
-    const b1 = splitAsset('door.1x2x3.123456.jpg')
-    expect(b1.alias).to.be.eql('door')
-    expect(b1.w).to.be.eql(1)
-    expect(b1.h).to.be.eql(2)
-    expect(b1.side).to.be.eql(3)
-    expect(b1.color).to.be.eql('123456')
-
-    const a2 = splitAsset('dungeon.doorOpen.3x2x1.png')
-    expect(a2.alias).to.be.eql('dungeon.doorOpen')
-    expect(a2.w).to.be.eql(3)
-    expect(a2.h).to.be.eql(2)
-    expect(a2.side).to.be.eql(1)
-    expect(a2.color).to.be.eql('808080')
-
-    const b2 = splitAsset('dungeon.doorOpen.3x2x1.transparent.png')
-    expect(b2.alias).to.be.eql('dungeon.doorOpen')
-    expect(b2.w).to.be.eql(3)
-    expect(b2.h).to.be.eql(2)
-    expect(b2.side).to.be.eql(1)
-    expect(b2.color).to.be.eql('transparent')
-
-    const c1 = splitAsset('tile.svg')
-    expect(c1.alias).to.be.eql('tile')
-    expect(c1.w).to.be.eql(1)
-    expect(c1.h).to.be.eql(1)
-    expect(c1.side).to.be.eql(1)
-    expect(c1.color).to.be.eql('808080')
-
-    const a0 = splitAsset('invalid')
-    expect(a0.alias).to.be.eql('unknown')
-    expect(a0.w).to.be.eql(1)
-    expect(a0.h).to.be.eql(1)
-    expect(a0.side).to.be.eql(1)
-    expect(a0.color).to.be.eql('808080')
   })
 
   it('intersect()', function () {

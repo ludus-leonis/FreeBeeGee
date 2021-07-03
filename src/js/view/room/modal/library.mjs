@@ -17,6 +17,21 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from '../../../lib/FreeDOM.mjs'
+import {
+  UnexpectedStatus
+} from '../../../api/index.mjs'
+import {
+  toTitleCase,
+  toCamelCase,
+  sortByString
+} from '../../../lib/utils.mjs'
+import {
+  createModal,
+  getModal,
+  modalActive,
+  modalClose
+} from '../../../view/modal.mjs'
 import {
   getLibrary,
   createPieces,
@@ -24,23 +39,16 @@ import {
   setRoomPreference,
   addAsset,
   reloadRoom
-} from '../state.mjs'
+} from '../../../state/index.mjs'
+
 import {
   createPieceFromAsset,
-  populatePieceDefaults
-} from '../tabledata.mjs'
-import { UnexpectedStatus } from '../../../api.mjs'
+  populatePieceDefaults,
+  splitAssetFilename
+} from '../tabletop/tabledata.mjs'
 import {
   pieceToNode
-} from '../table.mjs'
-import _ from '../../../FreeDOM.mjs'
-import {
-  toTitleCase,
-  toCamelCase,
-  sortByString,
-  splitAsset
-} from '../../../utils.mjs'
-import { createModal, getModal, modalActive, modalClose } from '../../../modal.mjs'
+} from '../tabletop/index.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -359,7 +367,7 @@ function updatePreview (parseImage = false) {
 
   const file = _('#upload-file').files[0]
   if (parseImage) {
-    const parts = splitAsset(file.name)
+    const parts = splitAssetFilename(file.name)
     if (_('#upload-name').value.length <= 0) { // guess defaults for form
       _('#upload-w').value = parts.w
       _('#upload-h').value = parts.h

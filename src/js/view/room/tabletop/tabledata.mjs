@@ -25,12 +25,12 @@ import {
   getLibrary,
   getTable,
   getTableNo
-} from './state.mjs'
+} from '../../../state/index.mjs'
 
 import {
   clamp,
   intersect
-} from '../../utils.mjs'
+} from '../../../lib/utils.mjs'
 
 export const assetTypes = ['tile', 'token', 'overlay', 'other', 'tag']
 
@@ -410,6 +410,45 @@ export function getSetupCenter (no = getTableNo()) {
     x: x.length > 0 ? Math.ceil(x.reduce((a, b) => a + b) / x.length) : 0,
     y: y.length > 0 ? Math.ceil(y.reduce((a, b) => a + b) / y.length) : 0
   }
+}
+
+/**
+ * Extract parts (group, name, size, etc.) from an asset filename.
+ *
+ * @param {String} assetName Asset filename.
+ * @return {Object} Parsed elements.
+ */
+export function splitAssetFilename (assetName) {
+  const data = {
+    alias: 'unknown',
+    w: 1,
+    h: 1,
+    side: 1,
+    color: '808080'
+  }
+  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.side = Number(match[4])
+    data.color = match[5]
+    return data
+  }
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.side = Number(match[4])
+    return data
+  }
+  match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.alias = match[1]
+    return data
+  }
+  return data
 }
 
 // -----------------------------------------------------------------------------

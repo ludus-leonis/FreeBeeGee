@@ -17,28 +17,33 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from '../../lib/FreeDOM.mjs'
+import {
+  getTemplate,
+  movePiece
+} from '../../state/index.mjs'
+import {
+  clamp
+} from '../../lib/utils.mjs'
+
 import {
   getScrollPosition,
   setScrollPosition,
   getTableCoordinates,
   popupPiece
-} from '../room.mjs'
+} from './index.mjs'
 import {
-  getTemplate,
-  movePiece
-} from './state.mjs'
-import {
-  getMaxZ,
-  findPiece
-} from './tabledata.mjs'
-import { touch } from './sync.mjs'
+  touch
+} from './sync.mjs'
 import {
   unselectPieces,
   getTableTile,
   pointTo
-} from './table.mjs'
-import { clamp } from '../../utils.mjs'
-import _ from '../../FreeDOM.mjs'
+} from './tabletop/index.mjs'
+import {
+  getMaxZ,
+  findPiece
+} from './tabletop/tabledata.mjs'
 
 let scroller = null // the tabletop wrapper
 let mouseX = 0

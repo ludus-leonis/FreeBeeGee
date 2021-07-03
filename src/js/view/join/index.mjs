@@ -17,19 +17,29 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createScreen } from '../screen.mjs'
-import { createRoom } from './create.mjs'
-import { runRoom } from './room.mjs'
+import _ from '../../lib/FreeDOM.mjs'
 
-import { stateGetServerInfo } from '../server.mjs'
-import _ from '../FreeDOM.mjs'
+import {
+  createScreen
+} from '../../view/screen.mjs'
+import {
+  createRoom
+} from '../../view/create/index.mjs'
+import {
+  runRoom
+} from '../../view/room/index.mjs'
+
+import {
+  getServerInfo
+} from '../../state/index.mjs'
+
 import {
   getGetParameter,
   generateName,
   generateUsername
-} from '../utils.mjs'
-import { apiGetRoom } from '../api.mjs'
-import { navigateToRoom } from '../nav.mjs'
+} from '../../lib/utils.mjs'
+import { apiGetRoom } from '../../api/index.mjs'
+import { navigateToRoom } from '../../app.mjs'
 
 /** Limit room names like hilariousGazingPenguin */
 const roomNameMaxLength = 48
@@ -67,7 +77,7 @@ function showJoinDialog () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Enter</a>
     `,
 
-    `This server deletes rooms after ${stateGetServerInfo().ttl}h of inactivity.`
+    `This server deletes rooms after ${getServerInfo().ttl}h of inactivity.`
   )
 
   const name = _('#name')

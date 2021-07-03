@@ -17,6 +17,8 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
+// --- HTML5 + browser ---------------------------------------------------------
+
 /**
  * Access the ?x=y query-string of the current page.
  *
@@ -26,94 +28,6 @@
 export function getGetParameter (name) {
   const urlParams = new URLSearchParams(globalThis.location.search)
   return urlParams.get(name) || ''
-}
-
-/**
- * Generate a v4 UUID.
- *
- * @param {Number} seed Optional seed for UUID, defaults to Math.random()
- * @return {String} UUID.
- */
-export function uuid (seed = null) {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const s = seed === null ? Math.random() : seed
-    const r = s * 16 | 0
-    const v = c === 'x' ? r : (r & 0x3 | 0x8)
-    return v.toString(16)
-  })
-}
-
-/**
- * Clamp a value to be between a min and a max value.
- *
- * @param {Number} min Minimum number.
- * @param {Number} value Value to clamp.
- * @param {Number} max Maximum number.
- * @return {Number} Clamped value within [min, max].
- */
-export function clamp (min, value, max) {
-  if (value < min) return min
-  if (value > max) return max
-  return value
-}
-
-/**
- * Calculate a simple hash for a string.
- *
- * Based on Java's implementation.
- *
- * @param {String} string String to hash.
- * @return {Number} A hash value.
- */
-export function hash (string) {
-  let hash = 0
-  for (let i = 0; i < string.length; i++) {
-    hash = ((hash << 5) - hash) + string.charCodeAt(i)
-    hash |= 0
-  }
-  return hash
-}
-
-export const timeRecords = []
-
-/**
- * Record an execution time in a stats array.
- *
- * Will keep up to 10 values.
- *
- * @param {String} record Named record to add this time.
- * @param {Object} value Value to add, if > 0.
- */
-export function recordTime (data, value) {
-  timeRecords[data] = timeRecords[data] ?? [0]
-  while (timeRecords[data].length >= 10) timeRecords[data].shift()
-  if (value > 0) timeRecords[data].push(value)
-  return timeRecords[data]
-}
-
-/**
- * Convert a string to title-case (each word starts with an uppercase letter).
- *
- * @param {String} string String to title-case.
- * @return {String} Title-cased string.
- */
-export function toTitleCase (string) {
-  return string.replace(/\w\S*/g, txt =>
-    txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-  )
-}
-
-/**
- * Convert a string to camel-case (no spaces, parts starting with uppercase).
- *
- * @param {String} string String to camel-case.
- * @return {String} Camel-cased string.
- */
-export function toCamelCase (string) {
-  return string.replace(/[a-zA-Z0-9-]+/g, function (match, index) {
-    const lower = match.toLowerCase()
-    return index === 0 ? lower : (lower.charAt(0).toUpperCase() + lower.slice(1))
-  }).replace(/[^a-zA-Z0-9-]+/g, '')
 }
 
 /**
@@ -154,6 +68,143 @@ export function setStoreValue (key, property, value, local = true) {
   }
 }
 
+// --- math --------------------------------------------------------------------
+
+/**
+ * Clamp a value to be between a min and a max value.
+ *
+ * @param {Number} min Minimum number.
+ * @param {Number} value Value to clamp.
+ * @param {Number} max Maximum number.
+ * @return {Number} Clamped value within [min, max].
+ */
+export function clamp (min, value, max) {
+  if (value < min) return min
+  if (value > max) return max
+  return value
+}
+
+/**
+ * Shuffle an array using Durstenfeld shuffle.
+ *
+ * @param {Array} array Array to shuffle. Will be modified!
+ */
+export function shuffle (array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]
+  }
+}
+
+/**
+ * Determine if two rectacles intersect / overlap.
+ *
+ * @param {Object} rect1 First rect, containing of top/left/bottom/right.
+ * @param {Object} rect2 Second rect, containing of top/left/bottom/right.
+ * @returns {Boolean} True if they intersect.
+ */
+export function intersect (rect1, rect2) {
+  return (rect1.left <= rect2.right &&
+    rect2.left <= rect1.right &&
+    rect1.top <= rect2.bottom &&
+    rect2.top <= rect1.bottom)
+}
+
+// --- string & text -----------------------------------------------------------
+
+/**
+ * Generate a v4 UUID.
+ *
+ * @param {Number} seed Optional seed for UUID, defaults to Math.random()
+ * @return {String} UUID.
+ */
+export function uuid (seed = null) {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+    const s = seed === null ? Math.random() : seed
+    const r = s * 16 | 0
+    const v = c === 'x' ? r : (r & 0x3 | 0x8)
+    return v.toString(16)
+  })
+}
+
+/**
+ * Calculate a simple hash for a string.
+ *
+ * Based on Java's implementation.
+ *
+ * @param {String} string String to hash.
+ * @return {Number} A hash value.
+ */
+export function hash (string) {
+  let hash = 0
+  for (let i = 0; i < string.length; i++) {
+    hash = ((hash << 5) - hash) + string.charCodeAt(i)
+    hash |= 0
+  }
+  return hash
+}
+
+/**
+ * Convert a string to title-case (each word starts with an uppercase letter).
+ *
+ * @param {String} string String to title-case.
+ * @return {String} Title-cased string.
+ */
+export function toTitleCase (string) {
+  return string.replace(/\w\S*/g, txt =>
+    txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
+  )
+}
+
+/**
+ * Convert a string to camel-case (no spaces, parts starting with uppercase).
+ *
+ * @param {String} string String to camel-case.
+ * @return {String} Camel-cased string.
+ */
+export function toCamelCase (string) {
+  return string.replace(/[a-zA-Z0-9-]+/g, function (match, index) {
+    const lower = match.toLowerCase()
+    return index === 0 ? lower : (lower.charAt(0).toUpperCase() + lower.slice(1))
+  }).replace(/[^a-zA-Z0-9-]+/g, '')
+}
+
+/**
+ * Sort an array of objects by string property.
+ *
+ * @param {Array} pieces Pieces to sort.
+ * @param {String} property Property to sort.
+ * @return Sorted array.
+ */
+export function sortByString (pieces, property) {
+  return pieces.sort((a, b) => {
+    const valueA = (a[property] ?? '').toLowerCase()
+    const valueB = (b[property] ?? '').toLowerCase()
+    return valueA < valueB ? -1 : +(valueA > valueB)
+  })
+}
+
+// --- time & timestamps -------------------------------------------------------
+
+export const timeRecords = []
+
+/**
+ * Record an execution time in a stats array.
+ *
+ * Will keep up to 10 values.
+ *
+ * @param {String} record Named record to add this time.
+ * @param {Object} value Value to add, if > 0.
+ */
+export function recordTime (data, value) {
+  timeRecords[data] = timeRecords[data] ?? [0]
+  while (timeRecords[data].length >= 10) timeRecords[data].shift()
+  if (value > 0) timeRecords[data].push(value)
+  return timeRecords[data]
+}
+
+// --- misc --------------------------------------------------------------------
+
 /**
  * Generate a username like 'L. Lion'.
  *
@@ -173,86 +224,6 @@ export function generateName () {
   return adjectives[Math.floor(Math.random() * adjectives.length)] +
   verbs[Math.floor(Math.random() * verbs.length)] +
   animals[Math.floor(Math.random() * animals.length)]
-}
-
-/**
- * Shuffle an array using Durstenfeld shuffle.
- *
- * @param {Array} array Array to shuffle. Will be modified!
- */
-export function shuffle (array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]]
-  }
-}
-
-/**
- * Sort an array of objects by string property.
- *
- * @param {Array} pieces Pieces to sort.
- * @param {String} property Property to sort.
- * @return Sorted array.
- */
-export function sortByString (pieces, property) {
-  return pieces.sort((a, b) => {
-    const valueA = (a[property] ?? '').toLowerCase()
-    const valueB = (b[property] ?? '').toLowerCase()
-    return valueA < valueB ? -1 : +(valueA > valueB)
-  })
-}
-
-/**
- * Extract parts (group, name, size, etc.) from an asset filename.
- *
- * @param {String} assetName Asset filename.
- * @return {Object} Parsed elements.
- */
-export function splitAsset (assetName) {
-  const data = {
-    alias: 'unknown',
-    w: 1,
-    h: 1,
-    side: 1,
-    color: '808080'
-  }
-  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/)
-  if (match) {
-    data.alias = match[1]
-    data.w = Number(match[2])
-    data.h = Number(match[3])
-    data.side = Number(match[4])
-    data.color = match[5]
-    return data
-  }
-  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
-  if (match) {
-    data.alias = match[1]
-    data.w = Number(match[2])
-    data.h = Number(match[3])
-    data.side = Number(match[4])
-    return data
-  }
-  match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
-  if (match) {
-    data.alias = match[1]
-    return data
-  }
-  return data
-}
-
-/**
- * Determine if two rectacles intersect / overlap.
- *
- * @param {Object} rect1 First rect, containing of top/left/bottom/right.
- * @param {Object} rect2 Second rect, containing of top/left/bottom/right.
- * @returns {Boolean} True if they intersect.
- */
-export function intersect (rect1, rect2) {
-  return (rect1.left <= rect2.right &&
-    rect2.left <= rect1.right &&
-    rect1.top <= rect2.bottom &&
-    rect2.top <= rect1.bottom)
 }
 
 /** An array of all the letters A-Z. */

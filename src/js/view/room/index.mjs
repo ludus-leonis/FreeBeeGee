@@ -18,6 +18,12 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { createPopper } from '@popperjs/core'
+
+import _ from '../../lib/FreeDOM.mjs'
+import {
+  navigateToJoin
+} from '../../app.mjs'
 import { // TODO roomstate.mjs?
   loadRoom,
   getRoom,
@@ -25,7 +31,7 @@ import { // TODO roomstate.mjs?
   setRoomPreference,
   getTableNo,
   setTableNo
-} from './table/state.mjs'
+} from '../../state/index.mjs'
 
 import {
   unselectPieces,
@@ -37,32 +43,32 @@ import {
   flipSelected,
   randomSelected,
   deleteSelected
-} from './table/table.mjs'
+} from './tabletop/index.mjs'
 
 import {
   getSetupCenter,
   findPiece
-} from './table/tabledata.mjs'
+} from './tabletop/tabledata.mjs'
 
 import {
   enableDragAndDrop,
   getMouseTile
-  // updateMenu
-} from './table/mouse.mjs'
+} from './mouse.mjs'
 
-import { createPopper } from '@popperjs/core'
-
-import { startAutoSync } from './table/sync.mjs'
-import { navigateToJoin } from '../nav.mjs'
-import { modalLibrary } from './table/modals/library.mjs'
-import { modalHelp } from './table/modals/help.mjs'
+import {
+  startAutoSync
+} from './sync.mjs'
+import {
+  modalLibrary
+} from './modal/library.mjs'
+import {
+  modalHelp
+} from './modal/help.mjs'
 
 import {
   modalSettings,
   changeQuality
-} from './table/modals/settings.mjs'
-
-import _ from '../FreeDOM.mjs'
+} from './modal/settings.mjs'
 
 // --- public ------------------------------------------------------------------
 

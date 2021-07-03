@@ -18,10 +18,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from '../../../lib/FreeDOM.mjs'
+
 import {
-  updateStatusline,
-  getTableCoordinates
-} from '../room.mjs'
+  clamp,
+  shuffle,
+  recordTime
+} from '../../../lib/utils.mjs'
 
 import {
   getRoom,
@@ -34,7 +37,13 @@ import {
   movePiece,
   borderPiece,
   rotatePiece
-} from './state.mjs'
+} from '../../../state/index.mjs'
+
+import {
+  updateStatusline,
+  getTableCoordinates
+} from '../index.mjs'
+
 import {
   findAsset,
   findAssetByAlias,
@@ -47,16 +56,10 @@ import {
 } from './tabledata.mjs'
 import {
   updateMenu
-} from './mouse.mjs'
-import _ from '../../FreeDOM.mjs'
-import {
-  clamp,
-  shuffle,
-  recordTime
-} from '../../utils.mjs'
+} from '../mouse.mjs'
 
-import { modalEdit } from './modals/edit.mjs'
-import { modalSettings } from './modals/settings.mjs'
+import { modalEdit } from '../modal/edit.mjs'
+import { modalSettings } from '../modal/settings.mjs'
 
 // --- public ------------------------------------------------------------------
 

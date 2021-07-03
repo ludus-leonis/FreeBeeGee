@@ -1,6 +1,5 @@
 /**
- * @file Holds and manages global/server state objects.
- * @module
+ * @file Bootstrap our app.
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
@@ -17,24 +16,26 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-let serverInfo = {} /** stores the server meta info JSON */
+import {
+  route
+} from './app.mjs'
 
-// --- public ------------------------------------------------------------------
+import {
+  setTabActive
+} from './state/index.mjs'
 
-/**
- * Get the current serverInfo object from the client cache.
- *
- * @return {Object} The cached server metadata object.
- */
-export function stateGetServerInfo () {
-  return serverInfo
+// --- startup & page routing --------------------------------------------------
+
+document.onreadystatechange = function (event) {
+  if (document.readyState === 'complete') { // time to setup our routes
+    route()
+  }
 }
 
-/**
- * Set the current serverInfo object in the client cache.
- *
- * @param {object} info The serverInfo meta object.
- */
-export function stateSetServerInfo (info) {
-  serverInfo = info
-}
+document.addEventListener('visibilitychange', (visibilitychange) => {
+  if (globalThis.hidden) {
+    setTabActive(false)
+  } else {
+    setTabActive(true)
+  }
+})

@@ -17,20 +17,20 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../FreeDOM.mjs'
+import marked from 'marked'
 
+import _ from '../../../lib/FreeDOM.mjs'
 import {
   createModal,
   getModal,
   modalActive,
   modalClose
-} from '../../../modal.mjs'
+} from '../../../view/modal.mjs'
 import {
   getRoom,
   getRoomPreference,
   setRoomPreference
-} from '../state.mjs'
-import marked from 'marked'
+} from '../../../state/index.mjs'
 
 // --- public ------------------------------------------------------------------
 

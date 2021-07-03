@@ -18,7 +18,7 @@
     "url": "https://github.com/ludus-leonis/FreeBeeGee/issues"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "NODE_PATH=src/js/ mocha"
   },
   "license": "AGPL-3.0-or-later",
   "color": "#40bfbf",

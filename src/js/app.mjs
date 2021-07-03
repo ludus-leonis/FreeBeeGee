@@ -1,6 +1,5 @@
 /**
- * @file Manages the singe-page-app router.
- * @module
+ * @file Does all the browser/document setup & page routing.
  * @copyright 2021 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
@@ -17,7 +16,18 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-// --- public ------------------------------------------------------------------
+import {
+  runError
+} from './view/error/index.mjs'
+import {
+  runJoin
+} from './view/join/index.mjs'
+import {
+  setServerInfo
+} from './state/index.mjs'
+import {
+  apiGetServerInfo
+} from './api/index.mjs'
 
 /**
  * Reload the current page.
@@ -46,4 +56,32 @@ export function navigateToJoin (roomName) {
  */
 export function navigateToRoom (roomName) {
   globalThis.location = './' + roomName
+}
+
+/**
+ * Main entry point for the app. Will route the page to the proper code.
+ */
+export function route () {
+  apiGetServerInfo()
+    .then(info => {
+      if (info.version !== '$VERSION$') {
+        console.info('update', info.version, '$VERSION$')
+        runError('UPDATE')
+      } else {
+        setServerInfo(info)
+
+        // run the corresponding screen/dialog
+        const rootFolder = info.root.substr(0, info.root.length - '/api'.length)
+        let path = window.location.pathname
+        if (path[0] !== '/') path = '/' + path
+        if (path === rootFolder || path === rootFolder + '/') {
+          runJoin()
+        } else if (path.endsWith('/')) {
+          globalThis.location = path.substr(0, path.length - 1)
+        } else {
+          runJoin(path.replace(/^.*\//, ''))
+        }
+      }
+    })
+    .catch(error => runError('UNKNOWN', error))
 }
