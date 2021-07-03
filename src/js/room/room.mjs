@@ -234,7 +234,7 @@ export function updateStatusline () {
     minute: '2-digit'
   })
   const message = fakeTabularNums(`${time} • Table ${getStateNo()}`)
-  const status = _('#table .status')
+  const status = _('#room .status')
   if (status.innerHTML !== message) {
     status.innerHTML = message
   }

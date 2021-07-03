@@ -328,7 +328,6 @@ class FreeBeeGeeAPI
                 case 'template.json':
                     $this->validateTemplateJson(file_get_contents('zip://' . $zipPath . '#template.json'));
                     break;
-                case 'states/0.json':
                 case 'states/1.json':
                 case 'states/2.json':
                 case 'states/3.json':
@@ -508,9 +507,6 @@ class FreeBeeGeeAPI
         }
         if (!is_file($folder . 'states/1.json')) {
             file_put_contents($folder . 'states/1.json', '[]');
-        }
-        if (!is_file($folder . 'states/0.json')) { // recreate from 1.json, ignore digest
-            file_put_contents($folder . 'states/0.json', file_get_contents($folder . 'states/1.json'));
         }
         if (!is_file($folder . 'LICENSE.md')) {
             file_put_contents($folder . 'LICENSE.md', 'This snapshot does not provide license information.');
@@ -1113,12 +1109,6 @@ class FreeBeeGeeAPI
             $this->installSnapshot($newRoom->name, $zipPath, $validEntries);
             $newRoom->library = $this->generateLibraryJson($newRoom->name);
 
-            // keep original state for room resets, if game does not have a 0-state
-            if (!is_file($folder . 'states/0.json')) {
-                $state = file_get_contents($folder . 'states/1.json');
-                file_put_contents($folder . 'states/0.json', $state);
-            }
-
             $this->regenerateDigests($folder);
 
             // add/overrule some template.json infos into the room.json
@@ -1165,7 +1155,6 @@ class FreeBeeGeeAPI
         }
         foreach (
             [
-                'states/0.json',
                 'states/1.json',
                 'states/2.json',
                 'states/3.json',

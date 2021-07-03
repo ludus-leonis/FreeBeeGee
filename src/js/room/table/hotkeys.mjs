@@ -18,6 +18,10 @@
  */
 
 import {
+  toggleLayer
+} from '../room.mjs'
+
+import {
   settings,
   rotateSelected,
   deleteSelected,
@@ -30,7 +34,6 @@ import {
   createNote,
   outlineSelected,
   toBottomSelected,
-  toggleLayer,
   pointTo
 } from './table.mjs'
 import {

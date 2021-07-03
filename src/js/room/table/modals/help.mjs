@@ -58,6 +58,8 @@ export function modalHelp () {
         </div>
         <div class="tabs-content">
           <div class="primer">
+            <h2 class="h3">Introduction</h2>
+
             <p>FreeBeeGee is a shared, virtual tabletop (VTT). Everyone who enters a room will see the same tables. If you add, move, edit or remove pieces, the other players will see this immediately.</p>
 
             <p>On our tables, everyone is equal. There is no game master or superuser. Everyone can manipulate what's there. Please be polite.</p>

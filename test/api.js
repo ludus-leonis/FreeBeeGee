@@ -306,12 +306,6 @@ function testApiCrudState (version) {
     data = body
   })
 
-  // get initial state
-  testJsonGet(() => `/rooms/crudState${version}/states/0/`, save => {
-    expect(save).to.be.eql(data)
-    data = save
-  })
-
   // reset room
   testJsonPut(() => `/rooms/crudState${version}/states/1/`, () => [], body => {
     expect(body).to.be.an('array')
@@ -595,16 +589,6 @@ function testApiZipFull (version) {
       expect(body.template.colors.length).to.be.eql(1)
       expect(body.credits).to.contain('I am a license.')
     }, 201)
-
-  // get state 0
-  testJsonGet(() => `/rooms/fullziptest${version}/states/0/`, body => {
-    expect(body).to.be.an('array')
-    expect(body.length).to.be.eql(4)
-    expect(body[0].asset).to.be.eql('bb07ac49818bc000')
-    expect(body[1].asset).to.be.eql('f628553dd1802f0a')
-    expect(body[2].asset).to.be.eql('7261fff0158e27bc')
-    expect(body[3].asset).to.be.eql('d04e9af5e03f9f58')
-  })
 
   // get state 1
   testJsonGet(() => `/rooms/fullziptest${version}/states/1/`, body => {
