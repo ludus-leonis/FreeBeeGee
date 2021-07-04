@@ -5,8 +5,8 @@
   "codename": "Pointing Pony",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
-    "npm": ">=6.5.0",
-    "node" : ">14.0.0"
+    "npm": ">=7.0.0",
+    "node" : ">=14.0.0"
   },
   "author": "Markus Leupold-Löwenthal",
   "homepage": "https://github.com/ludus-leonis/FreeBeeGee",

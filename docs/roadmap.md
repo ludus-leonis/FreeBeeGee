@@ -10,7 +10,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] unit tests for client data model
 * [ ] pre-release
   * [ ] bugfixing
-    * [ ] css cleanup
+    * [X] css cleanup
     * [ ] note rotation
     * [ ] library tab sometimes wrong size
   * [ ] review + run tests
