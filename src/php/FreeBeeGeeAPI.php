@@ -49,25 +49,25 @@ class FreeBeeGeeAPI
 
         // --- GET ---
 
-        $this->api->register('GET', '/rooms/:tid/digest/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->getRoomDigest($data['tid']);
+        $this->api->register('GET', '/rooms/:rid/digest/?', function ($fbg, $data) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->getRoomDigest($data['rid']);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
-        $this->api->register('GET', '/rooms/:tid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->getRoom($data['tid']);
+        $this->api->register('GET', '/rooms/:rid/?', function ($fbg, $data) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->getRoom($data['rid']);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
-        $this->api->register('GET', '/rooms/:tid/tables/:sid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->getTable($data['tid'], $data['sid']);
+        $this->api->register('GET', '/rooms/:rid/tables/:tid/?', function ($fbg, $data) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->getTable($data['rid'], $data['tid']);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         $this->api->register('GET', '/', function ($fbg, $data) {
@@ -78,34 +78,34 @@ class FreeBeeGeeAPI
             $fbg->getTemplates();
         });
 
-        $this->api->register('GET', '/rooms/:tid/snapshot/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->getSnapshot($data['tid']);
+        $this->api->register('GET', '/rooms/:rid/snapshot/?', function ($fbg, $data) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->getSnapshot($data['rid']);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
-        $this->api->register('GET', '/rooms/:tid/tables/:sid/pieces/:pid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->getPiece($data['tid'], $data['sid'], $data['pid']);
+        $this->api->register('GET', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->getPiece($data['rid'], $data['tid'], $data['pid']);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         // --- POST ---
 
-        $this->api->register('POST', '/rooms/:tid/tables/:sid/pieces/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->createPiece($data['tid'], $data['sid'], $payload);
+        $this->api->register('POST', '/rooms/:rid/tables/:tid/pieces/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->createPiece($data['rid'], $data['tid'], $payload);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
-        $this->api->register('POST', '/rooms/:tid/assets/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->createAssetLocked($data['tid'], $payload);
+        $this->api->register('POST', '/rooms/:rid/assets/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->createAssetLocked($data['rid'], $payload);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         $this->api->register('POST', '/rooms/', function ($fbg, $data, $payload) {
@@ -119,57 +119,57 @@ class FreeBeeGeeAPI
 
         // --- PUT ---
 
-        $this->api->register('PUT', '/rooms/:tid/tables/:sid/pieces/:pid/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->updatePiece($data['tid'], $data['sid'], $data['pid'], $payload);
+        $this->api->register('PUT', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->updatePiece($data['rid'], $data['tid'], $data['pid'], $payload);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
-        $this->api->register('PUT', '/rooms/:tid/tables/:sid/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->putTableLocked($data['tid'], $data['sid'], $payload);
+        $this->api->register('PUT', '/rooms/:rid/tables/:tid/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->putTableLocked($data['rid'], $data['tid'], $payload);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         // --- PATCH ---
 
-        $this->api->register('PATCH', '/rooms/:tid/tables/:sid/pieces/:pid/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->updatePiece($data['tid'], $data['sid'], $data['pid'], $payload);
+        $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->updatePiece($data['rid'], $data['tid'], $data['pid'], $payload);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
-        $this->api->register('PATCH', '/rooms/:tid/tables/:sid/pieces/', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->updatePieces($data['tid'], $data['sid'], $payload);
+        $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/', function ($fbg, $data, $payload) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->updatePieces($data['rid'], $data['tid'], $payload);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
-        $this->api->register('PATCH', '/rooms/:tid/template/', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->updateRoomTemplateLocked($data['tid'], $payload);
+        $this->api->register('PATCH', '/rooms/:rid/template/', function ($fbg, $data, $payload) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->updateRoomTemplateLocked($data['rid'], $payload);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         // --- DELETE ---
 
-        $this->api->register('DELETE', '/rooms/:tid/tables/:sid/pieces/:pid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->deletePiece($data['tid'], $data['sid'], $data['pid']);
+        $this->api->register('DELETE', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->deletePiece($data['rid'], $data['tid'], $data['pid']);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
-        $this->api->register('DELETE', '/rooms/:tid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['tid']))) {
-                $fbg->deleteRoom($data['tid']);
+        $this->api->register('DELETE', '/rooms/:rid/?', function ($fbg, $data) {
+            if (is_dir($this->getRoomFolder($data['rid']))) {
+                $fbg->deleteRoom($data['rid']);
             }
-            $this->api->sendError(404, 'not found: ' . $data['tid']);
+            $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
     }
 
@@ -439,14 +439,14 @@ class FreeBeeGeeAPI
      *
      * Will termiante execution and send a 400 in case of invalid JSON.
      *
-     * @param string $sid Table ID for error messages.
+     * @param string $tid Table ID for error messages.
      * @param string $json JSON string.
      */
     private function validateTableJson(
-        string $sid,
+        string $tid,
         string $json
     ) {
-        $msg = 'validating table ' . $sid . '.json failed';
+        $msg = 'validating table ' . $tid . '.json failed';
         $table = json_decode($json);
         $validated = [];
 
@@ -456,7 +456,7 @@ class FreeBeeGeeAPI
         }
 
         // check for more stuff
-        $this->api->assertObjectArray($sid . '.json', $table, 0);
+        $this->api->assertObjectArray($tid . '.json', $table, 0);
         foreach ($table as $piece) {
             $validated[] = $this->validatePiece($piece, true);
         }
@@ -542,14 +542,14 @@ class FreeBeeGeeAPI
      * corresponding JSON Array item with the new one via ID reference.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $sid Table id / number, e.g. 2.
+     * @param string $tid Table id / number, e.g. 2.
      * @param object $piece The parsed & validated piece to update.
      * @param bool $create If true, this piece must not exist.
      * @return object The updated piece.
      */
     private function updatePieceTableLocked(
         string $roomName,
-        string $sid,
+        string $tid,
         object $piece,
         bool $create
     ): object {
@@ -557,8 +557,8 @@ class FreeBeeGeeAPI
         $lock = $this->api->waitForWriteLock($folder . '.flock');
 
         $oldTable = [];
-        if (is_file($folder . 'tables/' . $sid . '.json')) {
-            $oldTable = json_decode(file_get_contents($folder . 'tables/' . $sid . '.json'));
+        if (is_file($folder . 'tables/' . $tid . '.json')) {
+            $oldTable = json_decode(file_get_contents($folder . 'tables/' . $tid . '.json'));
         }
         $result = $piece;
 
@@ -605,7 +605,7 @@ class FreeBeeGeeAPI
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
         }
-        $this->writeAsJsonAndDigest($folder, 'tables/' . $sid . '.json', $newTable);
+        $this->writeAsJsonAndDigest($folder, 'tables/' . $tid . '.json', $newTable);
         $this->api->unlockLock($lock);
 
         return $result;
@@ -949,13 +949,21 @@ class FreeBeeGeeAPI
         $validated = new \stdClass();
 
         if ($checkMandatory) {
-            $this->api->assertHasProperties('asset', $incoming, ['name', 'format', 'type', 'w', 'h', 'base64', 'color']);
+            $this->api->assertHasProperties(
+                'asset',
+                $incoming,
+                ['name', 'format', 'type', 'w', 'h', 'base64', 'color']
+            );
         }
 
         foreach ($incoming as $property => $value) {
             switch ($property) {
                 case 'name':
-                    $validated->name = $this->api->assertString('name', $value, '[A-Za-z0-9-]{1,64}(.[A-Za-z0-9-]{1,64})?');
+                    $validated->name = $this->api->assertString(
+                        'name',
+                        $value,
+                        '[A-Za-z0-9-]{1,64}(.[A-Za-z0-9-]{1,64})?'
+                    );
                     break;
                 case 'format':
                     $validated->format = $this->api->assertEnum('format', $value, ['jpg', 'png']);
@@ -1290,19 +1298,19 @@ class FreeBeeGeeAPI
      * Returns the [0-9].json containing all pieces on the table.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param int $sid Table id / number, e.g. 2.
+     * @param int $tid Table id / number, e.g. 2.
      */
     public function getTable(
         string $roomName,
-        string $sid
+        string $tid
     ) {
-        $this->assertTableNo($sid);
+        $this->assertTableNo($tid);
         $folder = $this->getRoomFolder($roomName);
         if (is_dir($folder)) {
             $body = '[]';
-            if (is_file($folder . 'tables/' . $sid . '.json')) {
+            if (is_file($folder . 'tables/' . $tid . '.json')) {
                 $body = $this->api->fileGetContentsLocked(
-                    $folder . 'tables/' . $sid . '.json',
+                    $folder . 'tables/' . $tid . '.json',
                     $folder . '.flock'
                 );
             }
@@ -1317,20 +1325,20 @@ class FreeBeeGeeAPI
      * Can be used to reset a table or to revert to a save.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param int $sid Table id / number, e.g. 2.
+     * @param int $tid Table id / number, e.g. 2.
      * @param string $json New table JSON from client.
      */
     public function putTableLocked(
         string $roomName,
-        string $sid,
+        string $tid,
         string $json
     ) {
-        $this->assertTableNo($sid);
+        $this->assertTableNo($tid);
         $folder = $this->getRoomFolder($roomName);
-        $newTable = $this->validateTableJson($sid, $json);
+        $newTable = $this->validateTableJson($tid, $json);
 
         $lock = $this->api->waitForWriteLock($folder . '.flock');
-        $this->writeAsJsonAndDigest($folder, 'tables/' . $sid . '.json', $newTable);
+        $this->writeAsJsonAndDigest($folder, 'tables/' . $tid . '.json', $newTable);
         $this->api->unlockLock($lock);
 
         $this->api->sendReply(200, json_encode($newTable));
@@ -1340,15 +1348,15 @@ class FreeBeeGeeAPI
      * Add a new piece to a table.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $sid Table id / number, e.g. 2.
+     * @param string $tid Table id / number, e.g. 2.
      * @param string $json Full piece JSON from client.
      */
     public function createPiece(
         string $roomName,
-        string $sid,
+        string $tid,
         string $json
     ) {
-        $this->assertTableNo($sid);
+        $this->assertTableNo($tid);
         $piece = $this->validatePieceJson($json, true);
         if (isset($piece->asset) && $piece->asset === $this->ID_POINTER) {
             // there can only be one pointer and it has a fixed ID
@@ -1356,7 +1364,7 @@ class FreeBeeGeeAPI
         } else {
             $piece->id = $this->generateId();
         }
-        $this->updatePieceTableLocked($roomName, $sid, $piece, true);
+        $this->updatePieceTableLocked($roomName, $tid, $piece, true);
         $this->api->sendReply(201, json_encode($piece));
     }
 
@@ -1366,20 +1374,20 @@ class FreeBeeGeeAPI
      * Not very performant, but also not needed very often ;)
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $sid Table id / number, e.g. 2.
+     * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceId Id of piece.
      */
     public function getPiece(
         string $roomName,
-        string $sid,
+        string $tid,
         string $pieceId
     ) {
-        $this->assertTableNo($sid);
+        $this->assertTableNo($tid);
         $folder = $this->getRoomFolder($roomName);
 
-        if (is_file($folder . 'tables/' . $sid . '.json')) {
+        if (is_file($folder . 'tables/' . $tid . '.json')) {
             $table = json_decode($this->api->fileGetContentsLocked(
-                $folder . 'tables/' . $sid . '.json',
+                $folder . 'tables/' . $tid . '.json',
                 $folder . '.flock'
             ));
 
@@ -1390,7 +1398,7 @@ class FreeBeeGeeAPI
             }
         }
 
-        $this->api->sendError(404, 'not found: piece ' . $pieceId . ' in room ' . $roomName . ' on table ' . $sid);
+        $this->api->sendError(404, 'not found: piece ' . $pieceId . ' in room ' . $roomName . ' on table ' . $tid);
     }
 
     /**
@@ -1399,20 +1407,20 @@ class FreeBeeGeeAPI
      * Can overwrite the whole piece or only patch a few fields.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $sid Table id / number, e.g. 2.
+     * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceID ID of the piece to update.
      * @param string $json Full or parcial piece JSON from client.
      */
     public function updatePiece(
         string $roomName,
-        string $sid,
+        string $tid,
         string $pieceId,
         string $json
     ) {
-        $this->assertTableNo($sid);
+        $this->assertTableNo($tid);
         $patch = $this->validatePieceJson($json, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $updatedPiece = $this->updatePieceTableLocked($roomName, $sid, $patch, false);
+        $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false);
         $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
@@ -1422,15 +1430,15 @@ class FreeBeeGeeAPI
      * Can overwrite a whole piece or only patch a few fields.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $sid Table id / number, e.g. 2.
+     * @param string $tid Table id / number, e.g. 2.
      * @param string $json Array of full or parcial pieces JSON from client.
      */
     public function updatePieces(
         string $roomName,
-        string $sid,
+        string $tid,
         string $json
     ) {
-        $this->assertTableNo($sid);
+        $this->assertTableNo($tid);
 
         // check if we got JSON array of valid piece-patches and IDs
         $patches = $this->api->assertJsonArray($json);
@@ -1442,7 +1450,7 @@ class FreeBeeGeeAPI
 
         // looks good. do the update(s).
         foreach ($patches as $patch) {
-            $updatedPiece = $this->updatePieceTableLocked($roomName, $sid, $patch, false);
+            $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false);
         }
 
         $this->api->sendReply(200, json_encode($patches));
@@ -1454,22 +1462,22 @@ class FreeBeeGeeAPI
      * Will not remove it from the library.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $sid Table id / number, e.g. 2.
+     * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceID ID of the piece to delete.
      */
     public function deletePiece(
         string $roomName,
-        string $sid,
+        string $tid,
         string $pieceId
     ) {
-        $this->assertTableNo($sid);
+        $this->assertTableNo($tid);
 
         // create a dummy 'delete' object to represent deletion
         $piece = new \stdClass(); // sanitize item by recreating it
         $piece->layer = 'delete';
         $piece->id = $pieceId;
 
-        $this->updatePieceTableLocked($roomName, $sid, $piece, false);
+        $this->updatePieceTableLocked($roomName, $tid, $piece, false);
         $this->api->sendReply(204, '');
     }
 

@@ -2,10 +2,16 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.10.0
+## v0.10.0 - Pointing Pony
 
+This is a breaking release changing internal data structures. Old snapshots will no longer work.
+
+* added laser pointer
 * added status icons for pieces
 * refactored wording table -> room, sub-table -> table
+* refactored JS file layout
+* fixed spacings
+* added more technical documentation & TOC
 
 ## v0.9.0 - Happy Hamster
 
