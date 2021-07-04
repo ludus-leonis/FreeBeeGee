@@ -349,6 +349,7 @@ function setupRoom () {
   // setup remaining menu
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
+  _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
 
   updateRoom().css({
     backgroundColor: room.background.color,

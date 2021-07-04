@@ -80,7 +80,7 @@ class FreeBeeGeeAPI
 
         $this->api->register('GET', '/rooms/:rid/snapshot/?', function ($fbg, $data) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->getSnapshot($data['rid']);
+                $fbg->getSnapshot($data['rid'], intval($_GET['tzo']));
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
@@ -1519,9 +1519,12 @@ class FreeBeeGeeAPI
      * Will zip the room folder and provide that zip.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param int $timeZone Timezone offset of the client in minutes to UTC,
+     *                         as reported by the client.
      */
     public function getSnapshot(
-        string $roomName
+        string $roomName,
+        int $timeZoneOffset
     ) {
         $folder = realpath($this->getRoomFolder($roomName));
 
@@ -1557,8 +1560,17 @@ class FreeBeeGeeAPI
         }
         $zip->close();
 
+        // create timestamp for zip file
+        $time = new \DateTime();
+        if ($timeZoneOffset > 0) {
+            $time->add(new \DateInterval('PT' . $timeZoneOffset . 'M'));
+        } elseif ($timeZoneOffset < 0) {
+            $time->sub(new \DateInterval('PT' . ($timeZoneOffset * -1) . 'M'));
+        }
+
         // send and delete temporary file
-        header('Content-disposition: attachment; filename=' . $roomName . '.' . date('Y-m-d-Hi') . '.zip');
+        header('Content-disposition: attachment; filename=' .
+            $roomName . '.' . $time->format('Y-m-d-Hi') . '_' . $timeZoneOffset . '.zip');
         header('Content-type: application/zip');
         readfile($zipName);
         unlink($zipName);

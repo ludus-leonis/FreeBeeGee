@@ -88,7 +88,7 @@ export function stopAutoSync () {
 }
 
 /**
- * Record activity in the room.
+ * Record activity in the room / browser.
  *
  * @param {?Boolean} remote If true, the remote timestamp is touched. Otherwise
  *                          the local is.
@@ -152,7 +152,7 @@ function scheduleSync (ms = 0, callback = null) {
   clearTimeout(syncTimeout) // safety
   syncTimeout = setTimeout(() => {
     clearTimeout(syncTimeout)
-    checkDigests()
+    checkRoomDigests()
       .then((dirtyTable) => {
         if (dirtyTable > 0) {
           return fetchAndUpdateTable(dirtyTable)
@@ -170,7 +170,7 @@ function scheduleSync (ms = 0, callback = null) {
  *
  * @return {Promise} Promise of an integer. 0 = no sync, 1+ = table to sync.
  */
-function checkDigests (
+function checkRoomDigests (
   selectIds = []
 ) {
   const room = getRoom()

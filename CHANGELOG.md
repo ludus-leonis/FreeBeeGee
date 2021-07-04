@@ -12,6 +12,7 @@ This is a breaking release changing internal data structures. Old snapshots will
 * refactored JS file layout
 * fixed spacings
 * added more technical documentation & TOC
+* fixed snapshot filename to match client timezone
 
 ## v0.9.0 - Happy Hamster
 

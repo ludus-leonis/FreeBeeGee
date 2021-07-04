@@ -29,7 +29,7 @@ import {
   apiGetRoom,
   apiPostRoom,
   apiDeleteRoom,
-  apiPatchRoomTemplate,
+  apiPatchTemplate,
   apiPatchPiece,
   apiPatchPieces,
   apiDeletePiece,
@@ -156,7 +156,7 @@ export function getTable (no = getTableNo()) {
  * @param {Object} template (Partial) new template data.
  */
 export function updateTemplate (template) {
-  return apiPatchRoomTemplate(room.name, template)
+  return apiPatchTemplate(room.name, template)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
       syncNow()

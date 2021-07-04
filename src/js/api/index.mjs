@@ -112,7 +112,7 @@ export function apiDeleteRoom (roomName) {
  * @param {Object} patch Partial piece JSON/Object to send.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchRoomTemplate (roomName, patch) {
+export function apiPatchTemplate (roomName, patch) {
   return patchJson([200], 'api/rooms/' + roomName + '/template/', patch)
 }
 
@@ -236,7 +236,7 @@ export function apiPostAsset (roomName, asset) {
  * @return {Promse} Promise of a JSON object.
  * @throw {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
-function fetchOrThrow (expectedStatus, path, data = null, headers = false) {
+function fetchOrThrow (expectedStatus, path, data = {}, headers = false) {
   return globalThis.fetch(path, data)
     .then(response => {
       return response.text()
@@ -301,7 +301,11 @@ function head (path) {
  * @return {Promse} Promise of a JSON object.
  */
 function getJson (expectedStatus, path, headers = false) {
-  return fetchOrThrow(expectedStatus, path, null, headers)
+  return fetchOrThrow(expectedStatus, path, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  }, headers)
 }
 
 /**
