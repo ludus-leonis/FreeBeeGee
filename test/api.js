@@ -30,6 +30,7 @@ const p = require('../package.json')
 
 // --- helpers -----------------------------------------------------------------
 
+const fs = require('fs')
 const chai = require('chai')
 const expect = chai.expect
 chai
@@ -43,6 +44,8 @@ chai
  * @param path Function to return a path (possibly with dynamic ID) during runtime.
  * @param payloadTests Callback function. Will recieve the parsed payload for
  *                     further checking.
+ * @param status Expected HTTP status.
+ * @param forward Data to forward to the payload callback.
  */
 function testJsonGet (path, payloadTests, status = 200, forward = null) {
   it(`GET ${API_URL}${path()}`, function (done) {
@@ -60,6 +63,30 @@ function testJsonGet (path, payloadTests, status = 200, forward = null) {
 }
 
 /**
+ * GET an any endpoint, do common HTTP tests on it, and then run payload-
+ * specific tests. Used for non-JSON endpoints e.g. data blobs.
+ *
+ * @param path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param payloadTests Callback function. Will recieve the parsed payload for
+ *                     further checking.
+ * @param status Expected HTTP status.
+ * @param forward Data to forward to the payload callback.
+ */
+function testGet (path, payloadTests, status = 200, forward = null) {
+  it(`GET ${API_URL}${path()}`, function (done) {
+    chai.request(API_URL)
+      .get(path())
+      .end(function (err, res) {
+        expect(err).to.be.null
+        expect(res).to.have.status(status)
+        expect(res.body).to.be.not.null
+        payloadTests(res.body, forward)
+        done()
+      })
+  })
+}
+
+/**
  * Upload a file to an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
  * specific tests.
  *
@@ -68,6 +95,7 @@ function testJsonGet (path, payloadTests, status = 200, forward = null) {
  * @param upload Function to return (possibly dynamic) filename of file to upload.
  * @param payloadTests Callback function. Will recieve the parsed payload for
  *                     further checking.
+ * @param status Expected HTTP status.
  */
 function testZIPUpload (path, name, auth, upload, payloadTests, status = 200) {
   it(`POST ${API_URL}${path()}`, function (done) {
@@ -96,6 +124,7 @@ function testZIPUpload (path, name, auth, upload, payloadTests, status = 200) {
  * @param payload Function to return (possibly dynamic) object to send as JSON.
  * @param payloadTests Callback function. Will recieve the parsed payload for
  *                     further checking.
+ * @param status Expected HTTP status.
  */
 function testJsonPost (path, payload, payloadTests, status = 200) {
   it(`POST ${API_URL}${path()}`, function (done) {
@@ -122,7 +151,8 @@ function testJsonPost (path, payload, payloadTests, status = 200) {
  * @param payload Function to return (possibly dynamic) object to send as JSON.
  * @param payloadTests Callback function. Will recieve the parsed payload for
  *                     further checking.
- */
+ * @param status Expected HTTP status.
+*/
 function testJsonPut (path, payload, payloadTests, status = 200) {
   it(`PUT ${API_URL}${path()}`, function (done) {
     chai.request(API_URL)
@@ -148,6 +178,7 @@ function testJsonPut (path, payload, payloadTests, status = 200) {
  * @param payload Function to return (possibly dynamic) object to send as JSON.
  * @param payloadTests Callback function. Will recieve the parsed payload for
  *                     further checking.
+ * @param status Expected HTTP status.
  */
 function testJsonPatch (path, payload, payloadTests, status = 200) {
   it(`PATCH ${API_URL}${path()}`, function (done) {
@@ -171,9 +202,8 @@ function testJsonPatch (path, payload, payloadTests, status = 200) {
  * specific tests.
  *
  * @param path Function to return a path (possibly with dynamic ID) during runtime.
- * @param payloadTests Callback function. Will recieve the parsed payload for
- *                     further checking.
- */
+ * @param status Expected HTTP status. Defaults to 204 = gone.
+*/
 function testJsonDelete (path, status = 204) {
   it(`PUT ${API_URL}${path()}`, function (done) {
     chai.request(API_URL)
@@ -612,6 +642,75 @@ function testApiZipFull (version) {
   testJsonDelete(() => `/rooms/fullziptest${version}/`)
 }
 
+function testApiImageUpload (version) {
+  // create room
+  testJsonPost(() => '/rooms/', () => {
+    return {
+      name: `imageupload${version}`,
+      template: 'RPG',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.name).to.be.eql(`imageupload${version}`)
+  }, 201)
+
+  // get library size
+  testJsonGet(() => `/rooms/imageupload${version}/`, body => {
+    expect(body).to.be.an('object')
+    expect(body.library).to.be.an('object')
+    data = body.library
+  }, 200)
+
+  // upload asset
+  const image = fs.readFileSync('test/data/tile.jpg', { encoding: 'utf8', flag: 'r' })
+  testJsonPost(() => `/rooms/imageupload${version}/assets/`, () => {
+    return {
+      base64: Buffer.from(image).toString('base64'),
+      color: '#808080',
+      format: 'jpg',
+      h: 2,
+      w: 3,
+      layer: 'tile',
+      name: 'upload.test'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.color).to.be.eql('#808080')
+    expect(body.format).to.be.eql('jpg')
+    expect(body.h).to.be.eql(2)
+    expect(body.w).to.be.eql(3)
+    expect(body.layer).to.be.eql('tile')
+    expect(body.name).to.be.eql('upload.test')
+  }, 201)
+
+  // library must contain asset now
+  testJsonGet(() => `/rooms/imageupload${version}/`, body => {
+    expect(body).to.be.an('object')
+    expect(body.library).to.be.an('object')
+    expect(body.library.tile.length).to.be.eql(data.tile.length + 1)
+
+    const index = body.library.tile.length - 1
+
+    expect(body.library.tile[index].id).to.be.an('string')
+    expect(body.library.tile[index].media).to.be.an('array')
+    expect(body.library.tile[index].media[0]).to.be.eql('upload.test.3x2x1.808080.jpg')
+    expect(body.library.tile[index].color).to.be.eql('#808080')
+    expect(body.library.tile[index].h).to.be.eql(2)
+    expect(body.library.tile[index].w).to.be.eql(3)
+    expect(body.library.tile[index].type).to.be.eql('tile')
+    expect(body.library.tile[index].alias).to.be.eql('upload.test')
+  }, 200)
+
+  // check asset blob
+  testGet(() => `/data/rooms/imageupload${version}/assets/tile/upload.test.3x2x1.808080.jpg`, body => {
+    expect(body.toString('utf-8')).to.be.eql(image)
+  }, 200)
+
+  // cleanup
+  testJsonDelete(() => `/rooms/imageupload${version}/`)
+}
+
 // --- the test runners --------------------------------------------------------
 
 function runTests (version) {
@@ -623,6 +722,7 @@ function runTests (version) {
   describe('CRUD piece', () => testApiCrudPiece(version))
   describe('ZIP upload - minimal', () => testApiZipMinimal(version))
   describe('ZIP upload - full', () => testApiZipFull(version))
+  describe('JPG upload', () => testApiImageUpload(version))
 }
 
 describe('PHP 7.2', function () { runTests('72') })

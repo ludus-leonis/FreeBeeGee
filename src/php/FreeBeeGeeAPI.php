@@ -948,13 +948,11 @@ class FreeBeeGeeAPI
         $incoming = $this->api->assertJson($json);
         $validated = new \stdClass();
 
-        if ($checkMandatory) {
-            $this->api->assertHasProperties(
-                'asset',
-                $incoming,
-                ['name', 'format', 'type', 'w', 'h', 'base64', 'color']
-            );
-        }
+        $this->api->assertHasProperties(
+            'asset',
+            $incoming,
+            ['name', 'format', 'layer', 'w', 'h', 'base64', 'color']
+        );
 
         foreach ($incoming as $property => $value) {
             switch ($property) {
