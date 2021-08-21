@@ -260,7 +260,7 @@ function setupRoom () {
       <div class="menu">
         <div>
           <div class="menu-brand is-content">
-            <button id="btn-s" class="btn-icon" title="Room settings [s]"><img src="icon.svg"></button>
+            <button id="btn-s" class="btn-icon" title="Room settings [s]">${iconLogo}</button>
           </div>
 
           <div>
@@ -422,6 +422,8 @@ function runStatuslineLoop () {
 function fakeTabularNums (text) {
   return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
 }
+
+const iconLogo = '<svg xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="currentColor" fill="none" height="24" width="24" viewBox="0 0 24 24"><rect rx="4" height="24" width="24" fill="#262626" stroke="none"/><path stroke="#40bfbf" d="M2.566 7.283L12 12l9.434-4.717L12 2.566z" stroke-width="1.88678"/><path stroke="#bf40bf" d="M2.566 16.717L12 21.434l9.434-4.717" stroke-width="1.88678"/><path stroke="#fff" d="M2.566 12L12 16.717 21.434 12" stroke-width="1.88678"/></svg>'
 
 const iconDice = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
 
