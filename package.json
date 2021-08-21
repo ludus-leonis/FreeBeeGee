@@ -6,7 +6,7 @@
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=7.0.0",
-    "node" : ">=14.0.0"
+    "node": ">=14.0.0"
   },
   "author": "Markus Leupold-Löwenthal",
   "homepage": "https://github.com/ludus-leonis/FreeBeeGee",
@@ -30,15 +30,15 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.14.6",
-    "@babel/preset-env": "^7.14.7",
+    "@babel/core": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "chai": "^4.3.4",
     "chai-http": "^4.3.0",
     "chai-match": "^1.1.1",
     "del": "*",
-    "eslint": "^7.29.0",
+    "eslint": "^7.32.0",
     "gulp": "*",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-concat": "*",
@@ -58,12 +58,12 @@
     "gulp-tar": "^3.1.0",
     "gulp-zip": "^5.0.2",
     "mocha": "^8.4.0",
-    "sass": "^1.35.1",
+    "sass": "^1.38.0",
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
-    "@popperjs/core": "^2.9.2",
-    "bootstrap": "^5.0.2",
+    "@popperjs/core": "^2.9.3",
+    "bootstrap": "^5.1.0",
     "gulp-svgo": "^2.2.1",
     "marked": "^2.1.2"
   }
