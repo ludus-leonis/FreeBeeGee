@@ -33,7 +33,7 @@
 
     background-color: $color-secondary;
     color: $color-white-100;
-    padding: $spacing-tiny $spacing-medium;
+    padding: 12px $spacing-medium;
     text-align: center;
 
     h1,
@@ -43,6 +43,7 @@
     h3,
     .h3 {
       color: inherit;
+      line-height: 1;
     }
   }
 

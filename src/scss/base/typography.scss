@@ -38,10 +38,7 @@ sans-serif,
 'Segoe UI Emoji',
 'Segoe UI Symbol';
 
-$typography-font-list-sans: Poppins, $typography-font-list-fallback;
-$typography-font-list-hand: 'Patrick Hand', $typography-font-list-sans;
-
-$typography-font-list-monospace:
+$typography-font-list-monospace-fallback:
 SFMono-Regular,
 Menlo,
 Monaco,
@@ -71,12 +68,12 @@ monospace;
   $gradient-transparent: linear-gradient(transparent, transparent);
 
   background-image: $gradient-transparent, $gradient-transparent, linear-gradient(to right, $underline-color, $underline-color);
-  background-position: left bottom 3px; // depends on underline
+  background-position: left bottom 2px; // depends on underline
   background-repeat: no-repeat;
   background-size: 100% $underline-height;
   color: $color;
   display: inline;
-  padding-bottom: .05em;
+  padding-bottom: 0;
   position: relative;
   text-decoration: none;
 
@@ -96,43 +93,66 @@ monospace;
 ) {
   @include set-property-if-not(letter-spacing, 0, $letter-spacing);
 
+  color: inherit;
   font-family: $font-family;
-  font-size: $font-size;
+  font-size: round-rem($font-size);
   font-weight: $font-weight;
-  line-height: $line-height;
+  line-height: round-rem($line-height);
 }
+
+// --- font-specific tweaks ----------------------------------------------------
+
+$typography-font-list-sans: 'Poppins', $typography-font-list-fallback;
+$typography-font-list-sans-lineheight: 1; // scale bad font heights here
+$typography-font-list-monospace: $typography-font-list-monospace-fallback;
+$typography-font-list-monospace-lineheight: 1; // scale bad font heights here
+$typography-font-list-hand: 'Patrick Hand', $typography-font-list-sans;
+
+$typography-font-size-base: px(16);
+$typography-letter-spacing-base: 0;
+$typography-paragraph-lineheight: 1.6em;
+$typography-font-weight-regular: 400;
+$typography-font-weight-bold: $typography-font-weight-regular + 200;
 
 // --- or general typography style set -----------------------------------------
-
-h0,
-.h0,
-%h0 {
-  @include typography-font($typography-font-list-sans, 200, px(64), 1.4em);
-  color: inherit;
-}
 
 h1,
 .h1,
 %h1 {
   @extend %spacing-large;
-  @include typography-font($typography-font-list-sans, 400, px(40), 1.4em);
-  color: inherit;
+  @include typography-font(
+    $typography-font-list-sans,
+    $typography-font-weight-regular + 100,
+    $typography-font-size-base * 1.5,
+    1.25em,
+    $typography-letter-spacing-base
+  );
 }
 
 h2,
 .h2,
 %h2 {
   @extend %spacing-medium;
-  @include typography-font($typography-font-list-sans, 400, px(32), 1.25em);
-  color: inherit;
+  @include typography-font(
+    $typography-font-list-sans,
+    $typography-font-weight-regular + 100,
+    $typography-font-size-base * 1.5,
+    1.25em,
+    $typography-letter-spacing-base
+  );
 }
 
 h3,
 .h3,
 %h3 {
-  @extend %spacing-medium;
-  @include typography-font($typography-font-list-sans, 400, px(20), 1.25em);
-  color: inherit;
+  @extend %spacing-small;
+  @include typography-font(
+    $typography-font-list-sans,
+    $typography-font-weight-regular + 100,
+    $typography-font-size-base * 1.25,
+    1.25em,
+    $typography-letter-spacing-base
+  );
 }
 
 h4,
@@ -144,30 +164,58 @@ h5,
 h5,
 .h5,
 %h6 {
-  @include typography-font($typography-font-list-sans, 400, px(18), 1.5em);
-  color: inherit;
+  @include typography-font(
+    $typography-font-list-sans,
+    $typography-font-weight-regular,
+    $typography-font-size-base,
+    $typography-paragraph-lineheight,
+    $typography-letter-spacing-base
+  );
 }
 
 .p-large,
 %p-large {
-  @include typography-font($typography-font-list-sans, 300, px(22), 1.5em);
+  @include typography-font(
+    $typography-font-list-sans,
+    $typography-font-weight-regular,
+    $typography-font-size-base * 1.5,
+    $typography-paragraph-lineheight,
+    $typography-letter-spacing-base
+  );
 }
 
 .p-medium,
 %p-medium {
-  @include typography-font($typography-font-list-sans, 400, px(18), 1.5em);
+  @include typography-font(
+    $typography-font-list-sans,
+    $typography-font-weight-regular,
+    $typography-font-size-base,
+    $typography-paragraph-lineheight,
+    $typography-letter-spacing-base
+  );
 }
 
 .p-small,
 %p-small {
-  @include typography-font($typography-font-list-sans, 400, px(14), 1.5em, .02em);
+  @include typography-font(
+    $typography-font-list-sans,
+    $typography-font-weight-regular,
+    $typography-font-size-base * .875,
+    $typography-paragraph-lineheight,
+    $typography-letter-spacing-base + .015em
+  );
 }
 
 .p-tiny,
 %p-tiny {
-  @include typography-font($typography-font-list-sans, 700, px(10), 1.2em, .1em);
+  @include typography-font(
+    $typography-font-list-sans,
+    700,
+    px(11),
+    1.2em,
+    $typography-letter-spacing-base + .05em
+  );
 
-  font-weight: 700;
   text-transform: uppercase;
 
   a {
@@ -176,14 +224,24 @@ h5,
 }
 
 .p-micro,
-%p-micro {
-  @include typography-font($typography-font-list-sans, 600, px(10), 1.2em, .1em);
-  font-weight: 600;
+%p-micro { // only used in piece labels
+  @include typography-font(
+    $typography-font-list-sans,
+    600,
+    px(11),
+    1.2em,
+    $typography-letter-spacing-base - .025em
+  );
 }
 
 .p-pre,
 %p-pre {
-  @include typography-font($typography-font-list-monospace, 400, px(16), 1.5em);
+  @include typography-font(
+    $typography-font-list-monospace,
+    $typography-font-weight-regular,
+    px(16),
+    $typography-paragraph-lineheight
+  );
   background-color: $color-gray-05;
   font-variant-ligatures: none;
   padding: .1em .25em;
@@ -201,8 +259,7 @@ h5,
 
 // --- default styling to all elements -----------------------------------------
 
-html,
-body {
+html {
   font-size: 16px; // root font size
 }
 
@@ -211,6 +268,8 @@ body {
 
   background-color: var(--fbg-color-bg);
   color: var(--fbg-color-text);
+  font-size: $typography-font-size-base;
+  letter-spacing: $typography-letter-spacing-base;
 
   p > a,
   li > a {
@@ -226,7 +285,7 @@ body {
 
 b,
 strong {
-  font-weight: 600;
+  font-weight: $typography-font-weight-bold;
 }
 
 .a-invisible {

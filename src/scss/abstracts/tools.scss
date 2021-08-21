@@ -40,6 +40,17 @@
   @return(math.div(1rem, 16) * $px); // based on 16px = 1rem
 }
 
+/// Round a rem value to next full pixel. Assumes 16px root font size.
+///
+/// @example scss
+///   round-rem(.821rem)
+///
+/// @param {length} $rem Amout to round in rem, e.g. `.821rem`.
+/// @return {length} Rounded rem value, e.g. `.8125rem`.
+@function round-rem($rem) {
+  @return math.div(math.round($rem * 16), 16);
+}
+
 /// Set a property only if it is not equal to another value.
 ///
 /// Useful to minizize / avoid duplicate responsive rules.

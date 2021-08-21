@@ -45,6 +45,7 @@
 
       p {
         @extend %p-small;
+        letter-spacing: -.025em;
         margin: $spacing-tiny auto $spacing-small;
         text-align: center;
       }

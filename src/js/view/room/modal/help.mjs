@@ -58,13 +58,13 @@ export function modalHelp () {
         </div>
         <div class="tabs-content">
           <div class="primer">
-            <h2 class="h3">Introduction</h2>
+            <h2>Introduction</h2>
 
             <p>FreeBeeGee is a shared, virtual tabletop (VTT). Everyone who enters a room will see the same tables. If you add, move, edit or remove pieces, the other players will see this immediately.</p>
 
             <p>On our tables, everyone is equal. There is no game master or superuser. Everyone can manipulate what's there. Please be polite.</p>
 
-            <h2 class="h3">Layers</h2>
+            <h2>Layers</h2>
 
             <p>Each table has different layers, containing pieces of a specific type. From top to bottom the layers are:</p>
             <ul>
@@ -77,7 +77,9 @@ export function modalHelp () {
 
             <p>Use your <strong>browser zoom</strong> buttons to zoom-in and zoom-out.</p>
 
-            <h2 class="h3">Pieces</h2>
+            <p><strong>Shift-Click</strong> on the table to use a laser-pointer everyone will see for a few seconds.</p>
+
+            <h2>Pieces</h2>
 
             <p>To <strong>select</strong> a piece, left-click on it. It will get highlighted. However, you can only select pieces if their layer is currently active. Use the top three buttons in the menu to (de)activate layers. To <strong>move</strong> a selected piece, just drag'n'drop it.</p>
 
@@ -87,7 +89,7 @@ export function modalHelp () {
 
             <p>If a piece got hidden behind another piece, you can use the <strong>to&nbsp;top</strong> and <strong>to&nbsp;bottom</strong> buttons to change the order of pieces within their layer.</p>
 
-            <h2 class="h3">Dice</h2>
+            <h2>Dice</h2>
 
             <p>To roll dice, add them from the library to your table. Then <strong>select</strong> the die you want to roll and press <span class="key">#</span>.</p>
 
@@ -117,15 +119,15 @@ export function modalHelp () {
 
           </div>
           <div class="copyright">
-            <h3>Room assets</h3>
+            <h2>Room assets</h2>
 
             ${marked(getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
 
-            <h3>UI assets</h3>
+            <h2>UI assets</h2>
 
             <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
 
-            <h3>FreeBeeGee</h3>
+            <h2>FreeBeeGee</h2>
 
             <p>Copyright 2021 Markus Leupold-Löwenthal</p>
 
