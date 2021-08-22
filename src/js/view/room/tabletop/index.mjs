@@ -41,7 +41,8 @@ import {
 
 import {
   updateStatusline,
-  getTableCoordinates
+  getTableCoordinates,
+  restoreScrollPosition
 } from '../index.mjs'
 
 import {
@@ -211,6 +212,19 @@ export function randomSelected () {
         }
     }
   })
+}
+
+/**
+ * Set the table number.
+ *
+ * Actually only a CSS class that other can build upon.
+ *
+ * @param {Number} no Table to set (1..9).
+ */
+export function setTableNo (no) {
+  _('#tabletop').remove('.table-*')
+  _('#tabletop').add(`.table-${no}`)
+  restoreScrollPosition()
 }
 
 /**

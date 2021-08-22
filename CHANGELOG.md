@@ -6,10 +6,14 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 This is a breaking release changing internal data structures. Old snapshots will no longer work.
 
+### Notable changes
+
 * added laser-pointer feature
 * added status icons/tags for pieces
 * added individual edit windows per piece types
 * added glass tiles to RPG template for brighter/darker tiles
+
+### Other changes
 
 * fixed snapshot filename to match client timezone
 * fixed php8 compatibility issue

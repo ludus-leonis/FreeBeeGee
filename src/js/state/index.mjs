@@ -45,6 +45,9 @@ import {
   runError
 } from '../view/error/index.mjs'
 import {
+  setTableNo as setTabletopNo
+} from '../view/room/tabletop/index.mjs'
+import {
   populatePiecesDefaults,
   clampToTableSize
 } from '../view/room/tabletop/tabledata.mjs'
@@ -134,6 +137,7 @@ export function setTableNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     tableNo = no
     setRoomPreference('table', tableNo)
+    setTabletopNo(no)
     if (sync) syncNow([], true)
   }
 }
@@ -191,7 +195,7 @@ export function createRoom (room, snapshot) {
  * @return {String} The setting's value.
  */
 export function getRoomPreference (pref) {
-  return getStoreValue('g' + room.id.substr(0, 8), pref)
+  return getStoreValue('r' + room.id.substr(0, 8), pref)
 }
 
 /**
@@ -202,7 +206,31 @@ export function getRoomPreference (pref) {
  * @param {String} value The value to set.
  */
 export function setRoomPreference (pref, value) {
-  setStoreValue('g' + room.id.substr(0, 8), pref, value)
+  setStoreValue('r' + room.id.substr(0, 8), pref, value)
+}
+
+/**
+ * Get a setting from the browser HTML5 store. Automatically scoped to active
+ * room + table no.
+ *
+ * @param {String} pref Setting to obtain.
+ * @param {Number} no Table number. Defaults to curren table.
+ * @return {String} The setting's value.
+ */
+export function getTablePreference (pref, no = getTableNo()) {
+  return getStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref)
+}
+
+/**
+ * Set a setting in the browser HTML5 store. Automatically scoped to active
+ * room + table number.
+ *
+ * @param {String} pref Setting to set.
+ * @param {String} value The value to set.
+ * @param {Number} no Table number. Defaults to curren table.
+ */
+export function setTablePreference (pref, value, no = getTableNo()) {
+  setStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref, value)
 }
 
 /**

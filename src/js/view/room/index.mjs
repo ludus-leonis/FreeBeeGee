@@ -29,6 +29,8 @@ import { // TODO roomstate.mjs?
   getRoom,
   getRoomPreference,
   setRoomPreference,
+  getTablePreference,
+  setTablePreference,
   getTableNo,
   setTableNo
 } from '../../state/index.mjs'
@@ -243,6 +245,29 @@ export function updateStatusline () {
   }
 }
 
+/**
+ * Restore the scroll position from properties (if any).
+ *
+ * Defaults to the center of the table setup if no last scroll position ist known.
+ */
+export function restoreScrollPosition () {
+  const scroller = _('#scroller')
+  const lastX = getTablePreference('scrollX')
+  const lastY = getTablePreference('scrollY')
+  if (lastX && lastY) {
+    scroller.node().scrollTo(
+      lastX - Math.floor(scroller.clientWidth / 2),
+      lastY - Math.floor(scroller.clientHeight / 2)
+    )
+  } else {
+    const center = getSetupCenter()
+    scroller.node().scrollTo(
+      Math.floor(center.x - scroller.clientWidth / 2),
+      Math.floor(center.y - scroller.clientHeight / 2)
+    )
+  }
+}
+
 // --- internal ----------------------------------------------------------------
 
 let scroller = null /** keep reference to scroller div - we need it often */
@@ -379,32 +404,14 @@ function setupRoom () {
 let scrollFetcherTimeout = -1
 
 /**
- * Scroll to the last open scroll position.
- *
- * Defaults to the center of the setup if no last scroll position ist known. Will
- * also install an event handler to capture scroll events & record them.
+ * Scroll to the last open scroll position & start scroll tracking.
  */
 function setAutoScrollPosition () {
-  const scroller = _('#scroller')
-  const lastX = getRoomPreference('scrollX')
-  const lastY = getRoomPreference('scrollY')
-  if (lastX && lastY) {
-    scroller.node().scrollTo(
-      lastX - Math.floor(scroller.clientWidth / 2),
-      lastY - Math.floor(scroller.clientHeight / 2)
-    )
-  } else {
-    const center = getSetupCenter()
-    scroller.node().scrollTo(
-      Math.floor(center.x - scroller.clientWidth / 2),
-      Math.floor(center.y - scroller.clientHeight / 2)
-    )
-  }
-  scroller.on('scroll', () => {
+  _('#scroller').on('scroll', () => {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
-      setRoomPreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
-      setRoomPreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
+      setTablePreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
+      setTablePreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
     }, 1000)
   })
 }
