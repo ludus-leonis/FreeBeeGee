@@ -575,7 +575,7 @@ class FreeBeeGeeAPI
             foreach ($oldTable as $tableItem) {
                 if ($piece->id === $this->ID_POINTER && $tableItem->id === $piece->id) {
                     // skip recreated system piece
-                } else if (!in_array($tableItem->id, $ids)) {
+                } elseif (!in_array($tableItem->id, $ids)) {
                     // for newly created items we just copy the current table of the others
                     if ($tableItem->id === $piece->id) {
                         // the ID is already in the history - abort!
@@ -880,6 +880,9 @@ class FreeBeeGeeAPI
                     break;
                 case 'tag':
                     $validated->tag = trim($this->api->assertString('tag', $value, '^[^\n\r]{0,32}$'));
+                    break;
+                case 'expires':
+                    $validated->expires = 0; // we always override externaly provides expiry dates on create/update
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');

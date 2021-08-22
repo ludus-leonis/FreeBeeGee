@@ -12,9 +12,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bugfixing
     * [X] css cleanup
     * [ ] note rotation
+    * [ ] autofocus search in library not always working
     * [X] wrong snapshot filename timezone
     * [X] library tab sometimes wrong size
-    * [ ] tolerate expires field on snapshot load
+    * [X] tolerate expires field on snapshot load
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
