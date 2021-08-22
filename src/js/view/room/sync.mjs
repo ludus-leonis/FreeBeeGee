@@ -42,6 +42,9 @@ import {
   updateTabletop
 } from './tabletop/index.mjs'
 import {
+  findExpiredPieces
+} from './tabletop/tabledata.mjs'
+import {
   modalInactive
 } from './modal/inactive.mjs'
 
@@ -186,15 +189,21 @@ function checkRoomDigests (
         return syncRoom(selectIds).then(() => { touch(true); return table })
       }
 
-      // verify currently active table
-      if (digest[`tables/${table}.json`] !== lastDigests[`tables/${table}.json`]) {
+      // verify currently active table hasn't changed
+      if (
+        digest[`tables/${table}.json`] !== lastDigests[`tables/${table}.json`] ||
+        findExpiredPieces(table).length > 0
+      ) {
         touch(true)
         return table
       }
 
       // verify all (other) tables and trigger sync for first wrong one
       for (let i = 1; i <= 9; i++) {
-        if (digest[`tables/${i}.json`] !== lastDigests[`tables/${i}.json`]) {
+        if (
+          digest[`tables/${i}.json`] !== lastDigests[`tables/${i}.json`] ||
+          findExpiredPieces(i).length > 0
+        ) {
           touch(true)
           return i
         }
@@ -223,7 +232,8 @@ function fetchAndUpdateTable (
       lastDigests[`tables/${dirtyTable}.json`] = table.headers.get('digest')
 
       if (dirtyTable === getTableNo()) {
-        updateTabletop(table.body, selectIds)
+        // updateTabletop(table.body, selectIds)
+        updateTabletop(getTable(dirtyTable), selectIds) // use cleanedup data
       }
     })
 }

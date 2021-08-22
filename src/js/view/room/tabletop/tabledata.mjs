@@ -137,6 +137,25 @@ export function findPiecesWithin (rect, layer = 'all', no = getTableNo()) {
 }
 
 /**
+ * Find all pieces that are expired.
+ *
+ * @param {Number} no Table number, defaults to current one.
+ * @returns {Array} Array of nodes/pieces that are expired.
+ */
+export function findExpiredPieces (no = getTableNo()) {
+  const pieces = []
+
+  const now = new Date()
+  for (const piece of getTable(no)) {
+    if (piece._expires && piece._expires <= now) {
+      pieces.push(piece)
+    }
+  }
+
+  return pieces
+}
+
+/**
  * Create a new piece from an asset.
  *
  * @param {String} id Asset ID.
@@ -203,15 +222,26 @@ export function populatePieceDefaults (piece, headers = null) {
 /**
  * Add default values to all properties that the API might omit.
  *
+ * Also tosses out expired pieces.
+ *
  * @param {Array} pieces Data objects to populate.
  * @param {Object} headers Optional headers object (for date checking).
  * @return {Array} Pieces array for chaining.
  */
 export function populatePiecesDefaults (pieces, headers = null) {
+  const nonExpired = []
+  const now = new Date()
   for (const piece of pieces) {
     populatePieceDefaults(piece, headers)
+    if (piece._expires) {
+      if (piece._expires && piece._expires > now) {
+        nonExpired.push(piece)
+      }
+    } else {
+      nonExpired.push(piece)
+    }
   }
-  return pieces
+  return nonExpired
 }
 
 /**

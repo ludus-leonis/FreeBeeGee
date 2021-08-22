@@ -568,9 +568,14 @@ class FreeBeeGeeAPI
         $newTable = []; // will get the new, updated/rewritten table
         $ids = []; // the IDs of all pieces that are still in $newTable after all the updates
         if ($create) { // in create mode we inject the new piece
+            // add the new piece
             $newTable[] = $this->removeDefaultsFromPiece($piece);
+
+            // re-add all old pieces
             foreach ($oldTable as $tableItem) {
-                if (!in_array($tableItem->id, $ids)) {
+                if ($piece->id === $this->ID_POINTER && $tableItem->id === $piece->id) {
+                    // skip recreated system piece
+                } else if (!in_array($tableItem->id, $ids)) {
                     // for newly created items we just copy the current table of the others
                     if ($tableItem->id === $piece->id) {
                         // the ID is already in the history - abort!
@@ -593,7 +598,7 @@ class FreeBeeGeeAPI
                         $tableItem = $this->removeDefaultsFromPiece($this->merge($tableItem, $piece));
                         $result = $tableItem;
                     }
-                    if (!isset($tableItem->expires) || $tableItem->expires >= time()) {
+                    if (!isset($tableItem->expires) || $tableItem->expires > time()) {
                         // only add if not expired
                         $newTable[] = $tableItem;
                         $ids[] = $tableItem->id;

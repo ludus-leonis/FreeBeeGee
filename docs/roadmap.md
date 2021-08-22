@@ -6,7 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [X] pointer feature
 * [X] different edit modals per piece type (hide useless fields)
-* [ ] token status (blind, poison, prone, dazed, ...)
+* [X] token status (blind, poison, prone, dazed, ...)
 * [X] unit tests for client data model
 * [ ] pre-release
   * [ ] bugfixing
@@ -14,6 +14,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] note rotation
     * [X] wrong snapshot filename timezone
     * [ ] library tab sometimes wrong size
+    * [ ] tolerate expires field on snapshot load
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
@@ -40,6 +41,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* slightly table texture offset for different tables 1..9
 * generic marker overlay (X, ?, ...)
 * docs how to make table/template `.zip`s
 * click thru / don't drag on transparent parts of images

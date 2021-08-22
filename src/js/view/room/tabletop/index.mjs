@@ -567,20 +567,16 @@ export function pointTo (coords) {
 
   coords.x = clamp(0, coords.x - template.gridSize / 2, room.width - template.gridSize)
   coords.y = clamp(0, coords.y - template.gridSize / 2, room.height - template.gridSize)
-  const pointer = findPiece(ID_POINTER)
-  if (pointer) {
-    movePiece(pointer.id, coords.x, coords.y)
-  } else {
-    createPieces([{
-      asset: ID_POINTER,
-      layer: 'other',
-      w: 1,
-      h: 1,
-      x: coords.x,
-      y: coords.y,
-      z: getMaxZ('other') + 1
-    }])
-  }
+
+  createPieces([{ // always create (even if it is a move)
+    asset: ID_POINTER,
+    layer: 'other',
+    w: 1,
+    h: 1,
+    x: coords.x,
+    y: coords.y,
+    z: getMaxZ('other') + 1
+  }])
 }
 
 /**
@@ -748,14 +744,6 @@ function removeObsoletePieces (keepIds) {
   // remove ids from list that are dragndrop targets
   ids = ids.filter(item => !item.endsWith('-drag'))
 
-  // add ids for expired items (currently only pointers)
-  const now = new Date()
-  _('#tabletop .is-pointer').each(node => {
-    if (node.piece._expires < now) {
-      ids.push(node.id)
-    }
-  })
-
   // delete ids that are still left
   for (const id of ids) {
     _('#' + id).delete()
@@ -769,7 +757,6 @@ function removeObsoletePieces (keepIds) {
  * @param {Boolean} selected If true, this item will be selected.
  */
 function setItem (piece, selected) {
-  if (piece._expires < 0) return // do not add expired pieces
   switch (piece.layer) {
     case 'tile':
     case 'token':
