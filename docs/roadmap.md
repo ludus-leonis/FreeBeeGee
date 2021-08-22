@@ -9,9 +9,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] token status (blind, poison, prone, dazed, ...)
 * [X] unit tests for client data model
 * [ ] pre-release
-  * [ ] bugfixing
+  * [X] bugfixing
     * [X] css cleanup
-    * [ ] note rotation
+    * [X] note rotation
     * [X] autofocus search in library not always working
     * [X] wrong snapshot filename timezone
     * [X] library tab sometimes wrong size

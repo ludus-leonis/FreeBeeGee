@@ -34,7 +34,6 @@ $piece-note-glue: rgba(0, 0, 0, .02);
   background-color: $color-08;
   border-bottom-left-radius: 1px 90%;
   border-bottom-right-radius: 50% 4px;
-  box-shadow: 0 4px 4px -4px $color-black-85a, 0 46px 2px -2px inset $piece-note-glue; // corner shadow + glue band
   color: $color-bw-fg;
   font-variant-ligatures: none;
   overflow: hidden;
@@ -42,16 +41,6 @@ $piece-note-glue: rgba(0, 0, 0, .02);
   position: relative;
   text-align: center;
   word-break: break-word;
-
-  &::after {
-    bottom: 0;
-    box-shadow: 0 0 32px 3px $color-white-100;
-    content: '';
-    height: 1px;
-    position: absolute;
-    right: 0;
-    width: 15%;
-  }
 
   // --- reduce text size on small notes ---
 
@@ -74,21 +63,44 @@ $piece-note-glue: rgba(0, 0, 0, .02);
     font-size: 1.5em;
   }
 
+  &.is-rotate-180 {
+    align-items: center;
+  }
+
   // --- quality settings ---
 
+  .is-quality-medium & {
+    box-shadow: 0 3px 0 -2px $color-black-35a; // flat corner shadow
+  }
+
+  .is-quality-high &,
   .is-quality-ultra & {
+    box-shadow: 0 4px 4px -4px $color-black-85a, 0 46px 2px -2px inset $piece-note-glue; // corner shadow + glue band
+  }
+
+  .is-quality-ultra & {
+    &::after { // light white effect on corner
+      bottom: 0;
+      box-shadow: 0 0 32px 3px $color-white-100;
+      content: '';
+      height: 1px;
+      position: absolute;
+      right: 0;
+      width: 15%;
+    }
+
     @include piece-rotate(0deg, $note-rotate);
 
     &.is-rotate-90 {
-      @include piece-rotate(0deg, $note-rotate);
+      @include piece-rotate(90deg, $note-rotate);
     }
 
     &.is-rotate-180 {
-      @include piece-rotate(0deg, $note-rotate);
+      @include piece-rotate(180deg, $note-rotate);
     }
 
     &.is-rotate-270 {
-      @include piece-rotate(0deg, $note-rotate);
+      @include piece-rotate(270deg, $note-rotate);
     }
   }
 }
