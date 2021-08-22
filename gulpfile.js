@@ -163,27 +163,31 @@ gulp.task('js-main', gulp.series('test-js', () => {
   const source = require('vinyl-source-stream')
 
   return replace(browserify([
-    'src/js/api.js',
-    'src/js/FreeDOM.js',
-    'src/js/modal.js',
-    'src/js/nav.js',
-    'src/js/screen.js',
-    'src/js/state.js',
-    'src/js/utils.js',
-    'src/js/screens/create.js',
-    'src/js/screens/error.js',
-    'src/js/screens/join.js',
-    'src/js/screens/table/index.js',
-    'src/js/screens/table/hotkeys.js',
-    'src/js/screens/table/mouse.js',
-    'src/js/screens/table/state.js',
-    'src/js/screens/table/sync.js',
-    'src/js/screens/table/tabledata.js',
-    'src/js/screens/table/modals/edit.js',
-    'src/js/screens/table/modals/help.js',
-    'src/js/screens/table/modals/inactive.js',
-    'src/js/screens/table/modals/library.js'
-  ]).transform(babelify.configure({
+    'src/js/app.mjs',
+    'src/js/main.mjs',
+    'src/js/api/index.mjs',
+    'src/js/state/index.mjs',
+    'src/js/lib/FreeDOM.mjs',
+    'src/js/lib/utils.mjs',
+    'src/js/view/modal.mjs',
+    'src/js/view/screen.mjs',
+    'src/js/view/create/index.mjs',
+    'src/js/view/error/index.mjs',
+    'src/js/view/join/index.mjs',
+
+    'src/js/view/room/index.mjs',
+    'src/js/view/room/hotkeys.mjs',
+    'src/js/view/room/mouse.mjs',
+    'src/js/view/room/sync.mjs',
+    'src/js/view/room/tabletop/index.mjs',
+    'src/js/view/room/tabletop/tabledata.mjs',
+    'src/js/view/room/modal/edit.mjs',
+    'src/js/view/room/modal/help.mjs',
+    'src/js/view/room/modal/inactive.mjs',
+    'src/js/view/room/modal/library.mjs'
+  ], {
+    paths: []
+  }).transform(babelify.configure({
     presets: ['@babel/preset-env']
   })).bundle()
     .pipe(source('main.js')))

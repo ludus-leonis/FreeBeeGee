@@ -33,13 +33,6 @@
   width: 100%;
 
   .col-12 {
-    .h0,
-    > p {
-      padding-left: $spacing-tiny;
-      padding-right: $spacing-tiny;
-      text-align: center;
-    }
-
     > a {
       display: block;
       text-align: center;
@@ -55,18 +48,14 @@
       }
     }
 
-    .h0 {
-      color: $color-white-100;
-      font-size: 2.75em;
-      letter-spacing: px(2);
-      text-shadow: px(2) px(2) px(1) var(--fbg-color-bg), px(-2) px(-2) px(1) var(--fbg-color-bg);
-    }
-
     .h3 {
       font-size: 1.25em;
     }
 
     > p {
+      padding-left: $spacing-tiny;
+      padding-right: $spacing-tiny;
+      text-align: center;
       text-shadow: px(1) px(1) px(1) var(--fbg-color-bg), px(-1) px(-1) px(1) var(--fbg-color-bg);
     }
 

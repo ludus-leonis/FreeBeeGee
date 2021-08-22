@@ -1,0 +1,118 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group pages
+///
+/// Rules that affect the gaming screen & tabletop area.
+///
+/// @access public
+////
+
+.room {
+  $menu-icon-size: 32px;
+  $menu-shadow: rgba(0, 0, 0, .5);
+
+  padding-left: $menu-icon-size;
+
+  .scroller {
+    height: 100%;
+    overflow: auto;
+    width: 100%;
+  }
+
+  .menu {
+    background-color: $color-primary;
+    box-shadow: 0 0 px(16) $menu-shadow;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: space-between;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: $menu-icon-size;
+    z-index: $z-index-menu;
+
+    .menu-brand {
+      background-color: $color-gray-85;
+      margin-bottom: $spacing-micro;
+
+      .btn-icon {
+        padding: $spacing-micro;
+      }
+    }
+
+    .btn-icon {
+      background-color: transparent;
+      border: 0;
+      border-radius: 0;
+      color: $color-white-100;
+      margin: 0;
+      padding: $spacing-tiny $spacing-micro;
+
+      &.active {
+        color: $color-black-100;
+      }
+
+      svg {
+        height: px(20);
+        width: px(20);
+      }
+    }
+
+    .btn-icon.disabled,
+    .disabled > .btn-icon {
+      color: $color-white-25a;
+      cursor: not-allowed;
+    }
+
+    > div {
+      text-align: center;
+
+      > a {
+        display: inline-block;
+        padding: .2em;
+
+      }
+    }
+  }
+
+  .status {
+    bottom: $spacing-small;
+    font-weight: 500;
+    opacity: .75;
+    padding-right: $spacing-micro;
+    position: absolute;
+    right: $spacing-small;
+    text-shadow: 1px 1px 1px $color-black-100;
+  }
+}
+
+.if-quality-low,
+.if-quality-medium,
+.if-quality-high,
+.if-quality-ultra {
+  display: none;
+}
+
+body {
+  &.is-quality-low .if-quality-low { display: block; }
+  &.is-quality-medium .if-quality-medium { display: block; }
+  &.is-quality-high .if-quality-high { display: block; }
+  &.is-quality-ultra .if-quality-ultra { display: block; }
+}

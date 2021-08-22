@@ -8,20 +8,21 @@ A virtual gaming tabletop you can host on your own server.
 
 Your game. Your data.
 
-[FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Patreon](https://www.patreon.com/LudusLeonis)
+[FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Patreon](https://www.patreon.com/LudusLeonis) | [Documentation](docs/DOCS.md)
 
 ## Key features
 
 * Browser-based 2D virtual tabletop for board- and role-playing games.
 * Easy-to-use drag'n'drop interface. Keyboard hotkeys for power-users.
-* Invite friends by sending them a table's unique URL.
+* Invite friends by sending them a room's unique URL.
+* Multiple tables per room. Use them for different game setups or dungeon levels.
 * Tile-/grid-based, with snapping. Classic dungeon tiles and 200+ monster token included.
 * Separate layers for tiles, overlays and tokens.
 * Asset browser for your token/tiles. Individual libraries per game.
 * Sticky notes and dice trays.
 * Templates to setup tables and populate your library from.
-* Transfer individual tables between servers. Or keep an offline backup.
-* Privacy friendly. No user tracking. No 3rd-party scripts. Tables are deleted after some (configurable) time, usually 48h.
+* Transfer individual rooms between servers. Or keep an offline backup.
+* Privacy friendly. No user tracking. No 3rd-party scripts. Rooms are deleted after some (configurable) time, usually 48h.
 * File & folder-based. No database required.
 * Easy to install and maintain.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
@@ -29,8 +30,7 @@ Your game. Your data.
 **Note:** This is still an early/development version. A few rather major features are still missing, limiting it's current usefullness:
 
 * While you can upload images/tiles/pieces via the web-UI, editing them is quite limited.
-* No per-table passwords yet. Anyone who knows a table name can join. That is partly by design, but it would be nice to have that option.
-* You can attach (text)labels to tokens, but no fancy state-icons, HP counters etc. - yet.
+* No room passwords yet. Anyone who knows their name can join. That is partly by design, but it would be nice to have that option.
 
 The good news is: You can still use FreeBeeGee today to play! Missing features will arrive sooner or later. There is a [roadmap](docs/roadmap.md) for details.
 

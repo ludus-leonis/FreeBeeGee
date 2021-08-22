@@ -39,12 +39,15 @@
     }
 
     .col-card {
+      overflow: hidden;
+
       .is-scale-2 {
         cursor: pointer;
       }
 
       p {
         @extend %p-small;
+        letter-spacing: -.025em;
         margin: $spacing-tiny auto $spacing-small;
         text-align: center;
       }

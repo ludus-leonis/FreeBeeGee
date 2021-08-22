@@ -142,6 +142,16 @@ $piece-shadow-flat-overlay: 3px 2px 0 $color-black-35a;
 
 $label-offset: 8px;
 
+@keyframes whirl {
+  from {
+    transform: rotate(0deg) translateX(4px);
+  }
+
+  to {
+    transform: rotate(360deg) translateX(4px);
+  }
+}
+
 .piece {
   #{'--fbg-layer-image'}: none;
 
@@ -169,7 +179,13 @@ $label-offset: 8px;
   &.is-invalid {
     background-image: url('img/invalid.svg');
     background-size: contain;
-    display: none;
+  }
+
+  &.is-pointer {
+    animation: whirl 1s linear infinite;
+    background-image: url('img/pointer.png');
+    background-size: contain;
+    filter: none !important; // sass-lint:disable-line no-important
   }
 
   // --- size ------------------------------------------------------------------
@@ -203,6 +219,16 @@ $label-offset: 8px;
     position: relative;
     top: $label-offset;
     white-space: nowrap;
+
+    .icon {
+      height: 1em;
+      margin-top: 0;
+      width: 1em;
+
+      &:not(:first-child) {
+        margin-left: $spacing-micro;
+      }
+    }
   }
 
   &:hover > .label {

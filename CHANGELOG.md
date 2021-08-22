@@ -2,9 +2,29 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.10.0 - Pointing Pony
+
+This is a breaking release changing internal data structures. Old snapshots will no longer work.
+
+* added laser-pointer feature
+* added status icons/tags for pieces
+* added individual edit windows per piece types
+* added glass tiles to RPG template for brighter/darker tiles
+
+* fixed snapshot filename to match client timezone
+* fixed php8 compatibility issue
+* fixed image/piece upload
+* fixed search field not focused on library open
+* fixed sticky note rotation
+* tweaked spacings + font sizes
+* refactored refactored wording table->room, subtable->table, state->table
+* refactored JS file layout
+* added basic frontend JS unit tests
+* added more technical documentation & TOC
+
 ## v0.9.0 - Happy Hamster
 
-### Noteable changes
+### Notable changes
 
 * added subtable support (alt-1..9, ctrl-1..9)
 * added small clock in lower right corner

@@ -29,9 +29,11 @@
   overflow: hidden;
 
   &-header {
+    @include spacing-first-none;
+
     background-color: $color-secondary;
     color: $color-white-100;
-    padding: $spacing-tiny $spacing-medium;
+    padding: 12px $spacing-medium;
     text-align: center;
 
     h1,
@@ -41,10 +43,13 @@
     h3,
     .h3 {
       color: inherit;
+      line-height: 1;
     }
   }
 
   &-body {
+    @include spacing-first-none;
+
     background-color: $color-bw-bg;
     margin: 0;
     padding: $spacing-medium;
