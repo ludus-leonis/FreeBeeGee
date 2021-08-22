@@ -39,6 +39,8 @@
     }
 
     .col-card {
+      overflow: hidden;
+
       .is-scale-2 {
         cursor: pointer;
       }

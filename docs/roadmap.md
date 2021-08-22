@@ -13,7 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] css cleanup
     * [ ] note rotation
     * [X] wrong snapshot filename timezone
-    * [ ] library tab sometimes wrong size
+    * [X] library tab sometimes wrong size
     * [ ] tolerate expires field on snapshot load
   * [ ] review + run tests
   * [ ] update screenshots
