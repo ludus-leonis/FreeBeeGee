@@ -140,12 +140,10 @@ export function modalLibrary (tile) {
     _('#' + preselect).checked = true
 
     refreshTabs()
-
-    // enable upload tab
-    setupFooter()
     setupTabUpload()
-
+    setupFooter()
     getModal().show()
+    _('#input-search').focus()
 
     // adapt footer on change
     _('[name="tabs"]').on('change', click => {
