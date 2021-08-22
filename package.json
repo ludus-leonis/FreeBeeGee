@@ -1,6 +1,6 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.10.0-dev",
+  "version": "0.10.0",
   "versionEngine": "0.5.0",
   "codename": "Pointing Pony",
   "description": "A virtual tabletop for board games and RPGs.",

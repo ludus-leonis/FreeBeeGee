@@ -6,13 +6,21 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 This is a breaking release changing internal data structures. Old snapshots will no longer work.
 
-* added laser pointer
-* added status icons for pieces
-* refactored wording table -> room, sub-table -> table
-* refactored JS file layout
-* fixed spacings
-* added more technical documentation & TOC
+* added laser-pointer feature
+* added status icons/tags for pieces
+* added individual edit windows per piece types
+* added glass tiles to RPG template for brighter/darker tiles
+
 * fixed snapshot filename to match client timezone
+* fixed php8 compatibility issue
+* fixed image/piece upload
+* fixed search field not focused on library open
+* fixed sticky note rotation
+* tweaked spacings + font sizes
+* refactored refactored wording table->room, subtable->table, state->table
+* refactored JS file layout
+* added basic frontend JS unit tests
+* added more technical documentation & TOC
 
 ## v0.9.0 - Happy Hamster
 

@@ -2,20 +2,20 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.10 - Pointing Pony
+## v0.11 - ???
 
-* [X] pointer feature
-* [X] different edit modals per piece type (hide useless fields)
-* [X] token status (blind, poison, prone, dazed, ...)
-* [X] unit tests for client data model
+* [ ] table passwords
+* [ ] empty table template
+* [ ] slight table texture offset for different tables 1..9
+* [ ] more table backgrounds
+* [ ] click thru / don't drag on transparent parts of images
+* [ ] use image masks for png backsides
+* [ ] rightclick on table
+  * [ ] add piece
+  * [ ] change table 1..9
+  * [ ] change background
 * [ ] pre-release
-  * [X] bugfixing
-    * [X] css cleanup
-    * [X] note rotation
-    * [X] autofocus search in library not always working
-    * [X] wrong snapshot filename timezone
-    * [X] library tab sometimes wrong size
-    * [X] tolerate expires field on snapshot load
+  * [ ] bugfixing
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
@@ -26,11 +26,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * better tablet / touch support
   * zooming
   * moving pieces
-* table passwords
 
 ## v0.yy - Clean Cat
 
-* empty template table
 * reduce impact of "back" button
 * concurrent drag-n-drop - first mover wins
 * (bulk) manipulation of assets (delete, edit, change type)
@@ -42,15 +40,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
-* slightly table texture offset for different tables 1..9
 * generic marker overlay (X, ?, ...)
 * docs how to make table/template `.zip`s
-* click thru / don't drag on transparent parts of images
 * LOS-ruler
-* more tabletop settings (e.g. change background, grid)
+* more tabletop settings (e.g. grid)
 * undo (limited)
 * demo mode (serverless?)
-* use image masks for png backsides
 * show backside/all sides in tile browser
 * better sticky notes (more text, auto-size text)
 * protect pieces (no-delete, no-move)
@@ -60,15 +55,13 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * support for stacks/decks of cards
   * shuffle deck/stack
 * option to force-install templates with invalid versions
-* rightclick on desk -> add piece popup
 * multi-select stuff
-* add more classic game boards: go, backgammon, mills, solitaire
+* add more classic game boards: backgammon, mills, solitaire
 * "layer not active" hint when dragging nothing
 * I18N
 * show even more infos in media browser
 * full-screen key
 * dedicated HP/Mana/Value field(s)
-* token status (blind, poison, prone, dazed, ...)
 * obfuscate/hash room name
 * pinboard for handouts
 * tour / first-time-tutorial
