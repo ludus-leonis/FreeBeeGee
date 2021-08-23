@@ -39,23 +39,23 @@ The server config file is found in `api/data/server.json`:
 
 ```
 {
-  "ttl": 48,                // hours of inactivity after a table gets deleted
-  "maxRooms": 128,          // maximum concurrent tables allowed
-  "maxRoomSizeMB": 4,       // maximum size per table folder / snapshot / template
-  "snapshotUploads": false, // set to true to enable snapshot upload on table create
+  "ttl": 48,                // hours of inactivity after a room gets deleted
+  "maxRooms": 128,          // maximum concurrent rooms allowed
+  "maxRoomSizeMB": 4,       // maximum size per room folder / snapshot / template
+  "snapshotUploads": false, // set to true to enable snapshot upload on room create
   "passwordCreate": "................."
 }
 ```
 
 ### Passwords
 
-`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join tables. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
+`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join rooms. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
 
 ```
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
 ```
 
-FreeBeeGee ships with an unknown password. No tables can be created until you either set one or explicitly disable it.
+FreeBeeGee ships with an unknown password. No rooms can be created until you either set one or explicitly disable it.
 
 ### Uploads
 
@@ -65,7 +65,7 @@ You can change the maximum upload file size via the `server.json` (see above). Y
 
 ## Upgrading
 
-While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even tables will break between versions. Start with a fresh install till we reach v1.0.
+While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even rooms will break between versions. Start with a fresh install till we reach v1.0.
 
 ## Build from source
 

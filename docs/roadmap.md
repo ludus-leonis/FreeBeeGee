@@ -6,7 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] table passwords
 * [ ] empty table template
-* [ ] slight table texture offset for different tables 1..9
+* [X] slight table texture offset for different tables 1..9
 * [ ] more table backgrounds
 * [ ] click thru / don't drag on transparent parts of images
 * [ ] use image masks for png backsides

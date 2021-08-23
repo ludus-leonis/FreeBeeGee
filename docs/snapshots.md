@@ -4,7 +4,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It explains ho
 
 ## About snapshots
 
-Snapshots are Save-Game `*.zip`s you can obtain by downloading them from any table you have joined. When creating a new table, you can provide such a snapshot to recreate and continue a game.
+Snapshots are Save-Game `*.zip`s you can obtain by downloading them from any room you have joined. When creating a new room, you can provide such a snapshot to recreate and continue a game.
 
 Snapshots do not only serve as Save-Games and backups, but can also be used as pre-setup game templates and shared with other players/servers. While you can do most of the setup in the FreeBeeGee UI, there are some things that require you editing the `zip` file.
 

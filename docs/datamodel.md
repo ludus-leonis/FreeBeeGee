@@ -109,7 +109,7 @@ The library object holds information about all known assets, sorted by type.
 
 ## Pieces
 
-When assets are displayed on the table and become 'tangible', they are called pieces. Pieces extend the asset information by data like position, rotation, etc. Multiple pieces can share the same  asset.
+When assets are displayed on a table and become 'tangible', they are called pieces. Pieces extend the asset information by data like position, rotation, etc. Multiple pieces can share the same  asset.
 
 A minimal piece contains the following information:
 
