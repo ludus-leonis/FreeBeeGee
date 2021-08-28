@@ -1,6 +1,8 @@
 # Setup
 
-This document is part of the [FreeBeeGee documentation](DOCS.md). It covers the installation of FreeBeeGee.
+This document is part of the [FreeBeeGee documentation](DOCS.md). It covers the basic installation of FreeBeeGee.
+
+See the [Troubleshooting](troubleshooting.md) instructions for additional help.
 
 ## Requirements
 

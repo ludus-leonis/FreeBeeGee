@@ -15,6 +15,7 @@
 ## Admin Documentation
 
 * The [Installation Instructions](INSTALL.md) will get you started.
+* The [Troubleshooting Instructions](troubleshooting.md) might help, too.
 * The [Frequently Asked Questions (FAQ)](FAQ.md) explain a few design decisions.
 
 ## Developer Documentation
