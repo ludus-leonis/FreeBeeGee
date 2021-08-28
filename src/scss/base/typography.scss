@@ -234,17 +234,18 @@ h5,
   );
 }
 
+code,
+pre,
 .p-pre,
 %p-pre {
   @include typography-font(
     $typography-font-list-monospace,
     $typography-font-weight-regular,
-    px(16),
+    px(15),
     $typography-paragraph-lineheight
   );
-  background-color: $color-gray-05;
+  color: $color-secondary;
   font-variant-ligatures: none;
-  padding: .1em .25em;
 }
 
 .p-label,
