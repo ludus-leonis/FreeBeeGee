@@ -2,9 +2,11 @@
 
 Here are a few common problems and possible solutions:
 
-## I don't know the password to create rooms.
+## I get an 'Internal Server Error' page.
 
-See the [install instructions](INSTALL.md). You need to set a password first (or disable it).
+If you get this with the basic, default `.htaccess` file provided in the .zip file right after installation: Apache's module `mod_rewrite` is not enabled on your httpd server - either not in general or not for your domain. How to enable it depends a bit on your configuration, so please check your server configuration file or the web admin tool of your provider.
+
+If you get this after editing the `.htaccess` file yourself: There is a syntax error or you are trying to use an Apache module currently not enabled on the server. Please check your changes.
 
 ## Our server is currently experiencing technical difficulties.
 
@@ -14,6 +16,10 @@ Here are a few things you can try:
 
 * Take a look into your web server's `error.log`. The server might complain about missing extensions/modules. If so, you need to install those.
 * Open the browser console (press F12) and switch to the Network tab. There sould be a line that says `/api`. Select it and view the server response/reply (raw/source). There might be errors about missing extensions/modules hidden there.
+
+## I don't know the password to create rooms.
+
+See the [install instructions](INSTALL.md). You need to set a password first (or disable it).
 
 ## I can't upload a snapshot (that I downloaded from the same server)
 

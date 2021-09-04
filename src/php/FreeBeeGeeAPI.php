@@ -92,6 +92,10 @@ class FreeBeeGeeAPI
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
+        $this->api->register('GET', '/issues/', function ($fbg, $data) {
+            $fbg->getIssues();
+        });
+
         // --- POST ---
 
         $this->api->register('POST', '/rooms/:rid/tables/:tid/pieces/?', function ($fbg, $data, $payload) {
@@ -1025,6 +1029,27 @@ class FreeBeeGeeAPI
             $info->createPassword = true;
         }
         $this->api->sendReply(200, json_encode($info));
+    }
+
+    /**
+     * Self-detect configuration issues.
+     *
+     * Usually called on faulty installations to find out what is missing.
+     */
+    private function getIssues()
+    {
+        $issues = new \stdClass();
+
+        $version = explode('.', phpversion());
+        if ($version[0] >= 8 || ($version[0] === '7' && $version[1] >= 3)) {
+            $issues->phpOk = true;
+        } else {
+            $issues->phpOk = false;
+        }
+
+        $issues->moduleZip = class_exists('\ZipArchive');
+
+        $this->api->sendReply(200, json_encode($issues));
     }
 
     /**

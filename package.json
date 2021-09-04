@@ -2,7 +2,7 @@
   "name": "FreeBeeGee",
   "version": "0.11.0-dev",
   "versionEngine": "0.5.0",
-  "codename": "Pointing Pony",
+  "codename": "Troubled Trout",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=7.0.0",

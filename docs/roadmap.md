@@ -2,11 +2,27 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.11 - ???
+## v0.11 - Troubled Trout
+
+* [X] better feedback for Apache httpd setup issues
+* [X] better feedback for PHP setup issues
+* [X] slight table texture offset for different tables 1..9
+* [ ] increase sticky note text length
+* [ ] start at center of empty tables
+* [ ] empty table template
+* [ ] tutorial table template
+* [ ] pre-release
+  * [ ] bugfixing
+    * [ ] fix auto-center not always working
+    * [ ] fix flashing scrollto in some constallation
+  * [ ] review + run tests
+  * [ ] update screenshots
+  * [ ] review docs
+  * [ ] bump version/codename & update CHANGELOG
+
+## v0.12 - ???
 
 * [ ] table passwords
-* [ ] empty table template
-* [X] slight table texture offset for different tables 1..9
 * [ ] more table backgrounds
 * [ ] click thru / don't drag on transparent parts of images
 * [ ] use image masks for png backsides

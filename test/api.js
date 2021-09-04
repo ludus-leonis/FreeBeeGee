@@ -711,6 +711,13 @@ function testApiImageUpload (version) {
   testJsonDelete(() => `/rooms/imageupload${version}/`)
 }
 
+function testApiIssues (versionOK) {
+  testJsonGet(() => '/issues/', body => {
+    expect(body.phpOk).to.be.eql(versionOK)
+    expect(body.moduleZip).to.be.eql(true)
+  }, 200)
+}
+
 // --- the test runners --------------------------------------------------------
 
 function runTests (version) {
@@ -723,6 +730,7 @@ function runTests (version) {
   describe('ZIP upload - minimal', () => testApiZipMinimal(version))
   describe('ZIP upload - full', () => testApiZipFull(version))
   describe('JPG upload', () => testApiImageUpload(version))
+  // describe('self diagnosis', () => testApiIssues(version !== '72'))
 }
 
 describe('PHP 7.2', function () { runTests('72') })

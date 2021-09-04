@@ -60,6 +60,71 @@ export function runError (code, options) {
 }
 
 /**
+ * Try to find out what the problem is.
+ *
+ * @return {String} Explanatory HTML error message, or generic 'try again'.
+ **/
+function detectProblem () {
+  const error = _('#content')
+  const missing = new Error('Server is missing requirements.')
+
+  globalThis.fetch('api/issues/')
+    .then(response => {
+      response.text()
+        .then(text => {
+          if (response.status === 200) {
+            if (text.search(/This file is part of FreeBeeGee/) >= 0) {
+              error.innerHTML = '<p>PHP is not enabled on this server. FreeBeeGee can\'t run without PHP :(</p>'
+              throw missing // abort further diagnosis
+            } else if (
+              !text.search(/{/) >= 0 || // output does not start with json object
+              text.search(/^[^{]+{/) >= 0 // output has php messages before json object
+            ) {
+              error.innerHTML = `
+                <p>The API is reporting unexpected errors or warnings. Please inform your admin that&nbsp;...</p>
+                <ul>
+                  <li>PHP 7.3 or higher is required to run FreeBeeGee,</li>
+                  <li>the server might be out of resources,</li>
+                  <li>the webserver's <code>error.log</code> might contain more clues.</li>
+                </ul>
+              `
+            } else {
+              // no better cause found - output standard message
+              error.innerHTML = `
+                <p>No more information is available. Please try again later.</p>
+                <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
+              `
+              _('#ok').on('click', click => { navigateReload() })
+            }
+          }
+          if (response.status === 204) return {}
+          try { // try to parse what we got by skipping potential PHP errors before the JSON data
+            return JSON.parse(text.replace(/^[^{]+{/, '{'))
+          } catch (error) {
+            throw missing // abort further error detection due invalid JSON data
+          }
+        })
+        .then(json => {
+          console.log(json)
+
+          // The api seems to deliver JSON. Try to pin down the problem better.
+          let issues = ''
+          if (!json.phpOK) issues += '<li>PHP 7.3 or higher is required.</li>'
+          if (!json.moduleZip) issues += '<li>The PHP <code>zip</code> module is not available.</li>'
+
+          if (issues !== '') {
+            error.innerHTML = `
+              <p>This server does not meet FreeBeeGee's requirements. Please inform your admin that&nbsp;...</p>
+              <ul>
+                ${issues}
+              </ul>
+            `
+          }
+        })
+    })
+}
+
+/**
  * Error screen be shown when an existing room disappeared. Probably the admin
  * deleted/closed it.
  */
@@ -151,11 +216,11 @@ function runErrorServerGeneric () {
   createScreen(
     'We are sorry ...',
     `
-      <p>Our server is currently experiencing technical difficulties. Please try again later.</p>
-      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
+      <p>Our server is currently experiencing technical difficulties.</p>
+      <p id="why">Trying to detect why ...</p>
     `
   )
-  _('#ok').on('click', click => { navigateReload() })
+  detectProblem()
 }
 
 /**

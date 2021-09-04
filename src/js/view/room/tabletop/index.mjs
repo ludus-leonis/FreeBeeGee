@@ -29,6 +29,7 @@ import {
 import {
   getRoom,
   getTemplate,
+  getTable,
   updatePieces,
   createPieces,
   deletePiece,
@@ -215,16 +216,19 @@ export function randomSelected () {
 }
 
 /**
- * Set the table number.
+ * Set the table surface for the given table number.
  *
- * Actually only a CSS class that other can build upon.
+ * Will restore table settings (like scroll pos, table texture, ...) and set css classes.
  *
  * @param {Number} no Table to set (1..9).
  */
-export function setTableNo (no) {
-  _('#tabletop').remove('.table-*')
-  _('#tabletop').add(`.table-${no}`)
-  restoreScrollPosition()
+export function setTableSurface (no) {
+  const tabletop = _('#tabletop')
+  if (tabletop.tableNo !== no) { // no need to re-update unchanged no.
+    tabletop.tableNo = no
+    tabletop.remove('.table-*').add(`.table-${no}`)
+    restoreScrollPosition()
+  }
 }
 
 /**
@@ -551,11 +555,14 @@ export function moveContent (toX, toY) {
  *
  * Will add new, update existing and delete obsolte pieces.
  *
- * @param {Array} tableData Table's pieces.
+ * @param {Array} tableNo Table number to display.
  * @param {Array} selectIds Optional array of IDs to re-select after update.
  */
-export function updateTabletop (tableData, selectIds = []) {
+export function updateTabletop (tableNo, selectIds = []) {
+  const tableData = getTable(tableNo)
   const start = Date.now()
+
+  setTableSurface(tableNo)
 
   const keepIds = []
   cleanupTable()

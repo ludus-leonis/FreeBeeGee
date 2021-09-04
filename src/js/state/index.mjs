@@ -45,9 +45,6 @@ import {
   runError
 } from '../view/error/index.mjs'
 import {
-  setTableNo as setTabletopNo
-} from '../view/room/tabletop/index.mjs'
-import {
   populatePiecesDefaults,
   clampToTableSize
 } from '../view/room/tabletop/tabledata.mjs'
@@ -137,7 +134,6 @@ export function setTableNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     tableNo = no
     setRoomPreference('table', tableNo)
-    setTabletopNo(no)
     if (sync) syncNow([], true)
   }
 }

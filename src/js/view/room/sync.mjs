@@ -21,7 +21,6 @@
 import {
   getRoom,
   reloadRoom,
-  getTable,
   getTableNo,
   fetchTable,
   errorRoomGone,
@@ -70,7 +69,7 @@ export function syncNow (selectedIds = [], forceUIUpdate = false) {
   if (isAutoSync()) {
     if (forceUIUpdate) {
       scheduleSync(0, () => {
-        updateTabletop(getTable(getTableNo()), selectedIds)
+        updateTabletop(getTableNo(), selectedIds)
       })
     } else {
       scheduleSync(0)
@@ -232,8 +231,7 @@ function fetchAndUpdateTable (
       lastDigests[`tables/${dirtyTable}.json`] = table.headers.get('digest')
 
       if (dirtyTable === getTableNo()) {
-        // updateTabletop(table.body, selectIds)
-        updateTabletop(getTable(dirtyTable), selectIds) // use cleanedup data
+        updateTabletop(dirtyTable, selectIds) // use cleanedup data
       }
     })
 }
