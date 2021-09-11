@@ -9,8 +9,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] slight table texture offset for different tables 1..9
 * [X] increase sticky note text length to 128
 * [X] start at center of empty tables
-* [ ] empty table template
-* [ ] tutorial table template
+* [X] tutorial table template
 * [ ] pre-release
   * [ ] bugfixing
     * [ ] fix auto-center not always working
