@@ -8,7 +8,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] better feedback for PHP setup issues
 * [X] slight table texture offset for different tables 1..9
 * [ ] increase sticky note text length
-* [ ] start at center of empty tables
+* [X] start at center of empty tables
 * [ ] empty table template
 * [ ] tutorial table template
 * [ ] pre-release

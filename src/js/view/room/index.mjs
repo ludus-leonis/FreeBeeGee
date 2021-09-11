@@ -398,18 +398,19 @@ function setupRoom () {
   // load + setup content
   setTableNo(getRoomPreference('table') ?? 1, false)
   runStatuslineLoop()
-  startAutoSync(() => { setAutoScrollPosition() })
+  startAutoSync(() => { autoTrackScrollPosition() })
 }
 
 let scrollFetcherTimeout = -1
 
 /**
- * Scroll to the last open scroll position & start scroll tracking.
+ * Start scroll tracking.
  */
-function setAutoScrollPosition () {
+function autoTrackScrollPosition () {
   _('#scroller').on('scroll', () => {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
+      // store the viewport center, not the top-left coordinate
       setTablePreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
       setTablePreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
     }, 1000)

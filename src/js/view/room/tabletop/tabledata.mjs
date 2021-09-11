@@ -423,7 +423,8 @@ export function clampToTableSize (piece) {
 /**
  * Calculate the center of the setup on the room.
  *
- * Iterates over all pieces and averages their centers.
+ * Iterates over all pieces and averages their centers. Empty tables are considered
+ * to be centered on the whole table.
  *
  * @return {Object} Object with x and y.
  */
@@ -437,8 +438,12 @@ export function getSetupCenter (no = getTableNo()) {
     y.push((piece.y + piece.h * template.gridSize) / 2)
   }
   return {
-    x: x.length > 0 ? Math.ceil(x.reduce((a, b) => a + b) / x.length) : 0,
-    y: y.length > 0 ? Math.ceil(y.reduce((a, b) => a + b) / y.length) : 0
+    x: x.length > 0
+      ? Math.ceil(x.reduce((a, b) => a + b) / x.length)
+      : (template.gridSize * template.gridWidth) / 2,
+    y: y.length > 0
+      ? Math.ceil(y.reduce((a, b) => a + b) / y.length)
+      : (template.gridSize * template.gridHeight) / 2
   }
 }
 
