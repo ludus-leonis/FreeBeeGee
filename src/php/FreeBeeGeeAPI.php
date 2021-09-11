@@ -600,6 +600,7 @@ class FreeBeeGeeAPI
                             continue;
                         }
                         $tableItem = $this->removeDefaultsFromPiece($this->merge($tableItem, $piece));
+                        $this->validatePiece($tableItem, true); // double-check that the merged item is fine
                         $result = $tableItem;
                     }
                     if (!isset($tableItem->expires) || $tableItem->expires > time()) {
@@ -880,7 +881,11 @@ class FreeBeeGeeAPI
                     $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
                     break;
                 case 'label':
-                    $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
+                    if (property_exists($piece, 'layer') && $piece->layer !== 'note') {
+                        $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
+                    } else {
+                        $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,128}$'));
+                    }
                     break;
                 case 'tag':
                     $validated->tag = trim($this->api->assertString('tag', $value, '^[^\n\r]{0,32}$'));

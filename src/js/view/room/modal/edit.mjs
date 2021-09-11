@@ -300,7 +300,7 @@ function getModalNote () {
       <div class="row">
         <div class="col-12">
           <label for="piece-label">Label</label>
-          <input id="piece-label" name="piece-label" type="text" maxlength="32">
+          <input id="piece-label" name="piece-label" type="text" maxlength="128">
         </div>
         <div class="col-6 col-lg-3">
           <label for="piece-w">Width</label>
