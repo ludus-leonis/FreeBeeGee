@@ -430,20 +430,20 @@ export function clampToTableSize (piece) {
  */
 export function getSetupCenter (no = getTableNo()) {
   const template = getTemplate()
-  const x = []
-  const y = []
+  const rect = getContentRect(no)
 
-  for (const piece of getTable(no)) {
-    x.push((piece.x + piece.w * template.gridSize) / 2)
-    y.push((piece.y + piece.h * template.gridSize) / 2)
+  // use table center for empty tables
+  if (rect.bottom <= 0 && rect.right <= 0) {
+    return {
+      x: (template.gridSize * template.gridWidth) / 2,
+      y: (template.gridSize * template.gridHeight) / 2
+    }
   }
+
+  // calculate setup center otherwise
   return {
-    x: x.length > 0
-      ? Math.ceil(x.reduce((a, b) => a + b) / x.length)
-      : (template.gridSize * template.gridWidth) / 2,
-    y: y.length > 0
-      ? Math.ceil(y.reduce((a, b) => a + b) / y.length)
-      : (template.gridSize * template.gridHeight) / 2
+    x: rect.left + (rect.right - rect.left) / 2,
+    y: rect.top + (rect.bottom - rect.top) / 2
   }
 }
 
