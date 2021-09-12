@@ -186,7 +186,7 @@ export function assetToPiece (id) {
     x: 0,
     y: 0,
     z: 0,
-    color: asset.color
+    bg: asset.bg
   })
 }
 
@@ -201,7 +201,7 @@ export function populatePieceDefaults (piece, headers = null) {
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? 1
   piece.side = piece.side ?? 0
-  piece.border = piece.border ?? 0
+  piece.color = piece.color ?? 0
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
@@ -473,15 +473,15 @@ export function splitAssetFilename (assetName) {
     w: 1,
     h: 1,
     side: 1,
-    color: '808080'
+    bg: '808080'
   }
-  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/)
+  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.alias = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
     data.side = Number(match[4])
-    data.color = match[5]
+    data.bg = match[5]
     return data
   }
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
@@ -512,7 +512,7 @@ function createInvalidAsset () {
     media: ['invalid.svg'],
     width: 1,
     height: 1,
-    color: '40bfbf',
+    bg: '40bfbf',
     alias: 'invalid',
     type: 'tile',
     id: '0000000000000000'

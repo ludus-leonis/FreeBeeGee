@@ -378,7 +378,7 @@ function testApiCrudPiece (version) {
       r: 0,
       n: 2,
       side: 0,
-      border: 1
+      color: 1
     }
   }, body => {
     expect(body).to.be.an('object')
@@ -393,7 +393,7 @@ function testApiCrudPiece (version) {
     expect(body.r).to.not.exist
     expect(body.n).to.be.eql(2)
     expect(body.side).to.not.exist
-    expect(body.border).to.be.eql(1)
+    expect(body.color).to.be.eql(1)
     data = body
   }, 201)
 
@@ -411,7 +411,7 @@ function testApiCrudPiece (version) {
     expect(body.r).to.not.exist
     expect(body.n).to.be.eql(2)
     expect(body.side).to.not.exist
-    expect(body.border).to.be.eql(1)
+    expect(body.color).to.be.eql(1)
   })
 
   // update piece (patch)
@@ -432,7 +432,7 @@ function testApiCrudPiece (version) {
     expect(body.r).to.not.exist
     expect(body.n).to.be.eql(2)
     expect(body.side).to.not.exist
-    expect(body.border).to.be.eql(1)
+    expect(body.color).to.be.eql(1)
   })
 
   // get & compare piece
@@ -449,7 +449,7 @@ function testApiCrudPiece (version) {
     expect(body.r).to.not.exist
     expect(body.n).to.be.eql(2)
     expect(body.side).to.not.exist
-    expect(body.border).to.be.eql(1)
+    expect(body.color).to.be.eql(1)
   })
 
   // update/replace piece (put)
@@ -465,7 +465,7 @@ function testApiCrudPiece (version) {
       r: 90,
       n: 5,
       side: 3,
-      border: 2
+      color: 2
     }
   }, body => {
     expect(body).to.be.an('object')
@@ -480,7 +480,7 @@ function testApiCrudPiece (version) {
     expect(body.r).to.be.eql(90)
     expect(body.n).to.be.eql(5)
     expect(body.side).to.be.eql(3)
-    expect(body.border).to.be.eql(2)
+    expect(body.color).to.be.eql(2)
   })
 
   // get & compare piece
@@ -497,7 +497,7 @@ function testApiCrudPiece (version) {
     expect(body.r).to.be.eql(90)
     expect(body.n).to.be.eql(5)
     expect(body.side).to.be.eql(3)
-    expect(body.border).to.be.eql(2)
+    expect(body.color).to.be.eql(2)
   })
 
   // delete piece
@@ -667,7 +667,7 @@ function testApiImageUpload (version) {
   testJsonPost(() => `/rooms/imageupload${version}/assets/`, () => {
     return {
       base64: Buffer.from(image).toString('base64'),
-      color: '#808080',
+      bg: '#808080',
       format: 'jpg',
       h: 2,
       w: 3,
@@ -676,7 +676,7 @@ function testApiImageUpload (version) {
     }
   }, body => {
     expect(body).to.be.an('object')
-    expect(body.color).to.be.eql('#808080')
+    expect(body.bg).to.be.eql('#808080')
     expect(body.format).to.be.eql('jpg')
     expect(body.h).to.be.eql(2)
     expect(body.w).to.be.eql(3)
@@ -695,7 +695,7 @@ function testApiImageUpload (version) {
     expect(body.library.tile[index].id).to.be.an('string')
     expect(body.library.tile[index].media).to.be.an('array')
     expect(body.library.tile[index].media[0]).to.be.eql('upload.test.3x2x1.808080.jpg')
-    expect(body.library.tile[index].color).to.be.eql('#808080')
+    expect(body.library.tile[index].bg).to.be.eql('#808080')
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
     expect(body.library.tile[index].type).to.be.eql('tile')

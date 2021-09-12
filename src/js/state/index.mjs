@@ -311,17 +311,17 @@ export function flipPiece (pieceId, side) {
 }
 
 /**
- * Change the outline/border color.
+ * Change the piece/outline/border color.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
  * @param {String} pieceId ID of piece to change.
- * @param {Number} border New border. Zero-based.
+ * @param {Number} color New color index. Zero-based.
  */
-export function borderPiece (pieceId, border) {
+export function colorPiece (pieceId, color) {
   patchPiece(pieceId, {
-    border: border
+    color: color
   })
 }
 

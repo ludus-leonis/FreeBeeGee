@@ -11,10 +11,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] start at center of empty tables
 * [X] sticky notes colors
 * [X] tutorial table template
+* [X] refactored piece fiel border->color
 * [ ] pre-release
   * [ ] bugfixing
     * [X] fix auto-center not always working
     * [ ] fix flashing scrollto in some constallation
+    * [ ] fix piece position when adding them via (+)
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
@@ -24,7 +26,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] table passwords
 * [ ] more table backgrounds
-* [ ] click thru / don't drag on transparent parts of images
 * [ ] use image masks for png backsides
 * [ ] rightclick on table
   * [ ] add piece
@@ -56,6 +57,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* click thru / don't drag on transparent parts of images
 * generic marker overlay (X, ?, ...)
 * docs how to make table/template `.zip`s
 * LOS-ruler
@@ -80,7 +82,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * dedicated HP/Mana/Value field(s)
 * obfuscate/hash room name
 * pinboard for handouts
-* tour / first-time-tutorial
 * API Docs
 * randomize button on dicemat
 * generate average piece color during build and upload

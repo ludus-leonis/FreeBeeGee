@@ -42,23 +42,23 @@ $piece-note-glue: rgba(0, 0, 0, .02);
   text-align: center;
   word-break: break-word;
 
-  &.is-border-0 {
+  &.is-color-0 {
     background-color: $color-s1;
   }
 
-  &.is-border-1 {
+  &.is-color-1 {
     background-color: $color-s2;
   }
 
-  &.is-border-2 {
+  &.is-color-2 {
     background-color: $color-s3;
   }
 
-  &.is-border-3 {
+  &.is-color-3 {
     background-color: $color-s4;
   }
 
-  &.is-border-4 {
+  &.is-color-4 {
     background-color: $color-s5;
   }
 

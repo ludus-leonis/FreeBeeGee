@@ -36,7 +36,7 @@ import {
   numberPiece,
   flipPiece,
   movePiece,
-  borderPiece,
+  colorPiece,
   rotatePiece
 } from '../../../state/index.mjs'
 
@@ -140,23 +140,23 @@ export function flipSelected () {
 }
 
 /**
- * Switch the outline color of the currently selected piece.
+ * Switch the piece/outline color of the currently selected piece.
  *
  * Will cycle through all available colors and silently fail if nothing is selected.
  */
 export function outlineSelected () {
-  const borders = getTemplate().colors.length
+  const pieceColors = getTemplate().colors.length
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
     console.log(piece)
     switch (piece.layer) {
       case 'note':
-        borderPiece(piece.id, (piece.border + 1) % stickyNoteColors.length)
+        colorPiece(piece.id, (piece.color + 1) % stickyNoteColors.length)
         break
       default:
-        if (borders > 1) {
-          borderPiece(piece.id, (piece.border + 1) % borders)
+        if (pieceColors > 1) {
+          colorPiece(piece.id, (piece.color + 1) % pieceColors)
         }
     }
   })
@@ -298,13 +298,13 @@ function createOrUpdatePieceDOM (piece, select) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
-  if (_piece.border !== piece.border) {
+  if (_piece.color !== piece.color) {
     div
-      .remove('.is-border-*')
-      .add('.is-border-' + piece.border)
-    if (piece.border >= 0 && template.colors.length) {
+      .remove('.is-color-*')
+      .add('.is-color-' + piece.color)
+    if (piece.color >= 0 && template.colors.length) {
       _(`#${piece.id}`).css({
-        '--fbg-border-color': template.colors[piece.border].value
+        '--fbg-piece-color': template.colors[piece.color].value
       })
     }
   }
@@ -486,7 +486,7 @@ export function pieceToNode (piece) {
 
     if (asset.type !== 'overlay' && asset.type !== 'other') {
       node.css({
-        backgroundColor: asset.color ?? '#808080'
+        backgroundColor: asset.bg ?? '#808080'
       })
     }
   }
@@ -494,7 +494,7 @@ export function pieceToNode (piece) {
   // set meta-classes on node
   node.id = piece.id
   node.add(`.is-side-${piece.side}`)
-  if (asset?.color === 'border') node.add('.is-bordercolor')
+  if (asset?.bg === 'piece') node.add('.is-piececolor')
 
   return node
 }
