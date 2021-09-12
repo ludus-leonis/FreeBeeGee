@@ -16,6 +16,8 @@ See the [Troubleshooting](troubleshooting.md) instructions for additional help.
 
 Configuring your web-server & enabling the required extension/modules is beyond the scope of this guide. Please refer to your server/provider documentation how to do so.
 
+If the requirements are not met, FreeBeeGee will try to find out what is missing and tell you on the landing page.
+
 ### Client
 
 Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.

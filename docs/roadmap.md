@@ -18,7 +18,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] fix piece position when adding them via (+)
   * [X] review + run tests
   * [ ] update screenshots
-  * [ ] review docs
+  * [X] review docs
   * [ ] bump version/codename & update CHANGELOG
 
 ## v0.12 - ???
