@@ -54,7 +54,8 @@ import {
   getAssetURL,
   getMinZ,
   getMaxZ,
-  getContentRectGrid
+  getContentRectGrid,
+  stickyNoteColors
 } from './tabledata.mjs'
 import {
   updateMenu
@@ -148,8 +149,15 @@ export function outlineSelected () {
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    if (borders > 1) {
-      borderPiece(piece.id, (piece.border + 1) % borders)
+    console.log(piece)
+    switch (piece.layer) {
+      case 'note':
+        borderPiece(piece.id, (piece.border + 1) % stickyNoteColors.length)
+        break
+      default:
+        if (borders > 1) {
+          borderPiece(piece.id, (piece.border + 1) % borders)
+        }
     }
   })
 }
@@ -291,6 +299,9 @@ function createOrUpdatePieceDOM (piece, select) {
     }
   }
   if (_piece.border !== piece.border) {
+    div
+      .remove('.is-border-*')
+      .add('.is-border-' + piece.border)
     if (piece.border >= 0 && template.colors.length) {
       _(`#${piece.id}`).css({
         '--fbg-border-color': template.colors[piece.border].value

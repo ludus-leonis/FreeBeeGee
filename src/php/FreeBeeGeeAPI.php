@@ -36,6 +36,7 @@ class FreeBeeGeeAPI
     private $maxAssetSize = 1024 * 1024;
     private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'tag'];
+    private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
 
     /**
      * Constructor - setup our routes.
@@ -872,7 +873,16 @@ class FreeBeeGeeAPI
                     $validated->side = $this->api->assertInteger('side', $value, 0, 128);
                     break;
                 case 'border':
-                    $validated->border = $val = $this->api->assertInteger('border', $value, 0, 15);
+                    if (property_exists($piece, 'layer') && $piece->layer !== 'note') {
+                        $validated->border = $val = $this->api->assertInteger('border', $value, 0, 15);
+                    } else {
+                        $validated->border = $val = $this->api->assertInteger(
+                            'border',
+                            $value,
+                            0,
+                            sizeof($this->stickyNotes) - 1
+                        );
+                    }
                     break;
                 case 'n':
                     $validated->n = $this->api->assertInteger('n', $value, 0, 15);

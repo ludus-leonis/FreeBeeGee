@@ -32,7 +32,21 @@ import {
   intersect
 } from '../../../lib/utils.mjs'
 
-export const assetTypes = ['tile', 'token', 'overlay', 'other', 'tag']
+export const assetTypes = [
+  'tile',
+  'token',
+  'overlay',
+  'other',
+  'tag'
+]
+
+export const stickyNoteColors = [
+  { name: 'yellow' },
+  { name: 'orange' },
+  { name: 'green' },
+  { name: 'blue' },
+  { name: 'pink' }
+]
 
 /**
  * Find a piece by ID.

@@ -32,6 +32,10 @@ import {
   modalClose
 } from '../../../view/modal.mjs'
 
+import {
+  stickyNoteColors
+} from '../../../view/room/tabletop/tabledata.mjs'
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -122,14 +126,23 @@ export function modalEdit (piece) {
       pieceSide.add(option)
     }
 
-    // border color
+    // (border) color
     const pieceColor = _('#piece-border')
     const template = getTemplate()
-    for (let c = 0; c < template.colors.length; c++) {
-      const option = _('option').create(template.colors[c].name)
-      option.value = c
-      if (c === piece.border) option.selected = true
-      pieceColor.add(option)
+    if (piece.layer === 'note') {
+      for (let c = 0; c < stickyNoteColors.length; c++) {
+        const option = _('option').create(stickyNoteColors[c].name)
+        option.value = c
+        if (c === piece.border) option.selected = true
+        pieceColor.add(option)
+      }
+    } else {
+      for (let c = 0; c < template.colors.length; c++) {
+        const option = _('option').create(template.colors[c].name)
+        option.value = c
+        if (c === piece.border) option.selected = true
+        pieceColor.add(option)
+      }
     }
 
     _('#modal-footer').innerHTML = `

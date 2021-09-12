@@ -9,10 +9,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] slight table texture offset for different tables 1..9
 * [X] increase sticky note text length to 128
 * [X] start at center of empty tables
+* [X] sticky notes colors
 * [X] tutorial table template
 * [ ] pre-release
   * [ ] bugfixing
-    * [ ] fix auto-center not always working
+    * [X] fix auto-center not always working
     * [ ] fix flashing scrollto in some constallation
   * [ ] review + run tests
   * [ ] update screenshots
