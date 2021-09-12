@@ -32,7 +32,8 @@ import { // TODO roomstate.mjs?
   getTablePreference,
   setTablePreference,
   getTableNo,
-  setTableNo
+  setTableNo,
+  getTemplate
 } from '../../state/index.mjs'
 
 import {
@@ -75,7 +76,7 @@ import {
 // --- public ------------------------------------------------------------------
 
 /**
- * Get current tabletop scroll position.
+ * Get current top-left tabletop scroll position.
  *
  * @return {Object} Contains x and y in pixel.
  */
@@ -94,6 +95,32 @@ export function getScrollPosition () {
  */
 export function setScrollPosition (x, y) {
   scroller.scrollTo(x, y)
+}
+
+/**
+ * Get current center of the viewport of the scroll position.
+ *
+ * @return {Object} Contains x and y in pixel.
+ */
+export function getViewportCenter () {
+  return {
+    x: scroller.scrollLeft + Math.floor(scroller.clientWidth / 2),
+    y: scroller.scrollTop + Math.floor(scroller.clientHeight / 2)
+  }
+}
+
+/**
+ * Get current center of the viewport of the scroll position.
+ *
+ * @return {Object} Contains x and y in pixel.
+ */
+export function getViewportCenterTile () {
+  const template = getTemplate()
+  const pos = getViewportCenter()
+  return {
+    x: Math.floor(pos.x / template.gridSize),
+    y: Math.floor(pos.y / template.gridSize)
+  }
 }
 
 /**
@@ -360,7 +387,7 @@ function setupRoom () {
   }
 
   // setup menu for selection
-  _('#btn-a').on('click', () => modalLibrary(getMouseTile()))
+  _('#btn-a').on('click', () => modalLibrary(getViewportCenterTile()))
   _('#btn-e').on('click', () => editSelected())
   _('#btn-r').on('click', () => rotateSelected())
   _('#btn-c').on('click', () => cloneSelected(getMouseTile()))
@@ -410,9 +437,9 @@ function autoTrackScrollPosition () {
   _('#scroller').on('scroll', () => {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
-      // store the viewport center, not the top-left coordinate
-      setTablePreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
-      setTablePreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
+      const pos = getViewportCenter()
+      setTablePreference('scrollX', pos.x)
+      setTablePreference('scrollY', pos.y)
     }, 1000)
   })
 }

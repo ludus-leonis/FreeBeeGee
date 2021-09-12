@@ -16,7 +16,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bugfixing
     * [X] fix auto-center not always working
     * [ ] fix flashing scrollto in some constallation
-    * [ ] fix piece position when adding them via (+)
+    * [x] fix piece position when adding them via (+)
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
