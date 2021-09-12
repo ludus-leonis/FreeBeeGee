@@ -2,31 +2,12 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.11 - Troubled Trout
-
-* [X] better feedback for Apache httpd setup issues
-* [X] better feedback for PHP setup issues
-* [X] slight table texture offset for different tables 1..9
-* [X] increase sticky note text length to 128
-* [X] start at center of empty tables
-* [X] sticky notes colors
-* [X] tutorial table template
-* [X] refactored piece fiel border->color
-* [ ] pre-release
-  * [X] bugfixing
-    * [X] fix auto-center not always working
-    * [X] fix piece position when adding them via (+)
-  * [X] review + run tests
-  * [ ] update screenshots
-  * [X] review docs
-  * [ ] bump version/codename & update CHANGELOG
-
 ## v0.12 - ???
 
 * [ ] table passwords
 * [ ] more table backgrounds
 * [ ] use image masks for png backsides
-* [ ] rightclick on table
+* [ ] right-click on table
   * [ ] add piece
   * [ ] change table 1..9
   * [ ] change background
