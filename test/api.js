@@ -25,7 +25,6 @@
 // serve dist/FreeBeeGee/ using local webservers. Then run `npm test`.
 // Danger: the tests make destructive calls, so don't run against a live version.
 
-var API_URL = 'unknown'
 const p = require('../package.json')
 
 // --- helpers -----------------------------------------------------------------
@@ -47,9 +46,9 @@ chai
  * @param status Expected HTTP status.
  * @param forward Data to forward to the payload callback.
  */
-function testJsonGet (path, payloadTests, status = 200, forward = null) {
-  it(`GET ${API_URL}${path()}`, function (done) {
-    chai.request(API_URL)
+function testJsonGet (api, path, payloadTests, status = 200, forward = null) {
+  it(`GET ${api}${path()}`, function (done) {
+    chai.request(api)
       .get(path())
       .end(function (err, res) {
         expect(err).to.be.null
@@ -72,9 +71,9 @@ function testJsonGet (path, payloadTests, status = 200, forward = null) {
  * @param status Expected HTTP status.
  * @param forward Data to forward to the payload callback.
  */
-function testGet (path, payloadTests, status = 200, forward = null) {
-  it(`GET ${API_URL}${path()}`, function (done) {
-    chai.request(API_URL)
+function testGet (api, path, payloadTests, status = 200, forward = null) {
+  it(`GET ${api}${path()}`, function (done) {
+    chai.request(api)
       .get(path())
       .end(function (err, res) {
         expect(err).to.be.null
@@ -97,10 +96,10 @@ function testGet (path, payloadTests, status = 200, forward = null) {
  *                     further checking.
  * @param status Expected HTTP status.
  */
-function testZIPUpload (path, name, auth, upload, payloadTests, status = 200) {
-  it(`POST ${API_URL}${path()}`, function (done) {
+function testZIPUpload (api, path, name, auth, upload, payloadTests, status = 200) {
+  it(`POST ${api}${path()}`, function (done) {
     // const boundary = Math.random()
-    chai.request(API_URL)
+    chai.request(api)
       .post(path())
       .field('name', name())
       .field('auth', auth())
@@ -126,9 +125,9 @@ function testZIPUpload (path, name, auth, upload, payloadTests, status = 200) {
  *                     further checking.
  * @param status Expected HTTP status.
  */
-function testJsonPost (path, payload, payloadTests, status = 200) {
-  it(`POST ${API_URL}${path()}`, function (done) {
-    chai.request(API_URL)
+function testJsonPost (api, path, payload, payloadTests, status = 200) {
+  it(`POST ${api}${path()}`, function (done) {
+    chai.request(api)
       .post(path())
       .set('content-type', 'application/json')
       .send(payload())
@@ -153,9 +152,9 @@ function testJsonPost (path, payload, payloadTests, status = 200) {
  *                     further checking.
  * @param status Expected HTTP status.
 */
-function testJsonPut (path, payload, payloadTests, status = 200) {
-  it(`PUT ${API_URL}${path()}`, function (done) {
-    chai.request(API_URL)
+function testJsonPut (api, path, payload, payloadTests, status = 200) {
+  it(`PUT ${api}${path()}`, function (done) {
+    chai.request(api)
       .put(path())
       .set('content-type', 'application/json')
       .send(payload())
@@ -180,9 +179,9 @@ function testJsonPut (path, payload, payloadTests, status = 200) {
  *                     further checking.
  * @param status Expected HTTP status.
  */
-function testJsonPatch (path, payload, payloadTests, status = 200) {
-  it(`PATCH ${API_URL}${path()}`, function (done) {
-    chai.request(API_URL)
+function testJsonPatch (api, path, payload, payloadTests, status = 200) {
+  it(`PATCH ${api}${path()}`, function (done) {
+    chai.request(api)
       .patch(path())
       .set('content-type', 'application/json')
       .send(payload())
@@ -204,9 +203,9 @@ function testJsonPatch (path, payload, payloadTests, status = 200) {
  * @param path Function to return a path (possibly with dynamic ID) during runtime.
  * @param status Expected HTTP status. Defaults to 204 = gone.
 */
-function testJsonDelete (path, status = 204) {
-  it(`PUT ${API_URL}${path()}`, function (done) {
-    chai.request(API_URL)
+function testJsonDelete (api, path, status = 204) {
+  it(`PUT ${api}${path()}`, function (done) {
+    chai.request(api)
       .delete(path())
       .set('content-type', 'application/json')
       .end(function (err, res) {
@@ -223,8 +222,8 @@ function testJsonDelete (path, status = 204) {
 
 let data = null
 
-function testApiServerInfo () {
-  testJsonGet(() => '/', body => {
+function testApiServerInfo (api) {
+  testJsonGet(api, () => '/', body => {
     expect(body).to.be.an('object')
     expect(body.createPassword).to.be.eql(true)
     expect(body.freeRooms).to.be.eql(16)
@@ -233,23 +232,23 @@ function testApiServerInfo () {
   })
 }
 
-function testApiTemplates () {
-  testJsonGet(() => '/templates/', body => {
+function testApiTemplates (api) {
+  testJsonGet(api, () => '/templates/', body => {
     expect(body).to.be.an('array')
     expect(body).to.include('RPG')
     expect(body).to.include('Classic')
   })
 }
 
-function testApiCrudRoom (version) {
+function testApiCrudRoom (api, version) {
   // get room - should not be there yet
-  testJsonGet(() => `/rooms/crudRoom${version}/`, body => {
+  testJsonGet(api, () => `/rooms/crudRoom${version}/`, body => {
     expect(body).to.be.an('object')
     expect(body._messages).to.include(`not found: crudRoom${version}`)
   }, 404)
 
   // create room
-  testJsonPost(() => '/rooms/', () => {
+  testJsonPost(api, () => '/rooms/', () => {
     return {
       name: `crudRoom${version}`,
       template: 'RPG',
@@ -282,7 +281,7 @@ function testApiCrudRoom (version) {
   }, 201)
 
   // read room
-  testJsonGet(() => `/rooms/crudRoom${version}/`, body => {
+  testJsonGet(api, () => `/rooms/crudRoom${version}/`, body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
     expect(body.name).to.be.eql(`crudRoom${version}`)
@@ -312,13 +311,13 @@ function testApiCrudRoom (version) {
   // [not possible yet]
 
   // delete room
-  testJsonDelete(() => `/rooms/crudRoom${version}/`)
-  testJsonGet(() => `/rooms/crudRoom${version}/`, body => {}, 404)
+  testJsonDelete(api, () => `/rooms/crudRoom${version}/`)
+  testJsonGet(api, () => `/rooms/crudRoom${version}/`, body => {}, 404)
 }
 
-function testApiCrudTable (version) {
+function testApiCrudTable (api, version) {
   // create room
-  testJsonPost(() => '/rooms/', () => {
+  testJsonPost(api, () => '/rooms/', () => {
     return {
       name: `crudTable${version}`,
       template: 'RPG',
@@ -330,31 +329,31 @@ function testApiCrudTable (version) {
   }, 201)
 
   // get table
-  testJsonGet(() => `/rooms/crudTable${version}/tables/1/`, body => {
+  testJsonGet(api, () => `/rooms/crudTable${version}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.gt(5)
     data = body
   })
 
   // reset room
-  testJsonPut(() => `/rooms/crudTable${version}/tables/1/`, () => [], body => {
+  testJsonPut(api, () => `/rooms/crudTable${version}/tables/1/`, () => [], body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
 
   // get table again - still empty
-  testJsonGet(() => `/rooms/crudTable${version}/tables/1/`, body => {
+  testJsonGet(api, () => `/rooms/crudTable${version}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eq(0)
   })
 
   // cleanup
-  testJsonDelete(() => `/rooms/crudTable${version}/`)
+  testJsonDelete(api, () => `/rooms/crudTable${version}/`)
 }
 
-function testApiCrudPiece (version) {
+function testApiCrudPiece (api, version) {
   // create room
-  testJsonPost(() => '/rooms/', () => {
+  testJsonPost(api, () => '/rooms/', () => {
     return {
       name: `crudPiece${version}`,
       template: 'RPG',
@@ -366,7 +365,7 @@ function testApiCrudPiece (version) {
   }, 201)
 
   // create piece
-  testJsonPost(() => `/rooms/crudPiece${version}/tables/1/pieces/`, () => {
+  testJsonPost(api, () => `/rooms/crudPiece${version}/tables/1/pieces/`, () => {
     return { // add letter-token
       layer: 'token',
       asset: 'dd74249373740cdf',
@@ -398,7 +397,7 @@ function testApiCrudPiece (version) {
   }, 201)
 
   // get & compare piece
-  testJsonGet(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
@@ -415,7 +414,7 @@ function testApiCrudPiece (version) {
   })
 
   // update piece (patch)
-  testJsonPatch(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
+  testJsonPatch(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
     return {
       x: 19
     }
@@ -436,7 +435,7 @@ function testApiCrudPiece (version) {
   })
 
   // get & compare piece
-  testJsonGet(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('token')
@@ -453,7 +452,7 @@ function testApiCrudPiece (version) {
   })
 
   // update/replace piece (put)
-  testJsonPut(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
+  testJsonPut(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
     return {
       layer: 'tile',
       asset: '0d74249373740cdf',
@@ -484,7 +483,7 @@ function testApiCrudPiece (version) {
   })
 
   // get & compare piece
-  testJsonGet(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  testJsonGet(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
     expect(body.layer).to.be.eql('tile')
@@ -501,17 +500,17 @@ function testApiCrudPiece (version) {
   })
 
   // delete piece
-  testJsonDelete(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/')
+  testJsonDelete(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/')
 
   // get - should be gone
-  testJsonGet(() => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {}, 404)
+  testJsonGet(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {}, 404)
 
   // cleanup
-  testJsonDelete(() => `/rooms/crudPiece${version}/`)
+  testJsonDelete(api, () => `/rooms/crudPiece${version}/`)
 }
 
-function testApiZipMinimal (version) {
-  testZIPUpload(
+function testApiZipMinimal (api, version) {
+  testZIPUpload(api,
     () => '/rooms/',
     () => { return `minimalzip${version}` },
     () => { return 'apitests' },
@@ -550,29 +549,29 @@ function testApiZipMinimal (version) {
     }, 201)
 
   // get table 0
-  testJsonGet(() => `/rooms/minimalzip${version}/tables/0/`, body => {
+  testJsonGet(api, () => `/rooms/minimalzip${version}/tables/0/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(0)
   })
 
   // get table 1
-  testJsonGet(() => `/rooms/minimalzip${version}/tables/1/`, body => {
+  testJsonGet(api, () => `/rooms/minimalzip${version}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(0)
   })
 
   // get table 2
-  testJsonGet(() => `/rooms/minimalzip${version}/tables/2/`, body => {
+  testJsonGet(api, () => `/rooms/minimalzip${version}/tables/2/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(0)
   })
 
   // cleanup
-  testJsonDelete(() => `/rooms/minimalzip${version}/`)
+  testJsonDelete(api, () => `/rooms/minimalzip${version}/`)
 }
 
-function testApiZipFull (version) {
-  testZIPUpload(
+function testApiZipFull (api, version) {
+  testZIPUpload(api,
     () => '/rooms/',
     () => { return `fullziptest${version}` },
     () => { return 'apitests' },
@@ -619,32 +618,32 @@ function testApiZipFull (version) {
     }, 201)
 
   // get table 1
-  testJsonGet(() => `/rooms/fullziptest${version}/tables/1/`, body => {
+  testJsonGet(api, () => `/rooms/fullziptest${version}/tables/1/`, body => {
     expect(body.length).to.be.eql(2)
     expect(body[0].asset).to.be.eql('bb07ac49818bc000')
     expect(body[1].asset).to.be.eql('f628553dd1802f0a')
   })
 
   // get table 2
-  testJsonGet(() => `/rooms/fullziptest${version}/tables/2/`, body => {
+  testJsonGet(api, () => `/rooms/fullziptest${version}/tables/2/`, body => {
     expect(body.length).to.be.eql(2)
     expect(body[0].asset).to.be.eql('7261fff0158e27bc')
     expect(body[1].asset).to.be.eql('d04e9af5e03f9f58')
   })
 
   // get table 3
-  testJsonGet(() => `/rooms/fullziptest${version}/tables/3/`, body => {
+  testJsonGet(api, () => `/rooms/fullziptest${version}/tables/3/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(0)
   })
 
   // cleanup
-  testJsonDelete(() => `/rooms/fullziptest${version}/`)
+  testJsonDelete(api, () => `/rooms/fullziptest${version}/`)
 }
 
-function testApiImageUpload (version) {
+function testApiImageUpload (api, version) {
   // create room
-  testJsonPost(() => '/rooms/', () => {
+  testJsonPost(api, () => '/rooms/', () => {
     return {
       name: `imageupload${version}`,
       template: 'RPG',
@@ -656,7 +655,7 @@ function testApiImageUpload (version) {
   }, 201)
 
   // get library size
-  testJsonGet(() => `/rooms/imageupload${version}/`, body => {
+  testJsonGet(api, () => `/rooms/imageupload${version}/`, body => {
     expect(body).to.be.an('object')
     expect(body.library).to.be.an('object')
     data = body.library
@@ -664,7 +663,7 @@ function testApiImageUpload (version) {
 
   // upload asset
   const image = fs.readFileSync('test/data/tile.jpg', { encoding: 'utf8', flag: 'r' })
-  testJsonPost(() => `/rooms/imageupload${version}/assets/`, () => {
+  testJsonPost(api, () => `/rooms/imageupload${version}/assets/`, () => {
     return {
       base64: Buffer.from(image).toString('base64'),
       bg: '#808080',
@@ -685,7 +684,7 @@ function testApiImageUpload (version) {
   }, 201)
 
   // library must contain asset now
-  testJsonGet(() => `/rooms/imageupload${version}/`, body => {
+  testJsonGet(api, () => `/rooms/imageupload${version}/`, body => {
     expect(body).to.be.an('object')
     expect(body.library).to.be.an('object')
     expect(body.library.tile.length).to.be.eql(data.tile.length + 1)
@@ -703,16 +702,16 @@ function testApiImageUpload (version) {
   }, 200)
 
   // check asset blob
-  testGet(() => `/data/rooms/imageupload${version}/assets/tile/upload.test.3x2x1.808080.jpg`, body => {
+  testGet(api, () => `/data/rooms/imageupload${version}/assets/tile/upload.test.3x2x1.808080.jpg`, body => {
     expect(body.toString('utf-8')).to.be.eql(image)
   }, 200)
 
   // cleanup
-  testJsonDelete(() => `/rooms/imageupload${version}/`)
+  testJsonDelete(api, () => `/rooms/imageupload${version}/`)
 }
 
-function testApiIssues (versionOK) {
-  testJsonGet(() => '/issues/', body => {
+function testApiIssues (api, versionOK) {
+  testJsonGet(api, () => '/issues/', body => {
     expect(body.phpOk).to.be.eql(versionOK)
     expect(body.moduleZip).to.be.eql(true)
   }, 200)
@@ -721,16 +720,16 @@ function testApiIssues (versionOK) {
 // --- the test runners --------------------------------------------------------
 
 function runTests (version) {
-  API_URL = `http://play${version}.local/api`
-  describe('API Server-Info', () => testApiServerInfo())
-  describe('API Templates', () => testApiTemplates())
-  describe('CRUD room', () => testApiCrudRoom(version))
-  describe('CRUD table', () => testApiCrudTable(version))
-  describe('CRUD piece', () => testApiCrudPiece(version))
-  describe('ZIP upload - minimal', () => testApiZipMinimal(version))
-  describe('ZIP upload - full', () => testApiZipFull(version))
-  describe('JPG upload', () => testApiImageUpload(version))
-  // describe('self diagnosis', () => testApiIssues(version !== '72'))
+  const api = `http://play${version}.local/api`
+  describe('API Server-Info', () => testApiServerInfo(api))
+  describe('API Templates', () => testApiTemplates(api))
+  describe('CRUD room', () => testApiCrudRoom(api, version))
+  describe('CRUD table', () => testApiCrudTable(api, version))
+  describe('CRUD piece', () => testApiCrudPiece(api, version))
+  describe('ZIP upload - minimal', () => testApiZipMinimal(api, version))
+  describe('ZIP upload - full', () => testApiZipFull(api, version))
+  describe('JPG upload', () => testApiImageUpload(api, version))
+  describe('self diagnosis', () => testApiIssues(api, version !== '72'))
 }
 
 describe('PHP 7.2', function () { runTests('72') })

@@ -13,11 +13,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] tutorial table template
 * [X] refactored piece fiel border->color
 * [ ] pre-release
-  * [ ] bugfixing
+  * [X] bugfixing
     * [X] fix auto-center not always working
-    * [ ] fix flashing scrollto in some constallation
-    * [x] fix piece position when adding them via (+)
-  * [ ] review + run tests
+    * [X] fix piece position when adding them via (+)
+  * [X] review + run tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG

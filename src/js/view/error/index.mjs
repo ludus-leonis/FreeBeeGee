@@ -109,7 +109,7 @@ function detectProblem () {
 
           // The api seems to deliver JSON. Try to pin down the problem better.
           let issues = ''
-          if (!json.phpOK) issues += '<li>PHP 7.3 or higher is required.</li>'
+          if (!json.phpOk) issues += '<li>PHP 7.3 or higher is required.</li>'
           if (!json.moduleZip) issues += '<li>The PHP <code>zip</code> module is not available.</li>'
 
           if (issues !== '') {

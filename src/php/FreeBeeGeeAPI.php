@@ -1056,6 +1056,7 @@ class FreeBeeGeeAPI
         $issues = new \stdClass();
 
         $version = explode('.', phpversion());
+        $issues->v = $version;
         if ($version[0] >= 8 || ($version[0] === '7' && $version[1] >= 3)) {
             $issues->phpOk = true;
         } else {
