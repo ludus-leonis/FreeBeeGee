@@ -283,6 +283,7 @@ function template (name) {
 
 gulp.task('template-RPG', () => template('RPG'))
 gulp.task('template-Classic', () => template('Classic'))
+gulp.task('template-Tutorial', () => template('Tutorial'))
 
 gulp.task('build', gulp.parallel(
   'js-main',
@@ -292,6 +293,7 @@ gulp.task('build', gulp.parallel(
   'php',
   'template-RPG',
   'template-Classic',
+  'template-Tutorial',
   'fonts',
   'img',
   'favicon'

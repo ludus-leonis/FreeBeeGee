@@ -375,16 +375,16 @@ $label-offset: 8px;
 // --- tokens ------------------------------------------------------------------
 
 .piece-token {
-  #{'--fbg-border-color'}: $piece-color;
+  #{'--fbg-piece-color'}: $piece-color;
 
-  background-color: var(--fbg-border-color); // tile background
-  border: $piece-border-size solid var(--fbg-border-color);
+  background-color: var(--fbg-piece-color); // tile background
+  border: $piece-border-size solid var(--fbg-piece-color);
   border-radius: $piece-tile-size;
   margin: $piece-border-size;
 
   $is-n-size: 1rem;
 
-  &.is-bordercolor {
+  &.is-piececolor {
     border-color: $color-gray-95;
 
     &.is-n::after {
@@ -394,7 +394,7 @@ $label-offset: 8px;
 
   &.is-n::after {
     align-items: center;
-    background-color: var(--fbg-border-color);
+    background-color: var(--fbg-piece-color);
     border-radius: 100%;
     display: flex;
     flex-direction: row;

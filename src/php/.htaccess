@@ -1,4 +1,4 @@
-# minimalistic .htaccess file for rest API functionality
+# minimalistic .htaccess file for Rest API functionality
 
 RewriteEngine on
 
@@ -17,4 +17,4 @@ RewriteRule "\.json" - [F]
 # Enable catch-all rule for the main file.
 RewriteCond %{REQUEST_FILENAME} !-f
 # RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?path=$1 [NC,L,QSA]
+RewriteRule ^(.*)$ ./index.php?path=$1 [NC,L,QSA]

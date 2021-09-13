@@ -5,14 +5,16 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} (.+)/$
 RewriteRule ^ %1 [R=301,L]
 
-# serve ".html" files if called without extension
+# serve ".html" files if called without extension except 'app'
+RewriteRule ^app$ / [R=301,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+)$ $1.html [L,QSA]
 
-# serve index.html if called with a room name as (root)folder
-RewriteRule ^[A-Za-z0-9]{8,48}$ index.html [NC,L,QSA]
+# serve app.html if called with or without a room name as (root)folder
+RewriteRule ^[A-Za-z0-9]{8,48}$ app.html [NC,L,QSA]
+RewriteRule ^$ app.html [NC,L,QSA]
 
 # PHP tweaks
 <IfModule mod_php7.c>

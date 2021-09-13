@@ -32,7 +32,21 @@ import {
   intersect
 } from '../../../lib/utils.mjs'
 
-export const assetTypes = ['tile', 'token', 'overlay', 'other', 'tag']
+export const assetTypes = [
+  'tile',
+  'token',
+  'overlay',
+  'other',
+  'tag'
+]
+
+export const stickyNoteColors = [
+  { name: 'yellow' },
+  { name: 'orange' },
+  { name: 'green' },
+  { name: 'blue' },
+  { name: 'pink' }
+]
 
 /**
  * Find a piece by ID.
@@ -172,7 +186,7 @@ export function assetToPiece (id) {
     x: 0,
     y: 0,
     z: 0,
-    color: asset.color
+    bg: asset.bg
   })
 }
 
@@ -187,7 +201,7 @@ export function populatePieceDefaults (piece, headers = null) {
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? 1
   piece.side = piece.side ?? 0
-  piece.border = piece.border ?? 0
+  piece.color = piece.color ?? 0
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
@@ -423,22 +437,27 @@ export function clampToTableSize (piece) {
 /**
  * Calculate the center of the setup on the room.
  *
- * Iterates over all pieces and averages their centers.
+ * Iterates over all pieces and averages their centers. Empty tables are considered
+ * to be centered on the whole table.
  *
  * @return {Object} Object with x and y.
  */
 export function getSetupCenter (no = getTableNo()) {
   const template = getTemplate()
-  const x = []
-  const y = []
+  const rect = getContentRect(no)
 
-  for (const piece of getTable(no)) {
-    x.push((piece.x + piece.w * template.gridSize) / 2)
-    y.push((piece.y + piece.h * template.gridSize) / 2)
+  // use table center for empty tables
+  if (rect.bottom <= 0 && rect.right <= 0) {
+    return {
+      x: (template.gridSize * template.gridWidth) / 2,
+      y: (template.gridSize * template.gridHeight) / 2
+    }
   }
+
+  // calculate setup center otherwise
   return {
-    x: x.length > 0 ? Math.ceil(x.reduce((a, b) => a + b) / x.length) : 0,
-    y: y.length > 0 ? Math.ceil(y.reduce((a, b) => a + b) / y.length) : 0
+    x: rect.left + (rect.right - rect.left) / 2,
+    y: rect.top + (rect.bottom - rect.top) / 2
   }
 }
 
@@ -454,15 +473,15 @@ export function splitAssetFilename (assetName) {
     w: 1,
     h: 1,
     side: 1,
-    color: '808080'
+    bg: '808080'
   }
-  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/)
+  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.alias = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
     data.side = Number(match[4])
-    data.color = match[5]
+    data.bg = match[5]
     return data
   }
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
@@ -493,7 +512,7 @@ function createInvalidAsset () {
     media: ['invalid.svg'],
     width: 1,
     height: 1,
-    color: '40bfbf',
+    bg: '40bfbf',
     alias: 'invalid',
     type: 'tile',
     id: '0000000000000000'

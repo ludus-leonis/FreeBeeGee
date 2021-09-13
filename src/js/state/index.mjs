@@ -191,7 +191,7 @@ export function createRoom (room, snapshot) {
  * @return {String} The setting's value.
  */
 export function getRoomPreference (pref) {
-  return getStoreValue('g' + room.id.substr(0, 8), pref)
+  return getStoreValue('r' + room.id.substr(0, 8), pref)
 }
 
 /**
@@ -202,7 +202,31 @@ export function getRoomPreference (pref) {
  * @param {String} value The value to set.
  */
 export function setRoomPreference (pref, value) {
-  setStoreValue('g' + room.id.substr(0, 8), pref, value)
+  setStoreValue('r' + room.id.substr(0, 8), pref, value)
+}
+
+/**
+ * Get a setting from the browser HTML5 store. Automatically scoped to active
+ * room + table no.
+ *
+ * @param {String} pref Setting to obtain.
+ * @param {Number} no Table number. Defaults to curren table.
+ * @return {String} The setting's value.
+ */
+export function getTablePreference (pref, no = getTableNo()) {
+  return getStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref)
+}
+
+/**
+ * Set a setting in the browser HTML5 store. Automatically scoped to active
+ * room + table number.
+ *
+ * @param {String} pref Setting to set.
+ * @param {String} value The value to set.
+ * @param {Number} no Table number. Defaults to curren table.
+ */
+export function setTablePreference (pref, value, no = getTableNo()) {
+  setStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref, value)
 }
 
 /**
@@ -287,17 +311,17 @@ export function flipPiece (pieceId, side) {
 }
 
 /**
- * Change the outline/border color.
+ * Change the piece/outline/border color.
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
  * @param {String} pieceId ID of piece to change.
- * @param {Number} border New border. Zero-based.
+ * @param {Number} color New color index. Zero-based.
  */
-export function borderPiece (pieceId, border) {
+export function colorPiece (pieceId, color) {
   patchPiece(pieceId, {
-    border: border
+    color: color
   })
 }
 

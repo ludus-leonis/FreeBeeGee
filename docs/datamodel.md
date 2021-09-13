@@ -22,7 +22,7 @@ A basic example:
   ],
   "w": 4,
   "h": 4,
-  "color": "#808674",
+  "bg": "#808674",
   "type": "tile"
 }
 ```
@@ -42,8 +42,8 @@ A basic example:
 `h`
 : The default height of the asset in grid spaces.
 
-`color`
-: The (background) color of the asset. Will be visible while loading the media and in it's transparent parts. Can be an RGB code, `transparent` or `border`. Border-colored assets will use their border color (if any) as background color.
+`bg`
+: The background color of the asset. Will be visible while loading the media and in it's transparent parts. Can be an RGB code, `transparent` or `piece`. Piece-colored assets will use their UI/border color (if any) as background color.
 
 `type`
 : The type of the asset. Can be `tile`, `token`, `overlay` or `other`. This will usually define the type of piece this asset will use.
@@ -109,7 +109,7 @@ The library object holds information about all known assets, sorted by type.
 
 ## Pieces
 
-When assets are displayed on the table and become 'tangible', they are called pieces. Pieces extend the asset information by data like position, rotation, etc. Multiple pieces can share the same  asset.
+When assets are displayed on a table and become 'tangible', they are called pieces. Pieces extend the asset information by data like position, rotation, etc. Multiple pieces can share the same  asset.
 
 A minimal piece contains the following information:
 
@@ -159,8 +159,8 @@ In addition, pieces can have the following properties. If omitted, they default 
 `n`
 : The number of the piece. This is a small digit displayed on the piece to distinguish multiple pieces with the same artwork (e.g. different Goblins). Can be 0..15. Defaults to 0 = none.
 
-`border`
-: The number of the border-color/style. Can be 0..? and depends on the available styles in the template. Defaults to 0.
+`color`
+: The index of the border/background-color/style. Can be 0..? and depends on the available styles in the template. Defaults to 0.
 
 `label`
 : A short text to be displayed on/next to the piece. Defaults to '' (empty string).

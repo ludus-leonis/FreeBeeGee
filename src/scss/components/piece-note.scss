@@ -31,7 +31,7 @@ $piece-note-glue: rgba(0, 0, 0, .02);
 
   $note-rotate: 10deg;
 
-  background-color: $color-08;
+  background-color: $color-gray-05;
   border-bottom-left-radius: 1px 90%;
   border-bottom-right-radius: 50% 4px;
   color: $color-bw-fg;
@@ -41,6 +41,26 @@ $piece-note-glue: rgba(0, 0, 0, .02);
   position: relative;
   text-align: center;
   word-break: break-word;
+
+  &.is-color-0 {
+    background-color: $color-s1;
+  }
+
+  &.is-color-1 {
+    background-color: $color-s2;
+  }
+
+  &.is-color-2 {
+    background-color: $color-s3;
+  }
+
+  &.is-color-3 {
+    background-color: $color-s4;
+  }
+
+  &.is-color-4 {
+    background-color: $color-s5;
+  }
 
   // --- reduce text size on small notes ---
 

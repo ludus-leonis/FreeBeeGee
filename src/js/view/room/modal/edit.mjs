@@ -32,6 +32,10 @@ import {
   modalClose
 } from '../../../view/modal.mjs'
 
+import {
+  stickyNoteColors
+} from '../../../view/room/tabletop/tabledata.mjs'
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -122,14 +126,23 @@ export function modalEdit (piece) {
       pieceSide.add(option)
     }
 
-    // border color
-    const pieceColor = _('#piece-border')
+    // piece/border color
+    const pieceColor = _('#piece-color')
     const template = getTemplate()
-    for (let c = 0; c < template.colors.length; c++) {
-      const option = _('option').create(template.colors[c].name)
-      option.value = c
-      if (c === piece.border) option.selected = true
-      pieceColor.add(option)
+    if (piece.layer === 'note') {
+      for (let c = 0; c < stickyNoteColors.length; c++) {
+        const option = _('option').create(stickyNoteColors[c].name)
+        option.value = c
+        if (c === piece.color) option.selected = true
+        pieceColor.add(option)
+      }
+    } else {
+      for (let c = 0; c < template.colors.length; c++) {
+        const option = _('option').create(template.colors[c].name)
+        option.value = c
+        if (c === piece.color) option.selected = true
+        pieceColor.add(option)
+      }
     }
 
     _('#modal-footer').innerHTML = `
@@ -205,8 +218,8 @@ function getModalToken () {
           <select id="piece-side" name="piece-side"></select>
         </div>
         <div class="col-6">
-          <label for="piece-border">Color</label>
-          <select id="piece-border" name="piece-color"></select>
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6">
           <label for="piece-number">Number</label>
@@ -243,8 +256,8 @@ function getModalOther () {
           <select id="piece-side" name="piece-side"></select>
         </div>
         <div class="col-6 is-hidden">
-          <label for="piece-border">Color</label>
-          <select id="piece-border" name="piece-color"></select>
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
           <label for="piece-number">Number</label>
@@ -281,8 +294,8 @@ function getModalTile () {
           <select id="piece-side" name="piece-side"></select>
         </div>
         <div class="col-6 is-hidden">
-          <label for="piece-border">Color</label>
-          <select id="piece-border" name="piece-color"></select>
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
           <label for="piece-number">Number</label>
@@ -300,7 +313,7 @@ function getModalNote () {
       <div class="row">
         <div class="col-12">
           <label for="piece-label">Label</label>
-          <input id="piece-label" name="piece-label" type="text" maxlength="32">
+          <input id="piece-label" name="piece-label" type="text" maxlength="128">
         </div>
         <div class="col-6 col-lg-3">
           <label for="piece-w">Width</label>
@@ -319,8 +332,8 @@ function getModalNote () {
           <select id="piece-side" name="piece-side"></select>
         </div>
         <div class="col-12 col-lg-6">
-          <label for="piece-border">Color</label>
-          <select id="piece-border" name="piece-color"></select>
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
           <label for="piece-number">Number</label>
@@ -355,8 +368,8 @@ function modalOk () {
   value = Number(_('#piece-side').value)
   if (value !== piece.side) updates.side = value
 
-  value = Number(_('#piece-border').value)
-  if (value !== piece.border) updates.border = value
+  value = Number(_('#piece-color').value)
+  if (value !== piece.color) updates.color = value
 
   value = Number(_('#piece-number').value)
   if (value !== piece.n) updates.n = value

@@ -36,6 +36,7 @@ class FreeBeeGeeAPI
     private $maxAssetSize = 1024 * 1024;
     private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'tag'];
+    private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
 
     /**
      * Constructor - setup our routes.
@@ -90,6 +91,10 @@ class FreeBeeGeeAPI
                 $fbg->getPiece($data['rid'], $data['tid'], $data['pid']);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
+        });
+
+        $this->api->register('GET', '/issues/', function ($fbg, $data) {
+            $fbg->getIssues();
         });
 
         // --- POST ---
@@ -596,6 +601,7 @@ class FreeBeeGeeAPI
                             continue;
                         }
                         $tableItem = $this->removeDefaultsFromPiece($this->merge($tableItem, $piece));
+                        $this->validatePiece($tableItem, true); // double-check that the merged item is fine
                         $result = $tableItem;
                     }
                     if (!isset($tableItem->expires) || $tableItem->expires > time()) {
@@ -633,7 +639,7 @@ class FreeBeeGeeAPI
         if (
             // group.name.1x2x3.808080.png
             preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|border)\.[a-zA-Z0-9]+$/',
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
@@ -643,11 +649,11 @@ class FreeBeeGeeAPI
             $asset->side = $matches[4];
             switch ($matches[5]) {
                 case 'transparent':
-                case 'border':
-                    $asset->color = $matches[5];
+                case 'piece':
+                    $asset->bg = $matches[5];
                     break;
                 default:
-                    $asset->color = '#' . $matches[5];
+                    $asset->bg = '#' . $matches[5];
             }
             $asset->alias = $matches[1];
         } elseif (
@@ -661,7 +667,7 @@ class FreeBeeGeeAPI
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->side = $matches[4];
-            $asset->color = '#808080';
+            $asset->bg = '#808080';
             $asset->alias = $matches[1];
         } elseif (
             // group.name.png
@@ -670,7 +676,7 @@ class FreeBeeGeeAPI
             $asset->w = 1;
             $asset->h = 1;
             $asset->side = 1;
-            $asset->color = '#808080';
+            $asset->bg = '#808080';
             $asset->alias = $matches[1];
         }
         return $asset;
@@ -809,8 +815,8 @@ class FreeBeeGeeAPI
         if (isset($piece->n) && $piece->n === 0) {
             unset($piece->n);
         }
-        if (isset($piece->border) && $piece->border === 0) {
-            unset($piece->border);
+        if (isset($piece->color) && $piece->color === 0) {
+            unset($piece->color);
         }
         if (isset($piece->label) && $piece->label === '') {
             unset($piece->label);
@@ -866,8 +872,17 @@ class FreeBeeGeeAPI
                 case 'side':
                     $validated->side = $this->api->assertInteger('side', $value, 0, 128);
                     break;
-                case 'border':
-                    $validated->border = $val = $this->api->assertInteger('border', $value, 0, 15);
+                case 'color':
+                    if (property_exists($piece, 'layer') && $piece->layer === 'note') {
+                        $validated->color = $val = $this->api->assertInteger(
+                            'color',
+                            $value,
+                            0,
+                            sizeof($this->stickyNotes) - 1
+                        );
+                    } else {
+                        $validated->color = $val = $this->api->assertInteger('color', $value, 0, 15);
+                    }
                     break;
                 case 'n':
                     $validated->n = $this->api->assertInteger('n', $value, 0, 15);
@@ -876,7 +891,11 @@ class FreeBeeGeeAPI
                     $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
                     break;
                 case 'label':
-                    $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
+                    if (property_exists($piece, 'layer') && $piece->layer !== 'note') {
+                        $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
+                    } else {
+                        $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,128}$'));
+                    }
                     break;
                 case 'tag':
                     $validated->tag = trim($this->api->assertString('tag', $value, '^[^\n\r]{0,32}$'));
@@ -959,7 +978,7 @@ class FreeBeeGeeAPI
         $this->api->assertHasProperties(
             'asset',
             $incoming,
-            ['name', 'format', 'layer', 'w', 'h', 'base64', 'color']
+            ['name', 'format', 'layer', 'w', 'h', 'base64', 'bg']
         );
 
         foreach ($incoming as $property => $value) {
@@ -986,8 +1005,8 @@ class FreeBeeGeeAPI
                 case 'base64':
                     $validated->base64 = $this->api->assertBase64('base64', $value);
                     break;
-                case 'color':
-                    $validated->color = $this->api->assertString('color', $value, '#[a-fA-F0-9]{6}|transparent|border');
+                case 'bg':
+                    $validated->bg = $this->api->assertString('bg', $value, '#[a-fA-F0-9]{6}|transparent|piece');
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -1025,6 +1044,28 @@ class FreeBeeGeeAPI
             $info->createPassword = true;
         }
         $this->api->sendReply(200, json_encode($info));
+    }
+
+    /**
+     * Self-detect configuration issues.
+     *
+     * Usually called on faulty installations to find out what is missing.
+     */
+    private function getIssues()
+    {
+        $issues = new \stdClass();
+
+        $version = explode('.', phpversion());
+        $issues->v = $version;
+        if ($version[0] >= 8 || ($version[0] === '7' && $version[1] >= 3)) {
+            $issues->phpOk = true;
+        } else {
+            $issues->phpOk = false;
+        }
+
+        $issues->moduleZip = class_exists('\ZipArchive');
+
+        $this->api->sendReply(200, json_encode($issues));
     }
 
     /**
@@ -1502,7 +1543,7 @@ class FreeBeeGeeAPI
         // determine asset path elements
         $folder = $this->getRoomFolder($roomName);
         $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' .
-            str_replace('#', '', $asset->color) . '.' . $asset->format;
+            str_replace('#', '', $asset->bg) . '.' . $asset->format;
 
         // output file data
         $lock = $this->api->waitForWriteLock($folder . '.flock');

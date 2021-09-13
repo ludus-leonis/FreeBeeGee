@@ -29,8 +29,11 @@ import { // TODO roomstate.mjs?
   getRoom,
   getRoomPreference,
   setRoomPreference,
+  getTablePreference,
+  setTablePreference,
   getTableNo,
-  setTableNo
+  setTableNo,
+  getTemplate
 } from '../../state/index.mjs'
 
 import {
@@ -73,7 +76,7 @@ import {
 // --- public ------------------------------------------------------------------
 
 /**
- * Get current tabletop scroll position.
+ * Get current top-left tabletop scroll position.
  *
  * @return {Object} Contains x and y in pixel.
  */
@@ -92,6 +95,32 @@ export function getScrollPosition () {
  */
 export function setScrollPosition (x, y) {
   scroller.scrollTo(x, y)
+}
+
+/**
+ * Get current center of the viewport of the scroll position.
+ *
+ * @return {Object} Contains x and y in pixel.
+ */
+export function getViewportCenter () {
+  return {
+    x: scroller.scrollLeft + Math.floor(scroller.clientWidth / 2),
+    y: scroller.scrollTop + Math.floor(scroller.clientHeight / 2)
+  }
+}
+
+/**
+ * Get current center of the viewport of the scroll position.
+ *
+ * @return {Object} Contains x and y in pixel.
+ */
+export function getViewportCenterTile () {
+  const template = getTemplate()
+  const pos = getViewportCenter()
+  return {
+    x: Math.floor(pos.x / template.gridSize),
+    y: Math.floor(pos.y / template.gridSize)
+  }
 }
 
 /**
@@ -243,6 +272,29 @@ export function updateStatusline () {
   }
 }
 
+/**
+ * Restore the scroll position from properties (if any).
+ *
+ * Defaults to the center of the table setup if no last scroll position ist known.
+ */
+export function restoreScrollPosition () {
+  const scroller = _('#scroller')
+  const lastX = getTablePreference('scrollX')
+  const lastY = getTablePreference('scrollY')
+  if (lastX && lastY) {
+    scroller.node().scrollTo(
+      lastX - Math.floor(scroller.clientWidth / 2),
+      lastY - Math.floor(scroller.clientHeight / 2)
+    )
+  } else {
+    const center = getSetupCenter()
+    scroller.node().scrollTo(
+      Math.floor(center.x - scroller.clientWidth / 2),
+      Math.floor(center.y - scroller.clientHeight / 2)
+    )
+  }
+}
+
 // --- internal ----------------------------------------------------------------
 
 let scroller = null /** keep reference to scroller div - we need it often */
@@ -335,7 +387,7 @@ function setupRoom () {
   }
 
   // setup menu for selection
-  _('#btn-a').on('click', () => modalLibrary(getMouseTile()))
+  _('#btn-a').on('click', () => modalLibrary(getViewportCenterTile()))
   _('#btn-e').on('click', () => editSelected())
   _('#btn-r').on('click', () => rotateSelected())
   _('#btn-c').on('click', () => cloneSelected(getMouseTile()))
@@ -373,38 +425,21 @@ function setupRoom () {
   // load + setup content
   setTableNo(getRoomPreference('table') ?? 1, false)
   runStatuslineLoop()
-  startAutoSync(() => { setAutoScrollPosition() })
+  startAutoSync(() => { autoTrackScrollPosition() })
 }
 
 let scrollFetcherTimeout = -1
 
 /**
- * Scroll to the last open scroll position.
- *
- * Defaults to the center of the setup if no last scroll position ist known. Will
- * also install an event handler to capture scroll events & record them.
+ * Start scroll tracking.
  */
-function setAutoScrollPosition () {
-  const scroller = _('#scroller')
-  const lastX = getRoomPreference('scrollX')
-  const lastY = getRoomPreference('scrollY')
-  if (lastX && lastY) {
-    scroller.node().scrollTo(
-      lastX - Math.floor(scroller.clientWidth / 2),
-      lastY - Math.floor(scroller.clientHeight / 2)
-    )
-  } else {
-    const center = getSetupCenter()
-    scroller.node().scrollTo(
-      Math.floor(center.x - scroller.clientWidth / 2),
-      Math.floor(center.y - scroller.clientHeight / 2)
-    )
-  }
-  scroller.on('scroll', () => {
+function autoTrackScrollPosition () {
+  _('#scroller').on('scroll', () => {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
-      setRoomPreference('scrollX', scroller.scrollLeft + Math.floor(scroller.clientWidth / 2))
-      setRoomPreference('scrollY', scroller.scrollTop + Math.floor(scroller.clientHeight / 2))
+      const pos = getViewportCenter()
+      setTablePreference('scrollX', pos.x)
+      setTablePreference('scrollY', pos.y)
     }, 1000)
   })
 }

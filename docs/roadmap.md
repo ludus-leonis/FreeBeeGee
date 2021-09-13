@@ -2,15 +2,12 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.11 - ???
+## v0.12 - ???
 
 * [ ] table passwords
-* [ ] empty table template
-* [ ] slight table texture offset for different tables 1..9
 * [ ] more table backgrounds
-* [ ] click thru / don't drag on transparent parts of images
 * [ ] use image masks for png backsides
-* [ ] rightclick on table
+* [ ] right-click on table
   * [ ] add piece
   * [ ] change table 1..9
   * [ ] change background
@@ -40,6 +37,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* click thru / don't drag on transparent parts of images
 * generic marker overlay (X, ?, ...)
 * docs how to make table/template `.zip`s
 * LOS-ruler
@@ -64,7 +62,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * dedicated HP/Mana/Value field(s)
 * obfuscate/hash room name
 * pinboard for handouts
-* tour / first-time-tutorial
 * API Docs
 * randomize button on dicemat
 * generate average piece color during build and upload

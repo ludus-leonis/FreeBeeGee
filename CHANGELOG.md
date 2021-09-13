@@ -2,14 +2,42 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.11.0 - Troubled Trout
+
+This is a breaking release changing internal data structures. Old snapshots will no longer work.
+
+### Notable changes
+
+* added error reporting on missing PHP requirements
+* added error message on missing .htaccess support during setup
+* added sticky note colors
+* added tutorial template
+
+### Other changes
+
+* changed sticky note max text length to 128
+* fixed piece position when adding them via (+)
+* improved classic template
+* improved scroll position handling when switching tables
+* added auto-center view for empty tables
+* added troubleshooting guide
+* added differnt, slight offsets for table 1..9 textures
+* fixed api tests
+* updated docs
+* refactored pieces border->color
+
 ## v0.10.0 - Pointing Pony
 
 This is a breaking release changing internal data structures. Old snapshots will no longer work.
+
+### Notable changes
 
 * added laser-pointer feature
 * added status icons/tags for pieces
 * added individual edit windows per piece types
 * added glass tiles to RPG template for brighter/darker tiles
+
+### Other changes
 
 * fixed snapshot filename to match client timezone
 * fixed php8 compatibility issue

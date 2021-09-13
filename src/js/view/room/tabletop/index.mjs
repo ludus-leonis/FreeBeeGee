@@ -29,19 +29,21 @@ import {
 import {
   getRoom,
   getTemplate,
+  getTable,
   updatePieces,
   createPieces,
   deletePiece,
   numberPiece,
   flipPiece,
   movePiece,
-  borderPiece,
+  colorPiece,
   rotatePiece
 } from '../../../state/index.mjs'
 
 import {
   updateStatusline,
-  getTableCoordinates
+  getTableCoordinates,
+  restoreScrollPosition
 } from '../index.mjs'
 
 import {
@@ -52,7 +54,8 @@ import {
   getAssetURL,
   getMinZ,
   getMaxZ,
-  getContentRectGrid
+  getContentRectGrid,
+  stickyNoteColors
 } from './tabledata.mjs'
 import {
   updateMenu
@@ -137,17 +140,23 @@ export function flipSelected () {
 }
 
 /**
- * Switch the outline color of the currently selected piece.
+ * Switch the piece/outline color of the currently selected piece.
  *
  * Will cycle through all available colors and silently fail if nothing is selected.
  */
 export function outlineSelected () {
-  const borders = getTemplate().colors.length
+  const pieceColors = getTemplate().colors.length
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    if (borders > 1) {
-      borderPiece(piece.id, (piece.border + 1) % borders)
+    switch (piece.layer) {
+      case 'note':
+        colorPiece(piece.id, (piece.color + 1) % stickyNoteColors.length)
+        break
+      default:
+        if (pieceColors > 1) {
+          colorPiece(piece.id, (piece.color + 1) % pieceColors)
+        }
     }
   })
 }
@@ -214,6 +223,22 @@ export function randomSelected () {
 }
 
 /**
+ * Set the table surface for the given table number.
+ *
+ * Will restore table settings (like scroll pos, table texture, ...) and set css classes.
+ *
+ * @param {Number} no Table to set (1..9).
+ */
+export function setTableSurface (no) {
+  const tabletop = _('#tabletop')
+  if (tabletop.tableNo !== no) { // no need to re-update unchanged no.
+    tabletop.tableNo = no
+    tabletop.remove('.table-*').add(`.table-${no}`)
+    restoreScrollPosition()
+  }
+}
+
+/**
  * Update or recreate the DOM node of a piece.
  *
  * Will try to minimize recreation of objects and tries to only update it's
@@ -272,10 +297,13 @@ function createOrUpdatePieceDOM (piece, select) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
-  if (_piece.border !== piece.border) {
-    if (piece.border >= 0 && template.colors.length) {
+  if (_piece.color !== piece.color) {
+    div
+      .remove('.is-color-*')
+      .add('.is-color-' + piece.color)
+    if (piece.color >= 0 && template.colors.length) {
       _(`#${piece.id}`).css({
-        '--fbg-border-color': template.colors[piece.border].value
+        '--fbg-piece-color': template.colors[piece.color].value
       })
     }
   }
@@ -457,7 +485,7 @@ export function pieceToNode (piece) {
 
     if (asset.type !== 'overlay' && asset.type !== 'other') {
       node.css({
-        backgroundColor: asset.color ?? '#808080'
+        backgroundColor: asset.bg ?? '#808080'
       })
     }
   }
@@ -465,7 +493,7 @@ export function pieceToNode (piece) {
   // set meta-classes on node
   node.id = piece.id
   node.add(`.is-side-${piece.side}`)
-  if (asset?.color === 'border') node.add('.is-bordercolor')
+  if (asset?.bg === 'piece') node.add('.is-piececolor')
 
   return node
 }
@@ -537,11 +565,14 @@ export function moveContent (toX, toY) {
  *
  * Will add new, update existing and delete obsolte pieces.
  *
- * @param {Array} tableData Table's pieces.
+ * @param {Array} tableNo Table number to display.
  * @param {Array} selectIds Optional array of IDs to re-select after update.
  */
-export function updateTabletop (tableData, selectIds = []) {
+export function updateTabletop (tableNo, selectIds = []) {
+  const tableData = getTable(tableNo)
   const start = Date.now()
+
+  setTableSurface(tableNo)
 
   const keepIds = []
   cleanupTable()

@@ -14,30 +14,31 @@
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <link rel="manifest" href="manifest.webmanifest">
 
-  <link rel="stylesheet" href="style-$VERSION$.css?v=$BUILD$">
-  <script src="vendor-$VERSION$.js?v=$BUILD$"></script>
-  <script src="main-$VERSION$.js?v=$BUILD$"></script>
+  <link rel="stylesheet" href="style.css?v=$BUILD$">
 </head>
 
 <body id="body" class="page-boxed">
-  <noscript>
-    <main class="container is-medium">
-      <div class="row">
-        <div class="col-12">
-          <a class="a-invisible" href="./"><img src="img/freebeegee-logo.svg" alt="FreeBeeGee"></a>
-          <p class="spacing-none">Your game. Your data.</p>
-          <div class="card spacing-large">
-            <div class="card-header is-content"><h1 class="h3">JavaScript required</h1></div>
-            <div class="card-body is-content">
-              <p>If you are like us, you'll have a JavaScript-Blocker installed. That's good!</p>
-              <p>But FreeBeeGee this is an interactive web application. We do not load crap from other servers, but you need to add an exception for our server. Feel free to check out our <a href="privacy">Privacy Policy</a> or our <a href="$URL$">source code</a> in advance.</p>
-              <p>And hey, look: No&nbsp;cookies!</p>
-            </div>
+  <main class="container is-medium">
+    <div class="row">
+      <div class="col-12">
+        <a class="a-invisible" href="./"><img src="img/freebeegee-logo.svg" alt="FreeBeeGee"></a>
+        <p class="spacing-none">Your game. Your data.</p>
+        <div class="card spacing-large">
+          <div class="card-header is-content"><h1 class="h3">FreeBeeGee Setup</h1></div>
+          <div class="card-body is-content">
+            <p>Thank you for installing FreeBeeGee $VERSION$.</p>
+            <p>Unfortunately, this webserver can't run FreeBeeGee (yet). This can have the following reasons:</p>
+            <ul>
+              <li><code>.htaccess</code> support might be disabled. Check your webserver's config file or your provider's admin-interface and enable this feature. It is also called <code>AllowOverrides</code>.</li>
+              <li>FreeBeeGee files might be missing. <code>.htaccess</code> files are considered hidden files on some operating systems. Verify that all files and directories from the <code>.zip</code>/<code>.tar.gz</code> are on the server and there are no other files there. Also verify the file-permissions for the web-server.</li>
+              <li>This might not be an required <strong>Apache HTTP Server</strong>.</li>
+            </ul>
+            <p>If none of the above helps, take a look in the servers' <code>error.log</code> for clues.</p>
           </div>
-          <p class="p-tiny is-faded spacing-medium"><a href="https://freebeegee.org/">FreeBeeGee</a> v$VERSION$, ©2021 Ludus Leonis · <a href="terms">Terms of use</a> · <a href="privacy">Privacy Policy</a></p>
         </div>
+        <p class="p-tiny is-faded spacing-medium"><a href="https://freebeegee.org/">FreeBeeGee</a> v$VERSION$, ©2021 Ludus Leonis · <a href="terms">Terms of use</a> · <a href="privacy">Privacy Policy</a></p>
       </div>
-    </main>
-  </noscript>
+    </div>
+  </main>
 </body>
 </html>

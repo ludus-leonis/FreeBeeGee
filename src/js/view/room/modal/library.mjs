@@ -278,7 +278,7 @@ function modalUpload () {
       base64: _('.upload-preview .piece').node().style.backgroundImage
         .replace(/^[^,]*,/, '')
         .replace(/".*/, ''),
-      color: layer === 'token' ? '#808080' : 'transparent'
+      bg: layer === 'token' ? '#808080' : 'transparent'
     }
 
     addAsset(data)
@@ -403,7 +403,7 @@ function updatePreview (parseImage = false) {
     })
   } else {
     piece.css({
-      backgroundColor: 'var(--fbg-border-color)'
+      backgroundColor: 'var(--fbg-piece-color)'
     })
   }
   preview.add(piece)
