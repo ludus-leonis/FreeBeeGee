@@ -149,7 +149,6 @@ export function outlineSelected () {
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    console.log(piece)
     switch (piece.layer) {
       case 'note':
         colorPiece(piece.id, (piece.color + 1) % stickyNoteColors.length)
