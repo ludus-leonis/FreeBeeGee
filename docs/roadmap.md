@@ -16,61 +16,60 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] fix unreadable piece numbers on white borders
     * [X] fix tokens sometime shifting when selecting
     * [X] improve build speed by caching some files
+    * [X] fix library search sometimes missing / ok not working
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
   * [ ] bump version/codename & update CHANGELOG
 
-## v0.xx - Mobile Monkey
-
-* better tablet / touch support
-  * zooming
-  * moving pieces
-
-## v0.yy - Clean Cat
-
-* reduce impact of "back" button
-* concurrent drag-n-drop - first mover wins
-* (bulk) manipulation of assets (delete, edit, change type)
-* remove default entries from json files before save (e.g. side=0)
-* add template version to asset urls
-* catch all unhandled warnings/exceptions in PHP API and return 500
-
 ## Backlog (unsorted)
 
 ### rather sooner
 
+* manipulation of single assets in library (delete, edit, change type)
+* when dragging pieces, move those on top of the original piece too
+* dragging some pieces should not change z (e.g. dicemat)
+* multi-select stuff
+* protect pieces (no-delete, no-move)
+* LOS-ruler
+* full-screen key
+* show backside/all sides in tile browser
+* dedicated HP/Mana/Value field(s)
+* meta-piece: supply heap
+* support for stacks/decks of cards
+* shuffle deck/stack
+* better sticky notes (auto-size text)
+* more tabletop settings in UI (e.g. grid)
+* reduce impact of "back" button
+* "layer not active" hint when dragging nothing
+* demo mode (serverless?)
+* randomize button on dicemat
 * click thru / don't drag on transparent parts of images
 * generic marker overlay (X, ?, ...)
-* docs how to make table/template `.zip`s
-* LOS-ruler
-* more tabletop settings (e.g. grid)
-* undo (limited)
-* demo mode (serverless?)
-* show backside/all sides in tile browser
-* better sticky notes (more text, auto-size text)
-* protect pieces (no-delete, no-move)
-* meta-piece: supply heap
-* overlay-grid-on-tile option
-* hide .../data/... from URLs (via .htaccess)
-* support for stacks/decks of cards
-  * shuffle deck/stack
-* option to force-install templates with invalid versions
-* multi-select stuff
 * add more classic game boards: backgammon, mills, solitaire
-* "layer not active" hint when dragging nothing
-* I18N
-* show even more infos in media browser
-* full-screen key
-* dedicated HP/Mana/Value field(s)
-* obfuscate/hash room name
-* pinboard for handouts
-* API Docs
-* randomize button on dicemat
+* remove default entries from json files before save (e.g. side=0)
+* add template version to asset urls
 * generate average piece color during build and upload
+* catch all unhandled warnings/exceptions in PHP API and return 500
+* hide .../data/... from URLs (via .htaccess)
+* concurrent drag-n-drop - first mover wins
+  * add hash/deprecation header
+* obfuscate/hash room name
+* docs how to make table/template `.zip`s
+* API Docs
 
 ### rather later
 
+* bulk manipulation of assets (delete, edit, change type)
+* show even more infos in media browser
+* overlay-grid-on-tile option
+* option to force-install templates with invalid versions
+* I18N
+* pinboard for handouts
+* undo (limited)
+* better tablet / touch support
+  * zooming
+  * moving pieces
 * color.sh: detect dominant piece color instead of average color
 * compile js for older browsers (<globalThis)
 * arbitrary layers
