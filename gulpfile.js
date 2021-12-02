@@ -23,7 +23,8 @@ const rnd = Math.floor(Math.random() * 10000000)
 const dirs = {
   build: 'dist',
   site: 'dist/' + p.name,
-  docs: 'dist/docs/'
+  docs: 'dist/docs/',
+  cache: '.cache'
 }
 
 gulp.task('clean', () => {
@@ -33,6 +34,13 @@ gulp.task('clean', () => {
     [dirs.site] + '/**/.*',
     [dirs.build] + '/*zip',
     [dirs.build] + '/*gz'
+  ])
+})
+
+gulp.task('clean-cache', () => {
+  const del = require('del')
+  return del([
+    dirs.cache
   ])
 })
 
@@ -117,9 +125,11 @@ function svg2png (svg, outname, size) {
   const svg2png = require('gulp-svg2png')
   const image = require('gulp-image')
   const rename = require('gulp-rename')
+  const changed = require('gulp-changed')
   return gulp.src(svg)
-    .pipe(svg2png({ width: size, height: size }))
     .pipe(rename(outname))
+    .pipe(changed(dirs.cache + '/favicon'))
+    .pipe(svg2png({ width: size, height: size }))
     .pipe(image({
       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
       pngquant: ['--speed=1', '--force', 256],
@@ -128,21 +138,30 @@ function svg2png (svg, outname, size) {
 }
 
 // convert -background none icon.svg -define icon:auto-resize=32,16 favicon.ico
-gulp.task('favicon', gulp.parallel(() => {
+gulp.task('favicon', gulp.series(gulp.parallel(
+  // step 1 - generate cached icons
+  () => {
+    return gulp.src([
+      'src/favicon/icon.svg',
+      'src/favicon/favicon.ico', // note: .ico is not (re)generated yet
+      'src/favicon/manifest.webmanifest'
+    ])
+      .pipe(gulp.dest(dirs.cache + '/favicon'))
+  }, () => {
+    return svg2png('src/favicon/icon.svg', '512.png', 512)
+      .pipe(gulp.dest(dirs.cache + '/favicon'))
+  }, () => {
+    return svg2png('src/favicon/icon.svg', 'apple-touch-icon.png', 180)
+      .pipe(gulp.dest(dirs.cache + '/favicon'))
+  }, () => {
+    return svg2png('src/favicon/icon.svg', '192.png', 192)
+      .pipe(gulp.dest(dirs.cache + '/favicon'))
+  }
+), () => {
+  // step 2 - use cached icons
   return gulp.src([
-    'src/favicon/icon.svg',
-    'src/favicon/favicon.ico', // note: .ico is not (re)generated yet
-    'src/favicon/manifest.webmanifest'
+    dirs.cache + '/favicon/**/*'
   ])
-    .pipe(gulp.dest(dirs.site))
-}, () => {
-  return svg2png('src/favicon/icon.svg', '512.png', 512)
-    .pipe(gulp.dest(dirs.site))
-}, () => {
-  return svg2png('src/favicon/icon.svg', 'apple-touch-icon.png', 180)
-    .pipe(gulp.dest(dirs.site))
-}, () => {
-  return svg2png('src/favicon/icon.svg', '192.png', 192)
     .pipe(gulp.dest(dirs.site))
 }))
 
@@ -234,14 +253,17 @@ gulp.task('html', () => {
     .pipe(gulp.dest(dirs.site))
 })
 
-gulp.task('img', () => {
+gulp.task('img', gulp.series(() => {
+  // step 1 - optimize changed images into cache
   const image = require('gulp-image')
+  const changed = require('gulp-changed')
 
   return gulp.src([
     'src/img/**/*.svg',
     'src/img/**/*.jpg',
     'src/img/**/*.png'
   ])
+    .pipe(changed(dirs.cache + '/img'))
     .pipe(image({
       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
       pngquant: ['--speed=1', '--force', 256],
@@ -251,8 +273,16 @@ gulp.task('img', () => {
       gifsicle: ['--optimize'],
       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
     }))
+    .pipe(gulp.dest(dirs.cache + '/img'))
+}, () => {
+  // step 2 - use cached images
+  return gulp.src([
+    dirs.cache + '/img/**/*.svg',
+    dirs.cache + '/img/**/*.jpg',
+    dirs.cache + '/img/**/*.png'
+  ])
     .pipe(gulp.dest(dirs.site + '/img'))
-})
+}))
 
 function template (name) {
   const zip = require('gulp-zip')
@@ -345,7 +375,7 @@ gulp.task('package-zip', function () {
     .pipe(gulp.dest(dirs.build))
 })
 
-gulp.task('release', gulp.series('clean', 'dist', 'package-tgz', 'package-zip'))
+gulp.task('release', gulp.series('clean', 'clean-cache', 'dist', 'package-tgz', 'package-zip'))
 
 // --- default target ----------------------------------------------------------
 

@@ -41,6 +41,7 @@
     "eslint": "^8.3.0",
     "gulp": "*",
     "gulp-autoprefixer": "^8.0.0",
+    "gulp-changed": "^4.0.3",
     "gulp-concat": "*",
     "gulp-gzip": "^1.4.2",
     "gulp-image": "^6.2.1",

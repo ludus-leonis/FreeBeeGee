@@ -4,7 +4,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.12 - ???
 
-* [X] fix unreadable piece numbers on white borders
 * [ ] table passwords
 * [ ] more table backgrounds
 * [ ] use image masks for png backsides
@@ -14,6 +13,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] change background
 * [ ] pre-release
   * [ ] bugfixing
+    * [X] fix unreadable piece numbers on white borders
+    * [ ] fix tokens sometime shift when selecting
+    * [ ] improve build speed by caching some files
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
