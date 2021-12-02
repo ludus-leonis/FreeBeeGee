@@ -285,35 +285,33 @@ gulp.task('img', gulp.series(() => {
 }))
 
 function template (name) {
+  const image = require('gulp-image')
+  const changed = require('gulp-changed')
   const zip = require('gulp-zip')
 
-  return replace(gulp.src('src/templates/' + name + '/**/*'))
-    .pipe(zip(name + '.zip'))
-    .pipe(gulp.dest(dirs.site + '/api/data/templates'))
+  return gulp.series(() => { // step 1: optimize & cache content
+    return replace(gulp.src('src/templates/' + name + '/**/*'))
+      .pipe(changed(dirs.cache + '/templates/' + name))
+      .pipe(image({
+        optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+        pngquant: ['--speed=1', '--force', 256],
+        zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+        jpegRecompress: ['--strip', '--quality', 'high', '--min', 60, '--max', 85],
+        mozjpeg: ['-optimize', '-progressive'],
+        gifsicle: ['--optimize'],
+        svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+      }))
+      .pipe(gulp.dest(dirs.cache + '/templates/' + name))
+  }, () => { // step 2: zip cache
+    return gulp.src(dirs.cache + '/templates/' + name + '/**/*')
+      .pipe(zip(name + '.zip'))
+      .pipe(gulp.dest(dirs.site + '/api/data/templates'))
+  })
 }
 
-// function template (name) {
-//   const zip = require('gulp-zip')
-//   const image = require('gulp-image')
-//   const svgo = require('gulp-svgo')
-//
-//   return replace(gulp.src('src/templates/' + name + '/**/*'))
-//     .pipe(image({
-//       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
-//       pngquant: ['--speed=1', '--force', 256],
-//       zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-//       jpegRecompress: ['--strip', '--quality', 'medium', '--min', 40, '--max', 80],
-//       mozjpeg: ['-optimize', '-progressive'],
-//       gifsicle: ['--optimize']
-//     }))
-//     .pipe(svgo())
-//     .pipe(zip(name + '.zip'))
-//     .pipe(gulp.dest(dirs.site + '/api/data/templates'))
-// }
-
-gulp.task('template-RPG', () => template('RPG'))
-gulp.task('template-Classic', () => template('Classic'))
-gulp.task('template-Tutorial', () => template('Tutorial'))
+gulp.task('template-Classic', template('Classic'))
+gulp.task('template-RPG', template('RPG'))
+gulp.task('template-Tutorial', template('Tutorial'))
 
 gulp.task('build', gulp.parallel(
   'js-main',
@@ -375,7 +373,13 @@ gulp.task('package-zip', function () {
     .pipe(gulp.dest(dirs.build))
 })
 
-gulp.task('release', gulp.series('clean', 'clean-cache', 'dist', 'package-tgz', 'package-zip'))
+gulp.task('release', gulp.series(
+  'clean',
+  'clean-cache',
+  'dist',
+  'package-tgz',
+  'package-zip'
+))
 
 // --- default target ----------------------------------------------------------
 

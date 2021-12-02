@@ -13,10 +13,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] change background
 * [ ] pre-release
   * [ ] bugfixing
-    * [X] fix unreadable piece numbers on white borders
-    * [X] fix tokens sometime shifting when selecting
-    * [X] improve build speed by caching some files
-    * [X] fix library search sometimes missing / ok not working
+    * [X] unreadable piece numbers on white borders
+    * [X] tokens sometime shifting when selecting
+    * [X] build speed by caching some files
+    * [X] library search sometimes missing / ok not working
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs
@@ -26,10 +26,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
-* manipulation of single assets in library (delete, edit, change type)
+* delete items from library
 * when dragging pieces, move those on top of the original piece too
 * dragging some pieces should not change z (e.g. dicemat)
 * multi-select stuff
+* move / copy setups between tables
 * protect pieces (no-delete, no-move)
 * LOS-ruler
 * full-screen key
@@ -39,6 +40,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * support for stacks/decks of cards
 * shuffle deck/stack
 * better sticky notes (auto-size text)
+* manipulation of single assets in library (edit, change type)
 * more tabletop settings in UI (e.g. grid)
 * reduce impact of "back" button
 * "layer not active" hint when dragging nothing
