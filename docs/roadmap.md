@@ -4,6 +4,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.12 - ???
 
+* [X] fix unreadable piece numbers on white borders
 * [ ] table passwords
 * [ ] more table backgrounds
 * [ ] use image masks for png backsides

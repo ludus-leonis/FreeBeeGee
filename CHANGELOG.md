@@ -2,6 +2,14 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.12.0 - ???
+
+### Notable changes
+
+### Other changes
+
+* improved readablity of piece numbers on bright borders
+
 ## v0.11.0 - Troubled Trout
 
 This is a breaking release changing internal data structures. Old snapshots will no longer work.

@@ -26,7 +26,8 @@ import {
   toCamelCase,
   toTitleCase,
   intersect,
-  uuid
+  uuid,
+  brightness
 } from '../src/js/lib/utils.mjs'
 
 describe('Frontend - utils.mjs', function () {
@@ -213,5 +214,17 @@ describe('Frontend - utils.mjs', function () {
       { left: 201, top: 201, right: 300, bottom: 300 },
       { left: 100, top: 100, right: 200, bottom: 200 }
     )).to.be.eql(false)
+  })
+
+  it('brightness()', function () {
+    expect(brightness('#000000')).to.be.eql(0)
+    expect(brightness('#FF0000')).to.be.eql(85)
+    expect(brightness('#00FF00')).to.be.eql(85)
+    expect(brightness('#0000FF')).to.be.eql(85)
+    expect(brightness('#FFFF00')).to.be.eql(170)
+    expect(brightness('#00FFFF')).to.be.eql(170)
+    expect(brightness('#FF00FF')).to.be.eql(170)
+    expect(brightness('#ffffff')).to.be.eql(255)
+    expect(brightness('#FFFFFF')).to.be.eql(255)
   })
 })

@@ -174,7 +174,7 @@ export function toCamelCase (string) {
  *
  * @param {Array} pieces Pieces to sort.
  * @param {String} property Property to sort.
- * @return Sorted array.
+ * @return {Array} Sorted array.
  */
 export function sortByString (pieces, property) {
   return pieces.sort((a, b) => {
@@ -201,6 +201,21 @@ export function recordTime (data, value) {
   while (timeRecords[data].length >= 10) timeRecords[data].shift()
   if (value > 0) timeRecords[data].push(value)
   return timeRecords[data]
+}
+
+// --- color -------------------------------------------------------------------
+
+/**
+ * Calculate brightness of an HTML hex-color value.
+ *
+ * @param {String} color E.g. '#ff0000'
+ * @return {Number} Grayscale brightness of color (0..255), e.g. 85.
+ */
+export function brightness (color) {
+  const r = parseInt(color.substring(1, 3), 16)
+  const g = parseInt(color.substring(3, 5), 16)
+  const b = parseInt(color.substring(5, 7), 16)
+  return (r + g + b) / 3
 }
 
 // --- misc --------------------------------------------------------------------

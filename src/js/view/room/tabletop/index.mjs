@@ -23,7 +23,8 @@ import _ from '../../../lib/FreeDOM.mjs'
 import {
   clamp,
   shuffle,
-  recordTime
+  recordTime,
+  brightness
 } from '../../../lib/utils.mjs'
 
 import {
@@ -303,7 +304,8 @@ function createOrUpdatePieceDOM (piece, select) {
       .add('.is-color-' + piece.color)
     if (piece.color >= 0 && template.colors.length) {
       _(`#${piece.id}`).css({
-        '--fbg-piece-color': template.colors[piece.color].value
+        '--fbg-piece-color': template.colors[piece.color].value,
+        '--fbg-piece-color-invert': brightness(template.colors[piece.color].value) > 128 ? '#0d0d0d' : '#e6e6e6'
       })
     }
   }

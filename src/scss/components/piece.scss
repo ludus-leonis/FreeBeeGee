@@ -376,6 +376,7 @@ $label-offset: 8px;
 
 .piece-token {
   #{'--fbg-piece-color'}: $piece-color;
+  #{'--fbg-piece-color-invert'}: $color-wb-fg;
 
   background-color: var(--fbg-piece-color); // tile background
   border: $piece-border-size solid var(--fbg-piece-color);
@@ -389,6 +390,7 @@ $label-offset: 8px;
 
     &.is-n::after {
       background-color: $color-gray-95;
+      color: $color-wb-fg;
     }
   }
 
@@ -396,6 +398,7 @@ $label-offset: 8px;
     align-items: center;
     background-color: var(--fbg-piece-color);
     border-radius: 100%;
+    color: var(--fbg-piece-color-invert);
     display: flex;
     flex-direction: row;
     font-size: .85em;
