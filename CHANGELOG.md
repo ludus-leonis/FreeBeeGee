@@ -21,8 +21,8 @@ This is a breaking release changing internal data structures. Old snapshots will
 * improved scroll position handling when switching tables
 * added auto-center view for empty tables
 * added troubleshooting guide
-* added differnt, slight offsets for table 1..9 textures
-* fixed api tests
+* added different, slight offsets for table 1..9 textures
+* fixed API tests
 * updated docs
 * refactored pieces border->color
 
