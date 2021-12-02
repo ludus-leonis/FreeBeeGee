@@ -6,6 +6,8 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
+* added hotkey to toggle fullscreen (F11)
+
 ### Other changes
 
 * fixed tokens sometime shifting when selecting them

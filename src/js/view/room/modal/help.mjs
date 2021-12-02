@@ -104,6 +104,7 @@ export function modalHelp () {
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>
             <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to another table (1 to 9).</p>
             <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
+            <p><span class="key">F11</span> Toggle fullscreen.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>

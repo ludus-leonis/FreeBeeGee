@@ -11,6 +11,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] add piece
   * [ ] change table 1..9
   * [ ] change background
+* [X] fullscreen hotkey (F11)
 * [ ] pre-release
   * [ ] bugfixing
     * [X] unreadable piece numbers on white borders
@@ -33,7 +34,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * move / copy setups between tables
 * protect pieces (no-delete, no-move)
 * LOS-ruler
-* full-screen key
 * show backside/all sides in tile browser
 * dedicated HP/Mana/Value field(s)
 * meta-piece: supply heap

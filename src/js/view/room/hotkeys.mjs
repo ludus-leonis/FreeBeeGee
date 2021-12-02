@@ -58,6 +58,9 @@ import {
 import {
   modalHelp
 } from './modal/help.mjs'
+import {
+  toggleFullscreen
+} from '../../lib/utils.mjs'
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleRoomKeys(keydown))
@@ -134,6 +137,9 @@ function handleRoomKeys (keydown) {
       case 'e': // edit
       case 'F2':
         editSelected()
+        break
+      case 'F11':
+        toggleFullscreen()
         break
       case 'f': // flip
         flipSelected()
