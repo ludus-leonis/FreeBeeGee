@@ -14,8 +14,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [ ] bugfixing
     * [X] fix unreadable piece numbers on white borders
-    * [ ] fix tokens sometime shift when selecting
-    * [ ] improve build speed by caching some files
+    * [X] fix tokens sometime shifting when selecting
+    * [X] improve build speed by caching some files
   * [ ] review + run tests
   * [ ] update screenshots
   * [ ] review docs

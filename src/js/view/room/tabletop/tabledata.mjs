@@ -209,6 +209,9 @@ export function populatePieceDefaults (piece, headers = null) {
   piece.tag = piece.tag ?? ''
 
   // add client-side meta information
+  const template = getTemplate()
+  piece._width = piece.w * template.gridSize
+  piece._height = piece.h * template.gridSize
   const asset = findAsset(piece.asset)
   piece._sides = asset?.media.length ?? 1
   if (asset?.id === 'ffffffffffffffff') {

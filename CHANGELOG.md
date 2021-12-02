@@ -8,6 +8,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* fixed tokens sometime shifting when selecting
 * improved readablity of piece numbers on bright borders
 * improved build speed by caching some files
 

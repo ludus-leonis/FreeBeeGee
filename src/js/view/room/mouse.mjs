@@ -232,19 +232,11 @@ function dragStart (mousedown) {
   dragging = node.cloneNode(true)
   dragging.id = dragging.id + '-drag'
   dragging.piece = findPiece(node.id)
+
   dragging.style.zIndex = 999999999 // drag visually on top of everything
   dragging.classList.add('dragging')
   dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
   node.parentNode.appendChild(dragging)
-
-  // rect is relative to viewport, so we compensate for scrolling
-  const rect = dragging.getBoundingClientRect()
-  const absolute = getTableCoordinates(rect.left, rect.top)
-  dragging.originX = absolute.x
-  dragging.originY = absolute.y
-
-  dragging.width = rect.right - rect.left
-  dragging.height = rect.bottom - rect.top
 
   dragging.startX = mousedown.clientX // no need to compensate, as we
   dragging.startY = mousedown.clientY // only calculate offset anyway
@@ -262,8 +254,8 @@ function dragContinue (mousemove) {
     dragging.classList.remove('dragging-hidden') // we are moving now (1)
     setPosition(
       dragging,
-      dragging.originX + mousemove.clientX - dragging.startX,
-      dragging.originY + mousemove.clientY - dragging.startY,
+      dragging.piece.x + mousemove.clientX - dragging.startX,
+      dragging.piece.y + mousemove.clientY - dragging.startY,
       1
     )
     mousemove.preventDefault()
@@ -280,8 +272,8 @@ function dragEnd (mouseup, cancel = false) {
     if (!cancel) { // drag could be canceled by releasing outside
       setPosition(
         dragging,
-        dragging.originX + mouseup.clientX - dragging.startX,
-        dragging.originY + mouseup.clientY - dragging.startY
+        dragging.piece.x + mouseup.clientX - dragging.startX,
+        dragging.piece.y + mouseup.clientY - dragging.startY
       )
 
       // only record state if there was a change in position
