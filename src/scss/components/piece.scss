@@ -235,6 +235,19 @@ $label-offset: 8px;
     font-size: px(16);
   }
 
+  // --- backsides -------------------------------------------------------------
+
+  .backside {
+    background-image: url('img/backside.svg');
+    background-repeat: repeat;
+    background-size: 64px;
+    height: 100%;
+    mask-size: 100%;
+    pointer-events: none;
+    transform: scaleX(-1);
+    width: 100%;
+  }
+
   // --- additional layer (dice) -----------------------------------------------
 
   &.has-layer::after {

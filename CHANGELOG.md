@@ -11,6 +11,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* fixed outline of backsides of irregular-shaped pieces
 * fixed tokens sometime shifting when selecting them
 * fixed library search sometimes missing / ok not working
 * improved readablity of piece numbers on bright borders

@@ -6,7 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] table passwords
 * [X] more table backgrounds
-* [ ] use image masks for png backsides
+* [X] use image masks for backsides
 * [ ] right-click on table
   * [ ] add piece
   * [ ] change table 1..9

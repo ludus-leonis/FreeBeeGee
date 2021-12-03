@@ -470,19 +470,28 @@ export function pieceToNode (piece) {
       node = createInvalidAsset(piece.layer)
     }
   } else {
-    const uriSide = asset.media[piece.side] === '##BACK##'
-      ? 'img/backside.svg'
-      : getAssetURL(asset, piece.side)
-    const uriBase = getAssetURL(asset, -1)
-    if (asset.base) { // layered asset
-      node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
-        backgroundImage: 'url("' + encodeURI(uriBase) + '")',
-        '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
+    if (asset.media[piece.side] === '##BACK##') { // backside piece
+      const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
+      node = _(`.piece.piece-${asset.type}`).create()
+
+      // create inner div as we can't image-map the outer without cutting the shadow
+      const inner = _('.backside').create().css({
+        maskImage: 'url("' + encodeURI(uriMask) + '")'
       })
-    } else { // regular asset
-      node = _(`.piece.piece-${asset.type}`).create().css({
-        backgroundImage: 'url("' + encodeURI(uriSide) + '")'
-      })
+      node.add(inner)
+    } else { // regular piece
+      const uriSide = getAssetURL(asset, piece.side)
+      const uriBase = getAssetURL(asset, -1)
+      if (asset.base) { // layered asset
+        node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
+          backgroundImage: 'url("' + encodeURI(uriBase) + '")',
+          '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
+        })
+      } else { // regular asset
+        node = _(`.piece.piece-${asset.type}`).create().css({
+          backgroundImage: 'url("' + encodeURI(uriSide) + '")'
+        })
+      }
     }
 
     if (asset.type !== 'overlay' && asset.type !== 'other') {

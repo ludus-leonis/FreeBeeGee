@@ -418,13 +418,18 @@ function setPosition (element, x, y, snap = getTemplate().snapSize) {
  */
 function handleSelection (element) {
   // remove selection from all elements if we clicked on the background or on a piece
-  if (element.id === 'tabletop' || element.classList.contains('piece')) {
+  if (element.id === 'tabletop' || element.classList.contains('piece') || element.classList.contains('backside')) {
     unselectPieces()
   }
 
   // add selection to clicked element (if it is a piece)
   if (element.classList.contains('piece')) {
     element.classList.add('is-selected')
+  }
+
+  // add selection to parent (if it is a backside piece)
+  if (element.classList.contains('backside')) {
+    element.parentElement.classList.add('is-selected')
   }
 
   updateMenu()
