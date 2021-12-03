@@ -308,7 +308,7 @@ export function restoreScrollPosition () {
 export function setupBackground (bgIndex) {
   const room = getRoom()
 
-  bgIndex = clamp(0, bgIndex, room.backgrounds.length)
+  bgIndex = clamp(0, bgIndex, room.backgrounds.length - 1)
 
   const grid = brightness(room.backgrounds[bgIndex].color) < 92 ? 'checkers-white' : 'checkers-black'
 
@@ -439,7 +439,7 @@ function setupRoom () {
   _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
   _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
 
-  setupBackground(getRoomPreference('background') ?? 0)
+  setupBackground(getRoomPreference('background') ?? 99)
 
   _('body').on('contextmenu', e => e.preventDefault())
 
