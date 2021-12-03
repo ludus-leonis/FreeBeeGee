@@ -31,6 +31,9 @@ import {
   getRoomPreference,
   setRoomPreference
 } from '../../../state/index.mjs'
+import {
+  timeRecords
+} from '../../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -75,7 +78,7 @@ export function modalHelp () {
               <li><strong>Tiles</strong> are assembled to form your game board. They can be corridors, caves and more.</li>
             </ul>
 
-            <p>Use your <strong>browser zoom</strong> buttons to zoom-in and zoom-out.</p>
+            <p>Use your <strong>browser zoom</strong> buttons to zoom-in and zoom-out. Press <span class="key">F11</span> to toggle fullscreen.</p>
 
             <p><strong>Shift-Click</strong> on the table to use a laser-pointer everyone will see for a few seconds.</p>
 
@@ -126,7 +129,10 @@ export function modalHelp () {
 
             <h2>UI assets</h2>
 
-            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
+            <p>
+              UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>.
+              Contains assets from <a href="https://ambientCG.com">ambientCG.com</a>ambientCG.com, licensed under CC0 1.0 Universal.
+            </p>
 
             <h2>FreeBeeGee</h2>
 
@@ -135,6 +141,9 @@ export function modalHelp () {
             <p>FreeBeeGee is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
 
             <p>FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://www.gnu.org/licenses/">GNU Affero General Public License</a> for more details.</p>
+
+            <h3>Statistics</h3>
+            <p>Refresh time: ${Math.ceil(timeRecords['sync-network'].reduce((a, b) => a + b) / timeRecords['sync-network'].length)}ms network + ${Math.ceil(timeRecords['sync-ui'].reduce((a, b) => a + b) / timeRecords['sync-ui'].length)}ms browser</p>
 
           </div>
         </div>

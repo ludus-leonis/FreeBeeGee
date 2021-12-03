@@ -142,9 +142,13 @@ select {
   appearance: none;
   background: $color-wb-fg;
   border-radius: 1em;
-  height: 1em;
+  height: .85em;
   outline: none;
   width: 100%;
+
+  label + & {
+    margin-top: $spacing-small;
+  }
 
   &::-webkit-slider-thumb { // sass-lint:disable-line no-vendor-prefixes
     appearance: none;
@@ -179,25 +183,3 @@ select {
     white-space: nowrap;
   }
 }
-
-// form {
-//   &.container,
-//   &.container > .row {
-//     margin: 0;
-//     padding: 0;
-//   }
-//
-//   &.container > .row > [class^='col-'] {
-//     margin-top: $spacing-small;
-//   }
-// }
-
-// &.container,
-// &.container:first-child {
-//   margin: calc(var(--fbg-spacing) / -2);
-// }
-//
-// [class^='col-'] {
-//   padding: calc(var(--fbg-spacing) / 2);
-// }
-//}

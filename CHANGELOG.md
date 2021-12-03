@@ -6,6 +6,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
+* added multiple table background images - change via settings
 * added hotkey to toggle fullscreen (F11)
 
 ### Other changes

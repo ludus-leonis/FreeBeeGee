@@ -254,13 +254,31 @@ gulp.task('html', () => {
 })
 
 gulp.task('img', gulp.series(() => {
-  // step 1 - optimize changed images into cache
+  // step 1 - optimize backgrounds in high quality
+  const image = require('gulp-image')
+  const changed = require('gulp-changed')
+
+  return gulp.src([
+    'src/img/**/*.jpg'
+  ])
+    .pipe(changed(dirs.cache + '/img'))
+    .pipe(image({
+      optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+      pngquant: ['--speed=1', '--force', 256],
+      zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+      jpegRecompress: ['--strip', '--quality', 'veryhigh', '--min', 92, '--max', 96],
+      mozjpeg: ['-optimize', '-progressive'],
+      gifsicle: ['--optimize'],
+      svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+    }))
+    .pipe(gulp.dest(dirs.cache + '/img'))
+}, () => {
+  // step 2 - optimize other assets
   const image = require('gulp-image')
   const changed = require('gulp-changed')
 
   return gulp.src([
     'src/img/**/*.svg',
-    'src/img/**/*.jpg',
     'src/img/**/*.png'
   ])
     .pipe(changed(dirs.cache + '/img'))
@@ -268,14 +286,14 @@ gulp.task('img', gulp.series(() => {
       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
       pngquant: ['--speed=1', '--force', 256],
       zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-      jpegRecompress: ['--strip', '--quality', 'medium', '--min', 40, '--max', 80],
+      jpegRecompress: ['--strip', '--quality', 'medium', '--min', 80, '--max', 90],
       mozjpeg: ['-optimize', '-progressive'],
       gifsicle: ['--optimize'],
       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
     }))
     .pipe(gulp.dest(dirs.cache + '/img'))
 }, () => {
-  // step 2 - use cached images
+  // step 3 - use cached images
   return gulp.src([
     dirs.cache + '/img/**/*.svg',
     dirs.cache + '/img/**/*.jpg',

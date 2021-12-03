@@ -1084,6 +1084,29 @@ class FreeBeeGeeAPI
         $this->api->sendReply(200, json_encode($templates));
     }
 
+    /**
+     * Create a background object for rooms.
+     *
+     * @param string $name Name for UI.
+     * @param string $image Path to image file, e.g. 'img/desktop-stone.jpg'.
+     * @param string $colorAvg Hex fallback color, e.g. '#808080'.
+     * @param string $colorScroll Hex color for scrollbar, e.g. '#606060'.
+     * @param string $gridColor Checker overlay to use ('white' or 'black').
+     */
+    private function getBackground(
+        string $name,
+        string $image,
+        string $colorAvg,
+        string $colorScroll
+    ) {
+        $background = new \stdClass();
+        $background->name = $name;
+        $background->image = $image;
+        $background->color = $colorAvg;
+        $background->scroller = $colorScroll;
+        return $background;
+    }
+
     // --- room handling endpoints ---------------------------------------------
 
     /**
@@ -1149,10 +1172,44 @@ class FreeBeeGeeAPI
         $newRoom->id = $this->generateId();
         $newRoom->name = $validated->name;
         $newRoom->engine = $this->engine;
-        $newRoom->background = new \stdClass();
-        $newRoom->background->color = '#423e3d';
-        $newRoom->background->scroller = '#2b2929';
-        $newRoom->background->image = 'img/desktop-wood.jpg';
+
+        $newRoom->backgrounds = [];
+        $newRoom->backgrounds[] = $this->getBackground(
+            'Casino',
+            'img/desktop-casino.jpg',
+            '#2e5d3c',
+            '#1b3c25'
+        );
+        $newRoom->backgrounds[] = $this->getBackground(
+            'Concrete',
+            'img/desktop-concrete.jpg',
+            '#646260',
+            '#494540'
+        );
+        $newRoom->backgrounds[] = $this->getBackground(
+            'Marble',
+            'img/desktop-marble.jpg',
+            '#b4a999',
+            '#80725e'
+        );
+        $newRoom->backgrounds[] = $this->getBackground(
+            'Metal',
+            'img/desktop-metal.jpg',
+            '#515354',
+            '#3e3e3e'
+        );
+        $newRoom->backgrounds[] = $this->getBackground(
+            'Rock',
+            'img/desktop-rock.jpg',
+            '#5c5d5a',
+            '#393930'
+        );
+        $newRoom->backgrounds[] = $this->getBackground(
+            'Wood',
+            'img/desktop-wood.jpg',
+            '#57514d',
+            '#3e3935'
+        );
 
         $folder = $this->getRoomFolder($newRoom->name);
         if (!is_dir($folder)) {

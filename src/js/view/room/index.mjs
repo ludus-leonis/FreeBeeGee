@@ -73,6 +73,11 @@ import {
   changeQuality
 } from './modal/settings.mjs'
 
+import {
+  clamp,
+  brightness
+} from '../../lib/utils.mjs'
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -295,6 +300,37 @@ export function restoreScrollPosition () {
   }
 }
 
+/**
+ * Set backround to given index + store it as preference.
+ *
+ * @param {Number} bgIndex Index of background. Will be clamped to the available ones.
+ */
+export function setupBackground (bgIndex) {
+  const room = getRoom()
+
+  bgIndex = clamp(0, bgIndex, room.backgrounds.length)
+
+  const grid = brightness(room.backgrounds[bgIndex].color) < 92 ? 'checkers-white' : 'checkers-black'
+
+  // setup background / wallpaper
+  updateRoom().css({
+    backgroundColor: room.backgrounds[bgIndex].color,
+    backgroundImage: 'url("img/' + grid + '.png?v=$CACHE$"),url("' + room.backgrounds[bgIndex].image + '?v=$CACHE$")',
+    backgroundSize: room.template.gridSize + 'px,auto'
+  })
+
+  // setup scroller
+  const scroller = _('#scroller')
+  scroller.css({ // this is for moz://a
+    scrollbarColor: `${room.backgrounds[bgIndex].scroller} ${room.backgrounds[bgIndex].color}`
+  })
+  scroller.node().style.setProperty('--fbg-color-scroll-fg', room.backgrounds[bgIndex].scroller)
+  scroller.node().style.setProperty('--fbg-color-scroll-bg', room.backgrounds[bgIndex].color)
+
+  // store for future reference
+  setRoomPreference('background', bgIndex)
+}
+
 // --- internal ----------------------------------------------------------------
 
 let scroller = null /** keep reference to scroller div - we need it often */
@@ -403,22 +439,12 @@ function setupRoom () {
   _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
   _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
 
-  updateRoom().css({
-    backgroundColor: room.background.color,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + room.background.image + '?v=$CACHE$")',
-    backgroundSize: room.template.gridSize + 'px,1152px 768px'
-  })
+  setupBackground(getRoomPreference('background') ?? 0)
 
   _('body').on('contextmenu', e => e.preventDefault())
 
-  // setup scroller + keep reference for scroll-tracking
-  scroller = _('#scroller')
-  scroller.css({ // this is for moz://a
-    scrollbarColor: `${room.background.scroller} ${room.background.color}`
-  })
-  scroller = scroller.node()
-  scroller.style.setProperty('--fbg-color-scroll-fg', room.background.scroller)
-  scroller.style.setProperty('--fbg-color-scroll-bg', room.background.color)
+  // keep global reference for scroll-tracking
+  scroller = _('#scroller').node()
 
   enableDragAndDrop('#tabletop')
 

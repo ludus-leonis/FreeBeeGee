@@ -5,7 +5,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.12 - ???
 
 * [ ] table passwords
-* [ ] more table backgrounds
+* [X] more table backgrounds
 * [ ] use image masks for png backsides
 * [ ] right-click on table
   * [ ] add piece
