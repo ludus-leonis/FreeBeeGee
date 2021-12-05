@@ -19,6 +19,7 @@ This is a breaking release changing internal data structures. Old snapshots will
 * fixed library search sometimes missing / ok not working
 * improved readablity of piece numbers on bright borders
 * improved build speed by caching some files
+* changed drag'n'drop 'ghost' image to show snap positions
 
 ## v0.11.0 - Troubled Trout
 
