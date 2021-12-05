@@ -46,8 +46,7 @@ import {
 } from './tabletop/index.mjs'
 import {
   isDragging,
-  getMouseCoords,
-  getMouseTile
+  getMouseCoords
 } from './mouse.mjs'
 import {
   touch
@@ -120,10 +119,10 @@ function handleRoomKeys (keydown) {
         if (keydown.ctrlKey | keydown.altKey) setTableNo(9)
         break
       case 'l': // library / add piece
-        modalLibrary(getMouseTile())
+        modalLibrary(getMouseCoords())
         break
       case 'n': // library / add piece
-        createNote(getMouseTile())
+        createNote(getMouseCoords())
         break
       case 'b': // to-bottom
         toBottomSelected()
@@ -132,7 +131,7 @@ function handleRoomKeys (keydown) {
         toTopSelected()
         break
       case 'c': // copy/clone
-        cloneSelected(getMouseTile())
+        cloneSelected(getMouseCoords())
         break
       case 'e': // edit
       case 'F2':

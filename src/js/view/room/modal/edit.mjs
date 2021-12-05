@@ -33,6 +33,7 @@ import {
 } from '../../../view/modal.mjs'
 
 import {
+  TYPE_HEX,
   stickyNoteColors
 } from '../../../view/room/tabletop/tabledata.mjs'
 
@@ -107,7 +108,7 @@ export function modalEdit (piece) {
 
     // rotate
     const pieceR = _('#piece-r')
-    for (let r = 0; r <= 270; r += 90) {
+    for (let r = 0; r < 360; r += getTemplate().type === TYPE_HEX ? 60 : 90) {
       const option = _('option').create(r === 0 ? 'normal' : r + '°')
       option.value = r
       if (r === piece.r) option.selected = true
@@ -116,9 +117,9 @@ export function modalEdit (piece) {
 
     // side
     const pieceSide = _('#piece-side')
-    for (let s = 1; s <= piece._sides; s++) {
+    for (let s = 1; s <= piece._meta.sides; s++) {
       let label = s
-      if (s === piece._sides) label = 'back'
+      if (s === piece._meta.sides) label = 'back'
       if (s === 1) label = 'front'
       const option = _('option').create(label)
       option.value = s - 1

@@ -26,121 +26,88 @@
 $piece-color: $color-gray-95;
 $piece-tile-size: 64px;
 $piece-border-size: 3px;
-$piece-border-radius: 2px;
-$piece-margin-size: 4px;
-$piece-rotate: 1deg;
+$piece-margin: 3px;
+$piece-corner-radius: 2px;
+$piece-rotate: .5deg;
 
-$piece-shadow: 3px 2px 2px $color-black-65a;
-$piece-shadow-90: 2px -3px 2px $color-black-65a;
-$piece-shadow-180: -3px -2px 2px $color-black-65a;
-$piece-shadow-270: -2px 3px 2px $color-black-65a;
+$piece-rotations: 60 90 120 180 240 270 300;
+
+$piece-shadow-x: 3;
+$piece-shadow-y: 2;
+$piece-shadow-direction: math.atan(math.div($piece-shadow-x, $piece-shadow-y));
+$piece-shadow-length: math.sqrt($piece-shadow-x * $piece-shadow-x + $piece-shadow-y * $piece-shadow-y);
+
+@function piece-shadow($deg, $blur, $color) {
+  @return
+  math.sin($deg + $piece-shadow-direction) * $piece-shadow-length * 1px
+  math.cos($deg + $piece-shadow-direction) * $piece-shadow-length * 1px
+  $blur
+  $color;
+}
+
+$piece-shadow: piece-shadow(0, 2px, $color-black-65a);
+$piece-shadow-60: piece-shadow(60, 2px, $color-black-65a);
+$piece-shadow-90: piece-shadow(90, 2px, $color-black-65a);
+$piece-shadow-120: piece-shadow(120, 2px, $color-black-65a);
+$piece-shadow-180: piece-shadow(180, 2px, $color-black-65a);
+$piece-shadow-240: piece-shadow(240, 2px, $color-black-65a);
+$piece-shadow-270: piece-shadow(270, 2px, $color-black-65a);
+$piece-shadow-300: piece-shadow(300, 2px, $color-black-65a);
+
+$piece-shadow-flat: piece-shadow(0, 0, $color-black-35a);
+$piece-shadow-flat-60: piece-shadow(60, 0, $color-black-35a);
+$piece-shadow-flat-90: piece-shadow(90, 0, $color-black-35a);
+$piece-shadow-flat-120: piece-shadow(120, 0, $color-black-35a);
+$piece-shadow-flat-180: piece-shadow(180, 0, $color-black-35a);
+$piece-shadow-flat-240: piece-shadow(240, 0, $color-black-35a);
+$piece-shadow-flat-270: piece-shadow(270, 0, $color-black-35a);
+$piece-shadow-flat-300: piece-shadow(300, 0, $color-black-35a);
+$piece-shadow-flat-overlay: piece-shadow(0, 0, $color-black-35a);
 
 $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
-$piece-shadow-flat: 3px 2px 0 $color-black-35a;
-$piece-shadow-flat-90: 2px -3px 0 $color-black-35a;
-$piece-shadow-flat-180: -3px -2px 0 $color-black-35a;
-$piece-shadow-flat-270: -2px 3px 0 $color-black-35a;
-$piece-shadow-flat-overlay: 3px 2px 0 $color-black-35a;
+// --- 'random' piece attributes -----------------------------------------------
 
-@mixin piece-rotate($r, $amount) {
-  &[id^='0'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 0); }
-  &[id^='1'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 1); }
-  &[id^='2'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 2); }
-  &[id^='3'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 3); }
-  &[id^='4'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 4); }
-  &[id^='5'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 5); }
-  &[id^='6'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 6); }
-  &[id^='7'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 7); }
-  &[id^='8'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 8); }
-  &[id^='9'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 9); }
-  &[id^='a'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 10); }
-  &[id^='b'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 11); }
-  &[id^='c'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 12); }
-  &[id^='d'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 13); }
-  &[id^='e'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 14); }
-  &[id^='f'] { transform: rotate($r + math.div($amount, 2) - math.div($amount, 16) * 15); }
+$piece-ids: '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f';
+$piece-jitter-a: (-1) (-.866) (-.733) (-.6) (-.466) (-.333) (-.2) (-.066) .066 .2 .333 .466 .6 .733 .866 1;
+$piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .1;
+
+@mixin piece-rotate($r, $amount) { // random rotation of pieces
+  @each $id in $piece-ids {
+    $i: index($piece-ids, $id);
+    $jitter: nth($piece-jitter-a, $i);
+    &[id^='#{$id}'] { transform: rotate($r + $amount * $jitter); }
+  }
 }
 
-@mixin piece-translate($amount) {
-  &[id^='0'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 0), round(math.div($amount, 2) - math.div($amount, 16) * 0)); }
-  &[id^='1'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 1), round(math.div($amount, 2) - math.div($amount, 16) * 8)); }
-  &[id^='2'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 2), round(math.div($amount, 2) - math.div($amount, 16) * 7)); }
-  &[id^='3'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 3), round(math.div($amount, 2) - math.div($amount, 16) * 6)); }
-  &[id^='4'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 4), round(math.div($amount, 2) - math.div($amount, 16) * 5)); }
-  &[id^='5'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 5), round(math.div($amount, 2) - math.div($amount, 16) * 4)); }
-  &[id^='6'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 6), round(math.div($amount, 2) - math.div($amount, 16) * 3)); }
-  &[id^='7'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 7), round(math.div($amount, 2) - math.div($amount, 16) * 2)); }
-  &[id^='8'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 8), round(math.div($amount, 2) - math.div($amount, 16) * 1)); }
-  &[id^='9'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 9), round(math.div($amount, 2) - math.div($amount, 16) * 15)); }
-  &[id^='a'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 10), round(math.div($amount, 2) - math.div($amount, 16) * 14)); }
-  &[id^='b'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 11), round(math.div($amount, 2) - math.div($amount, 16) * 13)); }
-  &[id^='c'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 12), round(math.div($amount, 2) - math.div($amount, 16) * 12)); }
-  &[id^='d'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 13), round(math.div($amount, 2) - math.div($amount, 16) * 11)); }
-  &[id^='e'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 14), round(math.div($amount, 2) - math.div($amount, 16) * 10)); }
-  &[id^='f'] { transform: translate(round(math.div($amount, 2) - math.div($amount, 16) * 15), round(math.div($amount, 2) - math.div($amount, 16) * 9)); }
+@mixin piece-jitter($amount) { // random translation of pieces
+  @each $id in $piece-ids {
+    $i: index($piece-ids, $id);
+    $jitter: nth($piece-jitter-a, $i);
+    $jitterb: nth($piece-jitter-b, $i);
 
-  &.is-rotate-90 {
-    &[id^='0'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 0), round(math.div($amount, 2) - math.div($amount, 16) * 0) * -1); }
-    &[id^='1'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 8), round(math.div($amount, 2) - math.div($amount, 16) * 1) * -1); }
-    &[id^='2'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 7), round(math.div($amount, 2) - math.div($amount, 16) * 2) * -1); }
-    &[id^='3'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 6), round(math.div($amount, 2) - math.div($amount, 16) * 3) * -1); }
-    &[id^='4'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 5), round(math.div($amount, 2) - math.div($amount, 16) * 4) * -1); }
-    &[id^='5'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 4), round(math.div($amount, 2) - math.div($amount, 16) * 5) * -1); }
-    &[id^='6'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 3), round(math.div($amount, 2) - math.div($amount, 16) * 6) * -1); }
-    &[id^='7'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 2), round(math.div($amount, 2) - math.div($amount, 16) * 7) * -1); }
-    &[id^='8'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 1), round(math.div($amount, 2) - math.div($amount, 16) * 8) * -1); }
-    &[id^='9'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 15), round(math.div($amount, 2) - math.div($amount, 16) * 9) * -1); }
-    &[id^='a'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 14), round(math.div($amount, 2) - math.div($amount, 16) * 10) * -1); }
-    &[id^='b'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 13), round(math.div($amount, 2) - math.div($amount, 16) * 11) * -1); }
-    &[id^='c'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 12), round(math.div($amount, 2) - math.div($amount, 16) * 12) * -1); }
-    &[id^='d'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 11), round(math.div($amount, 2) - math.div($amount, 16) * 13) * -1); }
-    &[id^='e'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 10), round(math.div($amount, 2) - math.div($amount, 16) * 14) * -1); }
-    &[id^='f'] { transform: rotate(90deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 9), round(math.div($amount, 2) - math.div($amount, 16) * 15) * -1); }
-  }
+    &[id^='#{$id}'] {
+      // transform: rotate($r + $amount * $jitter);
+      transform: translate(
+        math.sin(180deg * $jitter) * $amount * $jitterb,
+          math.cos(180deg * $jitter) * $amount * $jitterb
+      );
 
-  &.is-rotate-180 {
-    &[id^='0'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 0) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 0) * -1); }
-    &[id^='1'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 1) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 8) * -1); }
-    &[id^='2'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 2) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 7) * -1); }
-    &[id^='3'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 3) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 6) * -1); }
-    &[id^='4'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 4) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 5) * -1); }
-    &[id^='5'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 5) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 4) * -1); }
-    &[id^='6'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 6) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 3) * -1); }
-    &[id^='7'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 7) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 2) * -1); }
-    &[id^='8'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 8) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 1) * -1); }
-    &[id^='9'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 9) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 15) * -1); }
-    &[id^='a'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 10) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 14) * -1); }
-    &[id^='b'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 11) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 13) * -1); }
-    &[id^='c'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 12) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 12) * -1); }
-    &[id^='d'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 13) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 11) * -1); }
-    &[id^='e'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 14) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 10) * -1); }
-    &[id^='f'] { transform: rotate(180deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 15) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 9) * -1); }
-  }
-
-  &.is-rotate-270 {
-    &[id^='0'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 0) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 0)); }
-    &[id^='1'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 8) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 1)); }
-    &[id^='2'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 7) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 2)); }
-    &[id^='3'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 6) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 3)); }
-    &[id^='4'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 5) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 4)); }
-    &[id^='5'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 4) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 5)); }
-    &[id^='6'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 3) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 6)); }
-    &[id^='7'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 2) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 7)); }
-    &[id^='8'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 1) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 8)); }
-    &[id^='9'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 15) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 9)); }
-    &[id^='a'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 14) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 10)); }
-    &[id^='b'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 13) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 11)); }
-    &[id^='c'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 12) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 12)); }
-    &[id^='d'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 11) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 13)); }
-    &[id^='e'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 10) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 14)); }
-    &[id^='f'] { transform: rotate(270deg) translate(round(math.div($amount, 2) - math.div($amount, 16) * 9) * -1, round(math.div($amount, 2) - math.div($amount, 16) * 15)); }
+      @each $r in $piece-rotations {
+        &.is-rotate-#{$r} {
+          transform: rotate($r * 1deg) translate(
+            math.sin($r * 1deg + 180deg * $jitter) * $amount * $jitterb,
+              math.cos($r * 1deg + 180deg * $jitter) * $amount * $jitterb
+          );
+        }
+      }
+    }
   }
 }
 
 // --- piece basics (size, ...) ------------------------------------------------
 
-$label-offset: 8px;
+// $label-offset: 8px;
 
 @keyframes whirl {
   from {
@@ -155,7 +122,7 @@ $label-offset: 8px;
 .piece {
   #{'--fbg-layer-image'}: none;
 
-  align-items: flex-end;
+  align-items: center; // mainly for labels
   background-color: transparent;
   background-position: center;
   background-repeat: no-repeat;
@@ -193,16 +160,12 @@ $label-offset: 8px;
   @for $x from 1 through 32 {
     &.is-w-#{$x} {
       width: $x * $piece-tile-size;
-      &.is-rotate-270 { transform-origin: $piece-tile-half * $x $piece-tile-half * $x; }
-      &.piece-token.is-rotate-270 { transform-origin: $piece-tile-half * $x - $piece-border-size $piece-tile-half * $x - $piece-border-size; }
     }
   }
 
   @for $y from 1 through 32 {
     &.is-h-#{$y} {
       height: $y * $piece-tile-size;
-      &.is-rotate-90 { transform-origin: $piece-tile-half * $y $piece-tile-half * $y; }
-      &.piece-token.is-rotate-90 { transform-origin: $piece-tile-half * $y - $piece-border-size $piece-tile-half * $y - $piece-border-size; }
     }
   }
 
@@ -217,7 +180,6 @@ $label-offset: 8px;
     padding: .125em .5em;
     pointer-events: none;
     position: relative;
-    top: $label-offset;
     white-space: nowrap;
 
     .icon {
@@ -266,40 +228,13 @@ $label-offset: 8px;
 
   // --- rotation --------------------------------------------------------------
 
-  &.is-rotate-90 {
-    align-items: center;
-    justify-content: flex-end;
-    transform: rotate(90deg);
+  @each $r in $piece-rotations {
+    &.is-rotate-#{$r} {
+      transform: rotate($r * 1deg);
 
-    .label {
-      left: $label-offset;
-      top: 0;
-      transform: translateY(-50%) rotate(-90deg) translateX(50%);
-      transform-origin: 100% 100%;
-    }
-  }
-
-  &.is-rotate-180 {
-    align-items: flex-start;
-    justify-content: center;
-    transform: rotate(180deg);
-
-    .label {
-      top: -$label-offset;
-      transform: rotate(180deg);
-    }
-  }
-
-  &.is-rotate-270 {
-    align-items: center;
-    justify-content: flex-start;
-    transform: rotate(270deg);
-
-    .label {
-      right: $label-offset;
-      top: 0;
-      transform: translateY(-50%) rotate(90deg) translateX(-50%);
-      transform-origin: 0 100%;
+      .label {
+        transform: rotate($r * -1deg);
+      }
     }
   }
 
@@ -319,19 +254,44 @@ $label-offset: 8px;
   }
 }
 
-@mixin shadows($rotate0, $rotate90, $rotate180, $rotate270) {
+@mixin shadows(
+  $rotate0,
+  $rotate60: $rotate0,
+  $rotate90: $rotate0,
+  $rotate120: $rotate0,
+  $rotate180: $rotate0,
+  $rotate240: $rotate0,
+  $rotate270: $rotate0,
+  $rotate300: $rotate0
+) {
   filter: drop-shadow($rotate0);
+
+  &.is-rotate-60 {
+    filter: drop-shadow($rotate60);
+  }
 
   &.is-rotate-90 {
     filter: drop-shadow($rotate90);
+  }
+
+  &.is-rotate-120 {
+    filter: drop-shadow($rotate120);
   }
 
   &.is-rotate-180 {
     filter: drop-shadow($rotate180);
   }
 
+  &.is-rotate-240 {
+    filter: drop-shadow($rotate240);
+  }
+
   &.is-rotate-270 {
     filter: drop-shadow($rotate270);
+  }
+
+  &.is-rotate-300 {
+    filter: drop-shadow($rotate300);
   }
 }
 
@@ -343,13 +303,31 @@ $label-offset: 8px;
   // --- quality settings ---
 
   .is-quality-medium & {
-    @include shadows($piece-shadow-flat, $piece-shadow-flat-90, $piece-shadow-flat-180, $piece-shadow-flat-270);
+    @include shadows(
+      $piece-shadow-flat,
+      $piece-shadow-flat-60,
+      $piece-shadow-flat-90,
+      $piece-shadow-flat-120,
+      $piece-shadow-flat-180,
+      $piece-shadow-flat-240,
+      $piece-shadow-flat-270,
+      $piece-shadow-flat-300
+    );
   }
 
   .is-quality-high &,
   .is-quality-ultra & {
-    @include shadows($piece-shadow, $piece-shadow-90, $piece-shadow-180, $piece-shadow-270);
-    border-radius: $piece-border-radius;
+    @include shadows(
+      $piece-shadow,
+      $piece-shadow-60,
+      $piece-shadow-90,
+      $piece-shadow-120,
+      $piece-shadow-180,
+      $piece-shadow-240,
+      $piece-shadow-270,
+      $piece-shadow-300
+    );
+    border-radius: $piece-corner-radius;
   }
 
   .is-quality-ultra & {
@@ -359,27 +337,13 @@ $label-offset: 8px;
       &.is-y-#{$x} { transform: none; }
     }
 
-    &.is-rotate-90 {
-      @include piece-rotate(90deg, $piece-rotate);
-      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
-        &.is-w-#{$x} { transform: rotate(90deg); }
-        &.is-y-#{$x} { transform: rotate(90deg); }
-      }
-    }
-
-    &.is-rotate-180 {
-      @include piece-rotate(180deg, $piece-rotate);
-      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
-        &.is-w-#{$x} { transform: rotate(180deg); }
-        &.is-y-#{$x} { transform: rotate(180deg); }
-      }
-    }
-
-    &.is-rotate-270 {
-      @include piece-rotate(270deg, $piece-rotate);
-      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
-        &.is-w-#{$x} { transform: rotate(270deg); }
-        &.is-y-#{$x} { transform: rotate(270deg); }
+    @each $r in $piece-rotations {
+      &.is-rotate-#{$r} {
+        @include piece-rotate($r * 1deg, $piece-rotate);
+        @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+          &.is-w-#{$x} { transform: rotate($r * 1deg); }
+          &.is-y-#{$x} { transform: rotate($r * 1deg); }
+        }
       }
     }
   }
@@ -394,7 +358,7 @@ $label-offset: 8px;
   background-color: var(--fbg-piece-color); // tile background
   border: $piece-border-size solid var(--fbg-piece-color);
   border-radius: $piece-tile-size;
-  margin: $piece-border-size;
+  margin: $piece-margin;
 
   $is-n-size: 1rem;
 
@@ -404,6 +368,18 @@ $label-offset: 8px;
     &.is-n::after {
       background-color: $color-gray-95;
       color: $color-wb-fg;
+    }
+  }
+
+  // different labels for square tokens
+  @for $v from 1 through 32 {
+    &.is-w-#{$v}.is-h-#{$v} {
+      align-items: flex-start; // mainly for labels
+
+      .label {
+        top: $piece-tile-size * $v - $piece-border-size * 2 - $piece-margin * 2;
+        transform-origin: center math.div($piece-tile-size * $v - $piece-border-size * 2 - $piece-margin * 2 - 1, -2);
+      }
     }
   }
 
@@ -420,33 +396,9 @@ $label-offset: 8px;
     justify-content: center;
     margin-top: math.div($is-n-size, -2);
     position: absolute;
-    right: -$piece-border-size;
+    right: $piece-border-size * -1 + .75px;
     top: 50%;
     width: $is-n-size;
-  }
-
-  &.is-n.is-rotate-90::after {
-    left: 50%;
-    margin-left: math.div($is-n-size, -2);
-    margin-top: 0;
-    right: initial;
-    top: -$piece-border-size;
-    transform: rotate(-90deg);
-  }
-
-  &.is-n.is-rotate-180::after {
-    left: -$piece-border-size;
-    right: initial;
-    transform: rotate(-180deg);
-  }
-
-  &.is-n.is-rotate-270::after {
-    left: 50%;
-    margin-left: math.div($is-n-size, -2);
-    margin-top: 0;
-    right: initial;
-    top: calc(100% - #{$is-n-size} + #{$piece-border-size});
-    transform: rotate(-270deg);
   }
 
   &.is-n-1::after { content: '1'; }
@@ -465,25 +417,45 @@ $label-offset: 8px;
   &.is-n-14::after { content: 'E'; }
   &.is-n-15::after { content: 'F'; }
 
-  @include piece-translate(4px);
+  @include piece-jitter(4px);
 
   @for $x from 1 through 32 {
     &.is-w-#{$x} { width: $x * $piece-tile-size - $piece-border-size * 2; }
   }
 
   @for $y from 1 through 32 {
-    &.is-h-#{$y} { height: $y * $piece-tile-size - $piece-border-size * 2; }
+    &.is-h-#{$y} {
+      height: $y * $piece-tile-size - $piece-border-size * 2;
+    }
   }
 
   // --- quality settings ---
 
   .is-quality-medium & {
-    @include shadows($piece-shadow-flat, $piece-shadow-flat-90, $piece-shadow-flat-180, $piece-shadow-flat-270);
+    @include shadows(
+      $piece-shadow-flat,
+      $piece-shadow-flat-60,
+      $piece-shadow-flat-90,
+      $piece-shadow-flat-120,
+      $piece-shadow-flat-180,
+      $piece-shadow-flat-240,
+      $piece-shadow-flat-270,
+      $piece-shadow-flat-300
+    );
   }
 
   .is-quality-high &,
   .is-quality-ultra & {
-    @include shadows($piece-shadow, $piece-shadow-90, $piece-shadow-180, $piece-shadow-270);
+    @include shadows(
+      $piece-shadow,
+      $piece-shadow-60,
+      $piece-shadow-90,
+      $piece-shadow-120,
+      $piece-shadow-180,
+      $piece-shadow-240,
+      $piece-shadow-270,
+      $piece-shadow-300
+    );
   }
 }
 
@@ -498,36 +470,24 @@ $label-offset: 8px;
   transform: none;
   &::after { transform: rotate(0deg); }
 
-  // --- can't rotate other pieces ---
+  // --- can't rotate 'other' pieces ---
 
-  &.is-rotate-90,
-  &.is-rotate-180,
-  &.is-rotate-270 {
-    align-items: flex-end;
-    justify-content: center;
-    transform: none;
-
-    &::after,
-    .label {
+  @each $r in $piece-rotations {
+    &.is-rotate-#{$r} {
       transform: none;
-    }
-
-    .label {
-      left: initial;
-      right: initial;
-      top: $label-offset;
+      &::after { transform: rotate(0deg); }
     }
   }
 
   // --- quality settings ---
 
   .is-quality-medium & {
-    @include shadows($piece-shadow-flat, $piece-shadow-flat, $piece-shadow-flat, $piece-shadow-flat);
+    @include shadows($piece-shadow-flat);
   }
 
   .is-quality-high &,
   .is-quality-ultra & {
-    @include shadows($piece-shadow-other, $piece-shadow-other, $piece-shadow-other, $piece-shadow-other);
+    @include shadows($piece-shadow-other);
   }
 
   .is-quality-ultra & {
@@ -537,27 +497,13 @@ $label-offset: 8px;
       &.is-y-#{$x} { transform: none; }
     }
 
-    &.is-rotate-90 {
-      @include piece-rotate(0deg, $piece-rotate * 4);
-      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
-        &.is-w-#{$x} { transform: rotate(90deg); }
-        &.is-y-#{$x} { transform: rotate(90deg); }
-      }
-    }
-
-    &.is-rotate-180 {
-      @include piece-rotate(0deg, $piece-rotate * 4);
-      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
-        &.is-w-#{$x} { transform: rotate(180deg); }
-        &.is-y-#{$x} { transform: rotate(180deg); }
-      }
-    }
-
-    &.is-rotate-270 {
-      @include piece-rotate(0deg, $piece-rotate * 4);
-      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
-        &.is-w-#{$x} { transform: rotate(270deg); }
-        &.is-y-#{$x} { transform: rotate(270deg); }
+    @each $r in $piece-rotations {
+      &.is-rotate-#{$r} {
+        @include piece-rotate($r * 1deg, $piece-rotate * 4);
+        @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+          &.is-w-#{$x} { transform: rotate($r * 1deg); }
+          &.is-y-#{$x} { transform: rotate($r * 1deg); }
+        }
       }
     }
   }
@@ -576,31 +522,31 @@ $label-offset: 8px;
   &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary; }
 
   &.is-max-1 {
-    background-image: url('img/checkers-black.png');
+    background-image: url('img/grid-square-black.svg');
     background-position: center;
     background-size: 64px;
   }
 
   &.is-max-2 {
-    background-image: url('img/checkers-black.png');
+    background-image: url('img/grid-square-black.svg');
     background-position: top left;
     background-size: 64px;
   }
 
   &.is-max-3 {
-    background-image: url('img/checkers-black.png');
+    background-image: url('img/grid-square-black.svg');
     background-position: center;
     background-size: 48px;
   }
 
   &.is-max-4 {
-    background-image: url('img/checkers-black.png');
+    background-image: url('img/grid-square-black.svg');
     background-position: top left;
     background-size: 32px;
   }
 
   &.is-max-5 {
-    background-image: url('img/checkers-black.png');
+    background-image: url('img/grid-square-black.svg');
     background-position: center;
     background-size: 25px;
   }

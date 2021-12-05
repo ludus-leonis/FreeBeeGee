@@ -34,6 +34,7 @@ import {
 } from '../../../view/modal.mjs'
 import {
   getLibrary,
+  getTemplate,
   createPieces,
   getRoomPreference,
   setRoomPreference,
@@ -44,7 +45,8 @@ import {
 import {
   createPieceFromAsset,
   populatePieceDefaults,
-  splitAssetFilename
+  splitAssetFilename,
+  snap
 } from '../tabletop/tabledata.mjs'
 import {
   pieceToNode
@@ -57,10 +59,10 @@ import {
  *
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
-export function modalLibrary (tile) {
+export function modalLibrary (xy) {
   if (!modalActive()) {
     const node = createModal(true)
-    node.tile = tile
+    node.xy = xy
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Library</h3>
@@ -498,9 +500,10 @@ function unprettyName (assetName = '') {
 function modalOk () {
   const modal = document.getElementById('modal')
   const pieces = []
+  const snapped = snap(modal.xy.x, modal.xy.y, getTemplate().snapSize)
   let offsetZ = 0
   _('#tabs-library .is-selected .piece').each(item => {
-    const piece = createPieceFromAsset(item.dataset.asset, modal.tile.x, modal.tile.y)
+    const piece = createPieceFromAsset(item.dataset.asset, snapped.x, snapped.y)
 
     piece.z = piece.z + offsetZ
     pieces.push(piece)

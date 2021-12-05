@@ -107,8 +107,6 @@ export function getRoom () {
 /**
  * Get the current table's template (cached).
  *
- * Until we support multiple rooms, this is always the template of room 0.
- *
  * @return {Object} Current room's template metadata.
  */
 export function getTemplate () {
@@ -268,16 +266,10 @@ export function movePiece (pieceId, x = null, y = null, z = null) {
  * data model.
  *
  * @param {String} pieceId ID of piece to change.
- * @param {Number} r New rotation (0, 90, 180, 270).
- * @param {Number} x New x/rotation point.
- * @param {Number} y New y/rotation point.
+ * @param {Number} r New rotation (0, 60, 90, 120, 180, 260, 270).
  */
-export function rotatePiece (pieceId, r, x, y) {
-  patchPiece(pieceId, {
-    r: r,
-    x: x,
-    y: y
-  })
+export function rotatePiece (pieceId, r) {
+  patchPiece(pieceId, { r })
 }
 
 /**
@@ -287,12 +279,10 @@ export function rotatePiece (pieceId, r, x, y) {
  * data model.
  *
  * @param {String} pieceId ID of piece to change.
- * @param {Number} no New number (0..27).
+ * @param {Number} n New number (0..27).
  */
-export function numberPiece (pieceId, no) {
-  patchPiece(pieceId, {
-    n: no
-  })
+export function numberPiece (pieceId, n) {
+  patchPiece(pieceId, { n })
 }
 
 /**
@@ -305,9 +295,7 @@ export function numberPiece (pieceId, no) {
  * @param {Number} side New side. Zero-based.
  */
 export function flipPiece (pieceId, side) {
-  patchPiece(pieceId, {
-    side: side
-  })
+  patchPiece(pieceId, { side })
 }
 
 /**
@@ -320,9 +308,7 @@ export function flipPiece (pieceId, side) {
  * @param {Number} color New color index. Zero-based.
  */
 export function colorPiece (pieceId, color) {
-  patchPiece(pieceId, {
-    color: color
-  })
+  patchPiece(pieceId, { color })
 }
 
 /**
@@ -503,6 +489,14 @@ export function _setTable (no, data) {
  * Only exposed for unit testing.
  */
 export function _setRoom (data) {
+  // add often used meta-infos
+  if (data?.template) {
+    data.template._meta = {
+      widthPx: data.template.gridWidth * data.template.gridSize,
+      heightPx: data.template.gridHeight * data.template.gridSize
+    }
+  }
+
   room = data
 }
 

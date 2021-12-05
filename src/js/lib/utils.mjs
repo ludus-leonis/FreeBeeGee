@@ -115,6 +115,100 @@ export function clamp (min, value, max) {
 }
 
 /**
+ * Snap a coordinate to the closest snap position / grid.
+ *
+ * @param {Number} x X-coordinate to snap.
+ * @param {Number} y Y-coordiante to snap.
+ * @param {Number} snap Grid size, originates in 0/0.
+ * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ */
+export function snapGrid (x, y, snap) {
+  return {
+    x: Math.floor((x + Math.floor(snap / 2)) / snap) * snap,
+    y: Math.floor((y + Math.floor(snap / 2)) / snap) * snap
+  }
+}
+
+/**
+ * Snap a coordinate to the closest hex position / grid.
+ *
+ * @param {Number} x X-coordinate to snap.
+ * @param {Number} y Y-coordiante to snap.
+ * @param {Number} snap Grid size, originates in 0/0.
+ * @param {Number} lod Optional level of detail (1 = hex centers, 2 = also hex
+ *                     corners, 3 = also side centers). Defaults to 1.
+ * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ */
+export function snapHex (x, y, snap, lod = 1) {
+  const hexTileX = snap * 1.71875 // 110x64
+  const hexTileY = snap
+  const hexSide = 37
+  const modX = (x % hexTileX + hexTileX) % hexTileX
+  const modY = (y % hexTileY + hexTileX) % hexTileX
+  const tileX = Math.floor(x / hexTileX)
+  const tileY = Math.floor(y / hexTileY)
+
+  const points = []
+
+  // add potential snap points
+  if (lod >= 1) { // hex centers
+    if (modX < hexTileX / 2) {
+      points.push({ x: 0, y: 0 })
+      points.push({ x: 0, y: hexTileY })
+      points.push({ x: hexTileX / 2, y: hexTileY / 2 })
+    } else {
+      points.push({ x: hexTileX / 2, y: hexTileY / 2 })
+      points.push({ x: hexTileX, y: 0 })
+      points.push({ x: hexTileX, y: hexTileY })
+    }
+  }
+  if (lod >= 2) { // hex corners
+    if (modX < hexTileX / 2) {
+      points.push({ x: hexSide, y: 0 })
+      points.push({ x: hexSide / 2, y: hexTileY / 2 })
+      points.push({ x: hexSide, y: hexTileY })
+    } else {
+      points.push({ x: hexTileX - hexSide, y: 0 })
+      points.push({ x: hexTileX - hexSide / 2, y: hexTileY / 2 })
+      points.push({ x: hexTileX - hexSide, y: hexTileY })
+    }
+  }
+  if (lod >= 3) { // side centers
+    if (modX < hexTileX / 2) {
+      points.push({ x: hexTileX / 2, y: 0 })
+      points.push({ x: hexSide * 3 / 4, y: hexTileY / 4 })
+      points.push({ x: 0, y: hexTileY / 2 })
+      points.push({ x: hexSide * 3 / 4, y: hexTileY * 3 / 4 })
+      points.push({ x: hexTileX / 2, y: hexTileY })
+    } else {
+      points.push({ x: hexTileX / 2, y: 0 })
+      points.push({ x: hexTileX - hexSide * 3 / 4, y: hexTileY / 4 })
+      points.push({ x: hexTileX, y: hexTileY / 2 })
+      points.push({ x: hexTileX - hexSide * 3 / 4, y: hexTileY * 3 / 4 })
+      points.push({ x: hexTileX / 2, y: hexTileY })
+    }
+  }
+
+  // pick closest
+  let distance = 999999999.0
+  let snapX = 0
+  let snapY = 0
+  for (const point of points) {
+    const d = Math.sqrt((point.x - modX) ** 2 + (point.y - modY) ** 2)
+    if (d < distance) {
+      distance = d
+      snapX = point.x
+      snapY = point.y
+    }
+  }
+
+  return {
+    x: Math.round(tileX * hexTileX + snapX),
+    y: Math.round(tileY * hexTileY + snapY)
+  }
+}
+
+/**
  * Shuffle an array using Durstenfeld shuffle.
  *
  * @param {Array} array Array to shuffle. Will be modified!
@@ -138,6 +232,45 @@ export function intersect (rect1, rect2) {
     rect2.left <= rect1.right &&
     rect1.top <= rect2.bottom &&
     rect2.top <= rect1.bottom)
+}
+
+/**
+ * Calculate the width and height of the bounding box of a rotated rectangle.
+ *
+ * @param {Number} w Width of original rectangle.
+ * @param {Number} h Height of original rectangle.
+ * @param {Number} r Angle to rotate to.
+ * @param {Object} '{ w: ..., h: ...}' of transformed rectangle.
+ */
+export function getDimensionsRotated (w, h, r) {
+  // basic rotations don't need long transformation
+  switch (r) {
+    case 0:
+    case 180:
+      return { w, h }
+    case 90:
+    case 270:
+      return { h: w, w: h }
+    default:
+  }
+
+  // transform all other rotations
+  const x0 = w / 2 // origin-x
+  const y0 = h / 2 // origin-y
+  const rs = Math.sin(r * (Math.PI / 180))
+  const rc = Math.cos(r * (Math.PI / 180))
+  const x1 = x0 + (0 - x0) * rc + (0 - y0) * rs
+  const y1 = y0 - (0 - x0) * rs + (0 - y0) * rc
+  const x2 = x0 + (0 - x0) * rc + (h - y0) * rs
+  const y2 = y0 - (0 - x0) * rs + (h - y0) * rc
+  const x3 = x0 + (w - x0) * rc + (0 - y0) * rs
+  const y3 = y0 - (w - x0) * rs + (0 - y0) * rc
+  const x4 = x0 + (w - x0) * rc + (h - y0) * rs
+  const y4 = y0 - (w - x0) * rs + (h - y0) * rc
+  return { // compensate for rounding errors but ensure upper bounds
+    w: Math.ceil(Math.max(x1, x2, x3, x4) - Math.min(x1, x2, x3, x4) - 0.001),
+    h: Math.ceil(Math.max(y1, y2, y3, y4) - Math.min(y1, y2, y3, y4) - 0.001)
+  }
 }
 
 // --- string & text -----------------------------------------------------------

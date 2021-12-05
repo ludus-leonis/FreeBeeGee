@@ -23,7 +23,7 @@ import {
   _setTable,
   _setRoom,
   setTableNo
-} from '../src/js/state/index.mjs'
+} from '../../src/js/state/index.mjs'
 import {
   findPiece,
   findAsset,
@@ -39,7 +39,7 @@ import {
   clampToTableSize,
   createPieceFromAsset,
   splitAssetFilename
-} from '../src/js/view/room/tabletop/tabledata.mjs'
+} from '../../src/js/view/room/tabletop/tabledata.mjs'
 
 const TEST_STATE = 5
 
@@ -165,7 +165,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(a0.z).to.be.eq(0)
     expect(a0.w).to.be.eq(1)
     expect(a0.h).to.be.eq(1)
-    expect(a0._sides).to.be.eq(1)
+    expect(a0._meta.sides).to.be.eq(1)
     expect(a0.bg).to.be.eq('40bfbf')
     expect(a0.side).to.be.eq(0)
     expect(a0.color).to.be.eq(0)
@@ -182,7 +182,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(a1.z).to.be.eq(0)
     expect(a1.w).to.be.eq(1)
     expect(a1.h).to.be.eq(1)
-    expect(a1._sides).to.be.eq(1)
+    expect(a1._meta.sides).to.be.eq(1)
     expect(a1.bg).to.be.eq('40bfbf')
     expect(a1.side).to.be.eq(0)
     expect(a1.color).to.be.eq(0)
@@ -199,7 +199,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(a2.z).to.be.eq(0)
     expect(a2.w).to.be.eq(3)
     expect(a2.h).to.be.eq(2)
-    expect(a2._sides).to.be.eq(2)
+    expect(a2._meta.sides).to.be.eq(2)
     expect(a2.bg).to.be.eq('transparent')
     expect(a2.side).to.be.eq(0)
     expect(a2.color).to.be.eq(0)
@@ -217,7 +217,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p1.r).to.be.eq(0)
     expect(p1.n).to.be.eq(0)
     expect(p1.label).to.be.eq('')
-    expect(p1._feature).to.be.eq(undefined)
+    expect(p1._meta.feature).to.be.eq(undefined)
 
     const p2 = populatePieceDefaults(JSON.parse(pieceJSON))
     expect(p2.w).to.be.eq(1)
@@ -227,13 +227,13 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p2.r).to.be.eq(0)
     expect(p2.n).to.be.eq(0)
     expect(p2.label).to.be.eq('')
-    expect(p2._feature).to.be.eq(undefined)
+    expect(p2._meta.feature).to.be.eq(undefined)
 
     const p3 = populatePieceDefaults({ asset: 'dd07ac49818bc000' })
-    expect(p3._feature).to.be.eq('DISCARD')
+    expect(p3._meta.feature).to.be.eq('DISCARD')
 
     const p4 = populatePieceDefaults({ asset: 'bb07ac49818bc000' })
-    expect(p4._feature).to.be.eq('DICEMAT')
+    expect(p4._meta.feature).to.be.eq('DICEMAT')
   })
 
   it('populatePiecesDefaults()', function () {
@@ -246,7 +246,7 @@ describe('Frontend - tabledata.mjs', function () {
       expect(p[i].r).to.be.eq(0)
       expect(p[i].n).to.be.eq(0)
       expect(p[i].label).to.be.eq('')
-      expect(p[i]._feature).to.be.eq(undefined)
+      expect(p[i]._meta.feature).to.be.eq(undefined)
     }
   })
 
@@ -425,8 +425,8 @@ describe('Frontend - tabledata.mjs', function () {
     expect(piece.r).to.be.eq(0)
     expect(piece.n).to.be.eq(0)
     expect(piece.label).to.be.eq('')
-    expect(piece._sides).to.be.eq(2)
-    expect(piece._feature).to.be.eq('DICEMAT')
+    expect(piece._meta.sides).to.be.eq(2)
+    expect(piece._meta.feature).to.be.eq('DICEMAT')
   })
 
   it('splitAssetFilename()', function () {

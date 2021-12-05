@@ -34,6 +34,7 @@ class FreeBeeGeeAPI
     private $minRoomGridSize = 16;
     private $maxRoomGridSize = 256;
     private $maxAssetSize = 1024 * 1024;
+    private $types = ['grid-square', 'grid-hex'];
     private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'tag'];
     private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
@@ -411,7 +412,7 @@ class FreeBeeGeeAPI
                 case 'engine':
                     break; // was checked above
                 case 'type':
-                    $this->api->assertString('type', $value, 'grid-square');
+                    $this->api->assertEnum('type', $value, $this->types);
                     break;
                 case 'snapSize':
                     $this->api->assertInteger('snapSize', $value, 1, 64);
@@ -888,7 +889,7 @@ class FreeBeeGeeAPI
                     $validated->n = $this->api->assertInteger('n', $value, 0, 15);
                     break;
                 case 'r':
-                    $validated->r = $this->api->assertEnum('r', $value, [0, 90, 180, 270]);
+                    $validated->r = $this->api->assertEnum('r', $value, [0, 60, 90, 120, 180, 240, 270, 300]);
                     break;
                 case 'label':
                     if (property_exists($piece, 'layer') && $piece->layer !== 'note') {

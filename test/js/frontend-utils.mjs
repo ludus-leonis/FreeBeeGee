@@ -21,14 +21,17 @@
 import { expect } from 'chai'
 import {
   clamp,
+  snapGrid,
+  snapHex,
   hash,
   recordTime,
   toCamelCase,
   toTitleCase,
   intersect,
   uuid,
-  brightness
-} from '../src/js/lib/utils.mjs'
+  brightness,
+  getDimensionsRotated
+} from '../../src/js/lib/utils.mjs'
 
 describe('Frontend - utils.mjs', function () {
   it('clamp()', function () {
@@ -40,6 +43,64 @@ describe('Frontend - utils.mjs', function () {
     expect(clamp(-2, 2, 2)).to.be.eql(2)
     expect(clamp(-2, 3, 2)).to.be.eql(2)
     expect(clamp(-2.1, 3.1, 2.2)).to.be.eql(2.2)
+  })
+
+  it('snapGrid()', function () {
+    expect(snapGrid(0, 0, 32)).to.be.eql({ x: 0, y: 0 })
+    expect(snapGrid(15, 15, 32)).to.be.eql({ x: 0, y: 0 })
+    expect(snapGrid(16, 16, 32)).to.be.eql({ x: 32, y: 32 })
+    expect(snapGrid(31, 31, 32)).to.be.eql({ x: 32, y: 32 })
+    expect(snapGrid(32, 32, 32)).to.be.eql({ x: 32, y: 32 })
+    expect(snapGrid(33, 33, 32)).to.be.eql({ x: 32, y: 32 })
+    expect(snapGrid(63, 129, 32)).to.be.eql({ x: 64, y: 128 })
+    expect(snapGrid(-31, -31, 32)).to.be.eql({ x: -32, y: -32 })
+    expect(snapGrid(-32, -32, 32)).to.be.eql({ x: -32, y: -32 })
+    expect(snapGrid(-33, -33, 32)).to.be.eql({ x: -32, y: -32 })
+  })
+
+  it('snapHex()', function () {
+    const jitter = 4
+
+    // lod 1
+    expect(snapHex(0 + jitter, 0 - jitter, 64, 1)).to.be.eql({ x: 0, y: 0 })
+    expect(snapHex(0 + jitter, 64 - jitter, 64, 1)).to.be.eql({ x: 0, y: 64 })
+    expect(snapHex(55 + jitter, 32 - jitter, 64, 1)).to.be.eql({ x: 55, y: 32 })
+    expect(snapHex(110 + jitter, 0 - jitter, 64, 1)).to.be.eql({ x: 110, y: 0 })
+    expect(snapHex(110 + jitter, 64 - jitter, 64, 1)).to.be.eql({ x: 110, y: 64 })
+
+    // lod 2
+    expect(snapHex(0 + jitter, 0 - jitter, 64, 1)).to.be.eql({ x: 0, y: 0 })
+    expect(snapHex(0 + jitter, 64 - jitter, 64, 1)).to.be.eql({ x: 0, y: 64 })
+    expect(snapHex(55 + jitter, 32 - jitter, 64, 1)).to.be.eql({ x: 55, y: 32 })
+    expect(snapHex(110 + jitter, 0 - jitter, 64, 1)).to.be.eql({ x: 110, y: 0 })
+    expect(snapHex(110 + jitter, 64 - jitter, 64, 1)).to.be.eql({ x: 110, y: 64 })
+    expect(snapHex(37 + jitter, 0 - jitter, 64, 2)).to.be.eql({ x: 37, y: 0 })
+    expect(snapHex(73 + jitter, 0 - jitter, 64, 2)).to.be.eql({ x: 73, y: 0 })
+    expect(snapHex(19 + jitter, 32 - jitter, 64, 2)).to.be.eql({ x: 19, y: 32 })
+    expect(snapHex(92 + jitter, 32 - jitter, 64, 2)).to.be.eql({ x: 92, y: 32 })
+    expect(snapHex(37 + jitter, 64 - jitter, 64, 2)).to.be.eql({ x: 37, y: 64 })
+    expect(snapHex(73 + jitter, 64 - jitter, 64, 2)).to.be.eql({ x: 73, y: 64 })
+
+    // lod 3
+    expect(snapHex(0 + jitter, 0 - jitter, 64, 3)).to.be.eql({ x: 0, y: 0 })
+    expect(snapHex(0 + jitter, 64 - jitter, 64, 3)).to.be.eql({ x: 0, y: 64 })
+    expect(snapHex(55 + jitter, 32 - jitter, 64, 3)).to.be.eql({ x: 55, y: 32 })
+    expect(snapHex(110 + jitter, 0 - jitter, 64, 3)).to.be.eql({ x: 110, y: 0 })
+    expect(snapHex(110 + jitter, 64 - jitter, 64, 3)).to.be.eql({ x: 110, y: 64 })
+    expect(snapHex(37 + jitter, 0 - jitter, 64, 3)).to.be.eql({ x: 37, y: 0 })
+    expect(snapHex(73 + jitter, 0 - jitter, 64, 3)).to.be.eql({ x: 73, y: 0 })
+    expect(snapHex(19 + jitter, 32 - jitter, 64, 3)).to.be.eql({ x: 19, y: 32 })
+    expect(snapHex(92 + jitter, 32 - jitter, 64, 3)).to.be.eql({ x: 92, y: 32 })
+    expect(snapHex(37 + jitter, 64 - jitter, 64, 3)).to.be.eql({ x: 37, y: 64 })
+    expect(snapHex(73 + jitter, 64 - jitter, 64, 3)).to.be.eql({ x: 73, y: 64 })
+    expect(snapHex(55 + jitter, 0 - jitter, 64, 3)).to.be.eql({ x: 55, y: 0 })
+    expect(snapHex(0 + jitter, 32 - jitter, 64, 3)).to.be.eql({ x: 0, y: 32 })
+    expect(snapHex(28 + jitter, 16 - jitter, 64, 3)).to.be.eql({ x: 28, y: 16 })
+    expect(snapHex(82 + jitter, 16 - jitter, 64, 3)).to.be.eql({ x: 82, y: 16 })
+    expect(snapHex(28 + jitter, 48 - jitter, 64, 3)).to.be.eql({ x: 28, y: 48 })
+    expect(snapHex(82 + jitter, 48 - jitter, 64, 3)).to.be.eql({ x: 82, y: 48 })
+    expect(snapHex(110 + jitter, 32 - jitter, 64, 3)).to.be.eql({ x: 110, y: 32 })
+    expect(snapHex(55 + jitter, 64 - jitter, 64, 3)).to.be.eql({ x: 55, y: 64 })
   })
 
   it('uuid()', function () {
@@ -226,5 +287,47 @@ describe('Frontend - utils.mjs', function () {
     expect(brightness('#FF00FF')).to.be.eql(170)
     expect(brightness('#ffffff')).to.be.eql(255)
     expect(brightness('#FFFFFF')).to.be.eql(255)
+  })
+
+  it('getDimensionsRotated()', function () {
+    expect(getDimensionsRotated(1, 1, 0)).to.be.eql({ w: 1, h: 1 })
+    expect(getDimensionsRotated(1, 1, 90)).to.be.eql({ w: 1, h: 1 })
+    expect(getDimensionsRotated(1, 1, 180)).to.be.eql({ w: 1, h: 1 })
+    expect(getDimensionsRotated(1, 1, 270)).to.be.eql({ w: 1, h: 1 })
+    expect(getDimensionsRotated(1, 1, 1)).to.be.eql({ w: 2, h: 2 })
+    expect(getDimensionsRotated(1, 1, -1)).to.be.eql({ w: 2, h: 2 })
+
+    expect(getDimensionsRotated(4, 1, 0)).to.be.eql({ w: 4, h: 1 })
+    expect(getDimensionsRotated(4, 1, 90)).to.be.eql({ w: 1, h: 4 })
+    expect(getDimensionsRotated(4, 1, 180)).to.be.eql({ w: 4, h: 1 })
+    expect(getDimensionsRotated(4, 1, 270)).to.be.eql({ w: 1, h: 4 })
+    expect(getDimensionsRotated(4, 1, 1)).to.be.eql({ w: 5, h: 2 })
+    expect(getDimensionsRotated(4, 1, -1)).to.be.eql({ w: 5, h: 2 })
+    expect(getDimensionsRotated(1, 4, 1)).to.be.eql({ w: 2, h: 5 })
+    expect(getDimensionsRotated(1, 4, -1)).to.be.eql({ w: 2, h: 5 })
+
+    expect(getDimensionsRotated(100, 100, 45)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 + 90)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 + 180)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 + 270)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 + 360)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 + 360 + 90)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 + 360 + 180)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 + 360 + 270)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 - 360)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 - 360 + 90)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 - 360 + 180)).to.be.eql({ w: 142, h: 142 })
+    expect(getDimensionsRotated(100, 100, 45 - 360 + 270)).to.be.eql({ w: 142, h: 142 })
+
+    expect(getDimensionsRotated(200, 100, 0)).to.be.eql({ w: 200, h: 100 })
+    expect(getDimensionsRotated(200, 100, 90)).to.be.eql({ w: 100, h: 200 })
+    expect(getDimensionsRotated(200, 100, 180)).to.be.eql({ w: 200, h: 100 })
+    expect(getDimensionsRotated(200, 100, 270)).to.be.eql({ w: 100, h: 200 })
+    expect(getDimensionsRotated(200, 100, 60)).to.be.eql({ w: 187, h: 224 })
+    expect(getDimensionsRotated(200, 100, -60)).to.be.eql({ w: 187, h: 224 })
+    expect(getDimensionsRotated(200, 100, 120)).to.be.eql({ w: 187, h: 224 })
+    expect(getDimensionsRotated(200, 100, -120)).to.be.eql({ w: 187, h: 224 })
+
+    expect(getDimensionsRotated(576, 448, 60)).to.be.eql({ w: 676, h: 723 })
   })
 })

@@ -43,11 +43,11 @@ import {
 
 import {
   updateStatusline,
-  getTableCoordinates,
   restoreScrollPosition
 } from '../index.mjs'
 
 import {
+  TYPE_HEX,
   findAsset,
   findAssetByAlias,
   findPiece,
@@ -56,7 +56,10 @@ import {
   getMinZ,
   getMaxZ,
   getContentRectGrid,
-  stickyNoteColors
+  stickyNoteColors,
+  getTopLeftPx,
+  getPieceBounds,
+  snap
 } from './tabledata.mjs'
 import {
   updateMenu
@@ -111,12 +114,12 @@ export function editSelected () {
  *
  * @param {Object} tile Grid x/y position (in tiles).
  */
-export function cloneSelected (tile) {
+export function cloneSelected (xy) {
   getSelected().each(node => {
-    const template = getTemplate()
     const piece = findPiece(node.id)
-    piece.x = tile.x * template.gridSize
-    piece.y = tile.y * template.gridSize
+    const snapped = snap(xy.x, xy.y, getTemplate().snapSize)
+    piece.x = snapped.x
+    piece.y = snapped.y
     piece.z = getMaxZ(piece.layer) + 1
     if (piece.n > 0) { // increase piece letter (if it has one)
       piece.n = piece.n + 1
@@ -134,8 +137,8 @@ export function cloneSelected (tile) {
 export function flipSelected () {
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    if (piece._sides > 1) {
-      flipPiece(piece.id, (piece.side + 1) % piece._sides)
+    if (piece._meta.sides > 1) {
+      flipPiece(piece.id, (piece.side + 1) % piece._meta.sides)
     }
   })
 }
@@ -185,7 +188,7 @@ export function randomSelected () {
   const template = getTemplate()
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    switch (piece._feature) {
+    switch (piece._meta.feature) {
       case 'DICEMAT': // dicemat: randomize all pieces on it
         randomDicemat(piece)
         break
@@ -193,7 +196,7 @@ export function randomSelected () {
         randomDiscard(piece)
         break
       default: // ordinary piece
-        if (piece._sides > 1) { // only randomize multi-sided tokens
+        if (piece._meta.sides > 1) { // only randomize multi-sided tokens
           // slide token around
           let slideX = Math.floor(Math.random() * 3) - 1
           let slideY = Math.floor(Math.random() * 3) - 1
@@ -214,7 +217,7 @@ export function randomSelected () {
           // send to server
           updatePieces([{
             id: node.id,
-            side: Math.floor(Math.random() * piece._sides),
+            side: Math.floor(Math.random() * piece._meta.sides),
             x: x,
             y: y
           }])
@@ -276,9 +279,10 @@ function createOrUpdatePieceDOM (piece, select) {
   div = _('#' + piece.id) // fresh query
 
   if (_piece.x !== piece.x || _piece.y !== piece.y || _piece.z !== piece.z) {
+    const tl = getTopLeftPx(piece)
     div.css({
-      left: piece.x + 'px',
-      top: piece.y + 'px',
+      top: tl.top,
+      left: tl.left,
       zIndex: piece.z
     })
   }
@@ -302,7 +306,7 @@ function createOrUpdatePieceDOM (piece, select) {
     div
       .remove('.is-color-*')
       .add('.is-color-' + piece.color)
-    if (piece.color >= 0 && template.colors.length) {
+    if (piece.layer === 'token' && piece.color >= 0 && template.colors.length) {
       _(`#${piece.id}`).css({
         '--fbg-piece-color': template.colors[piece.color].value,
         '--fbg-piece-color-invert': brightness(template.colors[piece.color].value) > 128 ? '#0d0d0d' : '#e6e6e6'
@@ -370,28 +374,16 @@ export function setNote (note, select = false) {
 /**
  * Rotate the currently selected piece.
  *
- * Done in 90° increments.
+ * Done in increments based on game type.
  */
 export function rotateSelected () {
   const template = getTemplate()
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    const r = (piece.r + 90) % 360
-    let x = piece.x
-    let y = piece.y
-    switch (r) {
-      case 90:
-      case 270:
-        x = clamp(0, x, (template.gridWidth - piece.h) * template.gridSize - 1)
-        y = clamp(0, y, (template.gridHeight - piece.w) * template.gridSize - 1)
-        break
-      default:
-        x = clamp(0, x, (template.gridWidth - piece.w) * template.gridSize - 1)
-        y = clamp(0, y, (template.gridHeight - piece.h) * template.gridSize - 1)
-    }
-
-    rotatePiece(piece.id, r, x, y)
+    const increment = template.type === TYPE_HEX ? 60 : 90
+    const r = (piece.r + increment) % 360
+    rotatePiece(piece.id, r)
   })
 }
 
@@ -532,14 +524,14 @@ export function noteToNode (note) {
  *
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
-export function createNote (tile) {
-  const template = getTemplate()
+export function createNote (xy) {
+  const snapped = snap(xy.x, xy.y, getTemplate().snapSize)
   createPieces([{
     layer: 'note',
     w: 3,
     h: 3,
-    x: tile.x * template.gridSize,
-    y: tile.y * template.gridSize,
+    x: snapped.x,
+    y: snapped.y,
     z: getMaxZ('note') + 1
   }], true)
 }
@@ -601,37 +593,26 @@ export function updateTabletop (tableNo, selectIds = []) {
 /**
  * Move the pointer to the given location.
  *
- * @param {Object} coords {x, y} object.
+ * @param {Object} coords {x, y} object, in table px.
  */
 export function pointTo (coords) {
   const template = getTemplate()
   const room = getRoom()
 
-  coords.x = clamp(0, coords.x - template.gridSize / 2, room.width - template.gridSize)
-  coords.y = clamp(0, coords.y - template.gridSize / 2, room.height - template.gridSize)
+  coords.x = clamp(0, coords.x, room.width - template.gridSize - 1)
+  coords.y = clamp(0, coords.y, room.height - template.gridSize - 1)
+
+  const snapped = snap(coords.x, coords.y)
 
   createPieces([{ // always create (even if it is a move)
     asset: ID_POINTER,
     layer: 'other',
     w: 1,
     h: 1,
-    x: coords.x,
-    y: coords.y,
+    x: snapped.x,
+    y: snapped.y,
     z: getMaxZ('other') + 1
   }])
-}
-
-/**
- * Calculate the grid/tile X coordinate based on mouse position.
- *
- * @return {Object} Current tile as {x, y}.
- */
-export function getTableTile (windowX, windowY) {
-  const template = getTemplate()
-  const coords = getTableCoordinates(windowX, windowY)
-  coords.x = clamp(0, Math.floor(coords.x / template.gridSize), template.gridWidth - 1)
-  coords.y = clamp(0, Math.floor(coords.y / template.gridSize), template.gridHeight - 1)
-  return coords
 }
 
 // --- internal ----------------------------------------------------------------
@@ -679,19 +660,14 @@ function randomDicemat (dicemat) {
   for (let x = 0; x < Math.min(dicemat.w, 4); x++) {
     for (let y = 0; y < Math.min(dicemat.h, 4); y++) {
       coords.push({ // a max. 4x4 area in the center of the dicemat
-        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x) * template.gridSize,
-        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y) * template.gridSize
+        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x + 0.5) * template.gridSize,
+        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y + 0.5) * template.gridSize
       })
     }
   }
 
-  for (const piece of findPiecesWithin({
-    left: dicemat.x,
-    top: dicemat.y,
-    right: dicemat.x + dicemat.w * template.gridSize - 1,
-    bottom: dicemat.y + dicemat.h * template.gridSize - 1
-  }, dicemat.layer)) {
-    if (piece._feature === 'DICEMAT') continue // don't touch the dicemat
+  for (const piece of findPiecesWithin(getPieceBounds(dicemat), dicemat.layer)) {
+    if (piece._meta.feature === 'DICEMAT') continue // don't touch the dicemat
 
     // pick one random position
     let coord = { x: 0, y: 0 }
@@ -705,9 +681,9 @@ function randomDicemat (dicemat) {
     // update the piece
     pieces.push({
       id: piece.id,
-      side: Math.floor(Math.random() * piece._sides),
-      x: dicemat.x + coord.x,
-      y: dicemat.y + coord.y
+      side: Math.floor(Math.random() * piece._meta.sides),
+      x: dicemat.x - dicemat._meta.widthPx / 2 + coord.x,
+      y: dicemat.y - dicemat._meta.heightPx / 2 + coord.y
     })
   }
   updatePieces(pieces)
@@ -719,18 +695,11 @@ function randomDicemat (dicemat) {
  * @param {Object} discard Discard pile object.
  */
 function randomDiscard (discard) {
-  const template = getTemplate()
+  console.log(discard)
   const pieces = []
-  const centerX = discard.x + discard.w * template.gridSize / 2
-  const centerY = discard.y + discard.h * template.gridSize / 2
   let stackSide = -1
 
-  const stack = findPiecesWithin({
-    left: discard.x,
-    top: discard.y,
-    right: discard.x + discard.w * template.gridSize - 1,
-    bottom: discard.y + discard.h * template.gridSize - 1
-  }, discard.layer)
+  const stack = findPiecesWithin(getPieceBounds(discard), discard.layer)
 
   // shuffle z positions above the dicard pile piece
   const discardZ = discard.z
@@ -741,27 +710,24 @@ function randomDiscard (discard) {
   shuffle(z)
 
   for (const piece of stack) {
-    if (piece._feature === 'DISCARD') continue // don't touch the discard pile piece
+    if (piece._meta.feature === 'DISCARD') continue // don't touch the discard pile piece
 
     // detect the side to flip them to
     if (stackSide < 0) {
       // fip all pices, based on the state of the first one
       if (piece.side === 0) {
-        stackSide = Math.max(0, piece._sides - 1)
+        stackSide = Math.max(0, piece._meta.sides - 1)
       } else {
         stackSide = 0
       }
     }
 
-    const w = piece.r === 90 || piece.r === 270 ? piece.h : piece.w
-    const h = piece.r === 90 || piece.r === 270 ? piece.w : piece.h
-
     // update the piece
     pieces.push({
       id: piece.id,
       side: stackSide,
-      x: Math.floor(centerX - (w * template.gridSize) / 2),
-      y: Math.floor(centerY - (h * template.gridSize) / 2),
+      x: discard.x,
+      y: discard.y,
       z: z.pop()
     })
   }

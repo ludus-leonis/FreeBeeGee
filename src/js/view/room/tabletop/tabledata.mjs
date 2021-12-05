@@ -29,7 +29,10 @@ import {
 
 import {
   clamp,
-  intersect
+  snapGrid,
+  snapHex,
+  intersect,
+  getDimensionsRotated
 } from '../../../lib/utils.mjs'
 
 export const assetTypes = [
@@ -39,6 +42,9 @@ export const assetTypes = [
   'other',
   'tag'
 ]
+
+export const TYPE_SQUARE = 'grid-square'
+export const TYPE_HEX = 'grid-hex'
 
 export const stickyNoteColors = [
   { name: 'yellow' },
@@ -123,6 +129,39 @@ export function getAssetURL (asset, side) {
 }
 
 /**
+ * Get proper top-left coordinates for a piece.
+ *
+ * Takes into account that rotated pieces have a different offset to it's center
+ * than the original as CSS 'transform: rotate()' rotates round the original center.
+ *
+ * @param {Object} piece A game piece to operate on.
+ * @param {Number} x X coordinate of supposed center (defaults to piece.x)
+ * @param {Number} y Y coordinate of supposed center (defaults to piece.y)
+ * @return {Object} CSS-ready px String as { top: '', left: ''}.
+ **/
+export function getTopLeftPx (piece, x = piece.x, y = piece.y) {
+  return {
+    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + 'px',
+    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + 'px'
+  }
+}
+
+/**
+ * Get the area in px a piece covers.
+ *
+ * @param {Object} piece A game piece to operate on.
+ * @return {Object} Bounds as { top, left, bottom, right}.
+ */
+export function getPieceBounds (piece) {
+  return {
+    left: piece.x - piece._meta.widthPx / 2,
+    right: piece.x + piece._meta.widthPx / 2 - 1,
+    top: piece.y - piece._meta.heightPx / 2,
+    bottom: piece.y + piece._meta.heightPx / 2 - 1
+  }
+}
+
+/**
  * Find all pieces within a grid area.
  *
  * @param {Object} rect Rectangle object, containing top/left/bottom/right.
@@ -131,17 +170,11 @@ export function getAssetURL (asset, side) {
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
 export function findPiecesWithin (rect, layer = 'all', no = getTableNo()) {
-  const template = getTemplate()
   const pieces = []
 
   for (const piece of getTable(no)) {
     if (piece.layer === layer || layer === 'all') {
-      if (intersect(rect, {
-        left: piece.x,
-        top: piece.y,
-        right: piece.x + (piece.r === '0' || piece.r === '180' ? piece.w * template.gridSize : piece.h * template.gridSize) - 1,
-        bottom: piece.y + (piece.r === '0' || piece.r === '180' ? piece.h * template.gridSize : piece.w * template.gridSize) - 1
-      })) {
+      if (intersect(rect, getPieceBounds(piece))) {
         pieces.push(piece)
       }
     }
@@ -209,20 +242,26 @@ export function populatePieceDefaults (piece, headers = null) {
   piece.tag = piece.tag ?? ''
 
   // add client-side meta information
+  piece._meta = {}
   const template = getTemplate()
-  piece._width = piece.w * template.gridSize
-  piece._height = piece.h * template.gridSize
+  piece._meta.originWidthPx = piece.w * template.gridSize
+  piece._meta.originHeightPx = piece.h * template.gridSize
+  const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
+  piece._meta.widthPx = rect.w
+  piece._meta.heightPx = rect.h
+  piece._meta.originOffsetXPx = (piece._meta.originWidthPx - rect.w) / 2
+  piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
   const asset = findAsset(piece.asset)
-  piece._sides = asset?.media.length ?? 1
+  piece._meta.sides = asset?.media.length ?? 1
   if (asset?.id === 'ffffffffffffffff') {
-    piece._feature = 'POINTER'
+    piece._meta.feature = 'POINTER'
   } else {
     switch (asset?.alias) {
       case 'dicemat':
-        piece._feature = 'DICEMAT'
+        piece._meta.feature = 'DICEMAT'
         break
       case 'discard':
-        piece._feature = 'DISCARD'
+        piece._meta.feature = 'DISCARD'
         break
     }
   }
@@ -405,21 +444,22 @@ export function getContentRectGridAll () {
  * Create a new piece from an asset.
  *
  * @param {Number} assetId ID of asset.
- * @param {Number} gridX X-position (grid).
- * @param {Number} gridY Y-position (grid).
+ * @param {Number} x X-position (px).
+ * @param {Number} y Y-position (px).
  * @return {Object} Piece data object.
  */
-export function createPieceFromAsset (assetId, gridX = 0, gridY = 0) {
-  const asset = findAsset(assetId)
+export function createPieceFromAsset (assetId, x = 0, y = 0) {
   const template = getTemplate()
+  const asset = findAsset(assetId)
+  const xy = snap(x, y, template.snapSize)
 
   return populatePieceDefaults(clampToTableSize({
     asset: asset.id,
     layer: asset.type,
     w: asset.w,
     h: asset.h,
-    x: gridX * template.gridSize,
-    y: gridY * template.gridSize,
+    x: xy.x,
+    y: xy.y,
     z: getMaxZ(asset.layer) + 1
   }))
 }
@@ -435,6 +475,26 @@ export function clampToTableSize (piece) {
   piece.x = clamp(0, piece.x, (template.gridWidth - piece.w) * template.gridSize)
   piece.y = clamp(0, piece.y, (template.gridHeight - piece.h) * template.gridSize)
   return piece
+}
+
+/**
+ * Snap a coordinate to the closest hex position / grid.
+ *
+ * @param {Number} x X-coordinate to snap.
+ * @param {Number} y Y-coordiante to snap.
+ * @param {Number} lod Optional level of detail for hex snapping.
+ *                     1 = hex centers (default),
+ *                     2 = hex centers + hex corners,
+ *                     3 = hex centers + hex corners + hex sides
+ * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ */
+export function snap (x, y, lod = 1) {
+  const template = getTemplate()
+  if (template.type === TYPE_HEX) {
+    return snapHex(x, y, template.gridSize, 3)
+  } else {
+    return snapGrid(x, y, template.snapSize)
+  }
 }
 
 /**

@@ -37,12 +37,13 @@ import {
 } from './sync.mjs'
 import {
   unselectPieces,
-  getTableTile,
   pointTo
 } from './tabletop/index.mjs'
 import {
   getMaxZ,
-  findPiece
+  findPiece,
+  getTopLeftPx,
+  snap
 } from './tabletop/tabledata.mjs'
 
 let scroller = null // the tabletop wrapper
@@ -66,14 +67,6 @@ export function isDragging () {
  */
 export function getMouseCoords () {
   return getTableCoordinates(mouseX, mouseY)
-}
-
-/**
- * Get the current mouse cursor position.
- * @return {Object} Object with x and y in tiles/grid.
- */
-export function getMouseTile () {
-  return getTableTile(mouseX, mouseY)
 }
 
 /**
@@ -106,14 +99,14 @@ export function updateMenu () {
   } else if (selected.length === 1) {
     const piece = findPiece(selected[0].id)
     menu.remove('.disabled')
-    if (piece._sides <= 1) {
+    if (piece._meta.sides <= 1) {
       _('#btn-f').add('.disabled')
       _('#btn-hash').add('.disabled')
     }
-    if (piece._sides <= 2) {
+    if (piece._meta.sides <= 2) {
       _('#btn-hash').add('.disabled')
     }
-    if (piece._feature === 'DICEMAT') {
+    if (piece._meta.feature === 'DICEMAT') {
       _('#btn-hash').remove('.disabled')
     }
   } else {
@@ -145,7 +138,7 @@ function mouseDown (mousedown) {
   switch (mousedown.button) {
     case 0:
       if (mousedown.shiftKey) {
-        pointTo(getTableCoordinates(mouseX, mouseY))
+        pointTo(getMouseCoords())
       } else {
         handleSelection(mousedown.target)
         dragStart(mousedown)
@@ -255,8 +248,8 @@ function dragContinue (mousemove) {
     setPosition(
       dragging,
       dragging.piece.x + mousemove.clientX - dragging.startX,
-      dragging.piece.y + mousemove.clientY - dragging.startY,
-      1
+      dragging.piece.y + mousemove.clientY - dragging.startY
+      // 1
     )
     mousemove.preventDefault()
   }
@@ -277,19 +270,19 @@ function dragEnd (mouseup, cancel = false) {
       )
 
       // only record state if there was a change in position
-      if (dragging.piece.x !== Number(dragging.dataset.x) ||
-        dragging.piece.y !== Number(dragging.dataset.y)) {
-        const template = getTemplate()
+      if (dragging.piece.x !== dragging.x ||
+        dragging.piece.y !== dragging.y) {
+        // const template = getTemplate()
         const maxZ = getMaxZ(dragging.dataset.layer, {
-          top: Number(dragging.dataset.y),
-          left: Number(dragging.dataset.x),
-          bottom: Number(dragging.dataset.y) + Number(dragging.dataset.h) * template.gridSize,
-          right: Number(dragging.dataset.x) + Number(dragging.dataset.w) * template.gridSize
+          top: dragging.y - dragging.piece._meta.heightPx / 2,
+          left: dragging.x - dragging.piece._meta.widthPx / 2,
+          bottom: dragging.y + dragging.piece._meta.heightPx / 2,
+          right: dragging.x + dragging.piece._meta.widthPx / 2
         })
         movePiece(
           dragging.piece.id,
-          Number(dragging.dataset.x),
-          Number(dragging.dataset.y),
+          dragging.x,
+          dragging.y,
           dragging.piece.z === maxZ ? dragging.piece.z : getMaxZ(dragging.piece.layer) + 1
         )
       }
@@ -389,26 +382,21 @@ function properties (mousedown) {
  * @param {Element} element The HTML node to update.
  * @param {Number} x New x coordinate in px.
  * @param {Number} y New y coordinate in px.
- * @param {Number} snap Grid/snap size. Defaults to the tilesize.
+ * @param {Number} snapSize Grid/snap size. Defaults to the room's snap size.
  */
-function setPosition (element, x, y, snap = getTemplate().snapSize) {
+function setPosition (element, x, y, snapSize = getTemplate().snapSize) {
   const template = getTemplate()
-  switch (element.dataset.r) {
-    case '90':
-    case '270':
-      x = clamp(0, x, (template.gridWidth - element.dataset.h) * template.gridSize - 1)
-      y = clamp(0, y, (template.gridHeight - element.dataset.w) * template.gridSize - 1)
-      break
-    default:
-      x = clamp(0, x, (template.gridWidth - element.dataset.w) * template.gridSize - 1)
-      y = clamp(0, y, (template.gridHeight - element.dataset.h) * template.gridSize - 1)
-  }
-  x += Math.floor(snap / 2)
-  y += Math.floor(snap / 2)
-  element.dataset.x = Math.max(0, (Math.floor(x / snap) * snap))
-  element.dataset.y = Math.max(0, (Math.floor(y / snap) * snap))
-  element.style.left = element.dataset.x + 'px'
-  element.style.top = element.dataset.y + 'px'
+
+  x = clamp(0, x, template._meta.widthPx - 0 - 1)
+  y = clamp(0, y, template._meta.heightPx - 0 - 1)
+
+  const snapped = snap(x, y, snapSize)
+  element.x = Math.max(0, snapped.x)
+  element.y = Math.max(0, snapped.y)
+
+  const tl = getTopLeftPx(element.piece, element.x, element.y)
+  element.style.left = tl.left
+  element.style.top = tl.top
 }
 
 /**

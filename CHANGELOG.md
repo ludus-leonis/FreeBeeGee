@@ -2,10 +2,13 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.12.0 - ???
+## v0.12.0 - Hexing Heron
+
+This is a breaking release changing internal data structures. Old snapshots will no longer work.
 
 ### Notable changes
 
+* added hex mode for templates
 * added multiple table background images - change via settings
 * added hotkey to toggle fullscreen (F11)
 

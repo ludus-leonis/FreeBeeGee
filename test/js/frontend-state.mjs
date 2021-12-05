@@ -30,7 +30,7 @@ import {
   getLibrary,
   isTabActive,
   setTabActive
-} from '../src/js/state/index.mjs'
+} from '../../src/js/state/index.mjs'
 
 describe('Frontend - state.mjs', function () {
   it('getRoom() getTemplate() getLibrary()', function () {

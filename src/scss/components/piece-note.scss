@@ -111,16 +111,32 @@ $piece-note-glue: rgba(0, 0, 0, .02);
 
     @include piece-rotate(0deg, $note-rotate);
 
+    &.is-rotate-60 {
+      @include piece-rotate(90deg, $note-rotate);
+    }
+
     &.is-rotate-90 {
       @include piece-rotate(90deg, $note-rotate);
+    }
+
+    &.is-rotate-120 {
+      @include piece-rotate(120deg, $note-rotate);
     }
 
     &.is-rotate-180 {
       @include piece-rotate(180deg, $note-rotate);
     }
 
+    &.is-rotate-240 {
+      @include piece-rotate(240deg, $note-rotate);
+    }
+
     &.is-rotate-270 {
       @include piece-rotate(270deg, $note-rotate);
+    }
+
+    &.is-rotate-300 {
+      @include piece-rotate(300deg, $note-rotate);
     }
   }
 }

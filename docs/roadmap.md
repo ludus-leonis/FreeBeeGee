@@ -2,15 +2,13 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.12 - ???
+## v0.12 - Hexing Heron
 
-* [ ] table passwords
+* [ ] Hex mode
+  * [X] Engine changes
+  * [ ] Game template
 * [X] more table backgrounds
 * [X] use image masks for backsides
-* [ ] right-click on table
-  * [ ] add piece
-  * [ ] change table 1..9
-  * [ ] change background
 * [X] fullscreen hotkey (F11)
 * [ ] pre-release
   * [ ] bugfixing
@@ -27,38 +25,44 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
-* delete items from library
-* when dragging pieces, move those on top of the original piece too
-* dragging some pieces should not change z (e.g. dicemat)
-* multi-select stuff
-* move / copy setups between tables
-* protect pieces (no-delete, no-move)
-* LOS-ruler
-* show backside/all sides in tile browser
-* dedicated HP/Mana/Value field(s)
-* meta-piece: supply heap
-* support for stacks/decks of cards
-* shuffle deck/stack
-* better sticky notes (auto-size text)
-* manipulation of single assets in library (edit, change type)
-* more tabletop settings in UI (e.g. grid)
-* reduce impact of "back" button
-* "layer not active" hint when dragging nothing
-* demo mode (serverless?)
-* randomize button on dicemat
-* click thru / don't drag on transparent parts of images
-* generic marker overlay (X, ?, ...)
-* add more classic game boards: backgammon, mills, solitaire
-* remove default entries from json files before save (e.g. side=0)
-* add template version to asset urls
-* generate average piece color during build and upload
-* catch all unhandled warnings/exceptions in PHP API and return 500
-* hide .../data/... from URLs (via .htaccess)
-* concurrent drag-n-drop - first mover wins
-  * add hash/deprecation header
-* obfuscate/hash room name
-* docs how to make table/template `.zip`s
-* API Docs
+* [ ] right-click on table
+  * [ ] add piece
+  * [ ] change table 1..9
+  * [ ] change background
+* [ ] toggle grid on/off
+* [ ] set default/start table other than 1 in template
+* [ ] table passwords
+* [ ] delete items from library
+* [ ] when dragging pieces, move those on top of the original piece too
+* [ ] dragging some pieces should not change z (e.g. dicemat)
+* [ ] multi-select stuff
+* [ ] move / copy setups between tables
+* [ ] protect pieces (no-delete, no-move)
+* [ ] LOS-ruler
+* [ ] show backside/all sides in tile browser
+* [ ] dedicated HP/Mana/Value field(s)
+* [ ] meta-piece: supply heap
+* [ ] support for stacks/decks of cards
+* [ ] shuffle deck/stack
+* [ ] better sticky notes (auto-size text)
+* [ ] manipulation of single assets in library (edit, change type)
+* [ ] more tabletop settings in UI (e.g. grid)
+* [ ] reduce impact of "back" button
+* [ ] "layer not active" hint when dragging nothing
+* [ ] demo mode (serverless?)
+* [ ] randomize button on dicemat
+* [ ] click thru / don't drag on transparent parts of images
+* [ ] generic marker overlay (X, ?, ...)
+* [ ] add more classic game boards: backgammon, mills, solitaire
+* [ ] remove default entries from json files before save (e.g. side=0)
+* [ ] add template version to asset urls
+* [ ] generate average piece color during build and upload
+* [ ] catch all unhandled warnings/exceptions in PHP API and return 500
+* [ ] hide .../data/... from URLs (via .htaccess)
+* [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
+* [ ] obfuscate/hash room name
+* [ ] docs how to make table/template `.zip`s
+* [ ] API Docs
 
 ### rather later
 

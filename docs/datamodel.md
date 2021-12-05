@@ -134,10 +134,10 @@ A minimal piece contains the following information:
 : The ID of the asset.
 
 `x`
-: The x-coordinate on the table, in px.
+: The x-coordinate of the center of the piece on the table, in px.
 
 `y`
-: The y-coordinate on the table, in px.
+: The y-coordinate of the center of the piece on the table, in px.
 
 `z`
 : The z-coordinate (z-index) within the layer.
@@ -219,7 +219,7 @@ Templates using the `grid-square` type also have the following properties:
 : The width of this template/table in grid spaces.
 
 `snapSize`
-: The (invisible) grid size pieces will snap to. Usuall equal to the `gridSize` to allow only full-tile snapping, or half of the `gridSize` to allow snapping to border/corners.
+: The (invisible) grid size pieces will snap to. Is recommended to be set or half of the `gridSize` to allow snapping to border/corners. If set equal to `gridSize`, all pieces must have an even width and heigth (in grid units), or rotated odd-sized pieces can't be placed on the grid.
 
 
 ## Rooms

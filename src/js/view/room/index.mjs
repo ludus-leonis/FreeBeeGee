@@ -24,7 +24,7 @@ import _ from '../../lib/FreeDOM.mjs'
 import {
   navigateToJoin
 } from '../../app.mjs'
-import { // TODO roomstate.mjs?
+import {
   loadRoom,
   getRoom,
   getRoomPreference,
@@ -49,13 +49,14 @@ import {
 } from './tabletop/index.mjs'
 
 import {
+  TYPE_HEX,
   getSetupCenter,
   findPiece
 } from './tabletop/tabledata.mjs'
 
 import {
   enableDragAndDrop,
-  getMouseTile
+  getMouseCoords
 } from './mouse.mjs'
 
 import {
@@ -163,8 +164,8 @@ export function popupPiece (id) {
   popup.innerHTML = `
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
-    <a class="popup-menu flip ${piece._sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
-    <a class="popup-menu random ${(piece._sides > 2 || piece._feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
+    <a class="popup-menu flip ${piece._meta.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
+    <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
@@ -218,7 +219,7 @@ export function popupPiece (id) {
   _('#popper .clone').on('click', click => {
     click.preventDefault()
     _('#popper').remove('.show')
-    cloneSelected(getMouseTile())
+    cloneSelected(getMouseCoords())
   })
 
   createPopper(_('#' + id).node(), popup.node(), {
@@ -244,7 +245,7 @@ export function updateRoom () {
 }
 
 /**
- * Convert a window coordinates to a tabletop coordinates.
+ * Convert window coordinates to a tabletop coordinates.
  *
  * Takes position of element and scroll position inside the element into account.
  *
@@ -310,13 +311,18 @@ export function setupBackground (bgIndex) {
 
   bgIndex = clamp(0, bgIndex, room.backgrounds.length - 1)
 
-  const grid = brightness(room.backgrounds[bgIndex].color) < 92 ? 'checkers-white' : 'checkers-black'
+  const grid = room.template?.type === TYPE_HEX
+    ? brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-hex-white.svg' : 'grid-hex-black.svg'
+    : brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-square-white.svg' : 'grid-square-black.svg'
+
+  const gridX = room.template?.type === TYPE_HEX ? room.template.gridSize * 1.71875 : room.template.gridSize
+  const gridY = room.template.gridSize
 
   // setup background / wallpaper
   updateRoom().css({
     backgroundColor: room.backgrounds[bgIndex].color,
-    backgroundImage: 'url("img/' + grid + '.png?v=$CACHE$"),url("' + room.backgrounds[bgIndex].image + '?v=$CACHE$")',
-    backgroundSize: room.template.gridSize + 'px,auto'
+    backgroundImage: `url("img/${grid}?v=$CACHE$"),url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
+    backgroundSize: `${gridX}px ${gridY}px,auto`
   })
 
   // setup scroller
@@ -343,8 +349,10 @@ let scroller = null /** keep reference to scroller div - we need it often */
 function setupRoom () {
   const room = getRoom()
 
+  const mode = (room.template?.type === TYPE_HEX) ? 'is-grid-hex' : 'is-grid-square'
+
   _('body').remove('.page-boxed').innerHTML = `
-    <div id="room" class="room is-fullscreen is-noselect">
+    <div id="room" class="room is-fullscreen is-noselect ${mode}">
       <div class="menu">
         <div>
           <div class="menu-brand is-content">
@@ -423,10 +431,10 @@ function setupRoom () {
   }
 
   // setup menu for selection
-  _('#btn-a').on('click', () => modalLibrary(getViewportCenterTile()))
+  _('#btn-a').on('click', () => modalLibrary(getViewportCenter()))
   _('#btn-e').on('click', () => editSelected())
   _('#btn-r').on('click', () => rotateSelected())
-  _('#btn-c').on('click', () => cloneSelected(getMouseTile()))
+  _('#btn-c').on('click', () => cloneSelected(getMouseCoords()))
   _('#btn-t').on('click', () => toTopSelected())
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())
