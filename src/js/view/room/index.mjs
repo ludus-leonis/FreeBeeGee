@@ -380,10 +380,10 @@ let scroller = null /** keep reference to scroller div - we need it often */
 function setupRoom () {
   const room = getRoom()
 
-  const mode = (room.template?.type === TYPE_HEX) ? 'is-grid-hex' : 'is-grid-square'
+  const mode = (room.template?.type === TYPE_HEX) ? '.is-grid-hex' : '.is-grid-square'
 
-  _('body').remove('.page-boxed').innerHTML = `
-    <div id="room" class="room is-fullscreen is-noselect ${mode}">
+  _('body').remove('.page-boxed').add(mode).innerHTML = `
+    <div id="room" class="room is-fullscreen is-noselect">
       <div class="menu">
         <div>
           <div class="menu-brand is-content">

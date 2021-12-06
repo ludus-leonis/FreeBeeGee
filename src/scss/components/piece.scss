@@ -511,6 +511,12 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
 // --- helpers -----------------------------------------------------------------
 
+@mixin is-max($bg-size-x, $bg-size-y, $image, $position) {
+  background-image: url($image);
+  background-position: $position;
+  background-size: $bg-size-x $bg-size-y;
+}
+
 .is-scale-2 { // fixed maximum size for preview in modals
   background-color: $color-gray-05;
   background-repeat: repeat;
@@ -521,34 +527,48 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary; }
 
-  &.is-max-1 {
-    background-image: url('img/grid-square-black.svg');
-    background-position: center;
-    background-size: 64px;
+  .is-grid-square & {
+    &.is-max-1 {
+      @include is-max(64px, 64px, 'img/grid-square-black.svg', center);
+    }
+
+    &.is-max-2 {
+      @include is-max(64px, 64px, 'img/grid-square-black.svg', top left);
+    }
+
+    &.is-max-3 {
+      @include is-max(48px, 48px, 'img/grid-square-black.svg', center);
+    }
+
+    &.is-max-4 {
+      @include is-max(32px, 32px, 'img/grid-square-black.svg', top left);
+    }
+
+    &.is-max-5 {
+      @include is-max(25px, 25px, 'img/grid-square-black.svg', center);
+    }
   }
 
-  &.is-max-2 {
-    background-image: url('img/grid-square-black.svg');
-    background-position: top left;
-    background-size: 64px;
-  }
+  .is-grid-hex & {
+    &.is-max-1 {
+      @include is-max(110px, 64px, 'img/grid-hex-black.svg', center);
+    }
 
-  &.is-max-3 {
-    background-image: url('img/grid-square-black.svg');
-    background-position: center;
-    background-size: 48px;
-  }
+    &.is-max-2 {
+      @include is-max(110px, 64px, 'img/grid-hex-black.svg', top left);
+    }
 
-  &.is-max-4 {
-    background-image: url('img/grid-square-black.svg');
-    background-position: top left;
-    background-size: 32px;
-  }
+    &.is-max-3 {
+      @include is-max(82px, 48px, 'img/grid-hex-black.svg', center);
+    }
 
-  &.is-max-5 {
-    background-image: url('img/grid-square-black.svg');
-    background-position: center;
-    background-size: 25px;
+    &.is-max-4 {
+      @include is-max(55px, 32px, 'img/grid-hex-black.svg', top left);
+    }
+
+    &.is-max-5 {
+      @include is-max(43px, 25px, 'img/grid-hex-black.svg', center);
+    }
   }
 
   > .piece {
