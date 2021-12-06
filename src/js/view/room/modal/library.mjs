@@ -34,7 +34,6 @@ import {
 } from '../../../view/modal.mjs'
 import {
   getLibrary,
-  getTemplate,
   createPieces,
   getRoomPreference,
   setRoomPreference,
@@ -500,7 +499,7 @@ function unprettyName (assetName = '') {
 function modalOk () {
   const modal = document.getElementById('modal')
   const pieces = []
-  const snapped = snap(modal.xy.x, modal.xy.y, getTemplate().snapSize)
+  const snapped = snap(modal.xy.x, modal.xy.y)
   let offsetZ = 0
   _('#tabs-library .is-selected .piece').each(item => {
     const piece = createPieceFromAsset(item.dataset.asset, snapped.x, snapped.y)

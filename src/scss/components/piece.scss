@@ -96,8 +96,8 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
       @each $r in $piece-rotations {
         &.is-rotate-#{$r} {
           transform: rotate($r * 1deg) translate(
-            math.sin($r * 1deg + 180deg * $jitter) * $amount * $jitterb,
-              math.cos($r * 1deg + 180deg * $jitter) * $amount * $jitterb
+            (math.sin($r * 1deg + 180deg * $jitter) * $amount * $jitterb),
+              (math.cos($r * 1deg + 180deg * $jitter) * $amount * $jitterb)
           );
         }
       }
@@ -417,7 +417,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   &.is-n-14::after { content: 'E'; }
   &.is-n-15::after { content: 'F'; }
 
-  @include piece-jitter(4px);
+  @include piece-jitter(3px);
 
   @for $x from 1 through 32 {
     &.is-w-#{$x} { width: $x * $piece-tile-size - $piece-border-size * 2; }

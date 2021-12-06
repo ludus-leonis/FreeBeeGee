@@ -115,17 +115,70 @@ export function clamp (min, value, max) {
 }
 
 /**
+ * Find closest point in an array of points.
+ *
+ * @param {Number} x X-coordinate to match.
+ * @param {Number} y Y-coordiante to match.
+ * @param {Number} points Array of {x, y} points.
+ * @return {Object} Closest point of array to original x/y as {x, y, d}.
+ */
+function findClosestPoint (x, y, points) {
+  const closest = {
+    d: 999999999.0,
+    x: 0,
+    y: 0
+  }
+  for (const point of points) {
+    const delta = Math.sqrt((point.x - x) ** 2 + (point.y - y) ** 2)
+    if (delta < closest.d) {
+      closest.d = delta
+      closest.x = point.x
+      closest.y = point.y
+    }
+  }
+  return closest
+}
+
+/**
  * Snap a coordinate to the closest snap position / grid.
  *
  * @param {Number} x X-coordinate to snap.
  * @param {Number} y Y-coordiante to snap.
  * @param {Number} snap Grid size, originates in 0/0.
- * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ * @param {Number} lod Optional level of detail (1 = centers, 2 = also
+ *                     corners, 3 = also side centers). Defaults to 1.
+  * @return {Object} Closest grid vertex to original x/y as {x, y}.
  */
-export function snapGrid (x, y, snap) {
+export function snapGrid (x, y, snap, lod = 1) {
+  if (lod <= 1) { // tile centers
+    return {
+      x: Math.floor(x / snap) * snap + snap / 2,
+      y: Math.floor(y / snap) * snap + snap / 2
+    }
+  }
+  if (lod >= 3) { // tile centers, corners and sides
+    snap = snap / 2
+    return {
+      x: Math.floor((x + snap / 2) / snap) * snap,
+      y: Math.floor((y + snap / 2) / snap) * snap
+    }
+  }
+
+  // lod 2: centers + corners
+  const points = []
+  points.push({ x: 0, y: 0 })
+  points.push({ x: snap, y: 0 })
+  points.push({ x: 0, y: snap })
+  points.push({ x: snap, y: snap })
+  points.push({ x: snap / 2, y: snap / 2 })
+  const closest = findClosestPoint(
+    (x % snap + snap) % snap,
+    (y % snap + snap) % snap,
+    points
+  )
   return {
-    x: Math.floor((x + Math.floor(snap / 2)) / snap) * snap,
-    y: Math.floor((y + Math.floor(snap / 2)) / snap) * snap
+    x: Math.round(Math.floor(x / snap) * snap + closest.x),
+    y: Math.round(Math.floor(y / snap) * snap + closest.y)
   }
 }
 
@@ -144,7 +197,7 @@ export function snapHex (x, y, snap, lod = 1) {
   const hexTileY = snap
   const hexSide = 37
   const modX = (x % hexTileX + hexTileX) % hexTileX
-  const modY = (y % hexTileY + hexTileX) % hexTileX
+  const modY = (y % hexTileY + hexTileY) % hexTileY
   const tileX = Math.floor(x / hexTileX)
   const tileY = Math.floor(y / hexTileY)
 
@@ -189,22 +242,11 @@ export function snapHex (x, y, snap, lod = 1) {
     }
   }
 
-  // pick closest
-  let distance = 999999999.0
-  let snapX = 0
-  let snapY = 0
-  for (const point of points) {
-    const d = Math.sqrt((point.x - modX) ** 2 + (point.y - modY) ** 2)
-    if (d < distance) {
-      distance = d
-      snapX = point.x
-      snapY = point.y
-    }
-  }
+  const closest = findClosestPoint(modX, modY, points)
 
   return {
-    x: Math.round(tileX * hexTileX + snapX),
-    y: Math.round(tileY * hexTileY + snapY)
+    x: Math.round(tileX * hexTileX + closest.x),
+    y: Math.round(tileY * hexTileY + closest.y)
   }
 }
 

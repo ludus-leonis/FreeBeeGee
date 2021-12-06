@@ -249,7 +249,6 @@ function dragContinue (mousemove) {
       dragging,
       dragging.piece.x + mousemove.clientX - dragging.startX,
       dragging.piece.y + mousemove.clientY - dragging.startY
-      // 1
     )
     mousemove.preventDefault()
   }
@@ -382,15 +381,14 @@ function properties (mousedown) {
  * @param {Element} element The HTML node to update.
  * @param {Number} x New x coordinate in px.
  * @param {Number} y New y coordinate in px.
- * @param {Number} snapSize Grid/snap size. Defaults to the room's snap size.
  */
-function setPosition (element, x, y, snapSize = getTemplate().snapSize) {
+function setPosition (element, x, y) {
   const template = getTemplate()
 
   x = clamp(0, x, template._meta.widthPx - 0 - 1)
   y = clamp(0, y, template._meta.heightPx - 0 - 1)
 
-  const snapped = snap(x, y, snapSize)
+  const snapped = snap(x, y)
   element.x = Math.max(0, snapped.x)
   element.y = Math.max(0, snapped.y)
 

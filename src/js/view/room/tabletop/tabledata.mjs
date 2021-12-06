@@ -449,9 +449,8 @@ export function getContentRectGridAll () {
  * @return {Object} Piece data object.
  */
 export function createPieceFromAsset (assetId, x = 0, y = 0) {
-  const template = getTemplate()
   const asset = findAsset(assetId)
-  const xy = snap(x, y, template.snapSize)
+  const xy = snap(x, y)
 
   return populatePieceDefaults(clampToTableSize({
     asset: asset.id,
@@ -482,19 +481,21 @@ export function clampToTableSize (piece) {
  *
  * @param {Number} x X-coordinate to snap.
  * @param {Number} y Y-coordiante to snap.
- * @param {Number} lod Optional level of detail for hex snapping.
- *                     1 = hex centers (default),
- *                     2 = hex centers + hex corners,
- *                     3 = hex centers + hex corners + hex sides
+ * @param {Number} lod Optional level of detail for snapping.
+ *                     1 = centers,
+ *                     2 = centers + corners,
+ *                     3 = centers + corners + sides (default)
  * @return {Object} Closest grid vertex to original x/y as {x, y}.
  */
-export function snap (x, y, lod = 1) {
+export function snap (x, y, lod = 3) {
   const template = getTemplate()
-  if (template.type === TYPE_HEX) {
-    return snapHex(x, y, template.gridSize, 3)
-  } else {
-    return snapGrid(x, y, template.snapSize)
+  if (template.snap === false) {
+    return snapGrid(x, y, 8, 3) // snap to 4px
   }
+  if (template.type === TYPE_HEX) {
+    return snapHex(x, y, template.gridSize, lod)
+  }
+  return snapGrid(x, y, template.gridSize, lod)
 }
 
 /**

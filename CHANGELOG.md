@@ -9,17 +9,20 @@ This is a breaking release changing internal data structures. Old snapshots will
 ### Notable changes
 
 * added hex mode for templates
-* added multiple table background images - change via settings
+* added multiple table background images (change via settings)
 * added hotkey to toggle fullscreen (F11)
 
 ### Other changes
 
+* added `snap` property to templates to turn on/off snapping - defaults to true=on
 * fixed outline of backsides of irregular-shaped pieces
-* fixed tokens sometime shifting when selecting them
+* fixed tokens sometimes shifting when selecting them
 * fixed library search sometimes missing / ok not working
 * improved readablity of piece numbers on bright borders
 * improved build speed by caching some files
 * changed drag'n'drop 'ghost' image to show snap positions
+* changed grid indicators from pngs to sharper svgs
+* removed `gridSize` from templates - templates snap to their grid size if snapping is on
 
 ## v0.11.0 - Troubled Trout
 

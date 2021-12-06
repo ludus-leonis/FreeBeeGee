@@ -379,6 +379,26 @@ class JSONRestAPI
     }
 
     /**
+     * Check/convert Boolean JSON field.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $value The value to check.
+     * @return bool The parsed value.
+     */
+    public function assertBoolean(
+        string $field,
+        $value
+    ): int {
+        if ($value === true || $value === false) {
+            return $value;
+        }
+        $this->sendError(400, 'invalid JSON: ' . $field . ' not a boolean');
+    }
+
+    /**
      * Check Base64 JSON field.
      *
      * Accepts any datatype that can be cast properly to a string.

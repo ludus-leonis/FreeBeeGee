@@ -402,7 +402,7 @@ class FreeBeeGeeAPI
             $this->api->assertHasProperties(
                 'template.json',
                 $template,
-                ['type', 'gridSize', 'snapSize', 'version', 'engine', 'gridWidth', 'gridHeight', 'colors']
+                ['type', 'gridSize', 'version', 'engine', 'gridWidth', 'gridHeight', 'colors']
             );
         }
 
@@ -413,9 +413,6 @@ class FreeBeeGeeAPI
                     break; // was checked above
                 case 'type':
                     $this->api->assertEnum('type', $value, $this->types);
-                    break;
-                case 'snapSize':
-                    $this->api->assertInteger('snapSize', $value, 1, 64);
                     break;
                 case 'version':
                     $this->api->assertSemver('version', $value);
@@ -428,6 +425,9 @@ class FreeBeeGeeAPI
                     break;
                 case 'gridHeight':
                     $this->api->assertInteger('gridHeight', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
+                    break;
+                case 'snap':
+                    $this->api->assertBoolean('snap', $value);
                     break;
                 case 'colors':
                     $this->api->assertObjectArray('colors', $value, 1);
@@ -533,7 +533,6 @@ class FreeBeeGeeAPI
             'gridSize' => 64,
             'gridWidth' => 48,
             'gridHeight' => 32,
-            'snapSize' => 32,
             'colors' => [
                 (object) [ 'name ' => 'black', 'value' => '#0d0d0d' ],
                 (object) [ 'name ' => 'white', 'value' => '#ffffff' ],

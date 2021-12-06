@@ -186,13 +186,12 @@ A template, a.k.a. snapshot, describes a table setup for a particular game.
 
   "gridSize": 64,
   "gridWidth": 48,
-  "gridHeight": 32,
-  "snapSize": 32
+  "gridHeight": 32
 }
 ```
 
 `type`
-: The type of table this template uses. Currently only `grid-square` is supported.
+: The type of table this template uses. Can be either `grid-square` or `grid-hex`.
 
 `version`
 : The version of the template / snapshot itself. Uses [Semantic Versioning](https://semver.org/). Saved templates will contain the same version as the FreeBeeGee version, but you can use your own version in custom templates.
@@ -202,6 +201,9 @@ A template, a.k.a. snapshot, describes a table setup for a particular game.
 
 `colors`
 : A series of colors available as border-colors etc. on the table. Key-Value pairs with `name` and a `value` / RGB hex code. Minimum 1 required.
+
+`snap`
+: Optional boolean property. If set to `false`, grid-snapping will be disabled for this template. It is on per default.
 
 The remaining template properties depend on the game type.
 
@@ -218,9 +220,20 @@ Templates using the `grid-square` type also have the following properties:
 `gridWidth`
 : The width of this template/table in grid spaces.
 
-`snapSize`
-: The (invisible) grid size pieces will snap to. Is recommended to be set or half of the `gridSize` to allow snapping to border/corners. If set equal to `gridSize`, all pieces must have an even width and heigth (in grid units), or rotated odd-sized pieces can't be placed on the grid.
+### `grid-hex` entries
 
+Templates using the `grid-hex` use hexes oriented with their flat sides up/down. They have the following additional properties:
+
+`gridSize`
+: The grid / minimum tile size in px. This equals the height of one hex (side-to-side).
+
+`gridHeight`
+: The height of this template/table in grid spaces.
+
+`gridWidth`
+: The width of this template/table in grid spaces.
+
+Tiles for hex-templates are a bit complicated, as hex-forms usually do not fill squares. Tile images should therefore transparent PNGs with the hex shape placed in it's center. The images sould have the smallest possible tile-size that can hold that hex shape. For example, a 1x1 hex needs a 2x1 canvas.
 
 ## Rooms
 

@@ -117,7 +117,7 @@ export function editSelected () {
 export function cloneSelected (xy) {
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    const snapped = snap(xy.x, xy.y, getTemplate().snapSize)
+    const snapped = snap(xy.x, xy.y)
     piece.x = snapped.x
     piece.y = snapped.y
     piece.z = getMaxZ(piece.layer) + 1
@@ -204,16 +204,10 @@ export function randomSelected () {
             slideX = 1
             slideY = 1
           }
-          const x = Math.abs(clamp(
-            -template.snapSize,
-            piece.x + slideX * template.snapSize,
-            (template.gridWidth - 1) * template.gridSize
-          ))
-          const y = Math.abs(clamp(
-            -template.snapSize,
-            piece.y + slideY * template.snapSize,
-            (template.gridHeight - 1) * template.gridSize
-          ))
+          const offset = Math.floor(template.gridSize / 2)
+          const x = Math.abs(clamp(0, piece.x + slideX * offset, (template.gridWidth - 1) * template.gridSize))
+          const y = Math.abs(clamp(0, piece.y + slideY * offset, (template.gridHeight - 1) * template.gridSize))
+
           // send to server
           updatePieces([{
             id: node.id,
@@ -525,7 +519,7 @@ export function noteToNode (note) {
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
 export function createNote (xy) {
-  const snapped = snap(xy.x, xy.y, getTemplate().snapSize)
+  const snapped = snap(xy.x, xy.y)
   createPieces([{
     layer: 'note',
     w: 3,
