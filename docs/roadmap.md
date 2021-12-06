@@ -8,6 +8,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] Engine changes
   * [ ] Game template
 * [X] more table backgrounds
+* [X] toggle grid on/off (visual)
 * [X] use image masks for backsides
 * [X] fullscreen hotkey (F11)
 * [ ] pre-release
@@ -29,7 +30,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] add piece
   * [ ] change table 1..9
   * [ ] change background
-* [ ] toggle grid on/off
 * [ ] set default/start table other than 1 in template
 * [ ] table passwords
 * [ ] delete items from library
@@ -39,6 +39,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] move / copy setups between tables
 * [ ] protect pieces (no-delete, no-move)
 * [ ] LOS-ruler
+* [ ] toggle grid on/off (snapping)
 * [ ] show backside/all sides in tile browser
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] meta-piece: supply heap

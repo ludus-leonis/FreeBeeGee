@@ -47,7 +47,8 @@ import {
 } from '../tabletop/tabledata.mjs'
 
 import {
-  setupBackground
+  setupBackground,
+  toggleGrid
 } from '../index.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -61,6 +62,8 @@ export function modalSettings () {
   _('#modal-header').innerHTML = `
     <h3 class="modal-title">Settings</h3>
   `
+  const grid = getRoomPreference('showGrid', false)
+  console.log(grid)
   _('#modal-body').innerHTML = `
     <div id="tabs-settings" class="tabs">
       <input id="tab-1" type="radio" name="tabs">
@@ -81,16 +84,25 @@ export function modalSettings () {
             <div class="col-12 col-lg-6">
               <label for="table-background">Background</label>
               <select id="table-background" name="background"></select>
-              <p class="p-small spacing-tiny">Choose table surface.</p>
+              <p class="p-small spacing-tiny">Table texture.</p>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="col-12 col-lg-3">
+              <label for="table-grid">Grid</label>
+              <select id="table-grid" name="grid">
+                <option value="true" ${grid ? 'selected' : ''}>On</option>
+                <option value="false" ${!grid ? 'selected' : ''}>Off</option>
+              </select>
+              <p class="p-small spacing-tiny">Show grid?</p>
+            </div>
+
+            <div class="col-12 col-lg-3">
               <label for="table-sub">Table</label>
               <select id="table-sub" name="table"></select>
-              <p class="p-small spacing-tiny">Switch to a different table inside the room.</p>
+              <p class="p-small spacing-tiny">Visible table.</p>
             </div>
             <div class="col-12">
               <label for="table-quality">Render quality</label>
-              <input id="table-quality" class="slider" type="range" min="0" max="3" value="${getRoomPreference('renderQuality') ?? 3}" >
+              <input id="table-quality" class="slider" type="range" min="0" max="3" value="${getRoomPreference('renderQuality', 3)}" >
               <p class="p-small spacing-tiny if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
               <p class="p-small spacing-tiny if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
               <p class="p-small spacing-tiny if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
@@ -207,7 +219,7 @@ export function modalSettings () {
   _('input[name="tabs"]').on('change', change => {
     setRoomPreference('modalSettingsTab', change.target.id)
   })
-  const preselect = getRoomPreference('modalSettingsTab') ?? 'tab-1'
+  const preselect = getRoomPreference('modalSettingsTab', 'tab-1')
   _('#' + preselect).checked = true
 
   _('#table-quality').on('change', () => changeQuality(Number(_('#table-quality').value)))
@@ -233,16 +245,16 @@ export function modalSettings () {
   for (let i = 0; i < room.backgrounds.length; i++) {
     const option = _('option').create(room.backgrounds[i].name)
     option.value = i
-    if (i === getRoomPreference('background')) option.selected = true
+    if (i === getRoomPreference('background', 0)) option.selected = true
     backgrounds.add(option)
   }
 
-  const select = _('#table-sub')
+  const table = _('#table-sub')
   for (let i = 1; i <= 9; i++) {
     const option = _('option').create(i)
     option.value = i
     if (i === getTableNo()) option.selected = true
-    select.add(option)
+    table.add(option)
   }
 
   const rect = getContentRectGridAll()
@@ -266,6 +278,7 @@ export function modalSettings () {
 
   // ---------------------------------------------------------------------------
 
+  _('#table-grid').on('change', () => toggleGrid(_('#table-grid').value === 'true'))
   _('#table-background').on('change', () => setupBackground(Number(_('#table-background').value)))
   _('#table-sub').on('change', () => setTableNo(Number(_('#table-sub').value)))
 

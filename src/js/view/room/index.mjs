@@ -157,6 +157,24 @@ export function toggleLayer (layer) {
   }
 }
 
+/**
+ * Toggle grid display on/off.
+ */
+export function toggleGrid (on) {
+  console.log('toggleGrid', on)
+  if (on === true || on === false) {
+    setRoomPreference('showGrid', on)
+  } else { // undefined
+    setRoomPreference('showGrid', !getRoomPreference('showGrid', false))
+  }
+  setupBackground()
+}
+
+/**
+ * Show the popup menu for a piece.
+ *
+ * @param {String} id Id of piece.
+ */
 export function popupPiece (id) {
   const piece = findPiece(id)
   const popup = _('#popper.popup.is-content').create()
@@ -305,25 +323,37 @@ export function restoreScrollPosition () {
  * Set backround to given index + store it as preference.
  *
  * @param {Number} bgIndex Index of background. Will be clamped to the available ones.
+ * @param {Boolean} showGrid If true, the overlay grid will be drawn.
  */
-export function setupBackground (bgIndex) {
+export function setupBackground (
+  bgIndex = getRoomPreference('background', 99),
+  showGrid = getRoomPreference('showGrid', false)
+) {
   const room = getRoom()
 
   bgIndex = clamp(0, bgIndex, room.backgrounds.length - 1)
 
-  const grid = room.template?.type === TYPE_HEX
-    ? brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-hex-white.svg' : 'grid-hex-black.svg'
-    : brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-square-white.svg' : 'grid-square-black.svg'
-
-  const gridX = room.template?.type === TYPE_HEX ? room.template.gridSize * 1.71875 : room.template.gridSize
-  const gridY = room.template.gridSize
-
   // setup background / wallpaper
-  updateRoom().css({
-    backgroundColor: room.backgrounds[bgIndex].color,
-    backgroundImage: `url("img/${grid}?v=$CACHE$"),url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
-    backgroundSize: `${gridX}px ${gridY}px,auto`
-  })
+  if (showGrid) {
+    const grid = room.template?.type === TYPE_HEX
+      ? brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-hex-white.svg' : 'grid-hex-black.svg'
+      : brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-square-white.svg' : 'grid-square-black.svg'
+
+    const gridX = room.template?.type === TYPE_HEX ? room.template.gridSize * 1.71875 : room.template.gridSize
+    const gridY = room.template.gridSize
+
+    updateRoom().css({
+      backgroundColor: room.backgrounds[bgIndex].color,
+      backgroundImage: `url("img/${grid}?v=$CACHE$"),url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
+      backgroundSize: `${gridX}px ${gridY}px,auto`
+    })
+  } else {
+    updateRoom().css({
+      backgroundColor: room.backgrounds[bgIndex].color,
+      backgroundImage: `url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
+      backgroundSize: 'auto'
+    })
+  }
 
   // setup scroller
   const scroller = _('#scroller')
@@ -335,6 +365,7 @@ export function setupBackground (bgIndex) {
 
   // store for future reference
   setRoomPreference('background', bgIndex)
+  setRoomPreference('showGrid', showGrid)
 }
 
 // --- internal ----------------------------------------------------------------
@@ -414,7 +445,7 @@ function setupRoom () {
   `
 
   // load preferences
-  changeQuality(getRoomPreference('renderQuality') ?? 3)
+  changeQuality(getRoomPreference('renderQuality', 3))
 
   // setup menu for layers
   let undefinedCount = 0
@@ -447,7 +478,7 @@ function setupRoom () {
   _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
   _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
 
-  setupBackground(getRoomPreference('background') ?? 99)
+  setupBackground()
 
   _('body').on('contextmenu', e => e.preventDefault())
 
@@ -457,7 +488,7 @@ function setupRoom () {
   enableDragAndDrop('#tabletop')
 
   // load + setup content
-  setTableNo(getRoomPreference('table') ?? 1, false)
+  setTableNo(getRoomPreference('table', 1), false)
   runStatuslineLoop()
   startAutoSync(() => { autoTrackScrollPosition() })
 }

@@ -27,7 +27,8 @@ import {
 } from '../../view/modal.mjs'
 
 import {
-  toggleLayer
+  toggleLayer,
+  toggleGrid
 } from './index.mjs'
 import {
   settings,
@@ -142,6 +143,9 @@ function handleRoomKeys (keydown) {
         break
       case 'f': // flip
         flipSelected()
+        break
+      case 'g': // toggleGrid
+        toggleGrid()
         break
       case 'o': // color/outline selected
         outlineSelected()

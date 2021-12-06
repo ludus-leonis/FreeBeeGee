@@ -137,7 +137,7 @@ export function modalLibrary (xy) {
     _('input[name="tabs"]').on('change', change => {
       setRoomPreference('modalLibraryTab', change.target.id)
     })
-    const preselect = getRoomPreference('modalLibraryTab') ?? 'tab-1'
+    const preselect = getRoomPreference('modalLibraryTab', 'tab-1')
     _('#' + preselect).checked = true
 
     refreshTabs()

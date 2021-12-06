@@ -186,10 +186,11 @@ export function createRoom (room, snapshot) {
  * room.
  *
  * @param {String} pref Setting to obtain.
+ * @param {String} defaultValue Fallback value if not set/found.
  * @return {String} The setting's value.
  */
-export function getRoomPreference (pref) {
-  return getStoreValue('r' + room.id.substr(0, 8), pref)
+export function getRoomPreference (pref, defaultValue) {
+  return getStoreValue('r' + room.id.substr(0, 8), pref) ?? defaultValue
 }
 
 /**
