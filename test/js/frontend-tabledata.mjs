@@ -27,10 +27,10 @@ import {
 import {
   findPiece,
   findAsset,
+  getPieceBounds,
   findPiecesWithin,
   populatePieceDefaults,
   populatePiecesDefaults,
-  assetToPiece,
   getMinZ,
   getMaxZ,
   getContentRect,
@@ -100,6 +100,15 @@ describe('Frontend - tabledata.mjs', function () {
     }
   })
 
+  it('getPieceBounds()', function () {
+    const piece = populatePieceDefaults(JSON.parse(pieceJSON))
+    const bonds = getPieceBounds(piece)
+    expect(bonds.left).to.be.eq(256 - 0 * 64 - 64 / 2)
+    expect(bonds.right).to.be.eq(256 + 0 * 64 + 64 / 2 - 1)
+    expect(bonds.top).to.be.eq(192 - 0 * 64 - 64 / 2)
+    expect(bonds.bottom).to.be.eq(192 + 0 * 64 + 64 / 2 - 1)
+  })
+
   it('findPiecesWithin()', function () {
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
@@ -111,18 +120,25 @@ describe('Frontend - tabledata.mjs', function () {
 
       if (i === TEST_STATE) {
         // all layers
+        console.log(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i))
+
         expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i).length).to.be.eq(1)
         expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(1)
+        expect(findPiecesWithin({ left: 256 - 32, top: 192 - 32, right: 256 + 31, bottom: 192 + 31 }, 'all', i).length).to.be.eq(1)
         expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'all', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'all', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'all', i).length).to.be.eq(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'all', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(1)
+        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(0)
 
         // correct layer
         expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'other', i).length).to.be.eq(1)
         expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(1)
         expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'other', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'other', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'other', i).length).to.be.eq(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'other', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(1)
+        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(0)
 
         // wrong layer
         expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'tile', i).length).to.be.eq(0)
@@ -130,6 +146,10 @@ describe('Frontend - tabledata.mjs', function () {
         expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'tile', i).length).to.be.eq(0)
         expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'tile', i).length).to.be.eq(0)
         expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'tile', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'tile', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
       } else {
         // all layers
         expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i).length).to.be.eq(0)
@@ -153,59 +173,6 @@ describe('Frontend - tabledata.mjs', function () {
         expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
       }
     }
-  })
-
-  it('assetToPiece()', function () {
-    const a0 = assetToPiece()
-    expect(a0).to.be.an('object')
-    expect(a0.asset).to.be.eq('0000000000000000')
-    expect(a0.layer).to.be.eq('tile')
-    expect(a0.x).to.be.eq(0)
-    expect(a0.y).to.be.eq(0)
-    expect(a0.z).to.be.eq(0)
-    expect(a0.w).to.be.eq(1)
-    expect(a0.h).to.be.eq(1)
-    expect(a0._meta.sides).to.be.eq(1)
-    expect(a0.bg).to.be.eq('40bfbf')
-    expect(a0.side).to.be.eq(0)
-    expect(a0.color).to.be.eq(0)
-    expect(a0.r).to.be.eq(0)
-    expect(a0.n).to.be.eq(0)
-    expect(a0.label).to.be.eq('')
-
-    const a1 = assetToPiece('abc')
-    expect(a1).to.be.an('object')
-    expect(a1.asset).to.be.eq('0000000000000000')
-    expect(a1.layer).to.be.eq('tile')
-    expect(a1.x).to.be.eq(0)
-    expect(a1.y).to.be.eq(0)
-    expect(a1.z).to.be.eq(0)
-    expect(a1.w).to.be.eq(1)
-    expect(a1.h).to.be.eq(1)
-    expect(a1._meta.sides).to.be.eq(1)
-    expect(a1.bg).to.be.eq('40bfbf')
-    expect(a1.side).to.be.eq(0)
-    expect(a1.color).to.be.eq(0)
-    expect(a1.r).to.be.eq(0)
-    expect(a1.n).to.be.eq(0)
-    expect(a1.label).to.be.eq('')
-
-    const a2 = assetToPiece('5b150d84cee577dc')
-    expect(a2).to.be.an('object')
-    expect(a2.asset).to.be.eq('5b150d84cee577dc')
-    expect(a2.layer).to.be.eq('tile')
-    expect(a2.x).to.be.eq(0)
-    expect(a2.y).to.be.eq(0)
-    expect(a2.z).to.be.eq(0)
-    expect(a2.w).to.be.eq(3)
-    expect(a2.h).to.be.eq(2)
-    expect(a2._meta.sides).to.be.eq(2)
-    expect(a2.bg).to.be.eq('transparent')
-    expect(a2.side).to.be.eq(0)
-    expect(a2.color).to.be.eq(0)
-    expect(a2.r).to.be.eq(0)
-    expect(a2.n).to.be.eq(0)
-    expect(a2.label).to.be.eq('')
   })
 
   it('populatePieceDefaults()', function () {
@@ -474,8 +441,147 @@ describe('Frontend - tabledata.mjs', function () {
   })
 })
 
-const pieceJSON = '{"id":"fe008a4da3b2511e","layer":"other","asset":"f45f27b57498c3be","x":256,"y":192,"z":13,"side":4}'
+const pieceJSON = `
+{
+  "id": "fe008a4da3b2511e",
+  "layer": "other",
+  "asset": "f45f27b57498c3be",
+  "x": 256,
+  "y": 192,
+  "z": 13,
+  "side": 4
+}`
 
-const tableJSON = '[{"layer":"tile","asset":"c065574908de7702","w":3,"h":2,"x":960,"y":128,"z":58,"id":"437e26b90281e34e"},{"id":"0e13b377e39574bc","layer":"tile","asset":"da30d95f34341fc0","x":768,"y":256,"z":65,"r":90},{"layer":"tile","asset":"89bd84cc218186eb","x":1344,"y":192,"z":56,"id":"9754d0c014e39cd9","r":90},{"layer":"token","asset":"b7662212e5f3c6f9","x":768,"y":704,"z":35,"w":2,"h":2,"id":"49d045e1712c4148"},{"layer":"token","asset":"b7662212e5f3c6f9","x":960,"y":640,"z":34,"id":"b785cb505677f977"}]'
+const tableJSON = `
+[{
+  "layer": "tile",
+  "asset": "c065574908de7702",
+  "w": 3,
+  "h": 2,
+  "x": 960,
+  "y": 128,
+  "z": 58,
+  "id": "437e26b90281e34e"
+}, {
+  "id": "0e13b377e39574bc",
+  "layer": "tile",
+  "asset": "da30d95f34341fc0",
+  "x": 768,
+  "y": 256,
+  "z": 65,
+  "r": 90
+}, {
+  "layer": "tile",
+  "asset": "89bd84cc218186eb",
+  "x": 1344,
+  "y": 192,
+  "z": 56,
+  "id": "9754d0c014e39cd9",
+  "r": 90
+}, {
+  "layer": "token",
+  "asset": "b7662212e5f3c6f9",
+  "x": 768,
+  "y": 704,
+  "z": 35,
+  "w": 2,
+  "h": 2,
+  "id": "49d045e1712c4148"
+}, {
+  "layer": "token",
+  "asset": "b7662212e5f3c6f9",
+  "x": 960,
+  "y": 640,
+  "z": 34,
+  "id": "b785cb505677f977"
+}]`
 
-const roomJSON = '{"id":"f9d05a1ecec3ecb8","name":"selfishExaminingBaboon","engine":"0.3.0","background":{"color":"#423e3d","scroller":"#2b2929","image":"img/desktop-wood.jpg"},"library":{"overlay":[{"media":["area.1x1.1x1x1.svg","##BACK##"],"w":1,"h":1,"bg":"#808080","alias":"area.1x1","type":"overlay","id":"7261fff0158e27bc"}],"tile":[{"media":["altar.3x2x1.transparent.png","##BACK##"],"w":3,"h":2,"bg":"transparent","alias":"altar","type":"tile","id":"5b150d84cee577dc"}],"token":[{"media":["aasimar.1x1x1.piece.svg","##BACK##"],"w":1,"h":1,"bg":"piece","alias":"aasimar","type":"token","id":"484d7d45fdc27afa"}],"other":[{"media":["classic.a.1x1x1.svg","classic.a.1x1x2.svg","classic.a.1x1x3.svg"],"w":1,"h":1,"bg":"#808080","alias":"classic.a","type":"other","id":"f45f27b57498c3be","base":"classic.a.1x1x0.png"},{"media":["dicemat.4x4x1.jpg","##BACK##"],"w":4,"h":4,"bg":"#808080","alias":"dicemat","type":"other","id":"bb07ac49818bc000"},{"media":["discard.4x4x1.jpg"],"w":4,"h":4,"bg":"#808080","alias":"discard","type":"other","id":"dd07ac49818bc000"}],"tag":[]},"template":{"type":"grid-square","version":"0.9.0-dev","engine":"^0.3.0","gridSize":64,"gridWidth":48,"gridHeight":32,"colors":[{"name":"black","value":"#0d0d0d"},{"name":"blue","value":"#061862"},{"name":"white","value":"#ffffff"}]},"credits":"test template","width":3072,"height":2048}'
+const roomJSON = `
+{
+  "id": "f9d05a1ecec3ecb8",
+  "name": "selfishExaminingBaboon",
+  "engine": "0.3.0",
+  "background": {
+    "color": "#423e3d",
+    "scroller": "#2b2929",
+    "image": "img/desktop-wood.jpg"
+  },
+  "library": {
+    "overlay": [{
+      "media": ["area.1x1.1x1x1.svg", "##BACK##"],
+      "w": 1,
+      "h": 1,
+      "bg": "#808080",
+      "alias": "area.1x1",
+      "type": "overlay",
+      "id": "7261fff0158e27bc"
+    }],
+    "tile": [{
+      "media": ["altar.3x2x1.transparent.png", "##BACK##"],
+      "w": 3,
+      "h": 2,
+      "bg": "transparent",
+      "alias": "altar",
+      "type": "tile",
+      "id": "5b150d84cee577dc"
+    }],
+    "token": [{
+      "media": ["aasimar.1x1x1.piece.svg", "##BACK##"],
+      "w": 1,
+      "h": 1,
+      "bg": "piece",
+      "alias": "aasimar",
+      "type": "token",
+      "id": "484d7d45fdc27afa"
+    }],
+    "other": [{
+      "media": ["classic.a.1x1x1.svg", "classic.a.1x1x2.svg", "classic.a.1x1x3.svg"],
+      "w": 1,
+      "h": 1,
+      "bg": "#808080",
+      "alias": "classic.a",
+      "type": "other",
+      "id": "f45f27b57498c3be",
+      "base": "classic.a.1x1x0.png"
+    }, {
+      "media": ["dicemat.4x4x1.jpg", "##BACK##"],
+      "w": 4,
+      "h": 4,
+      "bg": "#808080",
+      "alias": "dicemat",
+      "type": "other",
+      "id": "bb07ac49818bc000"
+    }, {
+      "media": ["discard.4x4x1.jpg"],
+      "w": 4,
+      "h": 4,
+      "bg": "#808080",
+      "alias": "discard",
+      "type": "other",
+      "id": "dd07ac49818bc000"
+    }],
+    "tag": []
+  },
+  "template": {
+    "type": "grid-square",
+    "version": "0.9.0-dev",
+    "engine": "^0.3.0",
+    "gridSize": 64,
+    "gridWidth": 48,
+    "gridHeight": 32,
+    "colors": [{
+      "name": "black",
+      "value": "#0d0d0d"
+    }, {
+      "name": "blue",
+      "value": "#061862"
+    }, {
+      "name": "white",
+      "value": "#ffffff"
+    }]
+  },
+  "credits": "test template",
+  "width": 3072,
+  "height": 2048
+}
+`
