@@ -329,6 +329,7 @@ function template (name) {
 
 gulp.task('template-Classic', template('Classic'))
 gulp.task('template-RPG', template('RPG'))
+gulp.task('template-Hex', template('Hex'))
 gulp.task('template-Tutorial', template('Tutorial'))
 
 gulp.task('build', gulp.parallel(
@@ -338,6 +339,7 @@ gulp.task('build', gulp.parallel(
   'js-vendor',
   'php',
   'template-RPG',
+  'template-Hex',
   'template-Classic',
   'template-Tutorial',
   'fonts',
