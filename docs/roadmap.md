@@ -4,9 +4,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.12 - Hexing Heron
 
-* [ ] Hex mode
+* [X] Hex mode
   * [X] Engine changes
-  * [ ] Game template
+  * [X] Game template
 * [X] click thru / don't select on transparent parts of images
 * [X] more table backgrounds
 * [X] toggle grid on/off (visual)
@@ -27,6 +27,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* [ ] provide user better feedback when uploading incompatible templates
 * [ ] right-click on table (add piece, change table)
 * [ ] set default/start table other than 1 in template
 * [ ] table passwords

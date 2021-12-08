@@ -9,6 +9,7 @@ This is a breaking release changing internal data structures. Old snapshots will
 ### Notable changes
 
 * added hex mode for templates
+* added 'Hex' game template
 * added multiple table background images (change via settings)
 * added setting and hotkey to toggle grid overlay (g, initially hidden)
 * added hotkey to toggle fullscreen (F11)

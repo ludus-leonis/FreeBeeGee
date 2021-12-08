@@ -144,7 +144,9 @@ function touchMousePosition (x, y) {
  * @return {Boolean} True if pixel at x/y is transparent, false otherwise.
  */
 function isSolid (piece, x, y) {
-  if (!piece?._meta?.mask) return true // no mask = no checking possible
+  if (!piece) return true // no piece = no checking
+  if (piece?.layer === 'token') return true // token are always round & solid
+  if (!piece._meta?.mask) return true // no mask = no checking possible
 
   // now do the hit detection
   const img = new Image() // eslint-disable-line no-undef

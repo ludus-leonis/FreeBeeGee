@@ -243,7 +243,7 @@ export function populatePieceDefaults (piece, headers = null) {
   const asset = findAsset(piece.asset)
   if (asset) {
     const bgImage = getAssetURL(asset, asset.base ? -1 : piece.side)
-    if (bgImage.match(/png$/i)) piece._meta.mask = bgImage
+    if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     piece._meta.sides = asset.media.length ?? 1
     if (asset.id === 'ffffffffffffffff') {
       piece._meta.feature = 'POINTER'
