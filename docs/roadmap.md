@@ -27,7 +27,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
-* [ ] provide user better feedback when uploading incompatible templates
+* [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
 * [ ] right-click on table (add piece, change table)
 * [ ] set default/start table other than 1 in template
 * [ ] table passwords

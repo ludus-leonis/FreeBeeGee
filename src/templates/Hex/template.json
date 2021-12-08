@@ -1,7 +1,7 @@
 {
   "type": "grid-hex",
   "version": "$VERSION$",
-  "engine": "^$ENGINE$",
+  "engine": "$ENGINE$",
 
   "gridSize": 64,
   "gridWidth": 48,

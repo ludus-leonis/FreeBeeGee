@@ -29,7 +29,8 @@ import {
 import {
   getRoom,
   getRoomPreference,
-  setRoomPreference
+  setRoomPreference,
+  getTemplate
 } from '../../../state/index.mjs'
 import {
   timeRecords
@@ -45,6 +46,8 @@ import {
 export function modalHelp () {
   if (!modalActive()) {
     createModal(true)
+
+    const template = getTemplate()
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">FreeBeeGee v$VERSION$ “$CODENAME$”</h3>
@@ -144,8 +147,12 @@ export function modalHelp () {
             <p>FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://www.gnu.org/licenses/">GNU Affero General Public License</a> for more details.</p>
 
             <h3>Statistics</h3>
+
             <p>Refresh time: ${Math.ceil(timeRecords['sync-network'].reduce((a, b) => a + b) / timeRecords['sync-network'].length)}ms network + ${Math.ceil(timeRecords['sync-ui'].reduce((a, b) => a + b) / timeRecords['sync-ui'].length)}ms browser</p>
 
+            <p>Engine version: $ENGINE$</p>
+
+            <p>Template version: ${template.version} (requires engine ${template.engine})</p>
           </div>
         </div>
       </div>

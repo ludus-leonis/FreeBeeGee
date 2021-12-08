@@ -394,7 +394,7 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            if (!isset($template->engine) || !$this->api->semverSatisfies($this->engine, $template->engine)) {
+            if (!isset($template->engine) || !$this->api->semverSatisfies($this->engine, '^' . $template->engine)) {
                 $this->api->sendError(400, 'template.json: game engine mismatch', 'TEMPLATE_JSON_INVALID_ENGINE', [
                     $template->engine, $this->engine
                 ]);

@@ -23,6 +23,7 @@ This is a breaking release changing internal data structures. Old snapshots will
 * fixed library search sometimes missing / ok not working
 * improved readablity of piece numbers on bright borders
 * improved build speed by caching some files
+* improved template/engine mismatch detection
 * changed drag'n'drop 'ghost' image to show snap positions
 * changed grid indicators from pngs to sharper svgs
 * removed `gridSize` from templates - templates snap to their grid size if snapping is on

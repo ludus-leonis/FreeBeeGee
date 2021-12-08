@@ -165,12 +165,12 @@ function ok (name) {
           case 400:
             switch (error.body._error) {
               case 'TEMPLATE_JSON_INVALID_ENGINE':
-                serverFeedback(`This template requires engine <strong>${error.body._messages[1]}</strong> and can't be run on this server (engine <strong>${error.body._messages[2]}</strong>). Please choose another template.`)
+                serverFeedback(`The selected template requires engine <strong>${error.body._messages[1]}</strong> and can't be run on this server (engine <strong>${error.body._messages[2]}</strong>). Please choose another template.`)
                 _('#uploadInput').add('.invalid')
                 _('#template').add('.invalid').focus()
                 break
               case 'SIZE_EXCEEDED':
-                serverFeedback('This template is too large (or we are out of disk space). Please try again later or choose a smaller one.')
+                serverFeedback('The selected template is too large (or we are out of disk space). Please try again later or choose a smaller one.')
                 _('#uploadInput').add('.invalid')
                 _('#template').add('.invalid').focus()
                 break
@@ -178,7 +178,7 @@ function ok (name) {
               case 'TEMPLATE_JSON_INVALID':
               case 'STATE_JSON_INVALID':
               default:
-                serverFeedback('This template contains errors and can\'t be added to your room. Please choose another template.')
+                serverFeedback('The selected template contains errors and can\'t be added to your room. Please choose another template.')
                 console.error(error.body._messages)
                 _('#uploadInput').add('.invalid')
                 _('#template').add('.invalid').focus()
