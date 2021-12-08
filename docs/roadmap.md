@@ -7,6 +7,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] Hex mode
   * [X] Engine changes
   * [ ] Game template
+* [X] click thru / don't select on transparent parts of images
 * [X] more table backgrounds
 * [X] toggle grid on/off (visual)
 * [X] use image masks for backsides
@@ -26,10 +27,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
-* [ ] right-click on table
-  * [ ] add piece
-  * [ ] change table 1..9
-  * [ ] change background
+* [ ] right-click on table (add piece, change table)
 * [ ] set default/start table other than 1 in template
 * [ ] table passwords
 * [ ] delete items from library
@@ -52,7 +50,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] "layer not active" hint when dragging nothing
 * [ ] demo mode (serverless?)
 * [ ] randomize button on dicemat
-* [ ] click thru / don't drag on transparent parts of images
 * [ ] generic marker overlay (X, ?, ...)
 * [ ] add more classic game boards: backgammon, mills, solitaire
 * [ ] remove default entries from json files before save (e.g. side=0)

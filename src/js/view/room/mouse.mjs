@@ -20,6 +20,7 @@
 import _ from '../../lib/FreeDOM.mjs'
 import {
   getTemplate,
+  getRoomPreference,
   movePiece
 } from '../../state/index.mjs'
 import {
@@ -40,9 +41,12 @@ import {
   pointTo
 } from './tabletop/index.mjs'
 import {
+  LAYERS,
+  sortZ,
   getMaxZ,
   findPiece,
   getTopLeftPx,
+  findPiecesWithin,
   snap
 } from './tabletop/tabledata.mjs'
 
@@ -79,7 +83,7 @@ export function enableDragAndDrop (tabletop) {
 
   _(tabletop)
     .on('mousedown', mousedown => mouseDown(mousedown))
-    .on('mousemove', mousemove => mouseMove(mousemove)) // needed also to keep track of cursor
+    .on('mousemove', mousemove => mouseMove(mousemove)) // also tracks cursor
     .on('mouseup', mouseup => mouseUp(mouseup))
 }
 
@@ -128,6 +132,117 @@ function touchMousePosition (x, y) {
 }
 
 /**
+ * Determine if a piece is not transparent at a given coordinate.
+ *
+ * Does this by creating a temporary in-memory canvas and checking against it's
+ * alpha layer. Rotation is implicitly done by the browser as CSS 'transform:'
+ * also rotates/scales click x/y.
+ *
+ * @param {Object} piece Piece to check.
+ * @param {Number} x X-coordiante in px.
+ * @param {Number} y Y-coordiante in px.
+ * @return {Boolean} True if pixel at x/y is transparent, false otherwise.
+ */
+function isSolid (piece, x, y) {
+  if (!piece?._meta?.mask) return true // no mask = no checking possible
+
+  // now do the hit detection
+  const img = new Image() // eslint-disable-line no-undef
+  img.src = piece._meta.mask
+  if (img.complete) {
+    const template = getTemplate()
+
+    const width = piece.w * template.gridSize
+    const height = piece.h * template.gridSize
+
+    // calculate img->canvas scale,
+    // compensate for 'background-size: cover'
+    let sX = 0
+    let sY = 0
+    let sW = img.width * 1.0
+    let sH = img.height * 1.0
+    const sAspect = img.width * 1.0 / img.height
+    const cAspect = width * 1.0 / height
+    if (sAspect < cAspect) { // source higher
+      const scale = width / sW
+      sH = height / scale
+      sY = (img.height - sH) / 2
+    } else { // source wider
+      const scale = height / sH
+      sW = width / scale
+      sX = (img.width - sW) / 2
+    }
+
+    // draw & check pixel
+    const scale = 2 // we don't need full resolution for checking
+    const c = document.createElement('canvas')
+    c.width = width / scale
+    c.height = height / scale
+    const ctx = c.getContext('2d')
+    ctx.drawImage(img, sX, sY, sW, sH, 0, 0, c.width, c.height)
+    const alpha = ctx.getImageData(x / scale, y / scale, 1, 1).data[3]
+    return alpha > 4 // alpha value
+  } else {
+    return true // image was not already loaded
+  }
+}
+
+/**
+ * Click-thru transparent areas of clickable pieces.
+ *
+ * If clicked on an 100% alpha area, try to find a better target for the event
+ * by traversing all layers + object on the same coordnate.
+ *
+ * @param {Object} event JavaScript evend that was triggered on a click.
+ */
+function findRealClickTarget (event) {
+  // in most cases the hit item will be the correct one
+  if (isSolid(event.target.piece, event.offsetX, event.offsetY)) {
+    return event.target
+  }
+
+  // seems the initial target is transparent. now traverse all layers.
+  const index = LAYERS.indexOf(event.target.piece.layer)
+  const coords = getMouseCoords()
+  for (const layer of LAYERS) {
+    if (
+      LAYERS.indexOf(layer) >= index &&
+        getRoomPreference('layer' + layer)
+    ) { // we don't need to check higher layers
+      for (const piece of sortZ(findPiecesWithin({
+        left: coords.x,
+        top: coords.y,
+        right: coords.x,
+        bottom: coords.y
+      }, layer))) {
+        if (piece.id === event.target.piece.id) continue // don't double-check
+
+        //  compensate center
+        const oX = coords.x - piece.x
+        const oY = coords.y - piece.y
+        let tX = oX
+        let tY = oY
+
+        // compensate rotation clockwise
+        if (piece.r > 0) {
+          const rs = Math.sin(piece.r * Math.PI / 180)
+          const rc = Math.cos(piece.r * Math.PI / 180)
+          tX = oX * rc + oY * rs
+          tY = -oX * rs + oY * rc
+        }
+
+        tX += piece._meta.originWidthPx / 2
+        tY += piece._meta.originHeightPx / 2
+        if (isSolid(piece, tX, tY)) {
+          return _('#' + piece.id).node()
+        }
+      }
+    }
+  }
+  return null // no better target available
+}
+
+/**
  * Handle mousedown events.
  *
  * Will route the handling depeding on the button.
@@ -135,13 +250,15 @@ function touchMousePosition (x, y) {
  * @param {MouseEvent} mousedown The triggering mouse event.
  */
 function mouseDown (mousedown) {
+  let target
   switch (mousedown.button) {
     case 0:
       if (mousedown.shiftKey) {
         pointTo(getMouseCoords())
       } else {
-        handleSelection(mousedown.target)
-        dragStart(mousedown)
+        target = findRealClickTarget(mousedown)
+        handleSelection(target)
+        dragStart(mousedown, target)
       }
       break
     case 1:
@@ -149,8 +266,9 @@ function mouseDown (mousedown) {
       break
     case 2:
       mousedown.preventDefault()
-      handleSelection(mousedown.target)
-      properties(mousedown)
+      target = findRealClickTarget(mousedown)
+      handleSelection(target)
+      properties(target)
       break
     default:
   }
@@ -209,8 +327,11 @@ let dragging = null // the currently dragge object, or null
  * Start drag'n'drop after mousebutton was pushed.
  *
  * @param {MouseEvent} mousedown The triggering mouse event.
+ * @param {Object} realTarget The real target of the drag (maybe not the one of mousedown).
  */
-function dragStart (mousedown) {
+function dragStart (mousedown, realTarget) {
+  if (!realTarget) return // no real click
+
   if (isDragging()) { // you can't drag twice
     dragging.parentNode.removeChild(dragging) // quick fix for release-outsite bug
     dragging = null
@@ -218,18 +339,17 @@ function dragStart (mousedown) {
     return
   }
 
-  if (!mousedown.target.classList.contains('piece')) return // we only drag pieces
+  if (!realTarget.classList.contains('piece')) return // we only drag pieces
   scroller.classList.add('cursor-grab')
 
-  const node = mousedown.target
-  dragging = node.cloneNode(true)
+  dragging = realTarget.cloneNode(true)
   dragging.id = dragging.id + '-drag'
-  dragging.piece = findPiece(node.id)
+  dragging.piece = findPiece(realTarget.id)
 
   dragging.style.zIndex = 999999999 // drag visually on top of everything
   dragging.classList.add('dragging')
   dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
-  node.parentNode.appendChild(dragging)
+  realTarget.parentNode.appendChild(dragging)
 
   dragging.startX = mousedown.clientX // no need to compensate, as we
   dragging.startY = mousedown.clientY // only calculate offset anyway
@@ -367,9 +487,11 @@ function grabEnd (mouseup) {
 
 // --- right-click properties --------------------------------------------------
 
-function properties (mousedown) {
-  if (mousedown.target.classList.contains('piece')) {
-    popupPiece(mousedown.target.id)
+function properties (target) {
+  if (!target) return // no real click
+
+  if (target.classList.contains('piece')) {
+    popupPiece(target.id)
   }
 }
 
@@ -403,6 +525,12 @@ function setPosition (element, x, y) {
  * @param {Element} element The HTML node the user clicked on.
  */
 function handleSelection (element) {
+  // unselect everything if 'nothing' was clicked
+  if (!element) {
+    unselectPieces()
+    return
+  }
+
   // remove selection from all elements if we clicked on the background or on a piece
   if (element.id === 'tabletop' || element.classList.contains('piece') || element.classList.contains('backside')) {
     unselectPieces()

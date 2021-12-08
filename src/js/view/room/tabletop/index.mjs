@@ -689,7 +689,6 @@ function randomDicemat (dicemat) {
  * @param {Object} discard Discard pile object.
  */
 function randomDiscard (discard) {
-  console.log(discard)
   const pieces = []
   let stackSide = -1
 

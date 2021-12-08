@@ -31,6 +31,7 @@ import {
   findPiecesWithin,
   populatePieceDefaults,
   populatePiecesDefaults,
+  sortZ,
   getMinZ,
   getMaxZ,
   getContentRect,
@@ -120,8 +121,6 @@ describe('Frontend - tabledata.mjs', function () {
 
       if (i === TEST_STATE) {
         // all layers
-        console.log(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i))
-
         expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i).length).to.be.eq(1)
         expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(1)
         expect(findPiecesWithin({ left: 256 - 32, top: 192 - 32, right: 256 + 31, bottom: 192 + 31 }, 'all', i).length).to.be.eq(1)
@@ -215,6 +214,24 @@ describe('Frontend - tabledata.mjs', function () {
       expect(p[i].label).to.be.eq('')
       expect(p[i]._meta.feature).to.be.eq(undefined)
     }
+  })
+
+  it('sortZ()', function () {
+    const pieces = [
+      JSON.parse(pieceJSON),
+      JSON.parse(pieceJSON),
+      JSON.parse(pieceJSON),
+      JSON.parse(pieceJSON)
+    ]
+    pieces[0].z = 2
+    pieces[1].z = -1
+    pieces[2].z = 3
+    pieces[3].z = 1
+    const b = sortZ(pieces)
+    expect(b[0].z).to.be.eq(3)
+    expect(b[1].z).to.be.eq(2)
+    expect(b[2].z).to.be.eq(1)
+    expect(b[3].z).to.be.eq(-1)
   })
 
   it('getMinZ()', function () {

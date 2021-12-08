@@ -161,7 +161,6 @@ export function toggleLayer (layer) {
  * Toggle grid display on/off.
  */
 export function toggleGrid (on) {
-  console.log('toggleGrid', on)
   if (on === true || on === false) {
     setRoomPreference('showGrid', on)
   } else { // undefined

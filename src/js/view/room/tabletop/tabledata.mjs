@@ -54,6 +54,14 @@ export const stickyNoteColors = [
   { name: 'pink' }
 ]
 
+export const LAYERS = [
+  'other',
+  'token',
+  'note',
+  'overlay',
+  'tile'
+]
+
 /**
  * Find a piece by ID.
  *
@@ -203,27 +211,6 @@ export function findExpiredPieces (no = getTableNo()) {
 }
 
 /**
- * Create a new piece from an asset.
- *
- * @param {String} id Asset ID.
- * @return {Object} Piece generated from the asset.
- */
-export function assetToPiece (id) {
-  const asset = findAsset(id) ?? createInvalidAsset()
-
-  return populatePieceDefaults({
-    asset: asset.id,
-    layer: asset.type,
-    w: asset.w,
-    h: asset.h,
-    x: 0,
-    y: 0,
-    z: 0,
-    bg: asset.bg
-  })
-}
-
-/**
  * Add default values to all properties that the API might omit.
  *
  * @param {Object} piece Data object to populate.
@@ -241,7 +228,7 @@ export function populatePieceDefaults (piece, headers = null) {
   piece.label = piece.label ?? ''
   piece.tag = piece.tag ?? ''
 
-  // add client-side meta information
+  // add client-side meta information for piece
   piece._meta = {}
   const template = getTemplate()
   piece._meta.originWidthPx = piece.w * template.gridSize
@@ -251,18 +238,24 @@ export function populatePieceDefaults (piece, headers = null) {
   piece._meta.heightPx = rect.h
   piece._meta.originOffsetXPx = (piece._meta.originWidthPx - rect.w) / 2
   piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
+
+  // add client-side meta information for asset
   const asset = findAsset(piece.asset)
-  piece._meta.sides = asset?.media.length ?? 1
-  if (asset?.id === 'ffffffffffffffff') {
-    piece._meta.feature = 'POINTER'
-  } else {
-    switch (asset?.alias) {
-      case 'dicemat':
-        piece._meta.feature = 'DICEMAT'
-        break
-      case 'discard':
-        piece._meta.feature = 'DISCARD'
-        break
+  if (asset) {
+    const bgImage = getAssetURL(asset, asset.base ? -1 : piece.side)
+    if (bgImage.match(/png$/i)) piece._meta.mask = bgImage
+    piece._meta.sides = asset.media.length ?? 1
+    if (asset.id === 'ffffffffffffffff') {
+      piece._meta.feature = 'POINTER'
+    } else {
+      switch (asset.alias) {
+        case 'dicemat':
+          piece._meta.feature = 'DICEMAT'
+          break
+        case 'discard':
+          piece._meta.feature = 'DISCARD'
+          break
+      }
     }
   }
 
@@ -320,6 +313,16 @@ export function getMinZ (layer, area = {
     }
   }
   return minZ === Number.MAX_VALUE ? 0 : minZ // start at 0
+}
+
+/**
+ * Sort pieces by their Z value.
+ *
+ * @param {Array} pieces Array of pieces to sort.
+ * @return {Array} Given array, with sorted Z values (highest first).
+ */
+export function sortZ (pieces) {
+  return pieces.sort((a, b) => b.z - a.z)
 }
 
 /**
@@ -562,23 +565,4 @@ export function splitAssetFilename (assetName) {
     return data
   }
   return data
-}
-
-// -----------------------------------------------------------------------------
-
-/**
- * Create asset to be used for invalid asset references.
- *
- * @return {Object} Asset with placeholder/invalid image.
- */
-function createInvalidAsset () {
-  return {
-    media: ['invalid.svg'],
-    width: 1,
-    height: 1,
-    bg: '40bfbf',
-    alias: 'invalid',
-    type: 'tile',
-    id: '0000000000000000'
-  }
 }

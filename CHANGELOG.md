@@ -16,6 +16,7 @@ This is a breaking release changing internal data structures. Old snapshots will
 ### Other changes
 
 * added `snap` property to templates to turn on/off snapping - defaults to true=on
+* added click-thru for transparent parts of tiles (png)
 * fixed outline of backsides of irregular-shaped pieces
 * fixed tokens sometimes shifting when selecting them
 * fixed library search sometimes missing / ok not working

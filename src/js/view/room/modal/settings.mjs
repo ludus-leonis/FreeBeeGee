@@ -63,7 +63,6 @@ export function modalSettings () {
     <h3 class="modal-title">Settings</h3>
   `
   const grid = getRoomPreference('showGrid', false)
-  console.log(grid)
   _('#modal-body').innerHTML = `
     <div id="tabs-settings" class="tabs">
       <input id="tab-1" type="radio" name="tabs">
