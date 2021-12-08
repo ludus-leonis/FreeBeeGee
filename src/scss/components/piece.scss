@@ -429,6 +429,11 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     }
   }
 
+  .backside { // disable backsides for tokens
+    border-radius: $piece-tile-size;
+    mask-image: none !important; // sass-lint:disable-line no-important
+  }
+
   // --- quality settings ---
 
   .is-quality-medium & {
