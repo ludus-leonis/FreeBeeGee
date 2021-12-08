@@ -16,9 +16,10 @@ Your game. Your data.
 * Easy-to-use drag'n'drop interface. Keyboard hotkeys for power-users.
 * Invite friends by sending them a room's unique URL.
 * Multiple tables per room. Use them for different game setups or dungeon levels.
-* Tile-/grid-based, with snapping. Classic dungeon tiles and 200+ monster token included.
+* Tile-/grid-based. Supports square and hex grids, with snapping.
+* Classic dungeon tiles and 200+ monster token included.
 * Separate layers for tiles, overlays and tokens.
-* Asset browser for your token/tiles. Individual libraries per game.
+* Asset browser for your token/tiles. Individual libraries per room.
 * Sticky notes and dice trays.
 * Templates to setup tables and populate your library from.
 * Transfer individual rooms between servers. Or keep an offline backup.
@@ -30,7 +31,7 @@ Your game. Your data.
 **Note:** This is still an early/development version. A few rather major features are still missing, limiting it's current usefullness:
 
 * While you can upload images/tiles/pieces via the web-UI, editing them is quite limited.
-* No room passwords yet. Anyone who knows their name can join. That is partly by design, but it would be nice to have that option.
+* No room passwords yet. Anyone who knows a room name can join it. That is partly by design, but it would be nice to have that option.
 
 The good news is: You can still use FreeBeeGee today to play! Missing features will arrive sooner or later. There is a [roadmap](docs/roadmap.md) for details.
 
@@ -51,8 +52,8 @@ FreeBeeGee follows the [KISS principle](https://en.wikipedia.org/wiki/KISS_princ
 * A game scripting engine or programming environment.
 * An AI to play against.
 * A 3D or physics engine with dazzling visual effects.
-* A community management tool.
 * A campaign management tool.
+* A community management tool.
 
 There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/limitations of this project.
 
@@ -71,7 +72,7 @@ Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device su
 
 Download the latest release from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases). Extract the `*.tar.gz`/`*.zip` into a folder on your web-server and you are (almost) ready to go - FreeBeeGee comes with reasonable, secure defaults.
 
-Read the [Setup & Config](docs/INSTALL.md) docs for details.
+Read the [Setup & Config](docs/INSTALL.md) docs for full install instructions and how to setup your mandatory server password.
 
 ## License
 
