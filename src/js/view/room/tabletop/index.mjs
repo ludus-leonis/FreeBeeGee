@@ -255,7 +255,12 @@ function createOrUpdatePieceDOM (piece, select) {
   // reuse existing DOM node if possible, only (re)create on major changes
   let div = _('#' + piece.id)
   let _piece = div.unique() ? div.piece : {} // get old piece out of old node
-  if (_piece.layer !== piece.layer || _piece.side !== piece.side) {
+  if (
+    _piece.layer !== piece.layer ||
+    _piece.w !== piece.w ||
+    _piece.h !== piece.h ||
+    _piece.side !== piece.side
+  ) {
     selection = _('#tabletop .is-selected').id
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
