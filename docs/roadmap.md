@@ -9,6 +9,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] Game template
 * [X] click thru / don't select on transparent parts of images
 * [X] more table backgrounds
+* [X] improved generic game token / Go piece / bead
 * [X] toggle grid on/off (visual)
 * [X] use image masks for backsides
 * [X] fullscreen hotkey (F11)

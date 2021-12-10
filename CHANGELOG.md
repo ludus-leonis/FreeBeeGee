@@ -13,6 +13,7 @@ This is a breaking release changing internal data structures. Old snapshots will
 * added multiple table background images (change via settings)
 * added setting and hotkey to toggle grid overlay (g, initially hidden)
 * added hotkey to toggle fullscreen (F11)
+* improved generic game token / Go piece / bead (now in 8 colors)
 
 ### Other changes
 
