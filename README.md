@@ -38,11 +38,11 @@ The good news is: You can still use FreeBeeGee today to play! Those features wil
 ## Screenshots
 
 <img src="docs/FreeBeeGee-screenshot-3.jpg" width="320px">
-<img src="docs/FreeBeeGee-screenshot-6.jpg" width="320px">
 <img src="docs/FreeBeeGee-screenshot-4.jpg" width="320px">
+<img src="docs/FreeBeeGee-screenshot-7.jpg" width="320px">
+<img src="docs/FreeBeeGee-screenshot-6.jpg" width="320px">
 <img src="docs/FreeBeeGee-screenshot-5.jpg" width="320px">
 <img src="docs/FreeBeeGee-screenshot-1.jpg" width="320px">
-<img src="docs/FreeBeeGee-screenshot-2.jpg" width="320px">
 
 ## What FreeBeeGee is not
 

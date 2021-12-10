@@ -21,7 +21,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] library search sometimes missing / ok not working
     * [X] check existing rooms for engine mismatch after updates
   * [ ] review + run tests
-  * [ ] update screenshots
+  * [X] update screenshots
   * [X] review docs
   * [ ] bump version/codename & update CHANGELOG
 
