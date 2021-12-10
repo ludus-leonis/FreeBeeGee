@@ -13,14 +13,15 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] use image masks for backsides
 * [X] fullscreen hotkey (F11)
 * [ ] pre-release
-  * [ ] bugfixing
+  * [X] bugfixing
     * [X] unreadable piece numbers on white borders
     * [X] tokens sometime shifting when selecting
     * [X] build speed by caching some files
     * [X] library search sometimes missing / ok not working
+    * [X] check existing rooms for engine mismatch after updates
   * [ ] review + run tests
   * [ ] update screenshots
-  * [ ] review docs
+  * [X] review docs
   * [ ] bump version/codename & update CHANGELOG
 
 ## Backlog (unsorted)

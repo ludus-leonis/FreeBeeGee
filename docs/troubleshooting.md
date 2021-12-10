@@ -19,7 +19,7 @@ Here are a few things you can try:
 
 ## I don't know the password to create rooms.
 
-See the [install instructions](INSTALL.md). You need to set a password first (or disable it).
+See the [install instructions](INSTALL.md). You have to set a password first (or disable it).
 
 ## I can't upload a snapshot (that I downloaded from the same server)
 

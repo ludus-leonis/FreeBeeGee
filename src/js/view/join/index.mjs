@@ -34,6 +34,10 @@ import {
 } from '../../state/index.mjs'
 
 import {
+  runError
+} from '../error/index.mjs'
+
+import {
   getGetParameter,
   generateName,
   generateUsername
@@ -158,7 +162,11 @@ function ok () {
 function openOrCreate (name) {
   apiGetRoom(name)
     .then((room) => {
-      runRoom(room)
+      if (room._error) {
+        runError(room._error, name)
+      } else {
+        runRoom(room)
+      }
     })
     .catch(() => createRoom(name))
 }

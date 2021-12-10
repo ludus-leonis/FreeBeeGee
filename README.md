@@ -16,7 +16,7 @@ Your game. Your data.
 * Easy-to-use drag'n'drop interface. Keyboard hotkeys for power-users.
 * Invite friends by sending them a room's unique URL.
 * Multiple tables per room. Use them for different game setups or dungeon levels.
-* Tile-/grid-based. Supports square and hex grids, with snapping.
+* Tile-/grid-based. Supports square and hex layouts, with snapping.
 * Classic dungeon tiles and 200+ monster token included.
 * Separate layers for tiles, overlays and tokens.
 * Asset browser for your token/tiles. Individual libraries per room.
@@ -28,12 +28,12 @@ Your game. Your data.
 * Easy to install and maintain.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
 
-**Note:** This is still an early/development version. A few rather major features are still missing, limiting it's current usefullness:
+**Note:** This is an development version. A few rather major features are still missing:
 
 * While you can upload images/tiles/pieces via the web-UI, editing them is quite limited.
 * No room passwords yet. Anyone who knows a room name can join it. That is partly by design, but it would be nice to have that option.
 
-The good news is: You can still use FreeBeeGee today to play! Missing features will arrive sooner or later. There is a [roadmap](docs/roadmap.md) for details.
+The good news is: You can still use FreeBeeGee today to play! Those features will arrive sooner or later. There is a [roadmap](docs/roadmap.md) for details.
 
 ## Screenshots
 

@@ -202,9 +202,6 @@ A template, a.k.a. snapshot, describes a table setup for a particular game.
 `colors`
 : A series of colors available as border-colors etc. on the table. Key-Value pairs with `name` and a `value` / RGB hex code. Minimum 1 required.
 
-`snap`
-: Optional boolean property. If set to `false`, grid-snapping will be disabled for this template. It is on per default.
-
 The remaining template properties depend on the game type.
 
 ### `grid-square` entries
@@ -220,6 +217,9 @@ Templates using the `grid-square` type also have the following properties:
 `gridWidth`
 : The width of this template/table in grid spaces.
 
+`snap`
+: Optional boolean property. If set to `false`, grid-snapping will be disabled for this template. It is on per default.
+
 ### `grid-hex` entries
 
 Templates using the `grid-hex` use hexes oriented with their flat sides up/down. They have the following additional properties:
@@ -233,7 +233,10 @@ Templates using the `grid-hex` use hexes oriented with their flat sides up/down.
 `gridWidth`
 : The width of this template/table in grid spaces.
 
-Tiles for hex-templates are a bit complicated, as hex-forms usually do not fill squares. Tile images should therefore transparent PNGs with the hex shape placed in it's center. The images sould have the smallest possible tile-size that can hold that hex shape. For example, a 1x1 hex needs a 2x1 canvas.
+`snap`
+: Optional boolean property. If set to `false`, grid-snapping will be disabled for this template. It is on per default.
+
+Tiles for hex-templates are a bit complicated, as hex-forms usually do not fill squares. Tile images should therefore transparent PNGs with the hex shape placed in it's center. The images sould have the smallest possible multiple of 'gridSize' that can hold that hex shape. For example, a 1x1 hex needs a 2x1 canvas.
 
 ## Rooms
 

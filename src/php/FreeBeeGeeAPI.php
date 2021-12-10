@@ -1342,6 +1342,10 @@ class FreeBeeGeeAPI
                 $folder . 'room.json',
                 $folder . '.flock'
             );
+            $room = json_decode($body);
+            if (!$this->api->semverSatisfies($this->engine, '^' . $room->engine)) {
+                $this->api->sendError(400, 'invalid room engine', 'ROOM_INVALID_ENGINE');
+            }
             $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
         }
         $this->api->sendError(404, 'not found: ' . $roomName);
