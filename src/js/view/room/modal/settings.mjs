@@ -42,8 +42,7 @@ import {
   moveContent
 } from '../tabletop/index.mjs'
 import {
-  getContentRectGrid,
-  getContentRectGridAll
+  getContentRect
 } from '../tabletop/tabledata.mjs'
 
 import {
@@ -256,9 +255,10 @@ export function modalSettings () {
     table.add(option)
   }
 
-  const rect = getContentRectGridAll()
-  populateSizes('#table-w', getTemplate().gridWidth, rect.right)
-  populateSizes('#table-h', getTemplate().gridHeight, rect.bottom)
+  const template = getTemplate()
+  const rect = getContentRect()
+  populateSizes('#table-w', getTemplate().gridWidth, Math.floor(rect.right / template.gridSize))
+  populateSizes('#table-h', getTemplate().gridHeight, Math.floor(rect.bottom / template.gridSize))
 
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())
@@ -281,65 +281,15 @@ export function modalSettings () {
   _('#table-background').on('change', () => setupBackground(Number(_('#table-background').value)))
   _('#table-sub').on('change', () => setTableNo(Number(_('#table-sub').value)))
 
-  _('#btn-table-tl').on('click', click => {
-    handleAlign(click, 1, 1)
-  })
-
-  _('#btn-table-tc').on('click', click => {
-    handleAlign(click, getTemplate().gridWidth / 2 - getContentRectGrid().width / 2, 1)
-  })
-
-  _('#btn-table-tr').on('click', click => {
-    handleAlign(click, getTemplate().gridWidth - 1 - getContentRectGrid().width, 1)
-  })
-
-  _('#btn-table-cl').on('click', click => {
-    handleAlign(
-      click,
-      1,
-      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
-    )
-  })
-
-  _('#btn-table-cc').on('click', click => {
-    handleAlign(
-      click,
-      getTemplate().gridWidth / 2 - getContentRectGrid().width / 2,
-      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
-    )
-  })
-
-  _('#btn-table-cr').on('click', click => {
-    handleAlign(
-      click,
-      getTemplate().gridWidth - 1 - getContentRectGrid().width,
-      getTemplate().gridHeight / 2 - getContentRectGrid().height / 2
-    )
-  })
-
-  _('#btn-table-bl').on('click', click => {
-    handleAlign(
-      click,
-      1,
-      getTemplate().gridHeight - 1 - getContentRectGrid().height
-    )
-  })
-
-  _('#btn-table-bc').on('click', click => {
-    handleAlign(
-      click,
-      getTemplate().gridWidth / 2 - getContentRectGrid().width / 2,
-      getTemplate().gridHeight - 1 - getContentRectGrid().height
-    )
-  })
-
-  _('#btn-table-br').on('click', click => {
-    handleAlign(
-      click,
-      getTemplate().gridWidth - 1 - getContentRectGrid().width,
-      getTemplate().gridHeight - 1 - getContentRectGrid().height
-    )
-  })
+  _('#btn-table-tl').on('click', click => handleAlign(click, -1, -1))
+  _('#btn-table-tc').on('click', click => handleAlign(click, 0, -1))
+  _('#btn-table-tr').on('click', click => handleAlign(click, 1, -1))
+  _('#btn-table-cl').on('click', click => handleAlign(click, -1, 0))
+  _('#btn-table-cc').on('click', click => handleAlign(click, 0, 0))
+  _('#btn-table-cr').on('click', click => handleAlign(click, 1, 0))
+  _('#btn-table-bl').on('click', click => handleAlign(click, -1, 1))
+  _('#btn-table-bc').on('click', click => handleAlign(click, 0, 1))
+  _('#btn-table-br').on('click', click => handleAlign(click, 1, 1))
 
   _('#btn-table-resize').on('click', click => {
     click.preventDefault()
@@ -421,9 +371,40 @@ function resizeRoom () {
  * Handle the alignment click event.
  *
  * @param {Event} click Click-event.
+ * @param {Number} x X position on table, range [-1 .. 0 .. 1]
+ * @param {Number} y Y position on table, range [-1 .. 0 .. 1]
  */
 function handleAlign (click, x, y) {
   click.preventDefault()
-  moveContent(Math.floor(x), Math.floor(y))
+  const template = getTemplate()
+  const padding = template.gridSize // leave room on side
+  const rect = getContentRect()
+
+  let x2
+  let y2
+
+  switch (x) {
+    case -1:
+      x2 = (padding + rect.width / 2) - (rect.left + rect.width / 2)
+      break
+    case 0:
+      x2 = template._meta.widthPx / 2 - (rect.left + rect.width / 2)
+      break
+    case 1:
+      x2 = (template._meta.widthPx - padding - rect.width / 2) - (rect.left + rect.width / 2)
+  }
+
+  switch (y) {
+    case -1:
+      y2 = (padding + rect.height / 2) - (rect.top + rect.height / 2)
+      break
+    case 0:
+      y2 = template._meta.heightPx / 2 - (rect.top + rect.height / 2)
+      break
+    case 1:
+      y2 = (template._meta.heightPx - padding - rect.height / 2) - (rect.top + rect.height / 2)
+  }
+
+  moveContent(Math.floor(x2), Math.floor(y2))
   getModal().hide()
 }

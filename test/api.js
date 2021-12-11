@@ -98,7 +98,6 @@ function testGet (api, path, payloadTests, status = 200, forward = null) {
  */
 function testZIPUpload (api, path, name, auth, upload, payloadTests, status = 200) {
   it(`POST ${api}${path()}`, function (done) {
-    // const boundary = Math.random()
     chai.request(api)
       .post(path())
       .field('name', name())
@@ -277,7 +276,7 @@ function testApiCrudRoom (api, version) {
     expect(body.template.gridWidth).to.be.eql(48)
     expect(body.template.gridHeight).to.be.eql(32)
     expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql('^' + p.versionEngine)
+    expect(body.template.engine).to.be.eql(p.versionEngine)
     expect(body.template.colors).to.be.an('array')
   }, 201)
 
@@ -305,7 +304,7 @@ function testApiCrudRoom (api, version) {
     expect(body.template.gridWidth).to.be.eql(48)
     expect(body.template.gridHeight).to.be.eql(32)
     expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql('^' + p.versionEngine)
+    expect(body.template.engine).to.be.eql(p.versionEngine)
     expect(body.template.colors).to.be.an('array')
   }, 200)
 
@@ -369,8 +368,8 @@ function testApiCrudPiece (api, version) {
   // create piece
   testJsonPost(api, () => `/rooms/crudPiece${version}/tables/1/pieces/`, () => {
     return { // add letter-token
-      layer: 'token',
-      asset: 'dd74249373740cdf',
+      l: 4,
+      a: 'dd74249373740cdf',
       w: 1,
       h: 1,
       x: 18,
@@ -378,14 +377,14 @@ function testApiCrudPiece (api, version) {
       z: 10,
       r: 0,
       n: 2,
-      side: 0,
-      color: 1
+      s: 0,
+      c: [1]
     }
   }, body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
-    expect(body.layer).to.be.eql('token')
-    expect(body.asset).to.be.eql('dd74249373740cdf')
+    expect(body.l).to.be.eql(4)
+    expect(body.a).to.be.eql('dd74249373740cdf')
     expect(body.w).to.not.exist
     expect(body.h).to.not.exist
     expect(body.x).to.be.eql(18)
@@ -393,8 +392,10 @@ function testApiCrudPiece (api, version) {
     expect(body.z).to.be.eql(10)
     expect(body.r).to.not.exist
     expect(body.n).to.be.eql(2)
-    expect(body.side).to.not.exist
-    expect(body.color).to.be.eql(1)
+    expect(body.s).to.not.exist
+    expect(body.c).to.be.an('array')
+    expect(body.c.length).to.be.eql(1)
+    expect(body.c[0]).to.be.eql(1)
     data = body
   }, 201)
 
@@ -402,8 +403,8 @@ function testApiCrudPiece (api, version) {
   testJsonGet(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
-    expect(body.layer).to.be.eql('token')
-    expect(body.asset).to.be.eql('dd74249373740cdf')
+    expect(body.l).to.be.eql(4)
+    expect(body.a).to.be.eql('dd74249373740cdf')
     expect(body.w).to.not.exist
     expect(body.h).to.not.exist
     expect(body.x).to.be.eql(18)
@@ -411,20 +412,24 @@ function testApiCrudPiece (api, version) {
     expect(body.z).to.be.eql(10)
     expect(body.r).to.not.exist
     expect(body.n).to.be.eql(2)
-    expect(body.side).to.not.exist
-    expect(body.color).to.be.eql(1)
+    expect(body.s).to.not.exist
+    expect(body.t).to.not.exist
+    expect(body.c).to.be.an('array')
+    expect(body.c.length).to.be.eql(1)
+    expect(body.c[0]).to.be.eql(1)
   })
 
   // update piece (patch)
   testJsonPatch(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
     return {
-      x: 19
+      x: 19,
+      t: ['  hello test  ']
     }
   }, body => {
     expect(body).to.be.an('object')
     expect(body.id).to.match(/^[0-9a-f]+$/)
-    expect(body.layer).to.be.eql('token')
-    expect(body.asset).to.be.eql('dd74249373740cdf')
+    expect(body.l).to.be.eql(4)
+    expect(body.a).to.be.eql('dd74249373740cdf')
     expect(body.w).to.not.exist
     expect(body.h).to.not.exist
     expect(body.x).to.be.eql(19)
@@ -432,16 +437,21 @@ function testApiCrudPiece (api, version) {
     expect(body.z).to.be.eql(10)
     expect(body.r).to.not.exist
     expect(body.n).to.be.eql(2)
-    expect(body.side).to.not.exist
-    expect(body.color).to.be.eql(1)
+    expect(body.s).to.not.exist
+    expect(body.t).to.be.an('array')
+    expect(body.t.length).to.be.eql(1)
+    expect(body.t[0]).to.be.eql('hello test')
+    expect(body.c).to.be.an('array')
+    expect(body.c.length).to.be.eql(1)
+    expect(body.c[0]).to.be.eql(1)
   })
 
   // get & compare piece
   testJsonGet(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
-    expect(body.layer).to.be.eql('token')
-    expect(body.asset).to.be.eql('dd74249373740cdf')
+    expect(body.l).to.be.eql(4)
+    expect(body.a).to.be.eql('dd74249373740cdf')
     expect(body.w).to.not.exist
     expect(body.h).to.not.exist
     expect(body.x).to.be.eql(19)
@@ -449,56 +459,68 @@ function testApiCrudPiece (api, version) {
     expect(body.z).to.be.eql(10)
     expect(body.r).to.not.exist
     expect(body.n).to.be.eql(2)
-    expect(body.side).to.not.exist
-    expect(body.color).to.be.eql(1)
+    expect(body.s).to.not.exist
+    expect(body.t).to.be.an('array')
+    expect(body.t.length).to.be.eql(1)
+    expect(body.t[0]).to.be.eql('hello test')
+    expect(body.c).to.be.an('array')
+    expect(body.c.length).to.be.eql(1)
+    expect(body.c[0]).to.be.eql(1)
   })
 
   // update/replace piece (put)
   testJsonPut(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
     return {
-      layer: 'tile',
-      asset: '0d74249373740cdf',
+      l: 1,
+      a: '0d74249373740cdf',
       w: 2,
       h: 3,
       x: 17,
       y: 7,
       z: 27,
-      r: 90,
+      r: 0,
       n: 5,
-      side: 3,
-      color: 2
+      s: 3,
+      t: ['    '],
+      c: [2]
     }
   }, body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
-    expect(body.layer).to.be.eql('tile')
-    expect(body.asset).to.be.eql('0d74249373740cdf')
+    expect(body.l).to.be.eql(1)
+    expect(body.a).to.be.eql('0d74249373740cdf')
     expect(body.w).to.be.eql(2)
     expect(body.h).to.be.eql(3)
     expect(body.x).to.be.eql(17)
     expect(body.y).to.be.eql(7)
     expect(body.z).to.be.eql(27)
-    expect(body.r).to.be.eql(90)
+    expect(body.r).to.not.exist
     expect(body.n).to.be.eql(5)
-    expect(body.side).to.be.eql(3)
-    expect(body.color).to.be.eql(2)
+    expect(body.s).to.be.eql(3)
+    expect(body.t).to.not.exist
+    expect(body.c).to.be.an('array')
+    expect(body.c.length).to.be.eql(1)
+    expect(body.c[0]).to.be.eql(2)
   })
 
   // get & compare piece
   testJsonGet(api, () => `/rooms/crudPiece${version}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body).to.be.an('object')
     expect(body.id).to.be.eql(data.id)
-    expect(body.layer).to.be.eql('tile')
-    expect(body.asset).to.be.eql('0d74249373740cdf')
+    expect(body.l).to.be.eql(1)
+    expect(body.a).to.be.eql('0d74249373740cdf')
     expect(body.w).to.be.eql(2)
     expect(body.h).to.be.eql(3)
     expect(body.x).to.be.eql(17)
     expect(body.y).to.be.eql(7)
     expect(body.z).to.be.eql(27)
-    expect(body.r).to.be.eql(90)
+    expect(body.r).to.not.exist
     expect(body.n).to.be.eql(5)
-    expect(body.side).to.be.eql(3)
-    expect(body.color).to.be.eql(2)
+    expect(body.s).to.be.eql(3)
+    expect(body.t).to.not.exist
+    expect(body.c).to.be.an('array')
+    expect(body.c.length).to.be.eql(1)
+    expect(body.c[0]).to.be.eql(2)
   })
 
   // delete piece
@@ -545,7 +567,7 @@ function testApiZipMinimal (api, version) {
       expect(body.template.gridWidth).to.be.eql(48)
       expect(body.template.gridHeight).to.be.eql(32)
       expect(body.template.version).to.be.eql(p.version)
-      expect(body.template.engine).to.be.eql('^' + p.versionEngine)
+      expect(body.template.engine).to.be.eql(p.versionEngine)
       expect(body.template.colors).to.be.an('array')
       expect(body.template.colors.length).to.be.eql(2)
       expect(body.credits).to.be.eql('This snapshot does not provide license information.')
@@ -595,19 +617,19 @@ function testApiZipFull (api, version) {
       expect(body.library).to.be.an('object')
       expect(body.library.other).to.be.an('array')
       expect(body.library.other.length).to.be.eql(1)
-      expect(body.library.other[0].alias).to.be.eql('dicemat')
+      expect(body.library.other[0].name).to.be.eql('dicemat')
       expect(body.library.other[0].w).to.be.eql(4)
       expect(body.library.overlay).to.be.an('array')
       expect(body.library.overlay.length).to.be.eql(1)
-      expect(body.library.overlay[0].alias).to.be.eql('area.1x1')
+      expect(body.library.overlay[0].name).to.be.eql('area.1x1')
       expect(body.library.overlay[0].w).to.be.eql(1)
       expect(body.library.tile).to.be.an('array')
       expect(body.library.tile.length).to.be.eql(1)
-      expect(body.library.tile[0].alias).to.be.eql('go')
+      expect(body.library.tile[0].name).to.be.eql('go')
       expect(body.library.tile[0].w).to.be.eql(9)
       expect(body.library.token).to.be.an('array')
       expect(body.library.token.length).to.be.eql(1)
-      expect(body.library.token[0].alias).to.be.eql('generic.plain')
+      expect(body.library.token[0].name).to.be.eql('generic.plain')
       expect(body.library.token[0].w).to.be.eql(1)
       expect(body.template).to.be.an('object')
       expect(body.template.type).to.be.eql('grid-square')
@@ -615,7 +637,7 @@ function testApiZipFull (api, version) {
       expect(body.template.gridWidth).to.be.eql(48)
       expect(body.template.gridHeight).to.be.eql(32)
       expect(body.template.version).to.be.eql('1.2.3')
-      expect(body.template.engine).to.be.eql('^0.1.0')
+      expect(body.template.engine).to.be.eql('1.0.0')
       expect(body.template.colors).to.be.an('array')
       expect(body.template.colors.length).to.be.eql(1)
       expect(body.credits).to.contain('I am a license.')
@@ -624,15 +646,15 @@ function testApiZipFull (api, version) {
   // get table 1
   testJsonGet(api, () => `/rooms/fullziptest${version}/tables/1/`, body => {
     expect(body.length).to.be.eql(2)
-    expect(body[0].asset).to.be.eql('bb07ac49818bc000')
-    expect(body[1].asset).to.be.eql('f628553dd1802f0a')
+    expect(body[0].a).to.be.eql('bb07ac49818bc000')
+    expect(body[1].a).to.be.eql('f628553dd1802f0a')
   })
 
   // get table 2
   testJsonGet(api, () => `/rooms/fullziptest${version}/tables/2/`, body => {
     expect(body.length).to.be.eql(2)
-    expect(body[0].asset).to.be.eql('7261fff0158e27bc')
-    expect(body[1].asset).to.be.eql('d04e9af5e03f9f58')
+    expect(body[0].a).to.be.eql('7261fff0158e27bc')
+    expect(body[1].a).to.be.eql('d04e9af5e03f9f58')
   })
 
   // get table 3
@@ -674,7 +696,7 @@ function testApiImageUpload (api, version) {
       format: 'jpg',
       h: 2,
       w: 3,
-      layer: 'tile',
+      type: 'tile',
       name: 'upload.test'
     }
   }, body => {
@@ -683,7 +705,7 @@ function testApiImageUpload (api, version) {
     expect(body.format).to.be.eql('jpg')
     expect(body.h).to.be.eql(2)
     expect(body.w).to.be.eql(3)
-    expect(body.layer).to.be.eql('tile')
+    expect(body.type).to.be.eql('tile')
     expect(body.name).to.be.eql('upload.test')
   }, 201)
 
@@ -702,7 +724,7 @@ function testApiImageUpload (api, version) {
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
     expect(body.library.tile[index].type).to.be.eql('tile')
-    expect(body.library.tile[index].alias).to.be.eql('upload.test')
+    expect(body.library.tile[index].name).to.be.eql('upload.test')
   }, 200)
 
   // check asset blob

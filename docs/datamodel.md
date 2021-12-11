@@ -117,7 +117,7 @@ A minimal piece contains the following information:
 {
   "id": "ec0dfce0d35d657a",
   "layer": "other",
-  "asset": "0c6175be538f8b32",
+  "a": "0c6175be538f8b32",
   "x": 1216,
   "y": 640,
   "z": 10
@@ -130,7 +130,7 @@ A minimal piece contains the following information:
 `layer`
 : The type of piece / layer to show it in. Usually the type of the asset, but that is not mandatory.
 
-`asset`
+`a`
 : The ID of the asset.
 
 `x`

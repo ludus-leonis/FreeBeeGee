@@ -54,13 +54,21 @@ export const stickyNoteColors = [
   { name: 'pink' }
 ]
 
-export const LAYERS = [
-  'other',
-  'token',
-  'note',
+export const LAYERS = [ // reverse order
+  'tile',
   'overlay',
-  'tile'
+  'note',
+  'token',
+  'other'
 ]
+
+function layerToName (layer) {
+  return LAYERS[layer - 1]
+}
+
+export function nameToLayer (name) {
+  return LAYERS.indexOf(name) + 1
+}
 
 /**
  * Find a piece by ID.
@@ -103,17 +111,17 @@ export function findAsset (id, layer = 'any') {
 /**
  * Find an asset by ID.
  *
- * @param {String} alias Alias to lookup.
+ * @param {String} name Alias to lookup.
  * @param {String} layer Optional layer to limit/speed up search.
- * @return {Object} First found asset with the given alias.
+ * @return {Object} First found asset with the given name.
  */
-export function findAssetByAlias (alias, layer = 'any') {
+export function findAssetByAlias (name, layer = 'any') {
   const library = getLibrary()
 
   for (const assetType of assetTypes) {
     if (layer === assetType || layer === 'any') {
       for (const asset of library[assetType]) {
-        if (asset.alias === alias) return asset
+        if (asset.name === name) return asset
       }
     }
   }
@@ -181,7 +189,7 @@ export function findPiecesWithin (rect, layer = 'all', no = getTableNo()) {
   const pieces = []
 
   for (const piece of getTable(no)) {
-    if (piece.layer === layer || layer === 'all') {
+    if (piece.l === layer || layer === 'all') {
       if (intersect(rect, getPieceBounds(piece))) {
         pieces.push(piece)
       }
@@ -218,15 +226,16 @@ export function findExpiredPieces (no = getTableNo()) {
  * @return {Array} Pieces array for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
+  piece.l = layerToName(piece.l ?? 0)
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? 1
-  piece.side = piece.side ?? 0
-  piece.color = piece.color ?? 0
+  piece.s = piece.s ?? 0
+  piece.c = piece.c ?? [0]
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
-  piece.label = piece.label ?? ''
-  piece.tag = piece.tag ?? ''
+  piece.t = piece.t ?? []
+  piece.b = piece.b ?? []
 
   // add client-side meta information for piece
   piece._meta = {}
@@ -240,15 +249,15 @@ export function populatePieceDefaults (piece, headers = null) {
   piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
 
   // add client-side meta information for asset
-  const asset = findAsset(piece.asset)
+  const asset = findAsset(piece.a)
   if (asset) {
-    const bgImage = getAssetURL(asset, asset.base ? -1 : piece.side)
+    const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     piece._meta.sides = asset.media.length ?? 1
     if (asset.id === 'ffffffffffffffff') {
       piece._meta.feature = 'POINTER'
     } else {
-      switch (asset.alias) {
+      switch (asset.name) {
         case 'dicemat':
           piece._meta.feature = 'DICEMAT'
           break
@@ -352,7 +361,7 @@ export function getMaxZ (layer, area = {
  * Determine rectancle all items on the room are within in px.
  *
  * @param {Number} no Table number to work on, defaults to current.
- * @return {Object} Object with top/left/bottom/right property of main content.
+ * @return {Object} Object with top/left/bottom/right/width/height in px of main content.
  */
 export function getContentRect (no = getTableNo()) {
   const rect = {
@@ -361,7 +370,6 @@ export function getContentRect (no = getTableNo()) {
     right: Number.MIN_VALUE,
     bottom: Number.MIN_VALUE
   }
-  const gridSize = getTemplate().gridSize
   const tableData = getTable(no)
 
   // provide default for empty rooms
@@ -370,76 +378,27 @@ export function getContentRect (no = getTableNo()) {
       left: 0,
       top: 0,
       right: 0,
-      bottom: 0
+      bottom: 0,
+      width: 0,
+      height: 0
     }
   }
 
   // calculate values for non-empty rooms
   for (const piece of tableData) {
-    const top = piece.y
-    const left = piece.x
-    const bottom = top + piece.h * gridSize - 1
-    const right = left + piece.w * gridSize - 1
+    const left = piece.x - piece._meta.widthPx / 2
+    const top = piece.y - piece._meta.heightPx / 2
+    const right = piece.x + piece._meta.widthPx / 2 - 1
+    const bottom = piece.y + piece._meta.heightPx / 2 - 1
+
     rect.left = rect.left < left ? rect.left : left
     rect.top = rect.top < top ? rect.top : top
     rect.right = rect.right > right ? rect.right : right
     rect.bottom = rect.bottom > bottom ? rect.bottom : bottom
-  }
-
-  return rect
-}
-
-/**
- * Determine rectancle all items on the room are within in grid units.
- *
- * @param {Number} no Table number to work on, defaults to current.
- * @return {Object} Object with top/left/bottom/right property of main content.
- */
-export function getContentRectGrid (no = getTableNo()) {
-  const gridSize = getTemplate().gridSize
-  const rect = getContentRect(no)
-
-  rect.left = Math.floor(rect.left / gridSize)
-  rect.top = Math.floor(rect.top / gridSize)
-  rect.right = Math.floor(rect.right / gridSize)
-  rect.bottom = Math.floor(rect.bottom / gridSize)
-  if (rect.left === 0 && rect.right === 0) {
-    rect.width = 0
-  } else {
     rect.width = rect.right - rect.left + 1
-  }
-  if (rect.top === 0 && rect.bottom === 0) {
-    rect.height = 0
-  } else {
     rect.height = rect.bottom - rect.top + 1
   }
 
-  return rect
-}
-
-/**
- * Determine rectancle all items in all tables on the room are within in grid units.
- *
- * @return {Object} Object with top/left/bottom/right property of main content.
- */
-export function getContentRectGridAll () {
-  const rect = {
-    top: Number.MAX_VALUE,
-    left: Number.MAX_VALUE,
-    bottom: Number.MIN_VALUE,
-    right: Number.MIN_VALUE
-  }
-  for (let i = 0; i <= 9; i++) {
-    const rect2 = getContentRectGrid(i)
-    if (rect2.width > 0) {
-      rect.left = Math.min(rect.left, rect2.left)
-      rect.right = Math.max(rect.right, rect2.right)
-    }
-    if (rect2.height > 0) {
-      rect.top = Math.min(rect.top, rect2.top)
-      rect.bottom = Math.max(rect.bottom, rect2.bottom)
-    }
-  }
   return rect
 }
 
@@ -456,8 +415,8 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
   const xy = snap(x, y)
 
   return populatePieceDefaults(clampToTableSize({
-    asset: asset.id,
-    layer: asset.type,
+    a: asset.id,
+    l: nameToLayer(asset.type),
     w: asset.w,
     h: asset.h,
     x: xy.x,
@@ -536,32 +495,32 @@ export function getSetupCenter (no = getTableNo()) {
  */
 export function splitAssetFilename (assetName) {
   const data = {
-    alias: 'unknown',
+    name: 'unknown',
     w: 1,
     h: 1,
-    side: 1,
+    s: 1,
     bg: '808080'
   }
   let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/)
   if (match) {
-    data.alias = match[1]
+    data.name = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
-    data.side = Number(match[4])
+    data.s = Number(match[4])
     data.bg = match[5]
     return data
   }
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
   if (match) {
-    data.alias = match[1]
+    data.name = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
-    data.side = Number(match[4])
+    data.s = Number(match[4])
     return data
   }
   match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
   if (match) {
-    data.alias = match[1]
+    data.name = match[1]
     return data
   }
   return data

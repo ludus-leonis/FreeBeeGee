@@ -41,7 +41,7 @@ import {
   pointTo
 } from './tabletop/index.mjs'
 import {
-  LAYERS,
+  nameToLayer,
   sortZ,
   getMaxZ,
   findPiece,
@@ -145,7 +145,7 @@ function touchMousePosition (x, y) {
  */
 function isSolid (piece, x, y) {
   if (!piece) return true // no piece = no checking
-  if (piece?.layer === 'token') return true // token are always round & solid
+  if (piece?.l === 'token') return true // token are always round & solid
   if (!piece._meta?.mask) return true // no mask = no checking possible
 
   // now do the hit detection
@@ -204,13 +204,10 @@ function findRealClickTarget (event) {
   }
 
   // seems the initial target is transparent. now traverse all layers.
-  const index = LAYERS.indexOf(event.target.piece.layer)
+  const index = nameToLayer(event.target.piece.l)
   const coords = getMouseCoords()
-  for (const layer of LAYERS) {
-    if (
-      LAYERS.indexOf(layer) >= index &&
-        getRoomPreference('layer' + layer)
-    ) { // we don't need to check higher layers
+  for (const layer of ['other', 'token', 'note', 'overlay', 'tile']) {
+    if (nameToLayer(layer) <= index && getRoomPreference('layer' + layer)) { // we don't need to check higher layers
       for (const piece of sortZ(findPiecesWithin({
         left: coords.x,
         top: coords.y,
@@ -393,8 +390,7 @@ function dragEnd (mouseup, cancel = false) {
       // only record state if there was a change in position
       if (dragging.piece.x !== dragging.x ||
         dragging.piece.y !== dragging.y) {
-        // const template = getTemplate()
-        const maxZ = getMaxZ(dragging.dataset.layer, {
+        const maxZ = getMaxZ(dragging.piece.l, {
           top: dragging.y - dragging.piece._meta.heightPx / 2,
           left: dragging.x - dragging.piece._meta.widthPx / 2,
           bottom: dragging.y + dragging.piece._meta.heightPx / 2,
@@ -404,7 +400,7 @@ function dragEnd (mouseup, cancel = false) {
           dragging.piece.id,
           dragging.x,
           dragging.y,
-          dragging.piece.z === maxZ ? dragging.piece.z : getMaxZ(dragging.piece.layer) + 1
+          dragging.piece.z === maxZ ? dragging.piece.z : getMaxZ(dragging.piece.l) + 1
         )
       }
     }

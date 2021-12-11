@@ -4,7 +4,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ## v0.12.0 - Hexing Heron
 
-This is a breaking release changing internal data structures. Old snapshots will no longer work.
+This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
 
 ### Notable changes
 
@@ -26,13 +26,14 @@ This is a breaking release changing internal data structures. Old snapshots will
 * improved readablity of piece numbers on bright borders
 * improved build speed by caching some files
 * improved template/engine mismatch detection
+* changed piece/asset data model to be more compact and future proof
 * changed drag'n'drop 'ghost' image to show snap positions
 * changed grid indicators from pngs to sharper svgs
 * removed `gridSize` from templates - templates snap to their grid size if snapping is on
 
 ## v0.11.0 - Troubled Trout
 
-This is a breaking release changing internal data structures. Old snapshots will no longer work.
+This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
 
 ### Notable changes
 
@@ -56,7 +57,7 @@ This is a breaking release changing internal data structures. Old snapshots will
 
 ## v0.10.0 - Pointing Pony
 
-This is a breaking release changing internal data structures. Old snapshots will no longer work.
+This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
 
 ### Notable changes
 

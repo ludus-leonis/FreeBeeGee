@@ -165,19 +165,19 @@ function refreshTabs () {
 
   // add items to their tab
   const tiles = _('#tab-tiles').empty()
-  for (const asset of sortByString(library.tile ?? [], 'alias')) {
+  for (const asset of sortByString(library.tile ?? [], 'name')) {
     tiles.add(assetToPreview(asset))
   }
   const overlays = _('#tab-overlays').empty()
-  for (const asset of sortByString(library.overlay ?? [], 'alias')) {
+  for (const asset of sortByString(library.overlay ?? [], 'name')) {
     overlays.add(assetToPreview(asset))
   }
   const tokens = _('#tab-tokens').empty()
-  for (const asset of sortByString(library.token ?? [], 'alias')) {
+  for (const asset of sortByString(library.token ?? [], 'name')) {
     tokens.add(assetToPreview(asset))
   }
   const other = _('#tab-other').empty()
-  for (const asset of sortByString(library.other ?? [], 'alias')) {
+  for (const asset of sortByString(library.other ?? [], 'name')) {
     other.add(assetToPreview(asset))
   }
 
@@ -269,17 +269,17 @@ function modalUpload () {
 
   // upload stuff if checks were ok
   if (errorMessage.innerHTML === '') {
-    const layer = _('#upload-type').value
+    const type = _('#upload-type').value
     const data = {
       name: unprettyName(name.value),
       format: file.type === 'image/png' ? 'png' : 'jpg',
-      layer: layer,
+      type: type,
       w: Number(_('#upload-w').value),
       h: Number(_('#upload-h').value),
       base64: _('.upload-preview .piece').node().style.backgroundImage
         .replace(/^[^,]*,/, '')
         .replace(/".*/, ''),
-      bg: layer === 'token' ? '#808080' : 'transparent'
+      bg: type === 'token' ? '#808080' : 'transparent'
     }
 
     addAsset(data)
@@ -287,7 +287,7 @@ function modalUpload () {
         reloadRoom()
           .then(() => {
             refreshTabs()
-            switch (data.layer) {
+            switch (data.type) {
               case 'tile':
                 _('#tab-1').checked = true
                 break
@@ -323,14 +323,14 @@ function modalUpload () {
  */
 function setupTabUpload () {
   // width
-  const layer = _('#upload-type')
+  const type = _('#upload-type')
   for (const l of ['token', 'overlay', 'tile']) {
     const option = _('option').create(toTitleCase(l))
     option.value = l
     if (l === 'token') option.selected = true
-    layer.add(option)
+    type.add(option)
   }
-  layer.on('change', change => updatePreview())
+  type.on('change', change => updatePreview())
 
   // width
   const width = _('#upload-w')
@@ -370,8 +370,8 @@ function updatePreview (parseImage = false) {
     if (_('#upload-name').value.length <= 0) { // guess defaults for form
       _('#upload-w').value = parts.w
       _('#upload-h').value = parts.h
-      if (parts.alias !== 'unknown') {
-        _('#upload-name').value = prettyName(parts.alias)
+      if (parts.name !== 'unknown') {
+        _('#upload-name').value = prettyName(parts.name)
       }
       if (parts.w > 2 || parts.h > 2) {
         _('#upload-type').value = 'tile'
@@ -433,13 +433,13 @@ function updatePreview (parseImage = false) {
 function assetToPreview (asset) {
   const node = pieceToNode(populatePieceDefaults({
     id: 'x' + asset.id,
-    asset: asset.id,
-    side: 0
+    a: asset.id,
+    s: 0
   })).add(
     '.is-w-' + asset.w,
     '.is-h-' + asset.h
   )
-  node.dataset.asset = asset.id
+  node.dataset.a = asset.id
 
   const max = _('.is-scale-2').create(node)
 
@@ -454,7 +454,7 @@ function assetToPreview (asset) {
     tag += `:${asset.media.length}`
   }
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
-  card.add(_('p').create().add(prettyName(asset.alias)))
+  card.add(_('p').create().add(prettyName(asset.name)))
   return card
 }
 
@@ -479,7 +479,7 @@ function prettyName (assetName = '') {
 }
 
 /**
- * Convert an asset's readable name back into an alias.
+ * Convert an asset's readable name back into an name.
  *
  * @param {String} assetName Name to convert, e.g. 'Iron Door'.
  * @return {String} Alias for filename, e.g. 'ironDoor'.
@@ -502,7 +502,7 @@ function modalOk () {
   const snapped = snap(modal.xy.x, modal.xy.y)
   let offsetZ = 0
   _('#tabs-library .is-selected .piece').each(item => {
-    const piece = createPieceFromAsset(item.dataset.asset, snapped.x, snapped.y)
+    const piece = createPieceFromAsset(item.dataset.a, snapped.x, snapped.y)
 
     piece.z = piece.z + offsetZ
     pieces.push(piece)

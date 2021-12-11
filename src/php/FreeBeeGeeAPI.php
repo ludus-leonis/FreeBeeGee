@@ -28,6 +28,7 @@ namespace com\ludusleonis\freebeegee;
 class FreeBeeGeeAPI
 {
     private $ID_POINTER = 'ffffffffffffffff';
+    private $REGEXP_ID = '^[0-9a-f]{16}$';
     private $version = '$VERSION$';
     private $engine = '$ENGINE$';
     private $api = null; // JSONRestAPI instance
@@ -35,7 +36,6 @@ class FreeBeeGeeAPI
     private $maxRoomGridSize = 256;
     private $maxAssetSize = 1024 * 1024;
     private $types = ['grid-square', 'grid-hex'];
-    private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'tag'];
     private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
 
@@ -127,7 +127,7 @@ class FreeBeeGeeAPI
 
         $this->api->register('PUT', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->updatePiece($data['rid'], $data['tid'], $data['pid'], $payload);
+                $fbg->replacePiece($data['rid'], $data['tid'], $data['pid'], $payload);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
@@ -166,7 +166,7 @@ class FreeBeeGeeAPI
 
         $this->api->register('DELETE', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->deletePiece($data['rid'], $data['tid'], $data['pid']);
+                $fbg->deletePiece($data['rid'], $data['tid'], $data['pid'], true);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
@@ -529,7 +529,7 @@ class FreeBeeGeeAPI
         return (object) [
             'type' => 'grid-square',
             'version' => $this->version,
-            'engine' => '^' . $this->engine,
+            'engine' => $this->engine,
             'gridSize' => 64,
             'gridWidth' => 48,
             'gridHeight' => 32,
@@ -550,13 +550,15 @@ class FreeBeeGeeAPI
      * @param string $tid Table id / number, e.g. 2.
      * @param object $piece The parsed & validated piece to update.
      * @param bool $create If true, this piece must not exist.
+     * @param patch $create If true, old and new piece will be merged.
      * @return object The updated piece.
      */
     private function updatePieceTableLocked(
         string $roomName,
         string $tid,
         object $piece,
-        bool $create
+        bool $create,
+        bool $patch
     ): object {
         $folder = $this->getRoomFolder($roomName);
         $lock = $this->api->waitForWriteLock($folder . '.flock');
@@ -597,11 +599,15 @@ class FreeBeeGeeAPI
                     // this is an update, and we have to patch the item if the ID matches
                     if ($tableItem->id === $piece->id) {
                         // just skip deleted piece
-                        if (isset($piece->layer) && $piece->layer === 'delete') {
+                        if (isset($piece->l) && $piece->l === PHP_INT_MIN) {
                             continue;
                         }
-                        $tableItem = $this->removeDefaultsFromPiece($this->merge($tableItem, $piece));
-                        $this->validatePiece($tableItem, true); // double-check that the merged item is fine
+                        if ($patch) {
+                            $tableItem = $this->removeDefaultsFromPiece($this->merge($tableItem, $piece));
+                            $this->validatePiece($tableItem, true); // double-check that the merged item is fine
+                        } else {
+                            $tableItem = $this->removeDefaultsFromPiece($piece);
+                        }
                         $result = $tableItem;
                     }
                     if (!isset($tableItem->expires) || $tableItem->expires > time()) {
@@ -611,7 +617,7 @@ class FreeBeeGeeAPI
                     }
                 }
             }
-            if (!in_array($piece->id, $ids) && (!isset($piece->layer) || $piece->layer !== 'delete')) {
+            if (!in_array($piece->id, $ids) && (!isset($piece->l) || $piece->l !== PHP_INT_MIN)) {
                 $this->api->unlockLock($lock);
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
@@ -646,7 +652,7 @@ class FreeBeeGeeAPI
         ) {
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
-            $asset->side = $matches[4];
+            $asset->s = $matches[4];
             switch ($matches[5]) {
                 case 'transparent':
                 case 'piece':
@@ -655,7 +661,7 @@ class FreeBeeGeeAPI
                 default:
                     $asset->bg = '#' . $matches[5];
             }
-            $asset->alias = $matches[1];
+            $asset->name = $matches[1];
         } elseif (
             // group.name.1x2x3.png
             preg_match(
@@ -666,18 +672,18 @@ class FreeBeeGeeAPI
         ) {
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
-            $asset->side = $matches[4];
+            $asset->s = $matches[4];
             $asset->bg = '#808080';
-            $asset->alias = $matches[1];
+            $asset->name = $matches[1];
         } elseif (
             // group.name.png
             preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)
         ) {
             $asset->w = 1;
             $asset->h = 1;
-            $asset->side = 1;
+            $asset->s = 1;
             $asset->bg = '#808080';
-            $asset->alias = $matches[1];
+            $asset->name = $matches[1];
         }
         return $asset;
     }
@@ -705,12 +711,12 @@ class FreeBeeGeeAPI
 
                 // this ID only has to be unique within the room, but should be reproducable
                 // therefore we use a fast hash and even only use parts of it
-                $idBase = $type . '/' . $asset->alias . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->side;
+                $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
                 $asset->id = substr(hash('md5', $idBase), -16);
 
                 if (
                     $lastAsset === null
-                    || $lastAsset->alias !== $asset->alias
+                    || $lastAsset->name !== $asset->name
                     || $lastAsset->w !== $asset->w
                     || $lastAsset->h !== $asset->h
                 ) {
@@ -721,14 +727,14 @@ class FreeBeeGeeAPI
                         }
                         array_push($assets[$type], $lastAsset);
                     }
-                    if (preg_match('/^X+$/', $asset->side)) { // this is a back side
+                    if (preg_match('/^X+$/', $asset->s)) { // this is a back side
                         $asset->back = $asset->media[0];
                         $asset->media = [];
-                    } elseif ((int)$asset->side === 0) { // this is a background layer
+                    } elseif ((int)$asset->s === 0) { // this is a background layer
                         $asset->base = $asset->media[0];
                         $asset->media = [];
                     }
-                    unset($asset->side); // we don't keep the side in the json data
+                    unset($asset->s); // we don't keep the side in the json data
                     $lastAsset = $asset;
                 } else {
                     // this is another side of the same asset. add it to the existing one.
@@ -809,22 +815,22 @@ class FreeBeeGeeAPI
         if (isset($piece->r) && $piece->r === 0) {
             unset($piece->r);
         }
-        if (isset($piece->side) && $piece->side === 0) {
-            unset($piece->side);
+        if (isset($piece->s) && $piece->s === 0) {
+            unset($piece->s);
         }
         if (isset($piece->n) && $piece->n === 0) {
             unset($piece->n);
         }
-        if (isset($piece->color) && $piece->color === 0) {
-            unset($piece->color);
+        if (isset($piece->c) && $piece->c === 0) {
+            unset($piece->c);
         }
-        if (isset($piece->label) && $piece->label === '') {
-            unset($piece->label);
+        if (isset($piece->t) && is_array($piece->t) && (sizeof($piece->t) <= 0 || $piece->t === [''])) {
+            unset($piece->t);
         }
-        if (isset($piece->tag) && $piece->tag === '') {
-            unset($piece->tag);
+        if (isset($piece->b) && is_array($piece->b) && (sizeof($piece->b) <= 0)) {
+            unset($piece->b);
         }
-        if (isset($piece->asset) && $piece->asset === $this->ID_POINTER) {
+        if (isset($piece->a) && $piece->a === $this->ID_POINTER) {
             $piece->expires = time() + 8;
         }
         return $piece;
@@ -846,13 +852,13 @@ class FreeBeeGeeAPI
         foreach ($piece as $property => $value) {
             switch ($property) {
                 case 'id':
-                    $validated->id = $this->api->assertString('id', $value, '^[0-9a-f]{16}$');
+                    $validated->id = $this->api->assertString('id', $value, $this->REGEXP_ID);
                     break;
-                case 'layer':
-                    $validated->layer = $this->api->assertEnum('layer', $value, $this->layers);
+                case 'l':
+                    $validated->l = $this->api->assertInteger('l', $value, 1, 5);
                     break;
-                case 'asset':
-                    $validated->asset = $this->api->assertString('asset', $value, '^[0-9a-f]{16}$');
+                case 'a':
+                    $validated->a = $this->api->assertString('a', $value, $this->REGEXP_ID);
                     break;
                 case 'w':
                     $validated->w = $this->api->assertInteger('w', $value, 1, 32);
@@ -869,19 +875,15 @@ class FreeBeeGeeAPI
                 case 'z':
                     $validated->z = $this->api->assertInteger('z', $value, -100000, 100000);
                     break;
-                case 'side':
-                    $validated->side = $this->api->assertInteger('side', $value, 0, 128);
+                case 's':
+                    $validated->s = $this->api->assertInteger('s', $value, 0, 128);
                     break;
-                case 'color':
-                    if (property_exists($piece, 'layer') && $piece->layer === 'note') {
-                        $validated->color = $val = $this->api->assertInteger(
-                            'color',
-                            $value,
-                            0,
-                            sizeof($this->stickyNotes) - 1
-                        );
+                case 'c':
+                    if (property_exists($piece, 'l') && $piece->l === 3) { // 3 = note
+                        $validated->c =
+                            $this->api->assertIntegerArray('c', $value, 0, sizeof($this->stickyNotes) - 1, 1, 1);
                     } else {
-                        $validated->color = $val = $this->api->assertInteger('color', $value, 0, 15);
+                        $validated->c = $this->api->assertIntegerArray('c', $value, 0, 15, 1, 1);
                     }
                     break;
                 case 'n':
@@ -890,15 +892,15 @@ class FreeBeeGeeAPI
                 case 'r':
                     $validated->r = $this->api->assertEnum('r', $value, [0, 60, 90, 120, 180, 240, 270, 300]);
                     break;
-                case 'label':
-                    if (property_exists($piece, 'layer') && $piece->layer !== 'note') {
-                        $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,32}$'));
+                case 't':
+                    if (property_exists($piece, 'l') && $piece->l === 3) { // 3 = note
+                        $validated->t = $this->api->assertStringArray('t', $value, '^[^\n\r]{0,128}$', 0, 1);
                     } else {
-                        $validated->label = trim($this->api->assertString('label', $value, '^[^\n\r]{0,128}$'));
+                        $validated->t = $this->api->assertStringArray('t', $value, '^[^\n\r]{0,32}$', 0, 1);
                     }
                     break;
-                case 'tag':
-                    $validated->tag = trim($this->api->assertString('tag', $value, '^[^\n\r]{0,32}$'));
+                case 'b':
+                    $validated->b = $this->api->assertStringArray('b', $value, '^[^\n\r]{1,32}$', 0, 1);
                     break;
                 case 'expires':
                     $validated->expires = 0; // we always override externaly provides expiry dates on create/update
@@ -909,12 +911,12 @@ class FreeBeeGeeAPI
         }
 
         if ($checkMandatory) {
-            switch ($validated->layer) {
-                case 'note':
-                    $mandatory = ['layer', 'x', 'y', 'z'];
+            switch ($validated->l) {
+                case 3: // 3 = note
+                    $mandatory = ['l', 'x', 'y', 'z'];
                     break;
                 default:
-                    $mandatory = ['layer', 'asset', 'x', 'y', 'z'];
+                    $mandatory = ['l', 'a', 'x', 'y', 'z'];
             }
             $this->api->assertHasProperties('piece', $validated, $mandatory);
         }
@@ -978,7 +980,7 @@ class FreeBeeGeeAPI
         $this->api->assertHasProperties(
             'asset',
             $incoming,
-            ['name', 'format', 'layer', 'w', 'h', 'base64', 'bg']
+            ['name', 'format', 'type', 'w', 'h', 'base64', 'bg']
         );
 
         foreach ($incoming as $property => $value) {
@@ -993,8 +995,8 @@ class FreeBeeGeeAPI
                 case 'format':
                     $validated->format = $this->api->assertEnum('format', $value, ['jpg', 'png']);
                     break;
-                case 'layer':
-                    $validated->layer = $this->api->assertEnum('layer', $value, $this->layers);
+                case 'type':
+                    $validated->type = $this->api->assertEnum('type', $value, $this->assetTypes);
                     break;
                 case 'w':
                     $validated->w = $this->api->assertInteger('w', $value, 1, 32);
@@ -1291,7 +1293,7 @@ class FreeBeeGeeAPI
     /**
      * Change room template values.
      *
-     * Will terminate with 201 or an error.
+     * Will terminate with 200 or an error.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      * @param string $payload Parcial template JSON from client.
@@ -1323,7 +1325,7 @@ class FreeBeeGeeAPI
         $this->writeAsJsonAndDigest($folder, 'room.json', $roomFS);
 
         $this->api->unlockLock($lock);
-        $this->api->sendReply(201, json_encode($templateFS));
+        $this->api->sendReply(200, json_encode($templateFS));
     }
 
     /**
@@ -1466,13 +1468,13 @@ class FreeBeeGeeAPI
     ) {
         $this->assertTableNo($tid);
         $piece = $this->validatePieceJson($json, true);
-        if (isset($piece->asset) && $piece->asset === $this->ID_POINTER) {
+        if (isset($piece->a) && $piece->a === $this->ID_POINTER) {
             // there can only be one pointer and it has a fixed ID
             $piece->id = $this->ID_POINTER;
         } else {
             $piece->id = $this->generateId();
         }
-        $this->updatePieceTableLocked($roomName, $tid, $piece, true);
+        $this->updatePieceTableLocked($roomName, $tid, $piece, true, false);
         $this->api->sendReply(201, json_encode($piece));
     }
 
@@ -1510,7 +1512,30 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Update a piece.
+     * Replace a piece.
+     *
+     * Will discard all old piece data except the ID.
+     *
+     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param string $tid Table id / number, e.g. 2.
+     * @param string $pieceID ID of the piece to update.
+     * @param string $json Full piece JSON from client.
+     */
+    public function replacePiece(
+        string $roomName,
+        string $tid,
+        string $pieceId,
+        string $json
+    ) {
+        $this->assertTableNo($tid);
+        $patch = $this->validatePieceJson($json, false);
+        $patch->id = $pieceId; // overwrite with data from URL
+        $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false, false);
+        $this->api->sendReply(200, json_encode($updatedPiece));
+    }
+
+    /**
+     * (Partially) Update a piece.
      *
      * Can overwrite the whole piece or only patch a few fields.
      *
@@ -1528,7 +1553,7 @@ class FreeBeeGeeAPI
         $this->assertTableNo($tid);
         $patch = $this->validatePieceJson($json, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false);
+        $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false, true);
         $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
@@ -1558,7 +1583,7 @@ class FreeBeeGeeAPI
 
         // looks good. do the update(s).
         foreach ($patches as $patch) {
-            $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false);
+            $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false, true);
         }
 
         $this->api->sendReply(200, json_encode($patches));
@@ -1572,21 +1597,25 @@ class FreeBeeGeeAPI
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceID ID of the piece to delete.
+     * @param bool $sendReply If true, send a HTTP reply after deletion.
      */
     public function deletePiece(
         string $roomName,
         string $tid,
-        string $pieceId
+        string $pieceId,
+        bool $sendReply
     ) {
         $this->assertTableNo($tid);
 
         // create a dummy 'delete' object to represent deletion
         $piece = new \stdClass(); // sanitize item by recreating it
-        $piece->layer = 'delete';
+        $piece->l = PHP_INT_MIN;
         $piece->id = $pieceId;
 
-        $this->updatePieceTableLocked($roomName, $tid, $piece, false);
-        $this->api->sendReply(204, '');
+        $this->updatePieceTableLocked($roomName, $tid, $piece, false, false);
+        if ($sendReply) {
+            $this->api->sendReply(204, '');
+        }
     }
 
     /**
@@ -1608,7 +1637,7 @@ class FreeBeeGeeAPI
 
         // output file data
         $lock = $this->api->waitForWriteLock($folder . '.flock');
-        file_put_contents($folder . 'assets/' . $asset->layer . '/' . $filename, base64_decode($asset->base64));
+        file_put_contents($folder . 'assets/' . $asset->type . '/' . $filename, base64_decode($asset->base64));
 
         // regenerate library json
         $room = json_decode(file_get_contents($folder . 'room.json'));

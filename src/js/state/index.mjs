@@ -46,7 +46,8 @@ import {
 } from '../view/error/index.mjs'
 import {
   populatePiecesDefaults,
-  clampToTableSize
+  clampToTableSize,
+  nameToLayer
 } from '../view/room/tabletop/tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -238,7 +239,7 @@ export function setTablePreference (pref, value, no = getTableNo()) {
  * @param {String} label New label text.
  */
 export function stateLabelPiece (pieceId, label) {
-  patchPiece(pieceId, { label: label })
+  patchPiece(pieceId, { t: [label] })
 }
 
 /**
@@ -296,7 +297,7 @@ export function numberPiece (pieceId, n) {
  * @param {Number} side New side. Zero-based.
  */
 export function flipPiece (pieceId, side) {
-  patchPiece(pieceId, { side })
+  patchPiece(pieceId, { s: side })
 }
 
 /**
@@ -309,7 +310,7 @@ export function flipPiece (pieceId, side) {
  * @param {Number} color New color index. Zero-based.
  */
 export function colorPiece (pieceId, color) {
-  patchPiece(pieceId, { color })
+  patchPiece(pieceId, { c: [color] })
 }
 
 /**
@@ -539,6 +540,7 @@ function stripPiece (piece) {
  * @return {Object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, poll = true) {
+  if (patch.l) patch.l = nameToLayer(patch.l)
   return apiPatchPiece(room.name, getTableNo(), pieceId, patch)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
@@ -555,6 +557,9 @@ function patchPiece (pieceId, patch, poll = true) {
  * @return {Object} Promise of the API request.
  */
 function patchPieces (patches, poll = true) {
+  for (const patch of patches) {
+    if (patch.l) patch.l = nameToLayer(patch.l)
+  }
   return apiPatchPieces(room.name, getTableNo(), patches)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
@@ -571,6 +576,7 @@ function patchPieces (patches, poll = true) {
  * @return {Object} Promise of the ID of the new piece.
  */
 function createPiece (piece, poll = true) {
+  if (piece.l) piece.l = nameToLayer(piece.l)
   return apiPostPiece(room.name, getTableNo(), stripPiece(piece))
     .then(piece => {
       return piece.id

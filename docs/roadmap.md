@@ -29,6 +29,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* [ ] elemental status icons
 * [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
 * [ ] right-click on table (add piece, change table)
 * [ ] set default/start table other than 1 in template
@@ -55,7 +56,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] randomize button on dicemat
 * [ ] generic marker overlay (X, ?, ...)
 * [ ] add more classic game boards: backgammon, mills, solitaire
-* [ ] remove default entries from json files before save (e.g. side=0)
 * [ ] add template version to asset urls
 * [ ] generate average piece color during build and upload
 * [ ] catch all unhandled warnings/exceptions in PHP API and return 500

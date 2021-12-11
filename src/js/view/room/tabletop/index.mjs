@@ -55,7 +55,6 @@ import {
   getAssetURL,
   getMinZ,
   getMaxZ,
-  getContentRectGrid,
   stickyNoteColors,
   getTopLeftPx,
   getPieceBounds,
@@ -120,7 +119,7 @@ export function cloneSelected (xy) {
     const snapped = snap(xy.x, xy.y)
     piece.x = snapped.x
     piece.y = snapped.y
-    piece.z = getMaxZ(piece.layer) + 1
+    piece.z = getMaxZ(piece.l) + 1
     if (piece.n > 0) { // increase piece letter (if it has one)
       piece.n = piece.n + 1
       if (piece.n >= 16) piece.n = 1
@@ -138,7 +137,7 @@ export function flipSelected () {
   getSelected().each(node => {
     const piece = findPiece(node.id)
     if (piece._meta.sides > 1) {
-      flipPiece(piece.id, (piece.side + 1) % piece._meta.sides)
+      flipPiece(piece.id, (piece.s + 1) % piece._meta.sides)
     }
   })
 }
@@ -153,13 +152,13 @@ export function outlineSelected () {
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    switch (piece.layer) {
+    switch (piece.l) {
       case 'note':
-        colorPiece(piece.id, (piece.color + 1) % stickyNoteColors.length)
+        colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length)
         break
       default:
         if (pieceColors > 1) {
-          colorPiece(piece.id, (piece.color + 1) % pieceColors)
+          colorPiece(piece.id, (piece.c[0] + 1) % pieceColors)
         }
     }
   })
@@ -211,7 +210,7 @@ export function randomSelected () {
           // send to server
           updatePieces([{
             id: node.id,
-            side: Math.floor(Math.random() * piece._meta.sides),
+            s: Math.floor(Math.random() * piece._meta.sides),
             x: x,
             y: y
           }])
@@ -256,21 +255,21 @@ function createOrUpdatePieceDOM (piece, select) {
   let div = _('#' + piece.id)
   let _piece = div.unique() ? div.piece : {} // get old piece out of old node
   if (
-    _piece.layer !== piece.layer ||
+    _piece.l !== piece.l ||
     _piece.w !== piece.w ||
     _piece.h !== piece.h ||
-    _piece.side !== piece.side
+    _piece.s !== piece.s
   ) {
     selection = _('#tabletop .is-selected').id
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
   }
   if (!div.unique()) { // (re)create
-    const node = piece.layer === 'note' ? noteToNode(piece) : pieceToNode(piece)
+    const node = piece.l === 'note' ? noteToNode(piece) : pieceToNode(piece)
     node.piece = {}
     _piece = {}
     if (selection.includes(piece.id)) node.add('.is-selected')
-    _('#layer-' + piece.layer).add(node)
+    _('#layer-' + piece.l).add(node)
   }
 
   // update dom infos + classes (position, rotation ...)
@@ -297,24 +296,24 @@ function createOrUpdatePieceDOM (piece, select) {
   }
   if (_piece.n !== piece.n) {
     div.remove('.is-n', '.is-n-*')
-    if (piece.layer === 'token' && piece.n !== 0) {
+    if (piece.l === 'token' && piece.n !== 0) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
-  if (_piece.color !== piece.color) {
+  if (_piece.c?.[0] !== piece.c[0]) {
     div
       .remove('.is-color-*')
-      .add('.is-color-' + piece.color)
-    if (piece.layer === 'token' && piece.color >= 0 && template.colors.length) {
+      .add('.is-color-' + piece.c[0])
+    if (piece.l === 'token' && piece.c[0] >= 0 && template.colors.length) {
       _(`#${piece.id}`).css({
-        '--fbg-piece-color': template.colors[piece.color].value,
-        '--fbg-piece-color-invert': brightness(template.colors[piece.color].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+        '--fbg-piece-color': template.colors[piece.c[0]].value,
+        '--fbg-piece-color-invert': brightness(template.colors[piece.c[0]].value) > 128 ? '#0d0d0d' : '#e6e6e6'
       })
     }
   }
 
   // update select status
-  if (select && _('#tabletop.layer-' + piece.layer + '-enabled').exists()) {
+  if (select && _('#tabletop.layer-' + piece.l + '-enabled').exists()) {
     unselectPieces()
     div.add('.is-selected')
   }
@@ -331,16 +330,16 @@ function createOrUpdatePieceDOM (piece, select) {
 export function setPiece (piece, select = false) {
   const node = createOrUpdatePieceDOM(piece, select)
 
-  if (node.piece.label !== piece.label || node.piece.tag !== piece.tag) { // update label on change
+  if (node.piece.t?.[0] !== piece.t?.[0] || node.piece.b?.[0] !== piece.b?.[0]) { // update label on change
     _('#' + piece.id + ' .label').delete()
-    if (piece.label !== '' || piece.tag !== '') {
+    if (piece.t?.[0] !== '' || piece.b?.[0] !== '') {
       const label = _('.label').create()
-      if (piece.label !== '') {
-        const span = _('span').create(piece.label)
+      if (piece.t?.length >= 1) {
+        const span = _('span').create(piece.t[0])
         label.add(span)
       }
-      if (piece.tag !== '') {
-        const asset = findAssetByAlias(piece.tag, 'tag')
+      if (piece.b?.length >= 1) {
+        const asset = findAssetByAlias(piece.b?.[0], 'tag')
         if (asset) {
           const img = _('img.icon').create()
           img.src = getAssetURL(asset, 0)
@@ -363,8 +362,8 @@ export function setPiece (piece, select = false) {
 export function setNote (note, select = false) {
   const node = createOrUpdatePieceDOM(note, select)
 
-  if (node.piece.label !== note.label) { // update note on change
-    node.node().innerHTML = note.label ?? ''
+  if (node.piece.t?.[0] !== note.t?.[0]) { // update note on change
+    node.node().innerHTML = note.t?.[0] ?? ''
   }
 
   node.piece = note // store piece for future delta-checking
@@ -394,7 +393,7 @@ export function rotateSelected () {
 export function toTopSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
     const piece = findPiece(node.id)
-    const maxZ = getMaxZ(piece.layer)
+    const maxZ = getMaxZ(piece.l)
     if (piece.z < maxZ) {
       movePiece(piece.id, null, null, maxZ + 1)
     }
@@ -409,7 +408,7 @@ export function toTopSelected () {
 export function toBottomSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
     const piece = findPiece(node.id)
-    const minZ = getMinZ(piece.layer)
+    const minZ = getMinZ(piece.l)
     if (piece.z > minZ) {
       movePiece(piece.id, null, null, minZ - 1)
     }
@@ -453,15 +452,15 @@ export function pieceToNode (piece) {
   let node
 
   // create the dom node
-  const asset = findAsset(piece.asset)
+  const asset = findAsset(piece.a)
   if (asset === null) {
-    if (piece.asset === ID_POINTER) {
-      node = createPointerAsset(piece.layer)
+    if (piece.a === ID_POINTER) {
+      node = createPointerAsset(piece.l)
     } else {
-      node = createInvalidAsset(piece.layer)
+      node = createInvalidAsset(piece.l)
     }
   } else {
-    if (asset.media[piece.side] === '##BACK##') { // backside piece
+    if (asset.media[piece.s] === '##BACK##') { // backside piece
       const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
       node = _(`.piece.piece-${asset.type}`).create()
 
@@ -471,7 +470,7 @@ export function pieceToNode (piece) {
       })
       node.add(inner)
     } else { // regular piece
-      const uriSide = getAssetURL(asset, piece.side)
+      const uriSide = getAssetURL(asset, piece.s)
       const uriBase = getAssetURL(asset, -1)
       if (asset.base) { // layered asset
         node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
@@ -494,7 +493,7 @@ export function pieceToNode (piece) {
 
   // set meta-classes on node
   node.id = piece.id
-  node.add(`.is-side-${piece.side}`)
+  node.add(`.is-side-${piece.s}`)
   if (asset?.bg === 'piece') node.add('.is-piececolor')
 
   return node
@@ -511,7 +510,7 @@ export function noteToNode (note) {
 
   node.id = note.id
   node.add('.is-side-0')
-  node.node().innerHTML = note.label ?? ''
+  node.node().innerHTML = note.t?.[0] ?? ''
 
   return node
 }
@@ -526,7 +525,7 @@ export function noteToNode (note) {
 export function createNote (xy) {
   const snapped = snap(xy.x, xy.y)
   createPieces([{
-    layer: 'note',
+    l: 'note',
     w: 3,
     h: 3,
     x: snapped.x,
@@ -536,27 +535,18 @@ export function createNote (xy) {
 }
 
 /**
- * Move the room content to the given x/y position.
+ * Move the room content to by given x/y.
  *
- * Will determine the content-box and move each item relative to its top/left
- * corner.
- *
- * @param Number toX New x position.
- * @param Number toY New y position.
+ * @param Number offsetX Delta of new x position.
+ * @param Number offsetY Delta of new y position.
  */
-export function moveContent (toX, toY) {
-  const template = getTemplate()
-  const rect = getContentRectGrid()
-  const offsetX = (toX - rect.left) * template.gridSize
-  const offsetY = (toY - rect.top) * template.gridSize
-
+export function moveContent (offsetX, offsetY) {
   const pieces = []
   _('#tabletop .piece').each(node => {
-    const piece = findPiece(node.id)
     pieces.push({
-      id: piece.id,
-      x: piece.x + offsetX,
-      y: piece.y + offsetY
+      id: node.piece.id,
+      x: node.piece.x + offsetX,
+      y: node.piece.y + offsetY
     })
   })
   updatePieces(pieces)
@@ -604,8 +594,8 @@ export function pointTo (coords) {
   const snapped = snap(coords.x, coords.y)
 
   createPieces([{ // always create (even if it is a move)
-    asset: ID_POINTER,
-    layer: 'other',
+    a: ID_POINTER,
+    l: 'other',
     w: 1,
     h: 1,
     x: snapped.x,
@@ -665,7 +655,7 @@ function randomDicemat (dicemat) {
     }
   }
 
-  for (const piece of findPiecesWithin(getPieceBounds(dicemat), dicemat.layer)) {
+  for (const piece of findPiecesWithin(getPieceBounds(dicemat), dicemat.l)) {
     if (piece._meta.feature === 'DICEMAT') continue // don't touch the dicemat
 
     // pick one random position
@@ -680,7 +670,7 @@ function randomDicemat (dicemat) {
     // update the piece
     pieces.push({
       id: piece.id,
-      side: Math.floor(Math.random() * piece._meta.sides),
+      s: Math.floor(Math.random() * piece._meta.sides),
       x: dicemat.x - dicemat._meta.widthPx / 2 + coord.x,
       y: dicemat.y - dicemat._meta.heightPx / 2 + coord.y
     })
@@ -697,7 +687,7 @@ function randomDiscard (discard) {
   const pieces = []
   let stackSide = -1
 
-  const stack = findPiecesWithin(getPieceBounds(discard), discard.layer)
+  const stack = findPiecesWithin(getPieceBounds(discard), discard.l)
 
   // shuffle z positions above the dicard pile piece
   const discardZ = discard.z
@@ -713,7 +703,7 @@ function randomDiscard (discard) {
     // detect the side to flip them to
     if (stackSide < 0) {
       // fip all pices, based on the state of the first one
-      if (piece.side === 0) {
+      if (piece.s === 0) {
         stackSide = Math.max(0, piece._meta.sides - 1)
       } else {
         stackSide = 0
@@ -723,7 +713,7 @@ function randomDiscard (discard) {
     // update the piece
     pieces.push({
       id: piece.id,
-      side: stackSide,
+      s: stackSide,
       x: discard.x,
       y: discard.y,
       z: z.pop()
@@ -763,7 +753,7 @@ function removeObsoletePieces (keepIds) {
  * @param {Boolean} selected If true, this item will be selected.
  */
 function setItem (piece, selected) {
-  switch (piece.layer) {
+  switch (piece.l) {
     case 'tile':
     case 'token':
     case 'overlay':

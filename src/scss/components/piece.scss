@@ -208,6 +208,10 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     pointer-events: none;
     transform: scaleX(-1);
     width: 100%;
+
+    + .label {
+      display: none; // hide labes of flipped pieces
+    }
   }
 
   // --- additional layer (dice) -----------------------------------------------

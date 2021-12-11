@@ -52,10 +52,10 @@ export function modalEdit (piece) {
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Edit</h3>
     `
-    _('#modal-body').innerHTML = getModalBody(piece.layer)
+    _('#modal-body').innerHTML = getModalBody(piece.l)
 
     // label
-    _('#piece-label').value = piece.label
+    _('#piece-label').value = piece.t?.[0] ?? ''
 
     // tag
     const pieceTag = _('#piece-tag')
@@ -64,9 +64,9 @@ export function modalEdit (piece) {
     pieceTag.add(pieceTagNone)
     let pieceTagFound = false
     for (const tag of getLibrary().tag) {
-      const option = _('option').create(tag.alias)
-      option.value = tag.alias
-      if (tag.alias === piece.tag) {
+      const option = _('option').create(tag.name)
+      option.value = tag.name
+      if (tag.name === piece.b?.[0]) {
         pieceTagFound = true
         option.selected = true
       }
@@ -123,25 +123,25 @@ export function modalEdit (piece) {
       if (s === 1) label = 'front'
       const option = _('option').create(label)
       option.value = s - 1
-      if (s - 1 === piece.side) option.selected = true
+      if (s - 1 === piece.s) option.selected = true
       pieceSide.add(option)
     }
 
     // piece/border color
     const pieceColor = _('#piece-color')
     const template = getTemplate()
-    if (piece.layer === 'note') {
+    if (piece.l === 'note') {
       for (let c = 0; c < stickyNoteColors.length; c++) {
         const option = _('option').create(stickyNoteColors[c].name)
         option.value = c
-        if (c === piece.color) option.selected = true
+        if (c === piece.c[0]) option.selected = true
         pieceColor.add(option)
       }
     } else {
       for (let c = 0; c < template.colors.length; c++) {
         const option = _('option').create(template.colors[c].name)
         option.value = c
-        if (c === piece.color) option.selected = true
+        if (c === piece.c[0]) option.selected = true
         pieceColor.add(option)
       }
     }
@@ -351,11 +351,31 @@ function getModalNote () {
 function modalOk () {
   const piece = _('#modal').node().piece
   const updates = {}
+
   let value = _('#piece-label').value.trim()
-  if (value !== piece.label) updates.label = value
+  if (piece.t?.length > 0) { // piece had label
+    if (value.length <= 0) {
+      updates.l = piece.l
+      updates.t = []
+    } else if (value !== piece.t?.[0]) {
+      updates.l = piece.l
+      updates.t = [value]
+    }
+  } else if (value?.length > 0) {
+    updates.l = piece.l
+    updates.t = [value]
+  }
 
   value = _('#piece-tag').value
-  if (value !== piece.tag) updates.tag = value
+  if (piece.b?.length > 0) { // piece had tag
+    if (value.length <= 0) {
+      updates.b = []
+    } else if (value !== piece.b?.[0]) {
+      updates.b = [value]
+    }
+  } else if (value?.length > 0) {
+    updates.b = [value]
+  }
 
   value = Number(_('#piece-w').value)
   if (value !== piece.w) updates.w = value
@@ -367,10 +387,10 @@ function modalOk () {
   if (value !== piece.r) updates.r = value
 
   value = Number(_('#piece-side').value)
-  if (value !== piece.side) updates.side = value
+  if (value !== piece.s) updates.s = value
 
   value = Number(_('#piece-color').value)
-  if (value !== piece.color) updates.color = value
+  if (value !== piece.c[0]) updates.c = [value]
 
   value = Number(_('#piece-number').value)
   if (value !== piece.n) updates.n = value

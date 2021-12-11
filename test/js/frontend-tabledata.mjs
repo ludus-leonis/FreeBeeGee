@@ -22,6 +22,7 @@ import { expect } from 'chai'
 import {
   _setTable,
   _setRoom,
+  getTable,
   setTableNo
 } from '../../src/js/state/index.mjs'
 import {
@@ -35,8 +36,6 @@ import {
   getMinZ,
   getMaxZ,
   getContentRect,
-  getContentRectGrid,
-  getContentRectGridAll,
   clampToTableSize,
   createPieceFromAsset,
   splitAssetFilename
@@ -178,27 +177,27 @@ describe('Frontend - tabledata.mjs', function () {
     const p1 = populatePieceDefaults({})
     expect(p1.w).to.be.eq(1)
     expect(p1.h).to.be.eq(1)
-    expect(p1.side).to.be.eq(0)
-    expect(p1.color).to.be.eq(0)
+    expect(p1.s).to.be.eq(0)
+    expect(p1.c[0]).to.be.eq(0)
     expect(p1.r).to.be.eq(0)
     expect(p1.n).to.be.eq(0)
-    expect(p1.label).to.be.eq('')
+    expect(p1.t.length).to.be.eq(0)
     expect(p1._meta.feature).to.be.eq(undefined)
 
     const p2 = populatePieceDefaults(JSON.parse(pieceJSON))
     expect(p2.w).to.be.eq(1)
     expect(p2.h).to.be.eq(1)
-    expect(p2.side).to.be.eq(4)
-    expect(p2.color).to.be.eq(0)
+    expect(p2.s).to.be.eq(4)
+    expect(p2.c[0]).to.be.eq(0)
     expect(p2.r).to.be.eq(0)
     expect(p2.n).to.be.eq(0)
-    expect(p2.label).to.be.eq('')
+    expect(p2.t.length).to.be.eq(0)
     expect(p2._meta.feature).to.be.eq(undefined)
 
-    const p3 = populatePieceDefaults({ asset: 'dd07ac49818bc000' })
+    const p3 = populatePieceDefaults({ a: 'dd07ac49818bc000' })
     expect(p3._meta.feature).to.be.eq('DISCARD')
 
-    const p4 = populatePieceDefaults({ asset: 'bb07ac49818bc000' })
+    const p4 = populatePieceDefaults({ a: 'bb07ac49818bc000' })
     expect(p4._meta.feature).to.be.eq('DICEMAT')
   })
 
@@ -207,11 +206,11 @@ describe('Frontend - tabledata.mjs', function () {
     for (let i = 0; i <= 1; i++) {
       expect(p[i].w).to.be.eq(i + 1)
       expect(p[i].h).to.be.eq(1)
-      expect(p[i].side).to.be.eq(0)
-      expect(p[i].color).to.be.eq(0)
+      expect(p[i].s).to.be.eq(0)
+      expect(p[i].c[0]).to.be.eq(0)
       expect(p[i].r).to.be.eq(0)
       expect(p[i].n).to.be.eq(0)
-      expect(p[i].label).to.be.eq('')
+      expect(p[i].t.length).to.be.eq(0)
       expect(p[i]._meta.feature).to.be.eq(undefined)
     }
   })
@@ -299,41 +298,14 @@ describe('Frontend - tabledata.mjs', function () {
       setTableNo(i, false)
       if (i === TEST_STATE) {
         const r1 = getContentRect()
-        expect(r1.left).to.be.eq(768)
-        expect(r1.top).to.be.eq(128)
-        expect(r1.right).to.be.eq(1407)
-        expect(r1.bottom).to.be.eq(831)
+        expect(r1.left).to.be.eq(704)
+        expect(r1.top).to.be.eq(64)
+        expect(r1.right).to.be.eq(1375)
+        expect(r1.bottom).to.be.eq(767)
+        expect(r1.width).to.be.eq(672)
+        expect(r1.height).to.be.eq(704)
       } else {
         const r1 = getContentRect()
-        expect(r1.left).to.be.eq(0)
-        expect(r1.top).to.be.eq(0)
-        expect(r1.right).to.be.eq(0)
-        expect(r1.bottom).to.be.eq(0)
-      }
-
-      const r2 = getContentRect(2)
-      expect(r2.left).to.be.eq(0)
-      expect(r2.top).to.be.eq(0)
-      expect(r2.right).to.be.eq(0)
-      expect(r2.bottom).to.be.eq(0)
-    }
-  })
-
-  it('getContentRectGrid()', function () {
-    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
-
-    for (let i = 1; i <= 9; i++) {
-      setTableNo(i, false)
-      if (i === TEST_STATE) {
-        const r1 = getContentRectGrid()
-        expect(r1.left).to.be.eq(12)
-        expect(r1.top).to.be.eq(2)
-        expect(r1.right).to.be.eq(21)
-        expect(r1.bottom).to.be.eq(12)
-        expect(r1.width).to.be.eq(10)
-        expect(r1.height).to.be.eq(11)
-      } else {
-        const r1 = getContentRectGrid()
         expect(r1.left).to.be.eq(0)
         expect(r1.top).to.be.eq(0)
         expect(r1.right).to.be.eq(0)
@@ -342,26 +314,21 @@ describe('Frontend - tabledata.mjs', function () {
         expect(r1.height).to.be.eq(0)
       }
 
-      const r2 = getContentRectGrid(2)
+      const r2 = getContentRect(2)
       expect(r2.left).to.be.eq(0)
       expect(r2.top).to.be.eq(0)
       expect(r2.right).to.be.eq(0)
       expect(r2.bottom).to.be.eq(0)
       expect(r2.width).to.be.eq(0)
       expect(r2.height).to.be.eq(0)
-    }
-  })
 
-  it('getContentRectGridAll()', function () {
-    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
-
-    for (let i = 1; i <= 9; i++) {
-      setTableNo(i, false)
-      const r1 = getContentRectGridAll()
-      expect(r1.left).to.be.eq(12)
-      expect(r1.top).to.be.eq(2)
-      expect(r1.right).to.be.eq(21)
-      expect(r1.bottom).to.be.eq(12)
+      const r3 = getContentRect(TEST_STATE)
+      expect(r3.left).to.be.eq(704)
+      expect(r3.top).to.be.eq(64)
+      expect(r3.right).to.be.eq(1375)
+      expect(r3.bottom).to.be.eq(767)
+      expect(r3.width).to.be.eq(672)
+      expect(r3.height).to.be.eq(704)
     }
   })
 
@@ -397,63 +364,63 @@ describe('Frontend - tabledata.mjs', function () {
 
   it('createPieceFromAsset()', function () {
     const piece = createPieceFromAsset('bb07ac49818bc000')
-    expect(piece.asset).to.be.eq('bb07ac49818bc000')
-    expect(piece.layer).to.be.eq('other')
+    expect(piece.a).to.be.eq('bb07ac49818bc000')
+    expect(piece.l).to.be.eq('other')
     expect(piece.w).to.be.eq(4)
     expect(piece.h).to.be.eq(4)
     expect(piece.x).to.be.eq(0)
     expect(piece.y).to.be.eq(0)
     expect(piece.z).to.be.eq(1)
-    expect(piece.side).to.be.eq(0)
-    expect(piece.color).to.be.eq(0)
+    expect(piece.s).to.be.eq(0)
+    expect(piece.c[0]).to.be.eq(0)
     expect(piece.r).to.be.eq(0)
     expect(piece.n).to.be.eq(0)
-    expect(piece.label).to.be.eq('')
+    expect(piece.t.length).to.be.eq(0)
     expect(piece._meta.sides).to.be.eq(2)
     expect(piece._meta.feature).to.be.eq('DICEMAT')
   })
 
   it('splitAssetFilename()', function () {
     const a1 = splitAssetFilename('door.1x2x3.jpg')
-    expect(a1.alias).to.be.eql('door')
+    expect(a1.name).to.be.eql('door')
     expect(a1.w).to.be.eql(1)
     expect(a1.h).to.be.eql(2)
-    expect(a1.side).to.be.eql(3)
+    expect(a1.s).to.be.eql(3)
     expect(a1.bg).to.be.eql('808080')
 
     const b1 = splitAssetFilename('door.1x2x3.123456.jpg')
-    expect(b1.alias).to.be.eql('door')
+    expect(b1.name).to.be.eql('door')
     expect(b1.w).to.be.eql(1)
     expect(b1.h).to.be.eql(2)
-    expect(b1.side).to.be.eql(3)
+    expect(b1.s).to.be.eql(3)
     expect(b1.bg).to.be.eql('123456')
 
     const a2 = splitAssetFilename('dungeon.doorOpen.3x2x1.png')
-    expect(a2.alias).to.be.eql('dungeon.doorOpen')
+    expect(a2.name).to.be.eql('dungeon.doorOpen')
     expect(a2.w).to.be.eql(3)
     expect(a2.h).to.be.eql(2)
-    expect(a2.side).to.be.eql(1)
+    expect(a2.s).to.be.eql(1)
     expect(a2.bg).to.be.eql('808080')
 
     const b2 = splitAssetFilename('dungeon.doorOpen.3x2x1.transparent.png')
-    expect(b2.alias).to.be.eql('dungeon.doorOpen')
+    expect(b2.name).to.be.eql('dungeon.doorOpen')
     expect(b2.w).to.be.eql(3)
     expect(b2.h).to.be.eql(2)
-    expect(b2.side).to.be.eql(1)
+    expect(b2.s).to.be.eql(1)
     expect(b2.bg).to.be.eql('transparent')
 
     const c1 = splitAssetFilename('tile.svg')
-    expect(c1.alias).to.be.eql('tile')
+    expect(c1.name).to.be.eql('tile')
     expect(c1.w).to.be.eql(1)
     expect(c1.h).to.be.eql(1)
-    expect(c1.side).to.be.eql(1)
+    expect(c1.s).to.be.eql(1)
     expect(c1.bg).to.be.eql('808080')
 
     const a0 = splitAssetFilename('invalid')
-    expect(a0.alias).to.be.eql('unknown')
+    expect(a0.name).to.be.eql('unknown')
     expect(a0.w).to.be.eql(1)
     expect(a0.h).to.be.eql(1)
-    expect(a0.side).to.be.eql(1)
+    expect(a0.s).to.be.eql(1)
     expect(a0.bg).to.be.eql('808080')
   })
 })
@@ -461,18 +428,18 @@ describe('Frontend - tabledata.mjs', function () {
 const pieceJSON = `
 {
   "id": "fe008a4da3b2511e",
-  "layer": "other",
-  "asset": "f45f27b57498c3be",
+  "l": 5,
+  "a": "f45f27b57498c3be",
   "x": 256,
   "y": 192,
   "z": 13,
-  "side": 4
+  "s": 4
 }`
 
 const tableJSON = `
 [{
-  "layer": "tile",
-  "asset": "c065574908de7702",
+  "l": 1,
+  "a": "c065574908de7702",
   "w": 3,
   "h": 2,
   "x": 960,
@@ -481,23 +448,23 @@ const tableJSON = `
   "id": "437e26b90281e34e"
 }, {
   "id": "0e13b377e39574bc",
-  "layer": "tile",
-  "asset": "da30d95f34341fc0",
+  "l": 1,
+  "a": "da30d95f34341fc0",
   "x": 768,
   "y": 256,
   "z": 65,
   "r": 90
 }, {
-  "layer": "tile",
-  "asset": "89bd84cc218186eb",
+  "l": 1,
+  "a": "89bd84cc218186eb",
   "x": 1344,
   "y": 192,
   "z": 56,
   "id": "9754d0c014e39cd9",
   "r": 90
 }, {
-  "layer": "token",
-  "asset": "b7662212e5f3c6f9",
+  "l": 4,
+  "a": "b7662212e5f3c6f9",
   "x": 768,
   "y": 704,
   "z": 35,
@@ -505,8 +472,8 @@ const tableJSON = `
   "h": 2,
   "id": "49d045e1712c4148"
 }, {
-  "layer": "token",
-  "asset": "b7662212e5f3c6f9",
+  "l": 4,
+  "a": "b7662212e5f3c6f9",
   "x": 960,
   "y": 640,
   "z": 34,
@@ -529,7 +496,7 @@ const roomJSON = `
       "w": 1,
       "h": 1,
       "bg": "#808080",
-      "alias": "area.1x1",
+      "name": "area.1x1",
       "type": "overlay",
       "id": "7261fff0158e27bc"
     }],
@@ -538,7 +505,7 @@ const roomJSON = `
       "w": 3,
       "h": 2,
       "bg": "transparent",
-      "alias": "altar",
+      "name": "altar",
       "type": "tile",
       "id": "5b150d84cee577dc"
     }],
@@ -547,7 +514,7 @@ const roomJSON = `
       "w": 1,
       "h": 1,
       "bg": "piece",
-      "alias": "aasimar",
+      "name": "aasimar",
       "type": "token",
       "id": "484d7d45fdc27afa"
     }],
@@ -556,7 +523,7 @@ const roomJSON = `
       "w": 1,
       "h": 1,
       "bg": "#808080",
-      "alias": "classic.a",
+      "name": "classic.a",
       "type": "other",
       "id": "f45f27b57498c3be",
       "base": "classic.a.1x1x0.png"
@@ -565,7 +532,7 @@ const roomJSON = `
       "w": 4,
       "h": 4,
       "bg": "#808080",
-      "alias": "dicemat",
+      "name": "dicemat",
       "type": "other",
       "id": "bb07ac49818bc000"
     }, {
@@ -573,7 +540,7 @@ const roomJSON = `
       "w": 4,
       "h": 4,
       "bg": "#808080",
-      "alias": "discard",
+      "name": "discard",
       "type": "other",
       "id": "dd07ac49818bc000"
     }],
