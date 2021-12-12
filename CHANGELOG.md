@@ -29,6 +29,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * changed piece/asset data model to be more compact and future proof
 * changed drag'n'drop 'ghost' image to show snap positions
 * changed grid indicators from pngs to sharper svgs
+* updated datamodel docs
 * removed `gridSize` from templates - templates snap to their grid size if snapping is on
 
 ## v0.11.0 - Troubled Trout

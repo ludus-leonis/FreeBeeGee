@@ -1,8 +1,8 @@
 # FreeBeeGee datamodel
 
-This document is part of the [FreeBeeGee documentation](DOCS.md). It describes the FreeBeeGee JSON data model.
+This document is part of the [FreeBeeGee documentation](DOCS.md). It describes the FreeBeeGee (FBG) JSON data model.
 
-It is not necessary to read/understand this to create templates. This information is here for developers who would like to contribute code or extend FreeBeeGee.
+It is not necessary to read/understand this to create templates. This information is here for developers who would like to contribute code or extend FBG.
 
 ## Assets
 
@@ -15,7 +15,7 @@ A basic example:
 ```json
 {
   "id": "e786f024af997f9c",
-  "alias": "room",
+  "name": "room",
   "media": [
     "room.4x4x1.808674.jpg",
     "room.4x4x2.8E947E.jpg"
@@ -30,8 +30,8 @@ A basic example:
 `id`
 : The ID of the asset (16-digit hex).
 
-`alias`
-: The name of the asset if shown e.g. in the library.
+`name`
+: The name of the asset. Used e.g. in the library.
 
 `media`
 : An array of media files. Supported are `*.png`, `*.svg` and `*.jpg`. Which of those is shown when depends on the data object using this asset (usually a *Piece*).
@@ -70,12 +70,12 @@ For some assets it is useful to have a common base layer and the individual medi
 
 ### Default back sides
 
-Single-sided assets can have a default back side (showing the FreeBeeGee logo), so they can be flipped over. This is done by using `##BACK##` as image name:
+Single-sided assets can have a default back side (showing the FBG logo), so they can be flipped over. This is indicated by using `##BACK##` as image name:
 
 ```json
 {
   ...
-  "sides": [
+  "media": [
     "room.4x4x1.808674.jpg",
     "###BACK###"
   ],
@@ -85,7 +85,7 @@ Single-sided assets can have a default back side (showing the FreeBeeGee logo), 
 
 ## Library
 
-The library object holds information about all known assets, sorted by type.
+The library object holds information about all known assets, sorted by asset type.
 
 ```json
 {
@@ -101,22 +101,24 @@ The library object holds information about all known assets, sorted by type.
   "other": [
     ... assets ...
   ],
-  "note": [
+  "tag": [
     ... assets ...
   ]
 }
 ```
 
+If a room's library does not have assets of a particular type, the entry will be missing.
+
 ## Pieces
 
-When assets are displayed on a table and become 'tangible', they are called pieces. Pieces extend the asset information by data like position, rotation, etc. Multiple pieces can share the same  asset.
+When assets are displayed on a table and become 'tangible', they are called pieces. Pieces extend the asset information by data like position, rotation, etc. Multiple pieces can share the same asset.
 
 A minimal piece contains the following information:
 
 ```json
 {
   "id": "ec0dfce0d35d657a",
-  "layer": "other",
+  "l": 5,
   "a": "0c6175be538f8b32",
   "x": 1216,
   "y": 640,
@@ -127,8 +129,8 @@ A minimal piece contains the following information:
 `id`
 : The ID of the piece.
 
-`layer`
-: The type of piece / layer to show it in. Usually the type of the asset, but that is not mandatory.
+`l`
+: The layer (number) to show the piece in. `1` = tile, `2` = overlay, `3` = note, `4` = token, '5' = other. In theory the asset type does not have to match the layer it is shown in, but currently e.g. only tile assets are used in the tile layer.
 
 `a`
 : The ID of the asset.
@@ -142,28 +144,28 @@ A minimal piece contains the following information:
 `z`
 : The z-coordinate (z-index) within the layer.
 
-In addition, pieces can have the following properties. If omitted, they default to certain values.
+In addition, pieces can have the following optional properties. If omitted, they default to certain values.
 
 `w`
-: The width of the piece, in grid spaces. Defaults to 1.
+: The width of the piece, in grid spaces. Defaults to `1`.
 
 `h`
-: The height of the piece, in grid spaces. Defaults to 1.
+: The height of the piece, in grid spaces. Defaults to `1`.
 
 `r`
-: The rotation of the piece. Can be 0, 90, 180 or 270. Defaults to 0.
+: The rotation of the piece. Can be `0`, `60`, `90`, `120`, `180`, `240`, `270`  or `300`. Defaults to `0`.
 
 `side`
-: The side of the piece currently shown, usually one of the asset's media files. Defaults to 0.
+: The side of the piece currently shown, usually one of the asset's media files. Defaults to `0`.
 
 `n`
-: The number of the piece. This is a small digit displayed on the piece to distinguish multiple pieces with the same artwork (e.g. different Goblins). Can be 0..15. Defaults to 0 = none.
+: The number of the piece. This is a small digit displayed on the piece to distinguish multiple pieces with the same artwork (e.g. different Goblins). Can be `0`..`15`. Defaults to `0` = none.
 
-`color`
-: The index of the border/background-color/style. Can be 0..? and depends on the available styles in the template. Defaults to 0.
+`c`
+: An array of colors, mostly one. Each number in this array is an index of the of the colors defined in the room's tempalte. Can be 0..?. Defaults to `[0]`. It depends on the type of piece what these colors are used for (e.g. border, background, ...).
 
-`label`
-: A short text to be displayed on/next to the piece. Defaults to '' (empty string).
+`t`
+: An array of optional texts of a piece. Currently only the first entry in the array is used. Is used as note's text or as small label next to the piece for other types. Defaults to `[]`.
 
 `expires`
 : Timestamp in seconds-since-epoch when this piece expires. It should no longer displayed if that time is reached. Clients should compare it with the `Servertime` HTTP header and not with a local clock value. No `expires` field means no expiration.
@@ -176,7 +178,7 @@ A template, a.k.a. snapshot, describes a table setup for a particular game.
 {
   "type": "grid-square",
   "version": "1.0.1",
-  "engine": "^0.4.0",
+  "engine": "1.0.0",
 
   "colors": [{
     "name":"black","value":"#000000"
@@ -194,10 +196,10 @@ A template, a.k.a. snapshot, describes a table setup for a particular game.
 : The type of table this template uses. Can be either `grid-square` or `grid-hex`.
 
 `version`
-: The version of the template / snapshot itself. Uses [Semantic Versioning](https://semver.org/). Saved templates will contain the same version as the FreeBeeGee version, but you can use your own version in custom templates.
+: The version of the template / snapshot itself. Uses [Semantic Versioning](https://semver.org/). Saved templates will contain the same version as the FBG version, but you can use your own version in custom templates.
 
 `engine`
-: The FreeBeeGee engine this template should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
+: The FBG engine this template should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
 
 `colors`
 : A series of colors available as border-colors etc. on the table. Key-Value pairs with `name` and a `value` / RGB hex code. Minimum 1 required.
@@ -240,4 +242,59 @@ Tiles for hex-templates are a bit complicated, as hex-forms usually do not fill 
 
 ## Rooms
 
-TBD
+This JSON describes a whole room.
+
+```
+{
+  "id": "570216835fdebd3c",
+  "name": "openExaminingBear",
+  "engine": "1.0.0",
+
+  "backgrounds": [{
+		"name": "Casino",
+		"image": "img/desktop-casino.jpg",
+		"color": "#2e5d3c",
+		"scroller": "#1b3c25"
+	},
+  ...
+  ],
+
+  "library": {
+    ... library JSON ...
+  },
+  "template": {
+    ... template JSON ...
+  },
+
+  "credits": "(c) ACME Inc.",
+  "width": 2048,
+  "height": 1024
+}
+```
+
+`id`
+: The ID of this room. Generated by the server.
+
+`name`
+: The public name of this room. Same as in the URL. Minimum 8 characters, can contain only [a-zA-Z0-9].
+
+`engine`
+: The version of the game engine this FBG server is running. Usually differs from the FBG version itself.
+
+`backgrounds`
+: An array of backgrounds available for this room. `name` is the name to be displayed in the settings. `image` is the path to the file within the FBG installation. `color` is the average color of the bitmap to be used while loading or as fallback. `scroller` is a suitable secondary color to be used for the scrollbar.
+
+`library`
+: The room's library. Format is specified above.
+
+`templage`
+: The room's template. Format is specified above.
+
+`credits`
+: A Markdown string to be shown in the about modal.
+
+`width`
+: Width of the room's tables, in px.
+
+`height`
+: Height of the room's tables, in px.
