@@ -332,7 +332,7 @@ export function setPiece (piece, select = false) {
 
   if (node.piece.t?.[0] !== piece.t?.[0] || node.piece.b?.[0] !== piece.b?.[0]) { // update label on change
     _('#' + piece.id + ' .label').delete()
-    if (piece.t?.[0] !== '' || piece.b?.[0] !== '') {
+    if (piece.t?.[0] || piece.b?.[0]) {
       const label = _('.label').create()
       if (piece.t?.length >= 1) {
         const span = _('span').create(piece.t[0])
