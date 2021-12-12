@@ -381,8 +381,9 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
       align-items: flex-start; // mainly for labels
 
       .label {
-        top: $piece-tile-size * $v - $piece-border-size * 2 - $piece-margin * 2;
-        transform-origin: center math.div($piece-tile-size * $v - $piece-border-size * 2 - $piece-margin * 2 - 1, -2);
+        $label-offset-x: -8px;
+        top: $piece-tile-size * $v - $piece-border-size * 2 - $piece-margin * 2 + $label-offset-x;
+        transform-origin: center math.div($piece-tile-size * $v - $piece-border-size * 2 - $piece-margin * 2 - 1, -2) - $label-offset-x;
       }
     }
   }
