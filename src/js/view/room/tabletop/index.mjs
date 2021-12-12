@@ -535,12 +535,32 @@ export function createNote (xy) {
 }
 
 /**
- * Move the room content to by given x/y.
+ * Move the room content by approximately x/y.
+ *
+ * The actual amount will depend on the page grid so that the moved content
+ * still aligns to grid snapping.
  *
  * @param Number offsetX Delta of new x position.
  * @param Number offsetY Delta of new y position.
  */
 export function moveContent (offsetX, offsetY) {
+  const template = getTemplate()
+  console.log(offsetX, offsetY)
+  switch (template.type) {
+    case 'grid-hex':
+      if (offsetX < 0) offsetX += 109
+      if (offsetY < 0) offsetY += 63
+      offsetX = Math.floor(offsetX / 110) * 110
+      offsetY = Math.floor(offsetY / 64) * 64
+      break
+    case 'grid-square':
+    default:
+      if (offsetX < 0) offsetX += 63
+      if (offsetY < 0) offsetY += 63
+      offsetX = Math.floor(offsetX / template.gridSize) * template.gridSize
+      offsetY = Math.floor(offsetY / template.gridSize) * template.gridSize
+  }
+  console.log('->', offsetX, offsetY)
   const pieces = []
   _('#tabletop .piece').each(node => {
     pieces.push({

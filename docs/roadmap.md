@@ -20,9 +20,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] build speed by caching some files
     * [X] library search sometimes missing / ok not working
     * [X] check existing rooms for engine mismatch after updates
-  * [ ] review + run tests
   * [X] update screenshots
   * [X] review docs
+  * [ ] review + run tests
   * [ ] bump version/codename & update CHANGELOG
 
 ## Backlog (unsorted)
