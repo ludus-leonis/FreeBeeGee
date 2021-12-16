@@ -31,6 +31,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] elemental status icons
 * [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
 * [ ] right-click on table (add piece, change table)
