@@ -315,7 +315,7 @@ class FreeBeeGeeAPI
 
         // basic sanity tests
         if (filesize($zipPath) > $sizeLeft) {
-            // if the zip itself is too large, then it's content is probably too
+            // if the zip itself is too large, then its content is probably too
             $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
         }
 
@@ -881,9 +881,9 @@ class FreeBeeGeeAPI
                 case 'c':
                     if (property_exists($piece, 'l') && $piece->l === 3) { // 3 = note
                         $validated->c =
-                            $this->api->assertIntegerArray('c', $value, 0, sizeof($this->stickyNotes) - 1, 1, 1);
+                            $this->api->assertIntegerArray('c', $value, 0, sizeof($this->stickyNotes) - 1, 1, 2);
                     } else {
-                        $validated->c = $this->api->assertIntegerArray('c', $value, 0, 15, 1, 1);
+                        $validated->c = $this->api->assertIntegerArray('c', $value, 0, 15, 1, 2);
                     }
                     break;
                 case 'n':

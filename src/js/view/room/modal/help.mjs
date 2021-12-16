@@ -117,7 +117,8 @@ export function modalHelp () {
             <p><span class="key">e</span> Edit selected piece.</p>
             <p><span class="key">r</span> Rotate piece.</p>
             <p><span class="key">f</span> Flip over piece. Some pieces have more than two sides.</p>
-            <p><span class="key">o</span> Change piece/outline color (token and notes only).</p>
+            <p><span class="key">o</span> Change piece color (if a piece supports that).</p>
+            <p><span class="key">O</span> Change outline/border color (token only).</p>
             <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
             <p><span class="key">t</span> Move selected piece to the top of its layer.</p>
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>

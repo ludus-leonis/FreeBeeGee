@@ -129,7 +129,7 @@ export function cloneSelected (xy) {
 }
 
 /**
- * Flip the currently selected piece to it's next side.
+ * Flip the currently selected piece to its next side.
  *
  * Will cycle the sides and silently fail if nothing is selected.
  */
@@ -146,19 +146,25 @@ export function flipSelected () {
  * Switch the piece/outline color of the currently selected piece.
  *
  * Will cycle through all available colors and silently fail if nothing is selected.
+ *
+ * @param {boolean} outline If true, this will cycle the outline color. If false/unset,
+ *                          it will cycle the piece color.
  */
-export function outlineSelected () {
+export function cycleColor (outline = false) {
   const pieceColors = getTemplate().colors.length
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
     switch (piece.l) {
       case 'note':
-        colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length)
+        // always change base color
+        colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length, piece.c[1])
         break
       default:
-        if (pieceColors > 1) {
-          colorPiece(piece.id, (piece.c[0] + 1) % pieceColors)
+        if (outline) {
+          colorPiece(piece.id, piece.c[0], (piece.c[1] + 1) % (pieceColors + 1))
+        } else {
+          colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length, piece.c[1])
         }
     }
   })
@@ -238,7 +244,7 @@ export function setTableSurface (no) {
 /**
  * Update or recreate the DOM node of a piece.
  *
- * Will try to minimize recreation of objects and tries to only update it's
+ * Will try to minimize recreation of objects and tries to only update its
  * properties/classes if possible.
  *
  * Assumes that the caller will add a 'piece' property to the node so we can
@@ -300,15 +306,33 @@ function createOrUpdatePieceDOM (piece, select) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
-  if (_piece.c?.[0] !== piece.c[0]) {
+  if (_piece.c?.[0] !== piece.c[0] || _piece.c?.[1] !== piece.c[1]) {
     div
-      .remove('.is-color-*')
-      .add('.is-color-' + piece.c[0])
-    if (piece.l === 'token' && piece.c[0] >= 0 && template.colors.length) {
-      _(`#${piece.id}`).css({
-        '--fbg-piece-color': template.colors[piece.c[0]].value,
-        '--fbg-piece-color-invert': brightness(template.colors[piece.c[0]].value) > 128 ? '#0d0d0d' : '#e6e6e6'
-      })
+      .remove('.is-color-*', '.is-border-*')
+      .add('.is-color-' + piece.c[0], '.is-border-' + piece.c[1])
+    if (piece.l === 'token' && piece.c[0] >= 0 && piece.c[0] <= template.colors.length) {
+      if (piece.c[0] === 0) {
+        _(`#${piece.id}`).css({
+          '--fbg-piece-color': '#808080',
+          '--fbg-piece-color-invert': '#e6e6e6'
+        })
+      } else {
+        _(`#${piece.id}`).css({
+          '--fbg-piece-color': template.colors[piece.c[0] - 1].value,
+          '--fbg-piece-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+        })
+      }
+      if (piece.c[1] === 0) {
+        _(`#${piece.id}`).css({
+          '--fbg-border-color': '#808080',
+          '--fbg-border-color-invert': '#e6e6e6'
+        })
+      } else {
+        _(`#${piece.id}`).css({
+          '--fbg-border-color': template.colors[piece.c[1] - 1].value,
+          '--fbg-border-color-invert': brightness(template.colors[piece.c[1] - 1].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+        })
+      }
     }
   }
 
@@ -386,7 +410,7 @@ export function rotateSelected () {
 }
 
 /**
- * Move the currently selected piece to the top within it's layer.
+ * Move the currently selected piece to the top within its layer.
  *
  * Will silently fail if nothing is selected.
  */
@@ -401,7 +425,7 @@ export function toTopSelected () {
 }
 
 /**
- * Move the currently selected piece to the bottom within it's layer.
+ * Move the currently selected piece to the bottom within its layer.
  *
  * Will silently fail if nothing is selected.
  */
@@ -494,7 +518,6 @@ export function pieceToNode (piece) {
   // set meta-classes on node
   node.id = piece.id
   node.add(`.is-side-${piece.s}`)
-  if (asset?.bg === 'piece') node.add('.is-piececolor')
 
   return node
 }
@@ -545,7 +568,6 @@ export function createNote (xy) {
  */
 export function moveContent (offsetX, offsetY) {
   const template = getTemplate()
-  console.log(offsetX, offsetY)
   switch (template.type) {
     case 'grid-hex':
       if (offsetX < 0) offsetX += 109
@@ -560,7 +582,6 @@ export function moveContent (offsetX, offsetY) {
       offsetX = Math.floor(offsetX / template.gridSize) * template.gridSize
       offsetY = Math.floor(offsetY / template.gridSize) * template.gridSize
   }
-  console.log('->', offsetX, offsetY)
   const pieces = []
   _('#tabletop .piece').each(node => {
     pieces.push({

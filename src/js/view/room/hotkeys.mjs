@@ -41,7 +41,7 @@ import {
   randomSelected,
   numberSelected,
   createNote,
-  outlineSelected,
+  cycleColor,
   toBottomSelected,
   pointTo
 } from './tabletop/index.mjs'
@@ -147,8 +147,11 @@ function handleRoomKeys (keydown) {
       case 'g': // toggleGrid
         toggleGrid()
         break
-      case 'o': // color/outline selected
-        outlineSelected()
+      case 'o': // token color
+        cycleColor(false)
+        break
+      case 'O': // outline color
+        cycleColor(true)
         break
       case 'h': // help
       case 'H':

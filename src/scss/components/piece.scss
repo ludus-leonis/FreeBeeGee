@@ -37,6 +37,8 @@ $piece-shadow-y: 2;
 $piece-shadow-direction: math.atan(math.div($piece-shadow-x, $piece-shadow-y));
 $piece-shadow-length: math.sqrt($piece-shadow-x * $piece-shadow-x + $piece-shadow-y * $piece-shadow-y);
 
+$piece-highlights: 1.5px 1.5px 1px -.5px $color-white-25a inset, -1.5px -1.5px 1px -.5px $color-black-35a inset;
+
 @function piece-shadow($deg, $blur, $color) {
   @return
   math.sin($deg + $piece-shadow-direction) * $piece-shadow-length * 1px
@@ -181,6 +183,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     pointer-events: none;
     position: relative;
     white-space: nowrap;
+    z-index: 99; // within the piece
 
     .icon {
       height: 1em;
@@ -358,22 +361,14 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 .piece-token {
   #{'--fbg-piece-color'}: $piece-color;
   #{'--fbg-piece-color-invert'}: $color-wb-fg;
+  #{'--fbg-border-color'}: $piece-color;
+  #{'--fbg-border-color-invert'}: $color-wb-fg;
 
   background-color: var(--fbg-piece-color); // tile background
-  border: $piece-border-size solid var(--fbg-piece-color);
   border-radius: $piece-tile-size;
   margin: $piece-margin;
 
   $is-n-size: 1rem;
-
-  &.is-piececolor {
-    border-color: $color-gray-95;
-
-    &.is-n::after {
-      background-color: $color-gray-95;
-      color: $color-wb-fg;
-    }
-  }
 
   // different labels for square tokens
   @for $v from 1 through 32 {
@@ -381,18 +376,18 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
       align-items: flex-start; // mainly for labels
 
       .label {
-        $label-offset-x: -8px;
-        top: $piece-tile-size * $v - $piece-border-size * 2 - $piece-margin * 2 + $label-offset-x;
-        transform-origin: center math.div($piece-tile-size * $v - $piece-border-size * 2 - $piece-margin * 2 - 1, -2) - $label-offset-x;
+        $label-offset-x: -10px;
+        top: $piece-tile-size * $v - $piece-margin * 2 + $label-offset-x;
+        transform-origin: center math.div($piece-tile-size * $v - $piece-margin * 2 - 1, -2) - $label-offset-x;
       }
     }
   }
 
   &.is-n::after {
     align-items: center;
-    background-color: var(--fbg-piece-color);
+    background-color: var(--fbg-border-color);
     border-radius: 100%;
-    color: var(--fbg-piece-color-invert);
+    color: var(--fbg-border-color-invert);
     display: flex;
     flex-direction: row;
     font-size: .85em;
@@ -401,7 +396,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     justify-content: center;
     margin-top: math.div($is-n-size, -2);
     position: absolute;
-    right: $piece-border-size * -1 + .75px;
+    right: 0;
     top: 50%;
     width: $is-n-size;
   }
@@ -439,6 +434,13 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     mask-image: none !important; // sass-lint:disable-line no-important
   }
 
+  &.is-border-0 {
+    &.is-n::after {
+      background-color: var(--fbg-piece-color);
+      color: var(--fbg-piece-color-invert);
+    }
+  }
+
   // --- quality settings ---
 
   .is-quality-medium & {
@@ -456,6 +458,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   .is-quality-high &,
   .is-quality-ultra & {
+    // --- shadows ---
     @include shadows(
       $piece-shadow,
       $piece-shadow-60,
@@ -466,6 +469,17 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
       $piece-shadow-270,
       $piece-shadow-300
     );
+
+    // --- highlights ---
+    box-shadow: $piece-highlights, 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+
+    &.is-border-0 {
+      box-shadow: $piece-highlights;
+
+      &.is-n::after {
+        opacity: .85;
+      }
+    }
   }
 }
 

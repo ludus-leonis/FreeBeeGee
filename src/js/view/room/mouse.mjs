@@ -134,7 +134,7 @@ function touchMousePosition (x, y) {
 /**
  * Determine if a piece is not transparent at a given coordinate.
  *
- * Does this by creating a temporary in-memory canvas and checking against it's
+ * Does this by creating a temporary in-memory canvas and checking against its
  * alpha layer. Rotation is implicitly done by the browser as CSS 'transform:'
  * also rotates/scales click x/y.
  *

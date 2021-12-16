@@ -196,7 +196,7 @@ export function modalSettings () {
               <div class="container spacing-small">
                 <div class="row">
                   <div class="col-12 col-sm-8">
-                    <p>Deleting your room will permanently erase it and it's library.</p>
+                    <p>Deleting your room will permanently erase it and its library.</p>
                   </div>
                   <div class="col-12 col-sm-4">
                     <button id="btn-table-delete" class="btn btn-wide" disabled>Delete room</button>

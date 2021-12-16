@@ -13,6 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] toggle grid on/off (visual)
 * [X] use image masks for backsides
 * [X] fullscreen hotkey (F11)
+* [X] improved token look & no-border option
 * [ ] pre-release
   * [X] bugfixing
     * [X] unreadable piece numbers on white borders

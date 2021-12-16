@@ -307,10 +307,11 @@ export function flipPiece (pieceId, side) {
  * data model.
  *
  * @param {String} pieceId ID of piece to change.
- * @param {Number} color New color index. Zero-based.
+ * @param {Number} color1 New color index. Zero-based.
+ * @param {Number} color2 New color index. Zero-based.
  */
-export function colorPiece (pieceId, color) {
-  patchPiece(pieceId, { c: [color] })
+export function colorPiece (pieceId, color1 = 0, color2 = 0) {
+  patchPiece(pieceId, { c: [color1, color2] })
 }
 
 /**

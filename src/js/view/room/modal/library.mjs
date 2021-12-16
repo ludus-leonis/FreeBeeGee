@@ -437,7 +437,8 @@ function assetToPreview (asset) {
     s: 0
   })).add(
     '.is-w-' + asset.w,
-    '.is-h-' + asset.h
+    '.is-h-' + asset.h,
+    '.is-border-0'
   )
   node.dataset.a = asset.id
 

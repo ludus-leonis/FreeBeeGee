@@ -147,7 +147,7 @@ export function getAssetURL (asset, side) {
 /**
  * Get proper top-left coordinates for a piece.
  *
- * Takes into account that rotated pieces have a different offset to it's center
+ * Takes into account that rotated pieces have a different offset to its center
  * than the original as CSS 'transform: rotate()' rotates round the original center.
  *
  * @param {Object} piece A game piece to operate on.
@@ -230,7 +230,9 @@ export function populatePieceDefaults (piece, headers = null) {
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? 1
   piece.s = piece.s ?? 0
-  piece.c = piece.c ?? [0]
+  piece.c = piece.c ?? [0, 0]
+  piece.c[0] = piece.c[0] ?? 0
+  piece.c[1] = piece.c[1] ?? 0
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
@@ -426,7 +428,7 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
 }
 
 /**
- * Make sure a piece is fully on the room by clipping x/y based on it's size.
+ * Make sure a piece is fully on the room by clipping x/y based on its size.
  *
  * @param {Object} item Piece to clamp.
  * @return {Object} Clamped piece.
