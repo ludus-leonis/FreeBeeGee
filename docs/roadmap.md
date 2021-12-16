@@ -14,7 +14,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] use image masks for backsides
 * [X] fullscreen hotkey (F11)
 * [X] improved token look & no-border option
-* [ ] pre-release
+* [X] pre-release
+  * [X] bump dependencies
   * [X] bugfixing
     * [X] unreadable piece numbers on white borders
     * [X] tokens sometime shifting when selecting
@@ -23,8 +24,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] check existing rooms for engine mismatch after updates
   * [X] update screenshots
   * [X] review docs
-  * [ ] review + run tests
-  * [ ] bump version/codename & update CHANGELOG
+  * [X] review + run tests
+  * [X] bump version/codename & update CHANGELOG
 
 ## Backlog (unsorted)
 

@@ -25,11 +25,11 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * fixed tokens sometimes shifting when selecting them
 * fixed library search sometimes missing / ok not working
 * improved readablity of piece numbers on bright borders
-* improved build speed by caching some files
+* improved build speed by caching generated files
 * improved template/engine mismatch detection
 * changed piece/asset data model to be more compact and future proof
-* changed drag'n'drop 'ghost' image to show snap positions
-* changed grid indicators from pngs to sharper svgs
+* changed drag'n'drop 'ghost' image to snap to possible positions
+* changed grid indicators from pngs to crisper svgs
 * updated datamodel docs
 * removed `gridSize` from templates - templates snap to their grid size if snapping is on
 
