@@ -2,49 +2,36 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.12 - Hexing Heron
+## v0.13 - ??? ???
 
-* [X] Hex mode
-  * [X] Engine changes
-  * [X] Game template
-* [X] click thru / don't select on transparent parts of images
-* [X] more table backgrounds
-* [X] improved generic game token / Go piece / bead
-* [X] toggle grid on/off (visual)
-* [X] use image masks for backsides
-* [X] fullscreen hotkey (F11)
-* [X] improved token look & no-border option
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixing
-    * [X] unreadable piece numbers on white borders
-    * [X] tokens sometime shifting when selecting
-    * [X] build speed by caching some files
-    * [X] library search sometimes missing / ok not working
-    * [X] check existing rooms for engine mismatch after updates
-  * [X] update screenshots
-  * [X] review docs
-  * [X] review + run tests
-  * [X] bump version/codename & update CHANGELOG
+* [ ] elemental status icons
+* [ ] table passwords
+* [ ] LOS-ruler
+* [ ] advanced grid settings (minor, major)
+* [ ] add template version to asset urls
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixing
+    * [X] fixed "RPG" template glass tiles transparency
+  * [ ] update screenshots
+  * [ ] review docs
+  * [ ] review + run tests
+  * [ ] bump version/codename & update CHANGELOG
 
 ## Backlog (unsorted)
 
 ### rather sooner
 
 * [ ] automated deployment tests for new zip/tgz packages after build
-* [ ] elemental status icons
 * [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
 * [ ] right-click on table (add piece, change table)
 * [ ] set default/start table other than 1 in template
-* [ ] table passwords
 * [ ] delete items from library
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dragging some pieces should not change z (e.g. dicemat)
 * [ ] multi-select stuff
 * [ ] move / copy setups between tables
 * [ ] protect pieces (no-delete, no-move)
-* [ ] LOS-ruler
-* [ ] toggle grid on/off (snapping)
 * [ ] show backside/all sides in tile browser
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] meta-piece: supply heap
@@ -59,7 +46,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] randomize button on dicemat
 * [ ] generic marker overlay (X, ?, ...)
 * [ ] add more classic game boards: backgammon, mills, solitaire
-* [ ] add template version to asset urls
 * [ ] generate average piece color during build and upload
 * [ ] catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] hide .../data/... from URLs (via .htaccess)

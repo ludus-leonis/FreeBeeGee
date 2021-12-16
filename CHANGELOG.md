@@ -2,6 +2,14 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## V0.13.0 - ??? ???
+
+### Notable changes
+
+### Other changes
+
+* fixed "RPG" template glass tiles transparency
+
 ## v0.12.0 - Hexing Heron
 
 This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
