@@ -1,10 +1,10 @@
 # FreeBeeGee snapshot format
 
-This document is part of the [FreeBeeGee documentation](DOCS.md). It explains how FreeBeeGee game snapshots are structured.
+This document is part of the [FreeBeeGee documentation](DOCS.md). It explains how FreeBeeGee (FBG) game snapshots are structured.
 
 ## About snapshots
 
-Snapshots are Save-Game `*.zip`s you can obtain by downloading them from any room you have joined. When creating a new room, you can provide such a snapshot to recreate and continue a game.
+Snapshots are Save-Game `*.zip`s you can obtain by downloading them from any room you have joined. When creating a new room - even on another FBG server - you can provide such a snapshot to recreate and continue a game.
 
 Snapshots do not only serve as Save-Games and backups, but can also be used as pre-setup game templates and shared with other players/servers. While you can do most of the setup in the FreeBeeGee UI, there are some things that require you editing the `zip` file.
 
@@ -35,11 +35,14 @@ Note that all files have to be in the root folder of the `ZIP`! Usually you want
 │  ├─ tile/
 │  │  ├─ corridor.4x1x1.png
 │  │  └─ room.6x6x1.png
+│  ├─ tag/
+│  │  ├─ stunned.png
+│  │  └─ invisible.png
 │  └─ other/
 │     ├─ d6.1x1x1.png
 │     ├─ ...
 │     └─ d6.1x1x6.png
-└─ states/
+└─ tables/
    └─ 1.json
 ```
 
@@ -59,7 +62,7 @@ TBD
 
 Assets are the images users can see in the library window.
 
-All assets must be placed in an `assets/` folder. Inside that folder there may be subfolders for each asset type: `token`, `overlay`, `tile` and `other`. Images within those subfolders (but not sub-subfolders) will automatically be sorted in the corresponding library category. You can omit folders if your snapshot does not need them.
+All assets must be placed in an `assets/` folder. Inside that folder there may be subfolders for each asset type: `token`, `overlay`, `tile` and `other`, plus a `tag` folder for condition icons used in token labels. Images within those subfolders (but not sub-subfolders) will automatically be sorted in the corresponding library category. You can omit folders if your snapshot does not need them.
 
 TBD
 

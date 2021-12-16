@@ -2,72 +2,84 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.12 - ???
+## v0.12 - Hexing Heron
 
-* [ ] table passwords
-* [ ] more table backgrounds
-* [ ] use image masks for png backsides
-* [ ] right-click on table
-  * [ ] add piece
-  * [ ] change table 1..9
-  * [ ] change background
-* [ ] pre-release
-  * [ ] bugfixing
-  * [ ] review + run tests
-  * [ ] update screenshots
-  * [ ] review docs
-  * [ ] bump version/codename & update CHANGELOG
-
-## v0.xx - Mobile Monkey
-
-* better tablet / touch support
-  * zooming
-  * moving pieces
-
-## v0.yy - Clean Cat
-
-* reduce impact of "back" button
-* concurrent drag-n-drop - first mover wins
-* (bulk) manipulation of assets (delete, edit, change type)
-* remove default entries from json files before save (e.g. side=0)
-* add template version to asset urls
-* catch all unhandled warnings/exceptions in PHP API and return 500
+* [X] Hex mode
+  * [X] Engine changes
+  * [X] Game template
+* [X] click thru / don't select on transparent parts of images
+* [X] more table backgrounds
+* [X] improved generic game token / Go piece / bead
+* [X] toggle grid on/off (visual)
+* [X] use image masks for backsides
+* [X] fullscreen hotkey (F11)
+* [X] improved token look & no-border option
+* [X] pre-release
+  * [X] bump dependencies
+  * [X] bugfixing
+    * [X] unreadable piece numbers on white borders
+    * [X] tokens sometime shifting when selecting
+    * [X] build speed by caching some files
+    * [X] library search sometimes missing / ok not working
+    * [X] check existing rooms for engine mismatch after updates
+  * [X] update screenshots
+  * [X] review docs
+  * [X] review + run tests
+  * [X] bump version/codename & update CHANGELOG
 
 ## Backlog (unsorted)
 
 ### rather sooner
 
-* click thru / don't drag on transparent parts of images
-* generic marker overlay (X, ?, ...)
-* docs how to make table/template `.zip`s
-* LOS-ruler
-* more tabletop settings (e.g. grid)
-* undo (limited)
-* demo mode (serverless?)
-* show backside/all sides in tile browser
-* better sticky notes (more text, auto-size text)
-* protect pieces (no-delete, no-move)
-* meta-piece: supply heap
-* overlay-grid-on-tile option
-* hide .../data/... from URLs (via .htaccess)
-* support for stacks/decks of cards
-  * shuffle deck/stack
-* option to force-install templates with invalid versions
-* multi-select stuff
-* add more classic game boards: backgammon, mills, solitaire
-* "layer not active" hint when dragging nothing
-* I18N
-* show even more infos in media browser
-* full-screen key
-* dedicated HP/Mana/Value field(s)
-* obfuscate/hash room name
-* pinboard for handouts
-* API Docs
-* randomize button on dicemat
-* generate average piece color during build and upload
+* [ ] automated deployment tests for new zip/tgz packages after build
+* [ ] elemental status icons
+* [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
+* [ ] right-click on table (add piece, change table)
+* [ ] set default/start table other than 1 in template
+* [ ] table passwords
+* [ ] delete items from library
+* [ ] when dragging pieces, move those on top of the original piece too
+* [ ] dragging some pieces should not change z (e.g. dicemat)
+* [ ] multi-select stuff
+* [ ] move / copy setups between tables
+* [ ] protect pieces (no-delete, no-move)
+* [ ] LOS-ruler
+* [ ] toggle grid on/off (snapping)
+* [ ] show backside/all sides in tile browser
+* [ ] dedicated HP/Mana/Value field(s)
+* [ ] meta-piece: supply heap
+* [ ] support for stacks/decks of cards
+* [ ] shuffle deck/stack
+* [ ] better sticky notes (auto-size text)
+* [ ] manipulation of single assets in library (edit, change type)
+* [ ] more tabletop settings in UI (e.g. grid)
+* [ ] reduce impact of "back" button
+* [ ] "layer not active" hint when dragging nothing
+* [ ] demo mode (serverless?)
+* [ ] randomize button on dicemat
+* [ ] generic marker overlay (X, ?, ...)
+* [ ] add more classic game boards: backgammon, mills, solitaire
+* [ ] add template version to asset urls
+* [ ] generate average piece color during build and upload
+* [ ] catch all unhandled warnings/exceptions in PHP API and return 500
+* [ ] hide .../data/... from URLs (via .htaccess)
+* [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
+* [ ] obfuscate/hash room name
+* [ ] docs how to make table/template `.zip`s
+* [ ] API Docs
 
 ### rather later
 
+* bulk manipulation of assets (delete, edit, change type)
+* show even more infos in media browser
+* overlay-grid-on-tile option
+* option to force-install templates with invalid versions
+* I18N
+* pinboard for handouts
+* undo (limited)
+* better tablet / touch support
+  * zooming
+  * moving pieces
 * color.sh: detect dominant piece color instead of average color
 * compile js for older browsers (<globalThis)
 * arbitrary layers

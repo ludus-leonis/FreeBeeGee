@@ -222,11 +222,11 @@ class JSONRestAPI
                 return $value;
             }
         }
-        $this->sendError(400, 'invalid JSON: ' . $field . ' invalid');
+        $this->sendError(400, "invalid JSON: $field invalid");
     }
 
     /**
-     * Check/convert String JSON field against a RegExp.
+     * Check String JSON field against a RegExp.
      *
      * To be used on fields send by the client. Will send an 400-error to the
      * client and terminate further execution if invalid.
@@ -246,7 +246,7 @@ class JSONRestAPI
                 return $value;
             }
         }
-        $this->sendError(400, 'invalid JSON: ' . $field . ' does not match ' . $pattern);
+        $this->sendError(400, "invalid JSON: $field does not match $pattern");
     }
 
     /**
@@ -268,7 +268,7 @@ class JSONRestAPI
                 return $value;
             }
         }
-        $this->sendError(400, 'invalid JSON: ' . $field . ' is not a Semver version string.');
+        $this->sendError(400, "invalid JSON: $field is not a Semver version string.");
     }
 
     /**
@@ -280,25 +280,29 @@ class JSONRestAPI
      * @param string $field Field name for error message.
      * @param mixed $values The value(s) to check.
      * @param string $pattern RegExp to check against. Excluding '/^' and '$/'.
+     * @param int $minLength Minimum length of array. Defaults to 1.
+     * @param int $maxLength Maximum length of array. Defaults to unlimited.
      * @return array The parsed strings as array.
      */
     public function assertStringArray(
         string $field,
         $values,
-        string $pattern
+        string $pattern,
+        int $minLength = 1,
+        int $maxLength = PHP_INT_MAX
     ) {
-        if ($values !== null && gettype($values) === 'array') {
-            $array = [];
-            foreach ($values as $value) {
-                if (preg_match('/^' . $pattern . '$/', $value)) {
-                    array_push($array, $value);
-                }
-            }
-            if (sizeof($array) === sizeof($values)) {
-                return $array;
+        $this->assertArray($field, $values, $minLength, $maxLength);
+        $array = [];
+        foreach ($values as $value) {
+            $trimmed = trim($value);
+            if (preg_match('/^' . $pattern . '$/', $trimmed)) {
+                array_push($array, $trimmed);
             }
         }
-        $this->sendError(400, 'invalid JSON: ' . $field . ' does not match ' . $pattern);
+        if (sizeof($array) === sizeof($values)) {
+            return $array;
+        }
+        $this->sendError(400, "invalid JSON: $field entries do not match $pattern");
     }
 
     /**
@@ -309,18 +313,22 @@ class JSONRestAPI
      *
      * @param string $field Field name for error message.
      * @param mixed $values The value(s) to check.
-     * @param int $minLength Minimum length of array.
+     * @param int $minLength Minimum length of array. Defaults to 1.
+     * @param int $maxLength Maximum length of array. Defaults to unlimited.
      * @return array The parsed array.
      */
     public function assertArray(
         string $field,
         $values,
-        int $minLength
+        int $minLength = 1,
+        int $maxLength = PHP_INT_MAX
     ) {
-        if ($values !== null && gettype($values) === 'array' && sizeof($values) >= $minLength) {
-            return $values;
+        if ($values !== null && gettype($values) === 'array') {
+            if (sizeof($values) >= $minLength && sizeof($values) <= $maxLength) {
+                return $values;
+            }
         }
-        $this->sendError(400, 'invalid JSON: ' . $field . ' is not an array of minLength ' . $minLength);
+        $this->sendError(400, "invalid JSON: $field is not an array of length $minLength - $maxLength");
     }
 
     /**
@@ -337,12 +345,13 @@ class JSONRestAPI
     public function assertObjectArray(
         string $field,
         $values,
-        int $minLength
+        int $minLength = 0,
+        int $maxLength = PHP_INT_MAX
     ) {
-        $objects = $this->assertArray($field, $values, $minLength);
+        $objects = $this->assertArray($field, $values, $minLength, $maxLength);
         foreach ($objects as $object) {
             if (gettype($object) !== 'object') {
-                $this->sendError(400, 'invalid JSON: ' . $field . ' is not an array of (only) objects');
+                $this->sendError(400, "invalid JSON: $field is not an array of (only) objects");
             }
         }
         return $objects;
@@ -375,7 +384,65 @@ class JSONRestAPI
                 return $i;
             }
         }
-        $this->sendError(400, 'invalid JSON: ' . $field . ' not between ' . $min . ' and ' . $max);
+        $this->sendError(400, "invalid JSON: $field not between $min and $max");
+    }
+
+    /**
+     * Check/convert array-of-integers.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $values The value(s) to check.
+     * @param int $min Minimum value. Defaults to 1.
+     * @param int $max Maximum value. Defaults to 256.
+     * @param int $minLength Minimum length of array.
+     * @param int $maxLength Maximum length of array.
+     * @return array The parsed strings as array.
+     */
+    public function assertIntegerArray(
+        string $field,
+        $values,
+        int $min = 1,
+        int $max = 256,
+        int $minLength = 1,
+        int $maxLength = PHP_INT_MAX
+    ) {
+        $this->assertArray($field, $values, $minLength, $maxLength);
+        $array = [];
+        foreach ($values as $value) {
+            $i = (int) $value;
+            if ($i >= $min && $i <= $max) {
+                array_push($array, $i);
+            }
+        }
+        if (sizeof($array) === sizeof($values)) {
+            return $array;
+        }
+        print_r($array);
+        print_r($values);
+        $this->sendError(400, "invalid JSON: some $field entries are not integers $min - $max");
+    }
+
+    /**
+     * Check/convert Boolean JSON field.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $value The value to check.
+     * @return bool The parsed value.
+     */
+    public function assertBoolean(
+        string $field,
+        $value
+    ): int {
+        if ($value === true || $value === false) {
+            return $value;
+        }
+        $this->sendError(400, "invalid JSON: $field not a boolean");
     }
 
     /**
@@ -397,7 +464,7 @@ class JSONRestAPI
         if (base64_encode(base64_decode($value, true)) === $value) {
             return $value;
         }
-        $this->sendError(400, 'invalid JSON: ' . $field . ' not valid base64-encoded data.');
+        $this->sendError(400, "invalid JSON: $field not valid base64-encoded data.");
     }
 
     /**
@@ -416,11 +483,12 @@ class JSONRestAPI
         if ($value !== null && gettype($value) === 'object') {
             foreach ($properties as $property) {
                 if (!\property_exists($value, $property)) {
+                    print_r($value);
                     $this->sendError(400, 'invalid JSON: ' . $property . ' missing');
                 }
             }
         } else {
-            $this->sendError(400, 'invalid JSON: ' . $field . ' invalid ' . gettype($value));
+            $this->sendError(400, "invalid JSON: $field invalid " . gettype($value));
         }
         return $value;
     }

@@ -1,0 +1,22 @@
+{
+  "type": "grid-hex",
+  "version": "$VERSION$",
+  "engine": "$ENGINE$",
+
+  "gridSize": 64,
+  "gridWidth": 48,
+  "gridHeight": 32,
+
+  "colors": [
+    { "name": "black", "value": "#0d0d0d" },
+    { "name": "blue", "value": "#061862" },
+    { "name": "green", "value": "#294f28" },
+    { "name": "brown", "value": "#532501" },
+    { "name": "red", "value": "#eb250b" },
+    { "name": "blood", "value": "#820300" },
+    { "name": "orange", "value": "#fca718" },
+    { "name": "gray", "value": "#677274" },
+    { "name": "bones", "value": "#f2e4be" },
+    { "name": "white", "value": "#ffffff" }
+  ]
+}

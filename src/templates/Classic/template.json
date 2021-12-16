@@ -1,15 +1,20 @@
 {
   "type": "grid-square",
   "version": "$VERSION$",
-  "engine": "^$ENGINE$",
+  "engine": "$ENGINE$",
 
   "gridSize": 64,
   "gridWidth": 64,
   "gridHeight": 64,
-  "snapSize": 32,
 
   "colors": [
-    { "name": "black", "value": "#0d0d0d" },
-    { "name": "white", "value": "#ffffff" }
+    { "name": "black", "value": "#333333" },
+    { "name": "white", "value": "#ececec" },
+    { "name": "red", "value": "#c83737" },
+    { "name": "yellow", "value": "#d4aa00" },
+    { "name": "green", "value": "#5aa02c" },
+    { "name": "blue", "value": "#4c80ce" },
+    { "name": "violet", "value": "#744db2" },
+    { "name": "grey", "value": "#808080" }
   ]
 }

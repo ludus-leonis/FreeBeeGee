@@ -1,21 +1,19 @@
 # FreeBeeGee datamodel
 
-This document is part of the [FreeBeeGee documentation](DOCS.md). It describes the FreeBeeGee JSON data model.
+This document is part of the [FreeBeeGee documentation](DOCS.md). It describes the FreeBeeGee (FBG) JSON data model.
 
-It is not necessary to read/understand this to create templates. This information is here for developers who would like to contribute code or extend FreeBeeGee.
+It is not necessary to read/understand this to create templates. This information is here for developers who would like to contribute code or extend FBG.
 
 ## Assets
 
-An asset describes a single, possibly multi-sided graphical element that is
-available in the table's library and will be used by the *Pieces*. Assets are unique and are not directly placed
-on the table - they do not have a state like position, rotation, scale, ...
+An *Asset* describes a single, possibly multi-sided graphical element that is available in the table's library and will be used by the *Pieces*. Each *Asset* is unique and can't be directly placed on the table - it does not have a state like position, rotation, scale, ...
 
 A basic example:
 
 ```json
 {
   "id": "e786f024af997f9c",
-  "alias": "room",
+  "name": "room",
   "media": [
     "room.4x4x1.808674.jpg",
     "room.4x4x2.8E947E.jpg"
@@ -28,29 +26,55 @@ A basic example:
 ```
 
 `id`
-: The ID of the asset (16-digit hex).
+: The ID of the *Asset* (16-digit hex).
 
-`alias`
-: The name of the asset if shown e.g. in the library.
+`name`
+: The name of the *Asset*. Used e.g. in the library.
 
 `media`
-: An array of media files. Supported are `*.png`, `*.svg` and `*.jpg`. Which of those is shown when depends on the data object using this asset (usually a *Piece*).
+: An array of media files. Supported are `*.png`, `*.svg` and `*.jpg`. Which of those is shown when depends on the data object using this *Asset* (usually a *Piece*).
 
 `w`
-: The default width of the asset in grid spaces.
+: The default width of the *Asset* in grid spaces.
 
 `h`
-: The default height of the asset in grid spaces.
+: The default height of the *Asset* in grid spaces.
 
 `bg`
-: The background color of the asset. Will be visible while loading the media and in it's transparent parts. Can be an RGB code, `transparent` or `piece`. Piece-colored assets will use their UI/border color (if any) as background color.
+: The background color of the *Asset*. See *Media filenames* below for possible values.
 
 `type`
-: The type of the asset. Can be `tile`, `token`, `overlay` or `other`. This will usually define the type of piece this asset will use.
+: The type of the *Asset*. Can be `tile`, `token`, `overlay` or `other`. This will usually define the type of piece this *Asset* will use.
+
+### Media filenames
+
+Media (image) files should be named using the following syntax. This allows FBG to sort them automatically into the library and set their meta data.
+
+```
+mainName.[secondaryName.]{x}x{y}x{s}.[color.].{ext}
+```
+
+`mainName`
+: A camelcase name of the *Asset* for the media library. Will be reformated as e.g. `Main Name`.
+
+`secondaryName`
+: An optional secondary camelcase name to be shown after a comma in the library if present. Will be reformated e.g. as `Main Name, Secondary Name`.
+
+`x`
+: The X-size of the tile/token in grid spaces.
+
+`y`
+: The Y-size of the tile/token in grid spaces.
+
+`s`
+: The side this media represents, typically `1` or `2` but an *Asset* can have more (usually dice or enemy/color variants). FBG will cycle through this when pieces are flipped.
+
+`color`
+: A color value for this *Asset* as HTML Hex Color value (without #) and usually used as background color for the piece below the media, e.g. 'A0B1C2'. Defaults to `808080` if not specified. Will be shown as place-holder color while the *Asset* is loaded from the server, so it is recommended to set it to the media's average color value. If the media has transparent parts (for png/svg only), this color will shine through this areas. `color` can also be set to 'transparent' (no color) or `piece`. In the latter case, the background color can be set by the user in the piece's edit dialog to one of those provided in the *Template* (see below).
 
 ### Base images
 
-For some assets it is useful to have a common base layer and the individual media shown on top of that, e.g. dice often use a `png` background (the shape of the die) and a `svg` media on top (the die value).
+Sometimes it is useful for an *Asset* to have a common base layer and the individual media shown on top of that, e.g. dice often use a `png` background (the shape of the die) and a `svg` media on top (the die value).
 
 ```json
   {
@@ -70,12 +94,12 @@ For some assets it is useful to have a common base layer and the individual medi
 
 ### Default back sides
 
-Single-sided assets can have a default back side (showing the FreeBeeGee logo), so they can be flipped over. This is done by using `##BACK##` as image name:
+A single-sided *Asset* can have a default back side (showing the FBG logo), so it can be flipped over. This is indicated by using `##BACK##` as image name:
 
 ```json
 {
   ...
-  "sides": [
+  "media": [
     "room.4x4x1.808674.jpg",
     "###BACK###"
   ],
@@ -85,7 +109,7 @@ Single-sided assets can have a default back side (showing the FreeBeeGee logo), 
 
 ## Library
 
-The library object holds information about all known assets, sorted by type.
+The library object holds information about each *Asset*, sorted by *Asset* type.
 
 ```json
 {
@@ -101,23 +125,25 @@ The library object holds information about all known assets, sorted by type.
   "other": [
     ... assets ...
   ],
-  "note": [
+  "tag": [
     ... assets ...
   ]
 }
 ```
 
+If a room's library does not have any *Asset* of a particular type, the entry will be missing.
+
 ## Pieces
 
-When assets are displayed on a table and become 'tangible', they are called pieces. Pieces extend the asset information by data like position, rotation, etc. Multiple pieces can share the same  asset.
+When an *Asset* is displayed on a table and become 'tangible', and is called piece. A pieces extends its *Asset* information by data like position, rotation, etc. Multiple pieces can share the same *Asset*.
 
 A minimal piece contains the following information:
 
 ```json
 {
   "id": "ec0dfce0d35d657a",
-  "layer": "other",
-  "asset": "0c6175be538f8b32",
+  "l": 5,
+  "a": "0c6175be538f8b32",
   "x": 1216,
   "y": 640,
   "z": 10
@@ -127,56 +153,56 @@ A minimal piece contains the following information:
 `id`
 : The ID of the piece.
 
-`layer`
-: The type of piece / layer to show it in. Usually the type of the asset, but that is not mandatory.
+`l`
+: The layer (number) to show the piece in. `1` = tile, `2` = overlay, `3` = note, `4` = token, '5' = other. In theory the *Asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *Asset* is used in the tile layer.
 
-`asset`
-: The ID of the asset.
+`a`
+: The ID of the *Asset*.
 
 `x`
-: The x-coordinate on the table, in px.
+: The x-coordinate of the center of the piece on the table, in px.
 
 `y`
-: The y-coordinate on the table, in px.
+: The y-coordinate of the center of the piece on the table, in px.
 
 `z`
 : The z-coordinate (z-index) within the layer.
 
-In addition, pieces can have the following properties. If omitted, they default to certain values.
+In addition, pieces can have the following optional properties. If omitted, they default to certain values.
 
 `w`
-: The width of the piece, in grid spaces. Defaults to 1.
+: The width of the piece, in grid spaces. Defaults to `1`.
 
 `h`
-: The height of the piece, in grid spaces. Defaults to 1.
+: The height of the piece, in grid spaces. Defaults to `1`.
 
 `r`
-: The rotation of the piece. Can be 0, 90, 180 or 270. Defaults to 0.
+: The rotation of the piece. Can be `0`, `60`, `90`, `120`, `180`, `240`, `270`  or `300`. Defaults to `0`.
 
 `side`
-: The side of the piece currently shown, usually one of the asset's media files. Defaults to 0.
+: The side of the piece currently shown, usually one of its *Asset* media files. Defaults to `0`.
 
 `n`
-: The number of the piece. This is a small digit displayed on the piece to distinguish multiple pieces with the same artwork (e.g. different Goblins). Can be 0..15. Defaults to 0 = none.
+: The number of the piece. This is a small digit displayed on the piece to distinguish multiple pieces with the same artwork (e.g. different Goblins). Can be `0`..`15`. Defaults to `0` = none.
 
-`color`
-: The index of the border/background-color/style. Can be 0..? and depends on the available styles in the template. Defaults to 0.
+`c`
+: An array of colors, mostly one. Each number in this array is an index of the of the colors defined in the room's tempalte. Can be 0..?. Defaults to `[0]`. It depends on the type of piece what these colors are used for (e.g. border, background, ...).
 
-`label`
-: A short text to be displayed on/next to the piece. Defaults to '' (empty string).
+`t`
+: An array of optional texts of a piece. Currently only the first entry in the array is used. Is used as note's text or as small label next to the piece for other types. Defaults to `[]`.
 
 `expires`
 : Timestamp in seconds-since-epoch when this piece expires. It should no longer displayed if that time is reached. Clients should compare it with the `Servertime` HTTP header and not with a local clock value. No `expires` field means no expiration.
 
 ## Templates
 
-A template, a.k.a. snapshot, describes a table setup for a particular game.
+A *Template*, a.k.a. snapshot, describes a table setup for a particular game.
 
 ```json
 {
   "type": "grid-square",
   "version": "1.0.1",
-  "engine": "^0.4.0",
+  "engine": "1.0.0",
 
   "colors": [{
     "name":"black","value":"#000000"
@@ -186,42 +212,113 @@ A template, a.k.a. snapshot, describes a table setup for a particular game.
 
   "gridSize": 64,
   "gridWidth": 48,
-  "gridHeight": 32,
-  "snapSize": 32
+  "gridHeight": 32
 }
 ```
 
 `type`
-: The type of table this template uses. Currently only `grid-square` is supported.
+: The type of table this *Template* uses. Can be either `grid-square` or `grid-hex`.
 
 `version`
-: The version of the template / snapshot itself. Uses [Semantic Versioning](https://semver.org/). Saved templates will contain the same version as the FreeBeeGee version, but you can use your own version in custom templates.
+: The version of the *Template* / snapshot itself. Uses [Semantic Versioning](https://semver.org/). A downloaded snapshot will always contain the same version as the FBG version.
 
 `engine`
-: The FreeBeeGee engine this template should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
+: The FBG engine this *Template* should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
 
 `colors`
 : A series of colors available as border-colors etc. on the table. Key-Value pairs with `name` and a `value` / RGB hex code. Minimum 1 required.
 
-The remaining template properties depend on the game type.
+The remaining *Template* properties depend on the game type.
 
 ### `grid-square` entries
 
-Templates using the `grid-square` type also have the following properties:
+A *Template* using the `grid-square` type also have the following properties:
 
 `gridSize`
 : The grid / minimum tile size in px.
 
 `gridHeight`
-: The height of this template/table in grid spaces.
+: The height of this *Template*/table in grid spaces.
 
 `gridWidth`
-: The width of this template/table in grid spaces.
+: The width of this *Template*/table in grid spaces.
 
-`snapSize`
-: The (invisible) grid size pieces will snap to. Usuall equal to the `gridSize` to allow only full-tile snapping, or half of the `gridSize` to allow snapping to border/corners.
+`snap`
+: Optional boolean property. If set to `false`, grid-snapping will be disabled for this *Template*. It is on per default.
 
+### `grid-hex` entries
+
+A *Template* using the `grid-hex` use hexes oriented with their flat sides up/down. They have the following additional properties:
+
+`gridSize`
+: The grid / minimum tile size in px. This equals the height of one hex (side-to-side).
+
+`gridHeight`
+: The height of this *Template*/table in grid spaces.
+
+`gridWidth`
+: The width of this *Template*/table in grid spaces.
+
+`snap`
+: Optional boolean property. If set to `false`, grid-snapping will be disabled for this *Template*. It is on per default.
+
+Hex-tiles are a bit complicated, as hex-forms usually do not fill squares. Tile images should therefore transparent PNGs with the hex shape placed in its center. The images sould have the smallest possible multiple of 'gridSize' that can hold that hex shape. For example, a 1x1 hex needs a 2x1 canvas.
 
 ## Rooms
 
-TBD
+This JSON describes a whole room.
+
+```
+{
+  "id": "570216835fdebd3c",
+  "name": "openExaminingBear",
+  "engine": "1.0.0",
+
+  "backgrounds": [{
+		"name": "Casino",
+		"image": "img/desktop-casino.jpg",
+		"color": "#2e5d3c",
+		"scroller": "#1b3c25"
+	},
+  ...
+  ],
+
+  "library": {
+    ... library JSON ...
+  },
+  "template": {
+    ... template JSON ...
+  },
+
+  "credits": "(c) ACME Inc.",
+  "width": 2048,
+  "height": 1024
+}
+```
+
+`id`
+: The ID of this room. Generated by the server.
+
+`name`
+: The public name of this room. Same as in the URL. Minimum 8 characters, can contain only [a-zA-Z0-9].
+
+`engine`
+: The version of the game engine this FBG server is running. Usually differs from the FBG version itself.
+
+`backgrounds`
+: An array of backgrounds available for this room. `name` is the name to be displayed in the settings. `image` is the path to the file within the FBG installation. `color` is the average color of the bitmap to be used while loading or as fallback. `scroller` is a suitable secondary color to be used for the scrollbar.
+
+`library`
+: The room's library. Format is specified above.
+
+`templage`
+: The room's *Template*. Format is specified above.
+
+`credits`
+: A Markdown string to be shown in the about modal.
+
+`width`
+: Width of the room's tables, in px.
+
+`height`
+: Height of the room's tables, in px.

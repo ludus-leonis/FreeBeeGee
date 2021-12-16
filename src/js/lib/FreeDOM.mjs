@@ -488,7 +488,9 @@ class FreeDOM {
    * @return {FreeDOM} DOM object for chaining.
    */
   focus () {
-    this.node().focus()
+    if (this.exists()) {
+      this.node().focus()
+    }
     return this
   }
 

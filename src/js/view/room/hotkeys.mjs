@@ -27,7 +27,8 @@ import {
 } from '../../view/modal.mjs'
 
 import {
-  toggleLayer
+  toggleLayer,
+  toggleGrid
 } from './index.mjs'
 import {
   settings,
@@ -40,14 +41,13 @@ import {
   randomSelected,
   numberSelected,
   createNote,
-  outlineSelected,
+  cycleColor,
   toBottomSelected,
   pointTo
 } from './tabletop/index.mjs'
 import {
   isDragging,
-  getMouseCoords,
-  getMouseTile
+  getMouseCoords
 } from './mouse.mjs'
 import {
   touch
@@ -58,6 +58,9 @@ import {
 import {
   modalHelp
 } from './modal/help.mjs'
+import {
+  toggleFullscreen
+} from '../../lib/utils.mjs'
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleRoomKeys(keydown))
@@ -117,10 +120,10 @@ function handleRoomKeys (keydown) {
         if (keydown.ctrlKey | keydown.altKey) setTableNo(9)
         break
       case 'l': // library / add piece
-        modalLibrary(getMouseTile())
+        modalLibrary(getMouseCoords())
         break
       case 'n': // library / add piece
-        createNote(getMouseTile())
+        createNote(getMouseCoords())
         break
       case 'b': // to-bottom
         toBottomSelected()
@@ -129,17 +132,26 @@ function handleRoomKeys (keydown) {
         toTopSelected()
         break
       case 'c': // copy/clone
-        cloneSelected(getMouseTile())
+        cloneSelected(getMouseCoords())
         break
       case 'e': // edit
       case 'F2':
         editSelected()
         break
+      case 'F11':
+        toggleFullscreen()
+        break
       case 'f': // flip
         flipSelected()
         break
-      case 'o': // color/outline selected
-        outlineSelected()
+      case 'g': // toggleGrid
+        toggleGrid()
+        break
+      case 'o': // token color
+        cycleColor(false)
+        break
+      case 'O': // outline color
+        cycleColor(true)
         break
       case 'h': // help
       case 'H':

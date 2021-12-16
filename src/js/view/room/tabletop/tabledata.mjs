@@ -29,7 +29,10 @@ import {
 
 import {
   clamp,
-  intersect
+  snapGrid,
+  snapHex,
+  intersect,
+  getDimensionsRotated
 } from '../../../lib/utils.mjs'
 
 export const assetTypes = [
@@ -40,6 +43,9 @@ export const assetTypes = [
   'tag'
 ]
 
+export const TYPE_SQUARE = 'grid-square'
+export const TYPE_HEX = 'grid-hex'
+
 export const stickyNoteColors = [
   { name: 'yellow' },
   { name: 'orange' },
@@ -47,6 +53,22 @@ export const stickyNoteColors = [
   { name: 'blue' },
   { name: 'pink' }
 ]
+
+export const LAYERS = [ // reverse order
+  'tile',
+  'overlay',
+  'note',
+  'token',
+  'other'
+]
+
+function layerToName (layer) {
+  return LAYERS[layer - 1]
+}
+
+export function nameToLayer (name) {
+  return LAYERS.indexOf(name) + 1
+}
 
 /**
  * Find a piece by ID.
@@ -89,17 +111,17 @@ export function findAsset (id, layer = 'any') {
 /**
  * Find an asset by ID.
  *
- * @param {String} alias Alias to lookup.
+ * @param {String} name Alias to lookup.
  * @param {String} layer Optional layer to limit/speed up search.
- * @return {Object} First found asset with the given alias.
+ * @return {Object} First found asset with the given name.
  */
-export function findAssetByAlias (alias, layer = 'any') {
+export function findAssetByAlias (name, layer = 'any') {
   const library = getLibrary()
 
   for (const assetType of assetTypes) {
     if (layer === assetType || layer === 'any') {
       for (const asset of library[assetType]) {
-        if (asset.alias === alias) return asset
+        if (asset.name === name) return asset
       }
     }
   }
@@ -123,6 +145,39 @@ export function getAssetURL (asset, side) {
 }
 
 /**
+ * Get proper top-left coordinates for a piece.
+ *
+ * Takes into account that rotated pieces have a different offset to its center
+ * than the original as CSS 'transform: rotate()' rotates round the original center.
+ *
+ * @param {Object} piece A game piece to operate on.
+ * @param {Number} x X coordinate of supposed center (defaults to piece.x)
+ * @param {Number} y Y coordinate of supposed center (defaults to piece.y)
+ * @return {Object} CSS-ready px String as { top: '', left: ''}.
+ **/
+export function getTopLeftPx (piece, x = piece.x, y = piece.y) {
+  return {
+    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + 'px',
+    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + 'px'
+  }
+}
+
+/**
+ * Get the area in px a piece covers.
+ *
+ * @param {Object} piece A game piece to operate on.
+ * @return {Object} Bounds as { top, left, bottom, right}.
+ */
+export function getPieceBounds (piece) {
+  return {
+    left: piece.x - piece._meta.widthPx / 2,
+    right: piece.x + piece._meta.widthPx / 2 - 1,
+    top: piece.y - piece._meta.heightPx / 2,
+    bottom: piece.y + piece._meta.heightPx / 2 - 1
+  }
+}
+
+/**
  * Find all pieces within a grid area.
  *
  * @param {Object} rect Rectangle object, containing top/left/bottom/right.
@@ -131,17 +186,11 @@ export function getAssetURL (asset, side) {
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
 export function findPiecesWithin (rect, layer = 'all', no = getTableNo()) {
-  const template = getTemplate()
   const pieces = []
 
   for (const piece of getTable(no)) {
-    if (piece.layer === layer || layer === 'all') {
-      if (intersect(rect, {
-        left: piece.x,
-        top: piece.y,
-        right: piece.x + (piece.r === '0' || piece.r === '180' ? piece.w * template.gridSize : piece.h * template.gridSize) - 1,
-        bottom: piece.y + (piece.r === '0' || piece.r === '180' ? piece.h * template.gridSize : piece.w * template.gridSize) - 1
-      })) {
+    if (piece.l === layer || layer === 'all') {
+      if (intersect(rect, getPieceBounds(piece))) {
         pieces.push(piece)
       }
     }
@@ -170,27 +219,6 @@ export function findExpiredPieces (no = getTableNo()) {
 }
 
 /**
- * Create a new piece from an asset.
- *
- * @param {String} id Asset ID.
- * @return {Object} Piece generated from the asset.
- */
-export function assetToPiece (id) {
-  const asset = findAsset(id) ?? createInvalidAsset()
-
-  return populatePieceDefaults({
-    asset: asset.id,
-    layer: asset.type,
-    w: asset.w,
-    h: asset.h,
-    x: 0,
-    y: 0,
-    z: 0,
-    bg: asset.bg
-  })
-}
-
-/**
  * Add default values to all properties that the API might omit.
  *
  * @param {Object} piece Data object to populate.
@@ -198,29 +226,47 @@ export function assetToPiece (id) {
  * @return {Array} Pieces array for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
+  piece.l = layerToName(piece.l ?? 0)
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? 1
-  piece.side = piece.side ?? 0
-  piece.color = piece.color ?? 0
+  piece.s = piece.s ?? 0
+  piece.c = piece.c ?? [0, 0]
+  piece.c[0] = piece.c[0] ?? 0
+  piece.c[1] = piece.c[1] ?? 0
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
   piece.h = piece.h < 0 ? piece.w : piece.h
-  piece.label = piece.label ?? ''
-  piece.tag = piece.tag ?? ''
+  piece.t = piece.t ?? []
+  piece.b = piece.b ?? []
 
-  // add client-side meta information
-  const asset = findAsset(piece.asset)
-  piece._sides = asset?.media.length ?? 1
-  if (asset?.id === 'ffffffffffffffff') {
-    piece._feature = 'POINTER'
-  } else {
-    switch (asset?.alias) {
-      case 'dicemat':
-        piece._feature = 'DICEMAT'
-        break
-      case 'discard':
-        piece._feature = 'DISCARD'
-        break
+  // add client-side meta information for piece
+  piece._meta = {}
+  const template = getTemplate()
+  piece._meta.originWidthPx = piece.w * template.gridSize
+  piece._meta.originHeightPx = piece.h * template.gridSize
+  const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
+  piece._meta.widthPx = rect.w
+  piece._meta.heightPx = rect.h
+  piece._meta.originOffsetXPx = (piece._meta.originWidthPx - rect.w) / 2
+  piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
+
+  // add client-side meta information for asset
+  const asset = findAsset(piece.a)
+  if (asset) {
+    const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
+    if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
+    piece._meta.sides = asset.media.length ?? 1
+    if (asset.id === 'ffffffffffffffff') {
+      piece._meta.feature = 'POINTER'
+    } else {
+      switch (asset.name) {
+        case 'dicemat':
+          piece._meta.feature = 'DICEMAT'
+          break
+        case 'discard':
+          piece._meta.feature = 'DISCARD'
+          break
+      }
     }
   }
 
@@ -281,6 +327,16 @@ export function getMinZ (layer, area = {
 }
 
 /**
+ * Sort pieces by their Z value.
+ *
+ * @param {Array} pieces Array of pieces to sort.
+ * @return {Array} Given array, with sorted Z values (highest first).
+ */
+export function sortZ (pieces) {
+  return pieces.sort((a, b) => b.z - a.z)
+}
+
+/**
  * Determine the highest z-index in use by the pieces in a layer.
  *
  * @param {String} layer Name of a layer, e.g. 'tile'.
@@ -307,7 +363,7 @@ export function getMaxZ (layer, area = {
  * Determine rectancle all items on the room are within in px.
  *
  * @param {Number} no Table number to work on, defaults to current.
- * @return {Object} Object with top/left/bottom/right property of main content.
+ * @return {Object} Object with top/left/bottom/right/width/height in px of main content.
  */
 export function getContentRect (no = getTableNo()) {
   const rect = {
@@ -316,7 +372,6 @@ export function getContentRect (no = getTableNo()) {
     right: Number.MIN_VALUE,
     bottom: Number.MIN_VALUE
   }
-  const gridSize = getTemplate().gridSize
   const tableData = getTable(no)
 
   // provide default for empty rooms
@@ -325,47 +380,24 @@ export function getContentRect (no = getTableNo()) {
       left: 0,
       top: 0,
       right: 0,
-      bottom: 0
+      bottom: 0,
+      width: 0,
+      height: 0
     }
   }
 
   // calculate values for non-empty rooms
   for (const piece of tableData) {
-    const top = piece.y
-    const left = piece.x
-    const bottom = top + piece.h * gridSize - 1
-    const right = left + piece.w * gridSize - 1
+    const left = piece.x - piece._meta.widthPx / 2
+    const top = piece.y - piece._meta.heightPx / 2
+    const right = piece.x + piece._meta.widthPx / 2 - 1
+    const bottom = piece.y + piece._meta.heightPx / 2 - 1
+
     rect.left = rect.left < left ? rect.left : left
     rect.top = rect.top < top ? rect.top : top
     rect.right = rect.right > right ? rect.right : right
     rect.bottom = rect.bottom > bottom ? rect.bottom : bottom
-  }
-
-  return rect
-}
-
-/**
- * Determine rectancle all items on the room are within in grid units.
- *
- * @param {Number} no Table number to work on, defaults to current.
- * @return {Object} Object with top/left/bottom/right property of main content.
- */
-export function getContentRectGrid (no = getTableNo()) {
-  const gridSize = getTemplate().gridSize
-  const rect = getContentRect(no)
-
-  rect.left = Math.floor(rect.left / gridSize)
-  rect.top = Math.floor(rect.top / gridSize)
-  rect.right = Math.floor(rect.right / gridSize)
-  rect.bottom = Math.floor(rect.bottom / gridSize)
-  if (rect.left === 0 && rect.right === 0) {
-    rect.width = 0
-  } else {
     rect.width = rect.right - rect.left + 1
-  }
-  if (rect.top === 0 && rect.bottom === 0) {
-    rect.height = 0
-  } else {
     rect.height = rect.bottom - rect.top + 1
   }
 
@@ -373,56 +405,30 @@ export function getContentRectGrid (no = getTableNo()) {
 }
 
 /**
- * Determine rectancle all items in all tables on the room are within in grid units.
- *
- * @return {Object} Object with top/left/bottom/right property of main content.
- */
-export function getContentRectGridAll () {
-  const rect = {
-    top: Number.MAX_VALUE,
-    left: Number.MAX_VALUE,
-    bottom: Number.MIN_VALUE,
-    right: Number.MIN_VALUE
-  }
-  for (let i = 0; i <= 9; i++) {
-    const rect2 = getContentRectGrid(i)
-    if (rect2.width > 0) {
-      rect.left = Math.min(rect.left, rect2.left)
-      rect.right = Math.max(rect.right, rect2.right)
-    }
-    if (rect2.height > 0) {
-      rect.top = Math.min(rect.top, rect2.top)
-      rect.bottom = Math.max(rect.bottom, rect2.bottom)
-    }
-  }
-  return rect
-}
-
-/**
  * Create a new piece from an asset.
  *
  * @param {Number} assetId ID of asset.
- * @param {Number} gridX X-position (grid).
- * @param {Number} gridY Y-position (grid).
+ * @param {Number} x X-position (px).
+ * @param {Number} y Y-position (px).
  * @return {Object} Piece data object.
  */
-export function createPieceFromAsset (assetId, gridX = 0, gridY = 0) {
+export function createPieceFromAsset (assetId, x = 0, y = 0) {
   const asset = findAsset(assetId)
-  const template = getTemplate()
+  const xy = snap(x, y)
 
   return populatePieceDefaults(clampToTableSize({
-    asset: asset.id,
-    layer: asset.type,
+    a: asset.id,
+    l: nameToLayer(asset.type),
     w: asset.w,
     h: asset.h,
-    x: gridX * template.gridSize,
-    y: gridY * template.gridSize,
+    x: xy.x,
+    y: xy.y,
     z: getMaxZ(asset.layer) + 1
   }))
 }
 
 /**
- * Make sure a piece is fully on the room by clipping x/y based on it's size.
+ * Make sure a piece is fully on the room by clipping x/y based on its size.
  *
  * @param {Object} item Piece to clamp.
  * @return {Object} Clamped piece.
@@ -432,6 +438,28 @@ export function clampToTableSize (piece) {
   piece.x = clamp(0, piece.x, (template.gridWidth - piece.w) * template.gridSize)
   piece.y = clamp(0, piece.y, (template.gridHeight - piece.h) * template.gridSize)
   return piece
+}
+
+/**
+ * Snap a coordinate to the closest hex position / grid.
+ *
+ * @param {Number} x X-coordinate to snap.
+ * @param {Number} y Y-coordiante to snap.
+ * @param {Number} lod Optional level of detail for snapping.
+ *                     1 = centers,
+ *                     2 = centers + corners,
+ *                     3 = centers + corners + sides (default)
+ * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ */
+export function snap (x, y, lod = 3) {
+  const template = getTemplate()
+  if (template.snap === false) {
+    return snapGrid(x, y, 8, 3) // snap to 4px
+  }
+  if (template.type === TYPE_HEX) {
+    return snapHex(x, y, template.gridSize, lod)
+  }
+  return snapGrid(x, y, template.gridSize, lod)
 }
 
 /**
@@ -469,52 +497,33 @@ export function getSetupCenter (no = getTableNo()) {
  */
 export function splitAssetFilename (assetName) {
   const data = {
-    alias: 'unknown',
+    name: 'unknown',
     w: 1,
     h: 1,
-    side: 1,
+    s: 1,
     bg: '808080'
   }
   let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/)
   if (match) {
-    data.alias = match[1]
+    data.name = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
-    data.side = Number(match[4])
+    data.s = Number(match[4])
     data.bg = match[5]
     return data
   }
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
   if (match) {
-    data.alias = match[1]
+    data.name = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
-    data.side = Number(match[4])
+    data.s = Number(match[4])
     return data
   }
   match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
   if (match) {
-    data.alias = match[1]
+    data.name = match[1]
     return data
   }
   return data
-}
-
-// -----------------------------------------------------------------------------
-
-/**
- * Create asset to be used for invalid asset references.
- *
- * @return {Object} Asset with placeholder/invalid image.
- */
-function createInvalidAsset () {
-  return {
-    media: ['invalid.svg'],
-    width: 1,
-    height: 1,
-    bg: '40bfbf',
-    alias: 'invalid',
-    type: 'tile',
-    id: '0000000000000000'
-  }
 }

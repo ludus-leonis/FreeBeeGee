@@ -17,7 +17,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import marked from 'marked'
+import { marked } from 'marked'
 
 import _ from '../../../lib/FreeDOM.mjs'
 import {
@@ -29,8 +29,12 @@ import {
 import {
   getRoom,
   getRoomPreference,
-  setRoomPreference
+  setRoomPreference,
+  getTemplate
 } from '../../../state/index.mjs'
+import {
+  timeRecords
+} from '../../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -42,6 +46,8 @@ import {
 export function modalHelp () {
   if (!modalActive()) {
     createModal(true)
+
+    const template = getTemplate()
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">FreeBeeGee v$VERSION$ “$CODENAME$”</h3>
@@ -75,7 +81,7 @@ export function modalHelp () {
               <li><strong>Tiles</strong> are assembled to form your game board. They can be corridors, caves and more.</li>
             </ul>
 
-            <p>Use your <strong>browser zoom</strong> buttons to zoom-in and zoom-out.</p>
+            <p>Use your <strong>browser zoom</strong> buttons to zoom-in and zoom-out. Press <span class="key">F11</span> to toggle fullscreen.</p>
 
             <p><strong>Shift-Click</strong> on the table to use a laser-pointer everyone will see for a few seconds.</p>
 
@@ -103,13 +109,16 @@ export function modalHelp () {
             <p><span class="key">n</span> Add a new sticky note at the current mouse cursor position.</p>
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>
             <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to another table (1 to 9).</p>
+            <p><span class="key">g</span> Toggle table grid overlay.</p>
+            <p><span class="key">F11</span> Toggle fullscreen.</p>
             <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
             <p><span class="key">r</span> Rotate piece.</p>
             <p><span class="key">f</span> Flip over piece. Some pieces have more than two sides.</p>
-            <p><span class="key">o</span> Change piece/outline color (token and notes only).</p>
+            <p><span class="key">o</span> Change piece color (if a piece supports that).</p>
+            <p><span class="key">O</span> Change outline/border color (token only).</p>
             <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
             <p><span class="key">t</span> Move selected piece to the top of its layer.</p>
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
@@ -125,7 +134,10 @@ export function modalHelp () {
 
             <h2>UI assets</h2>
 
-            <p>UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>. One or more background textures have been created with images from Goodtextures.com. These images may not be redistributed by default. Please visit <a href="www.goodtextures.com">www.goodtextures.com</a> for more information.</p>
+            <p>
+              UI icons are MIT licensed by <a href="https://feathericons.com/">feathericons.com</a> and <a href="https://iconsvg.xyz/">iconsvg.xyz</a>.
+              Contains assets from <a href="https://ambientCG.com">ambientCG.com</a>ambientCG.com, licensed under CC0 1.0 Universal.
+            </p>
 
             <h2>FreeBeeGee</h2>
 
@@ -135,6 +147,13 @@ export function modalHelp () {
 
             <p>FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the <a href="https://www.gnu.org/licenses/">GNU Affero General Public License</a> for more details.</p>
 
+            <h3>Statistics</h3>
+
+            <p>Refresh time: ${Math.ceil(timeRecords['sync-network'].reduce((a, b) => a + b) / timeRecords['sync-network'].length)}ms network + ${Math.ceil(timeRecords['sync-ui'].reduce((a, b) => a + b) / timeRecords['sync-ui'].length)}ms browser</p>
+
+            <p>Engine version: $ENGINE$</p>
+
+            <p>Template version: ${template.version} (requires engine ${template.engine})</p>
           </div>
         </div>
       </div>
@@ -148,7 +167,7 @@ export function modalHelp () {
       setRoomPreference('modalHelpTab', change.target.id)
     })
 
-    const preselect = getRoomPreference('modalHelpTab') ?? 'tab-1'
+    const preselect = getRoomPreference('modalHelpTab', 'tab-1')
     _('#' + preselect).checked = true
 
     _('#btn-close').on('click', () => getModal().hide())

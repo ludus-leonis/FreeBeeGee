@@ -8,8 +8,8 @@
 
 ## User Documentation
 
-* The [Readme](../README.md) gives you an overview what FreeBeeGee can do. So does the [FreeBeeGee Homepage](https://freebeegee.org/).
-* Press the `h` key after joining a room to open the online help with a primer how to use FreeBeeGee as well as a list of hotkeys.
+* The [Readme](../README.md) contains an overview what FreeBeeGee can do. So does the [FreeBeeGee Homepage](https://freebeegee.org/).
+* Press the `h` key after joining a room to open the online help. It contains a primer how to use FreeBeeGee as well as a list of hotkeys.
 * The [Roadmap](roadmap.md) contains information about what features might come next.
 
 ## Admin Documentation

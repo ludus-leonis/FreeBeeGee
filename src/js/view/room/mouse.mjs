@@ -20,6 +20,7 @@
 import _ from '../../lib/FreeDOM.mjs'
 import {
   getTemplate,
+  getRoomPreference,
   movePiece
 } from '../../state/index.mjs'
 import {
@@ -37,12 +38,16 @@ import {
 } from './sync.mjs'
 import {
   unselectPieces,
-  getTableTile,
   pointTo
 } from './tabletop/index.mjs'
 import {
+  nameToLayer,
+  sortZ,
   getMaxZ,
-  findPiece
+  findPiece,
+  getTopLeftPx,
+  findPiecesWithin,
+  snap
 } from './tabletop/tabledata.mjs'
 
 let scroller = null // the tabletop wrapper
@@ -69,14 +74,6 @@ export function getMouseCoords () {
 }
 
 /**
- * Get the current mouse cursor position.
- * @return {Object} Object with x and y in tiles/grid.
- */
-export function getMouseTile () {
-  return getTableTile(mouseX, mouseY)
-}
-
-/**
  * Enable the room area drag'n'drop handling by registering the event handlers.
  *
  * @param {String} tabletop Selector/ID for tabletop div.
@@ -86,7 +83,7 @@ export function enableDragAndDrop (tabletop) {
 
   _(tabletop)
     .on('mousedown', mousedown => mouseDown(mousedown))
-    .on('mousemove', mousemove => mouseMove(mousemove)) // needed also to keep track of cursor
+    .on('mousemove', mousemove => mouseMove(mousemove)) // also tracks cursor
     .on('mouseup', mouseup => mouseUp(mouseup))
 }
 
@@ -106,14 +103,14 @@ export function updateMenu () {
   } else if (selected.length === 1) {
     const piece = findPiece(selected[0].id)
     menu.remove('.disabled')
-    if (piece._sides <= 1) {
+    if (piece._meta.sides <= 1) {
       _('#btn-f').add('.disabled')
       _('#btn-hash').add('.disabled')
     }
-    if (piece._sides <= 2) {
+    if (piece._meta.sides <= 2) {
       _('#btn-hash').add('.disabled')
     }
-    if (piece._feature === 'DICEMAT') {
+    if (piece._meta.feature === 'DICEMAT') {
       _('#btn-hash').remove('.disabled')
     }
   } else {
@@ -135,6 +132,116 @@ function touchMousePosition (x, y) {
 }
 
 /**
+ * Determine if a piece is not transparent at a given coordinate.
+ *
+ * Does this by creating a temporary in-memory canvas and checking against its
+ * alpha layer. Rotation is implicitly done by the browser as CSS 'transform:'
+ * also rotates/scales click x/y.
+ *
+ * @param {Object} piece Piece to check.
+ * @param {Number} x X-coordiante in px.
+ * @param {Number} y Y-coordiante in px.
+ * @return {Boolean} True if pixel at x/y is transparent, false otherwise.
+ */
+function isSolid (piece, x, y) {
+  if (!piece) return true // no piece = no checking
+  if (piece?.l === 'token') return true // token are always round & solid
+  if (!piece._meta?.mask) return true // no mask = no checking possible
+
+  // now do the hit detection
+  const img = new Image() // eslint-disable-line no-undef
+  img.src = piece._meta.mask
+  if (img.complete) {
+    const template = getTemplate()
+
+    const width = piece.w * template.gridSize
+    const height = piece.h * template.gridSize
+
+    // calculate img->canvas scale,
+    // compensate for 'background-size: cover'
+    let sX = 0
+    let sY = 0
+    let sW = img.width * 1.0
+    let sH = img.height * 1.0
+    const sAspect = img.width * 1.0 / img.height
+    const cAspect = width * 1.0 / height
+    if (sAspect < cAspect) { // source higher
+      const scale = width / sW
+      sH = height / scale
+      sY = (img.height - sH) / 2
+    } else { // source wider
+      const scale = height / sH
+      sW = width / scale
+      sX = (img.width - sW) / 2
+    }
+
+    // draw & check pixel
+    const scale = 2 // we don't need full resolution for checking
+    const c = document.createElement('canvas')
+    c.width = width / scale
+    c.height = height / scale
+    const ctx = c.getContext('2d')
+    ctx.drawImage(img, sX, sY, sW, sH, 0, 0, c.width, c.height)
+    const alpha = ctx.getImageData(x / scale, y / scale, 1, 1).data[3]
+    return alpha > 4 // alpha value
+  } else {
+    return true // image was not already loaded
+  }
+}
+
+/**
+ * Click-thru transparent areas of clickable pieces.
+ *
+ * If clicked on an 100% alpha area, try to find a better target for the event
+ * by traversing all layers + object on the same coordnate.
+ *
+ * @param {Object} event JavaScript evend that was triggered on a click.
+ */
+function findRealClickTarget (event) {
+  // in most cases the hit item will be the correct one
+  if (isSolid(event.target.piece, event.offsetX, event.offsetY)) {
+    return event.target
+  }
+
+  // seems the initial target is transparent. now traverse all layers.
+  const index = nameToLayer(event.target.piece.l)
+  const coords = getMouseCoords()
+  for (const layer of ['other', 'token', 'note', 'overlay', 'tile']) {
+    if (nameToLayer(layer) <= index && getRoomPreference('layer' + layer)) { // we don't need to check higher layers
+      for (const piece of sortZ(findPiecesWithin({
+        left: coords.x,
+        top: coords.y,
+        right: coords.x,
+        bottom: coords.y
+      }, layer))) {
+        if (piece.id === event.target.piece.id) continue // don't double-check
+
+        //  compensate center
+        const oX = coords.x - piece.x
+        const oY = coords.y - piece.y
+        let tX = oX
+        let tY = oY
+
+        // compensate rotation clockwise
+        if (piece.r > 0) {
+          const rs = Math.sin(piece.r * Math.PI / 180)
+          const rc = Math.cos(piece.r * Math.PI / 180)
+          tX = oX * rc + oY * rs
+          tY = -oX * rs + oY * rc
+        }
+
+        tX += piece._meta.originWidthPx / 2
+        tY += piece._meta.originHeightPx / 2
+        if (isSolid(piece, tX, tY)) {
+          return _('#' + piece.id).node()
+        }
+      }
+    }
+  }
+  return null // no better target available
+}
+
+/**
  * Handle mousedown events.
  *
  * Will route the handling depeding on the button.
@@ -142,13 +249,15 @@ function touchMousePosition (x, y) {
  * @param {MouseEvent} mousedown The triggering mouse event.
  */
 function mouseDown (mousedown) {
+  let target
   switch (mousedown.button) {
     case 0:
       if (mousedown.shiftKey) {
-        pointTo(getTableCoordinates(mouseX, mouseY))
+        pointTo(getMouseCoords())
       } else {
-        handleSelection(mousedown.target)
-        dragStart(mousedown)
+        target = findRealClickTarget(mousedown)
+        handleSelection(target)
+        dragStart(mousedown, target)
       }
       break
     case 1:
@@ -156,8 +265,9 @@ function mouseDown (mousedown) {
       break
     case 2:
       mousedown.preventDefault()
-      handleSelection(mousedown.target)
-      properties(mousedown)
+      target = findRealClickTarget(mousedown)
+      handleSelection(target)
+      properties(target)
       break
     default:
   }
@@ -216,8 +326,11 @@ let dragging = null // the currently dragge object, or null
  * Start drag'n'drop after mousebutton was pushed.
  *
  * @param {MouseEvent} mousedown The triggering mouse event.
+ * @param {Object} realTarget The real target of the drag (maybe not the one of mousedown).
  */
-function dragStart (mousedown) {
+function dragStart (mousedown, realTarget) {
+  if (!realTarget) return // no real click
+
   if (isDragging()) { // you can't drag twice
     dragging.parentNode.removeChild(dragging) // quick fix for release-outsite bug
     dragging = null
@@ -225,26 +338,17 @@ function dragStart (mousedown) {
     return
   }
 
-  if (!mousedown.target.classList.contains('piece')) return // we only drag pieces
+  if (!realTarget.classList.contains('piece')) return // we only drag pieces
   scroller.classList.add('cursor-grab')
 
-  const node = mousedown.target
-  dragging = node.cloneNode(true)
+  dragging = realTarget.cloneNode(true)
   dragging.id = dragging.id + '-drag'
-  dragging.piece = findPiece(node.id)
+  dragging.piece = findPiece(realTarget.id)
+
   dragging.style.zIndex = 999999999 // drag visually on top of everything
   dragging.classList.add('dragging')
   dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
-  node.parentNode.appendChild(dragging)
-
-  // rect is relative to viewport, so we compensate for scrolling
-  const rect = dragging.getBoundingClientRect()
-  const absolute = getTableCoordinates(rect.left, rect.top)
-  dragging.originX = absolute.x
-  dragging.originY = absolute.y
-
-  dragging.width = rect.right - rect.left
-  dragging.height = rect.bottom - rect.top
+  realTarget.parentNode.appendChild(dragging)
 
   dragging.startX = mousedown.clientX // no need to compensate, as we
   dragging.startY = mousedown.clientY // only calculate offset anyway
@@ -262,9 +366,8 @@ function dragContinue (mousemove) {
     dragging.classList.remove('dragging-hidden') // we are moving now (1)
     setPosition(
       dragging,
-      dragging.originX + mousemove.clientX - dragging.startX,
-      dragging.originY + mousemove.clientY - dragging.startY,
-      1
+      dragging.piece.x + mousemove.clientX - dragging.startX,
+      dragging.piece.y + mousemove.clientY - dragging.startY
     )
     mousemove.preventDefault()
   }
@@ -280,25 +383,24 @@ function dragEnd (mouseup, cancel = false) {
     if (!cancel) { // drag could be canceled by releasing outside
       setPosition(
         dragging,
-        dragging.originX + mouseup.clientX - dragging.startX,
-        dragging.originY + mouseup.clientY - dragging.startY
+        dragging.piece.x + mouseup.clientX - dragging.startX,
+        dragging.piece.y + mouseup.clientY - dragging.startY
       )
 
       // only record state if there was a change in position
-      if (dragging.piece.x !== Number(dragging.dataset.x) ||
-        dragging.piece.y !== Number(dragging.dataset.y)) {
-        const template = getTemplate()
-        const maxZ = getMaxZ(dragging.dataset.layer, {
-          top: Number(dragging.dataset.y),
-          left: Number(dragging.dataset.x),
-          bottom: Number(dragging.dataset.y) + Number(dragging.dataset.h) * template.gridSize,
-          right: Number(dragging.dataset.x) + Number(dragging.dataset.w) * template.gridSize
+      if (dragging.piece.x !== dragging.x ||
+        dragging.piece.y !== dragging.y) {
+        const maxZ = getMaxZ(dragging.piece.l, {
+          top: dragging.y - dragging.piece._meta.heightPx / 2,
+          left: dragging.x - dragging.piece._meta.widthPx / 2,
+          bottom: dragging.y + dragging.piece._meta.heightPx / 2,
+          right: dragging.x + dragging.piece._meta.widthPx / 2
         })
         movePiece(
           dragging.piece.id,
-          Number(dragging.dataset.x),
-          Number(dragging.dataset.y),
-          dragging.piece.z === maxZ ? dragging.piece.z : getMaxZ(dragging.piece.layer) + 1
+          dragging.x,
+          dragging.y,
+          dragging.piece.z === maxZ ? dragging.piece.z : getMaxZ(dragging.piece.l) + 1
         )
       }
     }
@@ -383,9 +485,11 @@ function grabEnd (mouseup) {
 
 // --- right-click properties --------------------------------------------------
 
-function properties (mousedown) {
-  if (mousedown.target.classList.contains('piece')) {
-    popupPiece(mousedown.target.id)
+function properties (target) {
+  if (!target) return // no real click
+
+  if (target.classList.contains('piece')) {
+    popupPiece(target.id)
   }
 }
 
@@ -397,26 +501,20 @@ function properties (mousedown) {
  * @param {Element} element The HTML node to update.
  * @param {Number} x New x coordinate in px.
  * @param {Number} y New y coordinate in px.
- * @param {Number} snap Grid/snap size. Defaults to the tilesize.
  */
-function setPosition (element, x, y, snap = getTemplate().snapSize) {
+function setPosition (element, x, y) {
   const template = getTemplate()
-  switch (element.dataset.r) {
-    case '90':
-    case '270':
-      x = clamp(0, x, (template.gridWidth - element.dataset.h) * template.gridSize - 1)
-      y = clamp(0, y, (template.gridHeight - element.dataset.w) * template.gridSize - 1)
-      break
-    default:
-      x = clamp(0, x, (template.gridWidth - element.dataset.w) * template.gridSize - 1)
-      y = clamp(0, y, (template.gridHeight - element.dataset.h) * template.gridSize - 1)
-  }
-  x += Math.floor(snap / 2)
-  y += Math.floor(snap / 2)
-  element.dataset.x = Math.max(0, (Math.floor(x / snap) * snap))
-  element.dataset.y = Math.max(0, (Math.floor(y / snap) * snap))
-  element.style.left = element.dataset.x + 'px'
-  element.style.top = element.dataset.y + 'px'
+
+  x = clamp(0, x, template._meta.widthPx - 0 - 1)
+  y = clamp(0, y, template._meta.heightPx - 0 - 1)
+
+  const snapped = snap(x, y)
+  element.x = Math.max(0, snapped.x)
+  element.y = Math.max(0, snapped.y)
+
+  const tl = getTopLeftPx(element.piece, element.x, element.y)
+  element.style.left = tl.left
+  element.style.top = tl.top
 }
 
 /**
@@ -425,14 +523,25 @@ function setPosition (element, x, y, snap = getTemplate().snapSize) {
  * @param {Element} element The HTML node the user clicked on.
  */
 function handleSelection (element) {
+  // unselect everything if 'nothing' was clicked
+  if (!element) {
+    unselectPieces()
+    return
+  }
+
   // remove selection from all elements if we clicked on the background or on a piece
-  if (element.id === 'tabletop' || element.classList.contains('piece')) {
+  if (element.id === 'tabletop' || element.classList.contains('piece') || element.classList.contains('backside')) {
     unselectPieces()
   }
 
   // add selection to clicked element (if it is a piece)
   if (element.classList.contains('piece')) {
     element.classList.add('is-selected')
+  }
+
+  // add selection to parent (if it is a backside piece)
+  if (element.classList.contains('backside')) {
+    element.parentElement.classList.add('is-selected')
   }
 
   updateMenu()

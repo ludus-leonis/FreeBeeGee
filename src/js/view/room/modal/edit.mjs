@@ -33,6 +33,8 @@ import {
 } from '../../../view/modal.mjs'
 
 import {
+  TYPE_HEX,
+  findAsset,
   stickyNoteColors
 } from '../../../view/room/tabletop/tabledata.mjs'
 
@@ -51,10 +53,10 @@ export function modalEdit (piece) {
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Edit</h3>
     `
-    _('#modal-body').innerHTML = getModalBody(piece.layer)
+    _('#modal-body').innerHTML = getModalBody(piece)
 
     // label
-    _('#piece-label').value = piece.label
+    _('#piece-label').value = piece.t?.[0] ?? ''
 
     // tag
     const pieceTag = _('#piece-tag')
@@ -63,9 +65,9 @@ export function modalEdit (piece) {
     pieceTag.add(pieceTagNone)
     let pieceTagFound = false
     for (const tag of getLibrary().tag) {
-      const option = _('option').create(tag.alias)
-      option.value = tag.alias
-      if (tag.alias === piece.tag) {
+      const option = _('option').create(tag.name)
+      option.value = tag.name
+      if (tag.name === piece.b?.[0]) {
         pieceTagFound = true
         option.selected = true
       }
@@ -107,7 +109,7 @@ export function modalEdit (piece) {
 
     // rotate
     const pieceR = _('#piece-r')
-    for (let r = 0; r <= 270; r += 90) {
+    for (let r = 0; r < 360; r += getTemplate().type === TYPE_HEX ? 60 : 90) {
       const option = _('option').create(r === 0 ? 'normal' : r + '°')
       option.value = r
       if (r === piece.r) option.selected = true
@@ -116,32 +118,62 @@ export function modalEdit (piece) {
 
     // side
     const pieceSide = _('#piece-side')
-    for (let s = 1; s <= piece._sides; s++) {
+    for (let s = 1; s <= piece._meta.sides; s++) {
       let label = s
-      if (s === piece._sides) label = 'back'
+      if (s === piece._meta.sides) label = 'back'
       if (s === 1) label = 'front'
       const option = _('option').create(label)
       option.value = s - 1
-      if (s - 1 === piece.side) option.selected = true
+      if (s - 1 === piece.s) option.selected = true
       pieceSide.add(option)
     }
 
-    // piece/border color
+    // piece color
     const pieceColor = _('#piece-color')
     const template = getTemplate()
-    if (piece.layer === 'note') {
+    if (piece.l === 'note') {
       for (let c = 0; c < stickyNoteColors.length; c++) {
         const option = _('option').create(stickyNoteColors[c].name)
         option.value = c
-        if (c === piece.color) option.selected = true
+        if (c === piece.c[0]) option.selected = true
         pieceColor.add(option)
       }
     } else {
-      for (let c = 0; c < template.colors.length; c++) {
-        const option = _('option').create(template.colors[c].name)
+      // default/none color
+      const option = _('option').create('none')
+      option.value = 0
+      if (piece.c[0] === 0) option.selected = true
+      pieceColor.add(option)
+
+      // other colors
+      for (let c = 1; c <= template.colors.length; c++) {
+        const option = _('option').create(template.colors[c - 1].name)
         option.value = c
-        if (c === piece.color) option.selected = true
+        if (c === piece.c[0]) option.selected = true
         pieceColor.add(option)
+      }
+    }
+
+    // border color
+    const borderColor = _('#piece-border')
+    if (piece.l === 'note') {
+      const option = _('option').create('none')
+      option.value = 0
+      option.selected = true
+      borderColor.add(option)
+    } else {
+      // default/none color
+      const option = _('option').create('none')
+      option.value = 0
+      if (piece.c[1] === 0) option.selected = true
+      borderColor.add(option)
+
+      // other colors
+      for (let c = 1; c <= template.colors.length; c++) {
+        const option = _('option').create(template.colors[c - 1].name)
+        option.value = c
+        if (c === piece.c[1]) option.selected = true
+        borderColor.add(option)
       }
     }
 
@@ -173,22 +205,26 @@ export function modalEdit (piece) {
 
 // --- internal ----------------------------------------------------------------
 
-function getModalBody (layer) {
-  switch (layer) {
+function getModalBody (piece) {
+  switch (piece.l) {
     case 'note':
-      return getModalNote()
+      return getModalNote(piece)
     case 'tile':
     case 'overlay':
-      return getModalTile()
+      return getModalTile(piece)
     case 'other':
-      return getModalOther()
+      return getModalOther(piece)
     case 'token':
     default:
-      return getModalToken()
+      return getModalToken(piece)
   }
 }
 
-function getModalToken () {
+function getModalToken (piece) {
+  const asset = findAsset(piece.a)
+  const pieceClass = asset?.bg === 'piece' ? 'col-lg-3' : 'is-hidden'
+  const borderClass = asset?.bg === 'piece' ? 'col-lg-3' : 'col-lg-6'
+  console.log(asset)
   return `
     <form class="container">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
@@ -217,9 +253,13 @@ function getModalToken () {
           <label for="piece-side">Side</label>
           <select id="piece-side" name="piece-side"></select>
         </div>
-        <div class="col-6">
+        <div class="col-6 ${pieceClass}">
           <label for="piece-color">Color</label>
           <select id="piece-color" name="piece-color"></select>
+        </div>
+        <div class="col-6 ${borderClass}">
+          <label for="piece-border">Border</label>
+          <select id="piece-border" name="piece-border"></select>
         </div>
         <div class="col-6">
           <label for="piece-number">Number</label>
@@ -260,6 +300,10 @@ function getModalOther () {
           <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
+          <label for="piece-border">Border</label>
+          <select id="piece-border" name="piece-border"></select>
+        </div>
+        <div class="col-6 is-hidden">
           <label for="piece-number">Number</label>
           <select id="piece-number" name="piece-number"></select>
         </div>
@@ -296,6 +340,10 @@ function getModalTile () {
         <div class="col-6 is-hidden">
           <label for="piece-color">Color</label>
           <select id="piece-color" name="piece-color"></select>
+        </div>
+        <div class="col-6 is-hidden">
+          <label for="piece-border">Border</label>
+          <select id="piece-border" name="piece-border"></select>
         </div>
         <div class="col-6 is-hidden">
           <label for="piece-number">Number</label>
@@ -336,6 +384,10 @@ function getModalNote () {
           <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
+          <label for="piece-border">Border</label>
+          <select id="piece-border" name="piece-border"></select>
+        </div>
+        <div class="col-6 is-hidden">
           <label for="piece-number">Number</label>
           <select id="piece-number" name="piece-number"></select>
         </div>
@@ -350,11 +402,31 @@ function getModalNote () {
 function modalOk () {
   const piece = _('#modal').node().piece
   const updates = {}
+
   let value = _('#piece-label').value.trim()
-  if (value !== piece.label) updates.label = value
+  if (piece.t?.length > 0) { // piece had label
+    if (value.length <= 0) {
+      updates.l = piece.l
+      updates.t = []
+    } else if (value !== piece.t?.[0]) {
+      updates.l = piece.l
+      updates.t = [value]
+    }
+  } else if (value?.length > 0) {
+    updates.l = piece.l
+    updates.t = [value]
+  }
 
   value = _('#piece-tag').value
-  if (value !== piece.tag) updates.tag = value
+  if (piece.b?.length > 0) { // piece had tag
+    if (value.length <= 0) {
+      updates.b = []
+    } else if (value !== piece.b?.[0]) {
+      updates.b = [value]
+    }
+  } else if (value?.length > 0) {
+    updates.b = [value]
+  }
 
   value = Number(_('#piece-w').value)
   if (value !== piece.w) updates.w = value
@@ -366,10 +438,13 @@ function modalOk () {
   if (value !== piece.r) updates.r = value
 
   value = Number(_('#piece-side').value)
-  if (value !== piece.side) updates.side = value
+  if (value !== piece.s) updates.s = value
 
   value = Number(_('#piece-color').value)
-  if (value !== piece.color) updates.color = value
+  const value2 = Number(_('#piece-border').value)
+  if (value !== piece.c[0] || value2 !== piece.c[1]) {
+    updates.c = [value, value2]
+  }
 
   value = Number(_('#piece-number').value)
   if (value !== piece.n) updates.n = value

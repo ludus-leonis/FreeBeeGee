@@ -23,7 +23,8 @@ const rnd = Math.floor(Math.random() * 10000000)
 const dirs = {
   build: 'dist',
   site: 'dist/' + p.name,
-  docs: 'dist/docs/'
+  docs: 'dist/docs/',
+  cache: '.cache'
 }
 
 gulp.task('clean', () => {
@@ -33,6 +34,13 @@ gulp.task('clean', () => {
     [dirs.site] + '/**/.*',
     [dirs.build] + '/*zip',
     [dirs.build] + '/*gz'
+  ])
+})
+
+gulp.task('clean-cache', () => {
+  const del = require('del')
+  return del([
+    dirs.cache
   ])
 })
 
@@ -117,9 +125,11 @@ function svg2png (svg, outname, size) {
   const svg2png = require('gulp-svg2png')
   const image = require('gulp-image')
   const rename = require('gulp-rename')
+  const changed = require('gulp-changed')
   return gulp.src(svg)
-    .pipe(svg2png({ width: size, height: size }))
     .pipe(rename(outname))
+    .pipe(changed(dirs.cache + '/favicon'))
+    .pipe(svg2png({ width: size, height: size }))
     .pipe(image({
       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
       pngquant: ['--speed=1', '--force', 256],
@@ -128,21 +138,30 @@ function svg2png (svg, outname, size) {
 }
 
 // convert -background none icon.svg -define icon:auto-resize=32,16 favicon.ico
-gulp.task('favicon', gulp.parallel(() => {
+gulp.task('favicon', gulp.series(gulp.parallel(
+  // step 1 - generate cached icons
+  () => {
+    return gulp.src([
+      'src/favicon/icon.svg',
+      'src/favicon/favicon.ico', // note: .ico is not (re)generated yet
+      'src/favicon/manifest.webmanifest'
+    ])
+      .pipe(gulp.dest(dirs.cache + '/favicon'))
+  }, () => {
+    return svg2png('src/favicon/icon.svg', '512.png', 512)
+      .pipe(gulp.dest(dirs.cache + '/favicon'))
+  }, () => {
+    return svg2png('src/favicon/icon.svg', 'apple-touch-icon.png', 180)
+      .pipe(gulp.dest(dirs.cache + '/favicon'))
+  }, () => {
+    return svg2png('src/favicon/icon.svg', '192.png', 192)
+      .pipe(gulp.dest(dirs.cache + '/favicon'))
+  }
+), () => {
+  // step 2 - use cached icons
   return gulp.src([
-    'src/favicon/icon.svg',
-    'src/favicon/favicon.ico', // note: .ico is not (re)generated yet
-    'src/favicon/manifest.webmanifest'
+    dirs.cache + '/favicon/**/*'
   ])
-    .pipe(gulp.dest(dirs.site))
-}, () => {
-  return svg2png('src/favicon/icon.svg', '512.png', 512)
-    .pipe(gulp.dest(dirs.site))
-}, () => {
-  return svg2png('src/favicon/icon.svg', 'apple-touch-icon.png', 180)
-    .pipe(gulp.dest(dirs.site))
-}, () => {
-  return svg2png('src/favicon/icon.svg', '192.png', 192)
     .pipe(gulp.dest(dirs.site))
 }))
 
@@ -234,56 +253,84 @@ gulp.task('html', () => {
     .pipe(gulp.dest(dirs.site))
 })
 
-gulp.task('img', () => {
+gulp.task('img', gulp.series(() => {
+  // step 1 - optimize backgrounds in high quality
   const image = require('gulp-image')
+  const changed = require('gulp-changed')
 
   return gulp.src([
-    'src/img/**/*.svg',
-    'src/img/**/*.jpg',
-    'src/img/**/*.png'
+    'src/img/**/*.jpg'
   ])
+    .pipe(changed(dirs.cache + '/img'))
     .pipe(image({
       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
       pngquant: ['--speed=1', '--force', 256],
       zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-      jpegRecompress: ['--strip', '--quality', 'medium', '--min', 40, '--max', 80],
+      jpegRecompress: ['--strip', '--quality', 'veryhigh', '--min', 92, '--max', 96],
       mozjpeg: ['-optimize', '-progressive'],
       gifsicle: ['--optimize'],
       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
     }))
+    .pipe(gulp.dest(dirs.cache + '/img'))
+}, () => {
+  // step 2 - optimize other assets
+  const image = require('gulp-image')
+  const changed = require('gulp-changed')
+
+  return gulp.src([
+    'src/img/**/*.svg',
+    'src/img/**/*.png'
+  ])
+    .pipe(changed(dirs.cache + '/img'))
+    .pipe(image({
+      optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+      pngquant: ['--speed=1', '--force', 256],
+      zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+      jpegRecompress: ['--strip', '--quality', 'medium', '--min', 80, '--max', 90],
+      mozjpeg: ['-optimize', '-progressive'],
+      gifsicle: ['--optimize'],
+      svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+    }))
+    .pipe(gulp.dest(dirs.cache + '/img'))
+}, () => {
+  // step 3 - use cached images
+  return gulp.src([
+    dirs.cache + '/img/**/*.svg',
+    dirs.cache + '/img/**/*.jpg',
+    dirs.cache + '/img/**/*.png'
+  ])
     .pipe(gulp.dest(dirs.site + '/img'))
-})
+}))
 
 function template (name) {
+  const image = require('gulp-image')
+  const changed = require('gulp-changed')
   const zip = require('gulp-zip')
 
-  return replace(gulp.src('src/templates/' + name + '/**/*'))
-    .pipe(zip(name + '.zip'))
-    .pipe(gulp.dest(dirs.site + '/api/data/templates'))
+  return gulp.series(() => { // step 1: optimize & cache content
+    return replace(gulp.src('src/templates/' + name + '/**/*'))
+      .pipe(changed(dirs.cache + '/templates/' + name))
+      .pipe(image({
+        optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+        pngquant: ['--speed=1', '--force', 256],
+        zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+        jpegRecompress: ['--strip', '--quality', 'high', '--min', 60, '--max', 85],
+        mozjpeg: ['-optimize', '-progressive'],
+        gifsicle: ['--optimize'],
+        svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+      }))
+      .pipe(gulp.dest(dirs.cache + '/templates/' + name))
+  }, () => { // step 2: zip cache
+    return gulp.src(dirs.cache + '/templates/' + name + '/**/*')
+      .pipe(zip(name + '.zip'))
+      .pipe(gulp.dest(dirs.site + '/api/data/templates'))
+  })
 }
 
-// function template (name) {
-//   const zip = require('gulp-zip')
-//   const image = require('gulp-image')
-//   const svgo = require('gulp-svgo')
-//
-//   return replace(gulp.src('src/templates/' + name + '/**/*'))
-//     .pipe(image({
-//       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
-//       pngquant: ['--speed=1', '--force', 256],
-//       zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-//       jpegRecompress: ['--strip', '--quality', 'medium', '--min', 40, '--max', 80],
-//       mozjpeg: ['-optimize', '-progressive'],
-//       gifsicle: ['--optimize']
-//     }))
-//     .pipe(svgo())
-//     .pipe(zip(name + '.zip'))
-//     .pipe(gulp.dest(dirs.site + '/api/data/templates'))
-// }
-
-gulp.task('template-RPG', () => template('RPG'))
-gulp.task('template-Classic', () => template('Classic'))
-gulp.task('template-Tutorial', () => template('Tutorial'))
+gulp.task('template-Classic', template('Classic'))
+gulp.task('template-RPG', template('RPG'))
+gulp.task('template-Hex', template('Hex'))
+gulp.task('template-Tutorial', template('Tutorial'))
 
 gulp.task('build', gulp.parallel(
   'js-main',
@@ -292,6 +339,7 @@ gulp.task('build', gulp.parallel(
   'js-vendor',
   'php',
   'template-RPG',
+  'template-Hex',
   'template-Classic',
   'template-Tutorial',
   'fonts',
@@ -345,7 +393,13 @@ gulp.task('package-zip', function () {
     .pipe(gulp.dest(dirs.build))
 })
 
-gulp.task('release', gulp.series('clean', 'dist', 'package-tgz', 'package-zip'))
+gulp.task('release', gulp.series(
+  'clean',
+  'clean-cache',
+  'dist',
+  'package-tgz',
+  'package-zip'
+))
 
 // --- default target ----------------------------------------------------------
 

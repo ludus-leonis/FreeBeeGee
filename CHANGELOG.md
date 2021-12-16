@@ -2,9 +2,40 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.12.0 - Hexing Heron
+
+This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
+
+### Notable changes
+
+* added hex mode for templates
+* added 'Hex' game template
+* added multiple table background images (change via settings)
+* added setting and hotkey to toggle grid overlay (g, initially hidden)
+* added hotkey to toggle fullscreen (F11)
+* improved token borders, token now have a no-border option
+* improved generic game token / Go piece / bead (now in 8 colors)
+
+### Other changes
+
+* added `snap` property to templates to turn on/off snapping - defaults to true=on
+* added click-thru for transparent parts of tiles (png)
+* added detection of existing but incompatible room versions
+* fixed outline of backsides of irregular-shaped pieces
+* fixed tokens sometimes shifting when selecting them
+* fixed library search sometimes missing / ok not working
+* improved readablity of piece numbers on bright borders
+* improved build speed by caching generated files
+* improved template/engine mismatch detection
+* changed piece/asset data model to be more compact and future proof
+* changed drag'n'drop 'ghost' image to snap to possible positions
+* changed grid indicators from pngs to crisper svgs
+* updated datamodel docs
+* removed `gridSize` from templates - templates snap to their grid size if snapping is on
+
 ## v0.11.0 - Troubled Trout
 
-This is a breaking release changing internal data structures. Old snapshots will no longer work.
+This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
 
 ### Notable changes
 
@@ -21,14 +52,14 @@ This is a breaking release changing internal data structures. Old snapshots will
 * improved scroll position handling when switching tables
 * added auto-center view for empty tables
 * added troubleshooting guide
-* added differnt, slight offsets for table 1..9 textures
-* fixed api tests
+* added different, slight offsets for table 1..9 textures
+* fixed API tests
 * updated docs
 * refactored pieces border->color
 
 ## v0.10.0 - Pointing Pony
 
-This is a breaking release changing internal data structures. Old snapshots will no longer work.
+This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
 
 ### Notable changes
 

@@ -24,7 +24,7 @@ import _ from '../../lib/FreeDOM.mjs'
 import {
   navigateToJoin
 } from '../../app.mjs'
-import { // TODO roomstate.mjs?
+import {
   loadRoom,
   getRoom,
   getRoomPreference,
@@ -49,13 +49,14 @@ import {
 } from './tabletop/index.mjs'
 
 import {
+  TYPE_HEX,
   getSetupCenter,
   findPiece
 } from './tabletop/tabledata.mjs'
 
 import {
   enableDragAndDrop,
-  getMouseTile
+  getMouseCoords
 } from './mouse.mjs'
 
 import {
@@ -72,6 +73,11 @@ import {
   modalSettings,
   changeQuality
 } from './modal/settings.mjs'
+
+import {
+  clamp,
+  brightness
+} from '../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -151,6 +157,23 @@ export function toggleLayer (layer) {
   }
 }
 
+/**
+ * Toggle grid display on/off.
+ */
+export function toggleGrid (on) {
+  if (on === true || on === false) {
+    setRoomPreference('showGrid', on)
+  } else { // undefined
+    setRoomPreference('showGrid', !getRoomPreference('showGrid', false))
+  }
+  setupBackground()
+}
+
+/**
+ * Show the popup menu for a piece.
+ *
+ * @param {String} id Id of piece.
+ */
 export function popupPiece (id) {
   const piece = findPiece(id)
   const popup = _('#popper.popup.is-content').create()
@@ -158,8 +181,8 @@ export function popupPiece (id) {
   popup.innerHTML = `
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
-    <a class="popup-menu flip ${piece._sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
-    <a class="popup-menu random ${(piece._sides > 2 || piece._feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
+    <a class="popup-menu flip ${piece._meta.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
+    <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
@@ -213,7 +236,7 @@ export function popupPiece (id) {
   _('#popper .clone').on('click', click => {
     click.preventDefault()
     _('#popper').remove('.show')
-    cloneSelected(getMouseTile())
+    cloneSelected(getMouseCoords())
   })
 
   createPopper(_('#' + id).node(), popup.node(), {
@@ -239,7 +262,7 @@ export function updateRoom () {
 }
 
 /**
- * Convert a window coordinates to a tabletop coordinates.
+ * Convert window coordinates to a tabletop coordinates.
  *
  * Takes position of element and scroll position inside the element into account.
  *
@@ -295,6 +318,55 @@ export function restoreScrollPosition () {
   }
 }
 
+/**
+ * Set backround to given index + store it as preference.
+ *
+ * @param {Number} bgIndex Index of background. Will be clamped to the available ones.
+ * @param {Boolean} showGrid If true, the overlay grid will be drawn.
+ */
+export function setupBackground (
+  bgIndex = getRoomPreference('background', 99),
+  showGrid = getRoomPreference('showGrid', false)
+) {
+  const room = getRoom()
+
+  bgIndex = clamp(0, bgIndex, room.backgrounds.length - 1)
+
+  // setup background / wallpaper
+  if (showGrid) {
+    const grid = room.template?.type === TYPE_HEX
+      ? brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-hex-white.svg' : 'grid-hex-black.svg'
+      : brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-square-white.svg' : 'grid-square-black.svg'
+
+    const gridX = room.template?.type === TYPE_HEX ? room.template.gridSize * 1.71875 : room.template.gridSize
+    const gridY = room.template.gridSize
+
+    updateRoom().css({
+      backgroundColor: room.backgrounds[bgIndex].color,
+      backgroundImage: `url("img/${grid}?v=$CACHE$"),url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
+      backgroundSize: `${gridX}px ${gridY}px,auto`
+    })
+  } else {
+    updateRoom().css({
+      backgroundColor: room.backgrounds[bgIndex].color,
+      backgroundImage: `url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
+      backgroundSize: 'auto'
+    })
+  }
+
+  // setup scroller
+  const scroller = _('#scroller')
+  scroller.css({ // this is for moz://a
+    scrollbarColor: `${room.backgrounds[bgIndex].scroller} ${room.backgrounds[bgIndex].color}`
+  })
+  scroller.node().style.setProperty('--fbg-color-scroll-fg', room.backgrounds[bgIndex].scroller)
+  scroller.node().style.setProperty('--fbg-color-scroll-bg', room.backgrounds[bgIndex].color)
+
+  // store for future reference
+  setRoomPreference('background', bgIndex)
+  setRoomPreference('showGrid', showGrid)
+}
+
 // --- internal ----------------------------------------------------------------
 
 let scroller = null /** keep reference to scroller div - we need it often */
@@ -307,7 +379,9 @@ let scroller = null /** keep reference to scroller div - we need it often */
 function setupRoom () {
   const room = getRoom()
 
-  _('body').remove('.page-boxed').innerHTML = `
+  const mode = (room.template?.type === TYPE_HEX) ? '.is-grid-hex' : '.is-grid-square'
+
+  _('body').remove('.page-boxed').add(mode).innerHTML = `
     <div id="room" class="room is-fullscreen is-noselect">
       <div class="menu">
         <div>
@@ -370,7 +444,7 @@ function setupRoom () {
   `
 
   // load preferences
-  changeQuality(getRoomPreference('renderQuality') ?? 3)
+  changeQuality(getRoomPreference('renderQuality', 3))
 
   // setup menu for layers
   let undefinedCount = 0
@@ -387,10 +461,10 @@ function setupRoom () {
   }
 
   // setup menu for selection
-  _('#btn-a').on('click', () => modalLibrary(getViewportCenterTile()))
+  _('#btn-a').on('click', () => modalLibrary(getViewportCenter()))
   _('#btn-e').on('click', () => editSelected())
   _('#btn-r').on('click', () => rotateSelected())
-  _('#btn-c').on('click', () => cloneSelected(getMouseTile()))
+  _('#btn-c').on('click', () => cloneSelected(getMouseCoords()))
   _('#btn-t').on('click', () => toTopSelected())
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())
@@ -403,27 +477,17 @@ function setupRoom () {
   _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
   _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
 
-  updateRoom().css({
-    backgroundColor: room.background.color,
-    backgroundImage: 'url("img/checkers-white.png?v=$CACHE$"),url("' + room.background.image + '?v=$CACHE$")',
-    backgroundSize: room.template.gridSize + 'px,1152px 768px'
-  })
+  setupBackground()
 
   _('body').on('contextmenu', e => e.preventDefault())
 
-  // setup scroller + keep reference for scroll-tracking
-  scroller = _('#scroller')
-  scroller.css({ // this is for moz://a
-    scrollbarColor: `${room.background.scroller} ${room.background.color}`
-  })
-  scroller = scroller.node()
-  scroller.style.setProperty('--fbg-color-scroll-fg', room.background.scroller)
-  scroller.style.setProperty('--fbg-color-scroll-bg', room.background.color)
+  // keep global reference for scroll-tracking
+  scroller = _('#scroller').node()
 
   enableDragAndDrop('#tabletop')
 
   // load + setup content
-  setTableNo(getRoomPreference('table') ?? 1, false)
+  setTableNo(getRoomPreference('table', 1), false)
   runStatuslineLoop()
   startAutoSync(() => { autoTrackScrollPosition() })
 }

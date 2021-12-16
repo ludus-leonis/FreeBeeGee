@@ -23,8 +23,8 @@
 /// @access public
 ////
 
-@mixin modal-library-flate($bg-size, $scale) {
-  background-size: $bg-size;
+@mixin modal-library-flate($bg-size-x, $bg-size-y, $scale) {
+  background-size: $bg-size-x $bg-size-y;
 
   > * {
     transform: scale($scale);
@@ -57,9 +57,7 @@
       @extend %flex-center-center;
 
       background-color: $color-gray-05;
-      background-image: url('img/checkers-black.png');
       background-position: center;
-      background-size: 64px;
       cursor: pointer;
       max-height: 50vh;
       min-height: 50vh;
@@ -69,10 +67,26 @@
         flex-shrink: 0;
       }
 
-      &.is-inflate-2x { @include modal-library-flate(128px, 2) }
-      &.is-deflate-2x { @include modal-library-flate(32px, .5) }
-      &.is-deflate-3x { @include modal-library-flate(24px, .375) }
-      &.is-deflate-4x { @include modal-library-flate(16px, .25) }
+      .is-grid-square & {
+        background-image: url('img/grid-square-black.svg');
+        background-size: 64px;
+
+        &.is-inflate-2x { @include modal-library-flate(128px, 128px, 2) }
+        &.is-deflate-2x { @include modal-library-flate(32px, 32px, .5) }
+        &.is-deflate-3x { @include modal-library-flate(24px, 24px, .375) }
+        &.is-deflate-4x { @include modal-library-flate(16px, 16px, .25) }
+      }
+
+      .is-grid-hex & {
+        background-image: url('img/grid-hex-black.svg');
+        background-size: 110px 64px;
+
+        &.is-inflate-2x { @include modal-library-flate(220px, 128px, 2) }
+        &.is-deflate-2x { @include modal-library-flate(55px, 32px, .5) }
+        &.is-deflate-3x { @include modal-library-flate(41px, 24px, .375) }
+        &.is-deflate-4x { @include modal-library-flate(28px, 16px, .25) }
+      }
+
     }
   }
 

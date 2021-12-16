@@ -23,7 +23,8 @@ import _ from '../../../lib/FreeDOM.mjs'
 import {
   clamp,
   shuffle,
-  recordTime
+  recordTime,
+  brightness
 } from '../../../lib/utils.mjs'
 
 import {
@@ -42,11 +43,11 @@ import {
 
 import {
   updateStatusline,
-  getTableCoordinates,
   restoreScrollPosition
 } from '../index.mjs'
 
 import {
+  TYPE_HEX,
   findAsset,
   findAssetByAlias,
   findPiece,
@@ -54,8 +55,10 @@ import {
   getAssetURL,
   getMinZ,
   getMaxZ,
-  getContentRectGrid,
-  stickyNoteColors
+  stickyNoteColors,
+  getTopLeftPx,
+  getPieceBounds,
+  snap
 } from './tabledata.mjs'
 import {
   updateMenu
@@ -110,13 +113,13 @@ export function editSelected () {
  *
  * @param {Object} tile Grid x/y position (in tiles).
  */
-export function cloneSelected (tile) {
+export function cloneSelected (xy) {
   getSelected().each(node => {
-    const template = getTemplate()
     const piece = findPiece(node.id)
-    piece.x = tile.x * template.gridSize
-    piece.y = tile.y * template.gridSize
-    piece.z = getMaxZ(piece.layer) + 1
+    const snapped = snap(xy.x, xy.y)
+    piece.x = snapped.x
+    piece.y = snapped.y
+    piece.z = getMaxZ(piece.l) + 1
     if (piece.n > 0) { // increase piece letter (if it has one)
       piece.n = piece.n + 1
       if (piece.n >= 16) piece.n = 1
@@ -126,15 +129,15 @@ export function cloneSelected (tile) {
 }
 
 /**
- * Flip the currently selected piece to it's next side.
+ * Flip the currently selected piece to its next side.
  *
  * Will cycle the sides and silently fail if nothing is selected.
  */
 export function flipSelected () {
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    if (piece._sides > 1) {
-      flipPiece(piece.id, (piece.side + 1) % piece._sides)
+    if (piece._meta.sides > 1) {
+      flipPiece(piece.id, (piece.s + 1) % piece._meta.sides)
     }
   })
 }
@@ -143,19 +146,25 @@ export function flipSelected () {
  * Switch the piece/outline color of the currently selected piece.
  *
  * Will cycle through all available colors and silently fail if nothing is selected.
+ *
+ * @param {boolean} outline If true, this will cycle the outline color. If false/unset,
+ *                          it will cycle the piece color.
  */
-export function outlineSelected () {
+export function cycleColor (outline = false) {
   const pieceColors = getTemplate().colors.length
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    switch (piece.layer) {
+    switch (piece.l) {
       case 'note':
-        colorPiece(piece.id, (piece.color + 1) % stickyNoteColors.length)
+        // always change base color
+        colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length, piece.c[1])
         break
       default:
-        if (pieceColors > 1) {
-          colorPiece(piece.id, (piece.color + 1) % pieceColors)
+        if (outline) {
+          colorPiece(piece.id, piece.c[0], (piece.c[1] + 1) % (pieceColors + 1))
+        } else {
+          colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length, piece.c[1])
         }
     }
   })
@@ -184,7 +193,7 @@ export function randomSelected () {
   const template = getTemplate()
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    switch (piece._feature) {
+    switch (piece._meta.feature) {
       case 'DICEMAT': // dicemat: randomize all pieces on it
         randomDicemat(piece)
         break
@@ -192,7 +201,7 @@ export function randomSelected () {
         randomDiscard(piece)
         break
       default: // ordinary piece
-        if (piece._sides > 1) { // only randomize multi-sided tokens
+        if (piece._meta.sides > 1) { // only randomize multi-sided tokens
           // slide token around
           let slideX = Math.floor(Math.random() * 3) - 1
           let slideY = Math.floor(Math.random() * 3) - 1
@@ -200,20 +209,14 @@ export function randomSelected () {
             slideX = 1
             slideY = 1
           }
-          const x = Math.abs(clamp(
-            -template.snapSize,
-            piece.x + slideX * template.snapSize,
-            (template.gridWidth - 1) * template.gridSize
-          ))
-          const y = Math.abs(clamp(
-            -template.snapSize,
-            piece.y + slideY * template.snapSize,
-            (template.gridHeight - 1) * template.gridSize
-          ))
+          const offset = Math.floor(template.gridSize / 2)
+          const x = Math.abs(clamp(0, piece.x + slideX * offset, (template.gridWidth - 1) * template.gridSize))
+          const y = Math.abs(clamp(0, piece.y + slideY * offset, (template.gridHeight - 1) * template.gridSize))
+
           // send to server
           updatePieces([{
             id: node.id,
-            side: Math.floor(Math.random() * piece._sides),
+            s: Math.floor(Math.random() * piece._meta.sides),
             x: x,
             y: y
           }])
@@ -241,7 +244,7 @@ export function setTableSurface (no) {
 /**
  * Update or recreate the DOM node of a piece.
  *
- * Will try to minimize recreation of objects and tries to only update it's
+ * Will try to minimize recreation of objects and tries to only update its
  * properties/classes if possible.
  *
  * Assumes that the caller will add a 'piece' property to the node so we can
@@ -257,17 +260,22 @@ function createOrUpdatePieceDOM (piece, select) {
   // reuse existing DOM node if possible, only (re)create on major changes
   let div = _('#' + piece.id)
   let _piece = div.unique() ? div.piece : {} // get old piece out of old node
-  if (_piece.layer !== piece.layer || _piece.side !== piece.side) {
+  if (
+    _piece.l !== piece.l ||
+    _piece.w !== piece.w ||
+    _piece.h !== piece.h ||
+    _piece.s !== piece.s
+  ) {
     selection = _('#tabletop .is-selected').id
     if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
     div.delete()
   }
   if (!div.unique()) { // (re)create
-    const node = piece.layer === 'note' ? noteToNode(piece) : pieceToNode(piece)
+    const node = piece.l === 'note' ? noteToNode(piece) : pieceToNode(piece)
     node.piece = {}
     _piece = {}
     if (selection.includes(piece.id)) node.add('.is-selected')
-    _('#layer-' + piece.layer).add(node)
+    _('#layer-' + piece.l).add(node)
   }
 
   // update dom infos + classes (position, rotation ...)
@@ -275,9 +283,10 @@ function createOrUpdatePieceDOM (piece, select) {
   div = _('#' + piece.id) // fresh query
 
   if (_piece.x !== piece.x || _piece.y !== piece.y || _piece.z !== piece.z) {
+    const tl = getTopLeftPx(piece)
     div.css({
-      left: piece.x + 'px',
-      top: piece.y + 'px',
+      top: tl.top,
+      left: tl.left,
       zIndex: piece.z
     })
   }
@@ -293,23 +302,42 @@ function createOrUpdatePieceDOM (piece, select) {
   }
   if (_piece.n !== piece.n) {
     div.remove('.is-n', '.is-n-*')
-    if (piece.layer === 'token' && piece.n !== 0) {
+    if (piece.l === 'token' && piece.n !== 0) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
-  if (_piece.color !== piece.color) {
+  if (_piece.c?.[0] !== piece.c[0] || _piece.c?.[1] !== piece.c[1]) {
     div
-      .remove('.is-color-*')
-      .add('.is-color-' + piece.color)
-    if (piece.color >= 0 && template.colors.length) {
-      _(`#${piece.id}`).css({
-        '--fbg-piece-color': template.colors[piece.color].value
-      })
+      .remove('.is-color-*', '.is-border-*')
+      .add('.is-color-' + piece.c[0], '.is-border-' + piece.c[1])
+    if (piece.l === 'token' && piece.c[0] >= 0 && piece.c[0] <= template.colors.length) {
+      if (piece.c[0] === 0) {
+        _(`#${piece.id}`).css({
+          '--fbg-piece-color': '#808080',
+          '--fbg-piece-color-invert': '#e6e6e6'
+        })
+      } else {
+        _(`#${piece.id}`).css({
+          '--fbg-piece-color': template.colors[piece.c[0] - 1].value,
+          '--fbg-piece-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+        })
+      }
+      if (piece.c[1] === 0) {
+        _(`#${piece.id}`).css({
+          '--fbg-border-color': '#808080',
+          '--fbg-border-color-invert': '#e6e6e6'
+        })
+      } else {
+        _(`#${piece.id}`).css({
+          '--fbg-border-color': template.colors[piece.c[1] - 1].value,
+          '--fbg-border-color-invert': brightness(template.colors[piece.c[1] - 1].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+        })
+      }
     }
   }
 
   // update select status
-  if (select && _('#tabletop.layer-' + piece.layer + '-enabled').exists()) {
+  if (select && _('#tabletop.layer-' + piece.l + '-enabled').exists()) {
     unselectPieces()
     div.add('.is-selected')
   }
@@ -326,16 +354,16 @@ function createOrUpdatePieceDOM (piece, select) {
 export function setPiece (piece, select = false) {
   const node = createOrUpdatePieceDOM(piece, select)
 
-  if (node.piece.label !== piece.label || node.piece.tag !== piece.tag) { // update label on change
+  if (node.piece.t?.[0] !== piece.t?.[0] || node.piece.b?.[0] !== piece.b?.[0]) { // update label on change
     _('#' + piece.id + ' .label').delete()
-    if (piece.label !== '' || piece.tag !== '') {
+    if (piece.t?.[0] || piece.b?.[0]) {
       const label = _('.label').create()
-      if (piece.label !== '') {
-        const span = _('span').create(piece.label)
+      if (piece.t?.length >= 1) {
+        const span = _('span').create(piece.t[0])
         label.add(span)
       }
-      if (piece.tag !== '') {
-        const asset = findAssetByAlias(piece.tag, 'tag')
+      if (piece.b?.length >= 1) {
+        const asset = findAssetByAlias(piece.b?.[0], 'tag')
         if (asset) {
           const img = _('img.icon').create()
           img.src = getAssetURL(asset, 0)
@@ -358,8 +386,8 @@ export function setPiece (piece, select = false) {
 export function setNote (note, select = false) {
   const node = createOrUpdatePieceDOM(note, select)
 
-  if (node.piece.label !== note.label) { // update note on change
-    node.node().innerHTML = note.label ?? ''
+  if (node.piece.t?.[0] !== note.t?.[0]) { // update note on change
+    node.node().innerHTML = note.t?.[0] ?? ''
   }
 
   node.piece = note // store piece for future delta-checking
@@ -368,40 +396,28 @@ export function setNote (note, select = false) {
 /**
  * Rotate the currently selected piece.
  *
- * Done in 90° increments.
+ * Done in increments based on game type.
  */
 export function rotateSelected () {
   const template = getTemplate()
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
-    const r = (piece.r + 90) % 360
-    let x = piece.x
-    let y = piece.y
-    switch (r) {
-      case 90:
-      case 270:
-        x = clamp(0, x, (template.gridWidth - piece.h) * template.gridSize - 1)
-        y = clamp(0, y, (template.gridHeight - piece.w) * template.gridSize - 1)
-        break
-      default:
-        x = clamp(0, x, (template.gridWidth - piece.w) * template.gridSize - 1)
-        y = clamp(0, y, (template.gridHeight - piece.h) * template.gridSize - 1)
-    }
-
-    rotatePiece(piece.id, r, x, y)
+    const increment = template.type === TYPE_HEX ? 60 : 90
+    const r = (piece.r + increment) % 360
+    rotatePiece(piece.id, r)
   })
 }
 
 /**
- * Move the currently selected piece to the top within it's layer.
+ * Move the currently selected piece to the top within its layer.
  *
  * Will silently fail if nothing is selected.
  */
 export function toTopSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
     const piece = findPiece(node.id)
-    const maxZ = getMaxZ(piece.layer)
+    const maxZ = getMaxZ(piece.l)
     if (piece.z < maxZ) {
       movePiece(piece.id, null, null, maxZ + 1)
     }
@@ -409,14 +425,14 @@ export function toTopSelected () {
 }
 
 /**
- * Move the currently selected piece to the bottom within it's layer.
+ * Move the currently selected piece to the bottom within its layer.
  *
  * Will silently fail if nothing is selected.
  */
 export function toBottomSelected () {
   for (const node of document.querySelectorAll('.piece.is-selected')) {
     const piece = findPiece(node.id)
-    const minZ = getMinZ(piece.layer)
+    const minZ = getMinZ(piece.l)
     if (piece.z > minZ) {
       movePiece(piece.id, null, null, minZ - 1)
     }
@@ -460,27 +476,36 @@ export function pieceToNode (piece) {
   let node
 
   // create the dom node
-  const asset = findAsset(piece.asset)
+  const asset = findAsset(piece.a)
   if (asset === null) {
-    if (piece.asset === ID_POINTER) {
-      node = createPointerAsset(piece.layer)
+    if (piece.a === ID_POINTER) {
+      node = createPointerAsset(piece.l)
     } else {
-      node = createInvalidAsset(piece.layer)
+      node = createInvalidAsset(piece.l)
     }
   } else {
-    const uriSide = asset.media[piece.side] === '##BACK##'
-      ? 'img/backside.svg'
-      : getAssetURL(asset, piece.side)
-    const uriBase = getAssetURL(asset, -1)
-    if (asset.base) { // layered asset
-      node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
-        backgroundImage: 'url("' + encodeURI(uriBase) + '")',
-        '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
+    if (asset.media[piece.s] === '##BACK##') { // backside piece
+      const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
+      node = _(`.piece.piece-${asset.type}`).create()
+
+      // create inner div as we can't image-map the outer without cutting the shadow
+      const inner = _('.backside').create().css({
+        maskImage: 'url("' + encodeURI(uriMask) + '")'
       })
-    } else { // regular asset
-      node = _(`.piece.piece-${asset.type}`).create().css({
-        backgroundImage: 'url("' + encodeURI(uriSide) + '")'
-      })
+      node.add(inner)
+    } else { // regular piece
+      const uriSide = getAssetURL(asset, piece.s)
+      const uriBase = getAssetURL(asset, -1)
+      if (asset.base) { // layered asset
+        node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
+          backgroundImage: 'url("' + encodeURI(uriBase) + '")',
+          '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
+        })
+      } else { // regular asset
+        node = _(`.piece.piece-${asset.type}`).create().css({
+          backgroundImage: 'url("' + encodeURI(uriSide) + '")'
+        })
+      }
     }
 
     if (asset.type !== 'overlay' && asset.type !== 'other') {
@@ -492,8 +517,7 @@ export function pieceToNode (piece) {
 
   // set meta-classes on node
   node.id = piece.id
-  node.add(`.is-side-${piece.side}`)
-  if (asset?.bg === 'piece') node.add('.is-piececolor')
+  node.add(`.is-side-${piece.s}`)
 
   return node
 }
@@ -509,7 +533,7 @@ export function noteToNode (note) {
 
   node.id = note.id
   node.add('.is-side-0')
-  node.node().innerHTML = note.label ?? ''
+  node.node().innerHTML = note.t?.[0] ?? ''
 
   return node
 }
@@ -521,40 +545,49 @@ export function noteToNode (note) {
  *
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
-export function createNote (tile) {
-  const template = getTemplate()
+export function createNote (xy) {
+  const snapped = snap(xy.x, xy.y)
   createPieces([{
-    layer: 'note',
+    l: 'note',
     w: 3,
     h: 3,
-    x: tile.x * template.gridSize,
-    y: tile.y * template.gridSize,
+    x: snapped.x,
+    y: snapped.y,
     z: getMaxZ('note') + 1
   }], true)
 }
 
 /**
- * Move the room content to the given x/y position.
+ * Move the room content by approximately x/y.
  *
- * Will determine the content-box and move each item relative to its top/left
- * corner.
+ * The actual amount will depend on the page grid so that the moved content
+ * still aligns to grid snapping.
  *
- * @param Number toX New x position.
- * @param Number toY New y position.
+ * @param Number offsetX Delta of new x position.
+ * @param Number offsetY Delta of new y position.
  */
-export function moveContent (toX, toY) {
+export function moveContent (offsetX, offsetY) {
   const template = getTemplate()
-  const rect = getContentRectGrid()
-  const offsetX = (toX - rect.left) * template.gridSize
-  const offsetY = (toY - rect.top) * template.gridSize
-
+  switch (template.type) {
+    case 'grid-hex':
+      if (offsetX < 0) offsetX += 109
+      if (offsetY < 0) offsetY += 63
+      offsetX = Math.floor(offsetX / 110) * 110
+      offsetY = Math.floor(offsetY / 64) * 64
+      break
+    case 'grid-square':
+    default:
+      if (offsetX < 0) offsetX += 63
+      if (offsetY < 0) offsetY += 63
+      offsetX = Math.floor(offsetX / template.gridSize) * template.gridSize
+      offsetY = Math.floor(offsetY / template.gridSize) * template.gridSize
+  }
   const pieces = []
   _('#tabletop .piece').each(node => {
-    const piece = findPiece(node.id)
     pieces.push({
-      id: piece.id,
-      x: piece.x + offsetX,
-      y: piece.y + offsetY
+      id: node.piece.id,
+      x: node.piece.x + offsetX,
+      y: node.piece.y + offsetY
     })
   })
   updatePieces(pieces)
@@ -590,37 +623,26 @@ export function updateTabletop (tableNo, selectIds = []) {
 /**
  * Move the pointer to the given location.
  *
- * @param {Object} coords {x, y} object.
+ * @param {Object} coords {x, y} object, in table px.
  */
 export function pointTo (coords) {
   const template = getTemplate()
   const room = getRoom()
 
-  coords.x = clamp(0, coords.x - template.gridSize / 2, room.width - template.gridSize)
-  coords.y = clamp(0, coords.y - template.gridSize / 2, room.height - template.gridSize)
+  coords.x = clamp(0, coords.x, room.width - template.gridSize - 1)
+  coords.y = clamp(0, coords.y, room.height - template.gridSize - 1)
+
+  const snapped = snap(coords.x, coords.y)
 
   createPieces([{ // always create (even if it is a move)
-    asset: ID_POINTER,
-    layer: 'other',
+    a: ID_POINTER,
+    l: 'other',
     w: 1,
     h: 1,
-    x: coords.x,
-    y: coords.y,
+    x: snapped.x,
+    y: snapped.y,
     z: getMaxZ('other') + 1
   }])
-}
-
-/**
- * Calculate the grid/tile X coordinate based on mouse position.
- *
- * @return {Object} Current tile as {x, y}.
- */
-export function getTableTile (windowX, windowY) {
-  const template = getTemplate()
-  const coords = getTableCoordinates(windowX, windowY)
-  coords.x = clamp(0, Math.floor(coords.x / template.gridSize), template.gridWidth - 1)
-  coords.y = clamp(0, Math.floor(coords.y / template.gridSize), template.gridHeight - 1)
-  return coords
 }
 
 // --- internal ----------------------------------------------------------------
@@ -668,19 +690,14 @@ function randomDicemat (dicemat) {
   for (let x = 0; x < Math.min(dicemat.w, 4); x++) {
     for (let y = 0; y < Math.min(dicemat.h, 4); y++) {
       coords.push({ // a max. 4x4 area in the center of the dicemat
-        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x) * template.gridSize,
-        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y) * template.gridSize
+        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x + 0.5) * template.gridSize,
+        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y + 0.5) * template.gridSize
       })
     }
   }
 
-  for (const piece of findPiecesWithin({
-    left: dicemat.x,
-    top: dicemat.y,
-    right: dicemat.x + dicemat.w * template.gridSize - 1,
-    bottom: dicemat.y + dicemat.h * template.gridSize - 1
-  }, dicemat.layer)) {
-    if (piece._feature === 'DICEMAT') continue // don't touch the dicemat
+  for (const piece of findPiecesWithin(getPieceBounds(dicemat), dicemat.l)) {
+    if (piece._meta.feature === 'DICEMAT') continue // don't touch the dicemat
 
     // pick one random position
     let coord = { x: 0, y: 0 }
@@ -694,9 +711,9 @@ function randomDicemat (dicemat) {
     // update the piece
     pieces.push({
       id: piece.id,
-      side: Math.floor(Math.random() * piece._sides),
-      x: dicemat.x + coord.x,
-      y: dicemat.y + coord.y
+      s: Math.floor(Math.random() * piece._meta.sides),
+      x: dicemat.x - dicemat._meta.widthPx / 2 + coord.x,
+      y: dicemat.y - dicemat._meta.heightPx / 2 + coord.y
     })
   }
   updatePieces(pieces)
@@ -708,18 +725,10 @@ function randomDicemat (dicemat) {
  * @param {Object} discard Discard pile object.
  */
 function randomDiscard (discard) {
-  const template = getTemplate()
   const pieces = []
-  const centerX = discard.x + discard.w * template.gridSize / 2
-  const centerY = discard.y + discard.h * template.gridSize / 2
   let stackSide = -1
 
-  const stack = findPiecesWithin({
-    left: discard.x,
-    top: discard.y,
-    right: discard.x + discard.w * template.gridSize - 1,
-    bottom: discard.y + discard.h * template.gridSize - 1
-  }, discard.layer)
+  const stack = findPiecesWithin(getPieceBounds(discard), discard.l)
 
   // shuffle z positions above the dicard pile piece
   const discardZ = discard.z
@@ -730,27 +739,24 @@ function randomDiscard (discard) {
   shuffle(z)
 
   for (const piece of stack) {
-    if (piece._feature === 'DISCARD') continue // don't touch the discard pile piece
+    if (piece._meta.feature === 'DISCARD') continue // don't touch the discard pile piece
 
     // detect the side to flip them to
     if (stackSide < 0) {
       // fip all pices, based on the state of the first one
-      if (piece.side === 0) {
-        stackSide = Math.max(0, piece._sides - 1)
+      if (piece.s === 0) {
+        stackSide = Math.max(0, piece._meta.sides - 1)
       } else {
         stackSide = 0
       }
     }
 
-    const w = piece.r === 90 || piece.r === 270 ? piece.h : piece.w
-    const h = piece.r === 90 || piece.r === 270 ? piece.w : piece.h
-
     // update the piece
     pieces.push({
       id: piece.id,
-      side: stackSide,
-      x: Math.floor(centerX - (w * template.gridSize) / 2),
-      y: Math.floor(centerY - (h * template.gridSize) / 2),
+      s: stackSide,
+      x: discard.x,
+      y: discard.y,
       z: z.pop()
     })
   }
@@ -788,7 +794,7 @@ function removeObsoletePieces (keepIds) {
  * @param {Boolean} selected If true, this item will be selected.
  */
 function setItem (piece, selected) {
-  switch (piece.layer) {
+  switch (piece.l) {
     case 'tile':
     case 'token':
     case 'overlay':

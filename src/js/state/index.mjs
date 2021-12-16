@@ -46,7 +46,8 @@ import {
 } from '../view/error/index.mjs'
 import {
   populatePiecesDefaults,
-  clampToTableSize
+  clampToTableSize,
+  nameToLayer
 } from '../view/room/tabletop/tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -106,8 +107,6 @@ export function getRoom () {
 
 /**
  * Get the current table's template (cached).
- *
- * Until we support multiple rooms, this is always the template of room 0.
  *
  * @return {Object} Current room's template metadata.
  */
@@ -188,10 +187,11 @@ export function createRoom (room, snapshot) {
  * room.
  *
  * @param {String} pref Setting to obtain.
+ * @param {String} defaultValue Fallback value if not set/found.
  * @return {String} The setting's value.
  */
-export function getRoomPreference (pref) {
-  return getStoreValue('r' + room.id.substr(0, 8), pref)
+export function getRoomPreference (pref, defaultValue) {
+  return getStoreValue('r' + room.id.substr(0, 8), pref) ?? defaultValue
 }
 
 /**
@@ -239,7 +239,7 @@ export function setTablePreference (pref, value, no = getTableNo()) {
  * @param {String} label New label text.
  */
 export function stateLabelPiece (pieceId, label) {
-  patchPiece(pieceId, { label: label })
+  patchPiece(pieceId, { t: [label] })
 }
 
 /**
@@ -268,16 +268,10 @@ export function movePiece (pieceId, x = null, y = null, z = null) {
  * data model.
  *
  * @param {String} pieceId ID of piece to change.
- * @param {Number} r New rotation (0, 90, 180, 270).
- * @param {Number} x New x/rotation point.
- * @param {Number} y New y/rotation point.
+ * @param {Number} r New rotation (0, 60, 90, 120, 180, 260, 270).
  */
-export function rotatePiece (pieceId, r, x, y) {
-  patchPiece(pieceId, {
-    r: r,
-    x: x,
-    y: y
-  })
+export function rotatePiece (pieceId, r) {
+  patchPiece(pieceId, { r })
 }
 
 /**
@@ -287,12 +281,10 @@ export function rotatePiece (pieceId, r, x, y) {
  * data model.
  *
  * @param {String} pieceId ID of piece to change.
- * @param {Number} no New number (0..27).
+ * @param {Number} n New number (0..27).
  */
-export function numberPiece (pieceId, no) {
-  patchPiece(pieceId, {
-    n: no
-  })
+export function numberPiece (pieceId, n) {
+  patchPiece(pieceId, { n })
 }
 
 /**
@@ -305,9 +297,7 @@ export function numberPiece (pieceId, no) {
  * @param {Number} side New side. Zero-based.
  */
 export function flipPiece (pieceId, side) {
-  patchPiece(pieceId, {
-    side: side
-  })
+  patchPiece(pieceId, { s: side })
 }
 
 /**
@@ -317,12 +307,11 @@ export function flipPiece (pieceId, side) {
  * data model.
  *
  * @param {String} pieceId ID of piece to change.
- * @param {Number} color New color index. Zero-based.
+ * @param {Number} color1 New color index. Zero-based.
+ * @param {Number} color2 New color index. Zero-based.
  */
-export function colorPiece (pieceId, color) {
-  patchPiece(pieceId, {
-    color: color
-  })
+export function colorPiece (pieceId, color1 = 0, color2 = 0) {
+  patchPiece(pieceId, { c: [color1, color2] })
 }
 
 /**
@@ -503,6 +492,14 @@ export function _setTable (no, data) {
  * Only exposed for unit testing.
  */
 export function _setRoom (data) {
+  // add often used meta-infos
+  if (data?.template) {
+    data.template._meta = {
+      widthPx: data.template.gridWidth * data.template.gridSize,
+      heightPx: data.template.gridHeight * data.template.gridSize
+    }
+  }
+
   room = data
 }
 
@@ -544,6 +541,7 @@ function stripPiece (piece) {
  * @return {Object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, poll = true) {
+  if (patch.l) patch.l = nameToLayer(patch.l)
   return apiPatchPiece(room.name, getTableNo(), pieceId, patch)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
@@ -560,6 +558,9 @@ function patchPiece (pieceId, patch, poll = true) {
  * @return {Object} Promise of the API request.
  */
 function patchPieces (patches, poll = true) {
+  for (const patch of patches) {
+    if (patch.l) patch.l = nameToLayer(patch.l)
+  }
   return apiPatchPieces(room.name, getTableNo(), patches)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
@@ -576,6 +577,7 @@ function patchPieces (patches, poll = true) {
  * @return {Object} Promise of the ID of the new piece.
  */
 function createPiece (piece, poll = true) {
+  if (piece.l) piece.l = nameToLayer(piece.l)
   return apiPostPiece(room.name, getTableNo(), stripPiece(piece))
     .then(piece => {
       return piece.id

@@ -37,6 +37,9 @@ import {
  */
 export function runError (code, options) {
   switch (code) {
+    case 'ROOM_INVALID_ENGINE':
+      runErrorRoomDeprecated(options)
+      break
     case 'UNEXPECTED': // 5
       runErrorUnexpected(options)
       break
@@ -104,13 +107,13 @@ function detectProblem () {
             throw missing // abort further error detection due invalid JSON data
           }
         })
-        .then(json => {
-          console.log(json)
+        .then(errorJson => {
+          console.error(errorJson)
 
           // The api seems to deliver JSON. Try to pin down the problem better.
           let issues = ''
-          if (!json.phpOk) issues += '<li>PHP 7.3 or higher is required.</li>'
-          if (!json.moduleZip) issues += '<li>The PHP <code>zip</code> module is not available.</li>'
+          if (!errorJson.phpOk) issues += '<li>PHP 7.3 or higher is required.</li>'
+          if (!errorJson.moduleZip) issues += '<li>The PHP <code>zip</code> module is not available.</li>'
 
           if (issues !== '') {
             error.innerHTML = `
@@ -154,6 +157,24 @@ function runErrorRoomGone (roomName, error) {
     `
   )
   _('#ok').on('click', click => { navigateToJoin(roomName) })
+}
+
+/**
+ * Error screen be shown when a room seems to be from an older, incopatible FBG
+ * version.
+ */
+function runErrorRoomDeprecated (roomName) {
+  createScreen(
+    'Room outdated ...',
+    `
+      <p class="is-wrapping">Room <strong>${roomName}</strong> has been created by an incompatible FreeBeeGee version.</p>
+
+      <p>We are sorry, but it can not be run on this server. Please choose another room.</p>
+
+      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
+    `
+  )
+  _('#ok').on('click', click => { navigateToJoin() })
 }
 
 /**

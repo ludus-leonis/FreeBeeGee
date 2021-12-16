@@ -32,11 +32,17 @@
 }
 
 $spacing-micro: calc(var(--fbg-spacing) / 4);
+$spacing-micro-neg: calc(var(--fbg-spacing) / -4);
 $spacing-tiny: calc(var(--fbg-spacing) / 2);
+$spacing-tiny-neg: calc(var(--fbg-spacing) / -2);
 $spacing-small: var(--fbg-spacing);
+$spacing-small-neg: calc(var(--fbg-spacing) * -1);
 $spacing-medium: calc(var(--fbg-spacing) * 2);
+$spacing-medium-neg: calc(var(--fbg-spacing) * -2);
 $spacing-large: calc(var(--fbg-spacing) * 3);
+$spacing-large-neg: calc(var(--fbg-spacing) * -3);
 $spacing-huge: calc(var(--fbg-spacing) * 4);
+$spacing-huge-neg: calc(var(--fbg-spacing) * -4);
 
 @mixin spacing-margin-top ($margin-top) {
   margin-bottom: 0;
@@ -161,9 +167,9 @@ textarea {
   margin-top: 0 !important; // sass-lint:disable-line no-important
 }
 
-@mixin spacing-box-x($spacing) {
+@mixin spacing-box-x($spacing, $spacing-neg) {
   line-height: 1em;
-  margin: $spacing-small -$spacing -$spacing 0;
+  margin: $spacing-small $spacing-neg $spacing-neg 0;
 
   > * {
     display: inline-block;
@@ -172,26 +178,26 @@ textarea {
 }
 
 .spacing-box-huge {
-  @include spacing-box-x($spacing-huge);
+  @include spacing-box-x($spacing-huge, $spacing-huge-neg);
 }
 
 .spacing-box-large {
-  @include spacing-box-x($spacing-large);
+  @include spacing-box-x($spacing-large, $spacing-large-neg);
 }
 
 .spacing-box-medium {
-  @include spacing-box-x($spacing-medium);
+  @include spacing-box-x($spacing-medium, $spacing-medium-neg);
 }
 
 .spacing-box,
 .spacing-box-small {
-  @include spacing-box-x($spacing-small);
+  @include spacing-box-x($spacing-small, $spacing-small-neg);
 }
 
 .spacing-box-tiny {
-  @include spacing-box-x($spacing-tiny);
+  @include spacing-box-x($spacing-tiny, $spacing-tiny-neg);
 }
 
 .spacing-box-micro {
-  @include spacing-box-x($spacing-micro);
+  @include spacing-box-x($spacing-micro, $spacing-micro-neg);
 }
