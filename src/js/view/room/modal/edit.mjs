@@ -22,7 +22,7 @@ import _ from '../../../lib/FreeDOM.mjs'
 import {
   getLibrary,
   getTemplate,
-  statePieceEdit
+  editPiece
 } from '../../../state/index.mjs'
 
 import {
@@ -224,7 +224,6 @@ function getModalToken (piece) {
   const asset = findAsset(piece.a)
   const pieceClass = asset?.bg === 'piece' ? 'col-lg-3' : 'is-hidden'
   const borderClass = asset?.bg === 'piece' ? 'col-lg-3' : 'col-lg-6'
-  console.log(asset)
   return `
     <form class="container">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
@@ -449,6 +448,6 @@ function modalOk () {
   value = Number(_('#piece-number').value)
   if (value !== piece.n) updates.n = value
 
-  statePieceEdit(piece.id, updates)
+  editPiece(piece.id, updates)
   getModal().hide()
 }

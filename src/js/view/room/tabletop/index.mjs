@@ -21,6 +21,7 @@
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
+  mod,
   clamp,
   shuffle,
   recordTime,
@@ -55,7 +56,6 @@ import {
   getAssetURL,
   getMinZ,
   getMaxZ,
-  stickyNoteColors,
   getTopLeftPx,
   getPieceBounds,
   snap
@@ -137,7 +137,7 @@ export function flipSelected () {
   getSelected().each(node => {
     const piece = findPiece(node.id)
     if (piece._meta.sides > 1) {
-      flipPiece(piece.id, (piece.s + 1) % piece._meta.sides)
+      flipPiece(piece.id, mod(piece.s + 1, piece._meta.sides))
     }
   })
 }
@@ -151,20 +151,18 @@ export function flipSelected () {
  *                          it will cycle the piece color.
  */
 export function cycleColor (outline = false) {
-  const pieceColors = getTemplate().colors.length
-
   getSelected().each(node => {
     const piece = findPiece(node.id)
     switch (piece.l) {
       case 'note':
         // always change base color
-        colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length, piece.c[1])
+        colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         break
       default:
         if (outline) {
-          colorPiece(piece.id, piece.c[0], (piece.c[1] + 1) % (pieceColors + 1))
+          colorPiece(piece.id, piece.c[0], piece.c[1] + 1)
         } else {
-          colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length, piece.c[1])
+          colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         }
     }
   })
@@ -178,7 +176,7 @@ export function cycleColor (outline = false) {
 export function numberSelected (delta) {
   _('#tabletop .piece-token.is-selected').each(node => {
     const piece = findPiece(node.id)
-    numberPiece(piece.id, (piece.n + 16 + delta) % 16) // 0=nothing, 1-9, A-F
+    numberPiece(piece.id, piece.n + delta) // 0=nothing, 1-9, A-F
   })
 }
 
@@ -404,7 +402,7 @@ export function rotateSelected () {
   getSelected().each(node => {
     const piece = findPiece(node.id)
     const increment = template.type === TYPE_HEX ? 60 : 90
-    const r = (piece.r + increment) % 360
+    const r = piece.r + increment
     rotatePiece(piece.id, r)
   })
 }
@@ -703,7 +701,7 @@ function randomDicemat (dicemat) {
     let coord = { x: 0, y: 0 }
     let index = Math.floor(Math.random() * coords.length)
     if (coords[index].x === piece.x && coords[index].y === piece.y) {
-      index = (index + 1) % coords.length
+      index = mod(index + 1, coords.length)
     }
     coord = coords[index]
     coords.splice(index, 1)

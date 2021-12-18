@@ -9,6 +9,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 ### Other changes
 
 * fixed "RPG" template glass tiles transparency
+* fixed piece.h default handling (now equals w, not 0)
 * added unit test docs and added `Dockerfile` for test webservers
 
 ## v0.12.0 - Hexing Heron

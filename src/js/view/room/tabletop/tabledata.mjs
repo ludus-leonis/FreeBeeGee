@@ -32,7 +32,8 @@ import {
   snapGrid,
   snapHex,
   intersect,
-  getDimensionsRotated
+  getDimensionsRotated,
+  mod
 } from '../../../lib/utils.mjs'
 
 export const assetTypes = [
@@ -210,12 +211,70 @@ export function findExpiredPieces (no = getTableNo()) {
 
   const now = new Date()
   for (const piece of getTable(no)) {
-    if (piece._expires && piece._expires <= now) {
+    if (piece._meta.expires <= now) {
       pieces.push(piece)
     }
   }
 
   return pieces
+}
+
+/**
+ * Remove excess fields and force ranges to be within 0..n.
+ *
+ * @param {Object} piece Piece to sanitize.
+ * @return {Object} Sanitized piece.
+ */
+export function sanitizePiecePatch (patch, pieceId = null) {
+  const r = getRoom()
+  const t = getTemplate()
+  const p = pieceId === null ? null : findPiece(pieceId)
+  const result = {}
+  let asset, colors
+  for (const field in patch) {
+    switch (field) {
+      case 'c':
+        result[field] = []
+        colors = p?.l === 'note' ? stickyNoteColors.length : t.colors.length
+        for (const c of patch[field]) {
+          result[field].push(mod(c, colors))
+        }
+        break
+      case 'x':
+        result[field] = clamp(0, patch[field], r.width - 1)
+        break
+      case 'y':
+        result[field] = clamp(0, patch[field], r.height - 1)
+        break
+      case 'w':
+      case 'h':
+        result[field] = clamp(1, patch[field], 32)
+        break
+      case 's':
+        asset = findAsset(p?.a) ?? { media: ['x'] }
+        result[field] = mod(patch[field], asset.media.length)
+        break
+      case 'n':
+        result[field] = mod(patch[field], 16)
+        break
+      case 'r':
+        result[field] = mod(patch[field], 360)
+        break
+      case 'l':
+      case 'id':
+      case 'a':
+      case 'b':
+      case 'z':
+      case 't':
+      case 'expires':
+        result[field] = patch[field]
+        break
+      default:
+        // skip unknown
+    }
+  }
+
+  return result
 }
 
 /**
@@ -228,14 +287,13 @@ export function findExpiredPieces (no = getTableNo()) {
 export function populatePieceDefaults (piece, headers = null) {
   piece.l = layerToName(piece.l ?? 0)
   piece.w = piece.w ?? 1
-  piece.h = piece.h ?? 1
+  piece.h = piece.h ?? piece.w
   piece.s = piece.s ?? 0
   piece.c = piece.c ?? [0, 0]
   piece.c[0] = piece.c[0] ?? 0
   piece.c[1] = piece.c[1] ?? 0
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
-  piece.h = piece.h < 0 ? piece.w : piece.h
   piece.t = piece.t ?? []
   piece.b = piece.b ?? []
 
@@ -272,8 +330,8 @@ export function populatePieceDefaults (piece, headers = null) {
 
   // header/expires information
   if (piece.expires && headers) {
-    piece._expires = new Date()
-    piece._expires.setSeconds(piece._expires.getSeconds() + piece.expires - Number(headers.get('servertime')))
+    piece._meta.expires = new Date()
+    piece._meta.expires.setSeconds(piece._meta.expires.getSeconds() + piece.expires - Number(headers.get('servertime')))
   }
 
   return piece
@@ -293,8 +351,8 @@ export function populatePiecesDefaults (pieces, headers = null) {
   const now = new Date()
   for (const piece of pieces) {
     populatePieceDefaults(piece, headers)
-    if (piece._expires) {
-      if (piece._expires && piece._expires > now) {
+    if (piece._meta.expires) {
+      if (piece._meta.expires > now) {
         nonExpired.push(piece)
       }
     } else {
@@ -484,8 +542,8 @@ export function getSetupCenter (no = getTableNo()) {
 
   // calculate setup center otherwise
   return {
-    x: rect.left + (rect.right - rect.left) / 2,
-    y: rect.top + (rect.bottom - rect.top) / 2
+    x: rect.left + (rect.right - rect.left - 1) / 2,
+    y: rect.top + (rect.bottom - rect.top - 1) / 2
   }
 }
 

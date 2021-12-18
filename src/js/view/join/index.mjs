@@ -23,7 +23,7 @@ import {
   createScreen
 } from '../../view/screen.mjs'
 import {
-  createRoom
+  createRoomView
 } from '../../view/create/index.mjs'
 import {
   runRoom
@@ -168,5 +168,5 @@ function openOrCreate (name) {
         runRoom(room)
       }
     })
-    .catch(() => createRoom(name))
+    .catch(() => createRoomView(name))
 }

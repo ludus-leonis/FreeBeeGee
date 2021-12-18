@@ -23,7 +23,7 @@ import {
 } from '../../../app.mjs'
 import {
   getTemplate,
-  updateTemplate,
+  patchTemplate,
   updateTable,
   getRoom,
   deleteRoom,
@@ -360,7 +360,7 @@ function resizeRoom () {
   const w = Number(_('#table-w').value)
   const h = Number(_('#table-h').value)
   if (w !== template.gridWidth || h !== template.gridHeight) {
-    updateTemplate({
+    patchTemplate({
       gridWidth: w,
       gridHeight: h
     })

@@ -101,7 +101,7 @@ A single-sided *asset* can have a default back side (showing the FBG logo), so i
   ...
   "media": [
     "room.4x4x1.808674.jpg",
-    "###BACK###"
+    "##BACK##"
   ],
   ...
 }
@@ -171,15 +171,15 @@ A minimal *piece* contains the following information:
 In addition, a *piece* can have the following optional properties. If omitted, they default to certain values.
 
 `w`
-: The width of the *piece*, in grid spaces. Defaults to `1`.
+: The size/width of the *piece*, in grid spaces. Defaults to `1`.
 
 `h`
-: The height of the *piece*, in grid spaces. Defaults to `1`.
+: The height of the *piece*, in grid spaces. Defaults to `w` so pieces that only have a width but no height are considered squares.
 
 `r`
 : The rotation of the *piece*. Can be `0`, `60`, `90`, `120`, `180`, `240`, `270`  or `300`. Defaults to `0`.
 
-`side`
+`s`
 : The side of the *piece* currently shown, usually one of its *asset* media files. Defaults to `0`.
 
 `n`
@@ -190,6 +190,9 @@ In addition, a *piece* can have the following optional properties. If omitted, t
 
 `t`
 : An array of optional texts of a *piece*. Currently only the first entry in the array is used. Is used as note's text or as small label next to the *piece* for other types. Defaults to `[]`.
+
+`b`
+: An array of badges of a *piece*. Each entry is the name of one asset of type `tag`. Those are usually displayed in their label.
 
 `expires`
 : Timestamp in seconds-since-epoch when this *piece* expires. It should no longer displayed if that time is reached. Clients should compare it with the `Servertime` HTTP header and not with a local clock value. No `expires` field means no expiration.

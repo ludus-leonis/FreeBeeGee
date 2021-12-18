@@ -47,7 +47,8 @@ import {
 import {
   populatePiecesDefaults,
   clampToTableSize,
-  nameToLayer
+  nameToLayer,
+  sanitizePiecePatch
 } from '../view/room/tabletop/tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -68,32 +69,6 @@ export function getServerInfo () {
  */
 export function setServerInfo (info) {
   serverInfo = info
-}
-
-/**
- * (Re)Fetch the room's state from the API and cache it
- *
- * @param {String} name The current table name.
- * @return {Promise} Promise of room data object.
- */
-export function loadRoom (name) {
-  return apiGetRoom(name, true)
-    .then(remoteRoom => {
-      _setRoom(remoteRoom.body)
-      return remoteRoom
-    })
-    .catch(error => errorRoomGone(error))
-}
-
-/**
- * Reload the current table information.
- *
- * Usefull to update the asset library.
- *
- * @return {Promise} Promise of room data object.
- */
-export function reloadRoom () {
-  return loadRoom(room.name)
 }
 
 /**
@@ -148,38 +123,12 @@ export function getTable (no = getTableNo()) {
 }
 
 /**
- * Update the current template.
- *
- * Supports partial updates.
- *
- * @param {Object} template (Partial) new template data.
- */
-export function updateTemplate (template) {
-  return apiPatchTemplate(room.name, template)
-    .catch(error => errorUnexpected404(error))
-    .finally(() => {
-      syncNow()
-    })
-}
-
-/**
  * Get the current table's template (cached).
  *
  * @return {Object} Current room's template metadata.
  */
 export function getLibrary () {
   return getRoom()?.library
-}
-
-/**
- * Create a new room on the server.
- *
- * @param {Object} room The room object to send to the API.
- * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
- * @return {Object} Promise of created room metadata object.
- */
-export function createRoom (room, snapshot) {
-  return apiPostRoom(room, snapshot)
 }
 
 /**
@@ -229,17 +178,59 @@ export function setTablePreference (pref, value, no = getTableNo()) {
   setStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref, value)
 }
 
+// --- API calls ---------------------------------------------------------------
+
 /**
- * Set the label of a piece of the current table.
+ * Reload the current table information.
  *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
+ * Usefull to update the asset library.
  *
- * @param {String} pieceId ID of piece to change.
- * @param {String} label New label text.
+ * @return {Promise} Promise of room data object.
  */
-export function stateLabelPiece (pieceId, label) {
-  patchPiece(pieceId, { t: [label] })
+export function reloadRoom () {
+  return loadRoom(room.name)
+}
+
+/**
+ * (Re)Fetch the room's state from the API and cache it
+ *
+ * @param {String} name The current table name.
+ * @return {Promise} Promise of room data object.
+ */
+export function loadRoom (name) {
+  return apiGetRoom(name, true)
+    .then(remoteRoom => {
+      _setRoom(remoteRoom.body)
+      return remoteRoom
+    })
+    .catch(error => errorRoomGone(error))
+}
+
+/**
+ * Update the current template.
+ *
+ * Supports partial updates.
+ *
+ * @param {Object} template (Partial) new template data.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
+ */
+export function patchTemplate (template, sync = true) {
+  return apiPatchTemplate(room.name, template)
+    .catch(error => errorUnexpected404(error))
+    .finally(() => {
+      if (sync) syncNow()
+    })
+}
+
+/**
+ * Create a new room on the server.
+ *
+ * @param {Object} room The room object to send to the API.
+ * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
+ * @return {Object} Promise of created room metadata object.
+ */
+export function addRoom (room, snapshot) {
+  return apiPostRoom(room, snapshot)
 }
 
 /**
@@ -252,13 +243,14 @@ export function stateLabelPiece (pieceId, label) {
  * @param {?Number} x New x. Will not be changed if null.
  * @param {?Number} y New y. Will not be changed if null.
  * @param {?Number} z New z. Will not be changed if null.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function movePiece (pieceId, x = null, y = null, z = null) {
-  patchPiece(pieceId, {
-    x: x != null ? x : undefined,
-    y: y != null ? y : undefined,
-    z: z != null ? z : undefined
-  })
+export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
+  const patch = {}
+  if (x != null) patch.x = x
+  if (y != null) patch.y = y
+  if (z != null) patch.z = z
+  return patchPiece(pieceId, sanitizePiecePatch(patch), sync)
 }
 
 /**
@@ -269,9 +261,10 @@ export function movePiece (pieceId, x = null, y = null, z = null) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Number} r New rotation (0, 60, 90, 120, 180, 260, 270).
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function rotatePiece (pieceId, r) {
-  patchPiece(pieceId, { r })
+export function rotatePiece (pieceId, r = 0, sync = true) {
+  return patchPiece(pieceId, sanitizePiecePatch({ r }), sync)
 }
 
 /**
@@ -282,9 +275,10 @@ export function rotatePiece (pieceId, r) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Number} n New number (0..27).
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function numberPiece (pieceId, n) {
-  patchPiece(pieceId, { n })
+export function numberPiece (pieceId, n = 0, sync = true) {
+  return patchPiece(pieceId, sanitizePiecePatch({ n }), sync)
 }
 
 /**
@@ -295,9 +289,10 @@ export function numberPiece (pieceId, n) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Number} side New side. Zero-based.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function flipPiece (pieceId, side) {
-  patchPiece(pieceId, { s: side })
+export function flipPiece (pieceId, side, sync = true) {
+  return patchPiece(pieceId, sanitizePiecePatch({ s: side }, pieceId))
 }
 
 /**
@@ -309,9 +304,14 @@ export function flipPiece (pieceId, side) {
  * @param {String} pieceId ID of piece to change.
  * @param {Number} color1 New color index. Zero-based.
  * @param {Number} color2 New color index. Zero-based.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function colorPiece (pieceId, color1 = 0, color2 = 0) {
-  patchPiece(pieceId, { c: [color1, color2] })
+export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
+  return patchPiece(
+    pieceId,
+    sanitizePiecePatch({ c: [color1, color2] }, pieceId),
+    sync
+  )
 }
 
 /**
@@ -323,11 +323,13 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0) {
  * @param {String} pieceId ID of piece to change.
  * @param {Object} updates All properties to be changed. Unchanged properties
  *                         should be omitted.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function statePieceEdit (pieceID, updates) {
+export function editPiece (pieceId, updates, sync = true) {
   if (Object.keys(updates).length > 0) {
-    patchPiece(pieceID, updates)
+    return patchPiece(pieceId, sanitizePiecePatch(updates, pieceId), sync)
   }
+  return Promise.resolve({}) // nothing to do
 }
 
 /**
@@ -337,12 +339,13 @@ export function statePieceEdit (pieceID, updates) {
  * data model.
  *
  * @param {String} pieceId ID of piece to remove.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function deletePiece (id) {
-  apiDeletePiece(room.name, getTableNo(), id)
+export function deletePiece (pieceId, sync = true) {
+  return apiDeletePiece(room.name, getTableNo(), pieceId)
     .catch(error => errorUnexpected(error))
     .finally(() => {
-      syncNow()
+      if (sync) syncNow()
     })
 }
 
@@ -352,12 +355,13 @@ export function deletePiece (id) {
  * Will replace the existing table.
  *
  * @param {Array} table Array of pieces.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function updateTable (table) {
-  apiPutTable(room.name, getTableNo(), table)
+export function updateTable (table, sync = true) {
+  return apiPutTable(room.name, getTableNo(), table)
     .catch(error => errorUnexpected(error))
     .finally(() => {
-      syncNow()
+      if (sync) syncNow()
     })
 }
 
@@ -367,9 +371,11 @@ export function updateTable (table) {
  * Will do only one state refresh after updating all items in the list.
  *
  * @param {Array} pieces (Partial) pieces to patch.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function updatePieces (pieces) {
-  if (pieces && pieces.length > 0) patchPieces(pieces, true)
+export function updatePieces (pieces, sync = true) {
+  if (pieces && pieces.length > 0) return patchPieces(pieces, sync)
+  return Promise.resolve({}) // nothing to do
 }
 
 /**
@@ -381,22 +387,21 @@ export function updatePieces (pieces) {
  * @param {Boolean} selected If true, the pieces should be selected after
  *                           creating them. Defaults to false.
  * @param {Array} selectIds Ids to select when done. Auto-populated in recursion.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function createPieces (pieces, selected = false, selectIds = []) {
+export function createPieces (pieces, selected = false, selectIds = [], sync = true) {
   let final = false
 
-  if (!pieces || pieces.length <= 0) return
+  if (!pieces || pieces.length <= 0) return Promise.resolve({})
   const piece = pieces.shift()
   return createPiece(clampToTableSize(piece), false)
     .then(id => {
       selectIds.push(id)
       if (pieces.length === 0) final = true
-      if (pieces.length > 0) return createPieces(pieces, selected, selectIds)
+      if (pieces.length > 0) return createPieces(pieces, selected, selectIds, sync)
     })
     .finally(() => {
-      if (final) {
-        syncNow(selected ? selectIds : [], true)
-      }
+      if (final && sync) syncNow(selected ? selectIds : [], true)
     })
 }
 
@@ -536,16 +541,15 @@ function stripPiece (piece) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Object} patch Partial object of fields to send.
- * @param {Object} poll Optional. If true (default), the table will be
- *                 polled after the patch.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  * @return {Object} Promise of the API request.
  */
-function patchPiece (pieceId, patch, poll = true) {
+function patchPiece (pieceId, patch, sync = true) {
   if (patch.l) patch.l = nameToLayer(patch.l)
   return apiPatchPiece(room.name, getTableNo(), pieceId, patch)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
-      if (poll) syncNow()
+      if (sync) syncNow()
     })
 }
 
@@ -553,18 +557,19 @@ function patchPiece (pieceId, patch, poll = true) {
  * Update a piece on the server.
  *
  * @param {Object} patch Array of partial object of fields to send. Must include ids!
- * @param {Object} poll Optional. If true (default), the table will be
- *                 polled after the patch.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  * @return {Object} Promise of the API request.
  */
-function patchPieces (patches, poll = true) {
+function patchPieces (patches, sync = true) {
+  const sane = []
   for (const patch of patches) {
     if (patch.l) patch.l = nameToLayer(patch.l)
+    sane.push(sanitizePiecePatch(patch))
   }
-  return apiPatchPieces(room.name, getTableNo(), patches)
+  return apiPatchPieces(room.name, getTableNo(), sane)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
-      if (poll) syncNow()
+      if (sync) syncNow()
     })
 }
 
@@ -572,11 +577,10 @@ function patchPieces (patches, poll = true) {
  * Create a piece on the server.
  *
  * @param {Object} piece The full piece to send to the server.
- * @param {Object} poll Optional. If true (default), the table will be
- *                 polled after the create.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  * @return {Object} Promise of the ID of the new piece.
  */
-function createPiece (piece, poll = true) {
+function createPiece (piece, sync = true) {
   if (piece.l) piece.l = nameToLayer(piece.l)
   return apiPostPiece(room.name, getTableNo(), stripPiece(piece))
     .then(piece => {
@@ -584,6 +588,6 @@ function createPiece (piece, poll = true) {
     })
     .catch(error => errorUnexpected(error))
     .finally(() => {
-      if (poll) syncNow()
+      if (sync) syncNow()
     })
 }

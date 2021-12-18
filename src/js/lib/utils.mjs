@@ -26,7 +26,10 @@
  * @return {String} Value of parameter. Defaults to '' if parameter is missing.
  */
 export function getGetParameter (name) {
-  const urlParams = new URLSearchParams(globalThis.location.search)
+  if (typeof URLSearchParams === 'undefined') {
+    return ''
+  }
+  const urlParams = new URLSearchParams(globalThis.location?.search)
   return urlParams.get(name) || ''
 }
 
@@ -34,6 +37,8 @@ export function getGetParameter (name) {
  * Get a value from an HTML5 browser store.
  *
  * Assumes there is a stringified JSON with sub-entries in the store.
+ *
+ * Transparent fallback to in-memory map if session store is not available.
  *
  * @param {String} key Name of the store item.
  * @param {String} property Property in the JSON stored in the store item.
@@ -46,12 +51,14 @@ export function getStoreValue (key, property, local = true) {
     const store = local ? globalThis.localStorage : globalThis.sessionStorage
     return JSON.parse(store.getItem(key) ?? '{}')[property]
   } else {
-    return undefined
+    return JSON.parse(fallbackStore.get(key) ?? '{}')[property]
   }
 }
 
 /**
  * Set a value in an HTML5 browser store.
+ *
+ * Transparent fallback to in-memory map if session store is not available.
  *
  * @param {String} key Name of the store item.
  * @param {String} property Property in the JSON stored in the store item.
@@ -65,6 +72,10 @@ export function setStoreValue (key, property, value, local = true) {
     const prefs = JSON.parse(store.getItem(key) ?? '{}')
     prefs[property] = value
     store.setItem(key, JSON.stringify(prefs))
+  } else {
+    const prefs = JSON.parse(fallbackStore.get(key) ?? '{}')
+    prefs[property] = value
+    fallbackStore.set(key, JSON.stringify(prefs))
   }
 }
 
@@ -72,33 +83,53 @@ export function setStoreValue (key, property, value, local = true) {
  * Switch browser to fullscreen or back again.
  */
 export function toggleFullscreen () {
+  if (typeof document === 'undefined') return false
   if (!document.fullscreenElement &&
       !document.mozFullScreenElement &&
       !document.webkitFullscreenElement &&
       !document.msFullscreenElement) {
     if (document.documentElement.requestFullscreen) {
       document.documentElement.requestFullscreen()
+      return true
     } else if (document.documentElement.msRequestFullscreen) {
       document.documentElement.msRequestFullscreen()
+      return true
     } else if (document.documentElement.mozRequestFullScreen) {
       document.documentElement.mozRequestFullScreen()
+      return true
     } else if (document.documentElement.webkitRequestFullscreen) {
       document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT) // eslint-disable-line no-undef
+      return true
     }
   } else {
     if (document.exitFullscreen) {
       document.exitFullscreen()
+      return true
     } else if (document.msExitFullscreen) {
       document.msExitFullscreen()
+      return true
     } else if (document.mozCancelFullScreen) {
       document.mozCancelFullScreen()
+      return true
     } else if (document.webkitExitFullscreen) {
       document.webkitExitFullscreen()
+      return true
     }
   }
+  return false
 }
 
 // --- math --------------------------------------------------------------------
+
+/**
+ * A modulo operation that does not produce negative results.
+ *
+ * @param {Number} n Number to modulo.
+ * @param {Number} m Number to modulo by.
+ */
+export function mod (n, m) {
+  return ((n % m) + m) % m
+}
 
 /**
  * Clamp a value to be between a min and a max value.
@@ -171,11 +202,7 @@ export function snapGrid (x, y, snap, lod = 1) {
   points.push({ x: 0, y: snap })
   points.push({ x: snap, y: snap })
   points.push({ x: snap / 2, y: snap / 2 })
-  const closest = findClosestPoint(
-    (x % snap + snap) % snap,
-    (y % snap + snap) % snap,
-    points
-  )
+  const closest = findClosestPoint(mod(x, snap), mod(y, snap), points)
   return {
     x: Math.round(Math.floor(x / snap) * snap + closest.x),
     y: Math.round(Math.floor(y / snap) * snap + closest.y)
@@ -196,8 +223,8 @@ export function snapHex (x, y, snap, lod = 1) {
   const hexTileX = snap * 1.71875 // 110x64
   const hexTileY = snap
   const hexSide = 37
-  const modX = (x % hexTileX + hexTileX) % hexTileX
-  const modY = (y % hexTileY + hexTileY) % hexTileY
+  const modX = mod(x, hexTileX)
+  const modY = mod(y, hexTileY)
   const tileX = Math.floor(x / hexTileX)
   const tileY = Math.floor(y / hexTileY)
 
@@ -260,6 +287,7 @@ export function shuffle (array) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]]
   }
+  return array
 }
 
 /**
@@ -377,12 +405,12 @@ export function toCamelCase (string) {
 /**
  * Sort an array of objects by string property.
  *
- * @param {Array} pieces Pieces to sort.
- * @param {String} property Property to sort.
+ * @param {Array} objects Array to sort.
+ * @param {String} property Property to sort by.
  * @return {Array} Sorted array.
  */
-export function sortByString (pieces, property) {
-  return pieces.sort((a, b) => {
+export function sortByString (objects, property) {
+  return objects.sort((a, b) => {
     const valueA = (a[property] ?? '').toLowerCase()
     const valueB = (b[property] ?? '').toLowerCase()
     return valueA < valueB ? -1 : +(valueA > valueB)
@@ -445,6 +473,8 @@ export function generateName () {
   verbs[Math.floor(Math.random() * verbs.length)] +
   animals[Math.floor(Math.random() * animals.length)]
 }
+
+const fallbackStore = new Map() // in-memory fallback 'store'
 
 /** An array of all the letters A-Z. */
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']

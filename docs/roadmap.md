@@ -4,6 +4,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.13 - ??? ???
 
+* [ ] change backgrounds from room to server setting
 * [ ] elemental status icons
 * [ ] table passwords
 * [ ] LOS-ruler

@@ -22,14 +22,16 @@ import { expect } from 'chai'
 import {
   _setTable,
   _setRoom,
-  getTable,
   setTableNo
 } from '../../src/js/state/index.mjs'
 import {
   findPiece,
   findAsset,
+  findAssetByAlias,
+  getTopLeftPx,
   getPieceBounds,
   findPiecesWithin,
+  findExpiredPieces,
   populatePieceDefaults,
   populatePiecesDefaults,
   sortZ,
@@ -38,7 +40,11 @@ import {
   getContentRect,
   clampToTableSize,
   createPieceFromAsset,
-  splitAssetFilename
+  splitAssetFilename,
+  getAssetURL,
+  sanitizePiecePatch,
+  snap,
+  getSetupCenter
 } from '../../src/js/view/room/tabletop/tabledata.mjs'
 
 const TEST_STATE = 5
@@ -55,6 +61,16 @@ function setupTestData () {
   setTableNo(1, false)
 }
 
+function nowEpoch () {
+  return Math.floor(new Date().getTime() / 1000)
+}
+
+function headers () {
+  return new Map([
+    ['servertime', nowEpoch()]
+  ])
+}
+
 describe('Frontend - tabledata.mjs', function () {
   beforeEach(function () {
     setupTestData()
@@ -64,15 +80,15 @@ describe('Frontend - tabledata.mjs', function () {
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
       if (i === TEST_STATE) {
-        expect(findPiece()).to.be.eq(null)
-        expect(findPiece('f45f27b57498c3be')).to.be.eq(null)
+        expect(findPiece()).to.be.eql(null)
+        expect(findPiece('f45f27b57498c3be')).to.be.eql(null)
         expect(findPiece('fe008a4da3b2511e')).to.be.an('object')
-        expect(findPiece('fe008a4da3b2511e').id).to.be.eq('fe008a4da3b2511e')
+        expect(findPiece('fe008a4da3b2511e').id).to.be.eql('fe008a4da3b2511e')
       } else {
         setTableNo(i, false)
-        expect(findPiece()).to.be.eq(null)
-        expect(findPiece('f45f27b57498c3be')).to.be.eq(null)
-        expect(findPiece('fe008a4da3b2511e')).to.be.eq(null)
+        expect(findPiece()).to.be.eql(null)
+        expect(findPiece('f45f27b57498c3be')).to.be.eql(null)
+        expect(findPiece('fe008a4da3b2511e')).to.be.eql(null)
       }
     }
   })
@@ -82,31 +98,78 @@ describe('Frontend - tabledata.mjs', function () {
       setTableNo(i, false)
 
       // invalid searches
-      expect(findAsset()).to.be.eq(null)
-      expect(findAsset('f9d05a1ecec3ecb8')).to.be.eq(null)
+      expect(findAsset()).to.be.eql(null)
+      expect(findAsset('f9d05a1ecec3ecb8')).to.be.eql(null)
 
       // valid default searches
       expect(findAsset('f45f27b57498c3be')).to.be.an('object')
-      expect(findAsset('f45f27b57498c3be').id).to.be.eq('f45f27b57498c3be')
+      expect(findAsset('f45f27b57498c3be').id).to.be.eql('f45f27b57498c3be')
 
       // valid limited searches
       expect(findAsset('f45f27b57498c3be', 'other')).to.be.an('object')
-      expect(findAsset('f45f27b57498c3be', 'other').id).to.be.eq('f45f27b57498c3be')
+      expect(findAsset('f45f27b57498c3be', 'other').id).to.be.eql('f45f27b57498c3be')
 
       // invalid limited searches
-      expect(findAsset('f45f27b57498c3be', 'tile')).to.be.eq(null)
-      expect(findAsset('f45f27b57498c3be', 'token')).to.be.eq(null)
-      expect(findAsset('f45f27b57498c3be', 'overlay')).to.be.eq(null)
+      expect(findAsset('f45f27b57498c3be', 'tile')).to.be.eql(null)
+      expect(findAsset('f45f27b57498c3be', 'token')).to.be.eql(null)
+      expect(findAsset('f45f27b57498c3be', 'overlay')).to.be.eql(null)
     }
+  })
+
+  it('findAssetByAlias()', function () {
+    for (let i = 1; i <= 9; i++) {
+      setTableNo(i, false)
+
+      // invalid searches
+      expect(findAssetByAlias()).to.be.eql(null)
+      expect(findAssetByAlias('f9d05a1ecec3ecb8')).to.be.eql(null)
+      expect(findAssetByAlias('f45f27b57498c3be')).to.be.eql(null)
+      expect(findAssetByAlias('f45f27b57498c3be', 'nolayer')).to.be.eql(null)
+
+      // valid default searches
+      expect(findAssetByAlias('classic.a')).to.be.an('object')
+      expect(findAssetByAlias('classic.a').id).to.be.eql('f45f27b57498c3be')
+
+      // valid limited searches
+      expect(findAssetByAlias('classic.a', 'other')).to.be.an('object')
+      expect(findAssetByAlias('classic.a', 'other').id).to.be.eql('f45f27b57498c3be')
+
+      // invalid limited searches
+      expect(findAssetByAlias('classic.a', 'tile')).to.be.eql(null)
+      expect(findAssetByAlias('classic.a', 'token')).to.be.eql(null)
+      expect(findAssetByAlias('classic.a', 'overlay')).to.be.eql(null)
+      expect(findAssetByAlias('classic.a', 'nolayer')).to.be.eql(null)
+    }
+  })
+
+  it('getAssetURL()', function () {
+    const asset = findAsset('f45f27b57498c3be')
+
+    expect(getAssetURL(asset, -1)).to.be.eql(
+      'api/data/rooms/testroom/assets/other/classic.a.1x1x0.png'
+    )
+    expect(getAssetURL(asset, 0)).to.be.eql(
+      'api/data/rooms/testroom/assets/other/classic.a.1x1x1.svg'
+    )
+    expect(getAssetURL(asset, 1)).to.be.eql(
+      'api/data/rooms/testroom/assets/other/classic.a.1x1x2.svg'
+    )
+  })
+
+  it('getTopLeftPx()', function () {
+    const piece = populatePieceDefaults(JSON.parse(pieceJSON))
+    const xy = getTopLeftPx(piece)
+    expect(xy.left).to.be.eql((256 - 0 * 64 - 64 / 2) + 'px')
+    expect(xy.top).to.be.eql((192 - 0 * 64 - 64 / 2) + 'px')
   })
 
   it('getPieceBounds()', function () {
     const piece = populatePieceDefaults(JSON.parse(pieceJSON))
     const bonds = getPieceBounds(piece)
-    expect(bonds.left).to.be.eq(256 - 0 * 64 - 64 / 2)
-    expect(bonds.right).to.be.eq(256 + 0 * 64 + 64 / 2 - 1)
-    expect(bonds.top).to.be.eq(192 - 0 * 64 - 64 / 2)
-    expect(bonds.bottom).to.be.eq(192 + 0 * 64 + 64 / 2 - 1)
+    expect(bonds.left).to.be.eql(256 - 0 * 64 - 64 / 2)
+    expect(bonds.right).to.be.eql(256 + 0 * 64 + 64 / 2 - 1)
+    expect(bonds.top).to.be.eql(192 - 0 * 64 - 64 / 2)
+    expect(bonds.bottom).to.be.eql(192 + 0 * 64 + 64 / 2 - 1)
   })
 
   it('findPiecesWithin()', function () {
@@ -114,104 +177,304 @@ describe('Frontend - tabledata.mjs', function () {
       setTableNo(i, false)
 
       // always invalid searches
-      expect(findPiecesWithin({ left: 0, top: 0, right: 0, bottom: 0 }).length).to.be.eq(0)
-      expect(findPiecesWithin({ left: 0, top: 0, right: 100, bottom: 100 }).length).to.be.eq(0)
-      expect(findPiecesWithin({ left: 100, top: 100, right: -100, bottom: -100 }).length).to.be.eq(0)
+      expect(findPiecesWithin({ left: 0, top: 0, right: 0, bottom: 0 }).length).to.be.eql(0)
+      expect(findPiecesWithin({ left: 0, top: 0, right: 100, bottom: 100 }).length).to.be.eql(0)
+      expect(findPiecesWithin({ left: 100, top: 100, right: -100, bottom: -100 }).length).to.be.eql(0)
 
       if (i === TEST_STATE) {
         // all layers
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 256 - 32, top: 192 - 32, right: 256 + 31, bottom: 192 + 31 }, 'all', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'all', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'all', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'all', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 256 - 32, top: 192 - 32, right: 256 + 31, bottom: 192 + 31 }, 'all', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'all', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'all', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'all', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eql(0)
 
         // correct layer
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'other', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'other', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'other', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'other', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(1)
-        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'other', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'other', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'other', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'other', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eql(0)
 
         // wrong layer
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eql(0)
       } else {
         // all layers
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'all', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'all', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'all', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'all', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eql(0)
 
         // 'correct' layer
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'other', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'other', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'other', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'other', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'other', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'other', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'other', i).length).to.be.eql(0)
 
         // wrong layer
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'tile', i).length).to.be.eq(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eq(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, 'tile', i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'tile', i).length).to.be.eql(0)
       }
     }
   })
 
+  it('findExpiredPieces()', function () {
+    // no expiration
+    let piece = JSON.parse(pieceJSON)
+    piece = populatePieceDefaults(piece, headers())
+    _setTable(TEST_STATE, [piece])
+    expect(findExpiredPieces(1).length).to.be.eql(0)
+    expect(findExpiredPieces(TEST_STATE).length).to.be.eql(0)
+    expect(findExpiredPieces().length).to.be.eql(0)
+
+    // past expiration
+    piece = JSON.parse(pieceJSON)
+    piece.expires = nowEpoch() - 10
+    piece = populatePieceDefaults(piece, headers())
+    _setTable(TEST_STATE, [piece])
+    expect(findExpiredPieces(1).length).to.be.eql(0)
+    expect(findExpiredPieces(TEST_STATE).length).to.be.eql(1)
+    setTableNo(2, false)
+    expect(findExpiredPieces().length).to.be.eql(0)
+    setTableNo(TEST_STATE, false)
+    expect(findExpiredPieces().length).to.be.eql(1)
+
+    // future expiration
+    piece = JSON.parse(pieceJSON)
+    piece.expires = nowEpoch() + 10
+    piece = populatePieceDefaults(piece, headers())
+    _setTable(TEST_STATE, [piece])
+    expect(findExpiredPieces(1).length).to.be.eql(0)
+    expect(findExpiredPieces(TEST_STATE).length).to.be.eql(0)
+    expect(findExpiredPieces().length).to.be.eql(0)
+  })
+
+  it('sanitizePiecePatch()', function () {
+    const expires = nowEpoch()
+    setTableNo(TEST_STATE, false)
+
+    let patch = {}
+    expect(sanitizePiecePatch(patch)).to.be.eql({})
+    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({})
+
+    patch = { unknown: 1, another: 2 }
+    expect(sanitizePiecePatch(patch)).to.be.eql({})
+    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({})
+
+    patch = {
+      id: 'fe008a4da3b2511e',
+      a: 'f45f27b57498c3be',
+      b: 'blind',
+      c: [1, 2],
+      x: 111,
+      y: 222,
+      z: 333,
+      r: 180,
+      w: 3,
+      h: 4,
+      l: 1,
+      s: 0,
+      n: 8,
+      t: ['one', 'more', 'time'],
+      expires: expires
+    }
+    expect(sanitizePiecePatch(patch)).not.to.be.eq(patch) // check for new object
+    expect(sanitizePiecePatch(patch)).to.be.eql(patch)
+    expect(sanitizePiecePatch(patch, 'invalid')).not.to.be.eq(patch) // check for new object
+    expect(sanitizePiecePatch(patch, 'invalid')).to.be.eql(patch)
+    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).not.to.be.eq(patch) // check for new object
+    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql(patch)
+
+    // check too low values
+    patch = {
+      id: 'fe008a4da3b2511e',
+      a: 'f45f27b57498c3be',
+      b: 'blind',
+      c: [-1, -9], // 3 colors in template
+      x: -111,
+      y: -222,
+      z: -333,
+      r: -180,
+      w: -3,
+      h: -4,
+      l: -1,
+      s: -1, // asset has 3 sides
+      n: -1,
+      t: ['one', 'more', 'time'],
+      expires: -expires
+    }
+    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({
+      id: 'fe008a4da3b2511e',
+      a: 'f45f27b57498c3be',
+      b: 'blind',
+      c: [2, 0],
+      x: 0,
+      y: 0,
+      z: -333,
+      r: 180,
+      w: 1,
+      h: 1,
+      l: -1,
+      s: 2,
+      n: 15,
+      t: ['one', 'more', 'time'],
+      expires: -expires
+    })
+
+    // check too high values
+    patch = {
+      id: 'fe008a4da3b2511e',
+      a: 'f45f27b57498c3be',
+      b: 'blind',
+      c: [4, 10], // 3 colors in template
+      x: 11111,
+      y: 22222,
+      z: 33333,
+      r: 180 + 360,
+      w: 36,
+      h: 37,
+      l: 99,
+      s: 4, // asset has 3 sides
+      n: 17,
+      t: ['one', 'more', 'time'],
+      expires: expires
+    }
+    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({
+      id: 'fe008a4da3b2511e',
+      a: 'f45f27b57498c3be',
+      b: 'blind',
+      c: [1, 1],
+      x: 3071,
+      y: 2047,
+      z: 33333,
+      r: 180,
+      w: 32,
+      h: 32,
+      l: 99,
+      s: 1,
+      n: 1,
+      t: ['one', 'more', 'time'],
+      expires: expires
+    })
+  })
+
   it('populatePieceDefaults()', function () {
     const p1 = populatePieceDefaults({})
-    expect(p1.w).to.be.eq(1)
-    expect(p1.h).to.be.eq(1)
-    expect(p1.s).to.be.eq(0)
-    expect(p1.c[0]).to.be.eq(0)
-    expect(p1.r).to.be.eq(0)
-    expect(p1.n).to.be.eq(0)
-    expect(p1.t.length).to.be.eq(0)
-    expect(p1._meta.feature).to.be.eq(undefined)
+    expect(Object.keys(p1)).to.have.members(['l', 'w', 'h', 's', 'c', 'r', 'n', 't', 'b', '_meta'])
+    expect(p1.w).to.be.eql(1)
+    expect(p1.h).to.be.eql(1)
+    expect(p1.s).to.be.eql(0)
+    expect(p1.c.length).to.be.eql(2)
+    expect(p1.c[0]).to.be.eql(0)
+    expect(p1.c[1]).to.be.eql(0)
+    expect(p1.r).to.be.eql(0)
+    expect(p1.n).to.be.eql(0)
+    expect(p1.t.length).to.be.eql(0)
+    expect(p1.b.length).to.be.eql(0)
+    expect(p1._meta.widthPx).to.be.eql(64)
+    expect(p1._meta.heightPx).to.be.eql(64)
+    expect(p1._meta.originWidthPx).to.be.eql(64)
+    expect(p1._meta.originHeightPx).to.be.eql(64)
+    expect(p1._meta.originOffsetXPx).to.be.eql(0)
+    expect(p1._meta.originOffsetYPx).to.be.eql(0)
+    expect(p1._meta.mask).to.be.eql(undefined)
+    expect(p1._meta.feature).to.be.eql(undefined)
+    expect(p1._meta.expires).to.be.eql(undefined)
 
-    const p2 = populatePieceDefaults(JSON.parse(pieceJSON))
-    expect(p2.w).to.be.eq(1)
-    expect(p2.h).to.be.eq(1)
-    expect(p2.s).to.be.eq(4)
-    expect(p2.c[0]).to.be.eq(0)
-    expect(p2.r).to.be.eq(0)
-    expect(p2.n).to.be.eq(0)
-    expect(p2.t.length).to.be.eq(0)
-    expect(p2._meta.feature).to.be.eq(undefined)
+    const p2 = populatePieceDefaults(JSON.parse(pieceJSON2), headers())
+    expect(p2.w).to.be.eql(2)
+    expect(p2.h).to.be.eql(1)
+    expect(p2.s).to.be.eql(4)
+    expect(p2.c.length).to.be.eql(2)
+    expect(p2.c[0]).to.be.eql(0)
+    expect(p2.c[1]).to.be.eql(0)
+    expect(p2.r).to.be.eql(90)
+    expect(p2.n).to.be.eql(0)
+    expect(p2.b.length).to.be.eql(0)
+    expect(p2.t.length).to.be.eql(0)
+    expect(p2._meta.originWidthPx).to.be.eql(128)
+    expect(p2._meta.originHeightPx).to.be.eql(64)
+    expect(p2._meta.widthPx).to.be.eql(64)
+    expect(p2._meta.heightPx).to.be.eql(128)
+    expect(p2._meta.originOffsetXPx).to.be.eql(32)
+    expect(p2._meta.originOffsetYPx).to.be.eql(-32)
+    expect(p2._meta.mask).to.be.eql(undefined)
+    expect(p2._meta.feature).to.be.eql('DISCARD')
+    expect(p2._meta.expires).to.be.gte(new Date())
 
     const p3 = populatePieceDefaults({ a: 'dd07ac49818bc000' })
-    expect(p3._meta.feature).to.be.eq('DISCARD')
+    expect(p3._meta.feature).to.be.eql('DISCARD')
 
     const p4 = populatePieceDefaults({ a: 'bb07ac49818bc000' })
-    expect(p4._meta.feature).to.be.eq('DICEMAT')
+    expect(p4._meta.feature).to.be.eql('DICEMAT')
   })
 
   it('populatePiecesDefaults()', function () {
-    const p = populatePiecesDefaults([{ w: 1 }, { w: 2 }, { w: 3 }])
+    let p = populatePiecesDefaults([{ w: 1 }, { w: 2 }, { w: 3 }])
     for (let i = 0; i <= 1; i++) {
-      expect(p[i].w).to.be.eq(i + 1)
-      expect(p[i].h).to.be.eq(1)
-      expect(p[i].s).to.be.eq(0)
-      expect(p[i].c[0]).to.be.eq(0)
-      expect(p[i].r).to.be.eq(0)
-      expect(p[i].n).to.be.eq(0)
-      expect(p[i].t.length).to.be.eq(0)
-      expect(p[i]._meta.feature).to.be.eq(undefined)
+      expect(p[i].w).to.be.eql(i + 1)
+      expect(p[i].h).to.be.eql(i + 1)
+      expect(p[i].s).to.be.eql(0)
+      expect(p[i].c[0]).to.be.eql(0)
+      expect(p[i].r).to.be.eql(0)
+      expect(p[i].n).to.be.eql(0)
+      expect(p[i].t.length).to.be.eql(0)
+      expect(p[i]._meta.feature).to.be.eql(undefined)
+    }
+
+    // autoremoves expired
+    p = populatePiecesDefaults([{}], headers())
+    expect(p.length).to.be.eql(1)
+    p = populatePiecesDefaults([{ expires: nowEpoch() - 10 }], headers())
+    expect(p.length).to.be.eql(0)
+    p = populatePiecesDefaults([{ expires: nowEpoch() + 10 }], headers())
+    expect(p.length).to.be.eql(1)
+  })
+
+  it('getMinZ()', function () {
+    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
+
+    for (let i = 1; i <= 9; i++) {
+      setTableNo(i, false)
+      if (i === TEST_STATE) {
+        expect(getMinZ('tile')).to.be.eql(56)
+        expect(getMinZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(58)
+        expect(getMinZ('token')).to.be.eql(34)
+        expect(getMinZ('token', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ('overlay')).to.be.eql(0)
+        expect(getMinZ('overlay', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ('other')).to.be.eql(0)
+        expect(getMinZ('other', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ()).to.be.eql(34)
+      } else {
+        expect(getMinZ('tile')).to.be.eql(0)
+        expect(getMinZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ('token')).to.be.eql(0)
+        expect(getMinZ('token', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ('overlay')).to.be.eql(0)
+        expect(getMinZ('overlay', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ('other')).to.be.eql(0)
+        expect(getMinZ('other', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ()).to.be.eql(0)
+      }
     }
   })
 
@@ -227,39 +490,10 @@ describe('Frontend - tabledata.mjs', function () {
     pieces[2].z = 3
     pieces[3].z = 1
     const b = sortZ(pieces)
-    expect(b[0].z).to.be.eq(3)
-    expect(b[1].z).to.be.eq(2)
-    expect(b[2].z).to.be.eq(1)
-    expect(b[3].z).to.be.eq(-1)
-  })
-
-  it('getMinZ()', function () {
-    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
-
-    for (let i = 1; i <= 9; i++) {
-      setTableNo(i, false)
-      if (i === TEST_STATE) {
-        expect(getMinZ('tile')).to.be.eq(56)
-        expect(getMinZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(58)
-        expect(getMinZ('token')).to.be.eq(34)
-        expect(getMinZ('token', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMinZ('overlay')).to.be.eq(0)
-        expect(getMinZ('overlay', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMinZ('other')).to.be.eq(0)
-        expect(getMinZ('other', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMinZ()).to.be.eq(34)
-      } else {
-        expect(getMinZ('tile')).to.be.eq(0)
-        expect(getMinZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMinZ('token')).to.be.eq(0)
-        expect(getMinZ('token', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMinZ('overlay')).to.be.eq(0)
-        expect(getMinZ('overlay', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMinZ('other')).to.be.eq(0)
-        expect(getMinZ('other', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMinZ()).to.be.eq(0)
-      }
-    }
+    expect(b[0].z).to.be.eql(3)
+    expect(b[1].z).to.be.eql(2)
+    expect(b[2].z).to.be.eql(1)
+    expect(b[3].z).to.be.eql(-1)
   })
 
   it('getMaxZ()', function () {
@@ -268,25 +502,25 @@ describe('Frontend - tabledata.mjs', function () {
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
       if (i === TEST_STATE) {
-        expect(getMaxZ('tile')).to.be.eq(65)
-        expect(getMaxZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(58)
-        expect(getMaxZ('token')).to.be.eq(35)
-        expect(getMaxZ('token', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMaxZ('overlay')).to.be.eq(0)
-        expect(getMaxZ('overlay', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMaxZ('other')).to.be.eq(0)
-        expect(getMaxZ('other', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMaxZ()).to.be.eq(65)
+        expect(getMaxZ('tile')).to.be.eql(65)
+        expect(getMaxZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(58)
+        expect(getMaxZ('token')).to.be.eql(35)
+        expect(getMaxZ('token', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ('overlay')).to.be.eql(0)
+        expect(getMaxZ('overlay', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ('other')).to.be.eql(0)
+        expect(getMaxZ('other', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ()).to.be.eql(65)
       } else {
-        expect(getMaxZ('tile')).to.be.eq(0)
-        expect(getMaxZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMaxZ('token')).to.be.eq(0)
-        expect(getMaxZ('token', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMaxZ('overlay')).to.be.eq(0)
-        expect(getMaxZ('overlay', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMaxZ('other')).to.be.eq(0)
-        expect(getMaxZ('other', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eq(0)
-        expect(getMaxZ()).to.be.eq(0)
+        expect(getMaxZ('tile')).to.be.eql(0)
+        expect(getMaxZ('tile', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ('token')).to.be.eql(0)
+        expect(getMaxZ('token', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ('overlay')).to.be.eql(0)
+        expect(getMaxZ('overlay', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ('other')).to.be.eql(0)
+        expect(getMaxZ('other', { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ()).to.be.eql(0)
       }
     }
   })
@@ -298,59 +532,77 @@ describe('Frontend - tabledata.mjs', function () {
       setTableNo(i, false)
       if (i === TEST_STATE) {
         const r1 = getContentRect()
-        expect(r1.left).to.be.eq(704)
-        expect(r1.top).to.be.eq(64)
-        expect(r1.right).to.be.eq(1375)
-        expect(r1.bottom).to.be.eq(767)
-        expect(r1.width).to.be.eq(672)
-        expect(r1.height).to.be.eq(704)
+        expect(r1.left).to.be.eql(704)
+        expect(r1.top).to.be.eql(64)
+        expect(r1.right).to.be.eql(1375)
+        expect(r1.bottom).to.be.eql(767)
+        expect(r1.width).to.be.eql(672)
+        expect(r1.height).to.be.eql(704)
       } else {
         const r1 = getContentRect()
-        expect(r1.left).to.be.eq(0)
-        expect(r1.top).to.be.eq(0)
-        expect(r1.right).to.be.eq(0)
-        expect(r1.bottom).to.be.eq(0)
-        expect(r1.width).to.be.eq(0)
-        expect(r1.height).to.be.eq(0)
+        expect(r1.left).to.be.eql(0)
+        expect(r1.top).to.be.eql(0)
+        expect(r1.right).to.be.eql(0)
+        expect(r1.bottom).to.be.eql(0)
+        expect(r1.width).to.be.eql(0)
+        expect(r1.height).to.be.eql(0)
       }
 
       const r2 = getContentRect(2)
-      expect(r2.left).to.be.eq(0)
-      expect(r2.top).to.be.eq(0)
-      expect(r2.right).to.be.eq(0)
-      expect(r2.bottom).to.be.eq(0)
-      expect(r2.width).to.be.eq(0)
-      expect(r2.height).to.be.eq(0)
+      expect(r2.left).to.be.eql(0)
+      expect(r2.top).to.be.eql(0)
+      expect(r2.right).to.be.eql(0)
+      expect(r2.bottom).to.be.eql(0)
+      expect(r2.width).to.be.eql(0)
+      expect(r2.height).to.be.eql(0)
 
       const r3 = getContentRect(TEST_STATE)
-      expect(r3.left).to.be.eq(704)
-      expect(r3.top).to.be.eq(64)
-      expect(r3.right).to.be.eq(1375)
-      expect(r3.bottom).to.be.eq(767)
-      expect(r3.width).to.be.eq(672)
-      expect(r3.height).to.be.eq(704)
+      expect(r3.left).to.be.eql(704)
+      expect(r3.top).to.be.eql(64)
+      expect(r3.right).to.be.eql(1375)
+      expect(r3.bottom).to.be.eql(767)
+      expect(r3.width).to.be.eql(672)
+      expect(r3.height).to.be.eql(704)
     }
+  })
+
+  it('createPieceFromAsset()', function () {
+    const piece = createPieceFromAsset('bb07ac49818bc000')
+    expect(piece.a).to.be.eql('bb07ac49818bc000')
+    expect(piece.l).to.be.eql('other')
+    expect(piece.w).to.be.eql(4)
+    expect(piece.h).to.be.eql(4)
+    expect(piece.x).to.be.eql(0)
+    expect(piece.y).to.be.eql(0)
+    expect(piece.z).to.be.eql(1)
+    expect(piece.s).to.be.eql(0)
+    expect(piece.c[0]).to.be.eql(0)
+    expect(piece.r).to.be.eql(0)
+    expect(piece.n).to.be.eql(0)
+    expect(piece.t.length).to.be.eql(0)
+    expect(piece._meta.sides).to.be.eql(2)
+    expect(piece._meta.feature).to.be.eql('DICEMAT')
   })
 
   it('clampToTableSize()', function () {
     const piece1 = populatePieceDefaults(JSON.parse(pieceJSON))
     clampToTableSize(piece1)
-    expect(piece1.x).to.be.eq(256)
-    expect(piece1.y).to.be.eq(192)
+    expect(piece1.x).to.be.eql(256)
+    expect(piece1.y).to.be.eql(192)
 
     const piece2 = populatePieceDefaults(JSON.parse(pieceJSON))
     piece2.x = -10
     piece2.y = -20
     clampToTableSize(piece2)
-    expect(piece2.x).to.be.eq(0)
-    expect(piece2.y).to.be.eq(0)
+    expect(piece2.x).to.be.eql(0)
+    expect(piece2.y).to.be.eql(0)
 
     const piece3 = populatePieceDefaults(JSON.parse(pieceJSON))
     piece3.x = 50000
     piece3.y = 60000
     clampToTableSize(piece3)
-    expect(piece3.x).to.be.eq(47 * 64)
-    expect(piece3.y).to.be.eq(31 * 64)
+    expect(piece3.x).to.be.eql(47 * 64)
+    expect(piece3.y).to.be.eql(31 * 64)
 
     const piece4 = populatePieceDefaults(JSON.parse(pieceJSON))
     piece4.x = 50000
@@ -358,26 +610,38 @@ describe('Frontend - tabledata.mjs', function () {
     piece4.w = 3
     piece4.h = 2
     clampToTableSize(piece4)
-    expect(piece4.x).to.be.eq((47 - 2) * 64)
-    expect(piece4.y).to.be.eq((31 - 1) * 64)
+    expect(piece4.x).to.be.eql((47 - 2) * 64)
+    expect(piece4.y).to.be.eql((31 - 1) * 64)
   })
 
-  it('createPieceFromAsset()', function () {
-    const piece = createPieceFromAsset('bb07ac49818bc000')
-    expect(piece.a).to.be.eq('bb07ac49818bc000')
-    expect(piece.l).to.be.eq('other')
-    expect(piece.w).to.be.eq(4)
-    expect(piece.h).to.be.eq(4)
-    expect(piece.x).to.be.eq(0)
-    expect(piece.y).to.be.eq(0)
-    expect(piece.z).to.be.eq(1)
-    expect(piece.s).to.be.eq(0)
-    expect(piece.c[0]).to.be.eq(0)
-    expect(piece.r).to.be.eq(0)
-    expect(piece.n).to.be.eq(0)
-    expect(piece.t.length).to.be.eq(0)
-    expect(piece._meta.sides).to.be.eq(2)
-    expect(piece._meta.feature).to.be.eq('DICEMAT')
+  it('snap()', function () { // hint - more in-depth snapping tests in utils-test
+    const room = JSON.parse(roomJSON)
+
+    // grid-room snapping
+    room.template.type = 'grid-square'
+    _setRoom(room)
+    expect(snap(31, -1).x).to.be.eql(32)
+    expect(snap(31, -1).y).to.be.eql(0)
+
+    // hex-room snapping
+    room.template.type = 'grid-hex'
+    _setRoom(room)
+    expect(snap(31, -1).x).to.be.eql(37)
+    expect(snap(31, -1).y).to.be.eql(0)
+  })
+
+  it('getSetupCenter()', function () {
+    // current table
+    expect(getSetupCenter().x).to.be.eql(1536)
+    expect(getSetupCenter().y).to.be.eql(1024)
+
+    // empty table
+    expect(getSetupCenter(2).x).to.be.eql(1536)
+    expect(getSetupCenter(2).y).to.be.eql(1024)
+
+    // full table
+    expect(getSetupCenter(TEST_STATE).x).to.be.eql(255)
+    expect(getSetupCenter(TEST_STATE).y).to.be.eql(191)
   })
 
   it('splitAssetFilename()', function () {
@@ -436,6 +700,21 @@ const pieceJSON = `
   "s": 4
 }`
 
+const pieceJSON2 = `
+{
+  "id": "fe008a4da3b2511e",
+  "l": 5,
+  "a": "dd07ac49818bc000",
+  "x": 256,
+  "y": 192,
+  "w": 2,
+  "h": 1,
+  "r": 90,
+  "z": 13,
+  "s": 4,
+  "expires": ${nowEpoch() + 10}
+}` // discard item
+
 const tableJSON = `
 [{
   "l": 1,
@@ -483,7 +762,7 @@ const tableJSON = `
 const roomJSON = `
 {
   "id": "f9d05a1ecec3ecb8",
-  "name": "selfishExaminingBaboon",
+  "name": "testroom",
   "engine": "0.3.0",
   "background": {
     "color": "#423e3d",
@@ -536,7 +815,7 @@ const roomJSON = `
       "type": "other",
       "id": "bb07ac49818bc000"
     }, {
-      "media": ["discard.4x4x1.jpg"],
+      "media": ["discard.4x4x1.png"],
       "w": 4,
       "h": 4,
       "bg": "#808080",
