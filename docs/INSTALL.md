@@ -81,7 +81,7 @@ However, if you want to build FreeBeeGee yourself, you'll need `git`, `php` v7.2
 git clone --depth 1 https://github.com/ludus-leonis/FreeBeeGee
 cd FreeBeeGee
 npm install
-gulp release
+npm run gulp release
 ```
 
 The archives can now be found in the `dist/` folder.

@@ -21,7 +21,7 @@
 
 // -----------------------------------------------------------------------------
 
-// Mocha / Chai tests for the API. To run them, you have to `gulp dist-test` and
+// Mocha / Chai tests for the API. To run them, you have to `npm run gulp dist-test` and
 // serve dist/FreeBeeGee/ using local webservers. Then run `npm test`.
 // Danger: the tests make destructive calls, so don't run against a live version.
 

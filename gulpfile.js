@@ -349,7 +349,7 @@ gulp.task('build', gulp.parallel(
 
 gulp.task('dist', gulp.parallel('build'))
 
-gulp.task('dist-test', gulp.series('dist', () => {
+gulp.task('dist-test', gulp.series('dist', 'clean', () => {
   return replace(gulp.src([
     'test/data/server.json'
   ]))
