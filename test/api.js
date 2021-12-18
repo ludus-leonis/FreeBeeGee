@@ -746,7 +746,8 @@ function testApiIssues (api, versionOK) {
 // --- the test runners --------------------------------------------------------
 
 function runTests (version) {
-  const api = `http://play${version}.local/api`
+  // const api = `http://play${version}.local/api`
+  const api = 'http://localhost:8765/api'
   describe('API Server-Info', () => testApiServerInfo(api))
   describe('API Templates', () => testApiTemplates(api))
   describe('CRUD room', () => testApiCrudRoom(api, version))
@@ -758,7 +759,7 @@ function runTests (version) {
   describe('self diagnosis', () => testApiIssues(api, version !== '72'))
 }
 
-describe('PHP 7.2', function () { runTests('72') })
-describe('PHP 7.3', function () { runTests('73') })
-describe('PHP 7.4', function () { runTests('74') })
+// describe('PHP 7.2', function () { runTests('72') })
+// describe('PHP 7.3', function () { runTests('73') })
+// describe('PHP 7.4', function () { runTests('74') })
 describe('PHP 8.0', function () { runTests('80') })

@@ -16,6 +16,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] update screenshots
   * [ ] review docs
   * [ ] review + run tests
+    * [X] document how to run tests
     * [X] add more PHP unit tests
     * [ ] add more JS unit tests
     * [ ] add more integration/API tests
