@@ -37,7 +37,7 @@ $piece-shadow-y: 2;
 $piece-shadow-direction: math.atan(math.div($piece-shadow-x, $piece-shadow-y));
 $piece-shadow-length: math.sqrt($piece-shadow-x * $piece-shadow-x + $piece-shadow-y * $piece-shadow-y);
 
-$piece-highlights: 1.5px 1.5px 1px -.5px $color-white-25a inset, -1.5px -1.5px 1px -.5px $color-black-35a inset;
+$piece-highlights: 1px 1px .5px 0 $color-white-15a inset, -1px -1px .5px 0 $color-black-20a inset;
 
 @function piece-shadow($deg, $blur, $color) {
   @return

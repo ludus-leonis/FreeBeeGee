@@ -500,9 +500,16 @@ export function pieceToNode (piece) {
           '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
         })
       } else { // regular asset
-        node = _(`.piece.piece-${asset.type}`).create().css({
-          backgroundImage: 'url("' + encodeURI(uriSide) + '")'
-        })
+        if (asset.tx) {
+          node = _(`.piece.piece-${asset.type}`).create().css({
+            backgroundImage: `url("img/material-${asset.tx}.png"),url("${encodeURI(uriSide)}")`,
+            backgroundSize: '256px, cover'
+          })
+        } else {
+          node = _(`.piece.piece-${asset.type}`).create().css({
+            backgroundImage: 'url("' + encodeURI(uriSide) + '")'
+          })
+        }
       }
     }
 

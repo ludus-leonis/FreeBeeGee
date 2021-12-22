@@ -637,7 +637,7 @@ class FreeBeeGeeAPI
      * @param string $filename Filename to parse
      * @return object Asset object (for JSON conversion).
      */
-    private function fileToAsset(
+    public static function fileToAsset(
         $filename
     ) {
         $asset = new \stdClass();
@@ -645,45 +645,49 @@ class FreeBeeGeeAPI
         if (
             // group.name.1x2x3.808080.png
             preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/',
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.]+)?(\.[^\.]+)?\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
         ) {
-            $asset->w = (int)$matches[2];
-            $asset->h = (int)$matches[3];
-            $asset->s = $matches[4];
-            switch ($matches[5]) {
-                case 'transparent':
-                case 'piece':
-                    $asset->bg = $matches[5];
-                    break;
-                default:
-                    $asset->bg = '#' . $matches[5];
-            }
             $asset->name = $matches[1];
-        } elseif (
-            // group.name.1x2x3.png
-            preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/',
-                $filename,
-                $matches
-            )
-        ) {
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->s = $matches[4];
             $asset->bg = '#808080';
-            $asset->name = $matches[1];
+
+            if (sizeof($matches) >= 6) {
+                switch ($matches[5]) {
+                    case '.transparent':
+                    case '.piece':
+                        $asset->bg = substr($matches[5], 1);
+                        break;
+                    default:
+                        if (preg_match('/^\.[a-fA-F0-9]{6}$/', $matches[5])) {
+                            $asset->bg = '#' . substr($matches[5], 1);
+                        }
+                }
+            }
+
+            if (sizeof($matches) >= 7) {
+                switch ($matches[6]) {
+                    case '.paper':
+                    case '.wood':
+                        $asset->tx = substr($matches[6], 1);
+                        break;
+                    default:
+                        // none
+                }
+            }
         } elseif (
             // group.name.png
             preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)
         ) {
+            $asset->name = $matches[1];
             $asset->w = 1;
             $asset->h = 1;
             $asset->s = 1;
             $asset->bg = '#808080';
-            $asset->name = $matches[1];
         }
         return $asset;
     }
@@ -706,7 +710,7 @@ class FreeBeeGeeAPI
             $assets[$type] = [];
             $lastAsset = null;
             foreach (glob($roomFolder . 'assets/' . $type . '/*') as $filename) {
-                $asset = $this->fileToAsset(basename($filename));
+                $asset = FreeBeeGeeAPI::fileToAsset(basename($filename));
                 $asset->type = $type;
 
                 // this ID only has to be unique within the room, but should be reproducable
@@ -1008,7 +1012,11 @@ class FreeBeeGeeAPI
                     $validated->base64 = $this->api->assertBase64('base64', $value);
                     break;
                 case 'bg':
-                    $validated->bg = $this->api->assertString('bg', $value, '#[a-fA-F0-9]{6}|transparent|piece');
+                    $validated->bg = $this->api->assertString(
+                        'bg',
+                        $value,
+                        '#[a-fA-F0-9]{6}|transparent|piece'
+                    );
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');

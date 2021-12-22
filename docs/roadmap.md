@@ -9,17 +9,20 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] table passwords
 * [ ] LOS-ruler
 * [ ] advanced grid settings (minor, major)
-* [ ] add template version to asset urls
+* [ ] add template name + version to asset urls
 * [ ] pre-release
   * [ ] bump dependencies
-  * [ ] bugfixing
+  * [ ] bugfixes + refactoring
     * [X] fixed "RPG" template glass tiles transparency
+    * [ ] fix dice rolling
+    * [ ] match library preview to show default color "none"
+    * [ ] switch all JS-CSS changes to CSS variables
   * [ ] update screenshots
   * [ ] review docs
   * [ ] review + run tests
     * [X] document how to run tests
     * [X] add more PHP unit tests
-    * [ ] add more JS unit tests
+    * [X] add more JS unit tests
     * [ ] add more integration/API tests
   * [ ] bump version/codename & update CHANGELOG
 
@@ -28,6 +31,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ### rather sooner
 
 * [ ] automated deployment tests for new zip/tgz packages after build
+* [ ] demo mode (serverless?)
+* [ ] more helper/marker overlays (arrows, areas, )
 * [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
 * [ ] right-click on table (add piece, change table)
 * [ ] set default/start table other than 1 in template
@@ -41,13 +46,13 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] meta-piece: supply heap
 * [ ] support for stacks/decks of cards
-* [ ] shuffle deck/stack
+  * [ ] shuffle deck/stack
+* [ ] player secrets (e.g. for goal cards, hidden rolling, ...)
 * [ ] better sticky notes (auto-size text)
 * [ ] manipulation of single assets in library (edit, change type)
 * [ ] more tabletop settings in UI (e.g. grid)
 * [ ] reduce impact of "back" button
 * [ ] "layer not active" hint when dragging nothing
-* [ ] demo mode (serverless?)
 * [ ] randomize button on dicemat
 * [ ] generic marker overlay (X, ?, ...)
 * [ ] add more classic game boards: backgammon, mills, solitaire
@@ -64,6 +69,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * bulk manipulation of assets (delete, edit, change type)
 * show even more infos in media browser
 * overlay-grid-on-tile option
+* sounds
+  * dice-roll
+  * shuffle
+  * object selection
+  * moving
 * option to force-install templates with invalid versions
 * I18N
 * pinboard for handouts
@@ -73,7 +83,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * moving pieces
 * color.sh: detect dominant piece color instead of average color
 * compile js for older browsers (<globalThis)
-* arbitrary layers
+* arbitrary layers via template configuration
 * link to subtable in url via /roomname#1
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
@@ -106,4 +116,4 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * download map/table as PDF for printing
 * cutcenes / message panels
 * labels looking like piece of paper sticking out
-* hex mode
+* lobby / room browser

@@ -8,22 +8,21 @@ It is not necessary to read/understand this to use FBG. This information is here
 
 An *asset* describes a single, possibly multi-sided graphical element that is available in the table's *library* and will be used by a *piece*. Each *asset* is unique and can't be directly placed on the table - it does not have a state like position, rotation, scale, ...
 
-A basic example:
+A minimal example:
 
 ```json
 {
   "id": "e786f024af997f9c",
   "name": "room",
+  "type": "tile",
   "media": [
     "room.4x4x1.808674.jpg",
     "room.4x4x2.8E947E.jpg"
-  ],
-  "w": 4,
-  "h": 4,
-  "bg": "#808674",
-  "type": "tile"
+  ]
 }
 ```
+
+Mandatory fields:
 
 `id`
 : The ID of the *asset* (16-digit hex).
@@ -31,27 +30,32 @@ A basic example:
 `name`
 : The name of the *asset*. Used e.g. in the *library*.
 
-`media`
-: An array of media files. Supported are `*.png`, `*.svg` and `*.jpg`. Which of those is shown when depends on the data object using this *asset* (usually a *piece*).
-
-`w`
-: The default width of the *asset* in grid spaces.
-
-`h`
-: The default height of the *asset* in grid spaces.
-
-`bg`
-: The background color of the *asset*. See *Media filenames* below for possible values.
-
 `type`
 : The type of the *asset*. Can be `tile`, `token`, `overlay` or `other`. This will usually define the type of *piece* this *asset* will use.
 
+`media`
+: An array of media files. Supported are `*.png`, `*.svg` and `*.jpg`. Which of those is shown when depends on the data object using this *asset* (usually a *piece*).
+
+Optional fields:
+
+`w`
+: The default width for a *piece* using this *asset*, in grid spaces. Defaults to `1`.
+
+`h`
+: The default height for a *piece* using this *asset*, in grid spaces. Defaults to `w`.
+
+`bg`
+: The background color of the *asset*. Defaults to '#808080'. See *Media filenames* below for possible values.
+
+`tx`
+: The texture of the *asset*. Defaults to 'none'. See *Media filenames* below for possible values.
+
 ### Media filenames
 
-Media (image) files should be named using the following syntax. This allows FBG to sort them automatically into the *library* and set their meta data.
+Media (image) files should be named using the following scheme. This allows FBG to sort them automatically into the *library* and set their meta data.
 
 ```
-mainName.[secondaryName.]{x}x{y}x{s}.[color.].{ext}
+mainName[.secondaryName].{x}x{y}x{s}[.bg[-texture]].{ext}
 ```
 
 `mainName`
@@ -67,10 +71,13 @@ mainName.[secondaryName.]{x}x{y}x{s}.[color.].{ext}
 : The Y-size of the tile/token in grid spaces.
 
 `s`
-: The side this media represents, typically `1` or `2` but an *asset* can have more (usually dice or enemy/color variants). FBG will cycle through this when a *piece* is flipped.
+: The side this file represents, typically `1` or `2`, but an *asset* can have more than that - e.g. dice sides or enemy/color variants. FBG will cycle through those when a *piece* gets flipped.
 
-`color`
-: A color value for this *asset* as HTML Hex Color value (without #) and usually used as background color for the *piece* below the media, e.g. 'A0B1C2'. Defaults to `808080` if not specified. Will be shown as place-holder color while the *asset* is loaded from the server, so it is recommended to set it to the media's average color value. If the media has transparent parts (for png/svg only), this color will shine through this areas. `color` can also be set to 'transparent' (no color) or `piece`. In the latter case, the background color can be set by the user in the *piece*'s edit dialog to one of those provided in the *template* (see below).
+`bg`
+: An optional background color for this *asset*. Will be visible as placeholder during image loading, and shine thrugh in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, `piece` (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash).
+
+`tx`
+: An optional texture for the *asset*. If present, an additional shade/texture will be applied on top of the media image to give it a rougher look. Can be `none`, `paper` or `wood`.
 
 ### Base images
 
