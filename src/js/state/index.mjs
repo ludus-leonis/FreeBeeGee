@@ -564,7 +564,7 @@ function patchPieces (patches, sync = true) {
   const sane = []
   for (const patch of patches) {
     if (patch.l) patch.l = nameToLayer(patch.l)
-    sane.push(sanitizePiecePatch(patch))
+    sane.push(sanitizePiecePatch(patch, patch.id))
   }
   return apiPatchPieces(room.name, getTableNo(), sane)
     .catch(error => errorUnexpected404(error))

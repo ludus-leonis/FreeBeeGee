@@ -14,7 +14,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] fixed "RPG" template glass tiles transparency
-    * [ ] fix dice rolling
+    * [X] fix dice rolling
     * [ ] match library preview to show default color "none"
     * [ ] switch all JS-CSS changes to CSS variables
   * [ ] update screenshots

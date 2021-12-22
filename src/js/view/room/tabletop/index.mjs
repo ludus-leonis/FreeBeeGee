@@ -210,7 +210,6 @@ export function randomSelected () {
           const offset = Math.floor(template.gridSize / 2)
           const x = Math.abs(clamp(0, piece.x + slideX * offset, (template.gridWidth - 1) * template.gridSize))
           const y = Math.abs(clamp(0, piece.y + slideY * offset, (template.gridHeight - 1) * template.gridSize))
-
           // send to server
           updatePieces([{
             id: node.id,

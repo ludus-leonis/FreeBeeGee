@@ -810,11 +810,11 @@ class FreeBeeGeeAPI
     private function removeDefaultsFromPiece(
         object $piece
     ): object {
+        if (isset($piece->h) && isset($piece->w) && $piece->h === $piece->w) {
+            unset($piece->h);
+        }
         if (isset($piece->w) && $piece->w === 1) {
             unset($piece->w);
-        }
-        if (isset($piece->h) && $piece->h === $piece->w) {
-            unset($piece->h);
         }
         if (isset($piece->r) && $piece->r === 0) {
             unset($piece->r);
