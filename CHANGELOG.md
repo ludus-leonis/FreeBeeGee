@@ -17,6 +17,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * fixed "RPG" template glass tiles transparency
 * fixed default piece backsides counting as side in library
 * fixed piece.h default handling (now equals w, not 0)
+* fixed browser caching artwork from previous template in same room
 
 ## v0.12.0 - Hexing Heron
 

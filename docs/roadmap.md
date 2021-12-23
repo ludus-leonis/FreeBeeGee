@@ -12,7 +12,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] advanced grid settings (minor, major)
 * [X] add separate color sets in templates for piece's borders and backgrounds
 * [X] add hotkeys to flip/rotate backwards
-* [ ] add template name + version to asset urls
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
@@ -21,6 +20,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] match library preview to show default color "none"
     * [X] refactor all JS-CSS changes to custom properties
     * [X] don't count default pieces' backsides as side in library
+    * [X] browser caching artwork from previous template in same room
     * [ ] rotating border highlights
   * [ ] update screenshots
   * [ ] review docs

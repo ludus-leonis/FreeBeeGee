@@ -47,7 +47,8 @@ import {
   toBottomSelected,
   flipSelected,
   randomSelected,
-  deleteSelected
+  deleteSelected,
+  url
 } from './tabletop/index.mjs'
 
 import {
@@ -336,7 +337,7 @@ export function setupBackground (
 
   updateRoom().css({
     '--fbg-tabletop-color': room.backgrounds[bgIndex].color,
-    '--fbg-tabletop-image': `url("${room.backgrounds[bgIndex].image}")`
+    '--fbg-tabletop-image': url(room.backgrounds[bgIndex].image)
   })
 
   // setup background / wallpaper

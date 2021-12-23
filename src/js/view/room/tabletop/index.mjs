@@ -492,7 +492,7 @@ export function pieceToNode (piece) {
     if (asset.media[piece.s] === MEDIA_BACK) { // backside piece
       const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
       node = _(`.piece.piece-${asset.type}`).create().css({
-        '--fbg-mask': `url("${encodeURI(uriMask)}")`
+        '--fbg-mask': url(uriMask)
       })
 
       // create inner div as we can't image-mask the outer without cutting the shadow
@@ -503,18 +503,18 @@ export function pieceToNode (piece) {
       if (asset.base) { // layered asset
         const uriBase = getAssetURL(asset, -1)
         node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
-          '--fbg-image': `url("${encodeURI(uriBase)}")`,
-          '--fbg-decal': `url("${encodeURI(uriSide)}")`
+          '--fbg-image': url(uriBase),
+          '--fbg-decal': url(uriSide)
         })
       } else { // regular asset
         node = _(`.piece.piece-${asset.type}`).create().css({
-          '--fbg-image': `url("${encodeURI(uriSide)}")`
+          '--fbg-image': url(uriSide)
         })
       }
     }
     if (asset.tx) {
       node.css({
-        '--fbg-material': `url("img/material-${asset.tx}.png")`
+        '--fbg-material': url(`img/material-${asset.tx}.png`)
       })
     } else {
       node.remove('--fbg-material')
@@ -549,6 +549,22 @@ export function noteToNode (note) {
   node.node().innerHTML = note.t?.[0] ?? ''
 
   return node
+}
+
+/**
+ * Convert a filename into a CSS url() and apply a scoped caching postfix.
+ *
+ * @param {String} file Filname for url().
+ * @param {Boolean} pin If true (optional), will append room id to pin caching.
+ * @return {FreeDOM} Converted node (not added to DOM yet).
+ */
+export function url (file, pin = true) {
+  let cache = ''
+  if (pin) {
+    const room = getRoom()
+    cache = '?r=' + encodeURI(room.id)
+  }
+  return `url("${encodeURI(file)}${cache}")`
 }
 
 /**

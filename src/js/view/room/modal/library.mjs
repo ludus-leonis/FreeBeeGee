@@ -49,7 +49,8 @@ import {
 } from '../tabletop/tabledata.mjs'
 import {
   MEDIA_BACK,
-  pieceToNode
+  pieceToNode,
+  url
 } from '../tabletop/index.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -413,7 +414,7 @@ function updatePreview (parseImage = false) {
     reader.readAsDataURL(file)
   } else {
     piece.css({
-      backgroundImage: 'url("img/upload.svg")',
+      backgroundImage: url('img/upload.svg'),
       backgroundSize: '25%'
     })
   }
