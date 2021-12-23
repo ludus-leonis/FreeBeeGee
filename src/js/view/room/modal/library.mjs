@@ -399,13 +399,7 @@ function updatePreview (parseImage = false) {
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
   if (type === 'overlay' || type === 'tile') {
-    piece.css({
-      backgroundColor: 'rgba(0,0,0,.05)'
-    })
-  } else {
-    piece.css({
-      backgroundColor: 'var(--fbg-piece-color)'
-    })
+    piece.css({ '--fbg-color': 'rgba(0,0,0,.05)' })
   }
   preview.add(piece)
 

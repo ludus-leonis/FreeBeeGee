@@ -6,6 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] change backgrounds from room to server setting
 * [ ] elemental status icons
+* [ ] predefined piece/asset colors
 * [ ] table passwords
 * [ ] LOS-ruler
 * [ ] advanced grid settings (minor, major)
@@ -13,10 +14,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [X] fixed "RPG" template glass tiles transparency
-    * [X] fix dice rolling
-    * [ ] match library preview to show default color "none"
-    * [ ] switch all JS-CSS changes to CSS variables
+    * [X] "RPG" template glass tiles transparency
+    * [X] dice rolling
+    * [X] match library preview to show default color "none"
+    * [ ] rotating border highlights
+    * [X] refactor all JS-CSS changes to custom properties
   * [ ] update screenshots
   * [ ] review docs
   * [ ] review + run tests

@@ -1,0 +1,59 @@
+// Copyright 2021 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// shadow.scss
+///
+/// Helpers that calculate highlights and shadows.
+///
+/// @group abstracts
+/// @access public
+////
+
+$shadow-x: 2; /// basic shadow length x
+$shadow-y: 3; /// basic shadow length y
+
+/// shadow direction angle
+$shadow-direction: math.atan(math.div($shadow-x, $shadow-y));
+
+/// shadow direction length
+$shadow-length: math.sqrt($shadow-x * $shadow-x + $shadow-y * $shadow-y);
+
+@function shadow-x-px($r) {
+  @return math.sin($r + $shadow-direction) * 1px;
+}
+
+@function shadow-y-px($r) {
+  @return math.cos($r + $shadow-direction) * 1px;
+}
+
+/// Return a drop-shadow value for the configured shadow.
+///
+/// @example scss
+///   shadow(90, 2px, #001122)
+///
+/// @param {length} $r The transform:rotation() of the element to compensate for.
+/// @param {length} $blur The amount of blur.
+/// @param {length} $color The color of the shadow
+/// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
+@function shadow($r, $blur, $color) {
+  @return
+  shadow-x-px($r) * $shadow-length
+  shadow-y-px($r) * $shadow-length
+  $blur
+  $color;
+}

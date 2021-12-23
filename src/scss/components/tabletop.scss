@@ -24,10 +24,40 @@
 ////
 
 .tabletop {
+  #{'--fbg-tabletop-image'}: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQAAAAA3iMLMAAAAC0lEQVR4AWMgEQAAADAAAclXe4EAAAAASUVORK5CYII=');
+  #{'--fbg-tabletop-color'}: #808080;
+  #{'--fbg-tabletop-width'}: 1024px;
+  #{'--fbg-tabletop-height'}: 1024px;
+
   $tile-size: 64px;
 
+  background-color: var(--fbg-tabletop-color);
+  background-image: none, var(--fbg-tabletop-image);
+  background-size: auto, auto;
+  height: var(--fbg-tabletop-height);
   overflow: hidden;
   position: relative;
+  width: var(--fbg-tabletop-width);
+
+  &.is-grid-hex-light {
+    background-image: url('img/grid-hex-white.svg'), var(--fbg-tabletop-image);
+    background-size: 110px 64px, auto;
+  }
+
+  &.is-grid-hex-dark {
+    background-image: url('img/grid-hex-black.svg'), var(--fbg-tabletop-image);
+    background-size: 110px 64px, auto;
+  }
+
+  &.is-grid-square-light {
+    background-image: url('img/grid-square-white.svg'), var(--fbg-tabletop-image);
+    background-size: 64px 64px, auto;
+  }
+
+  &.is-grid-square-dark {
+    background-image: url('img/grid-square-black.svg'), var(--fbg-tabletop-image);
+    background-size: 64px 64px, auto;
+  }
 
   .is-quality-low & {
     background-image: none !important; // sass-lint:disable-line no-important

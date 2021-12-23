@@ -410,7 +410,7 @@ class FreeDOM {
   /**
    * Remove items from all selected nodes.
    *
-   * Supports adding the following:
+   * Supports removing the following:
    * - CSS classes (strings starting with '.')
    *
    * @param {...String} items Items to remove.
@@ -418,27 +418,31 @@ class FreeDOM {
    */
   remove (...items) {
     for (const item of items) {
-      if (typeof item === 'string' && item.charAt(0) === '.') { // remove class
-        const asterisk = item.indexOf('*')
-        if (asterisk < 0) {
-          this.each(node => node.classList.remove(item.substr(1)))
-        } else {
-          const search = item.substr(1, item.length - 2) // remove dot & asterisk
-          this.each(node => {
-            const toRemove = []
-            for (const cls of node.classList) {
-              if (cls.startsWith(search)) toRemove.push(cls)
-            }
-            for (const cls of toRemove) {
-              node.classList.remove(cls)
-            }
-          })
+      if (typeof item === 'string') {
+        if (item.charAt(0) === '.') { // remove class
+          const asterisk = item.indexOf('*')
+          if (asterisk < 0) {
+            this.each(node => node.classList.remove(item.substr(1)))
+          } else {
+            const search = item.substr(1, item.length - 2) // remove dot & asterisk
+            this.each(node => {
+              const toRemove = []
+              for (const cls of node.classList) {
+                if (cls.startsWith(search)) toRemove.push(cls)
+              }
+              for (const cls of toRemove) {
+                node.classList.remove(cls)
+              }
+            })
+          }
+          return this
+        } else if (item.charAt(0) === '-') { // remove CSS variable
+          this.each(node => node.style.removeProperty(item))
         }
       } else {
         this._error('can\'t remove() ' + typeof item)
       }
     }
-    return this
   }
 
   /**

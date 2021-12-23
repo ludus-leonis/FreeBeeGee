@@ -23,7 +23,6 @@
 /// @access public
 ////
 
-$piece-color: $color-gray-95;
 $piece-tile-size: 64px;
 $piece-border-size: 3px;
 $piece-margin: 3px;
@@ -32,39 +31,26 @@ $piece-rotate: .5deg;
 
 $piece-rotations: 60 90 120 180 240 270 300;
 
-$piece-shadow-x: 3;
-$piece-shadow-y: 2;
-$piece-shadow-direction: math.atan(math.div($piece-shadow-x, $piece-shadow-y));
-$piece-shadow-length: math.sqrt($piece-shadow-x * $piece-shadow-x + $piece-shadow-y * $piece-shadow-y);
-
 $piece-highlights: 1px 1px .5px 0 $color-white-15a inset, -1px -1px .5px 0 $color-black-20a inset;
 
-@function piece-shadow($deg, $blur, $color) {
-  @return
-  math.sin($deg + $piece-shadow-direction) * $piece-shadow-length * 1px
-  math.cos($deg + $piece-shadow-direction) * $piece-shadow-length * 1px
-  $blur
-  $color;
-}
+$piece-shadow: shadow(0, 2px, $color-black-65a);
+$piece-shadow-60: shadow(60, 2px, $color-black-65a);
+$piece-shadow-90: shadow(90, 2px, $color-black-65a);
+$piece-shadow-120: shadow(120, 2px, $color-black-65a);
+$piece-shadow-180: shadow(180, 2px, $color-black-65a);
+$piece-shadow-240: shadow(240, 2px, $color-black-65a);
+$piece-shadow-270: shadow(270, 2px, $color-black-65a);
+$piece-shadow-300: shadow(300, 2px, $color-black-65a);
 
-$piece-shadow: piece-shadow(0, 2px, $color-black-65a);
-$piece-shadow-60: piece-shadow(60, 2px, $color-black-65a);
-$piece-shadow-90: piece-shadow(90, 2px, $color-black-65a);
-$piece-shadow-120: piece-shadow(120, 2px, $color-black-65a);
-$piece-shadow-180: piece-shadow(180, 2px, $color-black-65a);
-$piece-shadow-240: piece-shadow(240, 2px, $color-black-65a);
-$piece-shadow-270: piece-shadow(270, 2px, $color-black-65a);
-$piece-shadow-300: piece-shadow(300, 2px, $color-black-65a);
-
-$piece-shadow-flat: piece-shadow(0, 0, $color-black-35a);
-$piece-shadow-flat-60: piece-shadow(60, 0, $color-black-35a);
-$piece-shadow-flat-90: piece-shadow(90, 0, $color-black-35a);
-$piece-shadow-flat-120: piece-shadow(120, 0, $color-black-35a);
-$piece-shadow-flat-180: piece-shadow(180, 0, $color-black-35a);
-$piece-shadow-flat-240: piece-shadow(240, 0, $color-black-35a);
-$piece-shadow-flat-270: piece-shadow(270, 0, $color-black-35a);
-$piece-shadow-flat-300: piece-shadow(300, 0, $color-black-35a);
-$piece-shadow-flat-overlay: piece-shadow(0, 0, $color-black-35a);
+$piece-shadow-flat: shadow(0, 0, $color-black-35a);
+$piece-shadow-flat-60: shadow(60, 0, $color-black-35a);
+$piece-shadow-flat-90: shadow(90, 0, $color-black-35a);
+$piece-shadow-flat-120: shadow(120, 0, $color-black-35a);
+$piece-shadow-flat-180: shadow(180, 0, $color-black-35a);
+$piece-shadow-flat-240: shadow(240, 0, $color-black-35a);
+$piece-shadow-flat-270: shadow(270, 0, $color-black-35a);
+$piece-shadow-flat-300: shadow(300, 0, $color-black-35a);
+$piece-shadow-flat-overlay: shadow(0, 0, $color-black-35a);
 
 $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
@@ -109,8 +95,6 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
 // --- piece basics (size, ...) ------------------------------------------------
 
-// $label-offset: 8px;
-
 @keyframes whirl {
   from {
     transform: rotate(0deg) translateX(4px);
@@ -121,18 +105,33 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   }
 }
 
-.piece {
-  #{'--fbg-layer-image'}: none;
+:root {
+  #{'--fbg-x'}: 0;
+  #{'--fbg-y'}: 0;
+  #{'--fbg-z'}: 0;
+  #{'--fbg-color'}: var(--fbg-color-medium);
+  #{'--fbg-color-invert'}: var(--fbg-color-light);
+  #{'--fbg-border-color'}: var(--fbg-color-medium);
+  #{'--fbg-border-color-invert'}: var(--fbg-color-light);
+  #{'--fbg-material'}: none;
+  #{'--fbg-decal'}: none;
+  #{'--fbg-image'}: none;
+  #{'--fbg-mask'}: none;
+}
 
+.piece {
   align-items: center; // mainly for labels
-  background-color: transparent;
+  background-color: var(--fbg-color);
+  background-image: var(--fbg-image);
   background-position: center;
-  background-repeat: no-repeat;
   background-size: cover;
   display: flex;
   height: $piece-tile-size;
   justify-content: center;
+  left: var(--fbg-x);
+  top: var(--fbg-y);
   width: $piece-tile-size;
+  z-index: var(--fbg-z);
 
   $piece-tile-half: math.div($piece-tile-size, 2);
 
@@ -147,6 +146,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   &.is-invalid {
     background-image: url('img/invalid.svg');
+    background-repeat: no-repeat;
     background-size: contain;
   }
 
@@ -207,6 +207,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     background-repeat: repeat;
     background-size: 64px;
     height: 100%;
+    mask-image: var(--fbg-mask);
     mask-size: 100%;
     pointer-events: none;
     transform: scaleX(-1);
@@ -219,18 +220,9 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   // --- additional layer (dice) -----------------------------------------------
 
-  &.has-layer::after {
-    background-color: transparent;
-    background-image: var(--fbg-layer-image);
-    background-position: center;
-    background-size: cover;
-    bottom: 0;
-    content: '';
-    display: block;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
+  &.has-decal {
+    background-image: var(--fbg-decal), var(--fbg-image);
+    background-size: cover, cover;
   }
 
   // --- rotation --------------------------------------------------------------
@@ -273,40 +265,18 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 ) {
   filter: drop-shadow($rotate0);
 
-  &.is-rotate-60 {
-    filter: drop-shadow($rotate60);
-  }
-
-  &.is-rotate-90 {
-    filter: drop-shadow($rotate90);
-  }
-
-  &.is-rotate-120 {
-    filter: drop-shadow($rotate120);
-  }
-
-  &.is-rotate-180 {
-    filter: drop-shadow($rotate180);
-  }
-
-  &.is-rotate-240 {
-    filter: drop-shadow($rotate240);
-  }
-
-  &.is-rotate-270 {
-    filter: drop-shadow($rotate270);
-  }
-
-  &.is-rotate-300 {
-    filter: drop-shadow($rotate300);
-  }
+  &.is-rotate-60 { filter: drop-shadow($rotate60); }
+  &.is-rotate-90 { filter: drop-shadow($rotate90); }
+  &.is-rotate-120 { filter: drop-shadow($rotate120); }
+  &.is-rotate-180 { filter: drop-shadow($rotate180); }
+  &.is-rotate-240 { filter: drop-shadow($rotate240); }
+  &.is-rotate-270 { filter: drop-shadow($rotate270); }
+  &.is-rotate-300 { filter: drop-shadow($rotate300); }
 }
 
 // --- regular tiles -----------------------------------------------------------
 
 .piece-tile {
-  background-color: $piece-color;
-
   // --- quality settings ---
 
   .is-quality-medium & {
@@ -359,12 +329,6 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 // --- tokens ------------------------------------------------------------------
 
 .piece-token {
-  #{'--fbg-piece-color'}: $piece-color;
-  #{'--fbg-piece-color-invert'}: $color-wb-fg;
-  #{'--fbg-border-color'}: $piece-color;
-  #{'--fbg-border-color-invert'}: $color-wb-fg;
-
-  background-color: var(--fbg-piece-color); // tile background
   border-radius: $piece-tile-size;
   margin: $piece-margin;
 
@@ -436,8 +400,8 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   &.is-border-0 {
     &.is-n::after {
-      background-color: var(--fbg-piece-color);
-      color: var(--fbg-piece-color-invert);
+      background-color: var(--fbg-color);
+      color: var(--fbg-color-invert);
     }
   }
 
@@ -470,7 +434,9 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
       $piece-shadow-300
     );
 
-    // --- highlights ---
+    // --- highlights & material ---
+    background-image: var(--fbg-material), var(--fbg-image);
+    background-size: 256px, cover;
     box-shadow: $piece-highlights, 0 0 0 $piece-border-size var(--fbg-border-color) inset;
 
     &.is-border-0 {
@@ -480,17 +446,25 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
         opacity: .85;
       }
     }
+
+    &.has-decal {
+      background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
+      background-size: 256px, cover, cover;
+    }
   }
 }
 
 // --- overlays ----------------------------------------------------------------
 
-// .piece-overlay {
-// }
+.piece-overlay {
+  #{'--fbg-color'}: transparent;
+}
 
 // --- others (layered) --------------------------------------------------------
 
 .piece-other {
+  #{'--fbg-color'}: transparent;
+
   transform: none;
   &::after { transform: rotate(0deg); }
 

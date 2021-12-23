@@ -111,7 +111,6 @@ function replace (pipe) {
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))
     .pipe(repl('$COLOR$', p.color, { skipBinary: true }))
     .pipe(repl('$URL$', p.homepage, { skipBinary: true }))
-    .pipe(repl('$CACHE$', p.cache, { skipBinary: true }))
 }
 
 gulp.task('fonts', () => {
@@ -218,7 +217,6 @@ gulp.task('sass', gulp.series('test-sass', () => {
   const concat = require('gulp-concat')
   const autoprefixer = require('gulp-autoprefixer')
   const sourcemaps = require('gulp-sourcemaps')
-  const repl = require('gulp-replace')
 
   return replace(gulp.src([
     'src/scss/style.scss'
@@ -226,7 +224,6 @@ gulp.task('sass', gulp.series('test-sass', () => {
     .pipe(sourcemaps.init())
     .pipe(concat('style.css'))
     .pipe(sass({ outputStyle: 'compressed' }))
-    .pipe(repl('$CACHE$', p.cache, { skipBinary: true }))
     .pipe(autoprefixer())
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(dirs.site))

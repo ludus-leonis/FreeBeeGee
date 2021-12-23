@@ -282,9 +282,9 @@ function createOrUpdatePieceDOM (piece, select) {
   if (_piece.x !== piece.x || _piece.y !== piece.y || _piece.z !== piece.z) {
     const tl = getTopLeftPx(piece)
     div.css({
-      top: tl.top,
-      left: tl.left,
-      zIndex: piece.z
+      '--fbg-x': tl.left,
+      '--fbg-y': tl.top,
+      '--fbg-z': piece.z
     })
   }
   if (_piece.r !== piece.r) {
@@ -294,8 +294,8 @@ function createOrUpdatePieceDOM (piece, select) {
   }
   if (_piece.w !== piece.w || _piece.h !== piece.h) {
     div
-      .remove('.is-w-*', '.is-h-*', '.is-wh-*')
-      .add(`.is-w-${piece.w}`, `.is-h-${piece.h}`, `.is-wh-${piece.w - piece.h}`)
+      .remove('.is-w-*', '.is-h-*')
+      .add(`.is-w-${piece.w}`, `.is-h-${piece.h}`)
   }
   if (_piece.n !== piece.n) {
     div.remove('.is-n', '.is-n-*')
@@ -303,31 +303,33 @@ function createOrUpdatePieceDOM (piece, select) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
-  if (_piece.c?.[0] !== piece.c[0] || _piece.c?.[1] !== piece.c[1]) {
-    div
-      .remove('.is-color-*', '.is-border-*')
-      .add('.is-color-' + piece.c[0], '.is-border-' + piece.c[1])
+  if (_piece.c?.[0] !== piece.c[0]) { // color change
     if (piece.l === 'token' && piece.c[0] >= 0 && piece.c[0] <= template.colors.length) {
-      if (piece.c[0] === 0) {
+      if (piece.c[0] === 0) { // no color
+        _(`#${piece.id}`).remove('--fbg-color', '--fbg-color-invert')
+      } else { // color
         _(`#${piece.id}`).css({
-          '--fbg-piece-color': '#808080',
-          '--fbg-piece-color-invert': '#e6e6e6'
-        })
-      } else {
-        _(`#${piece.id}`).css({
-          '--fbg-piece-color': template.colors[piece.c[0] - 1].value,
-          '--fbg-piece-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+          '--fbg-color': template.colors[piece.c[0] - 1].value,
+          '--fbg-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
-      if (piece.c[1] === 0) {
-        _(`#${piece.id}`).css({
-          '--fbg-border-color': '#808080',
-          '--fbg-border-color-invert': '#e6e6e6'
-        })
-      } else {
+    }
+    if (piece.l === 'note') {
+      div
+        .remove('.is-color-*')
+        .add('.is-color-' + piece.c[0])
+    }
+  }
+  if (_piece.c?.[1] !== piece.c[1]) { // border change
+    div.remove('.is-border-*')
+    if (piece.l === 'token' && piece.c[1] >= 0 && piece.c[1] <= template.colors.length) {
+      if (piece.c[1] === 0) { // no border color
+        div.add('.is-border-0')
+        _(`#${piece.id}`).remove('--fbg-border-color', '--fbg-border-color-invert')
+      } else { // color
         _(`#${piece.id}`).css({
           '--fbg-border-color': template.colors[piece.c[1] - 1].value,
-          '--fbg-border-color-invert': brightness(template.colors[piece.c[1] - 1].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+          '--fbg-border-color-invert': brightness(template.colors[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
     }
@@ -483,45 +485,47 @@ export function pieceToNode (piece) {
   } else {
     if (asset.media[piece.s] === '##BACK##') { // backside piece
       const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
-      node = _(`.piece.piece-${asset.type}`).create()
-
-      // create inner div as we can't image-map the outer without cutting the shadow
-      const inner = _('.backside').create().css({
-        maskImage: 'url("' + encodeURI(uriMask) + '")'
+      node = _(`.piece.piece-${asset.type}`).create().css({
+        '--fbg-mask': `url("${encodeURI(uriMask)}")`
       })
+
+      // create inner div as we can't image-mask the outer without cutting the shadow
+      const inner = _('.backside').create()
       node.add(inner)
     } else { // regular piece
       const uriSide = getAssetURL(asset, piece.s)
-      const uriBase = getAssetURL(asset, -1)
       if (asset.base) { // layered asset
-        node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
-          backgroundImage: 'url("' + encodeURI(uriBase) + '")',
-          '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
+        const uriBase = getAssetURL(asset, -1)
+        node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
+          '--fbg-image': `url("${encodeURI(uriBase)}")`,
+          '--fbg-decal': `url("${encodeURI(uriSide)}")`
         })
       } else { // regular asset
-        if (asset.tx) {
-          node = _(`.piece.piece-${asset.type}`).create().css({
-            backgroundImage: `url("img/material-${asset.tx}.png"),url("${encodeURI(uriSide)}")`,
-            backgroundSize: '256px, cover'
-          })
-        } else {
-          node = _(`.piece.piece-${asset.type}`).create().css({
-            backgroundImage: 'url("' + encodeURI(uriSide) + '")'
-          })
-        }
+        node = _(`.piece.piece-${asset.type}`).create().css({
+          '--fbg-image': `url("${encodeURI(uriSide)}")`
+        })
       }
+    }
+    if (asset.tx) {
+      node.css({
+        '--fbg-material': `url("img/material-${asset.tx}.png")`
+      })
+    } else {
+      node.remove('--fbg-material')
     }
 
     if (asset.type !== 'overlay' && asset.type !== 'other') {
-      node.css({
-        backgroundColor: asset.bg ?? '#808080'
-      })
+      switch (asset.bg) {
+        case 'piece':
+          break
+        default:
+          node.css({ '--fbg-color': asset.bg })
+      }
     }
   }
 
   // set meta-classes on node
   node.id = piece.id
-  node.add(`.is-side-${piece.s}`)
 
   return node
 }
@@ -536,7 +540,6 @@ export function noteToNode (note) {
   const node = _('.piece.piece-note').create()
 
   node.id = note.id
-  node.add('.is-side-0')
   node.node().innerHTML = note.t?.[0] ?? ''
 
   return node

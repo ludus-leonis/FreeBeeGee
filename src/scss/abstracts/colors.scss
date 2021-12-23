@@ -92,6 +92,7 @@ $color-04: #40bfbf; // cyan
 $color-05: #cc2936; // red
 $color-06: #bf40bf; // magenta
 $color-07: #ff6700; // orange
+$color-08: #677274; // medium grey
 
 $color-s1: #ffeba6; // sticky yellow
 $color-s2: #fdce97; // sticky orange
@@ -126,6 +127,9 @@ $color-vignette: rgba(0, 0, 0, .5);
 :root { // output var as string to avoid sass-lint errors
   #{'--fbg-color-primary'}: $color-primary;
   #{'--fbg-color-secondary'}: $color-secondary;
+  #{'--fbg-color-dark'}: $color-gray-85;
+  #{'--fbg-color-medium'}: $color-08;
+  #{'--fbg-color-light'}: $color-gray-10;
   #{'--fbg-color-bg'}: $color-wb-bg;
   #{'--fbg-color-text'}: $color-wb-fg;
 }

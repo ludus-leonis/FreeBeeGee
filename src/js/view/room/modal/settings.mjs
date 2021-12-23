@@ -310,7 +310,7 @@ export function modalSettings () {
  * @param {Number} value Quality setting. 0 = low, 1 = medium, 2 = high, 3 = ultra
  */
 export function changeQuality (value) {
-  const body = _('body').remove('.is-quality-low', '.is-quality-medium', '.is-quality-high', '.is-quality-ultra')
+  const body = _('body').remove('.is-quality-*')
   setRoomPreference('renderQuality', value)
   switch (value) {
     case 0:

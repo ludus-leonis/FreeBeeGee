@@ -24,7 +24,6 @@
   },
   "license": "AGPL-3.0-or-later",
   "color": "#40bfbf",
-  "cache": 1028,
   "standard": {
     "globals": [
       "globalThis",

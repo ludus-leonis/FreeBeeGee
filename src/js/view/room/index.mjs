@@ -256,8 +256,8 @@ export function updateRoom () {
   const room = getRoom()
 
   return _('#tabletop').css({
-    width: room.width + 'px',
-    height: room.height + 'px'
+    '--fbg-tabletop-width': room.width + 'px',
+    '--fbg-tabletop-height': room.height + 'px'
   })
 }
 
@@ -332,26 +332,22 @@ export function setupBackground (
 
   bgIndex = clamp(0, bgIndex, room.backgrounds.length - 1)
 
+  updateRoom().css({
+    '--fbg-tabletop-color': room.backgrounds[bgIndex].color,
+    '--fbg-tabletop-image': `url("${room.backgrounds[bgIndex].image}")`
+  })
+
   // setup background / wallpaper
+  _('#tabletop').remove('.is-grid-*')
   if (showGrid) {
-    const grid = room.template?.type === TYPE_HEX
-      ? brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-hex-white.svg' : 'grid-hex-black.svg'
-      : brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-square-white.svg' : 'grid-square-black.svg'
-
-    const gridX = room.template?.type === TYPE_HEX ? room.template.gridSize * 1.71875 : room.template.gridSize
-    const gridY = room.template.gridSize
-
-    updateRoom().css({
-      backgroundColor: room.backgrounds[bgIndex].color,
-      backgroundImage: `url("img/${grid}?v=$CACHE$"),url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
-      backgroundSize: `${gridX}px ${gridY}px,auto`
-    })
-  } else {
-    updateRoom().css({
-      backgroundColor: room.backgrounds[bgIndex].color,
-      backgroundImage: `url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
-      backgroundSize: 'auto'
-    })
+    const dark = brightness(room.backgrounds[bgIndex].color) < 92
+    switch (room.template?.type) {
+      case TYPE_HEX:
+        _('#tabletop').add(dark ? '.is-grid-hex-light' : '.is-grid-hex-dark')
+        break
+      default:
+        _('#tabletop').add(dark ? '.is-grid-square-light' : '.is-grid-square-dark')
+    }
   }
 
   // setup scroller
