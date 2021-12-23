@@ -141,8 +141,11 @@ function handleRoomKeys (keydown) {
       case 'F11':
         toggleFullscreen()
         break
-      case 'f': // flip
+      case 'f': // flip forward
         flipSelected()
+        break
+      case 'F': // flip backward
+        flipSelected(false)
         break
       case 'g': // toggleGrid
         toggleGrid()
@@ -159,8 +162,11 @@ function handleRoomKeys (keydown) {
       case 'F1':
         modalHelp()
         break
-      case 'r': // rotate
+      case 'r': // rotate CW
         rotateSelected()
+        break
+      case 'R': // rotate CCW
+        rotateSelected(false)
         break
       case 'S': // settings
         settings()

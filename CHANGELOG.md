@@ -6,6 +6,8 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
+* added hotkeys F/R to flip/rotate backwards
+
 ### Other changes
 
 * added separate color sets in templates for piece borders and backgrounds

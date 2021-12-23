@@ -132,12 +132,14 @@ export function cloneSelected (xy) {
  * Flip the currently selected piece to its next side.
  *
  * Will cycle the sides and silently fail if nothing is selected.
+ *
+ * @param {Boolean} forward If true (default), will cycle forward, otherwise backward.
  */
-export function flipSelected () {
+export function flipSelected (forward = true) {
   getSelected().each(node => {
     const piece = findPiece(node.id)
     if (piece._meta.sides > 1) {
-      flipPiece(piece.id, mod(piece.s + 1, piece._meta.sides))
+      flipPiece(piece.id, mod(forward ? (piece.s + 1) : (piece.s - 1), piece._meta.sides))
     }
   })
 }
@@ -396,14 +398,16 @@ export function setNote (note, select = false) {
  * Rotate the currently selected piece.
  *
  * Done in increments based on game type.
+ *
+ * @param {Boolean} cw Optional direction. True = CW (default), False = CCW.
  */
-export function rotateSelected () {
+export function rotateSelected (cw = true) {
   const template = getTemplate()
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
     const increment = template.type === TYPE_HEX ? 60 : 90
-    const r = piece.r + increment
+    const r = cw ? (piece.r + increment) : (piece.r - increment)
     rotatePiece(piece.id, r)
   })
 }
