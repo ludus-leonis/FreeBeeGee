@@ -29,7 +29,9 @@ import {
   deleteRoom,
   getTableNo,
   setTableNo,
+  PREFS,
   getServerPreference,
+  setServerPreference,
   getRoomPreference,
   setRoomPreference
 } from '../../../state/index.mjs'
@@ -62,7 +64,7 @@ export function modalSettings () {
   _('#modal-header').innerHTML = `
     <h3 class="modal-title">Settings</h3>
   `
-  const grid = getRoomPreference('showGrid', false)
+  const grid = getRoomPreference(PREFS.GRID)
   _('#modal-body').innerHTML = `
     <div id="tabs-settings" class="tabs">
       <input id="tab-1" type="radio" name="tabs">
@@ -101,7 +103,7 @@ export function modalSettings () {
             </div>
             <div class="col-12">
               <label for="table-quality">Render quality</label>
-              <input id="table-quality" class="slider" type="range" min="0" max="3" value="${getRoomPreference('renderQuality', 3)}" >
+              <input id="table-quality" class="slider" type="range" min="0" max="3" value="${getServerPreference(PREFS.QUALITY)}" >
               <p class="p-small spacing-tiny if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
               <p class="p-small spacing-tiny if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
               <p class="p-small spacing-tiny if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
@@ -216,9 +218,9 @@ export function modalSettings () {
 
   // store/retrieve selected tab
   _('input[name="tabs"]').on('change', change => {
-    setRoomPreference('modalSettingsTab', change.target.id)
+    setRoomPreference(PREFS.TAB_SETTINGS, change.target.id)
   })
-  const preselect = getRoomPreference('modalSettingsTab', 'tab-1')
+  const preselect = getRoomPreference(PREFS.TAB_SETTINGS)
   _('#' + preselect).checked = true
 
   _('#table-quality').on('change', () => changeQuality(Number(_('#table-quality').value)))
@@ -244,7 +246,7 @@ export function modalSettings () {
   for (let i = 0; i < room.backgrounds.length; i++) {
     const option = _('option').create(room.backgrounds[i].name)
     option.value = i
-    if (i === getServerPreference('background', 0)) option.selected = true
+    if (i === getServerPreference(PREFS.BACKGROUND)) option.selected = true
     backgrounds.add(option)
   }
 
@@ -312,7 +314,7 @@ export function modalSettings () {
  */
 export function changeQuality (value) {
   const body = _('body').remove('.is-quality-*')
-  setRoomPreference('renderQuality', value)
+  setServerPreference(PREFS.QUALITY, value)
   switch (value) {
     case 0:
       body.add('.is-quality-low')

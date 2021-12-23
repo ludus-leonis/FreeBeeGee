@@ -130,18 +130,20 @@ describe('Frontend - state.mjs - basics', function () {
   })
 
   it('set...Preference', function () {
-    // we can only test fallback behavior here
-    expect(getServerPreference('my')).to.be.eql(undefined)
-    setServerPreference('my', 'value')
-    expect(getServerPreference('my')).to.be.eql('value')
+    const PREF = { name: 'my', default: 1 }
 
-    expect(getRoomPreference('my')).to.be.eql(undefined)
-    setRoomPreference('my', 'value')
-    expect(getRoomPreference('my')).to.be.eql('value')
+    // we can only test in-memory fallback behavior here
+    expect(getServerPreference(PREF)).to.be.eql(1)
+    setServerPreference(PREF, 'value')
+    expect(getServerPreference(PREF)).to.be.eql('value')
 
-    expect(getTablePreference('my')).to.be.eql(undefined)
-    setTablePreference('my', 'value')
-    expect(getTablePreference('my')).to.be.eql('value')
+    expect(getRoomPreference(PREF)).to.be.eql(1)
+    setRoomPreference(PREF, 'value')
+    expect(getRoomPreference(PREF)).to.be.eql('value')
+
+    expect(getTablePreference(PREF)).to.be.eql(1)
+    setTablePreference(PREF, 'value')
+    expect(getTablePreference(PREF)).to.be.eql('value')
   })
 
   it('setTabActive() isTabActive', function () {

@@ -34,6 +34,27 @@ export function getGetParameter (name) {
 }
 
 /**
+ * Get all values for a key from an HTML5 browser store.
+ *
+ * Assumes there is a stringified JSON with sub-entries in the store.
+ *
+ * Transparent fallback to in-memory map if session store is not available.
+ *
+ * @param {String} key Name of the store item.
+ * @param {Boolean} local If true, the localStorage will be used. Otherwise the
+ *                        sessionStorage will be used.
+ * @return {(String|undefined)} Retrieved value.
+ */
+export function getStoreValues (key, local = true) {
+  if (typeof Storage !== 'undefined') {
+    const store = local ? globalThis.localStorage : globalThis.sessionStorage
+    return JSON.parse(store.getItem(key) ?? '{}')
+  } else {
+    return JSON.parse(fallbackStore.get(key) ?? '{}')
+  }
+}
+
+/**
  * Get a value from an HTML5 browser store.
  *
  * Assumes there is a stringified JSON with sub-entries in the store.
@@ -47,12 +68,7 @@ export function getGetParameter (name) {
  * @return {(String|undefined)} Retrieved value.
  */
 export function getStoreValue (key, property, local = true) {
-  if (typeof Storage !== 'undefined') {
-    const store = local ? globalThis.localStorage : globalThis.sessionStorage
-    return JSON.parse(store.getItem(key) ?? '{}')[property]
-  } else {
-    return JSON.parse(fallbackStore.get(key) ?? '{}')[property]
-  }
+  return getStoreValues(key, local)[property]
 }
 
 /**

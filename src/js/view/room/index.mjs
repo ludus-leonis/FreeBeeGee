@@ -27,6 +27,8 @@ import {
 import {
   loadRoom,
   getRoom,
+  PREFS,
+  cleanupStore,
   getServerPreference,
   setServerPreference,
   getRoomPreference,
@@ -153,10 +155,10 @@ export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
   _('#tabletop').toggle('.layer-' + layer + '-enabled')
   if (_('#btn-' + layer + '.active').exists()) {
-    setRoomPreference('layer' + layer, true)
+    setRoomPreference(PREFS['LAYER' + layer], true)
   } else {
     unselectPieces(layer)
-    setRoomPreference('layer' + layer, false)
+    setRoomPreference(PREFS['LAYER' + layer], false)
   }
 }
 
@@ -165,9 +167,9 @@ export function toggleLayer (layer) {
  */
 export function toggleGrid (on) {
   if (on === true || on === false) {
-    setRoomPreference('showGrid', on)
+    setRoomPreference(PREFS.GRID, on ? 1 : 0)
   } else { // undefined
-    setRoomPreference('showGrid', !getRoomPreference('showGrid', false))
+    setRoomPreference(PREFS.GRID, !getRoomPreference(PREFS.GRID))
   }
   setupBackground()
 }
@@ -305,12 +307,11 @@ export function updateStatusline () {
  */
 export function restoreScrollPosition () {
   const scroller = _('#scroller')
-  const lastX = getTablePreference('scrollX')
-  const lastY = getTablePreference('scrollY')
-  if (lastX && lastY) {
+  const last = getTablePreference(PREFS.SCROLL)
+  if (last.x && last.y) {
     scroller.node().scrollTo(
-      lastX - Math.floor(scroller.clientWidth / 2),
-      lastY - Math.floor(scroller.clientHeight / 2)
+      last.x - Math.floor(scroller.clientWidth / 2),
+      last.y - Math.floor(scroller.clientHeight / 2)
     )
   } else {
     const center = getSetupCenter()
@@ -328,8 +329,8 @@ export function restoreScrollPosition () {
  * @param {Boolean} showGrid If true, the overlay grid will be drawn.
  */
 export function setupBackground (
-  bgIndex = getServerPreference('background', 99),
-  showGrid = getRoomPreference('showGrid', false)
+  bgIndex = getServerPreference(PREFS.BACKGROUND),
+  showGrid = getRoomPreference(PREFS.GRID)
 ) {
   const room = getRoom()
 
@@ -362,8 +363,8 @@ export function setupBackground (
   scroller.node().style.setProperty('--fbg-color-scroll-bg', room.backgrounds[bgIndex].color)
 
   // store for future reference
-  setServerPreference('background', bgIndex)
-  setRoomPreference('showGrid', showGrid)
+  setServerPreference(PREFS.BACKGROUND, bgIndex)
+  setRoomPreference(PREFS.GRID, showGrid)
 }
 
 // --- internal ----------------------------------------------------------------
@@ -376,6 +377,8 @@ let scroller = null /** keep reference to scroller div - we need it often */
  * @param {Object} room Room data object.
  */
 function setupRoom () {
+  cleanupStore()
+
   const room = getRoom()
 
   const mode = (room.template?.type === TYPE_HEX) ? '.is-grid-hex' : '.is-grid-square'
@@ -443,13 +446,13 @@ function setupRoom () {
   `
 
   // load preferences
-  changeQuality(getRoomPreference('renderQuality', 3))
+  changeQuality(getServerPreference(PREFS.QUALITY))
 
   // setup menu for layers
   let undefinedCount = 0
   for (const layer of ['token', 'overlay', 'tile', 'other']) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
-    const prop = getRoomPreference('layer' + layer)
+    const prop = getRoomPreference(PREFS['LAYER' + layer])
     if (prop === true) toggleLayer(layer) // stored enabled
     if (prop === undefined) undefinedCount++
   }
@@ -486,7 +489,7 @@ function setupRoom () {
   enableDragAndDrop('#tabletop')
 
   // load + setup content
-  setTableNo(getRoomPreference('table', 1), false)
+  setTableNo(getRoomPreference(PREFS.TABLE), false)
   runStatuslineLoop()
   startAutoSync(() => { autoTrackScrollPosition() })
 }
@@ -501,8 +504,7 @@ function autoTrackScrollPosition () {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
       const pos = getViewportCenter()
-      setTablePreference('scrollX', pos.x)
-      setTablePreference('scrollY', pos.y)
+      setTablePreference(PREFS.SCROLL, { x: pos.x, y: pos.y })
     }, 1000)
   })
 }

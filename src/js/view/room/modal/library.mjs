@@ -35,6 +35,7 @@ import {
 import {
   getLibrary,
   createPieces,
+  PREFS,
   getRoomPreference,
   setRoomPreference,
   addAsset,
@@ -137,9 +138,9 @@ export function modalLibrary (xy) {
 
     // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
-      setRoomPreference('modalLibraryTab', change.target.id)
+      setRoomPreference(PREFS.TAB_LIBRARY, change.target.id)
     })
-    const preselect = getRoomPreference('modalLibraryTab', 'tab-1')
+    const preselect = getRoomPreference(PREFS.TAB_LIBRARY)
     _('#' + preselect).checked = true
 
     refreshTabs()
@@ -448,7 +449,6 @@ function assetToPreview (asset) {
     tag = `${asset.w}x${asset.h}`
   }
   if (asset.media.length > 1 && asset.media[1] !== MEDIA_BACK) {
-    console.log(asset.media, MEDIA_BACK, asset.media[1])
     tag += `:${asset.media.length}`
   }
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))

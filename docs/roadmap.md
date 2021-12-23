@@ -21,6 +21,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor all JS-CSS changes to custom properties
     * [X] don't count default pieces' backsides as side in library
     * [X] browser caching artwork from previous template in same room
+    * [X] remove old/unused room properties
     * [ ] rotating border highlights
   * [ ] update screenshots
   * [ ] review docs
@@ -35,6 +36,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* [ ] use 'v' to paste / clone
 * [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] demo mode (serverless?)
 * [ ] more helper/marker overlays (arrows, areas, )

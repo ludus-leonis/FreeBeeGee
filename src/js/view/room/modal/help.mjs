@@ -28,6 +28,7 @@ import {
 } from '../../../view/modal.mjs'
 import {
   getRoom,
+  PREFS,
   getRoomPreference,
   setRoomPreference,
   getTemplate
@@ -164,10 +165,10 @@ export function modalHelp () {
     `
 
     _('input[name="tabs"]').on('change', change => {
-      setRoomPreference('modalHelpTab', change.target.id)
+      setRoomPreference(PREFS.TAB_HELP, change.target.id)
     })
 
-    const preselect = getRoomPreference('modalHelpTab', 'tab-1')
+    const preselect = getRoomPreference(PREFS.TAB_HELP)
     _('#' + preselect).checked = true
 
     _('#btn-close').on('click', () => getModal().hide())

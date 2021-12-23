@@ -20,6 +20,7 @@
 import _ from '../../lib/FreeDOM.mjs'
 import {
   getTemplate,
+  PREFS,
   getRoomPreference,
   movePiece
 } from '../../state/index.mjs'
@@ -207,7 +208,7 @@ function findRealClickTarget (event) {
   const index = nameToLayer(event.target.piece.l)
   const coords = getMouseCoords()
   for (const layer of ['other', 'token', 'note', 'overlay', 'tile']) {
-    if (nameToLayer(layer) <= index && getRoomPreference('layer' + layer)) { // we don't need to check higher layers
+    if (nameToLayer(layer) <= index && getRoomPreference(PREFS['LAYER' + layer])) { // we don't need to check higher layers
       for (const piece of sortZ(findPiecesWithin({
         left: coords.x,
         top: coords.y,

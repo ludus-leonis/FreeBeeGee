@@ -108,7 +108,7 @@ export function getTableNo () {
 export function setTableNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     tableNo = no
-    setRoomPreference('table', tableNo)
+    setRoomPreference(PREFS.TABLE, tableNo)
     if (sync) syncNow([], true)
   }
 }
@@ -132,15 +132,40 @@ export function getLibrary () {
   return getRoom()?.library
 }
 
+export const PREFS = {
+  TABLE: { name: 'table', default: 1 },
+  LAYERother: { name: 'layer5', default: true },
+  LAYERtoken: { name: 'layer4', default: true },
+  LAYERnote: { name: 'layer3', default: false },
+  LAYERoverlay: { name: 'layer2', default: false },
+  LAYERtile: { name: 'layer1', default: false },
+  GRID: { name: 'grid', default: 0 },
+  SCROLL: { name: 'scroll', default: {} },
+  BACKGROUND: { name: 'background', default: 5 }, // wood
+  QUALITY: { name: 'quality', default: 3 },
+  TAB_HELP: { name: 'tabHelp', default: 'tab-1' },
+  TAB_LIBRARY: { name: 'tabLibrary', default: 'tab-1' },
+  TAB_SETTINGS: { name: 'tabSettings', default: 'tab-1' }
+}
+
+function setPreference (key, pref, value) {
+  if (!pref.name) console.error('unknown pref', pref)
+  setStoreValue(key, pref.name, value)
+}
+
+function getPreference (key, pref) {
+  if (!pref.name) console.error('unknown pref', pref)
+  return getStoreValue(key, pref.name) ?? pref.default
+}
+
 /**
  * Get a setting from the browser HTML5 store. Automatically scoped to current server.
  *
  * @param {String} pref Setting to obtain.
- * @param {String} defaultValue Fallback value if not set/found.
  * @return {String} The setting's value.
  */
-export function getServerPreference (pref, defaultValue) {
-  return getStoreValue('s', pref) ?? defaultValue
+export function getServerPreference (pref) {
+  return getPreference('freebeegee', pref)
 }
 
 /**
@@ -150,7 +175,7 @@ export function getServerPreference (pref, defaultValue) {
  * @param {String} value The value to set.
  */
 export function setServerPreference (pref, value) {
-  setStoreValue('s', pref, value)
+  setPreference('freebeegee', pref, value)
 }
 
 /**
@@ -158,11 +183,10 @@ export function setServerPreference (pref, value) {
  * room.
  *
  * @param {String} pref Setting to obtain.
- * @param {String} defaultValue Fallback value if not set/found.
  * @return {String} The setting's value.
  */
-export function getRoomPreference (pref, defaultValue) {
-  return getStoreValue('r' + room.id.substr(0, 8), pref) ?? defaultValue
+export function getRoomPreference (pref) {
+  return getPreference(`freebeegee-${room.id}`, pref)
 }
 
 /**
@@ -173,7 +197,8 @@ export function getRoomPreference (pref, defaultValue) {
  * @param {String} value The value to set.
  */
 export function setRoomPreference (pref, value) {
-  setStoreValue('r' + room.id.substr(0, 8), pref, value)
+  setPreference(`freebeegee-${room.id}`, pref, value)
+  setStoreValue(`freebeegee-${room.id}`, 't', Math.floor(new Date().getTime() / 1000)) // touch
 }
 
 /**
@@ -185,7 +210,8 @@ export function setRoomPreference (pref, value) {
  * @return {String} The setting's value.
  */
 export function getTablePreference (pref, no = getTableNo()) {
-  return getStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref)
+  const table = getStoreValue(`freebeegee-${room.id}`, `table${no}`) ?? {}
+  return table[pref.name] ?? pref.default
 }
 
 /**
@@ -197,7 +223,34 @@ export function getTablePreference (pref, no = getTableNo()) {
  * @param {Number} no Table number. Defaults to curren table.
  */
 export function setTablePreference (pref, value, no = getTableNo()) {
-  setStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref, value)
+  const table = getStoreValue(`r${room.id}`, `table${no}`) ?? {}
+  table[pref.name] = value
+  setStoreValue(`freebeegee-${room.id}`, `table${no}`, table)
+  setStoreValue(`freebeegee-${room.id}`, 't', Math.floor(new Date().getTime() / 1000)) // touch
+}
+
+/**
+ * Remove old and unused entries (rooms) from the HTML local store.
+ */
+export function cleanupStore () {
+  const store = globalThis.localStorage
+
+  // clean obsolete entries
+  for (const key of Object.keys(store)) {
+    if (!key.startsWith('freebeegee')) store.removeItem(key)
+  }
+
+  // keep last entries
+  const entries = []
+  for (const key of Object.keys(store)) {
+    if (key.startsWith('freebeegee-')) {
+      entries.push({ key: key, t: JSON.parse(store.getItem(key)).t })
+    }
+  }
+  entries.sort((a, b) => a.t - b.t)
+  for (let i = 0; i < entries.length - 8; i++) {
+    store.removeItem(entries[i].key)
+  }
 }
 
 // --- API calls ---------------------------------------------------------------
