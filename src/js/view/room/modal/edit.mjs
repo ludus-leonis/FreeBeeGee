@@ -169,8 +169,8 @@ export function modalEdit (piece) {
       borderColor.add(option)
 
       // other colors
-      for (let c = 1; c <= template.colors.length; c++) {
-        const option = _('option').create(template.colors[c - 1].name)
+      for (let c = 1; c <= template.borders.length; c++) {
+        const option = _('option').create(template.borders[c - 1].name)
         option.value = c
         if (c === piece.c[1]) option.selected = true
         borderColor.add(option)

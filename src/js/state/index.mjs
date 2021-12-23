@@ -46,6 +46,7 @@ import {
 } from '../view/error/index.mjs'
 import {
   populatePiecesDefaults,
+  populateTemplateDefaults,
   clampToTableSize,
   nameToLayer,
   sanitizePiecePatch
@@ -497,12 +498,8 @@ export function _setTable (no, data) {
  * Only exposed for unit testing.
  */
 export function _setRoom (data) {
-  // add often used meta-infos
-  if (data?.template) {
-    data.template._meta = {
-      widthPx: data.template.gridWidth * data.template.gridSize,
-      heightPx: data.template.gridHeight * data.template.gridSize
-    }
+  if (data) {
+    data.template = populateTemplateDefaults(data.template)
   }
 
   room = data

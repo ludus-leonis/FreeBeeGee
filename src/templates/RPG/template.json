@@ -14,6 +14,16 @@
     { "name": "brown", "value": "#532501" },
     { "name": "red", "value": "#eb250b" },
     { "name": "blood", "value": "#820300" },
+    { "name": "orange", "value": "#fca718" }
+  ],
+
+  "borders": [
+    { "name": "black", "value": "#202020" },
+    { "name": "blue", "value": "#061862" },
+    { "name": "green", "value": "#294f28" },
+    { "name": "brown", "value": "#532501" },
+    { "name": "red", "value": "#eb250b" },
+    { "name": "blood", "value": "#820300" },
     { "name": "orange", "value": "#fca718" },
     { "name": "bones", "value": "#f2e4be" },
     { "name": "white", "value": "#ffffff" }

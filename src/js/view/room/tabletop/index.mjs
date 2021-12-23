@@ -322,14 +322,14 @@ function createOrUpdatePieceDOM (piece, select) {
   }
   if (_piece.c?.[1] !== piece.c[1]) { // border change
     div.remove('.is-border-*')
-    if (piece.l === 'token' && piece.c[1] >= 0 && piece.c[1] <= template.colors.length) {
+    if (piece.l === 'token' && piece.c[1] >= 0 && piece.c[1] <= template.borders.length) {
       if (piece.c[1] === 0) { // no border color
         div.add('.is-border-0')
         _(`#${piece.id}`).remove('--fbg-border-color', '--fbg-border-color-invert')
       } else { // color
         _(`#${piece.id}`).css({
-          '--fbg-border-color': template.colors[piece.c[1] - 1].value,
-          '--fbg-border-color-invert': brightness(template.colors[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+          '--fbg-border-color': template.borders[piece.c[1] - 1].value,
+          '--fbg-border-color-invert': brightness(template.borders[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
     }

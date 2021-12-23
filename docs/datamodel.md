@@ -214,11 +214,15 @@ A *template*, a.k.a. snapshot, describes a table setup for a particular game.
   "version": "1.0.1",
   "engine": "1.0.0",
 
-  "colors": [{
-    "name":"black","value":"#000000"
-  }, {
-    "name":"white","value":"#ffffff"
-  }],
+  "colors": [
+    { "name":"black","value":"#000000" },
+    { "name":"white","value":"#ffffff" }
+  ],
+
+  "borders": [
+    { "name":"black","value":"#000000" },
+    { "name":"white","value":"#ffffff" }
+  ],
 
   "gridSize": 64,
   "gridWidth": 48,
@@ -236,7 +240,10 @@ A *template*, a.k.a. snapshot, describes a table setup for a particular game.
 : The FBG engine this *template* should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
 
 `colors`
-: A series of colors available as border-colors etc. on the table. Key-Value pairs with `name` and a `value` / RGB hex code. Minimum 1 required.
+: An array of (background) colors available to pieces on the table. Key-Value pairs with `name` and a `value` / RGB hex code. If empty, pices can't have dynamic colors.
+
+`borders`
+: An (optional) series of border colors available to pieces. Key-Value pairs with `name` and a `value` / RGB hex code. If empty/missing, pices can't have dynamic colors.
 
 The remaining *template* properties depend on the game type.
 

@@ -432,6 +432,9 @@ class FreeBeeGeeAPI
                 case 'colors':
                     $this->api->assertObjectArray('colors', $value, 1);
                     break;
+                case 'borders':
+                    $this->api->assertObjectArray('borders', $value, 1);
+                    break;
                 default:
                     $this->api->sendError(400, 'invalid template.json: ' . $property . ' unkown');
             }
@@ -534,6 +537,10 @@ class FreeBeeGeeAPI
             'gridWidth' => 48,
             'gridHeight' => 32,
             'colors' => [
+                (object) [ 'name ' => 'black', 'value' => '#0d0d0d' ],
+                (object) [ 'name ' => 'white', 'value' => '#ffffff' ],
+            ],
+            'borders' => [
                 (object) [ 'name ' => 'black', 'value' => '#0d0d0d' ],
                 (object) [ 'name ' => 'white', 'value' => '#ffffff' ],
             ]

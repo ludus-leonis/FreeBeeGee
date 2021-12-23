@@ -8,6 +8,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* added separate color sets in templates for piece borders and backgrounds
 * fixed "RPG" template glass tiles transparency
 * fixed piece.h default handling (now equals w, not 0)
 * added unit test docs and added `Dockerfile` for test webservers

@@ -14,7 +14,6 @@
     { "name": "yellow", "value": "#d4aa00" },
     { "name": "green", "value": "#5aa02c" },
     { "name": "blue", "value": "#4c80ce" },
-    { "name": "violet", "value": "#744db2" },
-    { "name": "grey", "value": "#808080" }
+    { "name": "violet", "value": "#744db2" }
   ]
 }

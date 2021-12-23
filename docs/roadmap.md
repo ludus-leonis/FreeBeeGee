@@ -10,6 +10,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] table passwords
 * [ ] LOS-ruler
 * [ ] advanced grid settings (minor, major)
+* [X] added separate color sets in templates for piece's borders and backgrounds
 * [ ] add template name + version to asset urls
 * [ ] pre-release
   * [ ] bump dependencies

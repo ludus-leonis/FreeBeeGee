@@ -235,10 +235,9 @@ export function sanitizePiecePatch (patch, pieceId = null) {
     switch (field) {
       case 'c':
         result[field] = []
-        colors = p?.l === 'note' ? stickyNoteColors.length : t.colors.length
-        for (const c of patch[field]) {
-          result[field].push(mod(c, colors))
-        }
+        colors = p?.l === 'note' ? stickyNoteColors.length : (t.colors.length + 1)
+        if (patch[field][0] !== undefined) result[field].push(mod(patch[field][0], colors))
+        if (patch[field][1] !== undefined) result[field].push(mod(patch[field][1], t.borders.length + 1))
         break
       case 'x':
         result[field] = clamp(0, patch[field], r.width - 1)
@@ -278,11 +277,32 @@ export function sanitizePiecePatch (patch, pieceId = null) {
 }
 
 /**
- * Add default values to all properties that the API might omit.
+ * Add default template values to all properties that the API might omit.
+ *
+ * @param {Object} template Data object to populate.
+ * @return {Array} Template for chaining.
+ */
+export function populateTemplateDefaults (template, headers = null) {
+  template.gridSize = template.gridSize ?? 64
+  template.gridWidth = template.gridWidth ?? 64
+  template.gridHeight = template.gridHeight ?? 64
+  template.colors = template.colors ?? []
+  template.borders = template.borders ?? []
+
+  template._meta = {
+    widthPx: template.gridWidth * template.gridSize,
+    heightPx: template.gridHeight * template.gridSize
+  }
+
+  return template
+}
+
+/**
+ * Add default piece values to all properties that the API might omit.
  *
  * @param {Object} piece Data object to populate.
  * @param {Object} headers Optional headers object (for date checking).
- * @return {Array} Pieces array for chaining.
+ * @return {Object} Piece for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
   piece.l = layerToName(piece.l ?? 0)
