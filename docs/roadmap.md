@@ -19,8 +19,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] "RPG" template glass tiles transparency
     * [X] dice rolling
     * [X] match library preview to show default color "none"
-    * [ ] rotating border highlights
     * [X] refactor all JS-CSS changes to custom properties
+    * [X] don't count default pieces' backsides as side in library
+    * [ ] rotating border highlights
   * [ ] update screenshots
   * [ ] review docs
   * [ ] review + run tests

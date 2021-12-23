@@ -69,6 +69,8 @@ import { modalSettings } from '../modal/settings.mjs'
 
 // --- public ------------------------------------------------------------------
 
+export const MEDIA_BACK = '##BACK##'
+
 /**
  * Get all currently selected pieces.
  *
@@ -487,7 +489,7 @@ export function pieceToNode (piece) {
       node = createInvalidAsset(piece.l)
     }
   } else {
-    if (asset.media[piece.s] === '##BACK##') { // backside piece
+    if (asset.media[piece.s] === MEDIA_BACK) { // backside piece
       const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
       node = _(`.piece.piece-${asset.type}`).create().css({
         '--fbg-mask': `url("${encodeURI(uriMask)}")`

@@ -48,6 +48,7 @@ import {
   snap
 } from '../tabletop/tabledata.mjs'
 import {
+  MEDIA_BACK,
   pieceToNode
 } from '../tabletop/index.mjs'
 
@@ -445,7 +446,8 @@ function assetToPreview (asset) {
   if (asset.w > 2 || asset.h > 2) {
     tag = `${asset.w}x${asset.h}`
   }
-  if (asset.media.length > 1) {
+  if (asset.media.length > 1 && asset.media[1] !== MEDIA_BACK) {
+    console.log(asset.media, MEDIA_BACK, asset.media[1])
     tag += `:${asset.media.length}`
   }
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
