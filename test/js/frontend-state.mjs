@@ -33,6 +33,8 @@ import {
   getLibrary,
   isTabActive,
   setTabActive,
+  setServerPreference,
+  getServerPreference,
   setRoomPreference,
   getRoomPreference,
   setTablePreference,
@@ -127,8 +129,12 @@ describe('Frontend - state.mjs - basics', function () {
     expect(getTableNo()).to.be.eql(1)
   })
 
-  it('setRoomPreference', function () {
+  it('set...Preference', function () {
     // we can only test fallback behavior here
+    expect(getServerPreference('my')).to.be.eql(undefined)
+    setServerPreference('my', 'value')
+    expect(getServerPreference('my')).to.be.eql('value')
+
     expect(getRoomPreference('my')).to.be.eql(undefined)
     setRoomPreference('my', 'value')
     expect(getRoomPreference('my')).to.be.eql('value')
@@ -263,13 +269,13 @@ describe('Frontend - state.mjs - API request JSON', function () {
     expect(r.body.c[0]).to.be.eql(2)
     expect(r.body.c[1]).to.be.eql(0)
 
-    r = splitRequest(await colorPiece('c2de', 3, -1, false))
+    r = splitRequest(await colorPiece('c2de', 4, -1, false))
     expect(Object.keys(r.body)).to.have.members(['c'])
     expect(r.body.c[0]).to.be.eql(0)
-    expect(r.body.c[1]).to.be.eql(2)
+    expect(r.body.c[1]).to.be.eql(3)
 
     // test on exisiting piece
-    r = splitRequest(await colorPiece('c2de', 3, 4, false))
+    r = splitRequest(await colorPiece('c2de', 4, 5, false))
     expect(r.method).to.be.eql('PATCH')
     expect(Object.keys(r.body)).to.have.members(['c'])
     expect(r.body.c[0]).to.be.eql(0)
@@ -280,14 +286,14 @@ describe('Frontend - state.mjs - API request JSON', function () {
     expect(r.method).to.be.eql('PATCH')
     expect(Object.keys(r.body)).to.have.members(['c'])
     expect(r.body.c[0]).to.be.eql(3)
-    expect(r.body.c[1]).to.be.eql(4)
+    expect(r.body.c[1]).to.be.eql(0)
 
     // test on exisiting pice (0..2 colors)
     r = splitRequest(await colorPiece('fe008a4da3b2511e', 5, 6, false))
     expect(r.method).to.be.eql('PATCH')
     expect(Object.keys(r.body)).to.have.members(['c'])
-    expect(r.body.c[0]).to.be.eql(2)
-    expect(r.body.c[1]).to.be.eql(0)
+    expect(r.body.c[0]).to.be.eql(1)
+    expect(r.body.c[1]).to.be.eql(2)
   })
 
   it('editPiece()', async function () {
@@ -305,7 +311,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
     expect(Object.keys(r.body)).to.have.members(['a', 'b', 'c', 'r'])
     expect(r.body.a).to.be.eql('this')
     expect(r.body.b).to.be.eql('that')
-    expect(r.body.c[0]).to.be.eql(99 % 3)
+    expect(r.body.c[0]).to.be.eql(99 % 4)
     expect(r.body.r).to.be.eql(270)
 
     r = splitRequest(await editPiece('c0de', {}, false))
@@ -404,4 +410,4 @@ const pieceJSON = '{"id":"fe008a4da3b2511e","l":1,"a":"f45f27b57498c3be","x":256
 
 const noteJSON = '{"id":"00008a4da3b2511e","l":3,"a":"f45f27b57498c3be","x":256,"y":192,"z":13,"s":4}'
 
-const roomJSON = '{"id":"f9d05a1ecec3ecb8","name":"testroom","engine":"0.3.0","background":{"color":"#423e3d","scroller":"#2b2929","image":"img/desktop-wood.jpg"},"library":{"overlay":[{"media":["area.1x1.1x1x1.svg","##BACK##"],"w":1,"h":1,"color":"#808080","name":"area.1x1","type":"overlay","id":"7261fff0158e27bc"}],"tile":[{"media":["altar.3x2x1.transparent.png","##BACK##"],"w":3,"h":2,"color":"transparent","name":"altar","type":"tile","id":"5b150d84cee577dc"}],"token":[{"media":["aasimar.1x1x1.piece.svg","##BACK##"],"w":1,"h":1,"color":"piece","name":"aasimar","type":"token","id":"484d7d45fdc27afa"}],"other":[{"media":["classic.a.1x1x1.svg","classic.a.1x1x2.svg","classic.a.1x1x3.svg"],"w":1,"h":1,"color":"#808080","name":"classic.a","type":"other","id":"f45f27b57498c3be","base":"classic.a.1x1x0.png"}],"note":[]},"template":{"type":"grid-square","version":"0.9.0-dev","engine":"^0.3.0","gridSize":64,"gridWidth":48,"gridHeight":32,"colors":[{"name":"black","value":"#0d0d0d"},{"name":"blue","value":"#061862"},{"name":"white","value":"#ffffff"}]},"credits":"test template","width":3072,"height":2048}'
+const roomJSON = '{"id":"f9d05a1ecec3ecb8","name":"testroom","engine":"0.3.0","background":{"color":"#423e3d","scroller":"#2b2929","image":"img/desktop-wood.jpg"},"library":{"overlay":[{"media":["area.1x1.1x1x1.svg","##BACK##"],"w":1,"h":1,"color":"#808080","name":"area.1x1","type":"overlay","id":"7261fff0158e27bc"}],"tile":[{"media":["altar.3x2x1.transparent.png","##BACK##"],"w":3,"h":2,"color":"transparent","name":"altar","type":"tile","id":"5b150d84cee577dc"}],"token":[{"media":["aasimar.1x1x1.piece.svg","##BACK##"],"w":1,"h":1,"color":"piece","name":"aasimar","type":"token","id":"484d7d45fdc27afa"}],"other":[{"media":["classic.a.1x1x1.svg","classic.a.1x1x2.svg","classic.a.1x1x3.svg"],"w":1,"h":1,"color":"#808080","name":"classic.a","type":"other","id":"f45f27b57498c3be","base":"classic.a.1x1x0.png"}],"note":[]},"template":{"type":"grid-square","version":"0.9.0-dev","engine":"^0.3.0","gridSize":64,"gridWidth":48,"gridHeight":32,"colors":[{"name":"black","value":"#0d0d0d"},{"name":"blue","value":"#061862"},{"name":"white","value":"#ffffff"}],"borders":[{"name":"black","value":"#0d0d0d"},{"name":"blue","value":"#061862"},{"name":"white","value":"#ffffff"}]},"credits":"test template","width":3072,"height":2048}'

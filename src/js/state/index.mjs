@@ -133,6 +133,27 @@ export function getLibrary () {
 }
 
 /**
+ * Get a setting from the browser HTML5 store. Automatically scoped to current server.
+ *
+ * @param {String} pref Setting to obtain.
+ * @param {String} defaultValue Fallback value if not set/found.
+ * @return {String} The setting's value.
+ */
+export function getServerPreference (pref, defaultValue) {
+  return getStoreValue('s', pref) ?? defaultValue
+}
+
+/**
+ * Set a setting in the browser HTML5 store. Automatically scoped to current server.
+ *
+ * @param {String} pref Setting to set.
+ * @param {String} value The value to set.
+ */
+export function setServerPreference (pref, value) {
+  setStoreValue('s', pref, value)
+}
+
+/**
  * Get a setting from the browser HTML5 store. Automatically scoped to active
  * room.
  *

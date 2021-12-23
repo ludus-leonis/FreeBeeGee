@@ -283,10 +283,6 @@ export function sanitizePiecePatch (patch, pieceId = null) {
  * @return {Array} Template for chaining.
  */
 export function populateTemplateDefaults (template, headers = null) {
-  template.gridSize = template.gridSize ?? 64
-  template.gridWidth = template.gridWidth ?? 64
-  template.gridHeight = template.gridHeight ?? 64
-  template.colors = template.colors ?? []
   template.borders = template.borders ?? []
 
   template._meta = {

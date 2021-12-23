@@ -27,6 +27,8 @@ import {
 import {
   loadRoom,
   getRoom,
+  getServerPreference,
+  setServerPreference,
   getRoomPreference,
   setRoomPreference,
   getTablePreference,
@@ -325,7 +327,7 @@ export function restoreScrollPosition () {
  * @param {Boolean} showGrid If true, the overlay grid will be drawn.
  */
 export function setupBackground (
-  bgIndex = getRoomPreference('background', 99),
+  bgIndex = getServerPreference('background', 99),
   showGrid = getRoomPreference('showGrid', false)
 ) {
   const room = getRoom()
@@ -359,7 +361,7 @@ export function setupBackground (
   scroller.node().style.setProperty('--fbg-color-scroll-bg', room.backgrounds[bgIndex].color)
 
   // store for future reference
-  setRoomPreference('background', bgIndex)
+  setServerPreference('background', bgIndex)
   setRoomPreference('showGrid', showGrid)
 }
 

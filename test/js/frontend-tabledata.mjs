@@ -32,6 +32,7 @@ import {
   getPieceBounds,
   findPiecesWithin,
   findExpiredPieces,
+  populateTemplateDefaults,
   populatePieceDefaults,
   populatePiecesDefaults,
   sortZ,
@@ -325,7 +326,7 @@ describe('Frontend - tabledata.mjs', function () {
       id: 'fe008a4da3b2511e',
       a: 'f45f27b57498c3be',
       b: 'blind',
-      c: [2, 0],
+      c: [3, 3],
       x: 0,
       y: 0,
       z: -333,
@@ -361,7 +362,7 @@ describe('Frontend - tabledata.mjs', function () {
       id: 'fe008a4da3b2511e',
       a: 'f45f27b57498c3be',
       b: 'blind',
-      c: [1, 1],
+      c: [0, 2],
       x: 3071,
       y: 2047,
       z: 33333,
@@ -374,6 +375,13 @@ describe('Frontend - tabledata.mjs', function () {
       t: ['one', 'more', 'time'],
       expires: expires
     })
+  })
+
+  it('populateTemplateDefaults()', function () {
+    const t1 = populateTemplateDefaults({})
+    expect(Object.keys(t1)).to.have.members(['borders', '_meta'])
+    expect(t1.borders).to.be.an('array')
+    expect(t1._meta).to.be.an('object')
   })
 
   it('populatePieceDefaults()', function () {
@@ -833,6 +841,16 @@ const roomJSON = `
     "gridWidth": 48,
     "gridHeight": 32,
     "colors": [{
+      "name": "black",
+      "value": "#0d0d0d"
+    }, {
+      "name": "blue",
+      "value": "#061862"
+    }, {
+      "name": "white",
+      "value": "#ffffff"
+    }],
+    "borders": [{
       "name": "black",
       "value": "#0d0d0d"
     }, {
