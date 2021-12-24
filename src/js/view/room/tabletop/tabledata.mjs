@@ -342,6 +342,13 @@ export function populatePieceDefaults (piece, headers = null) {
           break
       }
     }
+
+    if (asset.bg.match(/^[0-9][0-9]?$/)) {
+      piece._meta.hasColor = true
+    } else {
+      piece._meta.hasColor = false
+    }
+    piece._meta.hasBorder = piece.l === 'token'
   }
 
   // header/expires information
@@ -490,7 +497,7 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
   const asset = findAsset(assetId)
   const xy = snap(x, y)
 
-  return populatePieceDefaults(clampToTableSize({
+  const piece = populatePieceDefaults(clampToTableSize({
     a: asset.id,
     l: nameToLayer(asset.type),
     w: asset.w,
@@ -499,6 +506,10 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
     y: xy.y,
     z: getMaxZ(asset.layer) + 1
   }))
+
+  piece.c[0] = Number.parseInt(asset.bg) // use asset suggestion for starter
+
+  return piece
 }
 
 /**

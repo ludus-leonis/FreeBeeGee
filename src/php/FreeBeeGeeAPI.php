@@ -652,7 +652,7 @@ class FreeBeeGeeAPI
         if (
             // group.name.1x2x3.808080.png
             preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.]+)?(\.[^\.]+)?\.[a-zA-Z0-9]+$/',
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?(-[^\.-]+)?\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
@@ -666,20 +666,21 @@ class FreeBeeGeeAPI
             if (sizeof($matches) >= 6) {
                 switch ($matches[5]) {
                     case '.transparent':
-                    case '.piece':
                         $asset->bg = substr($matches[5], 1);
                         break;
                     default:
                         if (preg_match('/^\.[a-fA-F0-9]{6}$/', $matches[5])) {
                             $asset->bg = '#' . substr($matches[5], 1);
+                        } elseif (preg_match('/^\.[0-9][0-9]?$/', $matches[5])) {
+                            $asset->bg = substr($matches[5], 1);
                         }
                 }
             }
 
             if (sizeof($matches) >= 7) {
                 switch ($matches[6]) {
-                    case '.paper':
-                    case '.wood':
+                    case '-paper':
+                    case '-wood':
                         $asset->tx = substr($matches[6], 1);
                         break;
                     default:

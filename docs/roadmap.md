@@ -6,10 +6,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [X] change backgrounds from room to server setting
 * [ ] elemental status icons for RPG/Hex templates
-* [ ] predefined piece/asset colors
+* [X] predefined piece colors
 * [ ] table passwords
 * [ ] LOS-ruler
-* [ ] advanced grid settings (minor, major)
+* [ ] advanced grid settings (minor + major grid)
 * [X] add separate color sets in templates for piece's borders and backgrounds
 * [X] add hotkeys to flip/rotate backwards
 * [ ] pre-release

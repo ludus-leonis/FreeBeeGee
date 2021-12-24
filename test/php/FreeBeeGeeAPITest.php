@@ -114,17 +114,26 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('eE', $asset->name);
         $this->assertObjectNotHasAttribute('tx', $asset);
 
-        $asset = FreeBeeGeeAPI::fileToAsset('eE.2x3x4.piece.jpg');
-        $this->assertEquals(['eE.2x3x4.piece.jpg'], $asset->media);
+        $asset = FreeBeeGeeAPI::fileToAsset('eE.2x3x4.1.jpg');
+        $this->assertEquals(['eE.2x3x4.1.jpg'], $asset->media);
         $this->assertEquals(2, $asset->w);
         $this->assertEquals(3, $asset->h);
         $this->assertEquals(4, $asset->s);
-        $this->assertEquals('piece', $asset->bg);
+        $this->assertEquals('1', $asset->bg);
         $this->assertEquals('eE', $asset->name);
         $this->assertObjectNotHasAttribute('tx', $asset);
 
-        $asset = FreeBeeGeeAPI::fileToAsset('d.e.2x3x4.abcdef.wood.jpg');
-        $this->assertEquals(['d.e.2x3x4.abcdef.wood.jpg'], $asset->media);
+        $asset = FreeBeeGeeAPI::fileToAsset('d.e.2x3x4.1-wood.jpg');
+        $this->assertEquals(['d.e.2x3x4.1-wood.jpg'], $asset->media);
+        $this->assertEquals(2, $asset->w);
+        $this->assertEquals(3, $asset->h);
+        $this->assertEquals(4, $asset->s);
+        $this->assertEquals('1', $asset->bg);
+        $this->assertEquals('wood', $asset->tx);
+        $this->assertEquals('d.e', $asset->name);
+
+        $asset = FreeBeeGeeAPI::fileToAsset('d.e.2x3x4.abcdef-wood.jpg');
+        $this->assertEquals(['d.e.2x3x4.abcdef-wood.jpg'], $asset->media);
         $this->assertEquals(2, $asset->w);
         $this->assertEquals(3, $asset->h);
         $this->assertEquals(4, $asset->s);
@@ -132,8 +141,8 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('wood', $asset->tx);
         $this->assertEquals('d.e', $asset->name);
 
-        $asset = FreeBeeGeeAPI::fileToAsset('soSo.2x3x4.transparent.paper.jpg');
-        $this->assertEquals(['soSo.2x3x4.transparent.paper.jpg'], $asset->media);
+        $asset = FreeBeeGeeAPI::fileToAsset('soSo.2x3x4.transparent-paper.jpg');
+        $this->assertEquals(['soSo.2x3x4.transparent-paper.jpg'], $asset->media);
         $this->assertEquals(2, $asset->w);
         $this->assertEquals(3, $asset->h);
         $this->assertEquals(4, $asset->s);

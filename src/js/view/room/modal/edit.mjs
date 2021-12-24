@@ -34,7 +34,6 @@ import {
 
 import {
   TYPE_HEX,
-  findAsset,
   stickyNoteColors
 } from '../../../view/room/tabletop/tabledata.mjs'
 
@@ -221,9 +220,8 @@ function getModalBody (piece) {
 }
 
 function getModalToken (piece) {
-  const asset = findAsset(piece.a)
-  const pieceClass = asset?.bg === 'piece' ? 'col-lg-3' : 'is-hidden'
-  const borderClass = asset?.bg === 'piece' ? 'col-lg-3' : 'col-lg-6'
+  const pieceClass = piece._meta.hasColor ? 'col-lg-3' : 'is-hidden'
+  const borderClass = piece._meta.hasBorder ? 'col-lg-3' : 'col-lg-6'
   return `
     <form class="container">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>

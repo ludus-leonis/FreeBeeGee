@@ -8,12 +8,28 @@
   "gridHeight": 64,
 
   "colors": [
-    { "name": "black", "value": "#333333" },
-    { "name": "white", "value": "#ececec" },
-    { "name": "red", "value": "#c83737" },
-    { "name": "yellow", "value": "#d4aa00" },
-    { "name": "green", "value": "#5aa02c" },
-    { "name": "blue", "value": "#4c80ce" },
-    { "name": "violet", "value": "#744db2" }
+    { "name": "Black", "value": "#202020" },
+    { "name": "Red", "value": "#b01c16" },
+    { "name": "Orange", "value": "#b05a11" },
+    { "name": "Yellow", "value": "#af9700" },
+    { "name": "Green", "value": "#317501" },
+    { "name": "Blue", "value": "#3387b0" },
+    { "name": "Indigo", "value": "#2e4d7b" },
+    { "name": "Violet", "value": "#730fb1" },
+    { "name": "Gray A", "value": "#606060" },
+    { "name": "Gray B", "value": "#a0a0a0" },
+    { "name": "White", "value": "#f0f0f0" }
+  ],
+
+  "borders": [
+    { "name": "Black", "value": "#202020" },
+    { "name": "Red", "value": "#b01c16" },
+    { "name": "Orange", "value": "#b05a11" },
+    { "name": "Yellow", "value": "#af9700" },
+    { "name": "Green", "value": "#409801" },
+    { "name": "Blue", "value": "#3387b0" },
+    { "name": "Indigo", "value": "#2e4d7b" },
+    { "name": "Violet", "value": "#730fb1" },
+    { "name": "White", "value": "#f0f0f0" }
   ]
 }

@@ -74,9 +74,9 @@ mainName[.secondaryName].{x}x{y}x{s}[.bg[-texture]].{ext}
 : The side this file represents, typically `1` or `2`, but an *asset* can have more than that - e.g. dice sides or enemy/color variants. FBG will cycle through those when a *piece* gets flipped.
 
 `bg`
-: An optional background color for this *asset*. Will be visible as placeholder during image loading, and shine thrugh in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, `piece` (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash).
+: An optional background color/style for this *asset*. Will be visible as placeholder during image loading, and shine thrugh in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, a number (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash). If missing, it defaults to `0`.
 
-`tx`
+`texture`
 : An optional texture for the *asset*. If present, an additional shade/texture will be applied on top of the media image to give it a rougher look. Can be `none`, `paper` or `wood`.
 
 ### Base images

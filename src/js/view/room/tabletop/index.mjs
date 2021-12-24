@@ -308,8 +308,8 @@ function createOrUpdatePieceDOM (piece, select) {
     }
   }
   if (_piece.c?.[0] !== piece.c[0]) { // color change
-    if (piece.l === 'token' && piece.c[0] >= 0 && piece.c[0] <= template.colors.length) {
-      if (piece.c[0] === 0) { // no color
+    if (piece._meta.hasColor) {
+      if (piece.c[0] === 0) { // no/default color
         _(`#${piece.id}`).remove('--fbg-color', '--fbg-color-invert')
       } else { // color
         _(`#${piece.id}`).css({
@@ -325,8 +325,8 @@ function createOrUpdatePieceDOM (piece, select) {
     }
   }
   if (_piece.c?.[1] !== piece.c[1]) { // border change
-    div.remove('.is-border-*')
-    if (piece.l === 'token' && piece.c[1] >= 0 && piece.c[1] <= template.borders.length) {
+    if (piece._meta.hasBorder) {
+      div.remove('.is-border-*')
       if (piece.c[1] === 0) { // no border color
         div.add('.is-border-0')
         _(`#${piece.id}`).remove('--fbg-border-color', '--fbg-border-color-invert')
@@ -521,11 +521,9 @@ export function pieceToNode (piece) {
     }
 
     if (asset.type !== 'overlay' && asset.type !== 'other') {
-      switch (asset.bg) {
-        case 'piece':
-          break
-        default:
-          node.css({ '--fbg-color': asset.bg })
+      if (!asset.bg.match(/^[0-9][0-9]?$/)) {
+        // color information is html color or 'transparent' -> apply
+        node.css({ '--fbg-color': asset.bg })
       }
     }
   }

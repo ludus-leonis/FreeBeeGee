@@ -39,7 +39,8 @@ import {
   getRoomPreference,
   setRoomPreference,
   addAsset,
-  reloadRoom
+  reloadRoom,
+  getTemplate
 } from '../../../state/index.mjs'
 
 import {
@@ -428,16 +429,25 @@ function updatePreview (parseImage = false) {
  * @return {HTMLElement} Node for the modal.
  */
 function assetToPreview (asset) {
-  const node = pieceToNode(populatePieceDefaults({
+  const piece = populatePieceDefaults({
     id: 'x' + asset.id,
     a: asset.id,
     s: 0
-  })).add(
+  })
+
+  const node = pieceToNode(piece).add(
     '.is-w-' + asset.w,
     '.is-h-' + asset.h,
     '.is-border-0'
   )
   node.dataset.a = asset.id
+
+  if (piece._meta.hasColor) {
+    piece.c[0] = Number.parseInt(asset.bg)
+    if (piece.c[0] !== 0) {
+      node.css({ '--fbg-color': getTemplate().colors[piece.c[0] - 1].value })
+    }
+  }
 
   const max = _('.is-scale-2').create(node)
 
