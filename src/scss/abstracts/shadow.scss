@@ -24,8 +24,8 @@
 /// @access public
 ////
 
-$shadow-x: 2; /// basic shadow length x
-$shadow-y: 3; /// basic shadow length y
+$shadow-x: 2; /// light length/direction x
+$shadow-y: 3; /// light length/direction y
 
 /// shadow direction angle
 $shadow-direction: math.atan(math.div($shadow-x, $shadow-y));
@@ -57,3 +57,20 @@ $shadow-length: math.sqrt($shadow-x * $shadow-x + $shadow-y * $shadow-y);
   $blur
   $color;
 }
+
+/// Return a box-shadow highlight and darklight value for the configured light source.
+///
+/// @example scss
+///   shadow(90, 2px, #001122)
+///
+/// @param {length} $r The transform:rotation() of the element to compensate for.
+/// @param {length} $blur The amount of blur.
+/// @param {length} $color The color of the shadow
+/// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
+@function highlight($r) {
+  @return
+  shadow-x-px($r) shadow-y-px($r) .5px 0 $color-white-15a inset,
+  shadow-x-px($r - 180) shadow-y-px($r - 180) .5px 0 $color-black-20a inset;
+}
+
+// $piece-highlights: 1px 1px .5px 0 $color-white-15a inset, -1px -1px .5px 0 $color-black-20a inset;

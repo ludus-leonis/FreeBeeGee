@@ -437,8 +437,7 @@ function assetToPreview (asset) {
 
   const node = pieceToNode(piece).add(
     '.is-w-' + asset.w,
-    '.is-h-' + asset.h,
-    '.is-border-0'
+    '.is-h-' + asset.h
   )
   node.dataset.a = asset.id
 

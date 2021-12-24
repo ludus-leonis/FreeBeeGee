@@ -31,8 +31,6 @@ $piece-rotate: .5deg;
 
 $piece-rotations: 60 90 120 180 240 270 300;
 
-$piece-highlights: 1px 1px .5px 0 $color-white-15a inset, -1px -1px .5px 0 $color-black-20a inset;
-
 $piece-shadow: shadow(0, 2px, $color-black-65a);
 $piece-shadow-60: shadow(60, 2px, $color-black-65a);
 $piece-shadow-90: shadow(90, 2px, $color-black-65a);
@@ -168,6 +166,33 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   @for $y from 1 through 32 {
     &.is-h-#{$y} {
       height: $y * $piece-tile-size;
+    }
+  }
+
+  // --- borders + 3d highlight ------------------------------------------------
+
+  &.has-border {
+    box-shadow: 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+  }
+
+  .is-quality-high &,
+  .is-quality-ultra & {
+    &.has-highlight {
+      box-shadow: highlight(0);
+
+      &.has-border {
+        box-shadow: highlight(0), 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+      }
+
+      @each $r in $piece-rotations {
+        &.is-rotate-#{$r} {
+          box-shadow: highlight($r);
+
+          &.has-border {
+            box-shadow: highlight($r), 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+          }
+        }
+      }
     }
   }
 
@@ -434,14 +459,11 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
       $piece-shadow-300
     );
 
-    // --- highlights & material ---
+    // --- material ---
     background-image: var(--fbg-material), var(--fbg-image);
     background-size: 256px, cover;
-    box-shadow: $piece-highlights, 0 0 0 $piece-border-size var(--fbg-border-color) inset;
 
     &.is-border-0 {
-      box-shadow: $piece-highlights;
-
       &.is-n::after {
         opacity: .85;
       }

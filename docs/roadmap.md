@@ -7,11 +7,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] change backgrounds from room to server setting
 * [ ] elemental status icons for RPG/Hex templates
 * [X] predefined piece colors
-* [ ] table passwords
 * [ ] LOS-ruler
 * [ ] advanced grid settings (minor + major grid)
 * [X] add separate color sets in templates for piece's borders and backgrounds
 * [X] add hotkeys to flip/rotate backwards
+* [ ] generate average piece color during upload
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
@@ -22,7 +22,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] don't count default pieces' backsides as side in library
     * [X] browser caching artwork from previous template in same room
     * [X] remove old/unused room properties
-    * [ ] rotating border highlights
+    * [ ] token upload form sometimes resetting
+    * [X] rotating border highlights
   * [ ] update screenshots
   * [ ] review docs
   * [ ] review + run tests
@@ -36,6 +37,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* [ ] table passwords
 * [ ] use 'v' to paste / clone
 * [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] demo mode (serverless?)

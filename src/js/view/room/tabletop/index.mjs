@@ -325,12 +325,12 @@ function createOrUpdatePieceDOM (piece, select) {
     }
   }
   if (_piece.c?.[1] !== piece.c[1]) { // border change
+    div.remove('.has-border')
     if (piece._meta.hasBorder) {
-      div.remove('.is-border-*')
       if (piece.c[1] === 0) { // no border color
-        div.add('.is-border-0')
         _(`#${piece.id}`).remove('--fbg-border-color', '--fbg-border-color-invert')
       } else { // color
+        div.add('.has-border')
         _(`#${piece.id}`).css({
           '--fbg-border-color': template.borders[piece.c[1] - 1].value,
           '--fbg-border-color-invert': brightness(template.borders[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
@@ -525,6 +525,10 @@ export function pieceToNode (piece) {
         // color information is html color or 'transparent' -> apply
         node.css({ '--fbg-color': asset.bg })
       }
+    }
+
+    if (asset.type === 'token') {
+      node.add('.has-highlight')
     }
   }
 
