@@ -23,7 +23,8 @@ import {
 } from '../../../api/index.mjs'
 import {
   toTitleCase,
-  toCamelCase,
+  prettyName,
+  unprettyName,
   sortByString
 } from '../../../lib/utils.mjs'
 import {
@@ -463,41 +464,6 @@ function assetToPreview (asset) {
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
   card.add(_('p').create().add(prettyName(asset.name)))
   return card
-}
-
-/**
- * Make an asset's name readable.
- *
- * Drops the group part (before the dot) and title-cases the rest.
- *
- * @param {String} assetName Name to convert, e.g. 'dungeon.ironDoor'.
- * @return {String} Improved name, e.g. 'Iron Door'.
- */
-function prettyName (assetName = '') {
-  const split = assetName.split('.')
-  if (split.length <= 1) {
-    return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim())
-  } else if (split[0] === '_') { // sort-first character
-    return toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
-  } else {
-    return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim()) +
-    ', ' + toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
-  }
-}
-
-/**
- * Convert an asset's readable name back into an name.
- *
- * @param {String} assetName Name to convert, e.g. 'Iron Door'.
- * @return {String} Alias for filename, e.g. 'ironDoor'.
- */
-function unprettyName (assetName = '') {
-  const split = assetName.split(',')
-  if (split.length <= 1) {
-    return toCamelCase(split[0].trim())
-  } else {
-    return toCamelCase(split[0].trim()) + '.' + toCamelCase(split[1].trim())
-  }
 }
 
 /**

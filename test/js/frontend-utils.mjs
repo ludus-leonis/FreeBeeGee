@@ -27,6 +27,9 @@ import {
   hash,
   recordTime,
   toCamelCase,
+  unCamelCase,
+  prettyName,
+  unprettyName,
   toTitleCase,
   intersect,
   uuid,
@@ -450,6 +453,14 @@ describe('Frontend - utils.mjs - Text', function () {
     expect(toCamelCase('hello.world')).to.be.eql('helloWorld')
   })
 
+  it('unCamelCase()', function () {
+    expect(unCamelCase('helloWorld')).to.be.eql('Hello World')
+    expect(unCamelCase('helloworld')).to.be.eql('Helloworld')
+    expect(unCamelCase('helloWorldWorld')).to.be.eql('Hello World World')
+    expect(unCamelCase('helloWorld World')).to.be.eql('Hello World World')
+    expect(unCamelCase(' hello World World ')).to.be.eql('Hello World World')
+  })
+
   it('sortByString()', function () {
     expect(sortByString([], 'none')).to.be.eql([])
     expect(sortByString([
@@ -461,6 +472,20 @@ describe('Frontend - utils.mjs - Text', function () {
       { id: 'three' },
       { id: 'two' }
     ])
+  })
+
+  it('prettyName()', function () {
+    expect(prettyName('dungeon')).to.be.eql('Dungeon')
+    expect(prettyName('dungeon.door')).to.be.eql('Dungeon, Door')
+    expect(prettyName('dungeon.ironDoor')).to.be.eql('Dungeon, Iron Door')
+    expect(prettyName(' dunGeon.ironDoor ')).to.be.eql('Dun Geon, Iron Door')
+  })
+
+  it('unprettyName()', function () {
+    expect(unprettyName('Dungeon')).to.be.eql('dungeon')
+    expect(unprettyName('Dungeon, Door')).to.be.eql('dungeon.door')
+    expect(unprettyName('Dungeon, Iron Door')).to.be.eql('dungeon.ironDoor')
+    expect(unprettyName('  Dun  Geon ,  Iron  Door  ')).to.be.eql('dunGeon.ironDoor')
   })
 })
 

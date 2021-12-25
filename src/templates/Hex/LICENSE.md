@@ -10,9 +10,9 @@ The **Hex** template is part of FreeBeeGee and released under the terms of the A
   * boar, deer, hyena-head by caro-asercion
   * dwarf-helmet by kier-heyl
 * Status icons by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified:
-  * broken-heart, manacles, psychic-waves, spider-web, stone-block, water-splash by Lorc
-  * invisible, target-poster by Delapouite
-  * hearing-disabled, sight-disabled by skoll
+  * broken-heart, bubbling-bowl, explosion-rays, magnet, manacles, power-lightning, psychic-waves, resonance, spider-web, stone-block, water-splash by Lorc
+  * griffin-shield, ice-iris, invisible, target-poster by Delapouite
+  * burning-skull, hearing-disabled, sight-disabled by skoll
   * water-drop by sbed
 * Props by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified:
   * chest by Delapouite

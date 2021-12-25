@@ -343,7 +343,7 @@ export function populatePieceDefaults (piece, headers = null) {
       }
     }
 
-    if (asset.bg.match(/^[0-9][0-9]?$/)) {
+    if (asset.bg?.match(/^[0-9][0-9]?$/)) {
       piece._meta.hasColor = true
     } else {
       piece._meta.hasColor = false
@@ -507,7 +507,9 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
     z: getMaxZ(asset.layer) + 1
   }))
 
-  piece.c[0] = Number.parseInt(asset.bg) // use asset suggestion for starter
+  if (piece._meta.hasColor) {
+    piece.c[0] = Number.parseInt(asset.bg) // use asset suggestion for starter
+  }
 
   return piece
 }

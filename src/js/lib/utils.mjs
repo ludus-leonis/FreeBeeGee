@@ -419,6 +419,16 @@ export function toCamelCase (string) {
 }
 
 /**
+ * Convert a CamelCase string to non-camel-case.
+ *
+ * @param {String} string String to un-camel-case.
+ * @return {String} Un-camel-cased string.
+ */
+export function unCamelCase (string) {
+  return toTitleCase(string.replace(/([A-Z])/g, ' $1').replace(/\s+/g, ' ').trim())
+}
+
+/**
  * Sort an array of objects by string property.
  *
  * @param {Array} objects Array to sort.
@@ -431,6 +441,41 @@ export function sortByString (objects, property) {
     const valueB = (b[property] ?? '').toLowerCase()
     return valueA < valueB ? -1 : +(valueA > valueB)
   })
+}
+
+/**
+ * Make an asset's name readable.
+ *
+ * Drops the group part (before the dot) and title-cases the rest.
+ *
+ * @param {String} assetName Name to convert, e.g. 'dungeon.ironDoor'.
+ * @return {String} Improved name, e.g. 'Dungeon, Iron Door'.
+ */
+export function prettyName (assetName = '') {
+  const split = assetName.split('.')
+  if (split.length <= 1) {
+    return unCamelCase(split[0])
+  } else if (split[0] === '_') { // sort-first character
+    return unCamelCase(split[1])
+  } else { // only 2 splits/groups are supported
+    return unCamelCase(split[0]) +
+    ', ' + unCamelCase(split[1])
+  }
+}
+
+/**
+ * Convert an asset's readable name back into an name.
+ *
+ * @param {String} assetName Name to convert, e.g. 'Dungeon, Iron Door'.
+ * @return {String} Alias for filename, e.g. 'dungeon.ironDoor'.
+ */
+export function unprettyName (assetName = '') {
+  const split = assetName.split(',')
+  if (split.length <= 1) {
+    return toCamelCase(split[0].trim())
+  } else {
+    return toCamelCase(split[0].trim()) + '.' + toCamelCase(split[1].trim())
+  }
 }
 
 // --- time & timestamps -------------------------------------------------------

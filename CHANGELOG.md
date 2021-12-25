@@ -9,6 +9,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added predefined piece colors - library entries now can have pre-set default colors
 * added color support and "?", "!" and "↑" sides to the generic A-Z piece
 * added hotkeys F/R to flip/rotate backwards
+* added more damage status icons for RPG/Hex templates (acid, fire, ...)
 
 ### Other changes
 

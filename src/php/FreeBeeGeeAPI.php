@@ -348,7 +348,7 @@ class FreeBeeGeeAPI
                 default: // scan for asset filenames
                     if (
                         !preg_match(
-                            '/^assets\/(overlay|tile|token|other|tag)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
+                            '/^assets\/(overlay|tile|token|other|tag)\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
                             $entry['name']
                         )
                     ) {

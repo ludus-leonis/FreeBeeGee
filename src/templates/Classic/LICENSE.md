@@ -5,3 +5,7 @@ The **Classic** template is part of FreeBeeGee and released under the terms of t
 * Pieces by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified:
   * Chess pieces by Skoll
   * Griffin shield icon by Delapouite
+* Status icons by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified:
+  * broken-heart, bubbling-bowl, explosion-rays, magnet, manacles, power-lightning, psychic-waves, resonance, spider-web, stone-block, water-splash by Lorc
+  * griffin-shield, target-poster by Delapouite
+  * water-drop by sbed

@@ -37,6 +37,10 @@ import {
   stickyNoteColors
 } from '../../../view/room/tabletop/tabledata.mjs'
 
+import {
+  prettyName
+} from '../../../lib/utils.mjs'
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -64,7 +68,7 @@ export function modalEdit (piece) {
     pieceTag.add(pieceTagNone)
     let pieceTagFound = false
     for (const tag of getLibrary().tag) {
-      const option = _('option').create(tag.name)
+      const option = _('option').create(prettyName(tag.name))
       option.value = tag.name
       if (tag.name === piece.b?.[0]) {
         pieceTagFound = true

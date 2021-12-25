@@ -5,7 +5,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.13 - ??? ???
 
 * [X] change backgrounds from room to server setting
-* [ ] elemental status icons for RPG/Hex templates
+* [X] damage status icons for RPG/Hex templates
 * [X] predefined piece colors
 * [ ] LOS-ruler
 * [ ] advanced grid settings (minor + major grid)
