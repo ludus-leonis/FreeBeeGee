@@ -22,7 +22,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] don't count default pieces' backsides as side in library
     * [X] browser caching artwork from previous template in same room
     * [X] remove old/unused room properties
-    * [ ] upload form sometimes resets selection
+    * [X] upload form sometimes resets selection
     * [X] rotating border highlights
   * [ ] update screenshots
   * [ ] review docs

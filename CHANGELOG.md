@@ -24,6 +24,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * fixed browser caching artwork from previous template in same room
 * fixed user preferences to have global default values and ttl
 * fixed rotating border highlights
+* fixed upload form sometimes resets selection
 
 ## v0.12.0 - Hexing Heron
 

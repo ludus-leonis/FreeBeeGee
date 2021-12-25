@@ -407,15 +407,10 @@ function updatePreview (parseImage = false) {
   if (parseImage) {
     const parts = splitAssetFilename(file.name)
     if (_('#upload-name').value.length <= 0) { // guess defaults for form
-      _('#upload-w').value = parts.w
-      _('#upload-h').value = parts.h
-      if (parts.name !== 'unknown') {
+      if (parts.w) _('#upload-w').value = parts.w
+      if (parts.h) _('#upload-h').value = parts.h
+      if (parts.name) {
         _('#upload-name').value = prettyName(parts.name)
-      }
-      if (parts.w > 2 || parts.h > 2) {
-        _('#upload-type').value = 'tile'
-      } else {
-        _('#upload-type').value = 'token'
       }
     }
   }

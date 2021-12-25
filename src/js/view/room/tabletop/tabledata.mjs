@@ -583,13 +583,7 @@ export function getSetupCenter (no = getTableNo()) {
  * @return {Object} Parsed elements.
  */
 export function splitAssetFilename (assetName) {
-  const data = {
-    name: 'unknown',
-    w: 1,
-    h: 1,
-    s: 1,
-    bg: '808080'
-  }
+  const data = {}
   let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
