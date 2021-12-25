@@ -25,7 +25,8 @@ import {
   toTitleCase,
   prettyName,
   unprettyName,
-  sortByString
+  sortByString,
+  resizeImage
 } from '../../../lib/utils.mjs'
 import {
   createModal,
@@ -128,6 +129,7 @@ export function modalLibrary (xy) {
               <label class="upload-group" for="upload-file">
                 <div class="upload-preview" title="Click to upload"></div>
                 <input id="upload-file" type="file" accept=".jpg,.jpeg,.png", class="is-hidden">
+                <input id="upload-color" type="hidden" class="is-hidden">
               </label>
             </div>
             <div class="col-6">
@@ -240,6 +242,30 @@ function setupFooter () {
 }
 
 /**
+ * Calculate the average color in an upload image.
+ *
+ * Will set the determined value in the upload form.
+ *
+ * @param {String} dataUrl Raw base65 data of uploaded image.
+ */
+function averageColor (dataUrl) {
+  _('#upload-color').value = '#808080' // color detection is async, so use interim-default
+  var image = new Image() // eslint-disable-line no-undef
+  image.onload = function () {
+    // shrink in 2 steps for more accurate average
+    const canvas8 = resizeImage(image, 8)
+    const canvas1 = resizeImage(canvas8, 1)
+
+    let [r, g, b] = canvas1.getContext('2d').getImageData(0, 0, 1, 1).data
+    r = r.toString(16).padStart(2, '0')
+    g = g.toString(16).padStart(2, '0')
+    b = b.toString(16).padStart(2, '0')
+    _('#upload-color').value = `#${r}${g}${b}`
+  }
+  image.src = dataUrl
+}
+
+/**
  * Execute the upload form.
  */
 function modalUpload () {
@@ -283,8 +309,14 @@ function modalUpload () {
       h: Number(_('#upload-h').value),
       base64: _('.upload-preview .piece').node().style.backgroundImage
         .replace(/^[^,]*,/, '')
-        .replace(/".*/, ''),
-      bg: type === 'token' ? '#808080' : 'transparent'
+        .replace(/".*/, '')
+    }
+
+    // set bg color
+    if (type === 'token' || data.format === 'jpg') {
+      data.bg = _('#upload-color').value
+    } else {
+      data.bg = 'transparent'
     }
 
     addAsset(data)
@@ -357,6 +389,8 @@ function setupTabUpload () {
   }
   height.on('change', change => updatePreview())
 
+  _('#upload-color').value = '#808080'
+
   _('#upload-file').on('change', change => updatePreview(true))
 
   updatePreview()
@@ -405,6 +439,8 @@ function updatePreview (parseImage = false) {
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
   if (type === 'overlay' || type === 'tile') {
     piece.css({ '--fbg-color': 'rgba(0,0,0,.05)' })
+  } else {
+    piece.css({ '--fbg-color': '#202020' })
   }
   preview.add(piece)
 
@@ -412,13 +448,18 @@ function updatePreview (parseImage = false) {
   if (file) {
     const reader = new FileReader()
     reader.addEventListener('load', event => {
-      _('.upload-preview .piece').css({ backgroundImage: `url("${event.target.result}")` })
+      _('.upload-preview .piece').css({
+        backgroundImage: `url("${event.target.result}")`,
+        backgroundSize: 'cover'
+      })
+      _('#upload-color').value = averageColor(event.target.result)
     }, false)
     reader.readAsDataURL(file)
   } else {
     piece.css({
       backgroundImage: url('img/upload.svg'),
-      backgroundSize: '25%'
+      backgroundSize: '25%',
+      backgroundRepeat: 'no-repeat'
     })
   }
 }

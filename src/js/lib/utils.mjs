@@ -135,6 +135,22 @@ export function toggleFullscreen () {
   return false
 }
 
+/**
+ * Resize a drawable (image, canvas).
+ *
+ * @param {Object} image Element to shrink (image, canvas).
+ * @param {Number} dimension Size to shrink to.
+ * @return Canvas with resized image. Does not honor aspect ratio and will deform.
+ */
+export function resizeImage (image, dimension) {
+  const canvas = document.createElement('canvas')
+  canvas.width = dimension
+  canvas.height = dimension
+  var ctx = canvas.getContext('2d')
+  ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, dimension, dimension)
+  return canvas
+}
+
 // --- math --------------------------------------------------------------------
 
 /**
@@ -142,6 +158,7 @@ export function toggleFullscreen () {
  *
  * @param {Number} n Number to modulo.
  * @param {Number} m Number to modulo by.
+ * @return Modulo value.
  */
 export function mod (n, m) {
   return ((n % m) + m) % m

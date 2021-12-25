@@ -13,6 +13,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* added automatic generation of average piece color during uploads
 * added separate color sets in templates for piece borders and backgrounds
 * added unit test docs and added `Dockerfile` for test webservers
 * changed all JS-CSS injections to use custom properties

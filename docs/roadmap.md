@@ -11,7 +11,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] advanced grid settings (minor + major grid)
 * [X] add separate color sets in templates for piece's borders and backgrounds
 * [X] add hotkeys to flip/rotate backwards
-* [ ] generate average piece color during upload
+* [X] generate average piece color during upload
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
