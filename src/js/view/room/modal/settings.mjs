@@ -90,8 +90,9 @@ export function modalSettings () {
             <div class="col-12 col-lg-3">
               <label for="table-grid">Grid</label>
               <select id="table-grid" name="grid">
-                <option value="true" ${grid ? 'selected' : ''}>On</option>
-                <option value="false" ${!grid ? 'selected' : ''}>Off</option>
+                <option value="0" ${grid === 0 ? 'selected' : ''}>None</option>
+                <option value="1" ${grid === 1 ? 'selected' : ''}>Minor</option>
+                <option value="2" ${grid === 2 ? 'selected' : ''}>Major</option>
               </select>
               <p class="p-small spacing-tiny">Show grid?</p>
             </div>
@@ -280,7 +281,7 @@ export function modalSettings () {
 
   // ---------------------------------------------------------------------------
 
-  _('#table-grid').on('change', () => toggleGrid(_('#table-grid').value === 'true'))
+  _('#table-grid').on('change', () => toggleGrid(Number.parseInt(_('#table-grid').value)))
   _('#table-background').on('change', () => setupBackground(Number(_('#table-background').value)))
   _('#table-sub').on('change', () => setTableNo(Number(_('#table-sub').value)))
 

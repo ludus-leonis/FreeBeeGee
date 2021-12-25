@@ -28,6 +28,7 @@
   #{'--fbg-tabletop-color'}: #808080;
   #{'--fbg-tabletop-width'}: 1024px;
   #{'--fbg-tabletop-height'}: 1024px;
+  #{'--fbg-tabletop-grid'}: 'none';
 
   $tile-size: 64px;
 
@@ -39,24 +40,8 @@
   position: relative;
   width: var(--fbg-tabletop-width);
 
-  &.is-grid-hex-light {
-    background-image: url('img/grid-hex-white.svg'), var(--fbg-tabletop-image);
-    background-size: 110px 64px, auto;
-  }
-
-  &.is-grid-hex-dark {
-    background-image: url('img/grid-hex-black.svg'), var(--fbg-tabletop-image);
-    background-size: 110px 64px, auto;
-  }
-
-  &.is-grid-square-light {
-    background-image: url('img/grid-square-white.svg'), var(--fbg-tabletop-image);
-    background-size: 64px 64px, auto;
-  }
-
-  &.is-grid-square-dark {
-    background-image: url('img/grid-square-black.svg'), var(--fbg-tabletop-image);
-    background-size: 64px 64px, auto;
+  &.has-grid {
+    background-image: var(--fbg-tabletop-grid), var(--fbg-tabletop-image);
   }
 
   .is-quality-low & {

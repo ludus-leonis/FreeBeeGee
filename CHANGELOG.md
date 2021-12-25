@@ -10,6 +10,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added color support and "?", "!" and "↑" sides to the generic A-Z piece
 * added hotkeys F/R to flip/rotate backwards
 * added more damage status icons for RPG/Hex templates (acid, fire, ...)
+* added grid option minor (dots) or major (lines) to settings
 
 ### Other changes
 

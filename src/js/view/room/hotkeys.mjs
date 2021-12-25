@@ -147,7 +147,7 @@ function handleRoomKeys (keydown) {
       case 'F': // flip backward
         flipSelected(false)
         break
-      case 'g': // toggleGrid
+      case 'g': // grid
         toggleGrid()
         break
       case 'o': // token color

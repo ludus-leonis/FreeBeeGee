@@ -164,12 +164,18 @@ export function toggleLayer (layer) {
 
 /**
  * Toggle grid display on/off.
+ *
+ * @param {Number} value Grid value (0..2).
  */
-export function toggleGrid (on) {
-  if (on === true || on === false) {
-    setRoomPreference(PREFS.GRID, on ? 1 : 0)
-  } else { // undefined
-    setRoomPreference(PREFS.GRID, !getRoomPreference(PREFS.GRID))
+export function toggleGrid (value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      setRoomPreference(PREFS.GRID, value)
+      break
+    default: // unknown value = cycle background
+      setRoomPreference(PREFS.GRID, (getRoomPreference(PREFS.GRID) + 1) % 3)
   }
   setupBackground()
 }
@@ -330,7 +336,7 @@ export function restoreScrollPosition () {
  */
 export function setupBackground (
   bgIndex = getServerPreference(PREFS.BACKGROUND),
-  showGrid = getRoomPreference(PREFS.GRID)
+  gridType = getRoomPreference(PREFS.GRID)
 ) {
   const room = getRoom()
 
@@ -341,17 +347,15 @@ export function setupBackground (
     '--fbg-tabletop-image': url(room.backgrounds[bgIndex].image)
   })
 
-  // setup background / wallpaper
-  _('#tabletop').remove('.is-grid-*')
-  if (showGrid) {
-    const dark = brightness(room.backgrounds[bgIndex].color) < 92
-    switch (room.template?.type) {
-      case TYPE_HEX:
-        _('#tabletop').add(dark ? '.is-grid-hex-light' : '.is-grid-hex-dark')
-        break
-      default:
-        _('#tabletop').add(dark ? '.is-grid-square-light' : '.is-grid-square-dark')
-    }
+  // setup background / wallpaper + grid
+  _('#tabletop').remove('.has-grid', '--fbg-tabletop-grid')
+  if (gridType > 0) {
+    _('#tabletop').add('.has-grid')
+
+    const color = brightness(room.backgrounds[bgIndex].color) < 92 ? 'white' : 'black'
+    const style = gridType > 1 ? 'major' : 'minor'
+    const shape = room.template?.type === TYPE_HEX ? 'hex' : 'square'
+    _('#tabletop').css({ '--fbg-tabletop-grid': url(`img/grid-${shape}-${style}-${color}.svg`) })
   }
 
   // setup scroller
@@ -364,7 +368,7 @@ export function setupBackground (
 
   // store for future reference
   setServerPreference(PREFS.BACKGROUND, bgIndex)
-  setRoomPreference(PREFS.GRID, showGrid)
+  setRoomPreference(PREFS.GRID, gridType)
 }
 
 // --- internal ----------------------------------------------------------------
@@ -381,7 +385,7 @@ function setupRoom () {
 
   const room = getRoom()
 
-  const mode = (room.template?.type === TYPE_HEX) ? '.is-grid-hex' : '.is-grid-square'
+  const mode = (room.template?.type === TYPE_HEX) ? '.is-template-grid-hex' : '.is-template-grid-square'
 
   _('body').remove('.page-boxed').add(mode).innerHTML = `
     <div id="room" class="room is-fullscreen is-noselect">

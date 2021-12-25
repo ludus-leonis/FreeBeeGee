@@ -8,7 +8,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] damage status icons for RPG/Hex templates
 * [X] predefined piece colors
 * [ ] LOS-ruler
-* [ ] advanced grid settings (minor + major grid)
+* [X] advanced grid settings (minor + major grid)
 * [X] add separate color sets in templates for piece's borders and backgrounds
 * [X] add hotkeys to flip/rotate backwards
 * [X] generate average piece color during upload
