@@ -13,7 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] add hotkeys to flip/rotate backwards
 * [ ] generate average piece color during upload
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] "RPG" template glass tiles transparency
     * [X] dice rolling
@@ -22,7 +22,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] don't count default pieces' backsides as side in library
     * [X] browser caching artwork from previous template in same room
     * [X] remove old/unused room properties
-    * [ ] token upload form sometimes resetting
+    * [ ] upload form sometimes resets selection
     * [X] rotating border highlights
   * [ ] update screenshots
   * [ ] review docs
