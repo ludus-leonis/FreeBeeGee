@@ -58,7 +58,8 @@ import {
   getMaxZ,
   getTopLeftPx,
   getPieceBounds,
-  snap
+  snap,
+  stickyNoteColors
 } from './tabledata.mjs'
 import {
   updateMenu
@@ -307,24 +308,34 @@ function createOrUpdatePieceDOM (piece, select) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
-  if (_piece.c?.[0] !== piece.c[0]) { // color change
-    if (piece._meta.hasColor) {
+
+  if (_piece.c?.[0] !== piece.c[0] || _piece.c?.[1] !== piece.c[1]) {
+    // (background) color
+    if (piece.l === 'note') {
+      div.css({
+        '--fbg-color': stickyNoteColors[piece.c[0]].value,
+        '--fbg-color-invert': brightness(stickyNoteColors[piece.c[0]].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+      })
+    } else if (piece.l === 'overlay' || piece.l === 'other') {
+      // no color
+    } else if (piece._meta.hasColor) {
       if (piece.c[0] === 0) { // no/default color
-        _(`#${piece.id}`).remove('--fbg-color', '--fbg-color-invert')
+        div.remove('--fbg-color', '--fbg-color-invert')
       } else { // color
-        _(`#${piece.id}`).css({
+        div.css({
           '--fbg-color': template.colors[piece.c[0] - 1].value,
           '--fbg-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
+    } else {
+      const asset = findAsset(piece.a)
+      div.css({
+        '--fbg-color': asset.bg,
+        '--fbg-color-invert': brightness(asset.bg) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+      })
     }
-    if (piece.l === 'note') {
-      div
-        .remove('.is-color-*')
-        .add('.is-color-' + piece.c[0])
-    }
-  }
-  if (_piece.c?.[1] !== piece.c[1]) { // border change
+
+    // border color
     div.remove('.has-border')
     if (piece._meta.hasBorder) {
       if (piece.c[1] === 0) { // no border color
@@ -674,6 +685,15 @@ export function pointTo (coords) {
     y: snapped.y,
     z: getMaxZ('other') + 1
   }])
+}
+
+/**
+ * Start a line-of-sight thread at the given coordination.
+ *
+ * @param {Object} coords {x, y} object, in table px.
+ */
+export function los (coords) {
+  // const los = { x: coords.x, y: coords.y }
 }
 
 // --- internal ----------------------------------------------------------------

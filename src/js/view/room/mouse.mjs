@@ -67,6 +67,15 @@ export function isDragging () {
 }
 
 /**
+ * Determine if user is currently drawing something (line, square, ...).
+ *
+ * @return {Boolean} True if so, false if not.
+ */
+export function isDrawing () {
+  return drawing !== null
+}
+
+/**
  * Get the current mouse cursor position.
  * @return {Object} Object with x and y in pixels.
  */
@@ -322,6 +331,7 @@ function mouseUp (mouseup) {
 // --- drag'n'drop -------------------------------------------------------------
 
 let dragging = null // the currently dragge object, or null
+const drawing = null
 
 /**
  * Start drag'n'drop after mousebutton was pushed.

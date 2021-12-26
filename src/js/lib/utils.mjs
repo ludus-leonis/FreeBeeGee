@@ -523,6 +523,7 @@ export function recordTime (data, value) {
  * @return {Number} Grayscale brightness of color (0..255), e.g. 85.
  */
 export function brightness (color) {
+  if (color === 'transparent') return 255 // all and nothing
   const r = parseInt(color.substring(1, 3), 16)
   const g = parseInt(color.substring(3, 5), 16)
   const b = parseInt(color.substring(5, 7), 16)

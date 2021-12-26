@@ -374,9 +374,9 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   &.is-n::after {
     align-items: center;
-    background-color: var(--fbg-border-color);
+    background-color: var(--fbg-color);
     border-radius: 100%;
-    color: var(--fbg-border-color-invert);
+    color: var(--fbg-color-invert);
     display: flex;
     flex-direction: row;
     font-size: .85em;
@@ -388,6 +388,11 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     right: 0;
     top: 50%;
     width: $is-n-size;
+  }
+
+  &.has-border.is-n::after {
+    background-color: var(--fbg-border-color);
+    color: var(--fbg-border-color-invert);
   }
 
   &.is-n-1::after { content: '1'; }

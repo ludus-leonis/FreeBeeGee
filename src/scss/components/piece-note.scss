@@ -31,36 +31,17 @@ $piece-note-glue: rgba(0, 0, 0, .02);
 
   $note-rotate: 10deg;
 
-  background-color: $color-gray-05;
+  #{'--fbg-color'}: $color-gray-10;
+  #{'--fbg-color-invert'}: $color-bw-fg;
   border-bottom-left-radius: 1px 90%;
   border-bottom-right-radius: 50% 4px;
-  color: $color-bw-fg;
+  color: var(--fbg-color-invert);
   font-variant-ligatures: none;
   overflow: hidden;
   padding: $spacing-small;
   position: relative;
   text-align: center;
   word-break: break-word;
-
-  &.is-color-0 {
-    background-color: $color-s1;
-  }
-
-  &.is-color-1 {
-    background-color: $color-s2;
-  }
-
-  &.is-color-2 {
-    background-color: $color-s3;
-  }
-
-  &.is-color-3 {
-    background-color: $color-s4;
-  }
-
-  &.is-color-4 {
-    background-color: $color-s5;
-  }
 
   // --- reduce text size on small notes ---
 
@@ -111,32 +92,10 @@ $piece-note-glue: rgba(0, 0, 0, .02);
 
     @include piece-rotate(0deg, $note-rotate);
 
-    &.is-rotate-60 {
-      @include piece-rotate(90deg, $note-rotate);
-    }
-
-    &.is-rotate-90 {
-      @include piece-rotate(90deg, $note-rotate);
-    }
-
-    &.is-rotate-120 {
-      @include piece-rotate(120deg, $note-rotate);
-    }
-
-    &.is-rotate-180 {
-      @include piece-rotate(180deg, $note-rotate);
-    }
-
-    &.is-rotate-240 {
-      @include piece-rotate(240deg, $note-rotate);
-    }
-
-    &.is-rotate-270 {
-      @include piece-rotate(270deg, $note-rotate);
-    }
-
-    &.is-rotate-300 {
-      @include piece-rotate(300deg, $note-rotate);
+    @each $r in $piece-rotations {
+      &.is-rotate-#{$r} {
+        @include piece-rotate($r, $note-rotate);
+      }
     }
   }
 }

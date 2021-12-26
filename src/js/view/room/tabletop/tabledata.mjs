@@ -48,11 +48,11 @@ export const TYPE_SQUARE = 'grid-square'
 export const TYPE_HEX = 'grid-hex'
 
 export const stickyNoteColors = [
-  { name: 'yellow' },
-  { name: 'orange' },
-  { name: 'green' },
-  { name: 'blue' },
-  { name: 'pink' }
+  { name: 'Yellow', value: '#ffeba6' },
+  { name: 'Orange', value: '#fdce97' },
+  { name: 'Green', value: '#bffabb' },
+  { name: 'Blue', value: '#bbe7fa' },
+  { name: 'Pink', value: '#f4a0c6' }
 ]
 
 export const LAYERS = [ // reverse order

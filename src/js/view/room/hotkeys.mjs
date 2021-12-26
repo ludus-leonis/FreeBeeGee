@@ -43,7 +43,8 @@ import {
   createNote,
   cycleColor,
   toBottomSelected,
-  pointTo
+  pointTo,
+  los
 } from './tabletop/index.mjs'
 import {
   isDragging,
@@ -121,6 +122,9 @@ function handleRoomKeys (keydown) {
         break
       case 'l': // library / add piece
         modalLibrary(getMouseCoords())
+        break
+      case 'L': // LOS checker
+        los(getMouseCoords())
         break
       case 'n': // library / add piece
         createNote(getMouseCoords())
