@@ -17,23 +17,27 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
+import _ from 'lib/FreeDOM.mjs'
+
 import {
   UnexpectedStatus
-} from '../../../api/index.mjs'
+} from 'api/index.mjs'
+
 import {
   toTitleCase,
   prettyName,
   unprettyName,
   sortByString,
   resizeImage
-} from '../../../lib/utils.mjs'
+} from 'lib/utils.mjs'
+
 import {
   createModal,
   getModal,
   modalActive,
   modalClose
-} from '../../../view/modal.mjs'
+} from 'view/modal.mjs'
+
 import {
   getLibrary,
   createPieces,
@@ -43,19 +47,20 @@ import {
   addAsset,
   reloadRoom,
   getTemplate
-} from '../../../state/index.mjs'
+} from 'state/index.mjs'
 
 import {
   createPieceFromAsset,
   populatePieceDefaults,
   splitAssetFilename,
   snap
-} from '../tabletop/tabledata.mjs'
+} from 'view/room/tabletop/tabledata.mjs'
+
 import {
   MEDIA_BACK,
   pieceToNode,
   url
-} from '../tabletop/index.mjs'
+} from 'view/room/tabletop/index.mjs'
 
 // --- public ------------------------------------------------------------------
 

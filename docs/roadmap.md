@@ -7,7 +7,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] change backgrounds from room to server setting
 * [X] damage status icons for RPG/Hex templates
 * [X] predefined piece colors
-* [ ] LOS-ruler
+* [X] LOS-ruler
 * [X] advanced grid settings (minor + major grid)
 * [X] add separate color sets in templates for piece's borders and backgrounds
 * [X] add hotkeys to flip/rotate backwards

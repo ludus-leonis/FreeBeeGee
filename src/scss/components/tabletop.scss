@@ -44,6 +44,10 @@
     background-image: var(--fbg-tabletop-grid), var(--fbg-tabletop-image);
   }
 
+  &.is-drawing {
+    cursor: crosshair;
+  }
+
   .is-quality-low & {
     background-image: none !important; // sass-lint:disable-line no-important
   }

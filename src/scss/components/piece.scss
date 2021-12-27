@@ -31,38 +31,25 @@ $piece-rotate: .5deg;
 
 $piece-rotations: 60 90 120 180 240 270 300;
 
-$piece-shadow: shadow(0, 2px, $color-black-65a);
-$piece-shadow-60: shadow(60, 2px, $color-black-65a);
-$piece-shadow-90: shadow(90, 2px, $color-black-65a);
-$piece-shadow-120: shadow(120, 2px, $color-black-65a);
-$piece-shadow-180: shadow(180, 2px, $color-black-65a);
-$piece-shadow-240: shadow(240, 2px, $color-black-65a);
-$piece-shadow-270: shadow(270, 2px, $color-black-65a);
-$piece-shadow-300: shadow(300, 2px, $color-black-65a);
-
-$piece-shadow-flat: shadow(0, 0, $color-black-35a);
-$piece-shadow-flat-60: shadow(60, 0, $color-black-35a);
-$piece-shadow-flat-90: shadow(90, 0, $color-black-35a);
-$piece-shadow-flat-120: shadow(120, 0, $color-black-35a);
-$piece-shadow-flat-180: shadow(180, 0, $color-black-35a);
-$piece-shadow-flat-240: shadow(240, 0, $color-black-35a);
-$piece-shadow-flat-270: shadow(270, 0, $color-black-35a);
-$piece-shadow-flat-300: shadow(300, 0, $color-black-35a);
-$piece-shadow-flat-overlay: shadow(0, 0, $color-black-35a);
-
 $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
 // --- 'random' piece attributes -----------------------------------------------
 
-$piece-ids: '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f';
-$piece-jitter-a: (-1) (-.866) (-.733) (-.6) (-.466) (-.333) (-.2) (-.066) .066 .2 .333 .466 .6 .733 .866 1;
-$piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .1;
+$piece-ids: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f';
+$piece-jitter-a: (-1) (-.866) (-.733) (-.6) (-.466) (-.333) (-.2) (-.066) .066 .2 .333 .466 .6 .733 1 0;
+$piece-jitter-b: .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .1 0; // last = f = none
 
 @mixin piece-rotate($r, $amount) { // random rotation of pieces
   @each $id in $piece-ids {
     $i: index($piece-ids, $id);
     $jitter: nth($piece-jitter-a, $i);
-    &[id^='#{$id}'] { transform: rotate($r + $amount * $jitter); }
+
+    &[id^='#{$id}'] {
+      transform: rotate($r + $amount * $jitter);
+      #{'--debug-r'}: $r;
+      #{'--debug-amount'}: $amount;
+      #{'--debug-jitter'}: $jitter;
+    }
   }
 }
 
@@ -306,28 +293,28 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   .is-quality-medium & {
     @include shadows(
-      $piece-shadow-flat,
-      $piece-shadow-flat-60,
-      $piece-shadow-flat-90,
-      $piece-shadow-flat-120,
-      $piece-shadow-flat-180,
-      $piece-shadow-flat-240,
-      $piece-shadow-flat-270,
-      $piece-shadow-flat-300
+      $shadow-flat-0,
+      $shadow-flat-60,
+      $shadow-flat-90,
+      $shadow-flat-120,
+      $shadow-flat-180,
+      $shadow-flat-240,
+      $shadow-flat-270,
+      $shadow-flat-300
     );
   }
 
   .is-quality-high &,
   .is-quality-ultra & {
     @include shadows(
-      $piece-shadow,
-      $piece-shadow-60,
-      $piece-shadow-90,
-      $piece-shadow-120,
-      $piece-shadow-180,
-      $piece-shadow-240,
-      $piece-shadow-270,
-      $piece-shadow-300
+      $shadow-0,
+      $shadow-60,
+      $shadow-90,
+      $shadow-120,
+      $shadow-180,
+      $shadow-240,
+      $shadow-270,
+      $shadow-300
     );
     border-radius: $piece-corner-radius;
   }
@@ -439,14 +426,14 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   .is-quality-medium & {
     @include shadows(
-      $piece-shadow-flat,
-      $piece-shadow-flat-60,
-      $piece-shadow-flat-90,
-      $piece-shadow-flat-120,
-      $piece-shadow-flat-180,
-      $piece-shadow-flat-240,
-      $piece-shadow-flat-270,
-      $piece-shadow-flat-300
+      $shadow-flat-0,
+      $shadow-flat-60,
+      $shadow-flat-90,
+      $shadow-flat-120,
+      $shadow-flat-180,
+      $shadow-flat-240,
+      $shadow-flat-270,
+      $shadow-flat-300
     );
   }
 
@@ -454,14 +441,14 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   .is-quality-ultra & {
     // --- shadows ---
     @include shadows(
-      $piece-shadow,
-      $piece-shadow-60,
-      $piece-shadow-90,
-      $piece-shadow-120,
-      $piece-shadow-180,
-      $piece-shadow-240,
-      $piece-shadow-270,
-      $piece-shadow-300
+      $shadow-0,
+      $shadow-60,
+      $shadow-90,
+      $shadow-120,
+      $shadow-180,
+      $shadow-240,
+      $shadow-270,
+      $shadow-300
     );
 
     // --- material ---
@@ -507,7 +494,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   // --- quality settings ---
 
   .is-quality-medium & {
-    @include shadows($piece-shadow-flat);
+    @include shadows($shadow-flat-0);
   }
 
   .is-quality-high &,

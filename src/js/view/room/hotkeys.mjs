@@ -17,19 +17,23 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
+import _ from 'lib/FreeDOM.mjs'
+
 import {
   setTableNo
-} from '../../state/index.mjs'
+} from 'state/index.mjs'
+
 import {
   modalActive,
   modalClose
-} from '../../view/modal.mjs'
+} from 'view/modal.mjs'
 
 import {
   toggleLayer,
-  toggleGrid
-} from './index.mjs'
+  toggleGrid,
+  toggleLos
+} from 'view/room/index.mjs'
+
 import {
   settings,
   rotateSelected,
@@ -43,25 +47,31 @@ import {
   createNote,
   cycleColor,
   toBottomSelected,
-  pointTo,
-  los
-} from './tabletop/index.mjs'
+  pointTo
+} from 'view/room/tabletop/index.mjs'
+
 import {
   isDragging,
+  isLMBLos,
+  release,
   getMouseCoords
-} from './mouse.mjs'
+} from 'view/room/mouse/index.mjs'
+
 import {
   touch
-} from './sync.mjs'
+} from 'view/room/sync.mjs'
+
 import {
   modalLibrary
-} from './modal/library.mjs'
+} from 'view/room/modal/library.mjs'
+
 import {
   modalHelp
-} from './modal/help.mjs'
+} from 'view/room/modal/help.mjs'
+
 import {
   toggleFullscreen
-} from '../../lib/utils.mjs'
+} from 'lib/utils.mjs'
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleRoomKeys(keydown))
@@ -85,7 +95,17 @@ function handleRoomKeys (keydown) {
     }
   }
 
-  if (!isDragging() && !modalActive()) {
+  if (isDragging() && !modalActive()) { // keys that work while dragging
+    switch (keydown.key) {
+      case ' ':
+        if (isLMBLos(true)) release(0)
+        keydown.stopPropagation()
+        keydown.preventDefault()
+        return
+    }
+  }
+
+  if (!isDragging() && !modalActive()) { // keys that don't work while dragging
     switch (keydown.key) {
       case 'Delete': // delete selected
         deleteSelected()
@@ -122,9 +142,6 @@ function handleRoomKeys (keydown) {
         break
       case 'l': // library / add piece
         modalLibrary(getMouseCoords())
-        break
-      case 'L': // LOS checker
-        los(getMouseCoords())
         break
       case 'n': // library / add piece
         createNote(getMouseCoords())
@@ -171,6 +188,9 @@ function handleRoomKeys (keydown) {
         break
       case 'R': // rotate CCW
         rotateSelected(false)
+        break
+      case 'm': // measure/LOS tool
+        toggleLos()
         break
       case 'S': // settings
         settings()

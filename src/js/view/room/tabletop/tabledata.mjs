@@ -19,13 +19,16 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from 'lib/FreeDOM.mjs'
+
 import {
   getRoom,
   getTemplate,
   getLibrary,
   getTable,
-  getTableNo
-} from '../../../state/index.mjs'
+  getTableNo,
+  isLayerActive
+} from 'state/index.mjs'
 
 import {
   clamp,
@@ -34,7 +37,7 @@ import {
   intersect,
   getDimensionsRotated,
   mod
-} from '../../../lib/utils.mjs'
+} from 'lib/utils.mjs'
 
 export const assetTypes = [
   'tile',
@@ -69,6 +72,11 @@ function layerToName (layer) {
 
 export function nameToLayer (name) {
   return LAYERS.indexOf(name) + 1
+}
+
+export const ID = {
+  POINTER: 'ffffffffffffffff',
+  LOS: 'fffffffffffffffe'
 }
 
 /**
@@ -316,13 +324,22 @@ export function populatePieceDefaults (piece, headers = null) {
   // add client-side meta information for piece
   piece._meta = {}
   const template = getTemplate()
-  piece._meta.originWidthPx = piece.w * template.gridSize
-  piece._meta.originHeightPx = piece.h * template.gridSize
-  const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
-  piece._meta.widthPx = rect.w
-  piece._meta.heightPx = rect.h
-  piece._meta.originOffsetXPx = (piece._meta.originWidthPx - rect.w) / 2
-  piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
+  if (piece.id === ID.LOS) {
+    piece._meta.originWidthPx = piece.w
+    piece._meta.originHeightPx = piece.h
+    piece._meta.widthPx = piece.w
+    piece._meta.heightPx = piece.h
+    piece._meta.originOffsetXPx = 0
+    piece._meta.originOffsetYPx = 0
+  } else {
+    piece._meta.originWidthPx = piece.w * template.gridSize
+    piece._meta.originHeightPx = piece.h * template.gridSize
+    const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
+    piece._meta.widthPx = rect.w
+    piece._meta.heightPx = rect.h
+    piece._meta.originOffsetXPx = (piece._meta.originWidthPx - rect.w) / 2
+    piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
+  }
 
   // add client-side meta information for asset
   const asset = findAsset(piece.a)
@@ -330,7 +347,7 @@ export function populatePieceDefaults (piece, headers = null) {
     const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     piece._meta.sides = asset.media.length ?? 1
-    if (asset.id === 'ffffffffffffffff') {
+    if (asset.id === ID.POINTER) {
       piece._meta.feature = 'POINTER'
     } else {
       switch (asset.name) {
@@ -349,6 +366,11 @@ export function populatePieceDefaults (piece, headers = null) {
       piece._meta.hasColor = false
     }
     piece._meta.hasBorder = piece.l === 'token'
+    if (asset.type === 'token' || piece._meta.hasColor === true || bgImage.match(/(jpg|jpeg)$/i)) {
+      piece._meta.hasHighlight = true
+    } else {
+      piece._meta.hasHighlight = false
+    }
   }
 
   // header/expires information
@@ -607,4 +629,114 @@ export function splitAssetFilename (assetName) {
     return data
   }
   return data
+}
+
+/**
+ * Determine if a piece is not transparent at a given coordinate.
+ *
+ * Does this by creating a temporary in-memory canvas and checking against its
+ * alpha layer. Rotation is implicitly done by the browser as CSS 'transform:'
+ * also rotates/scales click x/y.
+ *
+ * @param {Object} piece Piece to check.
+ * @param {Number} x X-coordiante in px.
+ * @param {Number} y Y-coordiante in px.
+ * @return {Boolean} True if pixel at x/y is transparent, false otherwise.
+ */
+export function isSolid (piece, x, y) {
+  if (!piece) return true // no piece = no checking
+  if (piece?.l === 'token') return true // token are always round & solid
+  if (!piece._meta?.mask) return true // no mask = no checking possible
+
+  // now do the hit detection
+  const img = new Image() // eslint-disable-line no-undef
+  img.src = piece._meta.mask
+  if (img.complete) {
+    const template = getTemplate()
+
+    const width = piece.w * template.gridSize
+    const height = piece.h * template.gridSize
+
+    // calculate img->canvas scale,
+    // compensate for 'background-size: cover'
+    let sX = 0
+    let sY = 0
+    let sW = img.width * 1.0
+    let sH = img.height * 1.0
+    const sAspect = img.width * 1.0 / img.height
+    const cAspect = width * 1.0 / height
+    if (sAspect < cAspect) { // source higher
+      const scale = width / sW
+      sH = height / scale
+      sY = (img.height - sH) / 2
+    } else { // source wider
+      const scale = height / sH
+      sW = width / scale
+      sX = (img.width - sW) / 2
+    }
+
+    // draw & check pixel
+    const scale = 2 // we don't need full resolution for checking
+    const c = document.createElement('canvas')
+    c.width = width / scale
+    c.height = height / scale
+    const ctx = c.getContext('2d')
+    ctx.drawImage(img, sX, sY, sW, sH, 0, 0, c.width, c.height)
+    const alpha = ctx.getImageData(x / scale, y / scale, 1, 1).data[3]
+    return alpha > 4 // alpha value
+  } else {
+    return true // image was not already loaded
+  }
+}
+
+/**
+ * Click-thru transparent areas of clickable pieces.
+ *
+ * If clicked on an 100% alpha area, try to find a better target for the event
+ * by traversing all layers + object on the same coordnate.
+ *
+ * @param {Object} event JavaScript evend that was triggered on a click.
+ * @param {Object} coords {x, y} of the current mouse coordinates.
+ */
+export function findRealClickTarget (event, coords) {
+  // in most cases the hit item will be the correct one
+  if (isSolid(event.target.piece, event.offsetX, event.offsetY)) {
+    return event.target
+  }
+
+  // seems the initial target is transparent. now traverse all layers.
+  const index = nameToLayer(event.target.piece.l)
+  for (const layer of ['other', 'token', 'note', 'overlay', 'tile']) {
+    if (nameToLayer(layer) <= index && isLayerActive(layer)) { // we don't need to check higher layers
+      for (const piece of sortZ(findPiecesWithin({
+        left: coords.x,
+        top: coords.y,
+        right: coords.x,
+        bottom: coords.y
+      }, layer))) {
+        if (piece.id === event.target.piece.id) continue // don't double-check
+
+        //  compensate center
+        const oX = coords.x - piece.x
+        const oY = coords.y - piece.y
+        let tX = oX
+        let tY = oY
+
+        // compensate rotation clockwise
+        if (piece.r > 0) {
+          const rs = Math.sin(piece.r * Math.PI / 180)
+          const rc = Math.cos(piece.r * Math.PI / 180)
+          tX = oX * rc + oY * rs
+          tY = -oX * rs + oY * rc
+        }
+
+        tX += piece._meta.originWidthPx / 2
+        tY += piece._meta.originHeightPx / 2
+        if (isSolid(piece, tX, tY)) {
+          return _('#' + piece.id).node()
+        }
+      }
+    }
+  }
+  return null // no better target available
 }

@@ -22,7 +22,8 @@
 import {
   getStoreValue,
   setStoreValue
-} from '../lib/utils.mjs'
+} from 'lib/utils.mjs'
+
 import {
   apiGetTable,
   apiPutTable,
@@ -36,21 +37,25 @@ import {
   apiPostPiece,
   apiPostAsset,
   UnexpectedStatus
-} from '../api/index.mjs'
+} from 'api/index.mjs'
+
 import {
   syncNow,
   stopAutoSync
-} from '../view/room/sync.mjs'
+} from 'view/room/sync.mjs'
+
 import {
   runError
-} from '../view/error/index.mjs'
+} from 'view/error/index.mjs'
+
 import {
   populatePiecesDefaults,
   populateTemplateDefaults,
   clampToTableSize,
   nameToLayer,
-  sanitizePiecePatch
-} from '../view/room/tabletop/tabledata.mjs'
+  sanitizePiecePatch,
+  ID
+} from 'view/room/tabletop/tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -132,6 +137,16 @@ export function getLibrary () {
   return getRoom()?.library
 }
 
+/**
+ * Determine if a layer is currently active.
+ *
+ * @param {String} layer Name of layer.
+ * @return {Boolean} True if active.
+ */
+export function isLayerActive (layer) {
+  return getRoomPreference(PREFS['LAYER' + layer])
+}
+
 export const PREFS = {
   TABLE: { name: 'table', default: 1 },
   LAYERother: { name: 'layer5', default: true },
@@ -140,6 +155,7 @@ export const PREFS = {
   LAYERoverlay: { name: 'layer2', default: false },
   LAYERtile: { name: 'layer1', default: false },
   GRID: { name: 'grid', default: 0 },
+  LOS: { name: 'los', default: false },
   SCROLL: { name: 'scroll', default: {} },
   BACKGROUND: { name: 'background', default: 5 }, // wood
   QUALITY: { name: 'quality', default: 3 },
@@ -468,8 +484,9 @@ export function createPieces (pieces, selected = false, selectIds = [], sync = t
   let final = false
 
   if (!pieces || pieces.length <= 0) return Promise.resolve({})
-  const piece = pieces.shift()
-  return createPiece(clampToTableSize(piece), false)
+  let piece = pieces.shift()
+  if (piece.a !== ID.LOS) piece = clampToTableSize(piece)
+  return createPiece(piece, false)
     .then(id => {
       selectIds.push(id)
       if (pieces.length === 0) final = true

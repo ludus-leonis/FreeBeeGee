@@ -69,8 +69,25 @@ $shadow-length: math.sqrt($shadow-x * $shadow-x + $shadow-y * $shadow-y);
 /// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function highlight($r) {
   @return
-  shadow-x-px($r) shadow-y-px($r) .5px 0 $color-white-15a inset,
-  shadow-x-px($r - 180) shadow-y-px($r - 180) .5px 0 $color-black-20a inset;
+  shadow-x-px($r) * 1.5 shadow-y-px($r) * 1.5 .5px 0 $color-white-20a inset,
+  shadow-x-px($r - 180) * 1.5 shadow-y-px($r - 180) * 1.5 .5px 0 $color-black-20a inset;
 }
 
-// $piece-highlights: 1px 1px .5px 0 $color-white-15a inset, -1px -1px .5px 0 $color-black-20a inset;
+$shadow-0: shadow(0, 2px, $color-black-65a);
+$shadow-60: shadow(60, 2px, $color-black-65a);
+$shadow-90: shadow(90, 2px, $color-black-65a);
+$shadow-120: shadow(120, 2px, $color-black-65a);
+$shadow-180: shadow(180, 2px, $color-black-65a);
+$shadow-240: shadow(240, 2px, $color-black-65a);
+$shadow-270: shadow(270, 2px, $color-black-65a);
+$shadow-300: shadow(300, 2px, $color-black-65a);
+
+$shadow-flat-0: shadow(0, 0, $color-black-35a);
+$shadow-flat-60: shadow(60, 0, $color-black-35a);
+$shadow-flat-90: shadow(90, 0, $color-black-35a);
+$shadow-flat-120: shadow(120, 0, $color-black-35a);
+$shadow-flat-180: shadow(180, 0, $color-black-35a);
+$shadow-flat-240: shadow(240, 0, $color-black-35a);
+$shadow-flat-270: shadow(270, 0, $color-black-35a);
+$shadow-flat-300: shadow(300, 0, $color-black-35a);
+$shadow-flat-overlay: shadow(0, 0, $color-black-35a);

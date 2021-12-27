@@ -195,8 +195,12 @@ gulp.task('js-main', gulp.series('test-js', () => {
 
     'src/js/view/room/index.mjs',
     'src/js/view/room/hotkeys.mjs',
-    'src/js/view/room/mouse.mjs',
     'src/js/view/room/sync.mjs',
+    'src/js/view/room/mouse/_MouseButtonHandler.mjs',
+    'src/js/view/room/mouse/index.mjs',
+    'src/js/view/room/mouse/Los.mjs',
+    'src/js/view/room/mouse/SelectAndDrag.mjs',
+    'src/js/view/room/mouse/Grab.mjs',
     'src/js/view/room/tabletop/index.mjs',
     'src/js/view/room/tabletop/tabledata.mjs',
     'src/js/view/room/modal/edit.mjs',
@@ -204,7 +208,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/view/room/modal/inactive.mjs',
     'src/js/view/room/modal/library.mjs'
   ], {
-    paths: []
+    paths: ['src/js']
   }).transform(babelify.configure({
     presets: ['@babel/preset-env']
   })).bundle()

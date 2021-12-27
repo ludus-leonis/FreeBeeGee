@@ -18,11 +18,11 @@
 
 import {
   route
-} from './app.mjs'
+} from 'app.mjs'
 
 import {
   setTabActive
-} from './state/index.mjs'
+} from 'state/index.mjs'
 
 // --- startup & page routing --------------------------------------------------
 

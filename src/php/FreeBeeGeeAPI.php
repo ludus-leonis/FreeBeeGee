@@ -27,7 +27,8 @@ namespace com\ludusleonis\freebeegee;
  */
 class FreeBeeGeeAPI
 {
-    private $ID_POINTER = 'ffffffffffffffff';
+    private $ID_ASSET_POINTER = 'ffffffffffffffff';
+    private $ID_ASSET_LOS = 'fffffffffffffffe';
     private $REGEXP_ID = '^[0-9a-f]{16}$';
     private $version = '$VERSION$';
     private $engine = '$ENGINE$';
@@ -587,7 +588,9 @@ class FreeBeeGeeAPI
 
             // re-add all old pieces
             foreach ($oldTable as $tableItem) {
-                if ($piece->id === $this->ID_POINTER && $tableItem->id === $piece->id) {
+                if ($piece->id === $this->ID_ASSET_LOS && $tableItem->id === $piece->id) {
+                    // skip recreated system piece
+                } elseif ($piece->id === $this->ID_ASSET_POINTER && $tableItem->id === $piece->id) {
                     // skip recreated system piece
                 } elseif (!in_array($tableItem->id, $ids)) {
                     // for newly created items we just copy the current table of the others
@@ -842,8 +845,15 @@ class FreeBeeGeeAPI
         if (isset($piece->b) && is_array($piece->b) && (sizeof($piece->b) <= 0)) {
             unset($piece->b);
         }
-        if (isset($piece->a) && $piece->a === $this->ID_POINTER) {
-            $piece->expires = time() + 8;
+        if (isset($piece->a)) {
+            switch ($piece->a) {
+                case $this->ID_ASSET_POINTER:
+                case $this->ID_ASSET_LOS:
+                    $piece->expires = time() + 8;
+                    break;
+                default:
+                    // nothing
+            }
         }
         return $piece;
     }
@@ -873,10 +883,18 @@ class FreeBeeGeeAPI
                     $validated->a = $this->api->assertString('a', $value, $this->REGEXP_ID);
                     break;
                 case 'w':
-                    $validated->w = $this->api->assertInteger('w', $value, 1, 32);
+                    if (property_exists($piece, 'a') && $piece->a === $this->ID_ASSET_LOS) {
+                        $validated->w = $this->api->assertInteger('w', $value, -100000, 100000);
+                    } else {
+                        $validated->w = $this->api->assertInteger('w', $value, 1, 32);
+                    }
                     break;
                 case 'h':
-                    $validated->h = $this->api->assertInteger('h', $value, 1, 32);
+                    if (property_exists($piece, 'a') && $piece->a === $this->ID_ASSET_LOS) {
+                        $validated->h = $this->api->assertInteger('h', $value, -100000, 100000);
+                    } else {
+                        $validated->h = $this->api->assertInteger('h', $value, 1, 32);
+                    }
                     break;
                 case 'x':
                     $validated->x = $this->api->assertInteger('x', $value, -100000, 100000);
@@ -1484,9 +1502,15 @@ class FreeBeeGeeAPI
     ) {
         $this->assertTableNo($tid);
         $piece = $this->validatePieceJson($json, true);
-        if (isset($piece->a) && $piece->a === $this->ID_POINTER) {
-            // there can only be one pointer and it has a fixed ID
-            $piece->id = $this->ID_POINTER;
+        if (isset($piece->a)) {
+            switch ($piece->a) {
+                case $this->ID_ASSET_POINTER:
+                case $this->ID_ASSET_LOS:
+                    $piece->id = $piece->a;
+                    break;
+                default:
+                    $piece->id = $this->generateId();
+            }
         } else {
             $piece->id = $this->generateId();
         }

@@ -7,6 +7,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 ### Notable changes
 
 * added predefined piece colors - library entries now can have pre-set default colors
+* added measure mode / line-of-sight tool - press m to toggle
 * added more damage status icons for RPG/Hex templates (acid, fire, ...)
 * added grid option minor (dots) or major (lines) to settings
 
@@ -18,6 +19,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added separate color sets in templates for piece borders and backgrounds
 * added unit test docs and added `Dockerfile` for test webservers
 * changed all JS-CSS injections to use custom properties
+* changed all JS imports to be relative to src/js/
 * changed background settings from room to server setting
 * fixed "RPG" template glass tiles transparency
 * fixed default piece backsides counting as side in library

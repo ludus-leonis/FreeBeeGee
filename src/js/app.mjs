@@ -18,16 +18,19 @@
 
 import {
   runError
-} from './view/error/index.mjs'
+} from 'view/error/index.mjs'
+
 import {
   runJoin
-} from './view/join/index.mjs'
+} from 'view/join/index.mjs'
+
 import {
   setServerInfo
-} from './state/index.mjs'
+} from 'state/index.mjs'
+
 import {
   apiGetServerInfo
-} from './api/index.mjs'
+} from 'api/index.mjs'
 
 /**
  * Reload the current page.

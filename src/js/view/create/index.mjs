@@ -17,27 +17,30 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from 'lib/FreeDOM.mjs'
+
 import {
   createScreen,
   serverFeedback
-} from '../../view/screen.mjs'
+} from 'view/screen.mjs'
+
 import {
   runError
-} from '../../view/error/index.mjs'
+} from 'view/error/index.mjs'
 
 import {
   addRoom,
   getServerInfo
-} from '../../state/index.mjs'
+} from 'state/index.mjs'
 
-import _ from '../../lib/FreeDOM.mjs'
 import {
   apiGetTemplates,
   UnexpectedStatus
-} from '../../api/index.mjs'
+} from 'api/index.mjs'
+
 import {
   navigateToRoom
-} from '../../app.mjs'
+} from 'app.mjs'
 
 /**
  * Show a create-room dialog.

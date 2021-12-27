@@ -25,27 +25,32 @@ import {
   fetchTable,
   errorRoomGone,
   isTabActive
-} from '../../state/index.mjs'
+} from 'state/index.mjs'
+
 import {
   apiGetRoomDigest
-} from '../../api/index.mjs'
+} from 'api/index.mjs'
+
 import {
   clamp,
   recordTime
-} from '../../lib/utils.mjs'
+} from 'lib/utils.mjs'
 
 import {
   updateRoom
-} from './index.mjs'
+} from 'view/room/index.mjs'
+
 import {
   updateTabletop
-} from './tabletop/index.mjs'
+} from 'view/room/tabletop/index.mjs'
+
 import {
   findExpiredPieces
-} from './tabletop/tabledata.mjs'
+} from 'view/room/tabletop/tabledata.mjs'
+
 import {
   modalInactive
-} from './modal/inactive.mjs'
+} from 'view/room/modal/inactive.mjs'
 
 // --- public ------------------------------------------------------------------
 

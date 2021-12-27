@@ -203,7 +203,7 @@ function testJsonPatch (api, path, payload, payloadTests, status = 200) {
  * @param status Expected HTTP status. Defaults to 204 = gone.
 */
 function testJsonDelete (api, path, status = 204) {
-  it(`PUT ${api}${path()}`, function (done) {
+  it(`DELETE ${api}${path()}`, function (done) {
     chai.request(api)
       .delete(path())
       .set('content-type', 'application/json')
@@ -533,6 +533,230 @@ function testApiCrudPiece (api, version) {
   testJsonDelete(api, () => `/rooms/crudPiece${version}/`)
 }
 
+function testApiCrudPointer (api, version) {
+  // create room
+  testJsonPost(api, () => '/rooms/', () => {
+    return {
+      name: `crudPointer${version}`,
+      template: 'RPG',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.name).to.be.eql(`crudPointer${version}`)
+  }, 201)
+
+  // create pointer
+  testJsonPost(api, () => `/rooms/crudPointer${version}/tables/5/pieces/`, () => {
+    return { // add letter-token
+      a: 'ffffffffffffffff',
+      l: 4,
+      x: 100,
+      y: 200,
+      z: 300
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql('ffffffffffffffff')
+    expect(body.l).to.be.eql(4)
+    expect(body.a).to.be.eql('ffffffffffffffff')
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
+    expect(body.x).to.be.eql(100)
+    expect(body.y).to.be.eql(200)
+    expect(body.z).to.be.eql(300)
+    expect(body.r).to.not.exist
+    expect(body.n).to.not.exist
+    expect(body.s).to.not.exist
+    expect(body.c).to.not.exist
+    data = body
+  }, 201)
+
+  // one piece on table
+  testJsonGet(api, () => `/rooms/crudPointer${version}/tables/5/`, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(1)
+    expect(body[0].id).to.be.eql('ffffffffffffffff')
+  })
+
+  // create again
+  testJsonPost(api, () => `/rooms/crudPointer${version}/tables/5/pieces/`, () => {
+    return { // add letter-token
+      a: 'ffffffffffffffff',
+      l: 4,
+      x: 100,
+      y: 200,
+      z: 300
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql('ffffffffffffffff')
+  }, 201)
+
+  // still one piece on table
+  testJsonGet(api, () => `/rooms/crudPointer${version}/tables/5/`, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(1)
+    expect(body[0].id).to.be.eql('ffffffffffffffff')
+  })
+
+  // update piece (patch)
+  testJsonPatch(api, () => `/rooms/crudPointer${version}/tables/5/pieces/ffffffffffffffff/`, () => {
+    return {
+      x: 1000
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql('ffffffffffffffff')
+    expect(body.l).to.be.eql(4)
+    expect(body.a).to.be.eql('ffffffffffffffff')
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
+    expect(body.x).to.be.eql(1000)
+    expect(body.y).to.be.eql(200)
+    expect(body.z).to.be.eql(300)
+    expect(body.r).to.not.exist
+    expect(body.n).to.not.exist
+    expect(body.s).to.not.exist
+    expect(body.c).to.not.exist
+  })
+
+  // still one piece on table
+  testJsonGet(api, () => `/rooms/crudPointer${version}/tables/5/`, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(1)
+    expect(body[0].id).to.be.eql('ffffffffffffffff')
+  })
+
+  // delete piece
+  testJsonDelete(api, () => `/rooms/crudPointer${version}/tables/5/pieces/ffffffffffffffff/`)
+
+  // still one piece on table
+  testJsonGet(api, () => `/rooms/crudPointer${version}/tables/5/`, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(0)
+  })
+
+  // get - should be gone
+  testJsonGet(api, () => `/rooms/crudPointer${version}/tables/5/pieces/ffffffffffffffff/`, body => {}, 404)
+
+  // cleanup
+  testJsonDelete(api, () => `/rooms/crudPointer${version}/`)
+}
+
+function testApiCrudLos (api, version) {
+  // create room
+  testJsonPost(api, () => '/rooms/', () => {
+    return {
+      name: `testApiCrudLos${version}`,
+      template: 'RPG',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.name).to.be.eql(`testApiCrudLos${version}`)
+  }, 201)
+
+  // create pointer
+  testJsonPost(api, () => `/rooms/testApiCrudLos${version}/tables/5/pieces/`, () => {
+    return { // add letter-token
+      a: 'fffffffffffffffe',
+      l: 4,
+      x: 100,
+      y: 200,
+      z: 300,
+      w: -400,
+      h: -500
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql('fffffffffffffffe')
+    expect(body.l).to.be.eql(4)
+    expect(body.a).to.be.eql('fffffffffffffffe')
+    expect(body.x).to.be.eql(100)
+    expect(body.y).to.be.eql(200)
+    expect(body.z).to.be.eql(300)
+    expect(body.w).to.be.eql(-400)
+    expect(body.h).to.be.eql(-500)
+    expect(body.r).to.not.exist
+    expect(body.n).to.not.exist
+    expect(body.s).to.not.exist
+    expect(body.c).to.not.exist
+    data = body
+  }, 201)
+
+  // one piece on table
+  testJsonGet(api, () => `/rooms/testApiCrudLos${version}/tables/5/`, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(1)
+    expect(body[0].id).to.be.eql('fffffffffffffffe')
+  })
+
+  // create again
+  testJsonPost(api, () => `/rooms/testApiCrudLos${version}/tables/5/pieces/`, () => {
+    return { // add letter-token
+      a: 'fffffffffffffffe',
+      l: 4,
+      x: 100,
+      y: 200,
+      z: 300
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql('fffffffffffffffe')
+  }, 201)
+
+  // still one piece on table
+  testJsonGet(api, () => `/rooms/testApiCrudLos${version}/tables/5/`, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(1)
+    expect(body[0].id).to.be.eql('fffffffffffffffe')
+  })
+
+  // update piece (patch)
+  testJsonPatch(api, () => `/rooms/testApiCrudLos${version}/tables/5/pieces/fffffffffffffffe/`, () => {
+    return {
+      x: 1000
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body.id).to.be.eql('fffffffffffffffe')
+    expect(body.l).to.be.eql(4)
+    expect(body.a).to.be.eql('fffffffffffffffe')
+    expect(body.w).to.not.exist
+    expect(body.h).to.not.exist
+    expect(body.x).to.be.eql(1000)
+    expect(body.y).to.be.eql(200)
+    expect(body.z).to.be.eql(300)
+    expect(body.r).to.not.exist
+    expect(body.n).to.not.exist
+    expect(body.s).to.not.exist
+    expect(body.c).to.not.exist
+  })
+
+  // still one piece on table
+  testJsonGet(api, () => `/rooms/testApiCrudLos${version}/tables/5/`, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(1)
+    expect(body[0].id).to.be.eql('fffffffffffffffe')
+  })
+
+  // delete piece
+  testJsonDelete(api, () => `/rooms/testApiCrudLos${version}/tables/5/pieces/fffffffffffffffe/`)
+
+  // still one piece on table
+  testJsonGet(api, () => `/rooms/testApiCrudLos${version}/tables/5/`, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(0)
+  })
+
+  // get - should be gone
+  testJsonGet(api, () => `/rooms/testApiCrudLos${version}/tables/5/pieces/fffffffffffffffe/`, body => {}, 404)
+
+  // cleanup
+  testJsonDelete(api, () => `/rooms/testApiCrudLos${version}/`)
+}
+
 function testApiZipMinimal (api, version) {
   testZIPUpload(api,
     () => '/rooms/',
@@ -753,6 +977,8 @@ function runTests (version) {
   describe('CRUD room', () => testApiCrudRoom(api, version))
   describe('CRUD table', () => testApiCrudTable(api, version))
   describe('CRUD piece', () => testApiCrudPiece(api, version))
+  describe('CRUD pointer', () => testApiCrudPointer(api, version))
+  describe('CRUD los', () => testApiCrudLos(api, version))
   describe('ZIP upload - minimal', () => testApiZipMinimal(api, version))
   describe('ZIP upload - full', () => testApiZipFull(api, version))
   describe('JPG upload', () => testApiImageUpload(api, version))

@@ -16,57 +16,23 @@
 // along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
 
 ////
-/// @group layout
+/// @group components
 ///
-/// General layout utility classes.
+/// The measure/los thread.
 ///
 /// @access public
 ////
 
-.is-noselect {
-  ::selection {
-    background: inherit;
-    color: inherit;
+.piece.is-los {
+  background: none;
+  pointer-events: none;
+
+  .is-quality-medium & {
+    filter: drop-shadow($shadow-flat-0);
   }
-}
 
-.is-gone {
-  display: none;
-}
-
-.is-hidden {
-  height: 1px;
-  opacity: 0;
-  position: absolute;
-  width: 1px;
-}
-
-.is-hidden + *,
-.is-content .is-hidden + * {
-  &:not([class^='col-']) {
-    margin-top: 0;
+  .is-quality-high &,
+  .is-quality-ultra & {
+    filter: drop-shadow($shadow-0);
   }
-}
-
-%is-wide,
-.is-wide {
-  max-width: 64rem;
-}
-
-%is-medium,
-.is-medium {
-  max-width: 48rem;
-}
-
-%is-slim,
-.is-slim {
-  max-width: 32rem;
-}
-
-.cursor-grab {
-  cursor: grabbing;
-}
-
-.cursor-cross {
-  cursor: crosshair;
 }

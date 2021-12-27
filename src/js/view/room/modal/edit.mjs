@@ -17,29 +17,29 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
+import _ from 'lib/FreeDOM.mjs'
 
 import {
   getLibrary,
   getTemplate,
   editPiece
-} from '../../../state/index.mjs'
+} from 'state/index.mjs'
 
 import {
   createModal,
   getModal,
   modalActive,
   modalClose
-} from '../../../view/modal.mjs'
+} from 'view/modal.mjs'
 
 import {
   TYPE_HEX,
   stickyNoteColors
-} from '../../../view/room/tabletop/tabledata.mjs'
+} from 'view/room/tabletop/tabledata.mjs'
 
 import {
   prettyName
-} from '../../../lib/utils.mjs'
+} from 'lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
 

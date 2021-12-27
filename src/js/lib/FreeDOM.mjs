@@ -39,15 +39,15 @@ class FreeDOM {
    *
    * Accepts a query string or objects to operate on.
    *
-   * @param {(String|HTMLElement|DOM)} stuff Stuff to operate on. Usually a query string (e.g.
-   *              '#myform > input.blue'), but can also be a vanilla HTMLElement
+   * @param {(String|Element|DOM)} stuff Stuff to operate on. Usually a query string (e.g.
+   *              '#myform > input.blue'), but can also be a vanilla Element
    *              or other DOM element.
    */
   constructor (stuff) {
     if (typeof stuff === 'string') {
       this._selector = stuff
       this._nodes = null
-    } else if (stuff instanceof globalThis.HTMLElement) {
+    } else if (stuff instanceof globalThis.Element) {
       this._selector = null
       this._nodes = [stuff]
     } else if (stuff instanceof FreeDOM) {
@@ -72,7 +72,7 @@ class FreeDOM {
   }
 
   /**
-   * Get the value of a property from all currently selected HTMLElements.
+   * Get the value of a property from all currently selected Elements.
    *
    * @param {String} property Property to get.
    * @return {*} A single value if one element is selected, an array of values if
@@ -94,7 +94,7 @@ class FreeDOM {
    * Will do a querySelectorAll() lookup if it was not done yet and cache the
    * result.
    *
-   * @return {HTMLElement[]} Array of matching/assigned HTMLElements or empty Array if nothing
+   * @return {Element[]} Array of matching/assigned Elements or empty Array if nothing
    *         matches our query.
    */
   _getNodes () {
@@ -105,7 +105,7 @@ class FreeDOM {
   }
 
   /**
-   * Set a property on all currently selected HTMLElements.
+   * Set a property on all currently selected Elements.
    *
    * @param {String} property Property to set.
    * @param {*} value Vale to set to.
@@ -133,12 +133,12 @@ class FreeDOM {
    * Add items to all selected nodes.
    *
    * Supports adding the following:
-   * - HTMLElement nodes
+   * - Element nodes
    * - DOM objects
    * - Text nodes
    * - CSS classes (strings starting with '.')
    *
-   * @param {...(HTMLElement|DOM|Text|String)} Items to add.
+   * @param {...(Element|DOM|Text|String)} Items to add.
    * @return {FreeDOM} DOM object for chaining.
    */
   add (...items) {
@@ -149,7 +149,7 @@ class FreeDOM {
         } else { // add as text node
           return this.each(node => node.appendChild(document.createTextNode(item)))
         }
-      } else if (item instanceof globalThis.HTMLElement) { // add node
+      } else if (item instanceof globalThis.Element) { // add node
         return this.each(node => node.appendChild(item))
       } else if (item instanceof FreeDOM) { // add self
         return this.each(node => node.appendChild(item.node()))
@@ -174,7 +174,7 @@ class FreeDOM {
   /**
    * Add css/style declarations to all selected nodes
    *
-   * Will set HTMLElement.style.* properties provided as flat object.
+   * Will set Element.style.* properties provided as flat object.
    *
    * @param {object} css Object with property -> value entries.
    * @return {FreeDOM} DOM object for chaining.
@@ -213,7 +213,7 @@ class FreeDOM {
    * - '.' for classes
    *
    * @param {Element|DOM} childItem An item to add as child for the deepest
-   *                  child. Can be a HTMLElement, a Text node, another DOM
+   *                  child. Can be a Element, a Text node, another DOM
    *                  object or a string. The latter will be converted to a Text.
    * @return {FreeDOM} Topmost DOM object for chaining.
    */
@@ -259,7 +259,7 @@ class FreeDOM {
 
       // add child to innermost node
       if (childItem !== null) {
-        if (childItem instanceof globalThis.HTMLElement || childItem instanceof globalThis.Text || childItem instanceof FreeDOM) {
+        if (childItem instanceof globalThis.Element || childItem instanceof globalThis.Text || childItem instanceof FreeDOM) {
           n.add(childItem)
         } else {
           n.add(this._text(childItem))
@@ -272,7 +272,7 @@ class FreeDOM {
   /**
    * Add data-* attributes to all selected nodes
    *
-   * Will set HTMLElement.dataset.* properties provided as flat object.
+   * Will set Element.dataset.* properties provided as flat object.
    *
    * @param {object} dataset Object with property -> value entries.
    * @return {FreeDOM} DOM object for chaining.
@@ -389,7 +389,7 @@ class FreeDOM {
   /**
    * Get all matching nodes.
    *
-   * @return {HTMLElement[]} Array of nodes, possibly empty.
+   * @return {Element[]} Array of nodes, possibly empty.
    */
   nodes () { // get first node
     return this._getNodes()
@@ -516,11 +516,11 @@ class FreeDOM {
  * Allows calling any property (e.g. .value or .id) on all selected DOM objects
  * by mapping properties to DOM._get() and DOM._set() calls.
  *
- * @param {(String|HTMLElement|DOM)} item Stuff forwarded to DOM().
+ * @param {(String|Element|DOM)} item Stuff forwarded to DOM().
  * @return {FreeDOM} DOM object with enabled proxy calls for getters/setters.
  */
 export default function _ (item) {
-  // a magic little proxy that exposes all HTMLElement properties
+  // a magic little proxy that exposes all Element properties
   return new Proxy(new FreeDOM(item), {
     set: function (target, prop, value, receiver) {
       if (typeof target[prop] !== 'function' && prop.charAt(0) !== '_') {

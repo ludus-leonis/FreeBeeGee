@@ -18,7 +18,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
+import _ from 'lib/FreeDOM.mjs'
 
 import {
   mod,
@@ -26,7 +26,7 @@ import {
   shuffle,
   recordTime,
   brightness
-} from '../../../lib/utils.mjs'
+} from 'lib/utils.mjs'
 
 import {
   getRoom,
@@ -40,15 +40,17 @@ import {
   movePiece,
   colorPiece,
   rotatePiece
-} from '../../../state/index.mjs'
+} from 'state/index.mjs'
 
 import {
   updateStatusline,
-  restoreScrollPosition
-} from '../index.mjs'
+  restoreScrollPosition,
+  updateMenu
+} from 'view/room/index.mjs'
 
 import {
   TYPE_HEX,
+  ID,
   findAsset,
   findAssetByAlias,
   findPiece,
@@ -60,13 +62,15 @@ import {
   getPieceBounds,
   snap,
   stickyNoteColors
-} from './tabledata.mjs'
-import {
-  updateMenu
-} from '../mouse.mjs'
+} from 'view/room/tabletop/tabledata.mjs'
 
-import { modalEdit } from '../modal/edit.mjs'
-import { modalSettings } from '../modal/settings.mjs'
+import {
+  modalEdit
+} from 'view/room/modal/edit.mjs'
+
+import {
+  modalSettings
+} from 'view/room/modal/settings.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -494,10 +498,15 @@ export function pieceToNode (piece) {
   // create the dom node
   const asset = findAsset(piece.a)
   if (asset === null) {
-    if (piece.a === ID_POINTER) {
-      node = createPointerAsset(piece.l)
-    } else {
-      node = createInvalidAsset(piece.l)
+    switch (piece.a) {
+      case ID.POINTER:
+        node = createPointerPiece(piece.l)
+        break
+      case ID.LOS:
+        node = createLosPiece(piece.x, piece.y, piece.w, piece.h)
+        break
+      default:
+        node = createInvalidPiece(piece.l)
     }
   } else {
     if (asset.media[piece.s] === MEDIA_BACK) { // backside piece
@@ -538,7 +547,7 @@ export function pieceToNode (piece) {
       }
     }
 
-    if (asset.type === 'token') {
+    if (piece._meta.hasHighlight) {
       node.add('.has-highlight')
     }
   }
@@ -677,7 +686,7 @@ export function pointTo (coords) {
   const snapped = snap(coords.x, coords.y)
 
   createPieces([{ // always create (even if it is a move)
-    a: ID_POINTER,
+    a: ID.POINTER,
     l: 'other',
     w: 1,
     h: 1,
@@ -688,17 +697,110 @@ export function pointTo (coords) {
 }
 
 /**
- * Start a line-of-sight thread at the given coordination.
+ * Persist the LOS line on the server
  *
- * @param {Object} coords {x, y} object, in table px.
+ * @param {Object} from {x, y} object, in table px.
+ * @param {Object} to {x, y} object, in table px.
  */
-export function los (coords) {
-  // const los = { x: coords.x, y: coords.y }
+export function losTo (x, y, w, h) {
+  createPieces([{
+    a: ID.LOS,
+    l: 'other',
+    x: x,
+    y: y,
+    w: w,
+    h: h,
+    z: getMaxZ('other') + 1
+  }])
+}
+
+/**
+ * Move a (dragging) piece to the current mouse position.
+ *
+ * @param {Element} element The HTML node to update.
+ * @param {Number} x New x coordinate in px.
+ * @param {Number} y New y coordinate in px.
+ */
+export function moveNodeToSnapped (element, x, y) {
+  const template = getTemplate()
+
+  x = clamp(0, x, template._meta.widthPx - 0 - 1)
+  y = clamp(0, y, template._meta.heightPx - 0 - 1)
+
+  const snapped = snap(x, y)
+  element.x = Math.max(0, snapped.x)
+  element.y = Math.max(0, snapped.y)
+
+  const tl = getTopLeftPx(element.piece, element.x, element.y)
+  element.style.left = tl.left
+  element.style.top = tl.top
+}
+
+/**
+ * Create an asset node for invalid assets / ids.
+ *
+ * @param {Number} x X-coordinate of starting point in px.
+ * @param {Number} y Y-coordinate of starting point in px.
+ * @param {Number} w Width in px. Can be negative.
+ * @param {Number} h Height in px. Can be negative.
+ * @return {FreeDOM} dummy node.
+ */
+export function createLosPiece (x, y, width, height) {
+  const stroke = 4
+  const padding = stroke / 2
+  const x1 = (width >= 0 ? padding : -width + padding)
+  const y1 = (height >= 0 ? padding : -height + padding)
+  const x2 = (width >= 0 ? width + padding : padding)
+  const y2 = (height >= 0 ? height + padding : padding)
+
+  // container svg
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  svg.setAttribute('fill', 'none')
+  svg.setAttribute('viewBox', `0 0 ${Math.abs(width) + padding * 2} ${Math.abs(height) + padding * 2}`)
+  svg.setAttribute('stroke', 'black')
+  svg.classList.add('piece', 'piece-other', 'is-los')
+
+  // base line
+  const base = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  base.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  base.setAttribute('stroke-linecap', 'round')
+  base.setAttribute('stroke-linejoin', 'round')
+  base.setAttribute('stroke', '#ad371a') // red thread
+  base.setAttribute('stroke-width', stroke - 1)
+  svg.appendChild(base)
+
+  // thicker line
+  const shape = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  shape.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  shape.setAttribute('stroke-linecap', 'round')
+  shape.setAttribute('stroke-linejoin', 'round')
+  shape.setAttribute('stroke-dasharray', '5,10')
+  shape.setAttribute('stroke', '#ad371a') // red thread
+  shape.setAttribute('stroke-width', stroke)
+  svg.appendChild(shape)
+
+  // shade line
+  const shade = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  shade.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  shade.setAttribute('stroke-linecap', 'round')
+  shade.setAttribute('stroke-linejoin', 'round')
+  shade.setAttribute('stroke-dasharray', '3,12')
+  shade.setAttribute('stroke-dashoffset', -1)
+  shade.setAttribute('stroke-opacity', 0.05)
+  shade.setAttribute('stroke', '#ffffff') // red thread
+  shade.setAttribute('stroke-width', stroke - 1)
+  svg.appendChild(shade)
+
+  svg.style.left = (width < 0 ? x + width : x) - stroke / 2 + 'px'
+  svg.style.top = (height < 0 ? y + height : y) - stroke / 2 + 'px'
+  svg.style.width = Math.abs(width) + stroke + 'px'
+  svg.style.height = Math.abs(height) + stroke + 'px'
+  svg.style.zIndex = 999999999
+
+  return _(svg)
 }
 
 // --- internal ----------------------------------------------------------------
-
-const ID_POINTER = 'ffffffffffffffff'
 
 /**
  * Remove dirty / obsolete / bad pieces from room.
@@ -715,7 +817,7 @@ function cleanupTable () {
  * @param {String} type Asset type (token, tile, ...).
  * @return {FreeDOM} dummy node.
  */
-function createInvalidAsset (type) {
+function createInvalidPiece (type) {
   return _(`.piece.piece-${type}.is-invalid`).create()
 }
 
@@ -725,7 +827,7 @@ function createInvalidAsset (type) {
  * @param {String} type Asset type (token, tile, ...).
  * @return {FreeDOM} dummy node.
  */
-function createPointerAsset () {
+function createPointerPiece () {
   return _('.piece.piece-other.is-pointer').create()
 }
 
