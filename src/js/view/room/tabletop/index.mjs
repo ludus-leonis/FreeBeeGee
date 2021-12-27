@@ -18,7 +18,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   mod,
@@ -26,7 +26,7 @@ import {
   shuffle,
   recordTime,
   brightness
-} from 'lib/utils.mjs'
+} from '../../../lib/utils.mjs'
 
 import {
   getRoom,
@@ -40,13 +40,13 @@ import {
   movePiece,
   colorPiece,
   rotatePiece
-} from 'state/index.mjs'
+} from '../../../state/index.mjs'
 
 import {
   updateStatusline,
   restoreScrollPosition,
   updateMenu
-} from 'view/room/index.mjs'
+} from '../../../view/room/index.mjs'
 
 import {
   TYPE_HEX,
@@ -62,15 +62,15 @@ import {
   getPieceBounds,
   snap,
   stickyNoteColors
-} from 'view/room/tabletop/tabledata.mjs'
+} from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
   modalEdit
-} from 'view/room/modal/edit.mjs'
+} from '../../../view/room/modal/edit.mjs'
 
 import {
   modalSettings
-} from 'view/room/modal/settings.mjs'
+} from '../../../view/room/modal/settings.mjs'
 
 // --- public ------------------------------------------------------------------
 

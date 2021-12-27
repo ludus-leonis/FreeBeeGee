@@ -19,11 +19,13 @@
 /* global describe, it, beforeEach */
 
 import { expect } from 'chai'
+
 import {
   _setTable,
   _setRoom,
   setTableNo
 } from '../../src/js/state/index.mjs'
+
 import {
   findPiece,
   findAsset,

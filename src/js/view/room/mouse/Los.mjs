@@ -17,25 +17,25 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   MouseButtonHandler
-} from 'view/room/mouse/_MouseButtonHandler.mjs'
+} from '../../../view/room/mouse/_MouseButtonHandler.mjs'
 
 import {
   losTo,
   createLosPiece
-} from 'view/room/tabletop/index.mjs'
+} from '../../../view/room/tabletop/index.mjs'
 
 import {
   ID,
   snap
-} from 'view/room/tabletop/tabledata.mjs'
+} from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
   getMouseCoords
-} from 'view/room/mouse/index.mjs'
+} from '../../../view/room/mouse/index.mjs'
 
 export class Los extends MouseButtonHandler {
   constructor () {

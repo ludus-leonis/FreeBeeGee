@@ -20,11 +20,11 @@
 
 import { createPopper } from '@popperjs/core'
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from '../../lib/FreeDOM.mjs'
 
 import {
   navigateToJoin
-} from 'app.mjs'
+} from '../../app.mjs'
 
 import {
   loadRoom,
@@ -40,7 +40,7 @@ import {
   getTableNo,
   setTableNo,
   getTemplate
-} from 'state/index.mjs'
+} from '../../state/index.mjs'
 
 import {
   unselectPieces,
@@ -53,42 +53,42 @@ import {
   randomSelected,
   deleteSelected,
   url
-} from 'view/room/tabletop/index.mjs'
+} from '../../view/room/tabletop/index.mjs'
 
 import {
   TYPE_HEX,
   getSetupCenter,
   findPiece
-} from 'view/room/tabletop/tabledata.mjs'
+} from '../../view/room/tabletop/tabledata.mjs'
 
 import {
   enableDragAndDrop,
   getMouseCoords,
   toggleLMBLos,
   isLMBLos
-} from 'view/room/mouse/index.mjs'
+} from '../../view/room/mouse/index.mjs'
 
 import {
   startAutoSync
-} from 'view/room/sync.mjs'
+} from '../../view/room/sync.mjs'
 
 import {
   modalLibrary
-} from 'view/room/modal/library.mjs'
+} from '../../view/room/modal/library.mjs'
 
 import {
   modalHelp
-} from 'view/room/modal/help.mjs'
+} from '../../view/room/modal/help.mjs'
 
 import {
   modalSettings,
   changeQuality
-} from 'view/room/modal/settings.mjs'
+} from '../../view/room/modal/settings.mjs'
 
 import {
   clamp,
   brightness
-} from 'lib/utils.mjs'
+} from '../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
 

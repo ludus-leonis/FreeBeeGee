@@ -19,14 +19,14 @@
 
 import { marked } from 'marked'
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   createModal,
   getModal,
   modalActive,
   modalClose
-} from 'view/modal.mjs'
+} from '../../../view/modal.mjs'
 
 import {
   getRoom,
@@ -34,11 +34,11 @@ import {
   getRoomPreference,
   setRoomPreference,
   getTemplate
-} from 'state/index.mjs'
+} from '../../../state/index.mjs'
 
 import {
   timeRecords
-} from 'lib/utils.mjs'
+} from '../../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
 

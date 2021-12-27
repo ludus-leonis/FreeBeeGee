@@ -19,21 +19,21 @@
 
 import {
   MouseButtonHandler
-} from 'view/room/mouse/_MouseButtonHandler.mjs'
+} from '../../../view/room/mouse/_MouseButtonHandler.mjs'
 
 import {
   getMouseCoords
-} from 'view/room/mouse/index.mjs'
+} from '../../../view/room/mouse/index.mjs'
 
 import {
   findRealClickTarget
-} from 'view/room/tabletop/tabledata.mjs'
+} from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
   popupPiece,
   updateSelection,
   setCursor
-} from 'view/room/index.mjs'
+} from '../../../view/room/index.mjs'
 
 export class SelectAndProperties extends MouseButtonHandler {
   isPreDrag () {

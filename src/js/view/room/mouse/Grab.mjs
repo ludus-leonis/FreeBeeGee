@@ -19,17 +19,17 @@
 
 import {
   MouseButtonHandler
-} from 'view/room/mouse/_MouseButtonHandler.mjs'
+} from '../../../view/room/mouse/_MouseButtonHandler.mjs'
 
 import {
   getScrollPosition,
   setScrollPosition,
   setCursor
-} from 'view/room/index.mjs'
+} from '../../../view/room/index.mjs'
 
 import {
   clamp
-} from 'lib/utils.mjs'
+} from '../../../lib/utils.mjs'
 
 export class Grab extends MouseButtonHandler {
   constructor () {

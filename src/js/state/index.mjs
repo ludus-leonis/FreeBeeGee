@@ -22,7 +22,7 @@
 import {
   getStoreValue,
   setStoreValue
-} from 'lib/utils.mjs'
+} from '../lib/utils.mjs'
 
 import {
   apiGetTable,
@@ -37,16 +37,16 @@ import {
   apiPostPiece,
   apiPostAsset,
   UnexpectedStatus
-} from 'api/index.mjs'
+} from '../api/index.mjs'
 
 import {
   syncNow,
   stopAutoSync
-} from 'view/room/sync.mjs'
+} from '../view/room/sync.mjs'
 
 import {
   runError
-} from 'view/error/index.mjs'
+} from '../view/error/index.mjs'
 
 import {
   populatePiecesDefaults,
@@ -55,7 +55,7 @@ import {
   nameToLayer,
   sanitizePiecePatch,
   ID
-} from 'view/room/tabletop/tabledata.mjs'
+} from '../view/room/tabletop/tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
 

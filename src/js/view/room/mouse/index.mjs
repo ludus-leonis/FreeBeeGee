@@ -17,35 +17,35 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   getTableCoordinates
-} from 'view/room/index.mjs'
+} from '../../../view/room/index.mjs'
 
 import {
   touch
-} from 'view/room/sync.mjs'
+} from '../../../view/room/sync.mjs'
 
 import {
   pointTo
-} from 'view/room/tabletop/index.mjs'
+} from '../../../view/room/tabletop/index.mjs'
 
 import {
   SelectAndDrag
-} from 'view/room/mouse/SelectAndDrag.mjs'
+} from '../../../view/room/mouse/SelectAndDrag.mjs'
 
 import {
   SelectAndProperties
-} from 'view/room/mouse/SelectAndProperties.mjs'
+} from '../../../view/room/mouse/SelectAndProperties.mjs'
 
 import {
   Grab
-} from 'view/room/mouse/Grab.mjs'
+} from '../../../view/room/mouse/Grab.mjs'
 
 import {
   Los
-} from 'view/room/mouse/Los.mjs'
+} from '../../../view/room/mouse/Los.mjs'
 
 // --- public ------------------------------------------------------------------
 

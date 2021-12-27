@@ -17,22 +17,22 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from '../../lib/FreeDOM.mjs'
 
 import {
   setTableNo
-} from 'state/index.mjs'
+} from '../../state/index.mjs'
 
 import {
   modalActive,
   modalClose
-} from 'view/modal.mjs'
+} from '../../view/modal.mjs'
 
 import {
   toggleLayer,
   toggleGrid,
   toggleLos
-} from 'view/room/index.mjs'
+} from '../../view/room/index.mjs'
 
 import {
   settings,
@@ -48,30 +48,30 @@ import {
   cycleColor,
   toBottomSelected,
   pointTo
-} from 'view/room/tabletop/index.mjs'
+} from '../../view/room/tabletop/index.mjs'
 
 import {
   isDragging,
   isLMBLos,
   release,
   getMouseCoords
-} from 'view/room/mouse/index.mjs'
+} from '../../view/room/mouse/index.mjs'
 
 import {
   touch
-} from 'view/room/sync.mjs'
+} from '../../view/room/sync.mjs'
 
 import {
   modalLibrary
-} from 'view/room/modal/library.mjs'
+} from '../../view/room/modal/library.mjs'
 
 import {
   modalHelp
-} from 'view/room/modal/help.mjs'
+} from '../../view/room/modal/help.mjs'
 
 import {
   toggleFullscreen
-} from 'lib/utils.mjs'
+} from '../../lib/utils.mjs'
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleRoomKeys(keydown))

@@ -17,39 +17,39 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from '../../lib/FreeDOM.mjs'
 
 import {
   createScreen
-} from 'view/screen.mjs'
+} from '../../view/screen.mjs'
 import {
   createRoomView
-} from 'view/create/index.mjs'
+} from '../../view/create/index.mjs'
 import {
   runRoom
-} from 'view/room/index.mjs'
+} from '../../view/room/index.mjs'
 
 import {
   getServerInfo
-} from 'state/index.mjs'
+} from '../../state/index.mjs'
 
 import {
   runError
-} from 'view/error/index.mjs'
+} from '../../view/error/index.mjs'
 
 import {
   getGetParameter,
   generateName,
   generateUsername
-} from 'lib/utils.mjs'
+} from '../../lib/utils.mjs'
 
 import {
   apiGetRoom
-} from 'api/index.mjs'
+} from '../../api/index.mjs'
 
 import {
   navigateToRoom
-} from 'app.mjs'
+} from '../../app.mjs'
 
 /** Limit room names like hilariousGazingPenguin */
 const roomNameMaxLength = 48

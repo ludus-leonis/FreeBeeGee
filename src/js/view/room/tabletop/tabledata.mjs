@@ -19,7 +19,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   getRoom,
@@ -28,7 +28,7 @@ import {
   getTable,
   getTableNo,
   isLayerActive
-} from 'state/index.mjs'
+} from '../../../state/index.mjs'
 
 import {
   clamp,
@@ -37,7 +37,7 @@ import {
   intersect,
   getDimensionsRotated,
   mod
-} from 'lib/utils.mjs'
+} from '../../../lib/utils.mjs'
 
 export const assetTypes = [
   'tile',

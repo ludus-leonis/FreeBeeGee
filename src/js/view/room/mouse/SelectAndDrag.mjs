@@ -19,30 +19,30 @@
 
 import {
   MouseButtonHandler
-} from 'view/room/mouse/_MouseButtonHandler.mjs'
+} from '../../../view/room/mouse/_MouseButtonHandler.mjs'
 
 import {
   movePiece
-} from 'state/index.mjs'
+} from '../../../state/index.mjs'
 
 import {
   getMouseCoords
-} from 'view/room/mouse/index.mjs'
+} from '../../../view/room/mouse/index.mjs'
 
 import {
   findRealClickTarget,
   findPiece,
   getMaxZ
-} from 'view/room/tabletop/tabledata.mjs'
+} from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
   updateSelection,
   setCursor
-} from 'view/room/index.mjs'
+} from '../../../view/room/index.mjs'
 
 import {
   moveNodeToSnapped
-} from 'view/room/tabletop/index.mjs'
+} from '../../../view/room/tabletop/index.mjs'
 
 export class SelectAndDrag extends MouseButtonHandler {
   constructor () {

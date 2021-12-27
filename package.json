@@ -19,8 +19,8 @@
   },
   "scripts": {
     "gulp": "gulp",
-    "test:api": "NODE_PATH=src/js/ mocha test",
-    "test:unit": "NODE_PATH=./src/js mocha test/js"
+    "test:api": "mocha test",
+    "test:unit": "mocha test/js"
   },
   "license": "AGPL-3.0-or-later",
   "color": "#40bfbf",

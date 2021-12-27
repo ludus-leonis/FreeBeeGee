@@ -49,7 +49,7 @@ npm install
 npm run gulp dist-test
 docker build -t fbg:apache-rewrite-php8 test/Docker/
 docker run -d -v "$PWD/dist/FreeBeeGee":/var/www/html -p 8765:80 -u $(id -u) --name freebeegee fbg:apache-rewrite-php8
-npm run test test/api.js
+npm run test:api
 docker rm -f freebeegee
 ```
 
