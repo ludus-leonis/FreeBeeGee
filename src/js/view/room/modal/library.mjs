@@ -34,7 +34,7 @@ import {
 import {
   createModal,
   getModal,
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../../view/modal.mjs'
 
@@ -70,7 +70,7 @@ import {
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
 export function modalLibrary (xy) {
-  if (!modalActive()) {
+  if (!isModalActive()) {
     const node = createModal(true)
     node.xy = xy
 

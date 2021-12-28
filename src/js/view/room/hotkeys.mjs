@@ -24,7 +24,7 @@ import {
 } from '../../state/index.mjs'
 
 import {
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../view/modal.mjs'
 
@@ -88,14 +88,14 @@ function handleRoomKeys (keydown) {
   touch()
 
   if (keydown.key === 'Escape') { // close modals on ESC
-    if (modalActive()) {
+    if (isModalActive()) {
       modalClose()
       keydown.stopPropagation()
       return
     }
   }
 
-  if (isDragging() && !modalActive()) { // keys that work while dragging
+  if (isDragging() && !isModalActive()) { // keys that work while dragging
     switch (keydown.key) {
       case ' ':
         if (isLMBLos(true)) release(0)
@@ -105,7 +105,7 @@ function handleRoomKeys (keydown) {
     }
   }
 
-  if (!isDragging() && !modalActive()) { // keys that don't work while dragging
+  if (!isDragging() && !isModalActive()) { // keys that don't work while dragging
     switch (keydown.key) {
       case 'Delete': // delete selected
         deleteSelected()

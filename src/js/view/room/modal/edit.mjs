@@ -28,7 +28,7 @@ import {
 import {
   createModal,
   getModal,
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../../view/modal.mjs'
 
@@ -49,7 +49,7 @@ import {
  * @param {Object} piece The piece's data object.
  */
 export function modalEdit (piece) {
-  if (piece != null && !modalActive()) {
+  if (piece != null && !isModalActive()) {
     const node = createModal()
     node.piece = piece
 

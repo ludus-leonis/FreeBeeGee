@@ -703,15 +703,17 @@ export function pointTo (coords) {
  * @param {Object} to {x, y} object, in table px.
  */
 export function losTo (x, y, w, h) {
-  createPieces([{
-    a: ID.LOS,
-    l: 'other',
-    x: x,
-    y: y,
-    w: w,
-    h: h,
-    z: getMaxZ('other') + 1
-  }])
+  if (w !== 0 || h !== 0) {
+    createPieces([{
+      a: ID.LOS,
+      l: 'other',
+      x: x,
+      y: y,
+      w: w,
+      h: h,
+      z: getMaxZ('other') + 1
+    }])
+  }
 }
 
 /**

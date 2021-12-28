@@ -37,7 +37,7 @@ export function getModal () {
  *
  * @return {Boolean} True, if there is a modal open.
  */
-export function modalActive () {
+export function isModalActive () {
   return modal !== null
 }
 
@@ -96,7 +96,7 @@ export function createModal (large = false) {
  * Will also empty the `#modal` DOM node for reuse.
  */
 export function modalClose () {
-  if (modalActive()) {
+  if (isModalActive()) {
     modal.dispose()
     modal = null
     _('#modal').delete()

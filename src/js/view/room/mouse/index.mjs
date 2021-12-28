@@ -197,7 +197,7 @@ function mouseUp (mouseup) {
   if (dragCurrent != null) {
     if (dragHandlers[dragCurrent].isDragging()) {
       dragHandlers[dragCurrent].release(mouseup)
-      dragCurrent = null
     }
+    dragCurrent = null
   }
 }

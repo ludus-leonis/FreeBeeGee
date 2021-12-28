@@ -24,7 +24,7 @@ import _ from '../../../lib/FreeDOM.mjs'
 import {
   createModal,
   getModal,
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../../view/modal.mjs'
 
@@ -48,7 +48,7 @@ import {
  * Contains basis help, shortcuts and an About section.
  */
 export function modalHelp () {
-  if (!modalActive()) {
+  if (!isModalActive()) {
     createModal(true)
 
     const template = getTemplate()
