@@ -69,7 +69,7 @@ $shadow-length: math.sqrt($shadow-x * $shadow-x + $shadow-y * $shadow-y);
 /// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function highlight($r) {
   @return
-  shadow-x-px($r) * 1.5 shadow-y-px($r) * 1.5 .5px 0 $color-white-20a inset,
+  shadow-x-px($r) * 1.5 shadow-y-px($r) * 1.5 .5px 0 $color-white-15a inset,
   shadow-x-px($r - 180) * 1.5 shadow-y-px($r - 180) * 1.5 .5px 0 $color-black-20a inset;
 }
 

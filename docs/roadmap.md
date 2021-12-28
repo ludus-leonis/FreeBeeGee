@@ -14,7 +14,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] generate average piece color during upload
 * [ ] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] "RPG" template glass tiles transparency
     * [X] dice rolling
     * [X] match library preview to show default color "none"
@@ -26,7 +26,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] rotating border highlights
   * [ ] update screenshots
   * [ ] review docs
-  * [ ] review + run tests
+  * [X] review + run tests
     * [X] document how to run tests
     * [X] add more PHP unit tests
     * [X] add more JS unit tests

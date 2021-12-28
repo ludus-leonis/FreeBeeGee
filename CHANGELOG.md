@@ -2,7 +2,7 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## V0.13.0 - ??? ???
+## v0.13.0 - Colorful Cobra
 
 ### Notable changes
 

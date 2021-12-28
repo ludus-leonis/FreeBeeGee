@@ -700,13 +700,16 @@ export function isSolid (piece, x, y) {
  */
 export function findRealClickTarget (event, coords) {
   // in most cases the hit item will be the correct one
-  if (isSolid(event.target.piece, event.offsetX, event.offsetY)) {
+  if (event.target.piece &&
+    event.target.piece.id !== ID.POINTER &&
+    event.target.piece.id !== ID.LOS &&
+    isSolid(event.target.piece, event.offsetX, event.offsetY)) {
     return event.target
   }
 
   // seems the initial target is transparent. now traverse all layers.
-  const index = nameToLayer(event.target.piece.l)
-  for (const layer of ['other', 'token', 'note', 'overlay', 'tile']) {
+  const index = event.target.piece ? nameToLayer(event.target.piece.l) : LAYERS.length - 1
+  for (const layer of LAYERS.slice().reverse()) {
     if (nameToLayer(layer) <= index && isLayerActive(layer)) { // we don't need to check higher layers
       for (const piece of sortZ(findPiecesWithin({
         left: coords.x,
@@ -714,7 +717,12 @@ export function findRealClickTarget (event, coords) {
         right: coords.x,
         bottom: coords.y
       }, layer))) {
-        if (piece.id === event.target.piece.id) continue // don't double-check
+        switch (piece.id) {
+          case event.target.piece?.id: // don't doublecheck
+          case ID.POINTER: // not selectable
+          case ID.LOS: // not selectable
+            continue
+        }
 
         //  compensate center
         const oX = coords.x - piece.x
