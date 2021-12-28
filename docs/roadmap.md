@@ -12,7 +12,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] add separate color sets in templates for piece's borders and backgrounds
 * [X] add hotkeys to flip/rotate backwards
 * [X] generate average piece color during upload
-* [ ] pre-release
+* [X] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
     * [X] "RPG" template glass tiles transparency
@@ -29,14 +29,16 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] document how to run tests
     * [X] add more PHP unit tests
     * [X] add more JS unit tests
-    * [ ] add more integration/API tests
-  * [ ] bump version/codename & update CHANGELOG
-  * [ ] update screenshots
+  * [X] bump version/codename & update CHANGELOG
+  * [X] update screenshots
 
 ## Backlog (unsorted)
 
 ### rather sooner
 
+* [ ] fix unselect sometimes not updating icons
+* [ ] add more integration/API tests (edge cases during CRUD)
+* [ ] system assets (always there, not part of template)
 * [ ] table passwords
 * [ ] use 'v' to paste / clone
 * [ ] automated deployment tests for new zip/tgz packages after build
