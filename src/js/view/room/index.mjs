@@ -446,6 +446,7 @@ export function updateSelection (element) {
   // unselect everything if 'nothing' was clicked
   if (!element) {
     unselectPieces()
+    updateMenu()
     return
   }
 

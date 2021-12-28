@@ -36,7 +36,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
-* [ ] fix unselect sometimes not updating icons
 * [ ] add more integration/API tests (edge cases during CRUD)
 * [ ] system assets (always there, not part of template)
 * [ ] table passwords
@@ -65,6 +64,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] reduce impact of "back" button
 * [ ] "layer not active" hint when dragging nothing
 * [ ] randomize button on dicemat
+* [ ] don't roll dice on transparent part of dicemat
+* [ ] add dice on dicemat
 * [ ] generic marker overlay (X, ?, ...)
 * [ ] add more classic game boards: backgammon, mills, solitaire
 * [ ] generate average piece color during build and upload
