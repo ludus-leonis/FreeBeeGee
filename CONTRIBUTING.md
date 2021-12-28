@@ -19,7 +19,7 @@ Please submit code changes via pull requests on GitHub:
 * Each commit should focus on one task.
 * Use meaningful commit messages. In general, they should start with `added .. `, `changed ...`, `fixed ...` or `removed ...` and describe what happened to the code.
 * Development is done from the `develop` branch. Create a feature branch and a pull request back into `develop`.
-* Make sure `gulp dist` runs without errors or warnings. This will enforce our coding standards.
+* Make sure `npm run gulp dist` runs without errors or warnings. This will enforce our coding standards.
 * It is helpful if you also run `npm run test` to run the Mocha API tests after server/PHP changes, but that requires a bit more setup on your part (a running server).
 
 ## Coding standards

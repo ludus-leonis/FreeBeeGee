@@ -223,7 +223,16 @@ export function apiPostAsset (roomName, asset) {
   return postJson([201], 'api/rooms/' + roomName + '/assets/', asset)
 }
 
+/**
+ * Helper method for unit tests to mock module calls.
+ */
+export function _setMock (value) {
+  mock = value
+}
+
 // --- internal methods --------------------------------------------------------
+
+let mock = 0 // mock mode for unit testing, 0 = off
 
 /**
  * Wrap a JS fetch() for a JSON/Rest call with basic status and error handling
@@ -237,6 +246,7 @@ export function apiPostAsset (roomName, asset) {
  * @throw {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
 function fetchOrThrow (expectedStatus, path, data = {}, headers = false) {
+  if (mock === 1) return Promise.resolve({ expectedStatus, path, data, headers })
   return globalThis.fetch(path, data)
     .then(response => {
       return response.text()

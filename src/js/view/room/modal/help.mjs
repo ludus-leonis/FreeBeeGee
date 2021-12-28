@@ -20,18 +20,22 @@
 import { marked } from 'marked'
 
 import _ from '../../../lib/FreeDOM.mjs'
+
 import {
   createModal,
   getModal,
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../../view/modal.mjs'
+
 import {
   getRoom,
+  PREFS,
   getRoomPreference,
   setRoomPreference,
   getTemplate
 } from '../../../state/index.mjs'
+
 import {
   timeRecords
 } from '../../../lib/utils.mjs'
@@ -44,7 +48,7 @@ import {
  * Contains basis help, shortcuts and an About section.
  */
 export function modalHelp () {
-  if (!modalActive()) {
+  if (!isModalActive()) {
     createModal(true)
 
     const template = getTemplate()
@@ -101,22 +105,27 @@ export function modalHelp () {
 
             <p>If you want to roll multiple dice at once, add a <strong>Dicemat</strong> from the library. Then move your dice onto the dicemat, <strong>select</strong> the dicemat and press <span class="key">#</span>.</p>
 
+            <h2>Measure mode</h2>
+
+            <p>Use the ruler icon or press <span class="key">m</span> to toggle measure mode. Useful to check line-of-sight in many games. While in this mode, press and hold the left mouse button to drag a line across the table. Only you will see the line - to share it with other players press space.</p>
+
           </div>
           <div class="hotkeys">
-            <p>The following hotkeys are available:</p>
+            <p>The following general hotkeys are available. Hotkeys are case-sensitve.</p>
             <p><span class="key">1</span> / <span class="key">2</span> / <span class="key">3</span> / <span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
             <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library window opened.</p>
             <p><span class="key">n</span> Add a new sticky note at the current mouse cursor position.</p>
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>
             <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to another table (1 to 9).</p>
             <p><span class="key">g</span> Toggle table grid overlay.</p>
+            <p><span class="key">m</span> Toggle measure mode.</p>
             <p><span class="key">F11</span> Toggle fullscreen.</p>
             <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
-            <p><span class="key">r</span> Rotate piece.</p>
-            <p><span class="key">f</span> Flip over piece. Some pieces have more than two sides.</p>
+            <p><span class="key">r</span>/<span class="key">R</span> Rotate piece clockwise/counter-clockwise.</p>
+            <p><span class="key">f</span>/<span class="key">F</span> Flip piece forward/backward. Some pieces have more than two sides.</p>
             <p><span class="key">o</span> Change piece color (if a piece supports that).</p>
             <p><span class="key">O</span> Change outline/border color (token only).</p>
             <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
@@ -164,10 +173,10 @@ export function modalHelp () {
     `
 
     _('input[name="tabs"]').on('change', change => {
-      setRoomPreference('modalHelpTab', change.target.id)
+      setRoomPreference(PREFS.TAB_HELP, change.target.id)
     })
 
-    const preselect = getRoomPreference('modalHelpTab', 'tab-1')
+    const preselect = getRoomPreference(PREFS.TAB_HELP)
     _('#' + preselect).checked = true
 
     _('#btn-close').on('click', () => getModal().hide())

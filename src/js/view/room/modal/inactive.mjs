@@ -22,7 +22,7 @@ import _ from '../../../lib/FreeDOM.mjs'
 import {
   createModal,
   getModal,
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../../view/modal.mjs'
 
@@ -34,7 +34,7 @@ import {
  * Contains basis help, shortcuts and an About section.
  */
 export function modalInactive (callback) {
-  if (!modalActive()) {
+  if (!isModalActive()) {
     createModal()
 
     _('#modal-header').innerHTML = `

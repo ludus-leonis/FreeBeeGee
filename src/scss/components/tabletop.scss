@@ -24,10 +24,29 @@
 ////
 
 .tabletop {
+  #{'--fbg-tabletop-image'}: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQAAAAA3iMLMAAAAC0lEQVR4AWMgEQAAADAAAclXe4EAAAAASUVORK5CYII=');
+  #{'--fbg-tabletop-color'}: #808080;
+  #{'--fbg-tabletop-width'}: 1024px;
+  #{'--fbg-tabletop-height'}: 1024px;
+  #{'--fbg-tabletop-grid'}: 'none';
+
   $tile-size: 64px;
 
+  background-color: var(--fbg-tabletop-color);
+  background-image: none, var(--fbg-tabletop-image);
+  background-size: auto, auto;
+  height: var(--fbg-tabletop-height);
   overflow: hidden;
   position: relative;
+  width: var(--fbg-tabletop-width);
+
+  &.has-grid {
+    background-image: var(--fbg-tabletop-grid), var(--fbg-tabletop-image);
+  }
+
+  &.is-drawing {
+    cursor: crosshair;
+  }
 
   .is-quality-low & {
     background-image: none !important; // sass-lint:disable-line no-important

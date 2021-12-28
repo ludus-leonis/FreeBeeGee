@@ -2,64 +2,74 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.12 - Hexing Heron
+## v0.13 - Colorful Cobra
 
-* [X] Hex mode
-  * [X] Engine changes
-  * [X] Game template
-* [X] click thru / don't select on transparent parts of images
-* [X] more table backgrounds
-* [X] improved generic game token / Go piece / bead
-* [X] toggle grid on/off (visual)
-* [X] use image masks for backsides
-* [X] fullscreen hotkey (F11)
-* [X] improved token look & no-border option
+* [X] change backgrounds from room to server setting
+* [X] damage status icons for RPG/Hex templates
+* [X] predefined piece colors
+* [X] LOS-ruler
+* [X] advanced grid settings (minor + major grid)
+* [X] add separate color sets in templates for piece's borders and backgrounds
+* [X] add hotkeys to flip/rotate backwards
+* [X] generate average piece color during upload
 * [X] pre-release
   * [X] bump dependencies
-  * [X] bugfixing
-    * [X] unreadable piece numbers on white borders
-    * [X] tokens sometime shifting when selecting
-    * [X] build speed by caching some files
-    * [X] library search sometimes missing / ok not working
-    * [X] check existing rooms for engine mismatch after updates
-  * [X] update screenshots
+  * [X] bugfixes + refactoring
+    * [X] "RPG" template glass tiles transparency
+    * [X] dice rolling
+    * [X] match library preview to show default color "none"
+    * [X] refactor all JS-CSS changes to custom properties
+    * [X] don't count default pieces' backsides as side in library
+    * [X] browser caching artwork from previous template in same room
+    * [X] remove old/unused room properties
+    * [X] upload form sometimes resets selection
+    * [X] rotating border highlights
   * [X] review docs
   * [X] review + run tests
+    * [X] document how to run tests
+    * [X] add more PHP unit tests
+    * [X] add more JS unit tests
   * [X] bump version/codename & update CHANGELOG
+  * [X] update screenshots
 
 ## Backlog (unsorted)
 
 ### rather sooner
 
+* [ ] fix isSolid image loading
+* [ ] autofix older rooms (or be more tolerant)
+* [ ] add more integration/API tests (edge cases during CRUD)
+* [ ] system assets (always there, not part of template)
+* [ ] table passwords
+* [ ] use 'v' to paste / clone
 * [ ] automated deployment tests for new zip/tgz packages after build
-* [ ] elemental status icons
+* [ ] demo mode (serverless?)
+* [ ] more helper/marker overlays (arrows, areas, )
 * [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
 * [ ] right-click on table (add piece, change table)
 * [ ] set default/start table other than 1 in template
-* [ ] table passwords
 * [ ] delete items from library
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dragging some pieces should not change z (e.g. dicemat)
 * [ ] multi-select stuff
 * [ ] move / copy setups between tables
 * [ ] protect pieces (no-delete, no-move)
-* [ ] LOS-ruler
-* [ ] toggle grid on/off (snapping)
 * [ ] show backside/all sides in tile browser
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] meta-piece: supply heap
 * [ ] support for stacks/decks of cards
-* [ ] shuffle deck/stack
+  * [ ] shuffle deck/stack
+* [ ] player secrets (e.g. for goal cards, hidden rolling, ...)
 * [ ] better sticky notes (auto-size text)
 * [ ] manipulation of single assets in library (edit, change type)
 * [ ] more tabletop settings in UI (e.g. grid)
 * [ ] reduce impact of "back" button
 * [ ] "layer not active" hint when dragging nothing
-* [ ] demo mode (serverless?)
 * [ ] randomize button on dicemat
+* [ ] don't roll dice on transparent part of dicemat
+* [ ] add dice on dicemat
 * [ ] generic marker overlay (X, ?, ...)
 * [ ] add more classic game boards: backgammon, mills, solitaire
-* [ ] add template version to asset urls
 * [ ] generate average piece color during build and upload
 * [ ] catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] hide .../data/... from URLs (via .htaccess)
@@ -73,6 +83,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * bulk manipulation of assets (delete, edit, change type)
 * show even more infos in media browser
 * overlay-grid-on-tile option
+* sounds
+  * dice-roll
+  * shuffle
+  * object selection
+  * moving
 * option to force-install templates with invalid versions
 * I18N
 * pinboard for handouts
@@ -82,7 +97,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * moving pieces
 * color.sh: detect dominant piece color instead of average color
 * compile js for older browsers (<globalThis)
-* arbitrary layers
+* arbitrary layers via template configuration
 * link to subtable in url via /roomname#1
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
@@ -115,4 +130,4 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * download map/table as PDF for printing
 * cutcenes / message panels
 * labels looking like piece of paper sticking out
-* hex mode
+* lobby / room browser

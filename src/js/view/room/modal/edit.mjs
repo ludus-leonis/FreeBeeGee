@@ -22,21 +22,24 @@ import _ from '../../../lib/FreeDOM.mjs'
 import {
   getLibrary,
   getTemplate,
-  statePieceEdit
+  editPiece
 } from '../../../state/index.mjs'
 
 import {
   createModal,
   getModal,
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../../view/modal.mjs'
 
 import {
   TYPE_HEX,
-  findAsset,
   stickyNoteColors
 } from '../../../view/room/tabletop/tabledata.mjs'
+
+import {
+  prettyName
+} from '../../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -46,7 +49,7 @@ import {
  * @param {Object} piece The piece's data object.
  */
 export function modalEdit (piece) {
-  if (piece != null && !modalActive()) {
+  if (piece != null && !isModalActive()) {
     const node = createModal()
     node.piece = piece
 
@@ -65,7 +68,7 @@ export function modalEdit (piece) {
     pieceTag.add(pieceTagNone)
     let pieceTagFound = false
     for (const tag of getLibrary().tag) {
-      const option = _('option').create(tag.name)
+      const option = _('option').create(prettyName(tag.name))
       option.value = tag.name
       if (tag.name === piece.b?.[0]) {
         pieceTagFound = true
@@ -169,8 +172,8 @@ export function modalEdit (piece) {
       borderColor.add(option)
 
       // other colors
-      for (let c = 1; c <= template.colors.length; c++) {
-        const option = _('option').create(template.colors[c - 1].name)
+      for (let c = 1; c <= template.borders.length; c++) {
+        const option = _('option').create(template.borders[c - 1].name)
         option.value = c
         if (c === piece.c[1]) option.selected = true
         borderColor.add(option)
@@ -221,10 +224,8 @@ function getModalBody (piece) {
 }
 
 function getModalToken (piece) {
-  const asset = findAsset(piece.a)
-  const pieceClass = asset?.bg === 'piece' ? 'col-lg-3' : 'is-hidden'
-  const borderClass = asset?.bg === 'piece' ? 'col-lg-3' : 'col-lg-6'
-  console.log(asset)
+  const pieceClass = piece._meta.hasColor ? 'col-lg-3' : 'is-hidden'
+  const borderClass = piece._meta.hasBorder ? 'col-lg-3' : 'col-lg-6'
   return `
     <form class="container">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
@@ -449,6 +450,6 @@ function modalOk () {
   value = Number(_('#piece-number').value)
   if (value !== piece.n) updates.n = value
 
-  statePieceEdit(piece.id, updates)
+  editPiece(piece.id, updates)
   getModal().hide()
 }

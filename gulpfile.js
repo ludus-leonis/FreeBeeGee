@@ -111,7 +111,6 @@ function replace (pipe) {
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))
     .pipe(repl('$COLOR$', p.color, { skipBinary: true }))
     .pipe(repl('$URL$', p.homepage, { skipBinary: true }))
-    .pipe(repl('$CACHE$', p.cache, { skipBinary: true }))
 }
 
 gulp.task('fonts', () => {
@@ -196,8 +195,12 @@ gulp.task('js-main', gulp.series('test-js', () => {
 
     'src/js/view/room/index.mjs',
     'src/js/view/room/hotkeys.mjs',
-    'src/js/view/room/mouse.mjs',
     'src/js/view/room/sync.mjs',
+    'src/js/view/room/mouse/_MouseButtonHandler.mjs',
+    'src/js/view/room/mouse/index.mjs',
+    'src/js/view/room/mouse/Los.mjs',
+    'src/js/view/room/mouse/SelectAndDrag.mjs',
+    'src/js/view/room/mouse/Grab.mjs',
     'src/js/view/room/tabletop/index.mjs',
     'src/js/view/room/tabletop/tabledata.mjs',
     'src/js/view/room/modal/edit.mjs',
@@ -205,7 +208,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/view/room/modal/inactive.mjs',
     'src/js/view/room/modal/library.mjs'
   ], {
-    paths: []
+    paths: ['src/js']
   }).transform(babelify.configure({
     presets: ['@babel/preset-env']
   })).bundle()
@@ -218,7 +221,6 @@ gulp.task('sass', gulp.series('test-sass', () => {
   const concat = require('gulp-concat')
   const autoprefixer = require('gulp-autoprefixer')
   const sourcemaps = require('gulp-sourcemaps')
-  const repl = require('gulp-replace')
 
   return replace(gulp.src([
     'src/scss/style.scss'
@@ -226,7 +228,6 @@ gulp.task('sass', gulp.series('test-sass', () => {
     .pipe(sourcemaps.init())
     .pipe(concat('style.css'))
     .pipe(sass({ outputStyle: 'compressed' }))
-    .pipe(repl('$CACHE$', p.cache, { skipBinary: true }))
     .pipe(autoprefixer())
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(dirs.site))
@@ -349,7 +350,7 @@ gulp.task('build', gulp.parallel(
 
 gulp.task('dist', gulp.parallel('build'))
 
-gulp.task('dist-test', gulp.series('dist', () => {
+gulp.task('dist-test', gulp.series('clean', 'dist', () => {
   return replace(gulp.src([
     'test/data/server.json'
   ]))

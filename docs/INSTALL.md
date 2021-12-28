@@ -75,13 +75,13 @@ While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. I
 
 This is not needed for a regular installation. Most users should be fine with the the pre-packaged `*.tar.gz`/`*.zip` mentioned above.
 
-However, if you want to build FreeBeeGee yourself, you'll need `git`, `php` v7.2+, `npm` v6.5+ and `gulp` v4 locally installed. Then do:
+However, if you want to build FreeBeeGee yourself, you'll need `git`, `php` v7.2+ and `npm` v8.0+ locally installed. Then do:
 
 ```
 git clone --depth 1 https://github.com/ludus-leonis/FreeBeeGee
 cd FreeBeeGee
 npm install
-gulp release
+npm run gulp release
 ```
 
 The archives can now be found in the `dist/` folder.

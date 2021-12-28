@@ -21,6 +21,7 @@
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
+  mod,
   clamp,
   shuffle,
   recordTime,
@@ -43,11 +44,13 @@ import {
 
 import {
   updateStatusline,
-  restoreScrollPosition
-} from '../index.mjs'
+  restoreScrollPosition,
+  updateMenu
+} from '../../../view/room/index.mjs'
 
 import {
   TYPE_HEX,
+  ID,
   findAsset,
   findAssetByAlias,
   findPiece,
@@ -55,19 +58,23 @@ import {
   getAssetURL,
   getMinZ,
   getMaxZ,
-  stickyNoteColors,
   getTopLeftPx,
   getPieceBounds,
-  snap
-} from './tabledata.mjs'
-import {
-  updateMenu
-} from '../mouse.mjs'
+  snap,
+  stickyNoteColors
+} from '../../../view/room/tabletop/tabledata.mjs'
 
-import { modalEdit } from '../modal/edit.mjs'
-import { modalSettings } from '../modal/settings.mjs'
+import {
+  modalEdit
+} from '../../../view/room/modal/edit.mjs'
+
+import {
+  modalSettings
+} from '../../../view/room/modal/settings.mjs'
 
 // --- public ------------------------------------------------------------------
+
+export const MEDIA_BACK = '##BACK##'
 
 /**
  * Get all currently selected pieces.
@@ -132,12 +139,14 @@ export function cloneSelected (xy) {
  * Flip the currently selected piece to its next side.
  *
  * Will cycle the sides and silently fail if nothing is selected.
+ *
+ * @param {Boolean} forward If true (default), will cycle forward, otherwise backward.
  */
-export function flipSelected () {
+export function flipSelected (forward = true) {
   getSelected().each(node => {
     const piece = findPiece(node.id)
     if (piece._meta.sides > 1) {
-      flipPiece(piece.id, (piece.s + 1) % piece._meta.sides)
+      flipPiece(piece.id, mod(forward ? (piece.s + 1) : (piece.s - 1), piece._meta.sides))
     }
   })
 }
@@ -151,20 +160,18 @@ export function flipSelected () {
  *                          it will cycle the piece color.
  */
 export function cycleColor (outline = false) {
-  const pieceColors = getTemplate().colors.length
-
   getSelected().each(node => {
     const piece = findPiece(node.id)
     switch (piece.l) {
       case 'note':
         // always change base color
-        colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length, piece.c[1])
+        colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         break
       default:
         if (outline) {
-          colorPiece(piece.id, piece.c[0], (piece.c[1] + 1) % (pieceColors + 1))
+          colorPiece(piece.id, piece.c[0], piece.c[1] + 1)
         } else {
-          colorPiece(piece.id, (piece.c[0] + 1) % stickyNoteColors.length, piece.c[1])
+          colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         }
     }
   })
@@ -178,7 +185,7 @@ export function cycleColor (outline = false) {
 export function numberSelected (delta) {
   _('#tabletop .piece-token.is-selected').each(node => {
     const piece = findPiece(node.id)
-    numberPiece(piece.id, (piece.n + 16 + delta) % 16) // 0=nothing, 1-9, A-F
+    numberPiece(piece.id, piece.n + delta) // 0=nothing, 1-9, A-F
   })
 }
 
@@ -212,7 +219,6 @@ export function randomSelected () {
           const offset = Math.floor(template.gridSize / 2)
           const x = Math.abs(clamp(0, piece.x + slideX * offset, (template.gridWidth - 1) * template.gridSize))
           const y = Math.abs(clamp(0, piece.y + slideY * offset, (template.gridHeight - 1) * template.gridSize))
-
           // send to server
           updatePieces([{
             id: node.id,
@@ -285,9 +291,9 @@ function createOrUpdatePieceDOM (piece, select) {
   if (_piece.x !== piece.x || _piece.y !== piece.y || _piece.z !== piece.z) {
     const tl = getTopLeftPx(piece)
     div.css({
-      top: tl.top,
-      left: tl.left,
-      zIndex: piece.z
+      '--fbg-x': tl.left,
+      '--fbg-y': tl.top,
+      '--fbg-z': piece.z
     })
   }
   if (_piece.r !== piece.r) {
@@ -297,8 +303,8 @@ function createOrUpdatePieceDOM (piece, select) {
   }
   if (_piece.w !== piece.w || _piece.h !== piece.h) {
     div
-      .remove('.is-w-*', '.is-h-*', '.is-wh-*')
-      .add(`.is-w-${piece.w}`, `.is-h-${piece.h}`, `.is-wh-${piece.w - piece.h}`)
+      .remove('.is-w-*', '.is-h-*')
+      .add(`.is-w-${piece.w}`, `.is-h-${piece.h}`)
   }
   if (_piece.n !== piece.n) {
     div.remove('.is-n', '.is-n-*')
@@ -306,31 +312,43 @@ function createOrUpdatePieceDOM (piece, select) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
+
   if (_piece.c?.[0] !== piece.c[0] || _piece.c?.[1] !== piece.c[1]) {
-    div
-      .remove('.is-color-*', '.is-border-*')
-      .add('.is-color-' + piece.c[0], '.is-border-' + piece.c[1])
-    if (piece.l === 'token' && piece.c[0] >= 0 && piece.c[0] <= template.colors.length) {
-      if (piece.c[0] === 0) {
-        _(`#${piece.id}`).css({
-          '--fbg-piece-color': '#808080',
-          '--fbg-piece-color-invert': '#e6e6e6'
-        })
-      } else {
-        _(`#${piece.id}`).css({
-          '--fbg-piece-color': template.colors[piece.c[0] - 1].value,
-          '--fbg-piece-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+    // (background) color
+    if (piece.l === 'note') {
+      div.css({
+        '--fbg-color': stickyNoteColors[piece.c[0]].value,
+        '--fbg-color-invert': brightness(stickyNoteColors[piece.c[0]].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+      })
+    } else if (piece.l === 'overlay' || piece.l === 'other') {
+      // no color
+    } else if (piece._meta.hasColor) {
+      if (piece.c[0] === 0) { // no/default color
+        div.remove('--fbg-color', '--fbg-color-invert')
+      } else { // color
+        div.css({
+          '--fbg-color': template.colors[piece.c[0] - 1].value,
+          '--fbg-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
-      if (piece.c[1] === 0) {
+    } else {
+      const asset = findAsset(piece.a)
+      div.css({
+        '--fbg-color': asset.bg,
+        '--fbg-color-invert': brightness(asset.bg) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+      })
+    }
+
+    // border color
+    div.remove('.has-border')
+    if (piece._meta.hasBorder) {
+      if (piece.c[1] === 0) { // no border color
+        _(`#${piece.id}`).remove('--fbg-border-color', '--fbg-border-color-invert')
+      } else { // color
+        div.add('.has-border')
         _(`#${piece.id}`).css({
-          '--fbg-border-color': '#808080',
-          '--fbg-border-color-invert': '#e6e6e6'
-        })
-      } else {
-        _(`#${piece.id}`).css({
-          '--fbg-border-color': template.colors[piece.c[1] - 1].value,
-          '--fbg-border-color-invert': brightness(template.colors[piece.c[1] - 1].value) > 128 ? '#0d0d0d' : '#e6e6e6'
+          '--fbg-border-color': template.borders[piece.c[1] - 1].value,
+          '--fbg-border-color-invert': brightness(template.borders[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
     }
@@ -397,14 +415,16 @@ export function setNote (note, select = false) {
  * Rotate the currently selected piece.
  *
  * Done in increments based on game type.
+ *
+ * @param {Boolean} cw Optional direction. True = CW (default), False = CCW.
  */
-export function rotateSelected () {
+export function rotateSelected (cw = true) {
   const template = getTemplate()
 
   getSelected().each(node => {
     const piece = findPiece(node.id)
     const increment = template.type === TYPE_HEX ? 60 : 90
-    const r = (piece.r + increment) % 360
+    const r = cw ? (piece.r + increment) : (piece.r - increment)
     rotatePiece(piece.id, r)
   })
 }
@@ -478,46 +498,62 @@ export function pieceToNode (piece) {
   // create the dom node
   const asset = findAsset(piece.a)
   if (asset === null) {
-    if (piece.a === ID_POINTER) {
-      node = createPointerAsset(piece.l)
-    } else {
-      node = createInvalidAsset(piece.l)
+    switch (piece.a) {
+      case ID.POINTER:
+        node = createPointerPiece(piece.l)
+        break
+      case ID.LOS:
+        node = createLosPiece(piece.x, piece.y, piece.w, piece.h)
+        break
+      default:
+        node = createInvalidPiece(piece.l)
     }
   } else {
-    if (asset.media[piece.s] === '##BACK##') { // backside piece
+    if (asset.media[piece.s] === MEDIA_BACK) { // backside piece
       const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
-      node = _(`.piece.piece-${asset.type}`).create()
-
-      // create inner div as we can't image-map the outer without cutting the shadow
-      const inner = _('.backside').create().css({
-        maskImage: 'url("' + encodeURI(uriMask) + '")'
+      node = _(`.piece.piece-${asset.type}`).create().css({
+        '--fbg-mask': url(uriMask)
       })
+
+      // create inner div as we can't image-mask the outer without cutting the shadow
+      const inner = _('.backside').create()
       node.add(inner)
     } else { // regular piece
       const uriSide = getAssetURL(asset, piece.s)
-      const uriBase = getAssetURL(asset, -1)
       if (asset.base) { // layered asset
-        node = _(`.piece.piece-${asset.type}.has-layer`).create().css({
-          backgroundImage: 'url("' + encodeURI(uriBase) + '")',
-          '--fbg-layer-image': 'url("' + encodeURI(uriSide) + '")'
+        const uriBase = getAssetURL(asset, -1)
+        node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
+          '--fbg-image': url(uriBase),
+          '--fbg-decal': url(uriSide)
         })
       } else { // regular asset
         node = _(`.piece.piece-${asset.type}`).create().css({
-          backgroundImage: 'url("' + encodeURI(uriSide) + '")'
+          '--fbg-image': url(uriSide)
         })
       }
     }
+    if (asset.tx) {
+      node.css({
+        '--fbg-material': url(`img/material-${asset.tx}.png`)
+      })
+    } else {
+      node.remove('--fbg-material')
+    }
 
     if (asset.type !== 'overlay' && asset.type !== 'other') {
-      node.css({
-        backgroundColor: asset.bg ?? '#808080'
-      })
+      if (!asset.bg.match(/^[0-9][0-9]?$/)) {
+        // color information is html color or 'transparent' -> apply
+        node.css({ '--fbg-color': asset.bg })
+      }
+    }
+
+    if (piece._meta.hasHighlight) {
+      node.add('.has-highlight')
     }
   }
 
   // set meta-classes on node
   node.id = piece.id
-  node.add(`.is-side-${piece.s}`)
 
   return node
 }
@@ -532,10 +568,25 @@ export function noteToNode (note) {
   const node = _('.piece.piece-note').create()
 
   node.id = note.id
-  node.add('.is-side-0')
   node.node().innerHTML = note.t?.[0] ?? ''
 
   return node
+}
+
+/**
+ * Convert a filename into a CSS url() and apply a scoped caching postfix.
+ *
+ * @param {String} file Filname for url().
+ * @param {Boolean} pin If true (optional), will append room id to pin caching.
+ * @return {FreeDOM} Converted node (not added to DOM yet).
+ */
+export function url (file, pin = true) {
+  let cache = ''
+  if (pin) {
+    const room = getRoom()
+    cache = '?r=' + encodeURI(room.id)
+  }
+  return `url("${encodeURI(file)}${cache}")`
 }
 
 /**
@@ -635,7 +686,7 @@ export function pointTo (coords) {
   const snapped = snap(coords.x, coords.y)
 
   createPieces([{ // always create (even if it is a move)
-    a: ID_POINTER,
+    a: ID.POINTER,
     l: 'other',
     w: 1,
     h: 1,
@@ -645,9 +696,113 @@ export function pointTo (coords) {
   }])
 }
 
-// --- internal ----------------------------------------------------------------
+/**
+ * Persist the LOS line on the server
+ *
+ * @param {Object} from {x, y} object, in table px.
+ * @param {Object} to {x, y} object, in table px.
+ */
+export function losTo (x, y, w, h) {
+  if (w !== 0 || h !== 0) {
+    createPieces([{
+      a: ID.LOS,
+      l: 'other',
+      x: x,
+      y: y,
+      w: w,
+      h: h,
+      z: getMaxZ('other') + 1
+    }])
+  }
+}
 
-const ID_POINTER = 'ffffffffffffffff'
+/**
+ * Move a (dragging) piece to the current mouse position.
+ *
+ * @param {Element} element The HTML node to update.
+ * @param {Number} x New x coordinate in px.
+ * @param {Number} y New y coordinate in px.
+ */
+export function moveNodeToSnapped (element, x, y) {
+  const template = getTemplate()
+
+  x = clamp(0, x, template._meta.widthPx - 0 - 1)
+  y = clamp(0, y, template._meta.heightPx - 0 - 1)
+
+  const snapped = snap(x, y)
+  element.x = Math.max(0, snapped.x)
+  element.y = Math.max(0, snapped.y)
+
+  const tl = getTopLeftPx(element.piece, element.x, element.y)
+  element.style.left = tl.left
+  element.style.top = tl.top
+}
+
+/**
+ * Create an asset node for invalid assets / ids.
+ *
+ * @param {Number} x X-coordinate of starting point in px.
+ * @param {Number} y Y-coordinate of starting point in px.
+ * @param {Number} w Width in px. Can be negative.
+ * @param {Number} h Height in px. Can be negative.
+ * @return {FreeDOM} dummy node.
+ */
+export function createLosPiece (x, y, width, height) {
+  const stroke = 4
+  const padding = stroke / 2
+  const x1 = (width >= 0 ? padding : -width + padding)
+  const y1 = (height >= 0 ? padding : -height + padding)
+  const x2 = (width >= 0 ? width + padding : padding)
+  const y2 = (height >= 0 ? height + padding : padding)
+
+  // container svg
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  svg.setAttribute('fill', 'none')
+  svg.setAttribute('viewBox', `0 0 ${Math.abs(width) + padding * 2} ${Math.abs(height) + padding * 2}`)
+  svg.setAttribute('stroke', 'black')
+  svg.classList.add('piece', 'piece-other', 'is-los')
+
+  // base line
+  const base = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  base.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  base.setAttribute('stroke-linecap', 'round')
+  base.setAttribute('stroke-linejoin', 'round')
+  base.setAttribute('stroke', '#ad371a') // red thread
+  base.setAttribute('stroke-width', stroke - 1)
+  svg.appendChild(base)
+
+  // thicker line
+  const shape = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  shape.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  shape.setAttribute('stroke-linecap', 'round')
+  shape.setAttribute('stroke-linejoin', 'round')
+  shape.setAttribute('stroke-dasharray', '5,10')
+  shape.setAttribute('stroke', '#ad371a') // red thread
+  shape.setAttribute('stroke-width', stroke)
+  svg.appendChild(shape)
+
+  // shade line
+  const shade = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  shade.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  shade.setAttribute('stroke-linecap', 'round')
+  shade.setAttribute('stroke-linejoin', 'round')
+  shade.setAttribute('stroke-dasharray', '3,12')
+  shade.setAttribute('stroke-dashoffset', -1)
+  shade.setAttribute('stroke-opacity', 0.05)
+  shade.setAttribute('stroke', '#ffffff') // red thread
+  shade.setAttribute('stroke-width', stroke - 1)
+  svg.appendChild(shade)
+
+  svg.style.left = (width < 0 ? x + width : x) - stroke / 2 + 'px'
+  svg.style.top = (height < 0 ? y + height : y) - stroke / 2 + 'px'
+  svg.style.width = Math.abs(width) + stroke + 'px'
+  svg.style.height = Math.abs(height) + stroke + 'px'
+  svg.style.zIndex = 999999999
+
+  return _(svg)
+}
+
+// --- internal ----------------------------------------------------------------
 
 /**
  * Remove dirty / obsolete / bad pieces from room.
@@ -664,7 +819,7 @@ function cleanupTable () {
  * @param {String} type Asset type (token, tile, ...).
  * @return {FreeDOM} dummy node.
  */
-function createInvalidAsset (type) {
+function createInvalidPiece (type) {
   return _(`.piece.piece-${type}.is-invalid`).create()
 }
 
@@ -674,7 +829,7 @@ function createInvalidAsset (type) {
  * @param {String} type Asset type (token, tile, ...).
  * @return {FreeDOM} dummy node.
  */
-function createPointerAsset () {
+function createPointerPiece () {
   return _('.piece.piece-other.is-pointer').create()
 }
 
@@ -703,7 +858,7 @@ function randomDicemat (dicemat) {
     let coord = { x: 0, y: 0 }
     let index = Math.floor(Math.random() * coords.length)
     if (coords[index].x === piece.x && coords[index].y === piece.y) {
-      index = (index + 1) % coords.length
+      index = mod(index + 1, coords.length)
     }
     coord = coords[index]
     coords.splice(index, 1)

@@ -18,18 +18,22 @@
  */
 
 import _ from '../../lib/FreeDOM.mjs'
+
 import {
   setTableNo
 } from '../../state/index.mjs'
+
 import {
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../view/modal.mjs'
 
 import {
   toggleLayer,
-  toggleGrid
-} from './index.mjs'
+  toggleGrid,
+  toggleLos
+} from '../../view/room/index.mjs'
+
 import {
   settings,
   rotateSelected,
@@ -44,20 +48,27 @@ import {
   cycleColor,
   toBottomSelected,
   pointTo
-} from './tabletop/index.mjs'
+} from '../../view/room/tabletop/index.mjs'
+
 import {
   isDragging,
+  isLMBLos,
+  release,
   getMouseCoords
-} from './mouse.mjs'
+} from '../../view/room/mouse/index.mjs'
+
 import {
   touch
-} from './sync.mjs'
+} from '../../view/room/sync.mjs'
+
 import {
   modalLibrary
-} from './modal/library.mjs'
+} from '../../view/room/modal/library.mjs'
+
 import {
   modalHelp
-} from './modal/help.mjs'
+} from '../../view/room/modal/help.mjs'
+
 import {
   toggleFullscreen
 } from '../../lib/utils.mjs'
@@ -77,14 +88,24 @@ function handleRoomKeys (keydown) {
   touch()
 
   if (keydown.key === 'Escape') { // close modals on ESC
-    if (modalActive()) {
+    if (isModalActive()) {
       modalClose()
       keydown.stopPropagation()
       return
     }
   }
 
-  if (!isDragging() && !modalActive()) {
+  if (isDragging() && !isModalActive()) { // keys that work while dragging
+    switch (keydown.key) {
+      case ' ':
+        if (isLMBLos(true)) release(0)
+        keydown.stopPropagation()
+        keydown.preventDefault()
+        return
+    }
+  }
+
+  if (!isDragging() && !isModalActive()) { // keys that don't work while dragging
     switch (keydown.key) {
       case 'Delete': // delete selected
         deleteSelected()
@@ -141,10 +162,13 @@ function handleRoomKeys (keydown) {
       case 'F11':
         toggleFullscreen()
         break
-      case 'f': // flip
+      case 'f': // flip forward
         flipSelected()
         break
-      case 'g': // toggleGrid
+      case 'F': // flip backward
+        flipSelected(false)
+        break
+      case 'g': // grid
         toggleGrid()
         break
       case 'o': // token color
@@ -159,8 +183,14 @@ function handleRoomKeys (keydown) {
       case 'F1':
         modalHelp()
         break
-      case 'r': // rotate
+      case 'r': // rotate CW
         rotateSelected()
+        break
+      case 'R': // rotate CCW
+        rotateSelected(false)
+        break
+      case 'm': // measure/LOS tool
+        toggleLos()
         break
       case 'S': // settings
         settings()

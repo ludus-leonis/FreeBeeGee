@@ -21,12 +21,18 @@
 import { createPopper } from '@popperjs/core'
 
 import _ from '../../lib/FreeDOM.mjs'
+
 import {
   navigateToJoin
 } from '../../app.mjs'
+
 import {
   loadRoom,
   getRoom,
+  PREFS,
+  cleanupStore,
+  getServerPreference,
+  setServerPreference,
   getRoomPreference,
   setRoomPreference,
   getTablePreference,
@@ -45,34 +51,39 @@ import {
   toBottomSelected,
   flipSelected,
   randomSelected,
-  deleteSelected
-} from './tabletop/index.mjs'
+  deleteSelected,
+  url
+} from '../../view/room/tabletop/index.mjs'
 
 import {
   TYPE_HEX,
   getSetupCenter,
   findPiece
-} from './tabletop/tabledata.mjs'
+} from '../../view/room/tabletop/tabledata.mjs'
 
 import {
   enableDragAndDrop,
-  getMouseCoords
-} from './mouse.mjs'
+  getMouseCoords,
+  toggleLMBLos,
+  isLMBLos
+} from '../../view/room/mouse/index.mjs'
 
 import {
   startAutoSync
-} from './sync.mjs'
+} from '../../view/room/sync.mjs'
+
 import {
   modalLibrary
-} from './modal/library.mjs'
+} from '../../view/room/modal/library.mjs'
+
 import {
   modalHelp
-} from './modal/help.mjs'
+} from '../../view/room/modal/help.mjs'
 
 import {
   modalSettings,
   changeQuality
-} from './modal/settings.mjs'
+} from '../../view/room/modal/settings.mjs'
 
 import {
   clamp,
@@ -80,6 +91,22 @@ import {
 } from '../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
+
+/**
+ * Set the room mouse cursor (pointer, cross, ...)
+ *
+ * @return {String} Cursor (class), or undefined to revert to default cursor.
+ */
+export function setCursor (cursor) {
+  scroller.remove('.cursor-*')
+  if (cursor) {
+    scroller.add(cursor)
+  } else {
+    if (isLMBLos()) {
+      scroller.add('.cursor-cross')
+    }
+  }
+}
 
 /**
  * Get current top-left tabletop scroll position.
@@ -100,7 +127,7 @@ export function getScrollPosition () {
  * @return {Number} y Y-coordinate.
  */
 export function setScrollPosition (x, y) {
-  scroller.scrollTo(x, y)
+  scroller.node().scrollTo(x, y)
 }
 
 /**
@@ -150,21 +177,42 @@ export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
   _('#tabletop').toggle('.layer-' + layer + '-enabled')
   if (_('#btn-' + layer + '.active').exists()) {
-    setRoomPreference('layer' + layer, true)
+    setRoomPreference(PREFS['LAYER' + layer], true)
   } else {
     unselectPieces(layer)
-    setRoomPreference('layer' + layer, false)
+    setRoomPreference(PREFS['LAYER' + layer], false)
+  }
+}
+
+/**
+ * Toggle the ruler on/off.
+ */
+export function toggleLos () {
+  _('#btn-s').toggle('.active')
+  toggleLMBLos()
+  if (isLMBLos()) {
+    setCursor('.cursor-cross')
+    setRoomPreference(PREFS.LOS, true)
+  } else {
+    setCursor()
+    setRoomPreference(PREFS.LOS, false)
   }
 }
 
 /**
  * Toggle grid display on/off.
+ *
+ * @param {Number} value Grid value (0..2).
  */
-export function toggleGrid (on) {
-  if (on === true || on === false) {
-    setRoomPreference('showGrid', on)
-  } else { // undefined
-    setRoomPreference('showGrid', !getRoomPreference('showGrid', false))
+export function toggleGrid (value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+      setRoomPreference(PREFS.GRID, value)
+      break
+    default: // unknown value = cycle background
+      setRoomPreference(PREFS.GRID, (getRoomPreference(PREFS.GRID) + 1) % 3)
   }
   setupBackground()
 }
@@ -246,6 +294,37 @@ export function popupPiece (id) {
 }
 
 /**
+ * Update the menu's disabled buttons.
+ *
+ * Mostly based on if a piece is selected or not.
+ */
+export function updateMenu () {
+  // (de)activate menu
+  const menu = _('.menu-selected')
+  const selected = _('.is-selected').nodes()
+
+  _('.menu-selected button').remove('.disabled')
+  if (selected.length <= 0) {
+    menu.add('.disabled')
+  } else if (selected.length === 1) {
+    const piece = findPiece(selected[0].id)
+    menu.remove('.disabled')
+    if (piece._meta.sides <= 1) {
+      _('#btn-f').add('.disabled')
+      _('#btn-hash').add('.disabled')
+    }
+    if (piece._meta.sides <= 2) {
+      _('#btn-hash').add('.disabled')
+    }
+    if (piece._meta.feature === 'DICEMAT') {
+      _('#btn-hash').remove('.disabled')
+    }
+  } else {
+    menu.remove('.disabled')
+  }
+}
+
+/**
  * Update DOM room to current table-data.
  *
  * e.g. for resizing the room.
@@ -256,8 +335,8 @@ export function updateRoom () {
   const room = getRoom()
 
   return _('#tabletop').css({
-    width: room.width + 'px',
-    height: room.height + 'px'
+    '--fbg-tabletop-width': room.width + 'px',
+    '--fbg-tabletop-height': room.height + 'px'
   })
 }
 
@@ -271,7 +350,7 @@ export function updateRoom () {
  * @return {Object} The absolute room coordinate as {x, y}.
  */
 export function getTableCoordinates (windowX, windowY) {
-  const origin = scroller.getBoundingClientRect()
+  const origin = scroller.node().getBoundingClientRect()
 
   return {
     x: windowX + scroller.scrollLeft - origin.left,
@@ -301,13 +380,11 @@ export function updateStatusline () {
  * Defaults to the center of the table setup if no last scroll position ist known.
  */
 export function restoreScrollPosition () {
-  const scroller = _('#scroller')
-  const lastX = getTablePreference('scrollX')
-  const lastY = getTablePreference('scrollY')
-  if (lastX && lastY) {
+  const last = getTablePreference(PREFS.SCROLL)
+  if (last.x && last.y) {
     scroller.node().scrollTo(
-      lastX - Math.floor(scroller.clientWidth / 2),
-      lastY - Math.floor(scroller.clientHeight / 2)
+      last.x - Math.floor(scroller.clientWidth / 2),
+      last.y - Math.floor(scroller.clientHeight / 2)
     )
   } else {
     const center = getSetupCenter()
@@ -325,46 +402,70 @@ export function restoreScrollPosition () {
  * @param {Boolean} showGrid If true, the overlay grid will be drawn.
  */
 export function setupBackground (
-  bgIndex = getRoomPreference('background', 99),
-  showGrid = getRoomPreference('showGrid', false)
+  bgIndex = getServerPreference(PREFS.BACKGROUND),
+  gridType = getRoomPreference(PREFS.GRID)
 ) {
   const room = getRoom()
 
   bgIndex = clamp(0, bgIndex, room.backgrounds.length - 1)
 
-  // setup background / wallpaper
-  if (showGrid) {
-    const grid = room.template?.type === TYPE_HEX
-      ? brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-hex-white.svg' : 'grid-hex-black.svg'
-      : brightness(room.backgrounds[bgIndex].color) < 92 ? 'grid-square-white.svg' : 'grid-square-black.svg'
+  updateRoom().css({
+    '--fbg-tabletop-color': room.backgrounds[bgIndex].color,
+    '--fbg-tabletop-image': url(room.backgrounds[bgIndex].image)
+  })
 
-    const gridX = room.template?.type === TYPE_HEX ? room.template.gridSize * 1.71875 : room.template.gridSize
-    const gridY = room.template.gridSize
+  // setup background / wallpaper + grid
+  _('#tabletop').remove('.has-grid', '--fbg-tabletop-grid')
+  if (gridType > 0) {
+    _('#tabletop').add('.has-grid')
 
-    updateRoom().css({
-      backgroundColor: room.backgrounds[bgIndex].color,
-      backgroundImage: `url("img/${grid}?v=$CACHE$"),url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
-      backgroundSize: `${gridX}px ${gridY}px,auto`
-    })
-  } else {
-    updateRoom().css({
-      backgroundColor: room.backgrounds[bgIndex].color,
-      backgroundImage: `url("${room.backgrounds[bgIndex].image}?v=$CACHE$")`,
-      backgroundSize: 'auto'
-    })
+    const color = brightness(room.backgrounds[bgIndex].color) < 92 ? 'white' : 'black'
+    const style = gridType > 1 ? 'major' : 'minor'
+    const shape = room.template?.type === TYPE_HEX ? 'hex' : 'square'
+    _('#tabletop').css({ '--fbg-tabletop-grid': url(`img/grid-${shape}-${style}-${color}.svg`) })
   }
 
   // setup scroller
-  const scroller = _('#scroller')
   scroller.css({ // this is for moz://a
-    scrollbarColor: `${room.backgrounds[bgIndex].scroller} ${room.backgrounds[bgIndex].color}`
+    scrollbarColor: `${room.backgrounds[bgIndex].scroller} ${room.backgrounds[bgIndex].color}`,
+    '--fbg-color-scroll-fg': room.backgrounds[bgIndex].scroller,
+    '--fbg-color-scroll-bg': room.backgrounds[bgIndex].color
   })
-  scroller.node().style.setProperty('--fbg-color-scroll-fg', room.backgrounds[bgIndex].scroller)
-  scroller.node().style.setProperty('--fbg-color-scroll-bg', room.backgrounds[bgIndex].color)
 
   // store for future reference
-  setRoomPreference('background', bgIndex)
-  setRoomPreference('showGrid', showGrid)
+  setServerPreference(PREFS.BACKGROUND, bgIndex)
+  setRoomPreference(PREFS.GRID, gridType)
+}
+
+/**
+ * Check if we need to update the select state after user clicked somewhere.
+ *
+ * @param {Element} element The HTML node the user clicked on. Unselect all if null.
+ */
+export function updateSelection (element) {
+  // unselect everything if 'nothing' was clicked
+  if (!element) {
+    unselectPieces()
+    updateMenu()
+    return
+  }
+
+  // remove selection from all elements if we clicked on the background or on a piece
+  if (element.id === 'tabletop' || element.classList.contains('piece') || element.classList.contains('backside')) {
+    unselectPieces()
+  }
+
+  // add selection to clicked element (if it is a piece)
+  if (element.classList.contains('piece')) {
+    element.classList.add('is-selected')
+  }
+
+  // add selection to parent (if it is a backside piece)
+  if (element.classList.contains('backside')) {
+    element.parentElement.classList.add('is-selected')
+  }
+
+  updateMenu()
 }
 
 // --- internal ----------------------------------------------------------------
@@ -377,47 +478,40 @@ let scroller = null /** keep reference to scroller div - we need it often */
  * @param {Object} room Room data object.
  */
 function setupRoom () {
+  cleanupStore()
+
   const room = getRoom()
 
-  const mode = (room.template?.type === TYPE_HEX) ? '.is-grid-hex' : '.is-grid-square'
+  const mode = (room.template?.type === TYPE_HEX) ? '.is-template-grid-hex' : '.is-template-grid-square'
 
   _('body').remove('.page-boxed').add(mode).innerHTML = `
     <div id="room" class="room is-fullscreen is-noselect">
       <div class="menu">
         <div>
           <div class="menu-brand is-content">
-            <button id="btn-s" class="btn-icon" title="Room settings [s]">${iconLogo}</button>
+            <button id="btn-S" class="btn-icon" title="Room settings [s]">${iconLogo}</button>
           </div>
 
           <div>
             <button id="btn-other" class="btn-icon" title="Toggle dice [1]">${iconDice}</button>
-
             <button id="btn-token" class="btn-icon" title="Toggle tokens [2]">${iconToken}</button>
-
             <button id="btn-overlay" class="btn-icon" title="Toggle overlays [3]">${iconOverlay}</button>
-
             <button id="btn-tile" class="btn-icon" title="Toggle tiles [4]">${iconTile}</button>
           </div>
 
-          <div class="spacing-medium">
+          <div class="spacing-small">
+            <button id="btn-s" class="btn-icon" title="Measure [m]">${iconRuler}</button>
             <button id="btn-a" class="btn-icon" title="Open library [l]">${iconAdd}</button>
           </div>
 
-          <div class="menu-selected disabled spacing-medium">
+          <div class="menu-selected disabled spacing-small">
             <button id="btn-e" class="btn-icon" title="Edit [e]">${iconEdit}</button>
-
             <button id="btn-r" class="btn-icon" title="Rotate [r]">${iconRotate}</button>
-
             <button id="btn-f" class="btn-icon" title="Flip [f]">${iconFlip}</button>
-
             <button id="btn-hash" class="btn-icon" title="Random [#]">${iconShuffle}</button>
-
             <button id="btn-t" class="btn-icon" title="To top [t]">${iconTop}</button>
-
             <button id="btn-b" class="btn-icon" title="To bottom [b]">${iconBottom}</button>
-
             <button id="btn-c" class="btn-icon" title="Clone [c]">${iconClone}</button>
-
             <button id="btn-del" class="btn-icon" title="Delete [Del]">${iconDelete}</button>
           </div>
         </div>
@@ -443,14 +537,17 @@ function setupRoom () {
     </div>
   `
 
+  // keep global reference for scroll-tracking
+  scroller = _('#scroller')
+
   // load preferences
-  changeQuality(getRoomPreference('renderQuality', 3))
+  changeQuality(getServerPreference(PREFS.QUALITY))
 
   // setup menu for layers
   let undefinedCount = 0
   for (const layer of ['token', 'overlay', 'tile', 'other']) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
-    const prop = getRoomPreference('layer' + layer)
+    const prop = getRoomPreference(PREFS['LAYER' + layer])
     if (prop === true) toggleLayer(layer) // stored enabled
     if (prop === undefined) undefinedCount++
   }
@@ -460,6 +557,8 @@ function setupRoom () {
     toggleLayer('token')
   }
 
+  if (getRoomPreference(PREFS.LOS)) toggleLos()
+
   // setup menu for selection
   _('#btn-a').on('click', () => modalLibrary(getViewportCenter()))
   _('#btn-e').on('click', () => editSelected())
@@ -468,7 +567,8 @@ function setupRoom () {
   _('#btn-t').on('click', () => toTopSelected())
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())
-  _('#btn-s').on('click', () => modalSettings())
+  _('#btn-s').on('click', () => toggleLos())
+  _('#btn-S').on('click', () => modalSettings())
   _('#btn-hash').on('click', () => randomSelected())
   _('#btn-del').on('click', () => deleteSelected())
 
@@ -481,13 +581,10 @@ function setupRoom () {
 
   _('body').on('contextmenu', e => e.preventDefault())
 
-  // keep global reference for scroll-tracking
-  scroller = _('#scroller').node()
-
   enableDragAndDrop('#tabletop')
 
   // load + setup content
-  setTableNo(getRoomPreference('table', 1), false)
+  setTableNo(getRoomPreference(PREFS.TABLE), false)
   runStatuslineLoop()
   startAutoSync(() => { autoTrackScrollPosition() })
 }
@@ -502,8 +599,7 @@ function autoTrackScrollPosition () {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
       const pos = getViewportCenter()
-      setTablePreference('scrollX', pos.x)
-      setTablePreference('scrollY', pos.y)
+      setTablePreference(PREFS.SCROLL, { x: pos.x, y: pos.y })
     }, 1000)
   })
 }
@@ -555,3 +651,5 @@ const iconDownload = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height=
 const iconHelp = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
 
 const iconQuit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
+
+const iconRuler = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.46 16.942l2.12 2.127M10.582 13.407l2.119 2.126M14.117 11.285l2.12 2.127M16.239 7.75l2.119 2.126M2.092 16.239L16.238 2.093l5.658 5.658L7.751 21.897z"/></svg>'

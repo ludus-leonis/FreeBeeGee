@@ -18,27 +18,35 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
+
 import {
   UnexpectedStatus
 } from '../../../api/index.mjs'
+
 import {
   toTitleCase,
-  toCamelCase,
-  sortByString
+  prettyName,
+  unprettyName,
+  sortByString,
+  resizeImage
 } from '../../../lib/utils.mjs'
+
 import {
   createModal,
   getModal,
-  modalActive,
+  isModalActive,
   modalClose
 } from '../../../view/modal.mjs'
+
 import {
   getLibrary,
   createPieces,
+  PREFS,
   getRoomPreference,
   setRoomPreference,
   addAsset,
-  reloadRoom
+  reloadRoom,
+  getTemplate
 } from '../../../state/index.mjs'
 
 import {
@@ -46,10 +54,13 @@ import {
   populatePieceDefaults,
   splitAssetFilename,
   snap
-} from '../tabletop/tabledata.mjs'
+} from '../../../view/room/tabletop/tabledata.mjs'
+
 import {
-  pieceToNode
-} from '../tabletop/index.mjs'
+  MEDIA_BACK,
+  pieceToNode,
+  url
+} from '../../../view/room/tabletop/index.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -59,7 +70,7 @@ import {
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
 export function modalLibrary (xy) {
-  if (!modalActive()) {
+  if (!isModalActive()) {
     const node = createModal(true)
     node.xy = xy
 
@@ -123,6 +134,7 @@ export function modalLibrary (xy) {
               <label class="upload-group" for="upload-file">
                 <div class="upload-preview" title="Click to upload"></div>
                 <input id="upload-file" type="file" accept=".jpg,.jpeg,.png", class="is-hidden">
+                <input id="upload-color" type="hidden" class="is-hidden">
               </label>
             </div>
             <div class="col-6">
@@ -135,9 +147,9 @@ export function modalLibrary (xy) {
 
     // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
-      setRoomPreference('modalLibraryTab', change.target.id)
+      setRoomPreference(PREFS.TAB_LIBRARY, change.target.id)
     })
-    const preselect = getRoomPreference('modalLibraryTab', 'tab-1')
+    const preselect = getRoomPreference(PREFS.TAB_LIBRARY)
     _('#' + preselect).checked = true
 
     refreshTabs()
@@ -235,6 +247,30 @@ function setupFooter () {
 }
 
 /**
+ * Calculate the average color in an upload image.
+ *
+ * Will set the determined value in the upload form.
+ *
+ * @param {String} dataUrl Raw base65 data of uploaded image.
+ */
+function averageColor (dataUrl) {
+  _('#upload-color').value = '#808080' // color detection is async, so use interim-default
+  var image = new Image() // eslint-disable-line no-undef
+  image.onload = function () {
+    // shrink in 2 steps for more accurate average
+    const canvas8 = resizeImage(image, 8)
+    const canvas1 = resizeImage(canvas8, 1)
+
+    let [r, g, b] = canvas1.getContext('2d').getImageData(0, 0, 1, 1).data
+    r = r.toString(16).padStart(2, '0')
+    g = g.toString(16).padStart(2, '0')
+    b = b.toString(16).padStart(2, '0')
+    _('#upload-color').value = `#${r}${g}${b}`
+  }
+  image.src = dataUrl
+}
+
+/**
  * Execute the upload form.
  */
 function modalUpload () {
@@ -278,8 +314,14 @@ function modalUpload () {
       h: Number(_('#upload-h').value),
       base64: _('.upload-preview .piece').node().style.backgroundImage
         .replace(/^[^,]*,/, '')
-        .replace(/".*/, ''),
-      bg: type === 'token' ? '#808080' : 'transparent'
+        .replace(/".*/, '')
+    }
+
+    // set bg color
+    if (type === 'token' || data.format === 'jpg') {
+      data.bg = _('#upload-color').value
+    } else {
+      data.bg = 'transparent'
     }
 
     addAsset(data)
@@ -352,6 +394,8 @@ function setupTabUpload () {
   }
   height.on('change', change => updatePreview())
 
+  _('#upload-color').value = '#808080'
+
   _('#upload-file').on('change', change => updatePreview(true))
 
   updatePreview()
@@ -368,15 +412,10 @@ function updatePreview (parseImage = false) {
   if (parseImage) {
     const parts = splitAssetFilename(file.name)
     if (_('#upload-name').value.length <= 0) { // guess defaults for form
-      _('#upload-w').value = parts.w
-      _('#upload-h').value = parts.h
-      if (parts.name !== 'unknown') {
+      if (parts.w) _('#upload-w').value = parts.w
+      if (parts.h) _('#upload-h').value = parts.h
+      if (parts.name) {
         _('#upload-name').value = prettyName(parts.name)
-      }
-      if (parts.w > 2 || parts.h > 2) {
-        _('#upload-type').value = 'tile'
-      } else {
-        _('#upload-type').value = 'token'
       }
     }
   }
@@ -399,13 +438,9 @@ function updatePreview (parseImage = false) {
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
   if (type === 'overlay' || type === 'tile') {
-    piece.css({
-      backgroundColor: 'rgba(0,0,0,.05)'
-    })
+    piece.css({ '--fbg-color': 'rgba(0,0,0,.05)' })
   } else {
-    piece.css({
-      backgroundColor: 'var(--fbg-piece-color)'
-    })
+    piece.css({ '--fbg-color': '#202020' })
   }
   preview.add(piece)
 
@@ -413,13 +448,18 @@ function updatePreview (parseImage = false) {
   if (file) {
     const reader = new FileReader()
     reader.addEventListener('load', event => {
-      _('.upload-preview .piece').css({ backgroundImage: `url("${event.target.result}")` })
+      _('.upload-preview .piece').css({
+        backgroundImage: `url("${event.target.result}")`,
+        backgroundSize: 'cover'
+      })
+      _('#upload-color').value = averageColor(event.target.result)
     }, false)
     reader.readAsDataURL(file)
   } else {
     piece.css({
-      backgroundImage: 'url("img/upload.svg")',
-      backgroundSize: '25%'
+      backgroundImage: url('img/upload.svg'),
+      backgroundSize: '25%',
+      backgroundRepeat: 'no-repeat'
     })
   }
 }
@@ -431,16 +471,24 @@ function updatePreview (parseImage = false) {
  * @return {HTMLElement} Node for the modal.
  */
 function assetToPreview (asset) {
-  const node = pieceToNode(populatePieceDefaults({
+  const piece = populatePieceDefaults({
     id: 'x' + asset.id,
     a: asset.id,
     s: 0
-  })).add(
+  })
+
+  const node = pieceToNode(piece).add(
     '.is-w-' + asset.w,
-    '.is-h-' + asset.h,
-    '.is-border-0'
+    '.is-h-' + asset.h
   )
   node.dataset.a = asset.id
+
+  if (piece._meta.hasColor) {
+    piece.c[0] = Number.parseInt(asset.bg)
+    if (piece.c[0] !== 0) {
+      node.css({ '--fbg-color': getTemplate().colors[piece.c[0] - 1].value })
+    }
+  }
 
   const max = _('.is-scale-2').create(node)
 
@@ -451,47 +499,12 @@ function assetToPreview (asset) {
   if (asset.w > 2 || asset.h > 2) {
     tag = `${asset.w}x${asset.h}`
   }
-  if (asset.media.length > 1) {
+  if (asset.media.length > 1 && asset.media[1] !== MEDIA_BACK) {
     tag += `:${asset.media.length}`
   }
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
   card.add(_('p').create().add(prettyName(asset.name)))
   return card
-}
-
-/**
- * Make an asset's name readable.
- *
- * Drops the group part (before the dot) and title-cases the rest.
- *
- * @param {String} assetName Name to convert, e.g. 'dungeon.ironDoor'.
- * @return {String} Improved name, e.g. 'Iron Door'.
- */
-function prettyName (assetName = '') {
-  const split = assetName.split('.')
-  if (split.length <= 1) {
-    return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim())
-  } else if (split[0] === '_') { // sort-first character
-    return toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
-  } else {
-    return toTitleCase(split[0].replace(/([A-Z])/g, ' $1').trim()) +
-    ', ' + toTitleCase(split[1].replace(/([A-Z])/g, ' $1').trim())
-  }
-}
-
-/**
- * Convert an asset's readable name back into an name.
- *
- * @param {String} assetName Name to convert, e.g. 'Iron Door'.
- * @return {String} Alias for filename, e.g. 'ironDoor'.
- */
-function unprettyName (assetName = '') {
-  const split = assetName.split(',')
-  if (split.length <= 1) {
-    return toCamelCase(split[0].trim())
-  } else {
-    return toCamelCase(split[0].trim()) + '.' + toCamelCase(split[1].trim())
-  }
 }
 
 /**

@@ -23,7 +23,6 @@
 /// @access public
 ////
 
-$piece-color: $color-gray-95;
 $piece-tile-size: 64px;
 $piece-border-size: 3px;
 $piece-margin: 3px;
@@ -32,53 +31,25 @@ $piece-rotate: .5deg;
 
 $piece-rotations: 60 90 120 180 240 270 300;
 
-$piece-shadow-x: 3;
-$piece-shadow-y: 2;
-$piece-shadow-direction: math.atan(math.div($piece-shadow-x, $piece-shadow-y));
-$piece-shadow-length: math.sqrt($piece-shadow-x * $piece-shadow-x + $piece-shadow-y * $piece-shadow-y);
-
-$piece-highlights: 1.5px 1.5px 1px -.5px $color-white-25a inset, -1.5px -1.5px 1px -.5px $color-black-35a inset;
-
-@function piece-shadow($deg, $blur, $color) {
-  @return
-  math.sin($deg + $piece-shadow-direction) * $piece-shadow-length * 1px
-  math.cos($deg + $piece-shadow-direction) * $piece-shadow-length * 1px
-  $blur
-  $color;
-}
-
-$piece-shadow: piece-shadow(0, 2px, $color-black-65a);
-$piece-shadow-60: piece-shadow(60, 2px, $color-black-65a);
-$piece-shadow-90: piece-shadow(90, 2px, $color-black-65a);
-$piece-shadow-120: piece-shadow(120, 2px, $color-black-65a);
-$piece-shadow-180: piece-shadow(180, 2px, $color-black-65a);
-$piece-shadow-240: piece-shadow(240, 2px, $color-black-65a);
-$piece-shadow-270: piece-shadow(270, 2px, $color-black-65a);
-$piece-shadow-300: piece-shadow(300, 2px, $color-black-65a);
-
-$piece-shadow-flat: piece-shadow(0, 0, $color-black-35a);
-$piece-shadow-flat-60: piece-shadow(60, 0, $color-black-35a);
-$piece-shadow-flat-90: piece-shadow(90, 0, $color-black-35a);
-$piece-shadow-flat-120: piece-shadow(120, 0, $color-black-35a);
-$piece-shadow-flat-180: piece-shadow(180, 0, $color-black-35a);
-$piece-shadow-flat-240: piece-shadow(240, 0, $color-black-35a);
-$piece-shadow-flat-270: piece-shadow(270, 0, $color-black-35a);
-$piece-shadow-flat-300: piece-shadow(300, 0, $color-black-35a);
-$piece-shadow-flat-overlay: piece-shadow(0, 0, $color-black-35a);
-
 $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
 // --- 'random' piece attributes -----------------------------------------------
 
-$piece-ids: '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f';
-$piece-jitter-a: (-1) (-.866) (-.733) (-.6) (-.466) (-.333) (-.2) (-.066) .066 .2 .333 .466 .6 .733 .866 1;
-$piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .1;
+$piece-ids: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f';
+$piece-jitter-a: (-1) (-.866) (-.733) (-.6) (-.466) (-.333) (-.2) (-.066) .066 .2 .333 .466 .6 .733 1 0;
+$piece-jitter-b: .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .1 0; // last = f = none
 
 @mixin piece-rotate($r, $amount) { // random rotation of pieces
   @each $id in $piece-ids {
     $i: index($piece-ids, $id);
     $jitter: nth($piece-jitter-a, $i);
-    &[id^='#{$id}'] { transform: rotate($r + $amount * $jitter); }
+
+    &[id^='#{$id}'] {
+      transform: rotate($r + $amount * $jitter);
+      #{'--debug-r'}: $r;
+      #{'--debug-amount'}: $amount;
+      #{'--debug-jitter'}: $jitter;
+    }
   }
 }
 
@@ -109,8 +80,6 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
 // --- piece basics (size, ...) ------------------------------------------------
 
-// $label-offset: 8px;
-
 @keyframes whirl {
   from {
     transform: rotate(0deg) translateX(4px);
@@ -121,18 +90,33 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   }
 }
 
-.piece {
-  #{'--fbg-layer-image'}: none;
+:root {
+  #{'--fbg-x'}: 0;
+  #{'--fbg-y'}: 0;
+  #{'--fbg-z'}: 0;
+  #{'--fbg-color'}: var(--fbg-color-medium);
+  #{'--fbg-color-invert'}: var(--fbg-color-light);
+  #{'--fbg-border-color'}: var(--fbg-color-medium);
+  #{'--fbg-border-color-invert'}: var(--fbg-color-light);
+  #{'--fbg-material'}: none;
+  #{'--fbg-decal'}: none;
+  #{'--fbg-image'}: none;
+  #{'--fbg-mask'}: none;
+}
 
+.piece {
   align-items: center; // mainly for labels
-  background-color: transparent;
+  background-color: var(--fbg-color);
+  background-image: var(--fbg-image);
   background-position: center;
-  background-repeat: no-repeat;
   background-size: cover;
   display: flex;
   height: $piece-tile-size;
   justify-content: center;
+  left: var(--fbg-x);
+  top: var(--fbg-y);
   width: $piece-tile-size;
+  z-index: var(--fbg-z);
 
   $piece-tile-half: math.div($piece-tile-size, 2);
 
@@ -147,6 +131,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   &.is-invalid {
     background-image: url('img/invalid.svg');
+    background-repeat: no-repeat;
     background-size: contain;
   }
 
@@ -168,6 +153,33 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   @for $y from 1 through 32 {
     &.is-h-#{$y} {
       height: $y * $piece-tile-size;
+    }
+  }
+
+  // --- borders + 3d highlight ------------------------------------------------
+
+  &.has-border {
+    box-shadow: 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+  }
+
+  .is-quality-high &,
+  .is-quality-ultra & {
+    &.has-highlight {
+      box-shadow: highlight(0);
+
+      &.has-border {
+        box-shadow: highlight(0), 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+      }
+
+      @each $r in $piece-rotations {
+        &.is-rotate-#{$r} {
+          box-shadow: highlight($r);
+
+          &.has-border {
+            box-shadow: highlight($r), 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+          }
+        }
+      }
     }
   }
 
@@ -207,6 +219,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     background-repeat: repeat;
     background-size: 64px;
     height: 100%;
+    mask-image: var(--fbg-mask);
     mask-size: 100%;
     pointer-events: none;
     transform: scaleX(-1);
@@ -219,18 +232,9 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   // --- additional layer (dice) -----------------------------------------------
 
-  &.has-layer::after {
-    background-color: transparent;
-    background-image: var(--fbg-layer-image);
-    background-position: center;
-    background-size: cover;
-    bottom: 0;
-    content: '';
-    display: block;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
+  &.has-decal {
+    background-image: var(--fbg-decal), var(--fbg-image);
+    background-size: cover, cover;
   }
 
   // --- rotation --------------------------------------------------------------
@@ -273,66 +277,44 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 ) {
   filter: drop-shadow($rotate0);
 
-  &.is-rotate-60 {
-    filter: drop-shadow($rotate60);
-  }
-
-  &.is-rotate-90 {
-    filter: drop-shadow($rotate90);
-  }
-
-  &.is-rotate-120 {
-    filter: drop-shadow($rotate120);
-  }
-
-  &.is-rotate-180 {
-    filter: drop-shadow($rotate180);
-  }
-
-  &.is-rotate-240 {
-    filter: drop-shadow($rotate240);
-  }
-
-  &.is-rotate-270 {
-    filter: drop-shadow($rotate270);
-  }
-
-  &.is-rotate-300 {
-    filter: drop-shadow($rotate300);
-  }
+  &.is-rotate-60 { filter: drop-shadow($rotate60); }
+  &.is-rotate-90 { filter: drop-shadow($rotate90); }
+  &.is-rotate-120 { filter: drop-shadow($rotate120); }
+  &.is-rotate-180 { filter: drop-shadow($rotate180); }
+  &.is-rotate-240 { filter: drop-shadow($rotate240); }
+  &.is-rotate-270 { filter: drop-shadow($rotate270); }
+  &.is-rotate-300 { filter: drop-shadow($rotate300); }
 }
 
 // --- regular tiles -----------------------------------------------------------
 
 .piece-tile {
-  background-color: $piece-color;
-
   // --- quality settings ---
 
   .is-quality-medium & {
     @include shadows(
-      $piece-shadow-flat,
-      $piece-shadow-flat-60,
-      $piece-shadow-flat-90,
-      $piece-shadow-flat-120,
-      $piece-shadow-flat-180,
-      $piece-shadow-flat-240,
-      $piece-shadow-flat-270,
-      $piece-shadow-flat-300
+      $shadow-flat-0,
+      $shadow-flat-60,
+      $shadow-flat-90,
+      $shadow-flat-120,
+      $shadow-flat-180,
+      $shadow-flat-240,
+      $shadow-flat-270,
+      $shadow-flat-300
     );
   }
 
   .is-quality-high &,
   .is-quality-ultra & {
     @include shadows(
-      $piece-shadow,
-      $piece-shadow-60,
-      $piece-shadow-90,
-      $piece-shadow-120,
-      $piece-shadow-180,
-      $piece-shadow-240,
-      $piece-shadow-270,
-      $piece-shadow-300
+      $shadow-0,
+      $shadow-60,
+      $shadow-90,
+      $shadow-120,
+      $shadow-180,
+      $shadow-240,
+      $shadow-270,
+      $shadow-300
     );
     border-radius: $piece-corner-radius;
   }
@@ -359,12 +341,6 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 // --- tokens ------------------------------------------------------------------
 
 .piece-token {
-  #{'--fbg-piece-color'}: $piece-color;
-  #{'--fbg-piece-color-invert'}: $color-wb-fg;
-  #{'--fbg-border-color'}: $piece-color;
-  #{'--fbg-border-color-invert'}: $color-wb-fg;
-
-  background-color: var(--fbg-piece-color); // tile background
   border-radius: $piece-tile-size;
   margin: $piece-margin;
 
@@ -385,9 +361,9 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   &.is-n::after {
     align-items: center;
-    background-color: var(--fbg-border-color);
+    background-color: var(--fbg-color);
     border-radius: 100%;
-    color: var(--fbg-border-color-invert);
+    color: var(--fbg-color-invert);
     display: flex;
     flex-direction: row;
     font-size: .85em;
@@ -399,6 +375,11 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
     right: 0;
     top: 50%;
     width: $is-n-size;
+  }
+
+  &.has-border.is-n::after {
+    background-color: var(--fbg-border-color);
+    color: var(--fbg-border-color-invert);
   }
 
   &.is-n-1::after { content: '1'; }
@@ -436,8 +417,8 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   &.is-border-0 {
     &.is-n::after {
-      background-color: var(--fbg-piece-color);
-      color: var(--fbg-piece-color-invert);
+      background-color: var(--fbg-color);
+      color: var(--fbg-color-invert);
     }
   }
 
@@ -445,14 +426,14 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   .is-quality-medium & {
     @include shadows(
-      $piece-shadow-flat,
-      $piece-shadow-flat-60,
-      $piece-shadow-flat-90,
-      $piece-shadow-flat-120,
-      $piece-shadow-flat-180,
-      $piece-shadow-flat-240,
-      $piece-shadow-flat-270,
-      $piece-shadow-flat-300
+      $shadow-flat-0,
+      $shadow-flat-60,
+      $shadow-flat-90,
+      $shadow-flat-120,
+      $shadow-flat-180,
+      $shadow-flat-240,
+      $shadow-flat-270,
+      $shadow-flat-300
     );
   }
 
@@ -460,37 +441,44 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   .is-quality-ultra & {
     // --- shadows ---
     @include shadows(
-      $piece-shadow,
-      $piece-shadow-60,
-      $piece-shadow-90,
-      $piece-shadow-120,
-      $piece-shadow-180,
-      $piece-shadow-240,
-      $piece-shadow-270,
-      $piece-shadow-300
+      $shadow-0,
+      $shadow-60,
+      $shadow-90,
+      $shadow-120,
+      $shadow-180,
+      $shadow-240,
+      $shadow-270,
+      $shadow-300
     );
 
-    // --- highlights ---
-    box-shadow: $piece-highlights, 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+    // --- material ---
+    background-image: var(--fbg-material), var(--fbg-image);
+    background-size: 256px, cover;
 
     &.is-border-0 {
-      box-shadow: $piece-highlights;
-
       &.is-n::after {
         opacity: .85;
       }
+    }
+
+    &.has-decal {
+      background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
+      background-size: 256px, cover, cover;
     }
   }
 }
 
 // --- overlays ----------------------------------------------------------------
 
-// .piece-overlay {
-// }
+.piece-overlay {
+  #{'--fbg-color'}: transparent;
+}
 
 // --- others (layered) --------------------------------------------------------
 
 .piece-other {
+  #{'--fbg-color'}: transparent;
+
   transform: none;
   &::after { transform: rotate(0deg); }
 
@@ -506,7 +494,7 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
   // --- quality settings ---
 
   .is-quality-medium & {
-    @include shadows($piece-shadow-flat);
+    @include shadows($shadow-flat-0);
   }
 
   .is-quality-high &,
@@ -551,47 +539,47 @@ $piece-jitter-b: 0 .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733
 
   &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary; }
 
-  .is-grid-square & {
+  .is-template-grid-square & {
     &.is-max-1 {
-      @include is-max(64px, 64px, 'img/grid-square-black.svg', center);
+      @include is-max(64px, 64px, 'img/grid-square-minor-black.svg', center);
     }
 
     &.is-max-2 {
-      @include is-max(64px, 64px, 'img/grid-square-black.svg', top left);
+      @include is-max(64px, 64px, 'img/grid-square-minor-black.svg', top left);
     }
 
     &.is-max-3 {
-      @include is-max(48px, 48px, 'img/grid-square-black.svg', center);
+      @include is-max(48px, 48px, 'img/grid-square-minor-black.svg', center);
     }
 
     &.is-max-4 {
-      @include is-max(32px, 32px, 'img/grid-square-black.svg', top left);
+      @include is-max(32px, 32px, 'img/grid-square-minor-black.svg', top left);
     }
 
     &.is-max-5 {
-      @include is-max(25px, 25px, 'img/grid-square-black.svg', center);
+      @include is-max(25px, 25px, 'img/grid-square-minor-black.svg', center);
     }
   }
 
-  .is-grid-hex & {
+  .is-template-grid-hex & {
     &.is-max-1 {
-      @include is-max(110px, 64px, 'img/grid-hex-black.svg', center);
+      @include is-max(110px, 64px, 'img/grid-hex-minor-black.svg', center);
     }
 
     &.is-max-2 {
-      @include is-max(110px, 64px, 'img/grid-hex-black.svg', top left);
+      @include is-max(110px, 64px, 'img/grid-hex-minor-black.svg', top left);
     }
 
     &.is-max-3 {
-      @include is-max(82px, 48px, 'img/grid-hex-black.svg', center);
+      @include is-max(82px, 48px, 'img/grid-hex-minor-black.svg', center);
     }
 
     &.is-max-4 {
-      @include is-max(55px, 32px, 'img/grid-hex-black.svg', top left);
+      @include is-max(55px, 32px, 'img/grid-hex-minor-black.svg', top left);
     }
 
     &.is-max-5 {
-      @include is-max(43px, 25px, 'img/grid-hex-black.svg', center);
+      @include is-max(43px, 25px, 'img/grid-hex-minor-black.svg', center);
     }
   }
 

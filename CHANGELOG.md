@@ -2,6 +2,33 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.13.0 - Colorful Cobra
+
+### Notable changes
+
+* added predefined piece colors - library entries now can have pre-set default colors
+* added measure mode / line-of-sight tool - press m to toggle
+* added more damage status icons for RPG/Hex templates (acid, fire, ...)
+* added grid option minor (dots) or major (lines) to settings
+
+### Other changes
+
+* added color support and "?", "!" and "↑" sides to the generic A-Z piece
+* added hotkeys F/R to flip/rotate backwards
+* added automatic generation of average piece color during uploads
+* added separate color sets in templates for piece borders and backgrounds
+* added unit test docs and added `Dockerfile` for test webservers
+* changed all JS-CSS injections to use custom properties
+* changed all JS imports to be relative to src/js/
+* changed background settings from room to server setting
+* fixed "RPG" template glass tiles transparency
+* fixed default piece backsides counting as side in library
+* fixed piece.h default handling (now equals w, not 0)
+* fixed browser caching artwork from previous template in same room
+* fixed user preferences to have global default values and ttl
+* fixed rotating border highlights
+* fixed upload form sometimes resets selection
+
 ## v0.12.0 - Hexing Heron
 
 This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.

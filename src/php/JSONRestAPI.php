@@ -89,7 +89,7 @@ class JSONRestAPI
     }
 
     /**
-     * Get user-visible path for the API.
+     * Get user-visible path (in URL) for the API.
      *
      * Usefull to detect a subdir installation on the client.
      *
@@ -151,10 +151,11 @@ class JSONRestAPI
      * something to the client & exit, or route() will do that by sending an error.
      *
      * @param object $instance Instance to forward to the route.
+     * @return mixed Data returned by the route. Usually only used by unit tests.
      */
     public function route(
         object $instance
-    ): void {
+    ) {
         $method = $_SERVER['REQUEST_METHOD'];
         $path = $this->sanitizePath(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
 
@@ -162,9 +163,9 @@ class JSONRestAPI
         foreach ($this->routes[$method] as $route => $handler) {
             if (preg_match($this->routeToRegExp($route), $path, $matches)) {
                 if ($method === 'PATCH' || $method === 'PUT' || $method === 'POST') {
-                    $handler($instance, $matches, file_get_contents('php://input'));
+                    return $handler($instance, $matches, file_get_contents('php://input'));
                 } else {
-                    $handler($instance, $matches); // don't parse incoming data on GET/DELETE
+                    return $handler($instance, $matches); // don't parse incoming data on GET/DELETE
                 }
                 $this->sendError(500, 'oops, route failed'); // handler did not return anything
             }
@@ -498,7 +499,7 @@ class JSONRestAPI
     /**
      * Convert incoming payload from form-data to Json.
      *
-     * @return object Incoming data as parsed JSON data if successfull, or null
+     * @return object Incoming data JSON string if successfull, or null
      *                if request was not 'multipart/form-data'.
      */
     public function multipartToJson()

@@ -74,7 +74,7 @@
   }
 
   @include media-breakpoint-up(sm) {
-    background-image: radial-gradient(transparent, transparent, $color-vignette), url('img/grid-square-white.svg?v=$CACHE$');
+    background-image: radial-gradient(transparent, transparent, $color-vignette), url('img/grid-square-minor-white.svg');
 
     .col-12 .h0 {
       font-size: 4em;

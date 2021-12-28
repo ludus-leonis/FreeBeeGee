@@ -23,6 +23,7 @@ import {
   getStoreValue,
   setStoreValue
 } from '../lib/utils.mjs'
+
 import {
   apiGetTable,
   apiPutTable,
@@ -37,17 +38,23 @@ import {
   apiPostAsset,
   UnexpectedStatus
 } from '../api/index.mjs'
+
 import {
   syncNow,
   stopAutoSync
 } from '../view/room/sync.mjs'
+
 import {
   runError
 } from '../view/error/index.mjs'
+
 import {
   populatePiecesDefaults,
+  populateTemplateDefaults,
   clampToTableSize,
-  nameToLayer
+  nameToLayer,
+  sanitizePiecePatch,
+  ID
 } from '../view/room/tabletop/tabledata.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -68,32 +75,6 @@ export function getServerInfo () {
  */
 export function setServerInfo (info) {
   serverInfo = info
-}
-
-/**
- * (Re)Fetch the room's state from the API and cache it
- *
- * @param {String} name The current table name.
- * @return {Promise} Promise of room data object.
- */
-export function loadRoom (name) {
-  return apiGetRoom(name, true)
-    .then(remoteRoom => {
-      _setRoom(remoteRoom.body)
-      return remoteRoom
-    })
-    .catch(error => errorRoomGone(error))
-}
-
-/**
- * Reload the current table information.
- *
- * Usefull to update the asset library.
- *
- * @return {Promise} Promise of room data object.
- */
-export function reloadRoom () {
-  return loadRoom(room.name)
 }
 
 /**
@@ -132,7 +113,7 @@ export function getTableNo () {
 export function setTableNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     tableNo = no
-    setRoomPreference('table', tableNo)
+    setRoomPreference(PREFS.TABLE, tableNo)
     if (sync) syncNow([], true)
   }
 }
@@ -148,21 +129,6 @@ export function getTable (no = getTableNo()) {
 }
 
 /**
- * Update the current template.
- *
- * Supports partial updates.
- *
- * @param {Object} template (Partial) new template data.
- */
-export function updateTemplate (template) {
-  return apiPatchTemplate(room.name, template)
-    .catch(error => errorUnexpected404(error))
-    .finally(() => {
-      syncNow()
-    })
-}
-
-/**
  * Get the current table's template (cached).
  *
  * @return {Object} Current room's template metadata.
@@ -172,14 +138,60 @@ export function getLibrary () {
 }
 
 /**
- * Create a new room on the server.
+ * Determine if a layer is currently active.
  *
- * @param {Object} room The room object to send to the API.
- * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
- * @return {Object} Promise of created room metadata object.
+ * @param {String} layer Name of layer.
+ * @return {Boolean} True if active.
  */
-export function createRoom (room, snapshot) {
-  return apiPostRoom(room, snapshot)
+export function isLayerActive (layer) {
+  return getRoomPreference(PREFS['LAYER' + layer])
+}
+
+export const PREFS = {
+  TABLE: { name: 'table', default: 1 },
+  LAYERother: { name: 'layer5', default: true },
+  LAYERtoken: { name: 'layer4', default: true },
+  LAYERnote: { name: 'layer3', default: false },
+  LAYERoverlay: { name: 'layer2', default: false },
+  LAYERtile: { name: 'layer1', default: false },
+  GRID: { name: 'grid', default: 0 },
+  LOS: { name: 'los', default: false },
+  SCROLL: { name: 'scroll', default: {} },
+  BACKGROUND: { name: 'background', default: 5 }, // wood
+  QUALITY: { name: 'quality', default: 3 },
+  TAB_HELP: { name: 'tabHelp', default: 'tab-1' },
+  TAB_LIBRARY: { name: 'tabLibrary', default: 'tab-1' },
+  TAB_SETTINGS: { name: 'tabSettings', default: 'tab-1' }
+}
+
+function setPreference (key, pref, value) {
+  if (!pref.name) console.error('unknown pref', pref)
+  setStoreValue(key, pref.name, value)
+}
+
+function getPreference (key, pref) {
+  if (!pref.name) console.error('unknown pref', pref)
+  return getStoreValue(key, pref.name) ?? pref.default
+}
+
+/**
+ * Get a setting from the browser HTML5 store. Automatically scoped to current server.
+ *
+ * @param {String} pref Setting to obtain.
+ * @return {String} The setting's value.
+ */
+export function getServerPreference (pref) {
+  return getPreference('freebeegee', pref)
+}
+
+/**
+ * Set a setting in the browser HTML5 store. Automatically scoped to current server.
+ *
+ * @param {String} pref Setting to set.
+ * @param {String} value The value to set.
+ */
+export function setServerPreference (pref, value) {
+  setPreference('freebeegee', pref, value)
 }
 
 /**
@@ -187,11 +199,10 @@ export function createRoom (room, snapshot) {
  * room.
  *
  * @param {String} pref Setting to obtain.
- * @param {String} defaultValue Fallback value if not set/found.
  * @return {String} The setting's value.
  */
-export function getRoomPreference (pref, defaultValue) {
-  return getStoreValue('r' + room.id.substr(0, 8), pref) ?? defaultValue
+export function getRoomPreference (pref) {
+  return getPreference(`freebeegee-${room.id}`, pref)
 }
 
 /**
@@ -202,7 +213,8 @@ export function getRoomPreference (pref, defaultValue) {
  * @param {String} value The value to set.
  */
 export function setRoomPreference (pref, value) {
-  setStoreValue('r' + room.id.substr(0, 8), pref, value)
+  setPreference(`freebeegee-${room.id}`, pref, value)
+  setStoreValue(`freebeegee-${room.id}`, 't', Math.floor(new Date().getTime() / 1000)) // touch
 }
 
 /**
@@ -214,7 +226,8 @@ export function setRoomPreference (pref, value) {
  * @return {String} The setting's value.
  */
 export function getTablePreference (pref, no = getTableNo()) {
-  return getStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref)
+  const table = getStoreValue(`freebeegee-${room.id}`, `table${no}`) ?? {}
+  return table[pref.name] ?? pref.default
 }
 
 /**
@@ -226,20 +239,89 @@ export function getTablePreference (pref, no = getTableNo()) {
  * @param {Number} no Table number. Defaults to curren table.
  */
 export function setTablePreference (pref, value, no = getTableNo()) {
-  setStoreValue(`r${room.id.substr(0, 8)}.t${no}`, pref, value)
+  const table = getStoreValue(`r${room.id}`, `table${no}`) ?? {}
+  table[pref.name] = value
+  setStoreValue(`freebeegee-${room.id}`, `table${no}`, table)
+  setStoreValue(`freebeegee-${room.id}`, 't', Math.floor(new Date().getTime() / 1000)) // touch
 }
 
 /**
- * Set the label of a piece of the current table.
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {String} pieceId ID of piece to change.
- * @param {String} label New label text.
+ * Remove old and unused entries (rooms) from the HTML local store.
  */
-export function stateLabelPiece (pieceId, label) {
-  patchPiece(pieceId, { t: [label] })
+export function cleanupStore () {
+  const store = globalThis.localStorage
+
+  // clean obsolete entries
+  for (const key of Object.keys(store)) {
+    if (!key.startsWith('freebeegee')) store.removeItem(key)
+  }
+
+  // keep last entries
+  const entries = []
+  for (const key of Object.keys(store)) {
+    if (key.startsWith('freebeegee-')) {
+      entries.push({ key: key, t: JSON.parse(store.getItem(key)).t })
+    }
+  }
+  entries.sort((a, b) => a.t - b.t)
+  for (let i = 0; i < entries.length - 8; i++) {
+    store.removeItem(entries[i].key)
+  }
+}
+
+// --- API calls ---------------------------------------------------------------
+
+/**
+ * Reload the current table information.
+ *
+ * Usefull to update the asset library.
+ *
+ * @return {Promise} Promise of room data object.
+ */
+export function reloadRoom () {
+  return loadRoom(room.name)
+}
+
+/**
+ * (Re)Fetch the room's state from the API and cache it
+ *
+ * @param {String} name The current table name.
+ * @return {Promise} Promise of room data object.
+ */
+export function loadRoom (name) {
+  return apiGetRoom(name, true)
+    .then(remoteRoom => {
+      _setRoom(remoteRoom.body)
+      return remoteRoom
+    })
+    .catch(error => errorRoomGone(error))
+}
+
+/**
+ * Update the current template.
+ *
+ * Supports partial updates.
+ *
+ * @param {Object} template (Partial) new template data.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
+ */
+export function patchTemplate (template, sync = true) {
+  return apiPatchTemplate(room.name, template)
+    .catch(error => errorUnexpected404(error))
+    .finally(() => {
+      if (sync) syncNow()
+    })
+}
+
+/**
+ * Create a new room on the server.
+ *
+ * @param {Object} room The room object to send to the API.
+ * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
+ * @return {Object} Promise of created room metadata object.
+ */
+export function addRoom (room, snapshot) {
+  return apiPostRoom(room, snapshot)
 }
 
 /**
@@ -252,13 +334,14 @@ export function stateLabelPiece (pieceId, label) {
  * @param {?Number} x New x. Will not be changed if null.
  * @param {?Number} y New y. Will not be changed if null.
  * @param {?Number} z New z. Will not be changed if null.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function movePiece (pieceId, x = null, y = null, z = null) {
-  patchPiece(pieceId, {
-    x: x != null ? x : undefined,
-    y: y != null ? y : undefined,
-    z: z != null ? z : undefined
-  })
+export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
+  const patch = {}
+  if (x != null) patch.x = x
+  if (y != null) patch.y = y
+  if (z != null) patch.z = z
+  return patchPiece(pieceId, sanitizePiecePatch(patch), sync)
 }
 
 /**
@@ -269,9 +352,10 @@ export function movePiece (pieceId, x = null, y = null, z = null) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Number} r New rotation (0, 60, 90, 120, 180, 260, 270).
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function rotatePiece (pieceId, r) {
-  patchPiece(pieceId, { r })
+export function rotatePiece (pieceId, r = 0, sync = true) {
+  return patchPiece(pieceId, sanitizePiecePatch({ r }), sync)
 }
 
 /**
@@ -282,9 +366,10 @@ export function rotatePiece (pieceId, r) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Number} n New number (0..27).
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function numberPiece (pieceId, n) {
-  patchPiece(pieceId, { n })
+export function numberPiece (pieceId, n = 0, sync = true) {
+  return patchPiece(pieceId, sanitizePiecePatch({ n }), sync)
 }
 
 /**
@@ -295,9 +380,10 @@ export function numberPiece (pieceId, n) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Number} side New side. Zero-based.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function flipPiece (pieceId, side) {
-  patchPiece(pieceId, { s: side })
+export function flipPiece (pieceId, side, sync = true) {
+  return patchPiece(pieceId, sanitizePiecePatch({ s: side }, pieceId))
 }
 
 /**
@@ -309,9 +395,14 @@ export function flipPiece (pieceId, side) {
  * @param {String} pieceId ID of piece to change.
  * @param {Number} color1 New color index. Zero-based.
  * @param {Number} color2 New color index. Zero-based.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function colorPiece (pieceId, color1 = 0, color2 = 0) {
-  patchPiece(pieceId, { c: [color1, color2] })
+export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
+  return patchPiece(
+    pieceId,
+    sanitizePiecePatch({ c: [color1, color2] }, pieceId),
+    sync
+  )
 }
 
 /**
@@ -323,11 +414,13 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0) {
  * @param {String} pieceId ID of piece to change.
  * @param {Object} updates All properties to be changed. Unchanged properties
  *                         should be omitted.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function statePieceEdit (pieceID, updates) {
+export function editPiece (pieceId, updates, sync = true) {
   if (Object.keys(updates).length > 0) {
-    patchPiece(pieceID, updates)
+    return patchPiece(pieceId, sanitizePiecePatch(updates, pieceId), sync)
   }
+  return Promise.resolve({}) // nothing to do
 }
 
 /**
@@ -337,12 +430,13 @@ export function statePieceEdit (pieceID, updates) {
  * data model.
  *
  * @param {String} pieceId ID of piece to remove.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function deletePiece (id) {
-  apiDeletePiece(room.name, getTableNo(), id)
+export function deletePiece (pieceId, sync = true) {
+  return apiDeletePiece(room.name, getTableNo(), pieceId)
     .catch(error => errorUnexpected(error))
     .finally(() => {
-      syncNow()
+      if (sync) syncNow()
     })
 }
 
@@ -352,12 +446,13 @@ export function deletePiece (id) {
  * Will replace the existing table.
  *
  * @param {Array} table Array of pieces.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function updateTable (table) {
-  apiPutTable(room.name, getTableNo(), table)
+export function updateTable (table, sync = true) {
+  return apiPutTable(room.name, getTableNo(), table)
     .catch(error => errorUnexpected(error))
     .finally(() => {
-      syncNow()
+      if (sync) syncNow()
     })
 }
 
@@ -367,9 +462,11 @@ export function updateTable (table) {
  * Will do only one state refresh after updating all items in the list.
  *
  * @param {Array} pieces (Partial) pieces to patch.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function updatePieces (pieces) {
-  if (pieces && pieces.length > 0) patchPieces(pieces, true)
+export function updatePieces (pieces, sync = true) {
+  if (pieces && pieces.length > 0) return patchPieces(pieces, sync)
+  return Promise.resolve({}) // nothing to do
 }
 
 /**
@@ -381,22 +478,22 @@ export function updatePieces (pieces) {
  * @param {Boolean} selected If true, the pieces should be selected after
  *                           creating them. Defaults to false.
  * @param {Array} selectIds Ids to select when done. Auto-populated in recursion.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function createPieces (pieces, selected = false, selectIds = []) {
+export function createPieces (pieces, selected = false, selectIds = [], sync = true) {
   let final = false
 
-  if (!pieces || pieces.length <= 0) return
-  const piece = pieces.shift()
-  return createPiece(clampToTableSize(piece), false)
+  if (!pieces || pieces.length <= 0) return Promise.resolve({})
+  let piece = pieces.shift()
+  if (piece.a !== ID.LOS) piece = clampToTableSize(piece)
+  return createPiece(piece, false)
     .then(id => {
       selectIds.push(id)
       if (pieces.length === 0) final = true
-      if (pieces.length > 0) return createPieces(pieces, selected, selectIds)
+      if (pieces.length > 0) return createPieces(pieces, selected, selectIds, sync)
     })
     .finally(() => {
-      if (final) {
-        syncNow(selected ? selectIds : [], true)
-      }
+      if (final && sync) syncNow(selected ? selectIds : [], true)
     })
 }
 
@@ -492,12 +589,8 @@ export function _setTable (no, data) {
  * Only exposed for unit testing.
  */
 export function _setRoom (data) {
-  // add often used meta-infos
-  if (data?.template) {
-    data.template._meta = {
-      widthPx: data.template.gridWidth * data.template.gridSize,
-      heightPx: data.template.gridHeight * data.template.gridSize
-    }
+  if (data) {
+    data.template = populateTemplateDefaults(data.template)
   }
 
   room = data
@@ -536,16 +629,15 @@ function stripPiece (piece) {
  *
  * @param {String} pieceId ID of piece to change.
  * @param {Object} patch Partial object of fields to send.
- * @param {Object} poll Optional. If true (default), the table will be
- *                 polled after the patch.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  * @return {Object} Promise of the API request.
  */
-function patchPiece (pieceId, patch, poll = true) {
+function patchPiece (pieceId, patch, sync = true) {
   if (patch.l) patch.l = nameToLayer(patch.l)
   return apiPatchPiece(room.name, getTableNo(), pieceId, patch)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
-      if (poll) syncNow()
+      if (sync) syncNow()
     })
 }
 
@@ -553,18 +645,19 @@ function patchPiece (pieceId, patch, poll = true) {
  * Update a piece on the server.
  *
  * @param {Object} patch Array of partial object of fields to send. Must include ids!
- * @param {Object} poll Optional. If true (default), the table will be
- *                 polled after the patch.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  * @return {Object} Promise of the API request.
  */
-function patchPieces (patches, poll = true) {
+function patchPieces (patches, sync = true) {
+  const sane = []
   for (const patch of patches) {
     if (patch.l) patch.l = nameToLayer(patch.l)
+    sane.push(sanitizePiecePatch(patch, patch.id))
   }
-  return apiPatchPieces(room.name, getTableNo(), patches)
+  return apiPatchPieces(room.name, getTableNo(), sane)
     .catch(error => errorUnexpected404(error))
     .finally(() => {
-      if (poll) syncNow()
+      if (sync) syncNow()
     })
 }
 
@@ -572,11 +665,10 @@ function patchPieces (patches, poll = true) {
  * Create a piece on the server.
  *
  * @param {Object} piece The full piece to send to the server.
- * @param {Object} poll Optional. If true (default), the table will be
- *                 polled after the create.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
  * @return {Object} Promise of the ID of the new piece.
  */
-function createPiece (piece, poll = true) {
+function createPiece (piece, sync = true) {
   if (piece.l) piece.l = nameToLayer(piece.l)
   return apiPostPiece(room.name, getTableNo(), stripPiece(piece))
     .then(piece => {
@@ -584,6 +676,6 @@ function createPiece (piece, poll = true) {
     })
     .catch(error => errorUnexpected(error))
     .finally(() => {
-      if (poll) syncNow()
+      if (sync) syncNow()
     })
 }

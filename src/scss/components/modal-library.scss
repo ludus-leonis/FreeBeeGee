@@ -67,8 +67,8 @@
         flex-shrink: 0;
       }
 
-      .is-grid-square & {
-        background-image: url('img/grid-square-black.svg');
+      .is-template-grid-square & {
+        background-image: url('img/grid-square-minor-black.svg');
         background-size: 64px;
 
         &.is-inflate-2x { @include modal-library-flate(128px, 128px, 2) }
@@ -77,8 +77,8 @@
         &.is-deflate-4x { @include modal-library-flate(16px, 16px, .25) }
       }
 
-      .is-grid-hex & {
-        background-image: url('img/grid-hex-black.svg');
+      .is-template-grid-hex & {
+        background-image: url('img/grid-hex-minor-black.svg');
         background-size: 110px 64px;
 
         &.is-inflate-2x { @include modal-library-flate(220px, 128px, 2) }

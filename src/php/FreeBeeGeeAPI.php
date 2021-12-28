@@ -27,7 +27,8 @@ namespace com\ludusleonis\freebeegee;
  */
 class FreeBeeGeeAPI
 {
-    private $ID_POINTER = 'ffffffffffffffff';
+    private $ID_ASSET_POINTER = 'ffffffffffffffff';
+    private $ID_ASSET_LOS = 'fffffffffffffffe';
     private $REGEXP_ID = '^[0-9a-f]{16}$';
     private $version = '$VERSION$';
     private $engine = '$ENGINE$';
@@ -348,7 +349,7 @@ class FreeBeeGeeAPI
                 default: // scan for asset filenames
                     if (
                         !preg_match(
-                            '/^assets\/(overlay|tile|token|other|tag)\/[a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
+                            '/^assets\/(overlay|tile|token|other|tag)\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
                             $entry['name']
                         )
                     ) {
@@ -431,6 +432,9 @@ class FreeBeeGeeAPI
                     break;
                 case 'colors':
                     $this->api->assertObjectArray('colors', $value, 1);
+                    break;
+                case 'borders':
+                    $this->api->assertObjectArray('borders', $value, 1);
                     break;
                 default:
                     $this->api->sendError(400, 'invalid template.json: ' . $property . ' unkown');
@@ -536,6 +540,10 @@ class FreeBeeGeeAPI
             'colors' => [
                 (object) [ 'name ' => 'black', 'value' => '#0d0d0d' ],
                 (object) [ 'name ' => 'white', 'value' => '#ffffff' ],
+            ],
+            'borders' => [
+                (object) [ 'name ' => 'black', 'value' => '#0d0d0d' ],
+                (object) [ 'name ' => 'white', 'value' => '#ffffff' ],
             ]
         ];
     }
@@ -580,7 +588,9 @@ class FreeBeeGeeAPI
 
             // re-add all old pieces
             foreach ($oldTable as $tableItem) {
-                if ($piece->id === $this->ID_POINTER && $tableItem->id === $piece->id) {
+                if ($piece->id === $this->ID_ASSET_LOS && $tableItem->id === $piece->id) {
+                    // skip recreated system piece
+                } elseif ($piece->id === $this->ID_ASSET_POINTER && $tableItem->id === $piece->id) {
                     // skip recreated system piece
                 } elseif (!in_array($tableItem->id, $ids)) {
                     // for newly created items we just copy the current table of the others
@@ -637,7 +647,7 @@ class FreeBeeGeeAPI
      * @param string $filename Filename to parse
      * @return object Asset object (for JSON conversion).
      */
-    private function fileToAsset(
+    public static function fileToAsset(
         $filename
     ) {
         $asset = new \stdClass();
@@ -645,45 +655,50 @@ class FreeBeeGeeAPI
         if (
             // group.name.1x2x3.808080.png
             preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/',
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?(-[^\.-]+)?\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
         ) {
-            $asset->w = (int)$matches[2];
-            $asset->h = (int)$matches[3];
-            $asset->s = $matches[4];
-            switch ($matches[5]) {
-                case 'transparent':
-                case 'piece':
-                    $asset->bg = $matches[5];
-                    break;
-                default:
-                    $asset->bg = '#' . $matches[5];
-            }
             $asset->name = $matches[1];
-        } elseif (
-            // group.name.1x2x3.png
-            preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/',
-                $filename,
-                $matches
-            )
-        ) {
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->s = $matches[4];
             $asset->bg = '#808080';
-            $asset->name = $matches[1];
+
+            if (sizeof($matches) >= 6) {
+                switch ($matches[5]) {
+                    case '.transparent':
+                        $asset->bg = substr($matches[5], 1);
+                        break;
+                    default:
+                        if (preg_match('/^\.[a-fA-F0-9]{6}$/', $matches[5])) {
+                            $asset->bg = '#' . substr($matches[5], 1);
+                        } elseif (preg_match('/^\.[0-9][0-9]?$/', $matches[5])) {
+                            $asset->bg = substr($matches[5], 1);
+                        }
+                }
+            }
+
+            if (sizeof($matches) >= 7) {
+                switch ($matches[6]) {
+                    case '-paper':
+                    case '-wood':
+                        $asset->tx = substr($matches[6], 1);
+                        break;
+                    default:
+                        // none
+                }
+            }
         } elseif (
             // group.name.png
             preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)
         ) {
+            $asset->name = $matches[1];
             $asset->w = 1;
             $asset->h = 1;
             $asset->s = 1;
             $asset->bg = '#808080';
-            $asset->name = $matches[1];
         }
         return $asset;
     }
@@ -706,7 +721,7 @@ class FreeBeeGeeAPI
             $assets[$type] = [];
             $lastAsset = null;
             foreach (glob($roomFolder . 'assets/' . $type . '/*') as $filename) {
-                $asset = $this->fileToAsset(basename($filename));
+                $asset = FreeBeeGeeAPI::fileToAsset(basename($filename));
                 $asset->type = $type;
 
                 // this ID only has to be unique within the room, but should be reproducable
@@ -806,11 +821,11 @@ class FreeBeeGeeAPI
     private function removeDefaultsFromPiece(
         object $piece
     ): object {
+        if (isset($piece->h) && isset($piece->w) && $piece->h === $piece->w) {
+            unset($piece->h);
+        }
         if (isset($piece->w) && $piece->w === 1) {
             unset($piece->w);
-        }
-        if (isset($piece->h) && $piece->h === 1) {
-            unset($piece->h);
         }
         if (isset($piece->r) && $piece->r === 0) {
             unset($piece->r);
@@ -830,8 +845,15 @@ class FreeBeeGeeAPI
         if (isset($piece->b) && is_array($piece->b) && (sizeof($piece->b) <= 0)) {
             unset($piece->b);
         }
-        if (isset($piece->a) && $piece->a === $this->ID_POINTER) {
-            $piece->expires = time() + 8;
+        if (isset($piece->a)) {
+            switch ($piece->a) {
+                case $this->ID_ASSET_POINTER:
+                case $this->ID_ASSET_LOS:
+                    $piece->expires = time() + 8;
+                    break;
+                default:
+                    // nothing
+            }
         }
         return $piece;
     }
@@ -861,10 +883,18 @@ class FreeBeeGeeAPI
                     $validated->a = $this->api->assertString('a', $value, $this->REGEXP_ID);
                     break;
                 case 'w':
-                    $validated->w = $this->api->assertInteger('w', $value, 1, 32);
+                    if (property_exists($piece, 'a') && $piece->a === $this->ID_ASSET_LOS) {
+                        $validated->w = $this->api->assertInteger('w', $value, -100000, 100000);
+                    } else {
+                        $validated->w = $this->api->assertInteger('w', $value, 1, 32);
+                    }
                     break;
                 case 'h':
-                    $validated->h = $this->api->assertInteger('h', $value, 1, 32);
+                    if (property_exists($piece, 'a') && $piece->a === $this->ID_ASSET_LOS) {
+                        $validated->h = $this->api->assertInteger('h', $value, -100000, 100000);
+                    } else {
+                        $validated->h = $this->api->assertInteger('h', $value, 1, 32);
+                    }
                     break;
                 case 'x':
                     $validated->x = $this->api->assertInteger('x', $value, -100000, 100000);
@@ -1008,7 +1038,11 @@ class FreeBeeGeeAPI
                     $validated->base64 = $this->api->assertBase64('base64', $value);
                     break;
                 case 'bg':
-                    $validated->bg = $this->api->assertString('bg', $value, '#[a-fA-F0-9]{6}|transparent|piece');
+                    $validated->bg = $this->api->assertString(
+                        'bg',
+                        $value,
+                        '#[a-fA-F0-9]{6}|transparent|piece'
+                    );
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -1468,9 +1502,15 @@ class FreeBeeGeeAPI
     ) {
         $this->assertTableNo($tid);
         $piece = $this->validatePieceJson($json, true);
-        if (isset($piece->a) && $piece->a === $this->ID_POINTER) {
-            // there can only be one pointer and it has a fixed ID
-            $piece->id = $this->ID_POINTER;
+        if (isset($piece->a)) {
+            switch ($piece->a) {
+                case $this->ID_ASSET_POINTER:
+                case $this->ID_ASSET_LOS:
+                    $piece->id = $piece->a;
+                    break;
+                default:
+                    $piece->id = $this->generateId();
+            }
         } else {
             $piece->id = $this->generateId();
         }

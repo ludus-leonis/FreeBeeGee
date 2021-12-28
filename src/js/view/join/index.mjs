@@ -23,7 +23,7 @@ import {
   createScreen
 } from '../../view/screen.mjs'
 import {
-  createRoom
+  createRoomView
 } from '../../view/create/index.mjs'
 import {
   runRoom
@@ -35,15 +35,21 @@ import {
 
 import {
   runError
-} from '../error/index.mjs'
+} from '../../view/error/index.mjs'
 
 import {
   getGetParameter,
   generateName,
   generateUsername
 } from '../../lib/utils.mjs'
-import { apiGetRoom } from '../../api/index.mjs'
-import { navigateToRoom } from '../../app.mjs'
+
+import {
+  apiGetRoom
+} from '../../api/index.mjs'
+
+import {
+  navigateToRoom
+} from '../../app.mjs'
 
 /** Limit room names like hilariousGazingPenguin */
 const roomNameMaxLength = 48
@@ -168,5 +174,5 @@ function openOrCreate (name) {
         runRoom(room)
       }
     })
-    .catch(() => createRoom(name))
+    .catch(() => createRoomView(name))
 }

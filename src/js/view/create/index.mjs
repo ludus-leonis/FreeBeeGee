@@ -17,24 +17,27 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from '../../lib/FreeDOM.mjs'
+
 import {
   createScreen,
   serverFeedback
 } from '../../view/screen.mjs'
+
 import {
   runError
 } from '../../view/error/index.mjs'
 
 import {
-  createRoom as stateCreateRoom,
+  addRoom,
   getServerInfo
 } from '../../state/index.mjs'
 
-import _ from '../../lib/FreeDOM.mjs'
 import {
   apiGetTemplates,
   UnexpectedStatus
 } from '../../api/index.mjs'
+
 import {
   navigateToRoom
 } from '../../app.mjs'
@@ -44,7 +47,7 @@ import {
  *
  * @param {String} name The room name the user entered in the join dialog.
  */
-export function createRoom (name) {
+export function createRoomView (name) {
   if (getServerInfo().freeRooms <= 0) {
     runError('NO_SLOT')
     return
@@ -153,7 +156,7 @@ function ok (name) {
     room.template = _('#template').value
   }
 
-  stateCreateRoom(room, snapshot)
+  addRoom(room, snapshot)
     .then((remoteRoom) => {
       navigateToRoom(remoteRoom.name)
     })

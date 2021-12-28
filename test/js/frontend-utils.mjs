@@ -19,21 +19,115 @@
 /* global describe, it */
 
 import { expect } from 'chai'
+
 import {
+  mod,
   clamp,
   snapGrid,
   snapHex,
   hash,
   recordTime,
   toCamelCase,
+  unCamelCase,
+  prettyName,
+  unprettyName,
   toTitleCase,
   intersect,
   uuid,
   brightness,
-  getDimensionsRotated
+  getDimensionsRotated,
+  getGetParameter,
+  getStoreValue,
+  setStoreValue,
+  toggleFullscreen,
+  shuffle,
+  sortByString
 } from '../../src/js/lib/utils.mjs'
 
-describe('Frontend - utils.mjs', function () {
+describe('Frontend - utils.mjs - HTML', function () {
+  it('getGetParameter()', function () {
+    // we can't really test this witout a browser
+    expect(getGetParameter()).to.be.eql('')
+    expect(getGetParameter('')).to.be.eql('')
+    expect(getGetParameter('none')).to.be.eql('')
+  })
+
+  it('setStoreValue() getStoreValue()', function () {
+    // we can't really test this witout a browser
+    expect(getStoreValue('p1', 'v1')).to.be.eql(undefined)
+    expect(getStoreValue('p1', 'v2')).to.be.eql(undefined)
+    expect(getStoreValue('p2', 'v1')).to.be.eql(undefined)
+    expect(getStoreValue('p2', 'v2')).to.be.eql(undefined)
+
+    setStoreValue('p1', 'v1', true)
+    expect(getStoreValue('p1', 'v1')).to.be.eql(true)
+    expect(getStoreValue('p1', 'v2')).to.be.eql(undefined)
+    expect(getStoreValue('p2', 'v1')).to.be.eql(undefined)
+    expect(getStoreValue('p2', 'v2')).to.be.eql(undefined)
+
+    setStoreValue('p1', 'v2', 'blue')
+    expect(getStoreValue('p1', 'v1')).to.be.eql(true)
+    expect(getStoreValue('p1', 'v2')).to.be.eql('blue')
+    expect(getStoreValue('p2', 'v1')).to.be.eql(undefined)
+    expect(getStoreValue('p2', 'v2')).to.be.eql(undefined)
+
+    setStoreValue('p2', 'v1', 123)
+    expect(getStoreValue('p1', 'v1')).to.be.eql(true)
+    expect(getStoreValue('p1', 'v2')).to.be.eql('blue')
+    expect(getStoreValue('p2', 'v1')).to.be.eql(123)
+    expect(getStoreValue('p2', 'v2')).to.be.eql(undefined)
+
+    setStoreValue('p2', 'v2', [1, 2])
+    expect(getStoreValue('p1', 'v1')).to.be.eql(true)
+    expect(getStoreValue('p1', 'v2')).to.be.eql('blue')
+    expect(getStoreValue('p2', 'v1')).to.be.eql(123)
+    expect(getStoreValue('p2', 'v2')).to.be.eql([1, 2])
+
+    setStoreValue('p1', 'v2', 'red')
+    expect(getStoreValue('p1', 'v1')).to.be.eql(true)
+    expect(getStoreValue('p1', 'v2')).to.be.eql('red')
+    expect(getStoreValue('p2', 'v1')).to.be.eql(123)
+    expect(getStoreValue('p2', 'v2')).to.be.eql([1, 2])
+  })
+
+  it('toggleFullscreen()', function () {
+    // we can't really test this witout a browser, but we at least call it
+    expect(toggleFullscreen()).to.be.eql(false)
+  })
+
+  it('brightness()', function () {
+    expect(brightness('#000000')).to.be.eql(0)
+    expect(brightness('#FF0000')).to.be.eql(85)
+    expect(brightness('#00FF00')).to.be.eql(85)
+    expect(brightness('#0000FF')).to.be.eql(85)
+    expect(brightness('#FFFF00')).to.be.eql(170)
+    expect(brightness('#00FFFF')).to.be.eql(170)
+    expect(brightness('#FF00FF')).to.be.eql(170)
+    expect(brightness('#ffffff')).to.be.eql(255)
+    expect(brightness('#FFFFFF')).to.be.eql(255)
+  })
+})
+
+describe('Frontend - utils.mjs - Math', function () {
+  it('mod()', function () {
+    expect(mod(-33, 16)).to.be.eql(15)
+    expect(mod(-32, 16)).to.be.eql(0)
+    expect(mod(-31, 16)).to.be.eql(1)
+    expect(mod(-17, 16)).to.be.eql(15)
+    expect(mod(-16, 16)).to.be.eql(0)
+    expect(mod(-15, 16)).to.be.eql(1)
+    expect(mod(-1, 16)).to.be.eql(15)
+    expect(mod(0, 16)).to.be.eql(0)
+    expect(mod(1, 16)).to.be.eql(1)
+    expect(mod(10, 16)).to.be.eql(10)
+    expect(mod(15, 16)).to.be.eql(15)
+    expect(mod(16, 16)).to.be.eql(0)
+    expect(mod(17, 16)).to.be.eql(1)
+    expect(mod(31, 16)).to.be.eql(15)
+    expect(mod(32, 16)).to.be.eql(0)
+    expect(mod(33, 16)).to.be.eql(1)
+  })
+
   it('clamp()', function () {
     expect(clamp(-2, -3, 2)).to.be.eql(-2)
     expect(clamp(-2, -2, 2)).to.be.eql(-2)
@@ -160,62 +254,12 @@ describe('Frontend - utils.mjs', function () {
     expect(snapHex(55 + jitter, 64 - jitter, 64, 3)).to.be.eql({ x: 55, y: 64 })
   })
 
-  it('uuid()', function () {
-    expect(uuid(0)).to.be.eql('00000000-0000-4000-8000-000000000000')
-    expect(uuid()).not.to.be.eql('00000000-0000-4000-8000-000000000000')
-    const id1 = uuid()
-    const id2 = uuid()
-    expect(id1).not.to.be.eql(id2)
-  })
-
-  it('hash()', function () {
-    expect(hash('hello world')).to.be.eql(1794106052)
-  })
-
-  it('recordTime()', function () {
-    expect(recordTime('stat1', 10)).to.be.eql([0, 10])
-    expect(recordTime('stat1', 11)).to.be.eql([0, 10, 11])
-    expect(recordTime('stat1', 12)).to.be.eql([0, 10, 11, 12])
-    expect(recordTime('stat1', 13)).to.be.eql([0, 10, 11, 12, 13])
-    expect(recordTime('stat1', 14)).to.be.eql([0, 10, 11, 12, 13, 14])
-    expect(recordTime('stat1', 15)).to.be.eql([0, 10, 11, 12, 13, 14, 15])
-    expect(recordTime('stat1', 16)).to.be.eql([0, 10, 11, 12, 13, 14, 15, 16])
-    expect(recordTime('stat1', 17)).to.be.eql([0, 10, 11, 12, 13, 14, 15, 16, 17])
-    expect(recordTime('stat1', 18)).to.be.eql([0, 10, 11, 12, 13, 14, 15, 16, 17, 18])
-    expect(recordTime('stat1', 19)).to.be.eql([10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
-
-    expect(recordTime('stat2', 20)).to.be.eql([0, 20])
-    expect(recordTime('stat2', 21)).to.be.eql([0, 20, 21])
-    expect(recordTime('stat2', 22)).to.be.eql([0, 20, 21, 22])
-    expect(recordTime('stat2', 23)).to.be.eql([0, 20, 21, 22, 23])
-    expect(recordTime('stat2', 24)).to.be.eql([0, 20, 21, 22, 23, 24])
-    expect(recordTime('stat2', 25)).to.be.eql([0, 20, 21, 22, 23, 24, 25])
-    expect(recordTime('stat2', 26)).to.be.eql([0, 20, 21, 22, 23, 24, 25, 26])
-    expect(recordTime('stat2', 27)).to.be.eql([0, 20, 21, 22, 23, 24, 25, 26, 27])
-    expect(recordTime('stat2', 28)).to.be.eql([0, 20, 21, 22, 23, 24, 25, 26, 27, 28])
-    expect(recordTime('stat2', 29)).to.be.eql([20, 21, 22, 23, 24, 25, 26, 27, 28, 29])
-
-    expect(recordTime('stat1', 30)).to.be.eql([11, 12, 13, 14, 15, 16, 17, 18, 19, 30])
-  })
-
-  it('toTitleCase()', function () {
-    expect(toTitleCase('hello world')).to.be.eql('Hello World')
-    expect(toTitleCase('helloworld')).to.be.eql('Helloworld')
-    expect(toTitleCase(' h e l l o ')).to.be.eql(' H E L L O ')
-    expect(toTitleCase('hELLO wORLD')).to.be.eql('Hello World')
-    expect(toTitleCase('HELLO WORLD')).to.be.eql('Hello World')
-    expect(toTitleCase(' hello   world ')).to.be.eql(' Hello   World ')
-    expect(toTitleCase('hello.world')).to.be.eql('Hello.world')
-  })
-
-  it('toCamelCase()', function () {
-    expect(toCamelCase('hello world')).to.be.eql('helloWorld')
-    expect(toCamelCase('helloworld')).to.be.eql('helloworld')
-    expect(toCamelCase(' h e l l o ')).to.be.eql('HELLO')
-    expect(toCamelCase('hELLO wORLD')).to.be.eql('helloWorld')
-    expect(toCamelCase('HELLO WORLD')).to.be.eql('helloWorld')
-    expect(toCamelCase(' hello   world ')).to.be.eql('HelloWorld')
-    expect(toCamelCase('hello.world')).to.be.eql('helloWorld')
+  it('shuffle()', function () {
+    expect(shuffle(
+      [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+    )).to.have.members(
+      [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]
+    )
   })
 
   it('intersect()', function () {
@@ -334,18 +378,6 @@ describe('Frontend - utils.mjs', function () {
     )).to.be.eql(false)
   })
 
-  it('brightness()', function () {
-    expect(brightness('#000000')).to.be.eql(0)
-    expect(brightness('#FF0000')).to.be.eql(85)
-    expect(brightness('#00FF00')).to.be.eql(85)
-    expect(brightness('#0000FF')).to.be.eql(85)
-    expect(brightness('#FFFF00')).to.be.eql(170)
-    expect(brightness('#00FFFF')).to.be.eql(170)
-    expect(brightness('#FF00FF')).to.be.eql(170)
-    expect(brightness('#ffffff')).to.be.eql(255)
-    expect(brightness('#FFFFFF')).to.be.eql(255)
-  })
-
   it('getDimensionsRotated()', function () {
     expect(getDimensionsRotated(1, 1, 0)).to.be.eql({ w: 1, h: 1 })
     expect(getDimensionsRotated(1, 1, 90)).to.be.eql({ w: 1, h: 1 })
@@ -386,5 +418,102 @@ describe('Frontend - utils.mjs', function () {
     expect(getDimensionsRotated(200, 100, -120)).to.be.eql({ w: 187, h: 224 })
 
     expect(getDimensionsRotated(576, 448, 60)).to.be.eql({ w: 676, h: 723 })
+  })
+})
+
+describe('Frontend - utils.mjs - Text', function () {
+  it('uuid()', function () {
+    expect(uuid(0)).to.be.eql('00000000-0000-4000-8000-000000000000')
+    expect(uuid()).not.to.be.eql('00000000-0000-4000-8000-000000000000')
+    const id1 = uuid()
+    const id2 = uuid()
+    expect(id1).not.to.be.eql(id2)
+  })
+
+  it('hash()', function () {
+    expect(hash('hello world')).to.be.eql(1794106052)
+  })
+
+  it('toTitleCase()', function () {
+    expect(toTitleCase('hello world')).to.be.eql('Hello World')
+    expect(toTitleCase('helloworld')).to.be.eql('Helloworld')
+    expect(toTitleCase(' h e l l o ')).to.be.eql(' H E L L O ')
+    expect(toTitleCase('hELLO wORLD')).to.be.eql('Hello World')
+    expect(toTitleCase('HELLO WORLD')).to.be.eql('Hello World')
+    expect(toTitleCase(' hello   world ')).to.be.eql(' Hello   World ')
+    expect(toTitleCase('hello.world')).to.be.eql('Hello.world')
+  })
+
+  it('toCamelCase()', function () {
+    expect(toCamelCase('hello world')).to.be.eql('helloWorld')
+    expect(toCamelCase('helloworld')).to.be.eql('helloworld')
+    expect(toCamelCase(' h e l l o ')).to.be.eql('HELLO')
+    expect(toCamelCase('hELLO wORLD')).to.be.eql('helloWorld')
+    expect(toCamelCase('HELLO WORLD')).to.be.eql('helloWorld')
+    expect(toCamelCase(' hello   world ')).to.be.eql('HelloWorld')
+    expect(toCamelCase('hello.world')).to.be.eql('helloWorld')
+  })
+
+  it('unCamelCase()', function () {
+    expect(unCamelCase('helloWorld')).to.be.eql('Hello World')
+    expect(unCamelCase('helloworld')).to.be.eql('Helloworld')
+    expect(unCamelCase('helloWorldWorld')).to.be.eql('Hello World World')
+    expect(unCamelCase('helloWorld World')).to.be.eql('Hello World World')
+    expect(unCamelCase(' hello World World ')).to.be.eql('Hello World World')
+  })
+
+  it('sortByString()', function () {
+    expect(sortByString([], 'none')).to.be.eql([])
+    expect(sortByString([
+      { id: 'one' },
+      { id: 'two' },
+      { id: 'three' }
+    ], 'id')).to.be.eql([
+      { id: 'one' },
+      { id: 'three' },
+      { id: 'two' }
+    ])
+  })
+
+  it('prettyName()', function () {
+    expect(prettyName('dungeon')).to.be.eql('Dungeon')
+    expect(prettyName('dungeon.door')).to.be.eql('Dungeon, Door')
+    expect(prettyName('dungeon.ironDoor')).to.be.eql('Dungeon, Iron Door')
+    expect(prettyName(' dunGeon.ironDoor ')).to.be.eql('Dun Geon, Iron Door')
+  })
+
+  it('unprettyName()', function () {
+    expect(unprettyName('Dungeon')).to.be.eql('dungeon')
+    expect(unprettyName('Dungeon, Door')).to.be.eql('dungeon.door')
+    expect(unprettyName('Dungeon, Iron Door')).to.be.eql('dungeon.ironDoor')
+    expect(unprettyName('  Dun  Geon ,  Iron  Door  ')).to.be.eql('dunGeon.ironDoor')
+  })
+})
+
+describe('Frontend - utils.mjs - Time', function () {
+  it('recordTime()', function () {
+    expect(recordTime('stat1', 10)).to.be.eql([0, 10])
+    expect(recordTime('stat1', 11)).to.be.eql([0, 10, 11])
+    expect(recordTime('stat1', 12)).to.be.eql([0, 10, 11, 12])
+    expect(recordTime('stat1', 13)).to.be.eql([0, 10, 11, 12, 13])
+    expect(recordTime('stat1', 14)).to.be.eql([0, 10, 11, 12, 13, 14])
+    expect(recordTime('stat1', 15)).to.be.eql([0, 10, 11, 12, 13, 14, 15])
+    expect(recordTime('stat1', 16)).to.be.eql([0, 10, 11, 12, 13, 14, 15, 16])
+    expect(recordTime('stat1', 17)).to.be.eql([0, 10, 11, 12, 13, 14, 15, 16, 17])
+    expect(recordTime('stat1', 18)).to.be.eql([0, 10, 11, 12, 13, 14, 15, 16, 17, 18])
+    expect(recordTime('stat1', 19)).to.be.eql([10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
+
+    expect(recordTime('stat2', 20)).to.be.eql([0, 20])
+    expect(recordTime('stat2', 21)).to.be.eql([0, 20, 21])
+    expect(recordTime('stat2', 22)).to.be.eql([0, 20, 21, 22])
+    expect(recordTime('stat2', 23)).to.be.eql([0, 20, 21, 22, 23])
+    expect(recordTime('stat2', 24)).to.be.eql([0, 20, 21, 22, 23, 24])
+    expect(recordTime('stat2', 25)).to.be.eql([0, 20, 21, 22, 23, 24, 25])
+    expect(recordTime('stat2', 26)).to.be.eql([0, 20, 21, 22, 23, 24, 25, 26])
+    expect(recordTime('stat2', 27)).to.be.eql([0, 20, 21, 22, 23, 24, 25, 26, 27])
+    expect(recordTime('stat2', 28)).to.be.eql([0, 20, 21, 22, 23, 24, 25, 26, 27, 28])
+    expect(recordTime('stat2', 29)).to.be.eql([20, 21, 22, 23, 24, 25, 26, 27, 28, 29])
+
+    expect(recordTime('stat1', 30)).to.be.eql([11, 12, 13, 14, 15, 16, 17, 18, 19, 30])
   })
 })

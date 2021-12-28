@@ -19,12 +19,15 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import _ from '../../../lib/FreeDOM.mjs'
+
 import {
   getRoom,
   getTemplate,
   getLibrary,
   getTable,
-  getTableNo
+  getTableNo,
+  isLayerActive
 } from '../../../state/index.mjs'
 
 import {
@@ -32,7 +35,8 @@ import {
   snapGrid,
   snapHex,
   intersect,
-  getDimensionsRotated
+  getDimensionsRotated,
+  mod
 } from '../../../lib/utils.mjs'
 
 export const assetTypes = [
@@ -47,11 +51,11 @@ export const TYPE_SQUARE = 'grid-square'
 export const TYPE_HEX = 'grid-hex'
 
 export const stickyNoteColors = [
-  { name: 'yellow' },
-  { name: 'orange' },
-  { name: 'green' },
-  { name: 'blue' },
-  { name: 'pink' }
+  { name: 'Yellow', value: '#ffeba6' },
+  { name: 'Orange', value: '#fdce97' },
+  { name: 'Green', value: '#bffabb' },
+  { name: 'Blue', value: '#bbe7fa' },
+  { name: 'Pink', value: '#f4a0c6' }
 ]
 
 export const LAYERS = [ // reverse order
@@ -68,6 +72,11 @@ function layerToName (layer) {
 
 export function nameToLayer (name) {
   return LAYERS.indexOf(name) + 1
+}
+
+export const ID = {
+  POINTER: 'ffffffffffffffff',
+  LOS: 'fffffffffffffffe'
 }
 
 /**
@@ -210,7 +219,7 @@ export function findExpiredPieces (no = getTableNo()) {
 
   const now = new Date()
   for (const piece of getTable(no)) {
-    if (piece._expires && piece._expires <= now) {
+    if (piece._meta.expires <= now) {
       pieces.push(piece)
     }
   }
@@ -219,36 +228,118 @@ export function findExpiredPieces (no = getTableNo()) {
 }
 
 /**
- * Add default values to all properties that the API might omit.
+ * Remove excess fields and force ranges to be within 0..n.
+ *
+ * @param {Object} piece Piece to sanitize.
+ * @return {Object} Sanitized piece.
+ */
+export function sanitizePiecePatch (patch, pieceId = null) {
+  const r = getRoom()
+  const t = getTemplate()
+  const p = pieceId === null ? null : findPiece(pieceId)
+  const result = {}
+  let asset, colors
+  for (const field in patch) {
+    switch (field) {
+      case 'c':
+        result[field] = []
+        colors = p?.l === 'note' ? stickyNoteColors.length : (t.colors.length + 1)
+        if (patch[field][0] !== undefined) result[field].push(mod(patch[field][0], colors))
+        if (patch[field][1] !== undefined) result[field].push(mod(patch[field][1], t.borders.length + 1))
+        break
+      case 'x':
+        result[field] = clamp(0, patch[field], r.width - 1)
+        break
+      case 'y':
+        result[field] = clamp(0, patch[field], r.height - 1)
+        break
+      case 'w':
+      case 'h':
+        result[field] = clamp(1, patch[field], 32)
+        break
+      case 's':
+        asset = findAsset(p?.a) ?? { media: ['x'] }
+        result[field] = mod(patch[field], asset.media.length)
+        break
+      case 'n':
+        result[field] = mod(patch[field], 16)
+        break
+      case 'r':
+        result[field] = mod(patch[field], 360)
+        break
+      case 'l':
+      case 'id':
+      case 'a':
+      case 'b':
+      case 'z':
+      case 't':
+      case 'expires':
+        result[field] = patch[field]
+        break
+      default:
+        // skip unknown
+    }
+  }
+
+  return result
+}
+
+/**
+ * Add default template values to all properties that the API might omit.
+ *
+ * @param {Object} template Data object to populate.
+ * @return {Array} Template for chaining.
+ */
+export function populateTemplateDefaults (template, headers = null) {
+  template.borders = template.borders ?? []
+
+  template._meta = {
+    widthPx: template.gridWidth * template.gridSize,
+    heightPx: template.gridHeight * template.gridSize
+  }
+
+  return template
+}
+
+/**
+ * Add default piece values to all properties that the API might omit.
  *
  * @param {Object} piece Data object to populate.
  * @param {Object} headers Optional headers object (for date checking).
- * @return {Array} Pieces array for chaining.
+ * @return {Object} Piece for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
   piece.l = layerToName(piece.l ?? 0)
   piece.w = piece.w ?? 1
-  piece.h = piece.h ?? 1
+  piece.h = piece.h ?? piece.w
   piece.s = piece.s ?? 0
   piece.c = piece.c ?? [0, 0]
   piece.c[0] = piece.c[0] ?? 0
   piece.c[1] = piece.c[1] ?? 0
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
-  piece.h = piece.h < 0 ? piece.w : piece.h
   piece.t = piece.t ?? []
   piece.b = piece.b ?? []
 
   // add client-side meta information for piece
   piece._meta = {}
   const template = getTemplate()
-  piece._meta.originWidthPx = piece.w * template.gridSize
-  piece._meta.originHeightPx = piece.h * template.gridSize
-  const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
-  piece._meta.widthPx = rect.w
-  piece._meta.heightPx = rect.h
-  piece._meta.originOffsetXPx = (piece._meta.originWidthPx - rect.w) / 2
-  piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
+  if (piece.id === ID.LOS) {
+    piece._meta.originWidthPx = piece.w
+    piece._meta.originHeightPx = piece.h
+    piece._meta.widthPx = piece.w
+    piece._meta.heightPx = piece.h
+    piece._meta.originOffsetXPx = 0
+    piece._meta.originOffsetYPx = 0
+  } else {
+    piece._meta.originWidthPx = piece.w * template.gridSize
+    piece._meta.originHeightPx = piece.h * template.gridSize
+    const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
+    piece._meta.widthPx = rect.w
+    piece._meta.heightPx = rect.h
+    piece._meta.originOffsetXPx = (piece._meta.originWidthPx - rect.w) / 2
+    piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
+  }
 
   // add client-side meta information for asset
   const asset = findAsset(piece.a)
@@ -256,7 +347,7 @@ export function populatePieceDefaults (piece, headers = null) {
     const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     piece._meta.sides = asset.media.length ?? 1
-    if (asset.id === 'ffffffffffffffff') {
+    if (asset.id === ID.POINTER) {
       piece._meta.feature = 'POINTER'
     } else {
       switch (asset.name) {
@@ -268,12 +359,24 @@ export function populatePieceDefaults (piece, headers = null) {
           break
       }
     }
+
+    if (asset.bg?.match(/^[0-9][0-9]?$/)) {
+      piece._meta.hasColor = true
+    } else {
+      piece._meta.hasColor = false
+    }
+    piece._meta.hasBorder = piece.l === 'token'
+    if (asset.type === 'token' || piece._meta.hasColor === true || bgImage.match(/(jpg|jpeg)$/i)) {
+      piece._meta.hasHighlight = true
+    } else {
+      piece._meta.hasHighlight = false
+    }
   }
 
   // header/expires information
   if (piece.expires && headers) {
-    piece._expires = new Date()
-    piece._expires.setSeconds(piece._expires.getSeconds() + piece.expires - Number(headers.get('servertime')))
+    piece._meta.expires = new Date()
+    piece._meta.expires.setSeconds(piece._meta.expires.getSeconds() + piece.expires - Number(headers.get('servertime')))
   }
 
   return piece
@@ -293,8 +396,8 @@ export function populatePiecesDefaults (pieces, headers = null) {
   const now = new Date()
   for (const piece of pieces) {
     populatePieceDefaults(piece, headers)
-    if (piece._expires) {
-      if (piece._expires && piece._expires > now) {
+    if (piece._meta.expires) {
+      if (piece._meta.expires > now) {
         nonExpired.push(piece)
       }
     } else {
@@ -416,7 +519,7 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
   const asset = findAsset(assetId)
   const xy = snap(x, y)
 
-  return populatePieceDefaults(clampToTableSize({
+  const piece = populatePieceDefaults(clampToTableSize({
     a: asset.id,
     l: nameToLayer(asset.type),
     w: asset.w,
@@ -425,6 +528,12 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
     y: xy.y,
     z: getMaxZ(asset.layer) + 1
   }))
+
+  if (piece._meta.hasColor) {
+    piece.c[0] = Number.parseInt(asset.bg) // use asset suggestion for starter
+  }
+
+  return piece
 }
 
 /**
@@ -484,8 +593,8 @@ export function getSetupCenter (no = getTableNo()) {
 
   // calculate setup center otherwise
   return {
-    x: rect.left + (rect.right - rect.left) / 2,
-    y: rect.top + (rect.bottom - rect.top) / 2
+    x: rect.left + (rect.right - rect.left - 1) / 2,
+    y: rect.top + (rect.bottom - rect.top - 1) / 2
   }
 }
 
@@ -496,13 +605,7 @@ export function getSetupCenter (no = getTableNo()) {
  * @return {Object} Parsed elements.
  */
 export function splitAssetFilename (assetName) {
-  const data = {
-    name: 'unknown',
-    w: 1,
-    h: 1,
-    s: 1,
-    bg: '808080'
-  }
+  const data = {}
   let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
@@ -526,4 +629,122 @@ export function splitAssetFilename (assetName) {
     return data
   }
   return data
+}
+
+/**
+ * Determine if a piece is not transparent at a given coordinate.
+ *
+ * Does this by creating a temporary in-memory canvas and checking against its
+ * alpha layer. Rotation is implicitly done by the browser as CSS 'transform:'
+ * also rotates/scales click x/y.
+ *
+ * @param {Object} piece Piece to check.
+ * @param {Number} x X-coordiante in px.
+ * @param {Number} y Y-coordiante in px.
+ * @return {Boolean} True if pixel at x/y is transparent, false otherwise.
+ */
+export function isSolid (piece, x, y) {
+  if (!piece) return true // no piece = no checking
+  if (piece?.l === 'token') return true // token are always round & solid
+  if (!piece._meta?.mask) return true // no mask = no checking possible
+
+  // now do the hit detection
+  const img = new Image() // eslint-disable-line no-undef
+  img.src = piece._meta.mask
+  if (img.complete) {
+    const template = getTemplate()
+
+    const width = piece.w * template.gridSize
+    const height = piece.h * template.gridSize
+
+    // calculate img->canvas scale,
+    // compensate for 'background-size: cover'
+    let sX = 0
+    let sY = 0
+    let sW = img.width * 1.0
+    let sH = img.height * 1.0
+    const sAspect = img.width * 1.0 / img.height
+    const cAspect = width * 1.0 / height
+    if (sAspect < cAspect) { // source higher
+      const scale = width / sW
+      sH = height / scale
+      sY = (img.height - sH) / 2
+    } else { // source wider
+      const scale = height / sH
+      sW = width / scale
+      sX = (img.width - sW) / 2
+    }
+
+    // draw & check pixel
+    const scale = 2 // we don't need full resolution for checking
+    const c = document.createElement('canvas')
+    c.width = width / scale
+    c.height = height / scale
+    const ctx = c.getContext('2d')
+    ctx.drawImage(img, sX, sY, sW, sH, 0, 0, c.width, c.height)
+    const alpha = ctx.getImageData(x / scale, y / scale, 1, 1).data[3]
+    return alpha > 4 // alpha value
+  } else {
+    return true // image was not already loaded
+  }
+}
+
+/**
+ * Click-thru transparent areas of clickable pieces.
+ *
+ * If clicked on an 100% alpha area, try to find a better target for the event
+ * by traversing all layers + object on the same coordnate.
+ *
+ * @param {Object} event JavaScript evend that was triggered on a click.
+ * @param {Object} coords {x, y} of the current mouse coordinates.
+ */
+export function findRealClickTarget (event, coords) {
+  // in most cases the hit item will be the correct one
+  if (event.target.piece &&
+    event.target.piece.id !== ID.POINTER &&
+    event.target.piece.id !== ID.LOS &&
+    isSolid(event.target.piece, event.offsetX, event.offsetY)) {
+    return event.target
+  }
+
+  // seems the initial target is transparent. now traverse all layers.
+  const index = event.target.piece ? nameToLayer(event.target.piece.l) : LAYERS.length - 1
+  for (const layer of LAYERS.slice().reverse()) {
+    if (nameToLayer(layer) <= index && isLayerActive(layer)) { // we don't need to check higher layers
+      for (const piece of sortZ(findPiecesWithin({
+        left: coords.x,
+        top: coords.y,
+        right: coords.x,
+        bottom: coords.y
+      }, layer))) {
+        switch (piece.id) {
+          case event.target.piece?.id: // don't doublecheck
+          case ID.POINTER: // not selectable
+          case ID.LOS: // not selectable
+            continue
+        }
+
+        //  compensate center
+        const oX = coords.x - piece.x
+        const oY = coords.y - piece.y
+        let tX = oX
+        let tY = oY
+
+        // compensate rotation clockwise
+        if (piece.r > 0) {
+          const rs = Math.sin(piece.r * Math.PI / 180)
+          const rc = Math.cos(piece.r * Math.PI / 180)
+          tX = oX * rc + oY * rs
+          tY = -oX * rs + oY * rc
+        }
+
+        tX += piece._meta.originWidthPx / 2
+        tY += piece._meta.originHeightPx / 2
+        if (isSolid(piece, tX, tY)) {
+          return _('#' + piece.id).node()
+        }
+      }
+    }
+  }
+  return null // no better target available
 }
