@@ -158,7 +158,7 @@ A minimal *piece* contains the following information:
 ```
 
 `id`
-: The ID of the *piece*.
+: The ID of the *piece*, a 16-digit hex string. The following IDs have a special meaning: 'ffffffffffffffff' represents the pointer, 'fffffffffffffffe' represents the LOS line.
 
 `l`
 : The layer (number) to show the *piece* in. `1` = tile, `2` = overlay, `3` = note, `4` = token, '5' = other. In theory the *asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *asset* is used in the tile layer.
@@ -201,8 +201,17 @@ In addition, a *piece* can have the following optional properties. If omitted, t
 `b`
 : An array of badges of a *piece*. Each entry is the name of one asset of type `tag`. Those are usually displayed in their label.
 
+### Special pieces
+
+A *piece* with `id` and `a` set to `ffffffffffffffff` represents the (laser)pointer. There can only be one on the table.
+
+A *piece* with `id` and `a` set to `fffffffffffffffe` represents the LOS line. There can only be one on the table. The `x`/`y` do not represent the center of this piece, but the center of the starting point of the line. `w` and `h` represent the width and height in px of the line's bounding box. It will always be drawn to the opposite corner. Width and height can be negative, extending the box to the left or upwards from the starting point.
+
+Special pieces feature the following additional fields:
+
 `expires`
 : Timestamp in seconds-since-epoch when this *piece* expires. It should no longer displayed if that time is reached. Clients should compare it with the `Servertime` HTTP header and not with a local clock value. No `expires` field means no expiration.
+
 
 ## Templates
 

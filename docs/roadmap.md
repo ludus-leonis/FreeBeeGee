@@ -24,14 +24,14 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] remove old/unused room properties
     * [X] upload form sometimes resets selection
     * [X] rotating border highlights
-  * [ ] update screenshots
-  * [ ] review docs
+  * [X] review docs
   * [X] review + run tests
     * [X] document how to run tests
     * [X] add more PHP unit tests
     * [X] add more JS unit tests
     * [ ] add more integration/API tests
   * [ ] bump version/codename & update CHANGELOG
+  * [ ] update screenshots
 
 ## Backlog (unsorted)
 
