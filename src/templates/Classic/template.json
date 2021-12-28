@@ -18,7 +18,7 @@
     { "name": "Violet", "value": "#730fb1" },
     { "name": "Gray A", "value": "#606060" },
     { "name": "Gray B", "value": "#a0a0a0" },
-    { "name": "White", "value": "#f0f0f0" }
+    { "name": "White", "value": "#e8e8e8" }
   ],
 
   "borders": [
@@ -30,6 +30,6 @@
     { "name": "Blue", "value": "#3387b0" },
     { "name": "Indigo", "value": "#2e4d7b" },
     { "name": "Violet", "value": "#730fb1" },
-    { "name": "White", "value": "#f0f0f0" }
+    { "name": "White", "value": "#e8e8e8" }
   ]
 }
