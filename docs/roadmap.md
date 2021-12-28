@@ -2,7 +2,7 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.13 - ??? ???
+## v0.13 - Colorful Cobra
 
 * [X] change backgrounds from room to server setting
 * [X] damage status icons for RPG/Hex templates
@@ -36,6 +36,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* [ ] fix isSolid image loading
+* [ ] autofix older rooms (or be more tolerant)
 * [ ] add more integration/API tests (edge cases during CRUD)
 * [ ] system assets (always there, not part of template)
 * [ ] table passwords

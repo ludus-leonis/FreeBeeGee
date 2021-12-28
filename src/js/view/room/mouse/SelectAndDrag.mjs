@@ -59,6 +59,10 @@ export class SelectAndDrag extends MouseButtonHandler {
   }
 
   push (mousedown) {
+    // we only react on pieces or the tabletop
+    if (!mousedown.target.classList.contains('piece') &&
+      !mousedown.target.classList.contains('tabletop')) return
+
     const target = findRealClickTarget(mousedown, getMouseCoords())
     updateSelection(target)
     if (!target) return // no real click
