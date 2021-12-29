@@ -316,6 +316,8 @@ $piece-jitter-b: .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .
       $shadow-270,
       $shadow-300
     );
+    background-image: var(--fbg-material), var(--fbg-image);
+    background-size: 256px, cover;
     border-radius: $piece-corner-radius;
   }
 

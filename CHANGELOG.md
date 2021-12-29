@@ -2,6 +2,16 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.14.0 - ??? ???
+
+### Notable changes
+
+* none yet
+
+### Other changes
+
+* changed RPG template tiles to paper material
+
 ## v0.13.0 - Colorful Cobra
 
 ### Notable changes
@@ -10,6 +20,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added measure mode / line-of-sight tool - press m to toggle
 * added more damage status icons for RPG/Hex templates (acid, fire, ...)
 * added grid option minor (dots) or major (lines) to settings
+* improved piece rendering - nicer highlights & material texture
 
 ### Other changes
 

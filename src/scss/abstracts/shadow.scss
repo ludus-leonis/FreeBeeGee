@@ -27,7 +27,7 @@
 $shadow-x: 2; /// light length/direction x
 $shadow-y: 3; /// light length/direction y
 
-/// shadow direction angle
+/// shadow direction angle (Azimuth 123, Elevation ~60)
 $shadow-direction: math.atan(math.div($shadow-x, $shadow-y));
 
 /// shadow direction length

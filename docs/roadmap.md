@@ -2,52 +2,34 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.13 - Colorful Cobra
+## v0.14 - ??? ???
 
-* [X] change backgrounds from room to server setting
-* [X] damage status icons for RPG/Hex templates
-* [X] predefined piece colors
-* [X] LOS-ruler
-* [X] advanced grid settings (minor + major grid)
-* [X] add separate color sets in templates for piece's borders and backgrounds
-* [X] add hotkeys to flip/rotate backwards
-* [X] generate average piece color during upload
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] "RPG" template glass tiles transparency
-    * [X] dice rolling
-    * [X] match library preview to show default color "none"
-    * [X] refactor all JS-CSS changes to custom properties
-    * [X] don't count default pieces' backsides as side in library
-    * [X] browser caching artwork from previous template in same room
-    * [X] remove old/unused room properties
-    * [X] upload form sometimes resets selection
-    * [X] rotating border highlights
-  * [X] review docs
-  * [X] review + run tests
-    * [X] document how to run tests
-    * [X] add more PHP unit tests
-    * [X] add more JS unit tests
-  * [X] bump version/codename & update CHANGELOG
-  * [X] update screenshots
+* [X] change RPG template tiles to paper material
+* [ ] autofix older rooms (or be more tolerant)
+* [ ] system assets (always there, not part of template)
+* [ ] serverless demo mode
+* [ ] more helper/marker overlays (arrows, areas, )
+* [ ] set default/start table other than 1 in template
+* [ ] add more classic game boards: backgammon, mills, solitaire
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] fix isSolid image loading
+  * [ ] review docs
+  * [ ] review + run tests
+  * [ ] bump version/codename & update CHANGELOG
+  * [ ] update screenshots
 
 ## Backlog (unsorted)
 
 ### rather sooner
 
-* [ ] fix isSolid image loading
-* [ ] autofix older rooms (or be more tolerant)
 * [ ] add more integration/API tests (edge cases during CRUD)
-* [ ] system assets (always there, not part of template)
 * [ ] table passwords
 * [ ] use 'v' to paste / clone
 * [ ] automated deployment tests for new zip/tgz packages after build
-* [ ] demo mode (serverless?)
-* [ ] more helper/marker overlays (arrows, areas, )
 * [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
 * [ ] right-click on table (add piece, change table)
-* [ ] set default/start table other than 1 in template
 * [ ] delete items from library
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dragging some pieces should not change z (e.g. dicemat)
@@ -68,8 +50,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] randomize button on dicemat
 * [ ] don't roll dice on transparent part of dicemat
 * [ ] add dice on dicemat
-* [ ] generic marker overlay (X, ?, ...)
-* [ ] add more classic game boards: backgammon, mills, solitaire
 * [ ] generate average piece color during build and upload
 * [ ] catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] hide .../data/... from URLs (via .htaccess)
