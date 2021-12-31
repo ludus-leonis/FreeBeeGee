@@ -20,9 +20,11 @@ const p = require('./package.json')
 const gulp = require('gulp')
 const rnd = Math.floor(Math.random() * 10000000)
 
+const subdir = '/xyz'
+
 const dirs = {
   build: 'dist',
-  site: 'dist/' + p.name,
+  site: 'dist/' + p.name + subdir,
   docs: 'dist/docs/',
   cache: '.cache'
 }
@@ -30,10 +32,10 @@ const dirs = {
 gulp.task('clean', () => {
   const del = require('del')
   return del([
-    [dirs.site] + '/**/*',
-    [dirs.site] + '/**/.*',
-    [dirs.build] + '/*zip',
-    [dirs.build] + '/*gz'
+    `${dirs.build}/${p.name}/**/*`,
+    `${dirs.build}/${p.name}/**/.*`,
+    `${dirs.build}/*zip`,
+    `${dirs.build}/*gz`
   ])
 })
 
