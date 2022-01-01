@@ -1,7 +1,7 @@
 /**
  * @file Handles the library modal.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -20,6 +20,7 @@
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
+  DEMO_MODE,
   UnexpectedStatus
 } from '../../../api/index.mjs'
 
@@ -61,6 +62,10 @@ import {
   pieceToNode,
   url
 } from '../../../view/room/tabletop/index.mjs'
+
+import {
+  modalDisabled
+} from '../../../view/room/modal/disabled.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -305,6 +310,12 @@ function modalUpload () {
 
   // upload stuff if checks were ok
   if (errorMessage.innerHTML === '') {
+    if (DEMO_MODE) {
+      getModal().hide()
+      modalDisabled('would have uploaded your piece to the library by now')
+      return
+    }
+
     const type = _('#upload-type').value
     const data = {
       name: unprettyName(name.value),

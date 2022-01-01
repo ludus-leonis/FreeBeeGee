@@ -5,12 +5,13 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.14 - ??? ???
 
 * [X] change RPG template tiles to paper material
-* [ ] autofix older rooms (or be more tolerant)
+* [ ] autofix older rooms / be more tolerant to changed fields
 * [ ] system assets (always there, not part of template)
-* [ ] serverless demo mode
+* [X] serverless demo mode
 * [ ] more helper/marker overlays (arrows, areas, )
 * [ ] set default/start table other than 1 in template
 * [ ] add more classic game boards: backgammon, mills, solitaire
+* [ ] multiple status icons
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring

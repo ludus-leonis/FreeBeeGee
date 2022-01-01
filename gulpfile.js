@@ -1,5 +1,5 @@
 /**
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  *
  * @license This file is part of FreeBeeGee.
  *
@@ -20,11 +20,15 @@ const p = require('./package.json')
 const gulp = require('gulp')
 const rnd = Math.floor(Math.random() * 10000000)
 
-const subdir = '/xyz'
+let demomode = false
+let site = './'
+
+const subdir = '' // '/xyz/abc'
 
 const dirs = {
   build: 'dist',
   site: 'dist/' + p.name + subdir,
+  demo: 'dist/' + p.name + subdir + '/demo',
   docs: 'dist/docs/',
   cache: '.cache'
 }
@@ -113,6 +117,8 @@ function replace (pipe) {
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))
     .pipe(repl('$COLOR$', p.color, { skipBinary: true }))
     .pipe(repl('$URL$', p.homepage, { skipBinary: true }))
+    .pipe(repl('$DEMOMODE$', demomode, { skipBinary: true }))
+    .pipe(repl('$SITE$', site, { skipBinary: true }))
 }
 
 gulp.task('fonts', () => {
@@ -186,9 +192,11 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/app.mjs',
     'src/js/main.mjs',
     'src/js/api/index.mjs',
-    'src/js/state/index.mjs',
+    'src/js/api/serverless.mjs',
     'src/js/lib/FreeDOM.mjs',
     'src/js/lib/utils.mjs',
+    'src/js/state/index.mjs',
+
     'src/js/view/modal.mjs',
     'src/js/view/screen.mjs',
     'src/js/view/create/index.mjs',
@@ -198,17 +206,21 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/view/room/index.mjs',
     'src/js/view/room/hotkeys.mjs',
     'src/js/view/room/sync.mjs',
-    'src/js/view/room/mouse/_MouseButtonHandler.mjs',
-    'src/js/view/room/mouse/index.mjs',
-    'src/js/view/room/mouse/Los.mjs',
-    'src/js/view/room/mouse/SelectAndDrag.mjs',
-    'src/js/view/room/mouse/Grab.mjs',
-    'src/js/view/room/tabletop/index.mjs',
-    'src/js/view/room/tabletop/tabledata.mjs',
+    'src/js/view/room/modal/demo.mjs',
+    'src/js/view/room/modal/disabled.mjs',
     'src/js/view/room/modal/edit.mjs',
     'src/js/view/room/modal/help.mjs',
     'src/js/view/room/modal/inactive.mjs',
-    'src/js/view/room/modal/library.mjs'
+    'src/js/view/room/modal/library.mjs',
+    'src/js/view/room/modal/settings.mjs',
+    'src/js/view/room/mouse/_MouseButtonHandler.mjs',
+    'src/js/view/room/mouse/Grab.mjs',
+    'src/js/view/room/mouse/index.mjs',
+    'src/js/view/room/mouse/Los.mjs',
+    'src/js/view/room/mouse/SelectAndDrag.mjs',
+    'src/js/view/room/mouse/SelectAndProperties.mjs',
+    'src/js/view/room/tabletop/index.mjs',
+    'src/js/view/room/tabletop/tabledata.mjs'
   ], {
     paths: ['src/js']
   }).transform(babelify.configure({
@@ -359,11 +371,6 @@ gulp.task('dist-test', gulp.series('clean', 'dist', () => {
     .pipe(gulp.dest(dirs.site + '/api/data'))
 }))
 
-gulp.task('release', gulp.series(
-  'clean',
-  'build'
-))
-
 // --- release targets ---------------------------------------------------------
 
 gulp.task('package-tgz', function () {
@@ -403,6 +410,57 @@ gulp.task('release', gulp.series(
   'package-tgz',
   'package-zip'
 ))
+
+// --- demo mode (serverless) targets ------------------------------------------
+
+function demo (name) {
+  const image = require('gulp-image')
+  const changed = require('gulp-changed')
+
+  return gulp.series(() => { // step 1: optimize & cache content
+    return replace(gulp.src('src/templates/' + name + '/**/*'))
+      .pipe(changed(dirs.cache + '/templates/' + name))
+      .pipe(image({
+        optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+        pngquant: ['--speed=1', '--force', 256],
+        zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+        jpegRecompress: ['--strip', '--quality', 'high', '--min', 60, '--max', 85],
+        mozjpeg: ['-optimize', '-progressive'],
+        gifsicle: ['--optimize'],
+        svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+      }))
+      .pipe(gulp.dest(dirs.cache + '/templates/' + name))
+  }, () => { // step 2: copy to demo folder
+    return gulp.src([
+      dirs.cache + '/templates/' + name + '/**/*',
+      'src/misc/demo/templates/' + name + '/**/*'
+    ])
+      .pipe(gulp.dest(dirs.demo + '/' + name))
+  })
+}
+
+gulp.task('demo-Classic', demo('Classic'))
+gulp.task('demo-RPG', demo('RPG'))
+gulp.task('demo-Hex', demo('Hex'))
+gulp.task('demo-Tutorial', demo('Tutorial'))
+
+gulp.task('demo', gulp.series('clean', () => {
+  demomode = true
+  site = 'https://freebeegee.org/'
+  return gulp.src('tools')
+}, gulp.parallel(
+  'js-main',
+  'sass',
+  'html',
+  'js-vendor',
+  'demo-Classic',
+  'demo-RPG',
+  'demo-Hex',
+  'demo-Tutorial',
+  'fonts',
+  'img',
+  'favicon'
+)))
 
 // --- default target ----------------------------------------------------------
 

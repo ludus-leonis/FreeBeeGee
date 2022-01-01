@@ -44,6 +44,7 @@
     "gulp-autoprefixer": "^8.0.0",
     "gulp-changed": "^4.0.3",
     "gulp-concat": "*",
+    "gulp-decompress": "^3.0.0",
     "gulp-gzip": "^1.4.2",
     "gulp-image": "~6.2.1",
     "gulp-jsdoc3": "^3.0.0",

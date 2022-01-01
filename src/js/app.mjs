@@ -1,6 +1,6 @@
 /**
  * @file Does all the browser/document setup & page routing.
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -46,9 +46,9 @@ export function navigateReload () {
  */
 export function navigateToJoin (roomName) {
   if (roomName) {
-    globalThis.location = './?room=' + roomName
+    goto('./?room=' + roomName)
   } else {
-    globalThis.location = './'
+    goto(globalThis.location = './')
   }
 }
 
@@ -58,7 +58,7 @@ export function navigateToJoin (roomName) {
  * @param {String} roomName Name of room to go to.
  */
 export function navigateToRoom (roomName) {
-  globalThis.location = './' + roomName
+  goto('./' + roomName)
 }
 
 /**
@@ -87,4 +87,15 @@ export function route () {
       }
     })
     .catch(error => runError('UNKNOWN', error))
+}
+
+/**
+ * Go to another url via browser's location.
+ *
+ * Will delay execution slightly to not mess up logging output order.
+ */
+function goto (url) {
+  setTimeout(() => {
+    globalThis.location = url
+  }, 10)
 }

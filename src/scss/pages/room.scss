@@ -1,4 +1,4 @@
-// Copyright 2021 Markus Leupold-Löwenthal
+// Copyright 2021-2022 Markus Leupold-Löwenthal
 //
 // This file is part of FreeBeeGee.
 //
@@ -100,6 +100,10 @@
     position: absolute;
     right: $spacing-small;
     text-shadow: 1px 1px 1px $color-black-100;
+
+    a {
+      @include typography-links(inherit, inherit, 2px, $color-primary, var(--fbg-color-text));
+    }
   }
 }
 

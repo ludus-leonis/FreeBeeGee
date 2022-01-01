@@ -3,7 +3,7 @@
  *       pieces. Does not do any API calls, only operates on pre-downloaded
  *       data. Does not know about DOM/nodes.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -38,6 +38,10 @@ import {
   getDimensionsRotated,
   mod
 } from '../../../lib/utils.mjs'
+
+import {
+  DEMO_MODE
+} from '../../../api/index.mjs'
 
 export const assetTypes = [
   'tile',
@@ -146,10 +150,18 @@ export function findAssetByAlias (name, layer = 'any') {
  * @return {String} URL to be used in url() or img.src.
  */
 export function getAssetURL (asset, side) {
-  if (side === -1) {
-    return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
+  if (DEMO_MODE) {
+    if (side === -1) {
+      return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`
+    } else {
+      return `demo/${getTemplate().name}/assets/${asset.type}/${asset.media[side]}`
+    }
   } else {
-    return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
+    if (side === -1) {
+      return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
+    } else {
+      return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
+    }
   }
 }
 

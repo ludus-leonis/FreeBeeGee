@@ -1,7 +1,7 @@
 /**
  * @file Various error dialogs
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -80,7 +80,7 @@ function detectProblem () {
         .then(text => {
           if (response.status === 200) {
             if (text.search(/This file is part of FreeBeeGee/) >= 0) {
-              error.innerHTML = '<p>PHP is not enabled on this server. FreeBeeGee can\'t run without PHP :(</p>'
+              error.innerHTML = '<p>PHP is not enabled on this server. FreeBeeGee can\'t run without PHP 😞</p>'
               throw missing // abort further diagnosis
             } else if (
               !text.search(/{/) >= 0 || // output does not start with json object

@@ -1,7 +1,7 @@
 /**
  * @file DOM manipulation helpers.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  * @version 1.0.1
  *

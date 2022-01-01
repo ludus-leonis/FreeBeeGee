@@ -6,10 +6,11 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
-* none yet
+* added laser-pointer, settings and measure mode to tutorial
 
 ### Other changes
 
+* added demo mode - separate build necessary
 * changed RPG template tiles to paper material
 
 ## v0.13.0 - Colorful Cobra

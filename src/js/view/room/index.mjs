@@ -2,7 +2,7 @@
  * @file The room handling. Mainly in charge of UI, menus and managing the
  *       tabletop canvas itself - but not the stuff on the tabletop.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -81,6 +81,14 @@ import {
 } from '../../view/room/modal/help.mjs'
 
 import {
+  modalDisabled
+} from '../../view/room/modal/disabled.mjs'
+
+import {
+  modalDemo
+} from '../../view/room/modal/demo.mjs'
+
+import {
   modalSettings,
   changeQuality
 } from '../../view/room/modal/settings.mjs'
@@ -89,6 +97,10 @@ import {
   clamp,
   brightness
 } from '../../lib/utils.mjs'
+
+import {
+  DEMO_MODE
+} from '../../api/index.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -367,7 +379,9 @@ export function updateStatusline () {
     hour: '2-digit',
     minute: '2-digit'
   })
-  const message = fakeTabularNums(`${time} • Table ${getTableNo()}`)
+  const message = DEMO_MODE
+    ? fakeTabularNums(`<a href="https://freebeegee.org/">FreeBeeGee</a> • ${time} • Table ${getTableNo()}`)
+    : fakeTabularNums(`${time} • Table ${getTableNo()}`)
   const status = _('#room .status')
   if (status.innerHTML !== message) {
     status.innerHTML = message
@@ -518,7 +532,7 @@ function setupRoom () {
         <div>
           <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
 
-          <a id="btn-snap" class="btn-icon" title="Download snapshot" href='./api/rooms/${room.name}/snapshot/'>${iconDownload}</a>
+          <a id="btn-snap" class="btn-icon" title="Download snapshot">${iconDownload}</a>
 
           <button id="btn-q" class="btn-icon" title="Leave room">${iconQuit}</button>
         </div>
@@ -575,7 +589,6 @@ function setupRoom () {
   // setup remaining menu
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
-  _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
 
   setupBackground()
 
@@ -586,7 +599,21 @@ function setupRoom () {
   // load + setup content
   setTableNo(getRoomPreference(PREFS.TABLE), false)
   runStatuslineLoop()
-  startAutoSync(() => { autoTrackScrollPosition() })
+
+  // start autosyncing after a short delay to reduce server load a bit
+  setTimeout(() => {
+    startAutoSync(() => { autoTrackScrollPosition() })
+  }, 100)
+
+  if (DEMO_MODE) {
+    _('#btn-snap').on('click', () => modalDisabled('would have downloaded a snapshot (a.k.a. savegame) of your whole room as <code>.zip</code> by now'))
+    if (!getRoomPreference(PREFS.DISCLAIMER)) {
+      setRoomPreference(PREFS.DISCLAIMER, true)
+      modalDemo()
+    }
+  } else {
+    _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
+  }
 }
 
 let scrollFetcherTimeout = -1

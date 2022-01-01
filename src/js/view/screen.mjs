@@ -1,7 +1,7 @@
 /**
  * @file Common screen handling.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -40,7 +40,7 @@ export function createScreen (headline, content, footer = '') {
             <div id="content" class="card-body">${content}</div>
           </form>
           <p id="footer" class="p-small is-faded is-center">${footer}</p>
-          <p class="p-tiny is-faded spacing-medium copyright"><a href="https://freebeegee.org/">FreeBeeGee</a> v$VERSION$, ©2021 Ludus Leonis · <a href="terms">Terms of use</a> · <a href="privacy">Privacy Policy</a></p>
+          <p class="p-tiny is-faded spacing-medium copyright"><a href="https://freebeegee.org/">FreeBeeGee</a> v$VERSION$, ©2021-2022 Ludus Leonis<br><a href="terms">Terms of use</a> · <a href="privacy">Privacy&nbsp;Policy</a></p>
         </div>
       </div>
     </div>

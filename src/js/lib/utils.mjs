@@ -1,7 +1,7 @@
 /**
  * @file Various generic utility helpers.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -92,6 +92,24 @@ export function setStoreValue (key, property, value, local = true) {
     const prefs = JSON.parse(fallbackStore.get(key) ?? '{}')
     prefs[property] = value
     fallbackStore.set(key, JSON.stringify(prefs))
+  }
+}
+
+/**
+ * Remove a key in an HTML5 browser store.
+ *
+ * Transparent fallback to in-memory map if session store is not available.
+ *
+ * @param {String} key Name of the store item.
+ * @param {Boolean} local If true, the localStorage will be used. Otherwise the
+ *                        sessionStorage will be used.
+ */
+export function removeStoreValue (key, local = true) {
+  if (typeof Storage !== 'undefined') {
+    const store = local ? globalThis.localStorage : globalThis.sessionStorage
+    store.removeItem(key)
+  } else {
+    fallbackStore.delete(key)
   }
 }
 
@@ -376,7 +394,30 @@ export function getDimensionsRotated (w, h, r) {
   }
 }
 
+// --- date --------------------------------------------------------------------
+
+/**
+ * Get seconds since epoch.
+ *
+ * @param {Number} delta Optional delta in seconds to apply.
+ * @return {Number} Seconds since epoch.
+ */
+export function epoch (delta = 0) {
+  return Math.floor(new Date().getTime() / 1000) + delta
+}
+
 // --- string & text -----------------------------------------------------------
+
+/**
+ * Generate a hex ID.
+ *
+ * @param {Number} digits Length of ID, defaults to 16.
+ * @return {String} Random Hex-string.
+ */
+export function hexId (digits = 16) {
+  // taken from https://stackoverflow.com/questions/58325771/how-to-generate-random-hex-string-in-javascript
+  return [...Array(digits)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
+}
 
 /**
  * Generate a v4 UUID.

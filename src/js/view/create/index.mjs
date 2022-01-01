@@ -1,7 +1,7 @@
 /**
  * @file The create-a-room screen.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -57,6 +57,8 @@ export function createRoomView (name) {
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
     : 'Let us know what game we may prepare for you.'
 
+  const ttl = getServerInfo().ttl
+
   createScreen(
     'Open new room',
     `
@@ -88,7 +90,9 @@ export function createRoomView (name) {
       </div>
     `,
 
-    `This server deletes rooms after ${getServerInfo().ttl}h of inactivity.`
+    ttl > 0
+      ? `This server deletes rooms after ${ttl}h of inactivity.`
+      : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 
   apiGetTemplates()
@@ -98,7 +102,7 @@ export function createRoomView (name) {
       for (const template of templates) {
         const option = _('option').create(template)
         option.value = template
-        if (template === 'RPG') option.selected = true
+        if (template === 'Tutorial') option.selected = true
         t.add(option)
       }
     })

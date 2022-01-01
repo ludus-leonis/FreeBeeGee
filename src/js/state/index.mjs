@@ -3,7 +3,7 @@
  *       changes to the API but is not in charge of syncing the state back.
  *       Might cache some values in the browser store.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -159,17 +159,18 @@ export const PREFS = {
   SCROLL: { name: 'scroll', default: {} },
   BACKGROUND: { name: 'background', default: 5 }, // wood
   QUALITY: { name: 'quality', default: 3 },
+  DISCLAIMER: { name: 'disclaimer', default: false },
   TAB_HELP: { name: 'tabHelp', default: 'tab-1' },
   TAB_LIBRARY: { name: 'tabLibrary', default: 'tab-1' },
   TAB_SETTINGS: { name: 'tabSettings', default: 'tab-1' }
 }
 
-function setPreference (key, pref, value) {
+export function setPreference (key, pref, value) {
   if (!pref.name) console.error('unknown pref', pref)
   setStoreValue(key, pref.name, value)
 }
 
-function getPreference (key, pref) {
+export function getPreference (key, pref) {
   if (!pref.name) console.error('unknown pref', pref)
   return getStoreValue(key, pref.name) ?? pref.default
 }
@@ -256,7 +257,7 @@ export function cleanupStore () {
     if (!key.startsWith('freebeegee')) store.removeItem(key)
   }
 
-  // keep last entries
+  // keep 16 newest entries
   const entries = []
   for (const key of Object.keys(store)) {
     if (key.startsWith('freebeegee-')) {
@@ -264,7 +265,7 @@ export function cleanupStore () {
     }
   }
   entries.sort((a, b) => a.t - b.t)
-  for (let i = 0; i < entries.length - 8; i++) {
+  for (let i = 0; i < entries.length - 16; i++) {
     store.removeItem(entries[i].key)
   }
 }
@@ -569,7 +570,7 @@ export function isTabActive () {
  */
 export function setTabActive (state) {
   tabActive = state
-  if (state) syncNow()
+  if (state && room) syncNow()
 }
 
 // --- internal, but exposed for unit testing ----------------------------------
@@ -598,8 +599,8 @@ export function _setRoom (data) {
 
 // --- internal ----------------------------------------------------------------
 
-let serverInfo = {} /** stores the server meta info JSON */
-let room = {} /** stores the room meta info JSON */
+let serverInfo = null /** stores the server meta info JSON */
+let room = null /** stores the room meta info JSON */
 let tableNo = 1 /** stores the currently visible table index */
 const tables = [[], [], [], [], [], [], [], [], [], []] /** caches the tables 0..9 **/
 let tabActive = true /** is the current tab/window active/maximized? */
