@@ -19,6 +19,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will no longer wor
 * changed default max room size to 16MB and max room count to 32 - customize them in server.json
 * changed IDs to 8-digit 64-base strings
 * changed RPG template tiles to paper material
+* changed API - backgrounds now part of server JSON, not room JSON
 
 ## v0.13.0 - Colorful Cobra
 

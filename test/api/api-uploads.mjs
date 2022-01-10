@@ -53,15 +53,10 @@ function testApiZipMinimal (api, version, room) {
     }),
     body => {
       expect(body).to.be.an('object')
+      expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
       expect(body.id).to.match(REGEXP_ID)
       expect(body.name).to.be.eql(room)
       expect(body.engine).to.be.eql(p.versionEngineTest)
-      expect(body.backgrounds).to.be.an('array')
-      expect(body.backgrounds[body.backgrounds.length - 1]).to.be.an('object')
-      expect(body.backgrounds[body.backgrounds.length - 1].name).to.be.eql('Wood')
-      expect(body.backgrounds[body.backgrounds.length - 1].color).to.be.eql('#57514d')
-      expect(body.backgrounds[body.backgrounds.length - 1].scroller).to.be.eql('#3e3935')
-      expect(body.backgrounds[body.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
       expect(body.width).to.be.eql(3072)
       expect(body.height).to.be.eql(2048)
       expect(body.library).to.be.an('object')
@@ -116,15 +111,10 @@ function testApiZipFull (api, version, room) {
     () => { return fs.readFileSync('test/data/full.zip') },
     body => {
       expect(body).to.be.an('object')
+      expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
       expect(body.id).to.match(REGEXP_ID)
       expect(body.name).to.be.eql(room)
       expect(body.engine).to.be.eql(p.versionEngineTest)
-      expect(body.backgrounds).to.be.an('array')
-      expect(body.backgrounds[body.backgrounds.length - 1]).to.be.an('object')
-      expect(body.backgrounds[body.backgrounds.length - 1].name).to.be.eql('Wood')
-      expect(body.backgrounds[body.backgrounds.length - 1].color).to.be.eql('#57514d')
-      expect(body.backgrounds[body.backgrounds.length - 1].scroller).to.be.eql('#3e3935')
-      expect(body.backgrounds[body.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
       expect(body.width).to.be.eql(3072)
       expect(body.height).to.be.eql(2048)
       expect(body.library).to.be.an('object')

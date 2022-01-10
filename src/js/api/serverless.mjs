@@ -314,7 +314,15 @@ function api (data, headers) {
         ttl: -1,
         snapshotUploads: false,
         freeRooms: 128,
-        root: root + 'api'
+        root: root + 'api',
+        backgrounds: [
+          { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2e5d3c', scroller: '#1b3c25' },
+          { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#646260', scroller: '#494540' },
+          { name: 'Marble', image: 'img/desktop-marble.jpg', color: '#b4a999', scroller: '#80725e' },
+          { name: 'Metal', image: 'img/desktop-metal.jpg', color: '#515354', scroller: '#3e3e3e' },
+          { name: 'Rock', image: 'img/desktop-rock.jpg', color: '#5c5d5a', scroller: '#393930' },
+          { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#57514d', scroller: '#3e3935' }
+        ]
       }, headers)
     default:
       throw new UnexpectedStatus(501, 'not implemented for demo')

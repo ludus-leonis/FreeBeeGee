@@ -34,10 +34,21 @@ import {
 function testApiServerInfo (api) {
   testJsonGet(api, () => '/', body => {
     expect(body).to.be.an('object')
+    expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'backgrounds', 'engine', 'root', 'snapshotUploads'])
     expect(body.createPassword).to.be.eql(true)
     expect(body.freeRooms).to.be.eql(16)
     expect(body.ttl).to.be.eql(48)
+    expect(body.engine).to.be.eql('2.3.4')
+    expect(body.root).to.be.eql('/api')
+    expect(body.snapshotUploads).to.be.eql(true)
     expect(body.version).to.match(/^[0-9]+\.[0-9]+\.[0-9]+/)
+    expect(body.backgrounds).to.be.an('array')
+    expect(body.backgrounds.length).to.be.gte(5)
+    expect(body.backgrounds[body.backgrounds.length - 1]).to.be.an('object')
+    expect(body.backgrounds[body.backgrounds.length - 1].name).to.be.eql('Wood')
+    expect(body.backgrounds[body.backgrounds.length - 1].color).to.be.eql('#57514d')
+    expect(body.backgrounds[body.backgrounds.length - 1].scroller).to.be.eql('#3e3935')
+    expect(body.backgrounds[body.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
   })
 }
 

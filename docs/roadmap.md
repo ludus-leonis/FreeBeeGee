@@ -6,7 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [X] change RPG template tiles to paper material
 * [X] add more PHP unit tests for room/template parsing
-* [ ] move backgrounds from room to server
+* [X] move backgrounds from room to server
 * [ ] add option to force-upgrade rooms
 * [X] auto-migrate rooms from compatible engine versions
 * [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen

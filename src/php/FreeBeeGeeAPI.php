@@ -1394,6 +1394,8 @@ class FreeBeeGeeAPI
         $info->freeRooms = $this->getFreeRooms($server);
         $info->root = $this->api->getAPIPath();
 
+        $info->backgrounds = $this->getBackgrounds();
+
         if ($server->passwordCreate ?? '' !== '') {
             $info->createPassword = true;
         }
@@ -1583,7 +1585,6 @@ class FreeBeeGeeAPI
             'engine' => $this->engine,
             'template' => $template,
             'library' => $this->generateLibraryJSON($name),
-            'backgrounds' => $this->getBackgrounds(),
             'credits' => file_get_contents($folder . 'LICENSE.md'),
             'width' => $template->gridWidth * $template->gridSize,
             'height' => $template->gridHeight * $template->gridSize,

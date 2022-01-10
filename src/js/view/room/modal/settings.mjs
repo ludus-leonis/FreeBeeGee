@@ -28,6 +28,7 @@ import {
   patchTemplate,
   updateTable,
   getRoom,
+  getServerInfo,
   deleteRoom,
   getTableNo,
   setTableNo,
@@ -246,10 +247,10 @@ export function modalSettings () {
     }
   })
 
-  const room = getRoom()
+  const server = getServerInfo()
   const backgrounds = _('#table-background')
-  for (let i = 0; i < room.backgrounds.length; i++) {
-    const option = _('option').create(room.backgrounds[i].name)
+  for (let i = 0; i < server.backgrounds.length; i++) {
+    const option = _('option').create(server.backgrounds[i].name)
     option.value = i
     if (i === getServerPreference(PREFS.BACKGROUND)) option.selected = true
     backgrounds.add(option)

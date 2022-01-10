@@ -29,6 +29,7 @@ import {
 import {
   loadRoom,
   getRoom,
+  getServerInfo,
   PREFS,
   cleanupStore,
   getServerPreference,
@@ -420,12 +421,13 @@ export function setupBackground (
   gridType = getRoomPreference(PREFS.GRID)
 ) {
   const room = getRoom()
+  const server = getServerInfo()
 
-  bgIndex = clamp(0, bgIndex, room.backgrounds.length - 1)
+  bgIndex = clamp(0, bgIndex, server.backgrounds.length - 1)
 
   updateRoom().css({
-    '--fbg-tabletop-color': room.backgrounds[bgIndex].color,
-    '--fbg-tabletop-image': url(room.backgrounds[bgIndex].image)
+    '--fbg-tabletop-color': server.backgrounds[bgIndex].color,
+    '--fbg-tabletop-image': url(server.backgrounds[bgIndex].image)
   })
 
   // setup background / wallpaper + grid
@@ -433,7 +435,7 @@ export function setupBackground (
   if (gridType > 0) {
     _('#tabletop').add('.has-grid')
 
-    const color = brightness(room.backgrounds[bgIndex].color) < 92 ? 'white' : 'black'
+    const color = brightness(server.backgrounds[bgIndex].color) < 92 ? 'white' : 'black'
     const style = gridType > 1 ? 'major' : 'minor'
     const shape = room.template?.type === TYPE_HEX ? 'hex' : 'square'
     _('#tabletop').css({ '--fbg-tabletop-grid': url(`img/grid-${shape}-${style}-${color}.svg`) })
@@ -441,9 +443,9 @@ export function setupBackground (
 
   // setup scroller
   scroller.css({ // this is for moz://a
-    scrollbarColor: `${room.backgrounds[bgIndex].scroller} ${room.backgrounds[bgIndex].color}`,
-    '--fbg-color-scroll-fg': room.backgrounds[bgIndex].scroller,
-    '--fbg-color-scroll-bg': room.backgrounds[bgIndex].color
+    scrollbarColor: `${server.backgrounds[bgIndex].scroller} ${server.backgrounds[bgIndex].color}`,
+    '--fbg-color-scroll-fg': server.backgrounds[bgIndex].scroller,
+    '--fbg-color-scroll-bg': server.backgrounds[bgIndex].color
   })
 
   // store for future reference
