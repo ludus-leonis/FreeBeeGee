@@ -171,7 +171,7 @@ function ok (name) {
         switch (error.status) {
           case 400:
             switch (error.body._error) {
-              case 'TEMPLATE_JSON_INVALID_ENGINE':
+              case 'INVALID_ENGINE':
                 serverFeedback(`The selected template requires engine <strong>${error.body._messages[1]}</strong> and can't be run on this server (engine <strong>${error.body._messages[2]}</strong>). Please choose another template.`)
                 _('#uploadInput').add('.invalid')
                 _('#template').add('.invalid').focus()

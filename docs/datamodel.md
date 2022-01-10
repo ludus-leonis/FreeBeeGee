@@ -4,6 +4,16 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It describes t
 
 It is not necessary to read/understand this to use FBG. This information is here for developers who would like to contribute code or extend FBG.
 
+## IDs
+
+Various objects have IDs. FreeBeeGee uses random 8-character-strings composed of uppercase and lowercase letters, digits, '_' and '-'. That's 64 possible characters and roughly 10^14 combinations. E.g.:
+
+```
+"id": "FpO1J-Tg"
+```
+
+IDs are only considered unique within their *room*.
+
 ## Assets
 
 An *asset* describes a single, possibly multi-sided graphical element that is available in the table's *library* and will be used by a *piece*. Each *asset* is unique and can't be directly placed on the table - it does not have a state like position, rotation, scale, ...
@@ -12,7 +22,7 @@ A minimal example:
 
 ```json
 {
-  "id": "e786f024af997f9c",
+  "id": "FpO1J-Tg",
   "name": "room",
   "type": "tile",
   "media": [
@@ -25,7 +35,7 @@ A minimal example:
 Mandatory fields:
 
 `id`
-: The ID of the *asset* (16-digit hex).
+: The ID of the *asset*. While this ID follows the general 8-character-string scheme, it is not randomly generated but derived from the asset filename (excluding color and extension).
 
 `name`
 : The name of the *asset*. Used e.g. in the *library*.
@@ -148,9 +158,9 @@ A minimal *piece* contains the following information:
 
 ```json
 {
-  "id": "ec0dfce0d35d657a",
+  "id": "r8PY_21s",
   "l": 5,
-  "a": "0c6175be538f8b32",
+  "a": "FpO1J-Tg",
   "x": 1216,
   "y": 640,
   "z": 10
@@ -158,7 +168,7 @@ A minimal *piece* contains the following information:
 ```
 
 `id`
-: The ID of the *piece*, a 16-digit hex string. The following IDs have a special meaning: 'ffffffffffffffff' represents the pointer, 'fffffffffffffffe' represents the LOS line.
+: The ID of the *piece*. The following IDs have a special meaning: 'ZZZZZZZZ' represents the pointer, 'ZZZZZZZY' represents the LOS line.
 
 `l`
 : The layer (number) to show the *piece* in. `1` = tile, `2` = overlay, `3` = note, `4` = token, '5' = other. In theory the *asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *asset* is used in the tile layer.
@@ -203,9 +213,9 @@ In addition, a *piece* can have the following optional properties. If omitted, t
 
 ### Special pieces
 
-A *piece* with `id` and `a` set to `ffffffffffffffff` represents the (laser)pointer. There can only be one on the table.
+A *piece* with `id` and `a` set to `ZZZZZZZZ` represents the (laser)pointer. There can only be one on the table.
 
-A *piece* with `id` and `a` set to `fffffffffffffffe` represents the LOS line. There can only be one on the table. The `x`/`y` do not represent the center of this piece, but the center of the starting point of the line. `w` and `h` represent the width and height in px of the line's bounding box. It will always be drawn to the opposite corner. Width and height can be negative, extending the box to the left or upwards from the starting point.
+A *piece* with `id` and `a` set to `ZZZZZZZY` represents the LOS line. There can only be one on the table. The `x`/`y` do not represent the center of this piece, but the center of the starting point of the line. `w` and `h` represent the width and height in px of the line's bounding box. It will always be drawn to the opposite corner. Width and height can be negative, extending the box to the left or upwards from the starting point.
 
 Special pieces feature the following additional fields:
 
@@ -296,7 +306,7 @@ This JSON describes a whole *room*.
 
 ```json
 {
-  "id": "570216835fdebd3c",
+  "id": "O1JsTFpg",
   "name": "openExaminingBear",
   "engine": "1.0.0",
 

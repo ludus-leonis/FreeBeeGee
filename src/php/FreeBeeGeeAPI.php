@@ -27,9 +27,11 @@ namespace com\ludusleonis\freebeegee;
  */
 class FreeBeeGeeAPI
 {
-    private $ID_ASSET_POINTER = 'ffffffffffffffff';
-    private $ID_ASSET_LOS = 'fffffffffffffffe';
-    private $REGEXP_ID = '^[0-9a-f]{16}$';
+    private $ID_ASSET_POINTER = 'ZZZZZZZZ';
+    private $ID_ASSET_LOS = 'ZZZZZZZY';
+    private $ID_ASSET_NONE = '00000000';
+    private $REGEXP_ID = '^[0-9a-zA-Z_-]{8}$';
+    private $REGEXP_COLOR = '^#[0-9a-fA-F]{6}$';
     private $version = '$VERSION$';
     private $engine = '$ENGINE$';
     private $api = null; // JSONRestAPI instance
@@ -83,7 +85,8 @@ class FreeBeeGeeAPI
 
         $this->api->register('GET', '/rooms/:rid/snapshot/?', function ($fbg, $data) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->getSnapshot($data['rid'], intval($_GET['tzo']));
+                $tzo = array_key_exists('tzo', $_GET) ? intval($_GET['tzo']) : 0;
+                $fbg->getSnapshot($data['rid'], $tzo);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
@@ -103,39 +106,44 @@ class FreeBeeGeeAPI
 
         $this->api->register('POST', '/rooms/:rid/tables/:tid/pieces/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->createPiece($data['rid'], $data['tid'], $payload);
+                $piece = $this->api->assertJSONObject('piece', $payload);
+                $fbg->createPiece($data['rid'], $data['tid'], $piece);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         $this->api->register('POST', '/rooms/:rid/assets/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->createAssetLocked($data['rid'], $payload);
+                $asset = $this->api->assertJSONObject('asset', $payload);
+                $fbg->createAssetLocked($data['rid'], $asset);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         $this->api->register('POST', '/rooms/', function ($fbg, $data, $payload) {
-            $formData = $this->api->multipartToJson();
+            $formData = $this->api->multipartToJSON();
             if ($formData) { // client sent us multipart
-                $fbg->createRoomLocked($formData);
-            } else { // client sent us regular json
-                $fbg->createRoomLocked($payload);
+                $room = $this->api->assertJSONObject('room', $formData);
+            } else { // client sent us regular JSON
+                $room = $this->api->assertJSONObject('room', $payload);
             }
+            $fbg->createRoomLocked($room);
         });
 
         // --- PUT ---
 
         $this->api->register('PUT', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->replacePiece($data['rid'], $data['tid'], $data['pid'], $payload);
+                $piece = $this->api->assertJSONObject('piece', $payload);
+                $fbg->replacePiece($data['rid'], $data['tid'], $data['pid'], $piece);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         $this->api->register('PUT', '/rooms/:rid/tables/:tid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->putTableLocked($data['rid'], $data['tid'], $payload);
+                $table = $this->api->assertJSONArray('table', $payload);
+                $fbg->putTableLocked($data['rid'], $data['tid'], $table);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
@@ -144,21 +152,24 @@ class FreeBeeGeeAPI
 
         $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->updatePiece($data['rid'], $data['tid'], $data['pid'], $payload);
+                $patch = $this->api->assertJSONObject('piece', $payload);
+                $fbg->updatePiece($data['rid'], $data['tid'], $data['pid'], $patch);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/', function ($fbg, $data, $payload) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->updatePieces($data['rid'], $data['tid'], $payload);
+                $patches = $this->api->assertJSONArray('pieces', $payload);
+                $fbg->updatePieces($data['rid'], $data['tid'], $patches);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
 
         $this->api->register('PATCH', '/rooms/:rid/template/', function ($fbg, $data, $payload) {
             if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->updateRoomTemplateLocked($data['rid'], $payload);
+                $patch = $this->api->assertJSONObject('template', $payload);
+                $fbg->updateRoomTemplateLocked($data['rid'], $patch);
             }
             $this->api->sendError(404, 'not found: ' . $data['rid']);
         });
@@ -181,6 +192,21 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Set API/temp dir and other values.
+     *
+     * Only to be used for debugging/unit testing.
+     */
+    public function setDebug(
+        string $dir,
+        string $version,
+        string $engine
+    ) {
+        $this->api->debugApiDir($dir);
+        $this->version = $version;
+        $this->engine = $engine;
+    }
+
+    /**
      * Run this application.
      *
      * Will route and execute a single HTTP request.
@@ -188,6 +214,13 @@ class FreeBeeGeeAPI
     public function run(): void
     {
         $this->api->route($this);
+    }
+
+    // --- getters -------------------------------------------------------------
+
+    public function getEngine(): string
+    {
+        return $this->engine;
     }
 
     // --- helpers -------------------------------------------------------------
@@ -225,11 +258,26 @@ class FreeBeeGeeAPI
      */
     private function getServerConfig()
     {
-        $config = json_decode(file_get_contents($this->api->getDataDir() . 'server.json'));
-        $config->version = '$VERSION$';
-        $config->engine = '$ENGINE$';
-        $config->maxAssetSize = $this->maxAssetSize;
-        return $config;
+        if (is_file($this->api->getDataDir() . 'server.json')) {
+            $config = json_decode(file_get_contents($this->api->getDataDir() . 'server.json'));
+            $config->version = '$VERSION$';
+            $config->engine = '$ENGINE$';
+            $config->maxAssetSize = $this->maxAssetSize;
+            return $config;
+        } else {
+            // config not found - return system values
+            return json_decode('
+                {
+                    "ttl": 48,
+                    "maxRooms": 32,
+                    "maxRoomSizeMB": 16,
+                    "snapshotUploads": false,
+                    "passwordCreate": "$2y$12$ZLUoJ7k6JODIgKk6et8ire6XxGDlCS4nupZo9NyJvSnomZ6lgFKGa",
+                    "version": "$VERSION$",
+                    "engine": "$ENGINE$"
+                }
+            ');
+        }
     }
 
     /**
@@ -283,198 +331,6 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Merge two data objects.
-     *
-     * The second object's properties take precedence.
-     *
-     * @param object $original The first/source object.
-     * @param object $updates An object containing new/updated properties.
-     * @return object An object with $original's properties overwritten by $updates's.
-     */
-    private function merge(
-        object $original,
-        object $updates
-    ): object {
-        return (object) array_merge((array) $original, (array) $updates);
-    }
-
-    /**
-     * Validate a template / snapshot.
-     *
-     * Does a few sanity checks to see if everything is there we need. Will
-     * termiante execution and send a 400 in case of invalid zips.
-     *
-     * @param string $zipPath Full path to the zip to check.
-     * @param array Array of strings / paths of all valid zip entries to extract.
-     */
-    private function validateSnapshot(
-        string $zipPath
-    ): array {
-        $issues = [];
-        $valid = [];
-        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB  * 1024 * 1024;
-
-        // basic sanity tests
-        if (filesize($zipPath) > $sizeLeft) {
-            // if the zip itself is too large, then its content is probably too
-            $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
-        }
-
-        // iterate over zip entries
-        $zip = new \ZipArchive();
-        if (!$zip->open($zipPath)) {
-            $this->api->sendError(400, 'can\'t open zip', 'ZIP_INVALID', $issues);
-        }
-        for ($i = 0; $i < $zip->numFiles; $i++) {
-            // note: the checks below will just 'continue' for invalid/ignored items
-            $entry = $zip->statIndex($i);
-
-            switch ($entry['name']) { // filename checks
-                case 'LICENSE.md':
-                    break; // known, unchecked file
-                case 'template.json':
-                    $this->validateTemplateJson(file_get_contents('zip://' . $zipPath . '#template.json'));
-                    break;
-                case 'tables/1.json':
-                case 'tables/2.json':
-                case 'tables/3.json':
-                case 'tables/4.json':
-                case 'tables/5.json':
-                case 'tables/6.json':
-                case 'tables/7.json':
-                case 'tables/8.json':
-                case 'tables/9.json':
-                    $this->validateTableJson('', file_get_contents('zip://' . $zipPath . '#' . $entry['name']));
-                    break;
-                default: // scan for asset filenames
-                    if (
-                        !preg_match(
-                            '/^assets\/(overlay|tile|token|other|tag)\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
-                            $entry['name']
-                        )
-                    ) {
-                        continue 2; // for
-                    }
-            }
-
-            if ($entry['size'] > $this->maxAssetSize) { // filesize checks
-                continue; // for
-            }
-            $sizeLeft -= $entry['size'];
-            if ($sizeLeft < 0) {
-                $this->api->sendError(400, 'zip content too large', 'SIZE_EXCEEDED', $issues);
-            }
-
-            // if we got here, no check failed, so the entry is ok!
-            $valid[] = $entry['name'];
-        }
-
-        return $valid;
-    }
-
-    /**
-     * Validate a template.json.
-     *
-     * Will termiante execution and send a 400 in case of invalid JSON.
-     *
-     * @param string $json JSON string.
-     * @param boolean $checkMandatory If true, this function will also ensure all
-     *                mandatory fields are present.
-     * @param Object The parsed template object.
-     */
-    private function validateTemplateJson(
-        string $json,
-        bool $checkMandatory = true
-    ): object {
-        $msg = 'validating template.json failed';
-        $template = json_decode($json);
-
-        // check the basics and abort on error
-        if ($template === null) {
-            $this->api->sendError(400, $json . ' - syntax error', 'TEMPLATE_JSON_INVALID');
-        }
-
-        if ($checkMandatory) {
-            if (!isset($template->engine) || !$this->api->semverSatisfies($this->engine, '^' . $template->engine)) {
-                $this->api->sendError(400, 'template.json: game engine mismatch', 'TEMPLATE_JSON_INVALID_ENGINE', [
-                    $template->engine, $this->engine
-                ]);
-            }
-            $this->api->assertHasProperties(
-                'template.json',
-                $template,
-                ['type', 'gridSize', 'version', 'engine', 'gridWidth', 'gridHeight', 'colors']
-            );
-        }
-
-        // check for more stuff
-        foreach ($template as $property => $value) {
-            switch ($property) {
-                case 'engine':
-                    break; // was checked above
-                case 'type':
-                    $this->api->assertEnum('type', $value, $this->types);
-                    break;
-                case 'version':
-                    $this->api->assertSemver('version', $value);
-                    break;
-                case 'gridSize':
-                    $this->api->assertInteger('gridSize', $value, 64, 64);
-                    break;
-                case 'gridWidth':
-                    $this->api->assertInteger('gridWidth', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
-                    break;
-                case 'gridHeight':
-                    $this->api->assertInteger('gridHeight', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
-                    break;
-                case 'snap':
-                    $this->api->assertBoolean('snap', $value);
-                    break;
-                case 'colors':
-                    $this->api->assertObjectArray('colors', $value, 1);
-                    break;
-                case 'borders':
-                    $this->api->assertObjectArray('borders', $value, 1);
-                    break;
-                default:
-                    $this->api->sendError(400, 'invalid template.json: ' . $property . ' unkown');
-            }
-        }
-
-        return $template;
-    }
-
-    /**
-     * Validate a table.json.
-     *
-     * Will termiante execution and send a 400 in case of invalid JSON.
-     *
-     * @param string $tid Table ID for error messages.
-     * @param string $json JSON string.
-     */
-    private function validateTableJson(
-        string $tid,
-        string $json
-    ) {
-        $msg = 'validating table ' . $tid . '.json failed';
-        $table = json_decode($json);
-        $validated = [];
-
-        // check the basics and abort on error
-        if ($table === null) {
-            $this->api->sendError(400, $msg . ' - syntax error', 'STATE_JSON_INVALID');
-        }
-
-        // check for more stuff
-        $this->api->assertObjectArray($tid . '.json', $table, 0);
-        foreach ($table as $piece) {
-            $validated[] = $this->validatePiece($piece, true);
-        }
-
-        return $validated;
-    }
-
-    /**
      * Install a template/snapshot into a room.
      *
      * Will unpack the template .zip into the room folder. Terminates execution
@@ -484,7 +340,7 @@ class FreeBeeGeeAPI
      * @param string $zipPath Path to snapshot/template zip to install.
      * @param array $validEntries Array of path names (strings) to extract from zip.
      */
-    private function installSnapshot(
+    public function installSnapshot(
         string $roomName,
         string $zipPath,
         array $validEntries
@@ -515,12 +371,6 @@ class FreeBeeGeeAPI
         if (!is_file($folder . 'template.json')) {
             file_put_contents($folder . 'template.json', json_encode($this->getTemplateDefault()));
         }
-        if (!is_file($folder . 'tables/1.json')) {
-            file_put_contents($folder . 'tables/1.json', '[]');
-        }
-        if (!is_file($folder . 'LICENSE.md')) {
-            file_put_contents($folder . 'LICENSE.md', 'This snapshot does not provide license information.');
-        }
     }
 
     /**
@@ -534,17 +384,44 @@ class FreeBeeGeeAPI
             'type' => 'grid-square',
             'version' => $this->version,
             'engine' => $this->engine,
+
             'gridSize' => 64,
             'gridWidth' => 48,
             'gridHeight' => 32,
-            'colors' => [
-                (object) [ 'name ' => 'black', 'value' => '#0d0d0d' ],
-                (object) [ 'name ' => 'white', 'value' => '#ffffff' ],
-            ],
-            'borders' => [
-                (object) [ 'name ' => 'black', 'value' => '#0d0d0d' ],
-                (object) [ 'name ' => 'white', 'value' => '#ffffff' ],
-            ]
+
+            'colors' => $this->getColors(),
+            'borders' => $this->getColors()
+        ];
+    }
+
+    /**
+     * Assemble our default color array.
+     *
+     * @return array Default colors for use in templates.
+     */
+    private function getColors(): array
+    {
+        return [
+            (object) [ 'name ' => 'Black', 'value' => '#202020' ],
+            (object) [ 'name ' => 'Red', 'value' => '#b01c16' ],
+            (object) [ 'name ' => 'Orange', 'value' => '#b05a11' ],
+            (object) [ 'name ' => 'Yellow', 'value' => '#af9700' ],
+            (object) [ 'name ' => 'Green', 'value' => '#317501' ],
+            (object) [ 'name ' => 'Blue', 'value' => '#3387b0' ],
+            (object) [ 'name ' => 'Indigo', 'value' => '#2e4d7b' ],
+            (object) [ 'name ' => 'Violet', 'value' => '#730fb1' ],
+        ];
+    }
+
+    private function getBackgrounds(): array
+    {
+        return [
+            $this->getBackground('Casino', 'img/desktop-casino.jpg', '#2e5d3c', '#1b3c25'),
+            $this->getBackground('Concrete', 'img/desktop-concrete.jpg', '#646260', '#494540'),
+            $this->getBackground('Marble', 'img/desktop-marble.jpg', '#b4a999', '#80725e'),
+            $this->getBackground('Metal', 'img/desktop-metal.jpg', '#515354', '#3e3e3e'),
+            $this->getBackground('Rock', 'img/desktop-rock.jpg', '#5c5d5a', '#393930'),
+            $this->getBackground('Wood', 'img/desktop-wood.jpg', '#57514d', '#3e3935'),
         ];
     }
 
@@ -584,7 +461,8 @@ class FreeBeeGeeAPI
         $ids = []; // the IDs of all pieces that are still in $newTable after all the updates
         if ($create) { // in create mode we inject the new piece
             // add the new piece
-            $newTable[] = $this->removeDefaultsFromPiece($piece);
+            $result = $this->cleanupPiece($piece);
+            $newTable[] = $result;
 
             // re-add all old pieces
             foreach ($oldTable as $tableItem) {
@@ -613,10 +491,9 @@ class FreeBeeGeeAPI
                             continue;
                         }
                         if ($patch) {
-                            $tableItem = $this->removeDefaultsFromPiece($this->merge($tableItem, $piece));
-                            $this->validatePiece($tableItem, true); // double-check that the merged item is fine
+                            $tableItem = $this->cleanupPiece($this->merge($tableItem, $piece));
                         } else {
-                            $tableItem = $this->removeDefaultsFromPiece($piece);
+                            $tableItem = $this->cleanupPiece($piece);
                         }
                         $result = $tableItem;
                     }
@@ -632,75 +509,10 @@ class FreeBeeGeeAPI
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
         }
-        $this->writeAsJsonAndDigest($folder, 'tables/' . $tid . '.json', $newTable);
+        $this->writeAsJSONAndDigest($folder, 'tables/' . $tid . '.json', $newTable);
         $this->api->unlockLock($lock);
 
         return $result;
-    }
-
-    /**
-     * Convert an asset's filename into JSON metadata.
-     *
-     * Will parse files named .myName.1x2x3.ff0000.jpg and split those
-     * properties into JSON metadata.
-     *
-     * @param string $filename Filename to parse
-     * @return object Asset object (for JSON conversion).
-     */
-    public static function fileToAsset(
-        $filename
-    ) {
-        $asset = new \stdClass();
-        $asset->media = [$filename];
-        if (
-            // group.name.1x2x3.808080.png
-            preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?(-[^\.-]+)?\.[a-zA-Z0-9]+$/',
-                $filename,
-                $matches
-            )
-        ) {
-            $asset->name = $matches[1];
-            $asset->w = (int)$matches[2];
-            $asset->h = (int)$matches[3];
-            $asset->s = $matches[4];
-            $asset->bg = '#808080';
-
-            if (sizeof($matches) >= 6) {
-                switch ($matches[5]) {
-                    case '.transparent':
-                        $asset->bg = substr($matches[5], 1);
-                        break;
-                    default:
-                        if (preg_match('/^\.[a-fA-F0-9]{6}$/', $matches[5])) {
-                            $asset->bg = '#' . substr($matches[5], 1);
-                        } elseif (preg_match('/^\.[0-9][0-9]?$/', $matches[5])) {
-                            $asset->bg = substr($matches[5], 1);
-                        }
-                }
-            }
-
-            if (sizeof($matches) >= 7) {
-                switch ($matches[6]) {
-                    case '-paper':
-                    case '-wood':
-                        $asset->tx = substr($matches[6], 1);
-                        break;
-                    default:
-                        // none
-                }
-            }
-        } elseif (
-            // group.name.png
-            preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)
-        ) {
-            $asset->name = $matches[1];
-            $asset->w = 1;
-            $asset->h = 1;
-            $asset->s = 1;
-            $asset->bg = '#808080';
-        }
-        return $asset;
     }
 
     /**
@@ -711,10 +523,10 @@ class FreeBeeGeeAPI
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      * @return array The generated library JSON data object.
      */
-    private function generateLibraryJson(
+    private function generateLibraryJSON(
         string $roomName
     ): array {
-        // generate json data
+        // generate JSON data
         $roomFolder = $this->getRoomFolder($roomName);
         $assets = [];
         foreach ($this->assetTypes as $type) {
@@ -727,7 +539,7 @@ class FreeBeeGeeAPI
                 // this ID only has to be unique within the room, but should be reproducable
                 // therefore we use a fast hash and even only use parts of it
                 $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
-                $asset->id = substr(hash('md5', $idBase), -16);
+                $asset->id = $this->generateId(crc32($idBase));
 
                 if (
                     $lastAsset === null
@@ -749,7 +561,7 @@ class FreeBeeGeeAPI
                         $asset->base = $asset->media[0];
                         $asset->media = [];
                     }
-                    unset($asset->s); // we don't keep the side in the json data
+                    unset($asset->s); // we don't keep the side in the JSON data
                     $lastAsset = $asset;
                 } else {
                     // this is another side of the same asset. add it to the existing one.
@@ -776,7 +588,7 @@ class FreeBeeGeeAPI
      * @param string $filename Relative path within root folder.
      * @param object $object PHP object to write.
      */
-    private function writeAsJsonAndDigest(
+    private function writeAsJSONAndDigest(
         $folder,
         $filename,
         $object
@@ -794,81 +606,569 @@ class FreeBeeGeeAPI
     // --- validators ----------------------------------------------------------
 
     /**
-     * Parse incoming JSON for pieces.
+     * Validate a template / snapshot.
      *
-     * @param string $json JSON string from the client.
+     * Does a few sanity checks to see if everything is there we need. Will
+     * termiante execution and send a 400 in case of invalid zips.
+     *
+     * @param string $zipPath Full path to the zip to check.
+     * @param array Array of strings / paths of all valid zip entries to extract.
+     */
+    public function validateSnapshot(
+        string $zipPath
+    ): array {
+        $issues = [];
+        $valid = [];
+        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB  * 1024 * 1024;
+
+        // basic sanity tests
+        if (filesize($zipPath) > $sizeLeft) {
+            // if the zip itself is too large, then its content is probably too
+            $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
+        }
+
+        // iterate over zip entries
+        $zip = new \ZipArchive();
+        if (!$zip->open($zipPath)) {
+            $this->api->sendError(400, 'can\'t open zip', 'ZIP_INVALID', $issues);
+        }
+        for ($i = 0; $i < $zip->numFiles; $i++) {
+            // note: the checks below will just 'continue' for invalid/ignored items
+            $entry = $zip->statIndex($i);
+
+            switch ($entry['name']) { // filename checks
+                case 'LICENSE.md':
+                    break; // known, unchecked file
+                case 'tables/1.json':
+                case 'tables/2.json':
+                case 'tables/3.json':
+                case 'tables/4.json':
+                case 'tables/5.json':
+                case 'tables/6.json':
+                case 'tables/7.json':
+                case 'tables/8.json':
+                case 'tables/9.json':
+                    break; // known files that will be cleaned up later anyway
+                case 'template.json':
+                    // only check version, everything else can be cleaned up later
+                    $this->validateTemplateEngineJSON(file_get_contents('zip://' . $zipPath . '#template.json'));
+                    break;
+                default: // scan for asset filenames
+                    if (
+                        !preg_match(
+                            '/^assets\/(overlay|tile|token|other|tag)\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
+                            $entry['name']
+                        )
+                    ) {
+                        continue 2; // for
+                    }
+            }
+
+            if ($entry['size'] > $this->maxAssetSize) { // filesize checks
+                continue; // for
+            }
+            $sizeLeft -= $entry['size'];
+            if ($sizeLeft < 0) {
+                $this->api->sendError(400, 'zip content too large', 'SIZE_EXCEEDED', $issues);
+            }
+
+            // if we got here, no check failed, so the entry is ok!
+            $valid[] = $entry['name'];
+        }
+
+        return $valid;
+    }
+
+    /**
+     * Validate the engine version of a template.json.
+     *
+     * Will try to parse the template JSON first.
+     *
+     * @param string $json JSON string.
+     */
+    public function validateTemplateEngineJSON(
+        string $json
+    ) {
+        $template = json_decode($json);
+        $template = is_object($template) ? $template : (object) [] ;
+        $this->setIfMissing($template, 'engine', 'unkown');
+
+        if (!is_string($template->engine) || !$this->api->semverSatisfies($this->engine, '^' . $template->engine, true)) {
+            $this->api->sendError(400, 'template.json: engine mismatch', 'INVALID_ENGINE', [
+                $template->engine, $this->engine
+            ]);
+        }
+    }
+
+    /**
+     * Validate a template object sent by the client.
+     *
+     * @param object $template Template to check.
      * @param boolean $checkMandatory If true, this function will also ensure all
      *                mandatory fields are present.
-     * @return object Validated JSON, converted to an object.
+     * @param Object The validated object.
      */
-    private function validatePieceJson(
-        string $json,
-        bool $checkMandatory
+    public function validateTemplate(
+        object $template,
+        bool $checkMandatory = true
     ): object {
-        $piece = $this->api->assertJson($json);
-        return $this->validatePiece($piece, $checkMandatory);
-    }
+        // check the basics and abort on error
+        if ($template === null) {
+            $this->api->sendError(400, $json . ' - syntax error', 'TEMPLATE_JSON_INVALID');
+        }
 
-    /**
-     * Remove properties that are at their default values from a piece. Add
-     * 'expires' fields for pieces that are short-lived.
-     *
-     * Saves some space in the JSON later on.
-     *
-     * @param object $piece Full piece.
-     * @return object New, reduced object.
-     */
-    private function removeDefaultsFromPiece(
-        object $piece
-    ): object {
-        if (isset($piece->h) && isset($piece->w) && $piece->h === $piece->w) {
-            unset($piece->h);
-        }
-        if (isset($piece->w) && $piece->w === 1) {
-            unset($piece->w);
-        }
-        if (isset($piece->r) && $piece->r === 0) {
-            unset($piece->r);
-        }
-        if (isset($piece->s) && $piece->s === 0) {
-            unset($piece->s);
-        }
-        if (isset($piece->n) && $piece->n === 0) {
-            unset($piece->n);
-        }
-        if (isset($piece->c) && $piece->c === 0) {
-            unset($piece->c);
-        }
-        if (isset($piece->t) && is_array($piece->t) && (sizeof($piece->t) <= 0 || $piece->t === [''])) {
-            unset($piece->t);
-        }
-        if (isset($piece->b) && is_array($piece->b) && (sizeof($piece->b) <= 0)) {
-            unset($piece->b);
-        }
-        if (isset($piece->a)) {
-            switch ($piece->a) {
-                case $this->ID_ASSET_POINTER:
-                case $this->ID_ASSET_LOS:
-                    $piece->expires = time() + 8;
-                    break;
-                default:
-                    // nothing
+        if ($checkMandatory) {
+            $this->api->assertHasProperties('template', $template, [
+                'engine',
+                'type'
+            ]);
+            if ($template->type === 'grid-square') {
+                $this->api->assertHasProperties('template', $template, [
+                    'gridSize',
+                    'gridWidth',
+                    'gridHeight',
+                    'colors'
+                ]);
+            } elseif ($template->type === 'grid-hex') {
+                $this->api->assertHasProperties('template', $template, [
+                    'gridSize',
+                    'gridWidth',
+                    'gridHeight',
+                    'colors'
+                ]);
             }
         }
-        return $piece;
+
+        // check for more stuff
+        $validated = new \stdClass();
+        foreach ($template as $property => $value) {
+            switch ($property) {
+                case 'engine':
+                    $validated->$property = $this->api->assertSemver('engine', $value);
+                    break;
+                case 'type':
+                    $validated->$property = $this->api->assertEnum('type', $value, $this->types);
+                    break;
+                case 'version':
+                    $validated->$property = $this->api->assertSemver('version', $value);
+                    break;
+                case 'gridSize':
+                    $validated->$property = $this->api->assertInteger('gridSize', $value, 64, 64);
+                    break;
+                case 'gridWidth':
+                    $validated->$property =
+                        $this->api->assertInteger('gridWidth', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
+                    break;
+                case 'gridHeight':
+                    $validated->$property =
+                        $this->api->assertInteger('gridHeight', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
+                    break;
+                case 'snap':
+                    $validated->$property = $this->api->assertBoolean('snap', $value);
+                    break;
+                case 'colors':
+                    $validated->$property = $this->api->assertObjectArray('colors', $value, 1);
+                    break;
+                case 'borders':
+                    $validated->$property = $this->api->assertObjectArray('borders', $value, 1);
+                    break;
+                default:
+                    // drop extra fields
+            }
+        }
+
+        return $validated;
     }
 
     /**
-     * Sanity check for pieces.
+     * Cleanup colors.
+     *
+     * Can not assume a validated colors.
+     *
+     * @param string $json JSON string from the filesystem.
+     * @return object Cleaned JSON, converted to an object.
+     */
+    public function cleanupColorJSON(
+        string $json
+    ): object {
+        $color = json_decode($json);
+        $color = is_object($color) ? $color : new \stdClass();
+        return $this->cleanupColor($color);
+    }
+
+    /**
+     * Cleanup colors.
+     *
+     * @param object $color Object to cleanup.
+     * @return object New, cleaned object.
+     */
+    public function cleanupColor(
+        object $color,
+        bool $newId = false
+    ): object {
+        $out = new \stdClass();
+
+        // add mandatory properties
+        $out->name = 'NoName';
+        $out->value = '#808080';
+
+        // remove unnecessary properties
+        foreach ($color as $property => $value) {
+            switch ($property) {
+                case 'name':
+                    $out->$property =
+                        $this->api->assertString('name', $value, '^[A-Za-z0-9 ]+$', false) ?: 'NoName';
+                    break;
+                case 'value':
+                    $out->$property =
+                        $this->api->assertString('value', $value, $this->REGEXP_COLOR, false) ?: '#808080';
+                    break;
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Cleanup templates by adding mandatory default properties, removing optional
+     * properties that contain default values and dropping unknown properties.
+     *
+     * Can not assume a validated template.
+     *
+     * @param string $json JSON string from the filesystem.
+     * @return object Cleaned JSON, converted to an object.
+     */
+    public function cleanupTemplateJSON(
+        string $json
+    ): object {
+        $template = json_decode($json);
+        $template = is_object($template) ? $template : new \stdClass();
+        return $this->cleanupTemplate($template);
+    }
+
+    /**
+     * Cleanup templates by adding mandatory default properties, removing optional
+     * properties that contain default values and dropping unknown properties.
+     *
+     * Can not assume a validated template.
+     *
+     * @param object $template Template to check.
+     * @param Object The cleaned template object.
+     */
+    private function cleanupTemplate(
+        object $template
+    ): object {
+        $out = new \stdClass();
+
+        # set defaults
+        $out->engine = $this->unpatchSemver($this->engine);
+        $out->version = '1.0.0';
+        $out->type = 'grid-square';
+        $out->gridSize = 64;
+        $out->gridWidth = 48;
+        $out->gridHeight = 32;
+        $out->colors = $this->getColors();
+        $out->borders = $this->getColors();
+
+        // check for more stuff
+        foreach ($template as $property => $value) {
+            switch ($property) {
+                case 'engine':
+                    // ignore - will be set to current engine
+                    break;
+                case 'type':
+                    $out->$property =
+                        $this->api->assertEnum('type', $value, $this->types, false) ?: 'grid-square';
+                    break;
+                case 'version':
+                    $out->$property =
+                        $this->api->assertSemver('version', $value, false) ?: '1.0.0';
+                    break;
+                case 'gridSize':
+                    $out->$property =
+                        $this->api->assertInteger('gridSize', $value, 64, 64, false) ?: '64';
+                    break;
+                case 'gridWidth':
+                    $out->$property =
+                        $this->api->assertInteger(
+                            'gridWidth',
+                            $value,
+                            $this->minRoomGridSize,
+                            $this->maxRoomGridSize,
+                            false
+                        ) ?: '48';
+                    break;
+                case 'gridHeight':
+                    $out->$property =
+                        $this->api->assertInteger(
+                            'gridHeight',
+                            $value,
+                            $this->minRoomGridSize,
+                            $this->maxRoomGridSize,
+                            false
+                        ) ?: '32';
+                    break;
+                case 'snap':
+                    $out->$property =
+                        $this->api->assertBoolean('snap', $value, false) ?: true;
+                    break;
+                case 'colors':
+                    $out->$property =
+                        $this->api->assertObjectArray('colors', $value, 1, 128, false) ?: $this->getColors();
+                    for ($i = 0; $i < count($out->$property); $i++) {
+                        $out->$property[$i] = $this->cleanupColor($out->$property[$i]);
+                    }
+                    break;
+                case 'borders':
+                    $out->$property =
+                        $this->api->assertObjectArray('borders', $value, 1, 128, false) ?: $this->getColors();
+                    for ($i = 0; $i < count($out->$property); $i++) {
+                        $out->$property[$i] = $this->cleanupColor($out->$property[$i]);
+                    }
+                    break;
+                default:
+                    // drop extra fields
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Validate a template.json.
+     *
+     * Will populate missing and remove unknown properties. Will termiante
+     * execution and send a 400 in case of too basic JSON errors.
+     *
+     * @param string $json JSON string.
+     * @param boolean $checkMandatory If true, this function will also ensure all
+     *                mandatory fields are present.
+     * @param Object The parsed & cleaned template object.
+     */
+    public function validateTemplateJSON(
+        string $json,
+        bool $checkMandatory = true
+    ): object {
+        $object = json_decode($json);
+        $object = is_object($object) ? $object : new \stdClass();
+        return $this->validateTemplate($object, $checkMandatory);
+    }
+
+    /**
+     * Sanity check uploaded/patched tables.
+     *
+     * Will termiante execution and send a 400 in case of invalid array.
+     *
+     * @param string $tid Table ID for error messages.
+     * @param array $table Table data (array of pieces).
+     */
+    private function validateTable(
+        string $tid,
+        array $table
+    ) {
+        $msg = 'validating table ' . $tid . '.json failed';
+        $validated = [];
+
+        // check the basics and abort on error
+        if ($table === null) {
+            $this->api->sendError(400, $msg . ' - syntax error', 'STATE_JSON_INVALID');
+        }
+
+        // check for more stuff
+        $this->api->assertObjectArray($tid . '.json', $table, 0);
+        foreach ($table as $piece) {
+            $validated[] = $this->validatePiece($piece, true);
+        }
+
+        return $validated;
+    }
+
+    /**
+     * Cleanup tables by cleaning up its pieces.
+     *
+     * @param string $json JSON string from the filesystem.
+     * @return object Validated JSON, converted to an object.
+     */
+    public function cleanupTableJSON(
+        string $json
+    ): array {
+        $table = json_decode($json);
+        $table = is_array($table) ? $table : [];
+        return $this->cleanupTable($table);
+    }
+
+    /**
+     * Cleanup tables by cleaning up its pieces.
+     *
+     * @param string $json JSON string from the filesystem.
+     * @param bool $newId Always assign a new ID.
+     * @return object Validated JSON, converted to an object.
+     */
+    public function cleanupTable(
+        array $table,
+        bool $newId = false
+    ): array {
+        $clean = [];
+        foreach ($table as $piece) {
+            $clean[] = $this->cleanupPiece($piece, $newId);
+        }
+        return $clean;
+    }
+
+    /**
+     * Cleanup pieces by adding mandatory default properties, removing optional
+     * properties that contain default values and dropping unknown properties.
+     *
+     * Can not assume a validated piece.
+     *
+     * @param string $json JSON string from the filesystem.
+     * @return object Validated JSON, converted to an object.
+     */
+    public function cleanupPieceJSON(
+        string $json
+    ): object {
+        $piece = json_decode($json);
+        $piece = is_object($piece) ? $piece : new \stdClass();
+        return $this->cleanupPiece($piece);
+    }
+
+    /**
+     * Cleanup pieces by adding mandatory default properties, removing optional
+     * properties that contain default values and dropping unknown properties.
+     *
+     * Can not assume a validated piece.
+     *
+     * @param object $piece Full piece.
+     * @param bool $newId Always assign a new ID.
+     * @return object New, cleaned object.
+     */
+    public function cleanupPiece(
+        object $piece,
+        bool $newId = false
+    ): object {
+        $out = new \stdClass();
+
+        // add mandatory properties
+        $out->l = isset($piece->l) ? $piece->l : 1;
+        $out->x = 0;
+        $out->y = 0;
+        $out->z = 0;
+        if ($out->l !== 3) { // not a note
+            $out->a = $this->ID_ASSET_NONE;
+        }
+
+        // remove unnecessary properties
+        foreach ($piece as $property => $value) {
+            switch ($property) {
+                case 'id':
+                    $out->$property =
+                        $this->api->assertString('id', $value, $this->REGEXP_ID, false) ?: $this->generateId();
+                    break;
+                case 'a':
+                    $out->$property =
+                        $this->api->assertString('a', $value, $this->REGEXP_ID, false) ?: $this->ID_ASSET_NONE;
+                    break;
+                case 'l':
+                    $out->$property =
+                        $this->api->assertInteger('l', $value, 1, 5, false) ?: 1;
+                    break;
+                case 'x':
+                case 'y':
+                case 'z':
+                    $out->$property =
+                        $this->api->assertInteger('x', $value, -100000, 100000, false) ?: 0;
+                    break;
+                case 'expires':
+                    $out->$property =
+                        $this->api->assertInteger('expires', $value, 1500000000, 9999999999, false) ?: 0;
+                    break;
+                case 's':
+                    if ($this->api->assertInteger('s', $value, 1, 128, false)) {
+                        $out->$property = $value; // 0 = default = don't add
+                    }
+                    break;
+                case 'n':
+                    if ($this->api->assertInteger('n', $value, 1, 15, false)) {
+                        $out->$property = $value; // 0 = default = don't add
+                    }
+                    break;
+                case 'r':
+                    if ($this->api->assertEnum('r', $value, [60, 90, 120, 180, 240, 270, 300], false)) {
+                        $out->$property = $value; // 0 = default = don't add
+                    }
+                    break;
+                case 'h':
+                case 'w':
+                    if (isset($piece->a) && $piece->a === $this->ID_ASSET_LOS) {
+                        $out->$property =
+                            $this->api->assertInteger('w/h', $value, -100000, 100000, false) ?: 0;
+                    } else {
+                        $out->$property =
+                            $this->api->assertInteger('w/h', $value, 1, 32, false) ?: 1;
+                    }
+                    break;
+                case 't':
+                    if ($this->api->assertStringArray('t', $value, '^.*$', 0, 1, false)) {
+                        $texts = $this->rtrimArray($value, '');
+                        if (sizeof($texts) > 0) {
+                            $out->$property = $texts;
+                        }
+                    }
+                    break;
+                case 'c':
+                    if ($this->api->assertIntegerArray('c', $value, 0, 15, 1, 2, false)) {
+                        $texts = $this->rtrimArray($value, 0);
+                        if (sizeof($texts) > 0) {
+                            $out->$property = $texts;
+                        }
+                    }
+                    break;
+                case 'b':
+                    if ($this->api->assertStringArray('b', $value, '^.*$', 0, 16, false)) {
+                        $badges = $this->rtrimArray($value, '');
+                        if (sizeof($badges) > 0) {
+                            $out->$property = $badges;
+                        }
+                    }
+                    break;
+            }
+        }
+
+        # enforce ID
+        if (!isset($out->id) || $newId) {
+            $out->id = $this->generateId();
+        }
+
+        # width/height default behavior
+        if (isset($out->w)) {
+            if (isset($out->h) && $out->h === $out->w) {
+                unset($out->h);
+            }
+            if ($out->w === 1) {
+                unset($out->w);
+            }
+        } else {
+            if (isset($out->h) && $out->h === 1) {
+                unset($out->h);
+            }
+        }
+
+        return $out;
+    }
+
+    /**
+     * Sanity check uploaded/patched pieces.
+     *
+     * Will termiante execution and send a 400 in case of invalid object.
      *
      * @param object $piece Full or partial piece.
      * @param boolean $checkMandatory If true, this function will also ensure all
      *                mandatory fields are present.
      * @return object New, validated object.
      */
-    private function validatePiece(
+    public function validatePiece(
         object $piece,
-        bool $checkMandatory
+        bool $checkMandatory = true
     ): object {
         $validated = new \stdClass();
         foreach ($piece as $property => $value) {
@@ -911,9 +1211,9 @@ class FreeBeeGeeAPI
                 case 'c':
                     if (property_exists($piece, 'l') && $piece->l === 3) { // 3 = note
                         $validated->c =
-                            $this->api->assertIntegerArray('c', $value, 0, sizeof($this->stickyNotes) - 1, 1, 2);
+                            $this->api->assertIntegerArray('c', $value, 0, sizeof($this->stickyNotes) - 1, 0, 2);
                     } else {
-                        $validated->c = $this->api->assertIntegerArray('c', $value, 0, 15, 1, 2);
+                        $validated->c = $this->api->assertIntegerArray('c', $value, 0, 15, 0, 2);
                     }
                     break;
                 case 'n':
@@ -933,14 +1233,14 @@ class FreeBeeGeeAPI
                     $validated->b = $this->api->assertStringArray('b', $value, '^[^\n\r]{1,32}$', 0, 1);
                     break;
                 case 'expires':
-                    $validated->expires = 0; // we always override externaly provides expiry dates on create/update
-                    break;
+                    // ignore as we do not honor externaly set expires
                 default:
-                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
+                    // ignore extra/unkown fields
             }
         }
 
         if ($checkMandatory) {
+            $this->api->assertHasProperties('piece', $validated, ['l']);
             switch ($validated->l) {
                 case 3: // 3 = note
                     $mandatory = ['l', 'x', 'y', 'z'];
@@ -955,6 +1255,26 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Validate a room.json.
+     *
+     * This is usually not the one on the server (which is generated by the API),
+     * but a new-room JSON sent by the client.
+     *
+     * @param string $json JSON string.
+     * @param boolean $checkMandatory If true, this function will also ensure all
+     *                mandatory fields are present.
+     * @param Object The validated object.
+     */
+    public function validateRoomJSON(
+        string $json,
+        bool $checkMandatory = true
+    ): object {
+        $room = json_decode($json);
+        $room = is_object($room) ? $room : new \stdClass();
+        return $this->validateRoom($room, $checkMandatory);
+    }
+
+    /**
      * Parse incoming JSON for (new) rooms.
      *
      * @param string $json JSON string from the client.
@@ -963,10 +1283,9 @@ class FreeBeeGeeAPI
      * @return object Validated JSON, convertet to an object.
      */
     private function validateRoom(
-        string $json,
+        object $incoming,
         bool $checkMandatory
     ): object {
-        $incoming = $this->api->assertJson($json);
         $validated = new \stdClass();
 
         if ($checkMandatory) {
@@ -977,18 +1296,18 @@ class FreeBeeGeeAPI
             switch ($property) {
                 case 'id':
                 case 'auth':
-                    break; // we accept but ignore these
+                    break; // known but ignored fields
                 case '_files':
-                    $validated->_files = $value;
+                    $validated->$property = $value;
                     break;
                 case 'name':
-                    $validated->name = $this->api->assertString('name', $value, '[A-Za-z0-9]{8,48}');
+                    $validated->$property = $this->api->assertString('name', $value, '[A-Za-z0-9]{8,48}');
                     break;
                 case 'template':
-                    $validated->template = $this->api->assertString('template', $value, '[A-Za-z0-9]{1,99}');
+                    $validated->$property = $this->api->assertString('template', $value, '[A-Za-z0-9]{1,99}');
                     break;
                 default:
-                    $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
+                    // ignore extra fields
             }
         }
 
@@ -998,13 +1317,12 @@ class FreeBeeGeeAPI
     /**
      * Parse incoming JSON for (new) assets.
      *
-     * @param string $json JSON string from the client.
+     * @param object $incoming Parsed asset from client.
      * @return object Validated JSON, convertet to an object.
      */
     private function validateAsset(
-        string $json
+        object $incoming
     ): object {
-        $incoming = $this->api->assertJson($json);
         $validated = new \stdClass();
 
         $this->api->assertHasProperties(
@@ -1067,7 +1385,7 @@ class FreeBeeGeeAPI
         // this is a good opportunity for housekeeping
         $this->deleteOldRooms(($server->ttl ?? 48) * 3600);
 
-        // assemble json
+        // assemble JSON
         $info = new \stdClass();
         $info->version = $server->version;
         $info->engine = $server->engine;
@@ -1151,17 +1469,15 @@ class FreeBeeGeeAPI
      * If there is a free room available, this will create a new room folder and
      * initialize it properly. Will terminate with 201 or an error.
      *
-     * @param string $payload Room JSON from client.
+     * @param object $payload Parsed room from client.
      */
     public function createRoomLocked(
-        string $payload
+        object $payload
     ) {
-        $item = $this->api->assertJson($payload);
-
         // check the password (if required)
         $server = $this->getServerConfig();
         if ($server->passwordCreate ?? '' !== '') {
-            if (!password_verify($item->auth ?? '', $server->passwordCreate)) {
+            if (!password_verify($payload->auth ?? '', $server->passwordCreate)) {
                 $this->api->sendError(401, 'valid password required');
             }
         }
@@ -1174,113 +1490,115 @@ class FreeBeeGeeAPI
         // sanitize item by recreating it
         $validated = $this->validateRoom($payload, true);
 
-        // we need either a template name or an uploaded snapshot
-        if (
-            isset($validated->template) && isset($validated->_files)
-            || (!isset($validated->template) && !isset($validated->_files))
-        ) {
-            $this->api->sendError(400, 'you need to either specify a template or upload a snapshot');
-        }
-
-        // check if upload (if any) was ok
-        if (isset($validated->_files)) {
-            if (!$server->snapshotUploads) {
-                $this->api->sendError(400, 'snapshot upload is not enabled on this server');
-            }
-            if ($_FILES[$validated->_files[0]]['error'] > 0) {
-                $this->api->sendError(400, 'PHP upload failed', JSONRestAPI::UPLOAD_ERR[
-                    $_FILES[$validated->_files[0]]['error']
-                ]);
-            }
-            $zipPath = $_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid';
+        $folder = $this->getRoomFolder($validated->name);
+        if (is_dir($folder)) {
+            $this->api->sendError(409, 'room already exists');
         } else {
-            $zipPath = $this->api->getDataDir() . 'templates/' . $validated->template . '.zip';
-        }
+            // we need either a template name or an uploaded snapshot
+            if (
+                isset($validated->template) && isset($validated->_files)
+                || (!isset($validated->template) && !isset($validated->_files))
+            ) {
+                $this->api->sendError(400, 'you need to either specify a template or upload a snapshot');
+            }
 
-        // doublecheck template / snapshot
-        if (!is_file($zipPath)) {
-            $this->api->sendError(400, 'template not available');
-        }
-        $validEntries = $this->validateSnapshot($zipPath);
+            // check if upload (if any) was ok
+            if (isset($validated->_files)) {
+                if (!$server->snapshotUploads) {
+                    $this->api->sendError(400, 'snapshot upload is not enabled on this server');
+                }
+                if ($_FILES[$validated->_files[0]]['error'] > 0) {
+                    $this->api->sendError(400, 'PHP upload failed', JSONRestAPI::UPLOAD_ERR[
+                        $_FILES[$validated->_files[0]]['error']
+                    ]);
+                }
+                $zipPath = $_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid';
+            } else {
+                $zipPath = $this->api->getDataDir() . 'templates/' . $validated->template . '.zip';
+            }
 
-        // create a new room
-        $newRoom = new \stdClass();
-        $newRoom->id = $this->generateId();
-        $newRoom->name = $validated->name;
-        $newRoom->engine = $this->engine;
+            // doublecheck template / snapshot
+            if (!is_file($zipPath)) {
+                $this->api->sendError(400, 'template not available');
+            }
+            $validEntries = $this->validateSnapshot($zipPath);
 
-        $newRoom->backgrounds = [];
-        $newRoom->backgrounds[] = $this->getBackground(
-            'Casino',
-            'img/desktop-casino.jpg',
-            '#2e5d3c',
-            '#1b3c25'
-        );
-        $newRoom->backgrounds[] = $this->getBackground(
-            'Concrete',
-            'img/desktop-concrete.jpg',
-            '#646260',
-            '#494540'
-        );
-        $newRoom->backgrounds[] = $this->getBackground(
-            'Marble',
-            'img/desktop-marble.jpg',
-            '#b4a999',
-            '#80725e'
-        );
-        $newRoom->backgrounds[] = $this->getBackground(
-            'Metal',
-            'img/desktop-metal.jpg',
-            '#515354',
-            '#3e3e3e'
-        );
-        $newRoom->backgrounds[] = $this->getBackground(
-            'Rock',
-            'img/desktop-rock.jpg',
-            '#5c5d5a',
-            '#393930'
-        );
-        $newRoom->backgrounds[] = $this->getBackground(
-            'Wood',
-            'img/desktop-wood.jpg',
-            '#57514d',
-            '#3e3935'
-        );
-
-        $folder = $this->getRoomFolder($newRoom->name);
-        if (!is_dir($folder)) {
             if (!mkdir($folder, 0777, true)) { // create room folder
                 $this->api->sendError(500, 'can\'t write on server');
             }
 
             $lock = $this->api->waitForWriteLock($folder . '.flock');
-            $this->installSnapshot($newRoom->name, $zipPath, $validEntries);
-            $newRoom->library = $this->generateLibraryJson($newRoom->name);
-
-            $this->regenerateDigests($folder);
-
-            // add/overrule some template.json infos into the room.json
-            $newRoom->template = json_decode(file_get_contents($folder . 'template.json'));
-            if (is_file($folder . 'LICENSE.md')) {
-                $newRoom->credits = file_get_contents($folder . 'LICENSE.md');
-            } else {
-                $newRoom->credits = 'Your template does not provide license information.';
-            }
-
-            // specific for 'grid-square'
-            $newRoom->width = $newRoom->template->gridWidth * $newRoom->template->gridSize;
-            $newRoom->height = $newRoom->template->gridHeight * $newRoom->template->gridSize;
-
-            $this->writeAsJsonAndDigest($folder, 'room.json', $newRoom);
+            $this->installSnapshot($validated->name, $zipPath, $validEntries);
+            $room = $this->cleanupRoom($validated->name);
             $this->api->unlockLock($lock);
 
-            $this->api->sendReply(201, json_encode($newRoom), '/api/rooms/' . $newRoom->name);
+            $this->api->sendReply(201, json_encode($room), '/api/rooms/' . $validated->name);
         }
-        $this->api->sendReply(409, json_encode($newRoom));
+    }
+
+    /**
+     * Check an existing room folder and fix it where necessary.
+     *
+     * Useful after installing new snapshots or when loading older rooms. Assumes
+     * the caller has locked the directory.
+     *
+     * @param string $name Name of room.
+     * @return object Room data.
+     */
+    public function cleanupRoom(
+        string $name
+    ) {
+        $folder = $this->getRoomFolder($name);
+        if (!is_dir($folder)) {
+            $this->api->sendError(500, 'cant cleanup room');
+        }
+
+        // cleanup or create [1-9].json
+        for ($i = 1; $i <= 9; $i++) {
+            if (is_file("$folder/tables/$i.json")) {
+                $table = $this->cleanupTableJSON(file_get_contents("$folder/tables/$i.json"));
+                file_put_contents("$folder/tables/$i.json", json_encode($table));
+            }
+        }
+
+        // cleanup or create template.json
+        $template = is_file($folder . 'template.json')
+            ? file_get_contents($folder . 'template.json')
+            : '{}';
+        $template = $this->cleanupTemplateJSON($template);
+        file_put_contents($folder . 'template.json', json_encode($template));
+
+        // enforce mandatory files
+        if (!is_file($folder . 'tables/1.json')) {
+            file_put_contents($folder . 'tables/1.json', '[]');
+        }
+        if (!is_file($folder . 'LICENSE.md')) {
+            file_put_contents($folder . 'LICENSE.md', 'This template does not provide license information.');
+        }
+
+        // (re)create room.json
+        $room = (object) [
+            'id' => $this->generateId(),
+            'name' => $name,
+            'engine' => $this->engine,
+            'template' => $template,
+            'library' => $this->generateLibraryJSON($name),
+            'backgrounds' => $this->getBackgrounds(),
+            'credits' => file_get_contents($folder . 'LICENSE.md'),
+            'width' => $template->gridWidth * $template->gridSize,
+            'height' => $template->gridHeight * $template->gridSize,
+        ];
+        file_put_contents($folder . 'room.json', json_encode($room));
+
+        $this->regenerateDigests($folder);
+
+        return $room;
     }
 
     /**
      * Populate digest.json with up-to-date crc32 hashes.
+     *
+     * Assumes the caller has locked the directory.
      *
      * @param string $folder Room folder to work in.
      */
@@ -1330,13 +1648,26 @@ class FreeBeeGeeAPI
      * Will terminate with 200 or an error.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $payload Parcial template JSON from client.
+     * @param object $patch Parcial parsed template from client.
      */
     public function updateRoomTemplateLocked(
         string $roomName,
-        string $payload
+        object $patch
     ) {
-        $template = $this->validateTemplateJson($payload, false);
+        $validated = $this->validateTemplate($patch, false);
+
+        // only a few fields may be updated
+        $template = new \stdClass();
+        foreach ($validated as $property => $value) {
+            switch ($property) {
+                case 'gridWidth':
+                case 'gridHeight':
+                    $template->$property = $value;
+                    break;
+                default:
+                    // other attributes are silently ignored
+            }
+        }
 
         $folder = $this->getRoomFolder($roomName);
         $lock = $this->api->waitForWriteLock($folder . '.flock');
@@ -1349,14 +1680,14 @@ class FreeBeeGeeAPI
         if (isset($template->gridHeight)) {
             $templateFS->gridHeight = $template->gridHeight;
         }
-        $this->writeAsJsonAndDigest($folder, 'template.json', $templateFS);
+        $this->writeAsJSONAndDigest($folder, 'template.json', $templateFS);
 
         // update room.json
         $roomFS = json_decode(file_get_contents($folder . 'room.json'));
         $roomFS->template = $templateFS;
         $roomFS->width = $templateFS->gridWidth * $templateFS->gridSize;
         $roomFS->height = $templateFS->gridHeight * $templateFS->gridSize;
-        $this->writeAsJsonAndDigest($folder, 'room.json', $roomFS);
+        $this->writeAsJSONAndDigest($folder, 'room.json', $roomFS);
 
         $this->api->unlockLock($lock);
         $this->api->sendReply(200, json_encode($templateFS));
@@ -1365,7 +1696,8 @@ class FreeBeeGeeAPI
     /**
      * Get room metadata.
      *
-     * Will return the room.json from a room's folder.
+     * Will return the room.json from a room's folder. Will also check if room
+     * is deprecated and/or can be upgraded on the fly.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      */
@@ -1374,15 +1706,28 @@ class FreeBeeGeeAPI
     ) {
         $folder = $this->getRoomFolder($roomName);
         if (is_dir($folder)) {
-            $body = $this->api->fileGetContentsLocked(
+            $roomJson = $this->api->fileGetContentsLocked(
                 $folder . 'room.json',
                 $folder . '.flock'
             );
-            $room = json_decode($body);
-            if (!$this->api->semverSatisfies($this->engine, '^' . $room->engine)) {
-                $this->api->sendError(400, 'invalid room engine', 'ROOM_INVALID_ENGINE');
+            $room = json_decode($roomJson);
+            if (!isset($room->engine) || $room->engine !== $this->engine) {
+                // room is from an older FBG version
+                if ($this->api->semverSatisfies($this->engine, '^' . $room->template->engine, true)) {
+                    // room can be converted
+                    $this->cleanupRoom($roomName);
+                    $roomJson = $this->api->fileGetContentsLocked(
+                        $folder . 'room.json',
+                        $folder . '.flock'
+                    );
+                } else {
+                    // room can't be converted
+                    $this->api->sendError(400, 'template.json: engine mismatch', 'INVALID_ENGINE', [
+                        $room->template->engine, $this->engine
+                    ]);
+                }
             }
-            $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
+            $this->api->sendReply(200, $roomJson, null, 'crc32:' . crc32($roomJson));
         }
         $this->api->sendError(404, 'not found: ' . $roomName);
     }
@@ -1470,19 +1815,20 @@ class FreeBeeGeeAPI
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      * @param int $tid Table id / number, e.g. 2.
-     * @param string $json New table JSON from client.
+     * @param array $table Parsed new table (array of pieces) from client.
      */
     public function putTableLocked(
         string $roomName,
         string $tid,
-        string $json
+        array $table
     ) {
         $this->assertTableNo($tid);
         $folder = $this->getRoomFolder($roomName);
-        $newTable = $this->validateTableJson($tid, $json);
+        $newTable = $this->validateTable($tid, $table);
+        $newTable = $this->cleanupTable($newTable, true);
 
         $lock = $this->api->waitForWriteLock($folder . '.flock');
-        $this->writeAsJsonAndDigest($folder, 'tables/' . $tid . '.json', $newTable);
+        $this->writeAsJSONAndDigest($folder, 'tables/' . $tid . '.json', $newTable);
         $this->api->unlockLock($lock);
 
         $this->api->sendReply(200, json_encode($newTable));
@@ -1493,20 +1839,21 @@ class FreeBeeGeeAPI
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      * @param string $tid Table id / number, e.g. 2.
-     * @param string $json Full piece JSON from client.
+     * @param object $data Full parsed piece from client.
      */
     public function createPiece(
         string $roomName,
         string $tid,
-        string $json
+        object $data
     ) {
         $this->assertTableNo($tid);
-        $piece = $this->validatePieceJson($json, true);
+        $piece = $this->validatePiece($data, true);
         if (isset($piece->a)) {
             switch ($piece->a) {
                 case $this->ID_ASSET_POINTER:
                 case $this->ID_ASSET_LOS:
                     $piece->id = $piece->a;
+                    $piece->expires = time() + 8;
                     break;
                 default:
                     $piece->id = $this->generateId();
@@ -1514,8 +1861,8 @@ class FreeBeeGeeAPI
         } else {
             $piece->id = $this->generateId();
         }
-        $this->updatePieceTableLocked($roomName, $tid, $piece, true, false);
-        $this->api->sendReply(201, json_encode($piece));
+        $created = $this->updatePieceTableLocked($roomName, $tid, $piece, true, false);
+        $this->api->sendReply(201, json_encode($created));
     }
 
     /**
@@ -1559,16 +1906,16 @@ class FreeBeeGeeAPI
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceID ID of the piece to update.
-     * @param string $json Full piece JSON from client.
+     * @param string $data Parsed piece from the client.
      */
     public function replacePiece(
         string $roomName,
         string $tid,
         string $pieceId,
-        string $json
+        object $data
     ) {
         $this->assertTableNo($tid);
-        $patch = $this->validatePieceJson($json, false);
+        $patch = $this->validatePiece($data, false);
         $patch->id = $pieceId; // overwrite with data from URL
         $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false, false);
         $this->api->sendReply(200, json_encode($updatedPiece));
@@ -1582,16 +1929,16 @@ class FreeBeeGeeAPI
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceID ID of the piece to update.
-     * @param string $json Full or parcial piece JSON from client.
+     * @param object $piece Full or parcial parsed piece from client.
      */
     public function updatePiece(
         string $roomName,
         string $tid,
         string $pieceId,
-        string $json
+        object $piece
     ) {
         $this->assertTableNo($tid);
-        $patch = $this->validatePieceJson($json, false);
+        $patch = $this->validatePiece($piece, false);
         $patch->id = $pieceId; // overwrite with data from URL
         $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false, true);
         $this->api->sendReply(200, json_encode($updatedPiece));
@@ -1604,29 +1951,28 @@ class FreeBeeGeeAPI
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
      * @param string $tid Table id / number, e.g. 2.
-     * @param string $json Array of full or parcial pieces JSON from client.
+     * @param array $patches Array of full or parcial parsed pieces from client.
      */
     public function updatePieces(
         string $roomName,
         string $tid,
-        string $json
+        array $patches
     ) {
         $this->assertTableNo($tid);
 
         // check if we got JSON array of valid piece-patches and IDs
-        $patches = $this->api->assertJsonArray($json);
-        $toPatch = [];
         foreach ($patches as $patch) {
             $piece = $this->validatePiece($patch, false);
             $this->api->assertHasProperties('piece', $patch, ['id']);
         }
 
         // looks good. do the update(s).
+        $updatedPieces = [];
         foreach ($patches as $patch) {
-            $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false, true);
+            $updatedPieces[] = $this->updatePieceTableLocked($roomName, $tid, $patch, false, true);
         }
 
-        $this->api->sendReply(200, json_encode($patches));
+        $this->api->sendReply(200, json_encode($updatedPieces));
     }
 
     /**
@@ -1662,13 +2008,13 @@ class FreeBeeGeeAPI
      * Add a new asset to the library of a room.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $json Full asset JSON from client.
+     * @param object $data Full paresed asset data from client.
      */
     public function createAssetLocked(
         string $roomName,
-        string $json
+        object $data
     ) {
-        $asset = $this->validateAsset($json);
+        $asset = $this->validateAsset($data);
 
         // determine asset path elements
         $folder = $this->getRoomFolder($roomName);
@@ -1679,10 +2025,10 @@ class FreeBeeGeeAPI
         $lock = $this->api->waitForWriteLock($folder . '.flock');
         file_put_contents($folder . 'assets/' . $asset->type . '/' . $filename, base64_decode($asset->base64));
 
-        // regenerate library json
+        // regenerate library JSON
         $room = json_decode(file_get_contents($folder . 'room.json'));
-        $room->library = $this->generateLibraryJson($roomName);
-        $this->writeAsJsonAndDigest($folder, 'room.json', $room);
+        $room->library = $this->generateLibraryJSON($roomName);
+        $this->writeAsJSONAndDigest($folder, 'room.json', $room);
 
         // return asset (without large blob)
         $this->api->unlockLock($lock);
@@ -1747,12 +2093,35 @@ class FreeBeeGeeAPI
 
         // send and delete temporary file
         header('Content-disposition: attachment; filename=' .
-            $roomName . '.' . $time->format('Y-m-d-Hi') . '_' . $timeZoneOffset . '.zip');
+            $roomName . '.' . $time->format('Y-m-d-Hi') . '.zip');
         header('Content-type: application/zip');
         readfile($zipName);
         unlink($zipName);
         die();
     }
+
+    /**
+     * Set an proper exiration date for pieces that expire.
+     *
+     * @param object $piece Piece to check.
+     * @return object Modified piece.
+     */
+    private function setExpiration(
+        object $piece
+    ): object {
+        if (isset($piece->a)) {
+            switch ($piece->a) {
+                case $this->ID_ASSET_POINTER:
+                case $this->ID_ASSET_LOS:
+                    $piece->expires = time() + 8;
+                    break;
+                default:
+                    // nothing
+            }
+        }
+        return $piece;
+    }
+
 
     /**
      * Generate an ID.
@@ -1761,8 +2130,150 @@ class FreeBeeGeeAPI
      *
      * @return {String} A random ID.
      */
-    private function generateId()
-    {
-        return JSONRestAPI::id();
+    private function generateId(
+        int $seed = null
+    ) {
+        return JSONRestAPI::id64($seed);
+    }
+
+    // --- statics -------------------------------------------------------------
+
+    /**
+     * Set a semvers 3rd number (patch) to 0.
+     *
+     * @param string $semver Semver to change.
+     * @return string Semver with patch set to 0.
+     */
+    public static function unpatchSemver(
+        string $semver
+    ): string {
+        return preg_replace('/([0-9][0-9]*)\.([0-9][0-9]*)\.([0-9][0-9]*)/', '$1.$2.0', $semver, 1);
+    }
+
+    /**
+     * Convert an asset's filename into JSON metadata.
+     *
+     * Will parse files named .myName.1x2x3.ff0000.jpg and split those
+     * properties into JSON metadata.
+     *
+     * @param string $filename Filename to parse
+     * @return object Asset object (for JSON conversion).
+     */
+    public static function fileToAsset(
+        $filename
+    ) {
+        $asset = new \stdClass();
+        $asset->media = [$filename];
+        if (
+            // group.name.1x2x3.808080.png
+            preg_match(
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?(-[^\.-]+)?\.[a-zA-Z0-9]+$/',
+                $filename,
+                $matches
+            )
+        ) {
+            $asset->name = $matches[1];
+            $asset->w = (int)$matches[2];
+            $asset->h = (int)$matches[3];
+            $asset->s = $matches[4];
+            $asset->bg = '#808080';
+
+            if (sizeof($matches) >= 6) {
+                switch ($matches[5]) {
+                    case '.transparent':
+                        $asset->bg = substr($matches[5], 1);
+                        break;
+                    default:
+                        if (preg_match('/^\.[a-fA-F0-9]{6}$/', $matches[5])) {
+                            $asset->bg = '#' . substr($matches[5], 1);
+                        } elseif (preg_match('/^\.[0-9][0-9]?$/', $matches[5])) {
+                            $asset->bg = substr($matches[5], 1);
+                        }
+                }
+            }
+
+            if (sizeof($matches) >= 7) {
+                switch ($matches[6]) {
+                    case '-paper':
+                    case '-wood':
+                        $asset->tx = substr($matches[6], 1);
+                        break;
+                    default:
+                        // none
+                }
+            }
+        } elseif (
+            // group.name.png
+            preg_match('/^(.*)\.[a-zA-Z0-9]+$/', $filename, $matches)
+        ) {
+            $asset->name = $matches[1];
+            $asset->w = 1;
+            $asset->h = 1;
+            $asset->s = 1;
+            $asset->bg = '#808080';
+        }
+        return $asset;
+    }
+
+    /**
+     * Merge two data objects.
+     *
+     * The second object's properties take precedence.
+     *
+     * @param object $original The first/source object.
+     * @param object $updates An object containing new/updated properties.
+     * @return object An object with $original's properties overwritten by $updates's.
+     */
+    public static function merge(
+        object $original,
+        object $updates
+    ): object {
+        return (object) array_merge((array) $original, (array) $updates);
+    }
+
+    /**
+     * Populate missing object's field with a default value.
+     *
+     * Will only add missing properties, not empty/null propertes.
+     *
+     * @param object $o The object.
+     * @param string $p The property.
+     * @param mixed $v The value.
+     */
+    public static function setIfMissing(
+        object $object,
+        string $property,
+        $value
+    ) {
+        if (!isset($object->$property)) {
+            $object->$property = $value;
+        }
+    }
+
+    /**
+     * Trim an array right-to-left.
+     *
+     * If working on a string array, it will also trim() all enties.
+     *
+     * @param array $array The array to trim, e.g. [1, 2, 0, 3, 0, 0].
+     * @param mixed $trim Value to trim, e.g. 0
+     * @return array Right-trimmed array, e.g. [1, 2, 0, 3].
+     */
+    public static function rtrimArray(
+        array $array,
+        $trim
+    ): array {
+        $trimmed = [];
+        $trimming = true;
+        for ($i = sizeof($array) - 1; $i >= 0; $i--) {
+            $item = is_string($trim) ? trim($array[$i]) : $array[$i];
+            if (!$trimming) {
+                array_unshift($trimmed, $item);
+            } elseif ($item !== $trim) {
+                array_unshift($trimmed, $item);
+                $trimming = false;
+            }
+        }
+        return $trimmed;
     }
 }

@@ -4,6 +4,8 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ## v0.14.0 - ??? ???
 
+This is a breaking release, changing IDs. Old snapshots/rooms will no longer work.
+
 ### Notable changes
 
 * added laser-pointer, settings and measure mode to tutorial
@@ -11,6 +13,11 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 ### Other changes
 
 * added demo mode - separate build necessary
+* added auto-migration of rooms from compatible engine versions
+* added more unit and API integration tests
+* fixed loading of rooms of older versions
+* changed default max room size to 16MB and max room count to 32 - customize them in server.json
+* changed IDs to 8-digit 64-base strings
 * changed RPG template tiles to paper material
 
 ## v0.13.0 - Colorful Cobra

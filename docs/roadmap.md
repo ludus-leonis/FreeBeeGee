@@ -5,7 +5,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.14 - ??? ???
 
 * [X] change RPG template tiles to paper material
-* [ ] autofix older rooms / be more tolerant to changed fields
+* [X] add more PHP unit tests for room/template parsing
+* [ ] move backgrounds from room to server
+* [ ] add option to force-upgrade rooms
+* [X] auto-migrate rooms from compatible engine versions
+* [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
+* [ ] provide clearer feedback when library upload fails
 * [ ] system assets (always there, not part of template)
 * [X] serverless demo mode
 * [ ] more helper/marker overlays (arrows, areas, )
@@ -16,6 +21,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [ ] fix isSolid image loading
+    * [ ] use shorter IDs
   * [ ] review docs
   * [ ] review + run tests
   * [ ] bump version/codename & update CHANGELOG
@@ -25,11 +31,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
-* [ ] add more integration/API tests (edge cases during CRUD)
 * [ ] table passwords
 * [ ] use 'v' to paste / clone
 * [ ] automated deployment tests for new zip/tgz packages after build
-* [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
 * [ ] right-click on table (add piece, change table)
 * [ ] delete items from library
 * [ ] when dragging pieces, move those on top of the original piece too
@@ -57,7 +61,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] obfuscate/hash room name
 * [ ] docs how to make table/template `.zip`s
+* [ ] add more integration/API tests (edge cases during CRUD)
 * [ ] API Docs
+* [ ] API check: sides correspond to asset
 
 ### rather later
 

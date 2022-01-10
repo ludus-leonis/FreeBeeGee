@@ -364,7 +364,11 @@ gulp.task('build', gulp.parallel(
 
 gulp.task('dist', gulp.parallel('build'))
 
-gulp.task('dist-test', gulp.series('clean', 'dist', () => {
+gulp.task('dist-test', gulp.series('clean', () => {
+  // switch to a version with no zeroes for better testing
+  p.versionEngine = p.versionEngineTest
+  return gulp.src('package.json')
+}, 'dist', () => {
   return replace(gulp.src([
     'test/data/server.json'
   ]))

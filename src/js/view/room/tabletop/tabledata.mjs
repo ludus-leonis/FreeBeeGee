@@ -79,8 +79,8 @@ export function nameToLayer (name) {
 }
 
 export const ID = {
-  POINTER: 'ffffffffffffffff',
-  LOS: 'fffffffffffffffe'
+  POINTER: 'ZZZZZZZZ',
+  LOS: 'ZZZZZZZY'
 }
 
 /**

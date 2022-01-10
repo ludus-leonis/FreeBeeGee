@@ -333,10 +333,12 @@ function createOrUpdatePieceDOM (piece, select) {
       }
     } else {
       const asset = findAsset(piece.a)
-      div.css({
-        '--fbg-color': asset.bg,
-        '--fbg-color-invert': brightness(asset.bg) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
-      })
+      if (asset) {
+        div.css({
+          '--fbg-color': asset.bg,
+          '--fbg-color-invert': brightness(asset.bg) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+        })
+      }
     }
 
     // border color

@@ -29,7 +29,7 @@ $piece-note-glue: rgba(0, 0, 0, .02);
   @extend %flex-center-center;
   @include typography-font($typography-font-list-hand, 400, px(32), 1.15em, .025em);
 
-  $note-rotate: 10deg;
+  $note-rotate: 4deg;
 
   #{'--fbg-color'}: $color-gray-10;
   #{'--fbg-color-invert'}: $color-bw-fg;

@@ -40,7 +40,7 @@ import {
  */
 export function runError (code, options) {
   switch (code) {
-    case 'ROOM_INVALID_ENGINE':
+    case 'INVALID_ENGINE':
       runErrorRoomDeprecated(options)
       break
     case 'UNEXPECTED': // 5
