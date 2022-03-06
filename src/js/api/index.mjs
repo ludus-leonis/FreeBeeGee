@@ -93,6 +93,7 @@ export function apiPostRoom (room, snapshot) {
   formData.append('name', room.name)
   if (room.template) formData.append('template', room.template)
   if (room.auth) formData.append('auth', room.auth)
+  if (room.convert !== undefined) formData.append('convert', room.convert)
   if (snapshot) formData.append('snapshot', snapshot)
 
   return fetchOrThrow([201], 'api/rooms/', {

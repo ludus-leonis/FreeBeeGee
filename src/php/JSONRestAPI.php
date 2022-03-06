@@ -555,6 +555,12 @@ class JSONRestAPI
         if ($value === true || $value === false) {
             return $value;
         }
+        if ($value === "true") {
+            return true;
+        }
+        if ($value === "false") {
+            return false;
+        }
         if ($send) {
             $this->sendError(400, "invalid JSON: $field not a boolean");
         } else {
@@ -776,6 +782,47 @@ class JSONRestAPI
         }
     }
 
+    /**
+     * Send an JSON error to the client for invalid PHP upload sizes.
+     *
+     * Will also terminate execution after sending.
+     */
+    public function sendErrorPHPUploadSize(): void
+    {
+        $this->sendError(400, 'upload too big', 'PHP_SIZE', [
+            min($this->getIniBytes('post_max_size'), $this->getIniBytes('upload_max_filesize')),
+        ]);
+    }
+
+    /**
+     * Get a php.ini value as bytes.
+     *
+     * @param string $key Key to fetch from php.ini.
+     * @return int Value. Expanded to bytes if byte shorthand like '8M' is used in php.ini.
+     */
+    private function getIniBytes(
+        string $key
+    ): int {
+        $value = trim(ini_get($key));
+        $unit = strtolower($value[strlen($value) - 1]);
+        $bytes = (int)$value;
+        switch ($unit) {
+            case 't':
+                $bytes *= 1024;
+                // fall-through
+            case 'g':
+                $bytes *= 1024;
+                // fall-through
+            case 'm':
+                $bytes *= 1024;
+                // fall-through
+            case 'k':
+                $bytes *= 1024;
+        }
+
+        return $bytes;
+    }
+
     // --- file locking --------------------------------------------------------
 
     // Locking functions are not needed by JSONRestAPI. They are provided for
@@ -930,23 +977,30 @@ class JSONRestAPI
     /**
      * Generate a compact ID.
      *
+     * As some browser still have problems with non-html5-ids, we make sure
+     * it starts with a letter.
+     *
      * @param int $seed Optional seed for predictable randomness.
      * @return string 8-digit base-64 string, e.g. 'a2-Jc5Xe'.
      */
     public static function id64(
         int $seed = null
     ): string {
+        $letters = 'abcdefghijklmnopqrstuvwxyz'
+            . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $digits = '0123456789'
             . 'abcdefghijklmnopqrstuvwxyz-'
             . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'; // 64 digits
         $id = [];
         if ($seed) {
-            for ($i = 0; $i < 8; $i++) {
+            $id[] = $letters[($seed >> (0 * 6)) % 52]; // letter first
+            for ($i = 1; $i < 8; $i++) {
                 $id[] = $digits[($seed >> ($i * 6)) % 64];
             }
         } else {
             $data = random_bytes(8);
-            for ($i = 0; $i < 8; $i++) {
+            $id[] = $letters[ord($data[0]) % 52]; // letter first
+            for ($i = 1; $i < 8; $i++) {
                 $id[] = $digits[ord($data[$i]) % 64];
             }
         }

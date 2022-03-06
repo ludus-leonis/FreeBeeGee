@@ -303,6 +303,86 @@ function testApiSnapshotVersions (api, version, room) {
   closeTestroom(api, room)
 }
 
+// -----------------------------------------------------------------------------
+
+function blob (mb) {
+  const chars = [...Array(256)].map((s, i) => String.fromCharCode(i))
+  var result = []
+  for (let i = 0; i < mb * 1024 * 1024; i++) {
+    const rnd = Math.floor(Math.random() * 256)
+    result.push(chars[rnd])
+  }
+  return result.join('')
+}
+
+// const rnd = (() => {
+//     const gen = (min, max) => max++ && [...Array(max-min)].map((s, i) => String.fromCharCode(min+i));
+//
+//     const sets = {
+//         num: gen(48,57),
+//         alphaLower: gen(97,122),
+//         alphaUpper: gen(65,90),
+//         special: [...`~!@#$%^&*()_+-=[]\{}|;:'",./<>?`]
+//     };
+//
+//     function* iter(len, set) {
+//         if (set.length < 1) set = Object.values(sets).flat();
+//         for (let i = 0; i < len; i++) yield set[Math.random() * set.length|0]
+//     }
+//
+//     return Object.assign(((len, ...set) => [...iter(len, set.flat())].join('')), sets);
+// })();
+
+function testApiSnapshotSize (api, version, room) {
+  const b = blob(1)
+
+  // 1MB - size ok
+  testZIPUpload(api,
+    () => '/rooms/',
+    () => { return room },
+    () => { return 'apitests' },
+    () => zipCreate(zip => {
+      for (let i = 0; i < 1; i++) {
+        zip.addFile(`blob${i}.bin`, Buffer.from(b))
+      }
+      zip.addFile('LICENSE.md', Buffer.from('you may'))
+    }),
+    body => {
+      expect(body).to.be.an('object')
+      expect(body.credits).to.be.eql('you may')
+    }, 201)
+
+  // 9MB - size exceeds php but not webserver
+  testZIPUpload(api,
+    () => '/rooms/',
+    () => { return room },
+    () => { return 'apitests' },
+    () => zipCreate(zip => {
+      for (let i = 0; i < 9; i++) {
+        zip.addFile(`blob${i}.bin`, Buffer.from(b))
+      }
+      zip.addFile('LICENSE.md', Buffer.from('you may'))
+    }),
+    body => {
+    }, 400)
+
+  // 65MB - size exceeds webserver
+  testZIPUpload(api,
+    () => '/rooms/',
+    () => { return room },
+    () => { return 'apitests' },
+    () => zipCreate(zip => {
+      for (let i = 0; i < 65; i++) {
+        zip.addFile(`blob${i}.bin`, Buffer.from(b))
+      }
+      zip.addFile('LICENSE.md', Buffer.from('you may'))
+    }),
+    body => {
+    }, 413, false)
+
+  closeTestroom(api, room)
+}
+
 // --- the test runners --------------------------------------------------------
 
 describe('API - snapshots', function () {
@@ -313,5 +393,6 @@ describe('API - snapshots', function () {
     describe('Tutorial', () => testApiSnapshotTutorial(api, version, room))
     describe('upload', () => testApiSnapshotUpload(api, version, room))
     describe('versions', () => testApiSnapshotVersions(api, version, room))
+    describe('size', () => testApiSnapshotSize(api, version, room))
   })
 })

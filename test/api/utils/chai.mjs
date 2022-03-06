@@ -118,8 +118,9 @@ export function testGetBuffer (api, path, headerTests, payloadTests, status = 20
  * @param {function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
+ * @param {boolean} json If true (default), tests expects a json reply from PHP.
  */
-export function testZIPUpload (api, path, name, auth, upload, payloadTests, status = 200) {
+export function testZIPUpload (api, path, name, auth, upload, payloadTests, status = 200, json = true) {
   it(`POST ${api}${path()}`, function (done) {
     chai.request(api)
       .post(path())
@@ -129,12 +130,12 @@ export function testZIPUpload (api, path, name, auth, upload, payloadTests, stat
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
         expect(res, res.text).to.have.status(status)
-        expect(res, res.text).to.be.json
+        if (json) expect(res, res.text).to.be.json
         expect(res.body).to.be.not.null
         payloadTests(res.body)
         done()
       })
-  })
+  }).timeout(10000)
 }
 
 /**
@@ -321,8 +322,8 @@ export function runTests (what) {
 
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
 
-  // describe('PHP 7.2', function () { what(api.replace(/PHP/, '72'), '72', `${room}72`) })
-  // describe('PHP 7.3', function () { what(api.replace(/PHP/, '73'), '73', `${room}73`) })
-  // describe('PHP 7.4', function () { what(api.replace(/PHP/, '74'), '74', `${room}74`) })
+  describe('PHP 7.2', function () { what(api.replace(/PHP/, '72'), '72', `${room}72`) })
+  describe('PHP 7.3', function () { what(api.replace(/PHP/, '73'), '73', `${room}73`) })
+  describe('PHP 7.4', function () { what(api.replace(/PHP/, '74'), '74', `${room}74`) })
   describe('PHP 8.0', function () { what(api.replace(/PHP/, '80'), '80', `${room}80`) })
 }

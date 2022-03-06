@@ -258,6 +258,19 @@ pre,
   text-transform: uppercase;
 }
 
+.is-icon,
+%is-icon {
+  display: inline-block;
+  height: 1em;
+  position: relative;
+  top: -.1em;
+
+  svg {
+    height: 100%;
+    width: auto;
+  }
+}
+
 // --- default styling to all elements -----------------------------------------
 
 html {

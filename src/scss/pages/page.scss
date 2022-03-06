@@ -59,7 +59,8 @@
       text-shadow: px(1) px(1) px(1) var(--fbg-color-bg), px(-1) px(-1) px(1) var(--fbg-color-bg);
     }
 
-    .server-feedback {
+    .server-feedback,
+    .server-feedback-form {
       color: $color-bad;
       display: none;
 

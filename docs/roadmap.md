@@ -7,22 +7,22 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] change RPG template tiles to paper material
 * [X] add more PHP unit tests for room/template parsing
 * [X] move backgrounds from room to server
-* [ ] add option to force-upgrade rooms
+* [X] add option to force-upgrade snapshots during upload
 * [X] auto-migrate rooms from compatible engine versions
-* [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
-* [ ] provide clearer feedback when library upload fails
-* [ ] system assets (always there, not part of template)
+* [X] provide better feedback when uploading incompatible templates
+* [X] provide better feedback when snapshot upload fails
+* [ ] provide better feedback when opening legacy rooms after updating
+* [ ] provide better feedback when library upload fails
 * [X] serverless demo mode
-* [ ] more helper/marker overlays (arrows, areas, )
-* [ ] set default/start table other than 1 in template
-* [ ] add more classic game boards: backgammon, mills, solitaire
 * [ ] multiple status icons
+* [ ] PHP 8.1 support
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [ ] fix isSolid image loading
-    * [ ] use shorter IDs
+    * [.] use shorter IDs
   * [ ] review docs
+    * [ ] install + write access
   * [ ] review + run tests
   * [ ] bump version/codename & update CHANGELOG
   * [ ] update screenshots
@@ -31,6 +31,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner
 
+* [ ] add more classic game boards: backgammon, mills, solitaire
+* [ ] more helper/marker overlays (arrows, areas, )
+* [ ] set default/start table other than 1 in template
+* [ ] system assets (always there, not part of template)
 * [ ] table passwords
 * [ ] use 'v' to paste / clone
 * [ ] automated deployment tests for new zip/tgz packages after build

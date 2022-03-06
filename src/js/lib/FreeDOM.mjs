@@ -340,10 +340,10 @@ class FreeDOM {
   hasAll (...items) {
     for (const item of items) {
       if (typeof item === 'string' && item.charAt(0) === '.') { // check for class
-        const search = item.substr(1, item.length - 2) // remove dot
+        const search = item.substr(1) // remove dot
         this.each(node => {
           for (const cls of node.classList) {
-            if (cls.startsWith(search)) continue
+            if (cls === search) continue
           }
         })
       }
@@ -364,12 +364,14 @@ class FreeDOM {
   hasAny (...items) {
     for (const item of items) {
       if (typeof item === 'string' && item.charAt(0) === '.') { // check for class
-        const search = item.substr(1, item.length - 2) // remove dot
+        const search = item.substr(1) // remove dot
+        let found = false
         this.each(node => {
           for (const cls of node.classList) {
-            if (cls.startsWith(search)) return true
+            if (cls === search) found = true
           }
         })
+        return found
       }
     }
     return false

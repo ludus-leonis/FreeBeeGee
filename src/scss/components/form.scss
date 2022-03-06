@@ -66,6 +66,11 @@ label {
   textarea {
     margin-top: 0;
   }
+
+  &.p-medium {
+    letter-spacing: inherit;
+    text-transform: none;
+  }
 }
 
 .is-input,

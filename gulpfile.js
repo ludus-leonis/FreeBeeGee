@@ -195,6 +195,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/api/serverless.mjs',
     'src/js/lib/FreeDOM.mjs',
     'src/js/lib/utils.mjs',
+    'src/js/lib/icons.mjs',
     'src/js/state/index.mjs',
 
     'src/js/view/modal.mjs',

@@ -123,7 +123,11 @@ class FreeBeeGeeAPI
         $this->api->register('POST', '/rooms/', function ($fbg, $data, $payload) {
             $formData = $this->api->multipartToJSON();
             if ($formData) { // client sent us multipart
-                $room = $this->api->assertJSONObject('room', $formData);
+                if ($formData === "[]" && $_SERVER['CONTENT_LENGTH'] > 0) {
+                    $this->api->sendErrorPHPUploadSize();
+                } else {
+                    $room = $this->api->assertJSONObject('snapshot room', $formData);
+                }
             } else { // client sent us regular JSON
                 $room = $this->api->assertJSONObject('room', $payload);
             }
@@ -612,25 +616,28 @@ class FreeBeeGeeAPI
      * termiante execution and send a 400 in case of invalid zips.
      *
      * @param string $zipPath Full path to the zip to check.
+     * @param bool $ignoreEngine Optional. If true, snapshots will not be rejected on eninge.
      * @param array Array of strings / paths of all valid zip entries to extract.
      */
     public function validateSnapshot(
-        string $zipPath
+        string $zipPath,
+        bool $ignoreEngine = false
     ): array {
-        $issues = [];
         $valid = [];
         $sizeLeft = $this->getServerConfig()->maxRoomSizeMB  * 1024 * 1024;
 
         // basic sanity tests
         if (filesize($zipPath) > $sizeLeft) {
             // if the zip itself is too large, then its content is probably too
-            $this->api->sendError(400, 'zip too large', 'SIZE_EXCEEDED', $issues);
+            $this->api->sendError(400, 'snapshot too big', 'ROOM_SIZE', [
+                $this->getServerConfig()->maxRoomSizeMB
+            ]);
         }
 
         // iterate over zip entries
         $zip = new \ZipArchive();
         if (!$zip->open($zipPath)) {
-            $this->api->sendError(400, 'can\'t open zip', 'ZIP_INVALID', $issues);
+            $this->api->sendError(400, 'can\'t open zip', 'ZIP_INVALID');
         }
         for ($i = 0; $i < $zip->numFiles; $i++) {
             // note: the checks below will just 'continue' for invalid/ignored items
@@ -651,7 +658,9 @@ class FreeBeeGeeAPI
                     break; // known files that will be cleaned up later anyway
                 case 'template.json':
                     // only check version, everything else can be cleaned up later
-                    $this->validateTemplateEngineJSON(file_get_contents('zip://' . $zipPath . '#template.json'));
+                    if (!$ignoreEngine) {
+                        $this->validateTemplateEngineJSON(file_get_contents('zip://' . $zipPath . '#template.json'));
+                    }
                     break;
                 default: // scan for asset filenames
                     if (
@@ -669,7 +678,9 @@ class FreeBeeGeeAPI
             }
             $sizeLeft -= $entry['size'];
             if ($sizeLeft < 0) {
-                $this->api->sendError(400, 'zip content too large', 'SIZE_EXCEEDED', $issues);
+                $this->api->sendError(400, 'content too large', 'ROOM_SIZE', [
+                    $this->getServerConfig()->maxRoomSizeMB
+                ]);
             }
 
             // if we got here, no check failed, so the entry is ok!
@@ -691,7 +702,7 @@ class FreeBeeGeeAPI
     ) {
         $template = json_decode($json);
         $template = is_object($template) ? $template : (object) [] ;
-        $this->setIfMissing($template, 'engine', 'unkown');
+        $this->setIfMissing($template, 'engine', '0.0.0');
 
         if (!is_string($template->engine) || !$this->api->semverSatisfies($this->engine, '^' . $template->engine, true)) {
             $this->api->sendError(400, 'template.json: engine mismatch', 'INVALID_ENGINE', [
@@ -1054,7 +1065,7 @@ class FreeBeeGeeAPI
         $out->y = 0;
         $out->z = 0;
         if ($out->l !== 3) { // not a note
-            $out->a = $this->ID_ASSET_NONE;
+            $out->a = 'n' . $this->ID_ASSET_NONE;
         }
 
         // remove unnecessary properties
@@ -1066,7 +1077,7 @@ class FreeBeeGeeAPI
                     break;
                 case 'a':
                     $out->$property =
-                        $this->api->assertString('a', $value, $this->REGEXP_ID, false) ?: $this->ID_ASSET_NONE;
+                        $this->api->assertString('a', $value, $this->REGEXP_ID, false) ?: $value;
                     break;
                 case 'l':
                     $out->$property =
@@ -1292,6 +1303,8 @@ class FreeBeeGeeAPI
             $this->api->assertHasProperties('room', $incoming, ['name']);
         }
 
+        $validated->convert = false;
+
         foreach ($incoming as $property => $value) {
             switch ($property) {
                 case 'id':
@@ -1302,6 +1315,9 @@ class FreeBeeGeeAPI
                     break;
                 case 'name':
                     $validated->$property = $this->api->assertString('name', $value, '[A-Za-z0-9]{8,48}');
+                    break;
+                case 'convert':
+                    $validated->$property = $this->api->assertBoolean('convert', $value);
                     break;
                 case 'template':
                     $validated->$property = $this->api->assertString('template', $value, '[A-Za-z0-9]{1,99}');
@@ -1510,9 +1526,14 @@ class FreeBeeGeeAPI
                     $this->api->sendError(400, 'snapshot upload is not enabled on this server');
                 }
                 if ($_FILES[$validated->_files[0]]['error'] > 0) {
-                    $this->api->sendError(400, 'PHP upload failed', JSONRestAPI::UPLOAD_ERR[
-                        $_FILES[$validated->_files[0]]['error']
-                    ]);
+                    $error = JSONRestAPI::UPLOAD_ERR[$_FILES[$validated->_files[0]]['error']];
+                    switch ($error) {
+                        case 'UPLOAD_ERR_INI_SIZE':
+                            $this->api->sendErrorPHPUploadSize();
+                            break;
+                        default:
+                            $this->api->sendError(400, 'PHP upload failed', $error);
+                    }
                 }
                 $zipPath = $_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid';
             } else {
@@ -1523,7 +1544,7 @@ class FreeBeeGeeAPI
             if (!is_file($zipPath)) {
                 $this->api->sendError(400, 'template not available');
             }
-            $validEntries = $this->validateSnapshot($zipPath);
+            $validEntries = $this->validateSnapshot($zipPath, $validated->convert);
 
             if (!mkdir($folder, 0777, true)) { // create room folder
                 $this->api->sendError(500, 'can\'t write on server');
@@ -2122,7 +2143,6 @@ class FreeBeeGeeAPI
         }
         return $piece;
     }
-
 
     /**
      * Generate an ID.

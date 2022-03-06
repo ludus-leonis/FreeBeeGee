@@ -50,10 +50,22 @@ export function createScreen (headline, content, footer = '') {
 }
 
 /**
+ * Hide the server feedback widgets.
+ */
+export function clearServerFeedback () {
+  _('.server-feedback').remove('.show')
+  _('#server-feedback-form').remove('.show')
+}
+
+/**
  * Show a server feedback (error message).
  *
  * @param {String} message Message to show.
  */
-export function serverFeedback (message) {
+export function serverFeedback (message, form) {
+  clearServerFeedback()
   _('.server-feedback').add('.show').innerHTML = message
+  if (form) {
+    _('#server-feedback-form').add('.show').innerHTML = form
+  }
 }
