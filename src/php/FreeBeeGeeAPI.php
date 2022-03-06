@@ -543,7 +543,7 @@ class FreeBeeGeeAPI
                 // this ID only has to be unique within the room, but should be reproducable
                 // therefore we use a fast hash and even only use parts of it
                 $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
-                $asset->id = $this->generateId(crc32($idBase));
+                $asset->id = $this->generateId(abs(crc32($idBase))); // avoid neg. values on 32bit systems
 
                 if (
                     $lastAsset === null

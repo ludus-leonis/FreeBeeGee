@@ -20,7 +20,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [ ] fix isSolid image loading
-    * [.] use shorter IDs
+    * [X] use shorter IDs
   * [ ] review docs
     * [ ] install + write access
   * [ ] review + run tests
