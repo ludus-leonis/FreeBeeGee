@@ -326,4 +326,5 @@ export function runTests (what) {
   describe('PHP 7.3', function () { what(api.replace(/PHP/, '73'), '73', `${room}73`) })
   describe('PHP 7.4', function () { what(api.replace(/PHP/, '74'), '74', `${room}74`) })
   describe('PHP 8.0', function () { what(api.replace(/PHP/, '80'), '80', `${room}80`) })
+  describe('PHP 8.1', function () { what(api.replace(/PHP/, '81'), '81', `${room}81`) })
 }

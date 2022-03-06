@@ -8,7 +8,7 @@ See the [Troubleshooting](troubleshooting.md) instructions for additional help.
 
 ### Server
 
-* PHP 7.3 / 7.4 / 8.0
+* PHP 7.3 / 7.4 / 8.0 / 8.1
   * required extensions: `zip`
 * Apache
   * required: `.htaccess`, `mod_rewrite`
@@ -38,6 +38,8 @@ Per default, FreeBeeGee comes with a simple `.htaccess` file with the same conte
 Finally, review the `terms.html` and don't forget to update your GDPR / privacy statement in `privacy.html`. Consider neither of them as legal advice - if in doubt, consult a lawyer.
 
 ## Configuration
+
+FreeBeeGee requires write-permissions in `api/data/` (including), where it will create directories and files to store all non-static data like rooms or lock files.
 
 The server config file is found in `api/data/server.json`:
 

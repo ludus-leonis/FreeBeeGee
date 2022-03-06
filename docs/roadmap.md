@@ -15,7 +15,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] provide better feedback when library upload fails
 * [X] serverless demo mode
 * [ ] multiple status icons
-* [ ] PHP 8.1 support
+* [X] PHP 8.1 support
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
