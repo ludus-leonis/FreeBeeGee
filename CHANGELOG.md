@@ -2,7 +2,7 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.14.0 - ??? ???
+## v0.14.0 - Verbose Vicuna
 
 This is a breaking release, changing IDs. Old snapshots/rooms will no longer work.
 
@@ -19,6 +19,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will no longer wor
 * added better feedback when uploading incompatible templates/snapshots
 * added better feedback when uploading too large snapshots
 * added more unit and API integration tests
+* fixed pieces sometimes getting selected when clicking in transparent areas
 * fixed loading of rooms of older versions
 * changed default max room size to 16MB and max room count to 32 - customize them in server.json
 * changed IDs to 8-digit 64-base strings

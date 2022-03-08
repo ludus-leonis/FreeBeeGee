@@ -139,7 +139,6 @@ export function createRoomView (name) {
  * Reset all error indicators on template<->upload switch.
  */
 function reset () {
-  console.log('reset')
   _('#template').remove('.invalid')
   _('#uploadInput').remove('.invalid')
   _('.server-feedback').remove('.show')

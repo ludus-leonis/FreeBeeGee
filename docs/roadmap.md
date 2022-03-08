@@ -2,7 +2,7 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.14 - ??? ???
+## v0.14 - Verbose Vicuna
 
 * [X] change RPG template tiles to paper material
 * [X] add more PHP unit tests for room/template parsing
@@ -19,10 +19,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] fix isSolid image loading
+    * [X] fix isSolid image loading
+    * [ ] check write permissions in data folder
     * [X] use shorter IDs
   * [ ] review docs
-    * [ ] install + write access
+    * [X] install + write access
   * [ ] review + run tests
   * [ ] bump version/codename & update CHANGELOG
   * [ ] update screenshots

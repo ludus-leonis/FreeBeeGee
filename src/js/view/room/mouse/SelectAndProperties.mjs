@@ -47,13 +47,12 @@ export class SelectAndProperties extends MouseButtonHandler {
   push (mousedown) {
     mousedown.preventDefault()
 
-    const target = findRealClickTarget(mousedown, getMouseCoords())
-    updateSelection(target)
-    if (!target) return // no real click
-
-    if (target.classList.contains('piece')) {
-      popupPiece(target.id)
-    }
+    findRealClickTarget(mousedown, getMouseCoords()).then(target => {
+      updateSelection(target)
+      if (target && target.classList.contains('piece')) {
+        popupPiece(target.id)
+      }
+    })
   }
 
   drag (mousemove) {

@@ -28,6 +28,7 @@ If the server requirements are met, installation is as simple as:
 
 * Download the latest `*.tar.gz`/`*.zip` from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 * Extract the `*.tar.gz`/`*.zip` into a folder on your web-server.
+* Make sure FreeBeeGee / the web server has write permissions in the `api/data/` folder.
 
 You can pick the root folder of your server, or create a subfolder for FreeBeeGee.
 
@@ -39,7 +40,7 @@ Finally, review the `terms.html` and don't forget to update your GDPR / privacy 
 
 ## Configuration
 
-FreeBeeGee requires write-permissions in `api/data/` (including), where it will create directories and files to store all non-static data like rooms or lock files.
+FreeBeeGee stores all non-static data in `api/data/`, where it expects its config files and will create directories for rooms and other content.
 
 The server config file is found in `api/data/server.json`:
 

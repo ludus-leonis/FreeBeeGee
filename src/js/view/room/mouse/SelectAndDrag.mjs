@@ -63,33 +63,36 @@ export class SelectAndDrag extends MouseButtonHandler {
     if (!mousedown.target.classList.contains('piece') &&
       !mousedown.target.classList.contains('tabletop')) return
 
-    const target = findRealClickTarget(mousedown, getMouseCoords())
-    updateSelection(target)
-    if (!target) return // no real click
-
-    if (this.isDragging()) { // you can't drag twice
-      this.dragging.parentNode.removeChild(this.dragging) // quick fix for release-outsite bug
-      this.dragging = null
-      mousedown.preventDefault()
-      return
-    }
-
-    if (!target.classList.contains('piece')) return // we only drag pieces
-    setCursor('.cursor-grab')
-
-    this.dragging = target.cloneNode(true)
-    this.dragging.id = this.dragging.id + '-drag'
-    this.dragging.piece = findPiece(target.id)
-
-    this.dragging.style.zIndex = 999999999 // drag visually on top of everything
-    this.dragging.classList.add('dragging')
-    this.dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
-    target.parentNode.appendChild(this.dragging)
-
-    this.dragging.startX = mousedown.clientX // no need to compensate, as we
-    this.dragging.startY = mousedown.clientY // only calculate offset anyway
-
     mousedown.preventDefault()
+
+    findRealClickTarget(mousedown, getMouseCoords()).then(target => {
+      updateSelection(target)
+      if (!target) return // no real click
+
+      if (this.isDragging()) { // you can't drag twice
+        this.dragging.parentNode.removeChild(this.dragging) // quick fix for release-outsite bug
+        this.dragging = null
+        // mousedown.preventDefault()
+        return
+      }
+
+      if (!target.classList.contains('piece')) return // we only drag pieces
+      setCursor('.cursor-grab')
+
+      this.dragging = target.cloneNode(true)
+      this.dragging.id = this.dragging.id + '-drag'
+      this.dragging.piece = findPiece(target.id)
+
+      this.dragging.style.zIndex = 999999999 // drag visually on top of everything
+      this.dragging.classList.add('dragging')
+      this.dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
+      target.parentNode.appendChild(this.dragging)
+
+      this.dragging.startX = mousedown.clientX // no need to compensate, as we
+      this.dragging.startY = mousedown.clientY // only calculate offset anyway
+
+      // mousedown.preventDefault()
+    })
   }
 
   drag (mousemove) {
