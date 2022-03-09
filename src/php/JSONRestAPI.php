@@ -580,14 +580,24 @@ class JSONRestAPI
      * @param mixed $value The value to check.
      * @param bool $send Optonal. If true (default), validation erros are
      *                   as JSON. If false, null is returned instead.
+     * @param int $maxSize Optional. Maximum (decoded) size of blob. Defaults to 1MB.
      * @return int The parsed value.
      */
     public function assertBase64(
         string $field,
         $value,
+        int $maxSize = 1024 * 1024,
         bool $send = true
     ): string {
-        if (base64_encode(base64_decode($value, true)) === $value) {
+        $decoded = base64_decode($value, true);
+        if (strlen($decoded) > $maxSize) {
+            if ($send) {
+                $this->sendError(400, "invalid JSON: $field too large.", 'UPLOAD_SIZE', [$maxSize]);
+            } else {
+                return null;
+            }
+        }
+        if (base64_encode($decoded) === $value) {
             return $value;
         }
         if ($send) {
@@ -1078,6 +1088,28 @@ class JSONRestAPI
         }
 
         return false; // unknown operator never satisfies
+    }
+
+    /**
+     * Calculate a room's size on disk.
+     *
+     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @return int Size of room in bytes.
+     */
+    public function getDirectorySize(
+        string $path
+    ) {
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($path),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
+        $size = 0;
+        foreach ($iterator as $filename => $file) {
+            if (!$file->isDir()) {
+                $size += $file->getSize();
+            }
+        }
+        return $size;
     }
 
     /**

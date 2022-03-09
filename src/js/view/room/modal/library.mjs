@@ -29,7 +29,8 @@ import {
   prettyName,
   unprettyName,
   sortByString,
-  resizeImage
+  resizeImage,
+  bytesToIso
 } from '../../../lib/utils.mjs'
 
 import {
@@ -336,7 +337,7 @@ function modalUpload () {
     }
 
     addAsset(data)
-      .then(remoteImage => {
+      .then(() => {
         reloadRoom()
           .then(() => {
             refreshTabs()
@@ -356,19 +357,39 @@ function modalUpload () {
           })
       })
       .catch(error => {
-        console.error(error)
         _('#ok').remove('.is-spinner')
         if (error instanceof UnexpectedStatus) {
           switch (error.status) {
+            case 400:
+              if (error?.body?._error === 'UPLOAD_SIZE') {
+                uploadFailed(`Assets are limited to ${bytesToIso(error.body._messages[1])}.`)
+              } else if (error?.body?._error === 'ROOM_SIZE') {
+                uploadFailed(`Room limit exceeded - ${bytesToIso(error.body._messages[1])} left.`)
+              } else {
+                uploadFailed('Invalid file (400).')
+              }
+              break
+            case 413:
+              uploadFailed('Webserver rejected the file (too large - 413).')
+              break
             default:
-              errorMessage.innerHTML = 'Upload failed. '
+              uploadFailed(`(${error.status})`)
           }
+        } else {
+          console.error(error)
         }
         _('#btn-ok').remove('.is-spinner')
       })
   } else {
     _('#btn-ok').remove('.is-spinner')
   }
+}
+
+/**
+ * Show an upload failed error message.
+ */
+function uploadFailed (why) {
+  _('#modal-body .fbg-error').innerHTML = `Upload failed: ${why}`
 }
 
 /**

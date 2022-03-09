@@ -19,6 +19,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will no longer wor
 * added better feedback when uploading incompatible templates/snapshots
 * added better feedback when uploading too large snapshots
 * added better feedback when existing rooms fail after server updates
+* added better feedback when library upload fails
 * added more unit and API integration tests
 * fixed pieces sometimes getting selected when clicking in transparent areas
 * fixed loading of rooms of older versions

@@ -624,13 +624,13 @@ class FreeBeeGeeAPI
         bool $ignoreEngine = false
     ): array {
         $valid = [];
-        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB  * 1024 * 1024;
+        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024;
 
         // basic sanity tests
         if (filesize($zipPath) > $sizeLeft) {
             // if the zip itself is too large, then its content is probably too
             $this->api->sendError(400, 'snapshot too big', 'ROOM_SIZE', [
-                $this->getServerConfig()->maxRoomSizeMB
+                $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024
             ]);
         }
 
@@ -679,7 +679,7 @@ class FreeBeeGeeAPI
             $sizeLeft -= $entry['size'];
             if ($sizeLeft < 0) {
                 $this->api->sendError(400, 'content too large', 'ROOM_SIZE', [
-                    $this->getServerConfig()->maxRoomSizeMB
+                    $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024
                 ]);
             }
 
@@ -1369,7 +1369,7 @@ class FreeBeeGeeAPI
                     $validated->h = $this->api->assertInteger('h', $value, 1, 32);
                     break;
                 case 'base64':
-                    $validated->base64 = $this->api->assertBase64('base64', $value);
+                    $validated->base64 = $this->api->assertBase64('base64', $value, $this->maxAssetSize);
                     break;
                 case 'bg':
                     $validated->bg = $this->api->assertString(
@@ -2038,14 +2038,22 @@ class FreeBeeGeeAPI
     ) {
         $asset = $this->validateAsset($data);
 
-        // determine asset path elements
+        // check remaining size
         $folder = $this->getRoomFolder($roomName);
+        $folderSize = $this->api->getDirectorySize($folder);
+        $maxSize = $this->getServerConfig()->maxRoomSizeMB  * 1024 * 1024;
+        $blob = base64_decode($asset->base64);
+        if ($folderSize + strlen($blob) > $maxSize) {
+            $this->api->sendError(400, 'snapshot too big', 'ROOM_SIZE', [$maxSize - $folderSize]);
+        }
+
+        // determine asset path elements
         $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' .
             str_replace('#', '', $asset->bg) . '.' . $asset->format;
 
         // output file data
         $lock = $this->api->waitForWriteLock($folder . '.flock');
-        file_put_contents($folder . 'assets/' . $asset->type . '/' . $filename, base64_decode($asset->base64));
+        file_put_contents($folder . 'assets/' . $asset->type . '/' . $filename, $blob);
 
         // regenerate library JSON
         $room = json_decode(file_get_contents($folder . 'room.json'));

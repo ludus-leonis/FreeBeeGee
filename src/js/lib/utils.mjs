@@ -435,6 +435,28 @@ export function uuid (seed = null) {
 }
 
 /**
+ * Generate a byte string.
+ *
+ * @param {Number} bytes Bytes to display, e.g. 1024
+ * @return {String} Compact version inkluding units, e.g. '1k'.
+ */
+export function bytesToIso (bytes) {
+  if (bytes === 1) {
+    return '1 byte'
+  }
+  if (bytes < 1024) {
+    return Math.floor(bytes) + ' bytes'
+  }
+  if (bytes < 1024 * 1024) {
+    return Math.floor(bytes / 1024) + ' kB'
+  }
+  if (bytes < 1024 * 1024 * 1024) {
+    return Math.floor(bytes / 1024 / 1024) + ' MB'
+  }
+  return Math.floor(bytes / 1024 / 1024 / 1024) + ' GB'
+}
+
+/**
  * Calculate a simple hash for a string.
  *
  * Based on Java's implementation.

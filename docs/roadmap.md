@@ -12,12 +12,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] add better feedback when uploading incompatible templates
 * [X] add better feedback when snapshot upload fails
 * [X] add better feedback when existing rooms fail after server updates
-* [ ] add better feedback when library upload fails
+* [X] add better feedback when library upload fails
 * [X] serverless demo mode
 * [ ] multiple status icons
 * [X] PHP 8.1 support
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] fix isSolid image loading
     * [ ] check write permissions in data folder
@@ -26,7 +26,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] install + write access
   * [ ] review + run tests
   * [ ] bump version/codename & update CHANGELOG
-  * [ ] update screenshots
+  * [X] update screenshots
 
 ## Backlog (unsorted)
 

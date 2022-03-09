@@ -41,7 +41,8 @@ import {
   setStoreValue,
   toggleFullscreen,
   shuffle,
-  sortByString
+  sortByString,
+  bytesToIso
 } from '../../src/js/lib/utils.mjs'
 
 describe('Frontend - utils.mjs - HTML', function () {
@@ -473,6 +474,18 @@ describe('Frontend - utils.mjs - Text', function () {
       { id: 'three' },
       { id: 'two' }
     ])
+  })
+
+  it('bytesToIso()', function () {
+    expect(bytesToIso(0)).to.be.eql('0 bytes')
+    expect(bytesToIso(1)).to.be.eql('1 byte')
+    expect(bytesToIso(2)).to.be.eql('2 bytes')
+    expect(bytesToIso(1023)).to.be.eql('1023 bytes')
+    expect(bytesToIso(1024)).to.be.eql('1 kB')
+    expect(bytesToIso(1024 * 1024 - 1)).to.be.eql('1023 kB')
+    expect(bytesToIso(1024 * 1024)).to.be.eql('1 MB')
+    expect(bytesToIso(1024 * 1024 * 1024 - 1)).to.be.eql('1023 MB')
+    expect(bytesToIso(1024 * 1024 * 1024)).to.be.eql('1 GB')
   })
 
   it('prettyName()', function () {

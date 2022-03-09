@@ -24,6 +24,10 @@ import {
 } from '../../lib/icons.mjs'
 
 import {
+  bytesToIso
+} from '../../lib/utils.mjs'
+
+import {
   createScreen,
   serverFeedback
 } from '../../view/screen.mjs'
@@ -214,7 +218,7 @@ function ok (name) {
                 break
               case 'ROOM_SIZE':
                 serverFeedback(`
-                  The snapshot is too large. This FreeBeeGee server limits ZIPs and their content to ${error.body._messages[1]}MB.
+                  The snapshot is too large. This FreeBeeGee server limits ZIPs and their content to ${bytesToIso(error.body._messages[1])}.
                   <span class="is-icon" title="Admins can change the limit in FBG's server.json.">${iconHelp}</span>
                 `)
                 _('#uploadInput').add('.invalid')
@@ -222,7 +226,7 @@ function ok (name) {
                 break
               case 'PHP_SIZE':
                 serverFeedback(`
-                  The snapshot is too large. Limit is ${error.body._messages[1] / 1024 / 1024}MB.
+                  The snapshot is too large. The current limit is ${bytesToIso(error.body._messages[1])}.
                   <span class="is-icon" title="Admins should check the php.ini upload settings.">${iconHelp}</span>
                 `)
                 _('#uploadInput').add('.invalid')
