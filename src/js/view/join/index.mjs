@@ -176,7 +176,9 @@ function ok () {
 function openOrCreate (name) {
   apiGetRoom(name, true)
     .then((response) => {
-      if (response.status === 200) {
+      if (response.status === 400) {
+        runError('ROOM_INVALID', name)
+      } else if (response.status === 200) {
         runRoom(response.body)
       } else { // 404
         createRoomView(name)

@@ -291,9 +291,13 @@ export function reloadRoom () {
  */
 export function loadRoom (name) {
   return apiGetRoom(name, true)
-    .then(remoteRoom => {
-      _setRoom(remoteRoom.body)
-      return remoteRoom
+    .then(response => {
+      if (response.status === 400) {
+        runError('ROOM_INVALID', name)
+      } else {
+        _setRoom(response.body)
+        return response
+      }
     })
     .catch(error => errorRoomGone(error))
 }
@@ -544,7 +548,7 @@ export function errorUnexpected404 (error) {
 
 export function errorRoomGone (error) {
   if (error instanceof UnexpectedStatus) {
-    runError('TABLE_GONE', room.name, error)
+    runError('ROOM_GONE', room.name, error)
     stopAutoSync()
   } else {
     errorUnexpected(error)

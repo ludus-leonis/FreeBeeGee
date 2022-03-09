@@ -9,10 +9,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] move backgrounds from room to server
 * [X] add option to force-upgrade snapshots during upload
 * [X] auto-migrate rooms from compatible engine versions
-* [X] provide better feedback when uploading incompatible templates
-* [X] provide better feedback when snapshot upload fails
-* [ ] provide better feedback when opening legacy rooms after updating
-* [ ] provide better feedback when library upload fails
+* [X] add better feedback when uploading incompatible templates
+* [X] add better feedback when snapshot upload fails
+* [X] add better feedback when existing rooms fail after server updates
+* [ ] add better feedback when library upload fails
 * [X] serverless demo mode
 * [ ] multiple status icons
 * [X] PHP 8.1 support

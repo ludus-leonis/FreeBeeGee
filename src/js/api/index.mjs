@@ -68,7 +68,7 @@ export function apiGetTemplates () {
  * @return {Promise} Promise containing JSON/Object payload.
  */
 export function apiGetRoom (roomName, headers = false) {
-  return getJson([200, 404], 'api/rooms/' + roomName + '/', headers)
+  return getJson([200, 400, 404], 'api/rooms/' + roomName + '/', headers)
 }
 
 /**

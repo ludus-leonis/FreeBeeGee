@@ -18,6 +18,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will no longer wor
 * added option to force-migrate rooms from incompatible engine versions - might loose data
 * added better feedback when uploading incompatible templates/snapshots
 * added better feedback when uploading too large snapshots
+* added better feedback when existing rooms fail after server updates
 * added more unit and API integration tests
 * fixed pieces sometimes getting selected when clicking in transparent areas
 * fixed loading of rooms of older versions
