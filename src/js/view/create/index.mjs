@@ -205,6 +205,14 @@ function ok (name) {
         switch (error.status) {
           case 400:
             switch (error.body._error) {
+              case 'FILE_PERMISSIONS':
+                serverFeedback(`
+                  FreeBeeGee is missing file-permissions on the server and can't create rooms right now.
+                  <span class="is-icon" title="Admins should check '${error.body._messages[0]}' to be writable.">${iconHelp}</span>
+                `)
+                _('#uploadInput').add('.invalid')
+                _('#template').add('.invalid').focus()
+                break
               case 'INVALID_ENGINE':
                 serverFeedback(
                   `This snapshot was created using engine

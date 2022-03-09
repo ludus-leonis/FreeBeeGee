@@ -18,9 +18,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] PHP 8.1 support
 * [ ] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] fix isSolid image loading
-    * [ ] check write permissions in data folder
+    * [X] check write permissions in data folder
     * [X] use shorter IDs
   * [ ] review docs
     * [X] install + write access

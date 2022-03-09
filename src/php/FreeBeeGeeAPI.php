@@ -1500,6 +1500,8 @@ class FreeBeeGeeAPI
             }
         }
 
+        $this->assertFilePermissions();
+
         // check if we have free rooms left
         if ($this->getFreeRooms($server) <= 0) {
             $this->api->sendError(503, 'no free rooms available');
@@ -1800,6 +1802,43 @@ class FreeBeeGeeAPI
         $value = intval($value);
         if ($value < 0 || $value > 9) {
             $this->api->sendError(400, 'invalid table: ' . $value);
+        }
+    }
+
+    /**
+     * Make sure FreeBeeGee can access all essential directories and files.
+     *
+     * @param string $roomName Optional room name, e.g. 'darkEscapingQuelea'.
+     */
+    public function assertFilePermissions(
+        $roomName = null
+    ) {
+        $data = $this->api->getDataDir();
+        $this->assertWritable('');
+        if (is_dir($data . '/rooms/')) {
+            $this->assertWritable('rooms/');
+        }
+        if ($roomName) {
+            $this->assertWritable('rooms/' . $roomName . '/');
+            $this->assertWritable('rooms/' . $roomName . '/tables/');
+            $this->assertWritable('rooms/' . $roomName . '/assets/other/');
+            $this->assertWritable('rooms/' . $roomName . '/assets/overlay/');
+            $this->assertWritable('rooms/' . $roomName . '/assets/tile/');
+            $this->assertWritable('rooms/' . $roomName . '/assets/token/');
+        }
+    }
+
+    /**
+     * Make sure a api/data/ file/dir is writable.
+     *
+     * @param string $dataDir Directory within 'api/data/' to check. '' for root.
+     */
+    public function assertWritable(
+        $dataDir
+    ) {
+        $data = $this->api->getDataDir();
+        if (is_dir($data . '/' . $dataDir) && !is_writable($data . '/' . $dataDir)) {
+            $this->api->sendError(400, 'api/data/' . $dataDir, 'FILE_PERMISSIONS');
         }
     }
 
