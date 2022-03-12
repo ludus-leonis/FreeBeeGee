@@ -16,6 +16,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] add better feedback when library upload fails
 * [X] serverless demo mode
 * [X] PHP 8.1 support
+* [X] add _.zip system template - always added to each template/snapshot
 * [ ] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
@@ -37,7 +38,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] add more classic game boards: backgammon, mills, solitaire
 * [ ] more helper/marker overlays (arrows, areas, )
 * [ ] set default/start table other than 1 in template
-* [ ] system assets (always there, not part of template)
 * [ ] table passwords
 * [ ] use 'v' to paste / clone
 * [ ] right-click on table (add piece, change table)

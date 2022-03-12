@@ -347,6 +347,7 @@ gulp.task('template-Classic', template('Classic'))
 gulp.task('template-RPG', template('RPG'))
 gulp.task('template-Hex', template('Hex'))
 gulp.task('template-Tutorial', template('Tutorial'))
+gulp.task('template-System', template('_'))
 
 gulp.task('build', gulp.parallel(
   'js-main',
@@ -358,6 +359,7 @@ gulp.task('build', gulp.parallel(
   'template-Hex',
   'template-Classic',
   'template-Tutorial',
+  'template-System',
   'fonts',
   'img',
   'favicon'

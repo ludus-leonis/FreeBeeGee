@@ -24,6 +24,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no
 * added better feedback when library upload fails
 * added more unit and API integration tests
 * added check for write permissions in data folder during setup/room create
+* added _.zip system template - always added to each template/snapshot
 * fixed pieces sometimes getting selected when clicking in transparent areas
 * fixed loading of rooms of older versions
 * changed default max room size to 16MB and max room count to 32 - customize them in server.json

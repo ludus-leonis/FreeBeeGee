@@ -372,6 +372,17 @@ class FreeBeeGeeAPI
             $this->api->sendError(500, 'can\'t setup template ' . $zipPath);
         }
 
+        // unzip system template next if it exists, possibly overwriting assets
+        if (is_file($this->api->getDataDir() . 'templates/_.zip')) {
+            $zip = new \ZipArchive();
+            if ($zip->open($this->api->getDataDir() . 'templates/_.zip') === true) {
+                $zip->extractTo($folder);
+                $zip->close();
+            } else {
+                $this->api->sendError(500, 'can\'t setup template ' . $zipPath);
+            }
+        }
+
         // recreate potential nonexisting files as fallback
         if (!is_file($folder . 'template.json')) {
             file_put_contents($folder . 'template.json', json_encode($this->getTemplateDefault()));
@@ -1452,7 +1463,9 @@ class FreeBeeGeeAPI
         $templates = [];
         foreach (glob($this->api->getDataDir() . 'templates/*zip') as $filename) {
             $zip = pathinfo($filename);
-            $templates[] = $zip['filename'];
+            if ($zip['filename'] != '_') { // don't add system template
+                $templates[] = $zip['filename'];
+            }
         }
         $this->api->sendReply(200, json_encode($templates));
     }

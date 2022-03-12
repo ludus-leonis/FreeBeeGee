@@ -43,6 +43,13 @@ import * as fs from 'fs'
 
 let data = null
 
+const _ = { // asset count in system template
+  other: 3,
+  overlay: 5,
+  tile: 2,
+  token: 3
+}
+
 function testApiZipMinimal (api, version, room) {
   testZIPUpload(api,
     () => '/rooms/',
@@ -61,13 +68,13 @@ function testApiZipMinimal (api, version, room) {
       expect(body.height).to.be.eql(2048)
       expect(body.library).to.be.an('object')
       expect(body.library.other).to.be.an('array')
-      expect(body.library.other.length).to.be.eql(0)
+      expect(body.library.other.length).to.be.eql(0 + _.other)
       expect(body.library.overlay).to.be.an('array')
-      expect(body.library.overlay.length).to.be.eql(0)
+      expect(body.library.overlay.length).to.be.eql(0 + _.overlay)
       expect(body.library.tile).to.be.an('array')
-      expect(body.library.tile.length).to.be.eql(0)
+      expect(body.library.tile.length).to.be.eql(0 + _.tile)
       expect(body.library.token).to.be.an('array')
-      expect(body.library.token.length).to.be.eql(0)
+      expect(body.library.token.length).to.be.eql(0 + _.token)
       expect(body.template).to.be.an('object')
       expect(body.template.type).to.be.eql('grid-square')
       expect(body.template.gridSize).to.be.eql(64)
@@ -119,20 +126,20 @@ function testApiZipFull (api, version, room) {
       expect(body.height).to.be.eql(2048)
       expect(body.library).to.be.an('object')
       expect(body.library.other).to.be.an('array')
-      expect(body.library.other.length).to.be.eql(1)
-      expect(body.library.other[0].name).to.be.eql('dicemat')
+      expect(body.library.other.length).to.be.eql(1 + _.other)
+      expect(body.library.other[0].name).to.be.eql('aaa')
       expect(body.library.other[0].w).to.be.eql(4)
       expect(body.library.overlay).to.be.an('array')
-      expect(body.library.overlay.length).to.be.eql(1)
-      expect(body.library.overlay[0].name).to.be.eql('area.1x1')
+      expect(body.library.overlay.length).to.be.eql(1 + _.overlay)
+      expect(body.library.overlay[0].name).to.be.eql('aab.1x1')
       expect(body.library.overlay[0].w).to.be.eql(1)
       expect(body.library.tile).to.be.an('array')
-      expect(body.library.tile.length).to.be.eql(1)
-      expect(body.library.tile[0].name).to.be.eql('go')
+      expect(body.library.tile.length).to.be.eql(1 + _.tile)
+      expect(body.library.tile[0].name).to.be.eql('aac')
       expect(body.library.tile[0].w).to.be.eql(9)
       expect(body.library.token).to.be.an('array')
-      expect(body.library.token.length).to.be.eql(1)
-      expect(body.library.token[0].name).to.be.eql('generic.plain')
+      expect(body.library.token.length).to.be.eql(1 + _.token)
+      expect(body.library.token[0].name).to.be.eql('aad.plain')
       expect(body.library.token[0].w).to.be.eql(1)
       expect(body.template).to.be.an('object')
       expect(body.template.type).to.be.eql('grid-square')

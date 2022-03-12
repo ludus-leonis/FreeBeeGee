@@ -128,7 +128,8 @@ function testApiSnapshotTutorial (api, version, room) {
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
     const entries = zipToc(buffer)
-    expect(entries.length).to.be.lte(100)
+    expect(entries.length).to.be.gte(100)
+    expect(entries.length).to.be.lte(150)
     expect(entries).to.contain('LICENSE.md')
     expect(entries).to.contain('template.json')
     expect(entries).to.contain('tables/6.json')
