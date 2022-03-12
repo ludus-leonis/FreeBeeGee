@@ -394,7 +394,7 @@ class FreeDOM {
    *
    * @return {Element[]} Array of nodes, possibly empty.
    */
-  nodes () { // get first node
+  nodes () { // get all nodes
     return this._getNodes()
   }
 

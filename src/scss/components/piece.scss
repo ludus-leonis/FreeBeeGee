@@ -196,19 +196,40 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
     white-space: nowrap;
     z-index: 99; // within the piece
 
+    .icon-ellipsis {
+      color: $color-gray-25;
+    }
+
     .icon {
+      display: inline-block;
       height: 1em;
       margin-top: 0;
       width: 1em;
 
+      &.icon-extra {
+        display: none;
+      }
+
       &:not(:first-child) {
-        margin-left: $spacing-micro;
+        margin-left: px(2);
+
+        &:first-of-type {
+          margin-left: $spacing-micro;
+        }
       }
     }
   }
 
   &:hover > .label {
     font-size: px(16);
+
+    .icon-ellipsis {
+      display: none;
+    }
+
+    .icon.icon-extra {
+      display: inline-block;
+    }
   }
 
   // --- backsides -------------------------------------------------------------

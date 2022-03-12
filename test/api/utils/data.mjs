@@ -39,7 +39,7 @@ export const pieceFull = {
   c: [1, 2],
   n: 2,
   r: 60,
-  b: ['badge'],
+  b: ['badge-id'],
   t: ['some text'],
   expires: 1234567890
 }

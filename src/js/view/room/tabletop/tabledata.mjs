@@ -146,10 +146,10 @@ export function findAssetByAlias (name, layer = 'any') {
  * Get the URL for an asset media.
  *
  * @param {Object} asset Asset to get URL for.
- * @param {Number} side Side/media to get, -1 = base.
+ * @param {Number} side Side/media to get, -1 = base. Defaults to 0 = first side.
  * @return {String} URL to be used in url() or img.src.
  */
-export function getAssetURL (asset, side) {
+export function getAssetURL (asset, side = 0) {
   if (DEMO_MODE) {
     if (side === -1) {
       return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`

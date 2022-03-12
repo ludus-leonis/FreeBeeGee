@@ -209,7 +209,7 @@ In addition, a *piece* can have the following optional properties. If omitted, t
 : An array of optional texts of a *piece*. Currently only the first entry in the array is used. Is used as note's text or as small label next to the *piece* for other types. Defaults to `[]`.
 
 `b`
-: An array of badges of a *piece*. Each entry is the name of one asset of type `tag`. Those are usually displayed in their label.
+: An array of IDs of *tag*/*piece*. Each entry corresponds to one asset of type `tag`. Those are usually displayed in their label.
 
 ### Special pieces
 

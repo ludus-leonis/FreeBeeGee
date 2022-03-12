@@ -118,16 +118,20 @@ final class FreeBeeGeeAPITest extends TestCase
     public function testValidateRoomJSON()
     {
         $room = $this->fbg->validateRoomJSON('{}', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
 
         $room = $this->fbg->validateRoomJSON('[]', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
 
         $room = $this->fbg->validateRoomJSON('I am not JSON.', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
 
         $room = $this->fbg->validateRoomJSON('["invalid", "array"]', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
 
         $this->assertHTTPStatus(function () {
             $room = $this->fbg->validateRoomJSON('{}');
@@ -136,41 +140,48 @@ final class FreeBeeGeeAPITest extends TestCase
         $room = $this->fbg->validateRoomJSON('{
             "name": "testroom"
         }');
-        $this->assertEqualsCanonicalizing(['name'], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert', 'name'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
         $this->assertEquals('testroom', $room->name);
 
         $room = $this->fbg->validateRoomJSON('{
             "id": "testroom"
         }', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
 
         $room = $this->fbg->validateRoomJSON('{
             "auth": "testroom"
         }', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
 
         $room = $this->fbg->validateRoomJSON('{
             "_files": "some"
         }', false);
-        $this->assertEqualsCanonicalizing(['_files'], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert', '_files'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
         $this->assertEquals('some', $room->_files);
 
         $room = $this->fbg->validateRoomJSON('{
             "name": "somename"
         }', false);
-        $this->assertEqualsCanonicalizing(['name'], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert', 'name'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
         $this->assertEquals('somename', $room->name);
 
         $room = $this->fbg->validateRoomJSON('{
             "template": "some"
         }', false);
-        $this->assertEqualsCanonicalizing(['template'], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert', 'template'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
         $this->assertEquals('some', $room->template);
 
         $room = $this->fbg->validateRoomJSON('{
             "extra": "some"
         }', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert'], array_keys((array)$room));
+        $this->assertEquals(false, $room->convert);
     }
 
     public function testValidateTemplateJSON()
@@ -610,7 +621,7 @@ final class FreeBeeGeeAPITest extends TestCase
             "w": 7,
             "t": ["text"],
             "c": [1, 2],
-            "b": ["dazed", "grumpy"]
+            "b": ["12345678", "abcdefgh"]
         }');
         $this->assertMatchesRegularExpression($this->REGEXP_ID, $piece->id);
         $this->assertEquals("5X9-7_fb", $piece->id);
@@ -627,7 +638,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(7, $piece->w);
         $this->assertEquals(["text"], $piece->t);
         $this->assertEquals([1, 2], $piece->c);
-        $this->assertEquals(["dazed", "grumpy"], $piece->b);
+        $this->assertEquals(["12345678", "abcdefgh"], $piece->b);
 
         $piece = $this->fbg->cleanupPieceJSON('{
             "id":"5X9-7_fb",
@@ -644,10 +655,10 @@ final class FreeBeeGeeAPITest extends TestCase
             "w": 2,
             "t": [""],
             "c": [0, 0, 0],
-            "b": ["dazed", "", ""]
+            "b": ["invalid-asset-id"]
         }');
         $this->assertEqualsCanonicalizing(
-            ['id', 'l', 'a', 'x', 'y', 'z', 'w', 'b', 'expires'],
+            ['id', 'l', 'a', 'x', 'y', 'z', 'w', 'expires'],
             array_keys((array)$piece)
         );
         $this->assertMatchesRegularExpression($this->REGEXP_ID, $piece->id);
@@ -659,7 +670,6 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(0, $piece->z);
         $this->assertEquals(2, $piece->w);
         $this->assertEquals(0, $piece->expires);
-        $this->assertEquals(["dazed"], $piece->b);
 
         $piece = $this->fbg->cleanupPieceJSON('{
             "id": false,
@@ -685,7 +695,7 @@ final class FreeBeeGeeAPITest extends TestCase
             array_keys((array)$piece)
         );
         $this->assertMatchesRegularExpression($this->REGEXP_ID, $piece->id);
-        $this->assertEquals("00000000", $piece->a);
+        $this->assertEquals("NO_ASSET", $piece->a);
         $this->assertEquals(1, $piece->l);
         $this->assertEquals(0, $piece->x);
         $this->assertEquals(0, $piece->y);

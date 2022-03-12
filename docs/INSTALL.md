@@ -72,4 +72,4 @@ You can change the maximum upload file size via the `server.json` (see above). Y
 
 ## Upgrading
 
-While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even rooms will break between versions. Start with a fresh install till we reach v1.0.
+While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even rooms will break between versions. Download rooms you want to keep as snapshots, do a fresh install and recreate the rooms from the snapshots till we reach v1.0.

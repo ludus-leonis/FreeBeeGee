@@ -406,6 +406,21 @@ export function epoch (delta = 0) {
   return Math.floor(new Date().getTime() / 1000) + delta
 }
 
+// --- data structures ---------------------------------------------------------
+
+/**
+ * Compare two items as JSON.
+ *
+ * Useful to compare arrays.
+ *
+ * @param a Item A.
+ * @param b Item B.
+ * @return {Boolean} True, of JSON representations of a and b are string-equal.
+ */
+export function equalsJSON (a, b) {
+  return JSON.stringify(a ?? []) === JSON.stringify(b ?? [])
+}
+
 // --- string & text -----------------------------------------------------------
 
 /**

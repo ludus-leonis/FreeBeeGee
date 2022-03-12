@@ -262,7 +262,7 @@ function testApiCrudPiece (api, version, room) {
       n: 2,
       s: 0,
       c: [1],
-      b: ['badge']
+      b: ['badge-id']
     }
   }, body => {
     expect(body).to.be.an('object')
@@ -279,7 +279,7 @@ function testApiCrudPiece (api, version, room) {
     expect(body.c[0]).to.be.eql(1)
     expect(body.b).to.be.an('array')
     expect(body.b.length).to.be.eql(1)
-    expect(body.b[0]).to.be.eql('badge')
+    expect(body.b[0]).to.be.eql('badge-id')
     data = body
   }, 201)
 
@@ -299,7 +299,7 @@ function testApiCrudPiece (api, version, room) {
     expect(body.c[0]).to.be.eql(1)
     expect(body.b).to.be.an('array')
     expect(body.b.length).to.be.eql(1)
-    expect(body.b[0]).to.be.eql('badge')
+    expect(body.b[0]).to.be.eql('badge-id')
   })
 
   // update piece (patch)
@@ -326,7 +326,7 @@ function testApiCrudPiece (api, version, room) {
     expect(body.c[0]).to.be.eql(1)
     expect(body.b).to.be.an('array')
     expect(body.b.length).to.be.eql(1)
-    expect(body.b[0]).to.be.eql('badge')
+    expect(body.b[0]).to.be.eql('badge-id')
   })
 
   // get & compare piece
@@ -348,7 +348,7 @@ function testApiCrudPiece (api, version, room) {
     expect(body.c[0]).to.be.eql(1)
     expect(body.b).to.be.an('array')
     expect(body.b.length).to.be.eql(1)
-    expect(body.b[0]).to.be.eql('badge')
+    expect(body.b[0]).to.be.eql('badge-id')
   })
 
   // update/replace piece (put)
@@ -366,7 +366,7 @@ function testApiCrudPiece (api, version, room) {
       s: 3,
       t: ['    '],
       c: [2],
-      b: ['other']
+      b: ['badge2id']
     }
   }, body => {
     expect(body).to.be.an('object')
@@ -386,7 +386,7 @@ function testApiCrudPiece (api, version, room) {
     expect(body.c[0]).to.be.eql(2)
     expect(body.b).to.be.an('array')
     expect(body.b.length).to.be.eql(1)
-    expect(body.b[0]).to.be.eql('other')
+    expect(body.b[0]).to.be.eql('badge2id')
   })
 
   // get & compare piece
@@ -408,7 +408,7 @@ function testApiCrudPiece (api, version, room) {
     expect(body.c[0]).to.be.eql(2)
     expect(body.b).to.be.an('array')
     expect(body.b.length).to.be.eql(1)
-    expect(body.b[0]).to.be.eql('other')
+    expect(body.b[0]).to.be.eql('badge2id')
   })
 
   // update/replace piece (put)

@@ -1,0 +1,47 @@
+// Copyright 2021-2022 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Toggle 'buttons'. Usually not buttons but other elemens like div or span.
+///
+/// @access public
+////
+
+.toggle-box {
+  line-height: 0;
+  margin-top: $spacing-tiny;
+}
+
+.toggle-icon {
+  background-color: $color-gray-75;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: calc(2rem - 4px);
+  border: 0;
+  border-radius: $border-radius;
+  display: inline-block;
+  height: 2rem;
+  margin: 0 .2rem .2rem 0;
+  opacity: .33;
+  width: 2rem;
+
+  &.active {
+    opacity: 1;
+  }
+}

@@ -939,8 +939,8 @@ function testApiPieceB (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, b: [' x '] }
   }, body => {
-    expect(body.b).to.be.eql(['x'])
-  }, 201)
+    expect(body._messages[0]).to.match(/ b entries do not matc/)
+  }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, b: ['  '] }
@@ -951,20 +951,26 @@ function testApiPieceB (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, b: [' ', '  '] }
   }, body => {
-    expect(body._messages[0]).to.match(/ b is not an array of length/)
+    expect(body._messages[0]).to.match(/ b entries do not matc/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: ['text'] }
+    return { ...pieceMinimal, b: ['texttext', '  '] }
   }, body => {
-    expect(body.b).to.be.eql(['text'])
+    expect(body._messages[0]).to.match(/ b entries do not matc/)
+  }, 400)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, b: [' ', 'texttext'] }
+  }, body => {
+    expect(body._messages[0]).to.match(/ b entries do not matc/)
+  }, 400)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, b: ['texttext'] }
+  }, body => {
+    expect(body.b).to.be.eql(['texttext'])
   }, 201)
-
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: ['text', ' '] }
-  }, body => {
-    expect(body._messages[0]).to.match(/ b is not an array of length/)
-  }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, b: '' }
@@ -973,7 +979,7 @@ function testApiPieceB (api, version, room) {
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: 'text' }
+    return { ...pieceMinimal, b: 'texttext' }
   }, body => {
     expect(body._messages[0]).to.match(/ b is not an array/)
   }, 400)
@@ -991,13 +997,13 @@ function testApiPieceB (api, version, room) {
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: [888] }
+    return { ...pieceMinimal, b: [12345678] }
   }, body => {
-    expect(body.b).to.be.eql(['888'])
+    expect(body.b).to.be.eql(['12345678'])
   }, 201)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
-    expect(body.length).to.be.eql(5)
+    expect(body.length).to.be.eql(4)
   })
 
   closeTestroom(api, room)

@@ -42,7 +42,8 @@ import {
   toggleFullscreen,
   shuffle,
   sortByString,
-  bytesToIso
+  bytesToIso,
+  equalsJSON
 } from '../../src/js/lib/utils.mjs'
 
 describe('Frontend - utils.mjs - HTML', function () {
@@ -419,6 +420,24 @@ describe('Frontend - utils.mjs - Math', function () {
     expect(getDimensionsRotated(200, 100, -120)).to.be.eql({ w: 187, h: 224 })
 
     expect(getDimensionsRotated(576, 448, 60)).to.be.eql({ w: 676, h: 723 })
+  })
+})
+
+describe('Frontend - utils.mjs - Datastructures', function () {
+  it('equalsJSON()', function () {
+    expect(equalsJSON(undefined, undefined)).to.be.eql(true)
+
+    expect(equalsJSON(1, 1)).to.be.eql(true)
+    expect(equalsJSON(2, 1)).to.be.eql(false)
+    expect(equalsJSON(1, 2)).to.be.eql(false)
+
+    expect(equalsJSON([1, 2], [1, 2])).to.be.eql(true)
+    expect(equalsJSON([2, 1], [1, 2])).to.be.eql(false)
+    expect(equalsJSON([1, 2], [2, 1])).to.be.eql(false)
+    expect(equalsJSON(undefined, [])).to.be.eql(true)
+    expect(equalsJSON([], undefined)).to.be.eql(true)
+    expect(equalsJSON(null, [])).to.be.eql(true)
+    expect(equalsJSON([], null)).to.be.eql(true)
   })
 })
 

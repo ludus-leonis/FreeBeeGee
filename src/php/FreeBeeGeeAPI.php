@@ -29,7 +29,7 @@ class FreeBeeGeeAPI
 {
     private $ID_ASSET_POINTER = 'ZZZZZZZZ';
     private $ID_ASSET_LOS = 'ZZZZZZZY';
-    private $ID_ASSET_NONE = '00000000';
+    private $ID_ASSET_NONE = 'NO_ASSET';
     private $REGEXP_ID = '^[0-9a-zA-Z_-]{8}$';
     private $REGEXP_COLOR = '^#[0-9a-fA-F]{6}$';
     private $version = '$VERSION$';
@@ -358,6 +358,7 @@ class FreeBeeGeeAPI
             || !mkdir($folder . 'assets/overlay', 0777, true)
             || !mkdir($folder . 'assets/tile', 0777, true)
             || !mkdir($folder . 'assets/token', 0777, true)
+            || !mkdir($folder . 'assets/tag', 0777, true)
         ) {
             $this->api->sendError(500, 'can\'t write on server');
         }
@@ -1065,7 +1066,7 @@ class FreeBeeGeeAPI
         $out->y = 0;
         $out->z = 0;
         if ($out->l !== 3) { // not a note
-            $out->a = 'n' . $this->ID_ASSET_NONE;
+            $out->a = $this->ID_ASSET_NONE;
         }
 
         // remove unnecessary properties
@@ -1077,7 +1078,7 @@ class FreeBeeGeeAPI
                     break;
                 case 'a':
                     $out->$property =
-                        $this->api->assertString('a', $value, $this->REGEXP_ID, false) ?: $value;
+                        $this->api->assertString('a', $value, $this->REGEXP_ID, false) ?: $this->ID_ASSET_NONE;
                     break;
                 case 'l':
                     $out->$property =
@@ -1135,7 +1136,7 @@ class FreeBeeGeeAPI
                     }
                     break;
                 case 'b':
-                    if ($this->api->assertStringArray('b', $value, '^.*$', 0, 16, false)) {
+                    if ($this->api->assertStringArray('b', $value, $this->REGEXP_ID, 0, 128, false)) {
                         $badges = $this->rtrimArray($value, '');
                         if (sizeof($badges) > 0) {
                             $out->$property = $badges;
@@ -1241,7 +1242,7 @@ class FreeBeeGeeAPI
                     }
                     break;
                 case 'b':
-                    $validated->b = $this->api->assertStringArray('b', $value, '^[^\n\r]{1,32}$', 0, 1);
+                    $validated->b = $this->api->assertStringArray('b', $value, $this->REGEXP_ID, 0, 128);
                     break;
                 case 'expires':
                     // ignore as we do not honor externaly set expires
@@ -1825,6 +1826,7 @@ class FreeBeeGeeAPI
             $this->assertWritable('rooms/' . $roomName . '/assets/overlay/');
             $this->assertWritable('rooms/' . $roomName . '/assets/tile/');
             $this->assertWritable('rooms/' . $roomName . '/assets/token/');
+            $this->assertWritable('rooms/' . $roomName . '/assets/tag/');
         }
     }
 

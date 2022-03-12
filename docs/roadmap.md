@@ -4,6 +4,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.14 - Verbose Vicuna
 
+* [X] add support for multiple icons/badges per token
 * [X] change RPG template tiles to paper material
 * [X] add more PHP unit tests for room/template parsing
 * [X] move backgrounds from room to server
@@ -14,7 +15,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] add better feedback when existing rooms fail after server updates
 * [X] add better feedback when library upload fails
 * [X] serverless demo mode
-* [ ] multiple status icons
 * [X] PHP 8.1 support
 * [ ] pre-release
   * [X] bump dependencies
@@ -22,15 +22,17 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] fix isSolid image loading
     * [X] check write permissions in data folder
     * [X] use shorter IDs
-  * [ ] review docs
+    * [X] update all templates to new IDs
+    * [ ] internally rename tag -> badge
+  * [X] review docs
     * [X] install + write access
-  * [ ] review + run tests
+  * [X] review + run tests
   * [ ] bump version/codename & update CHANGELOG
   * [X] update screenshots
 
 ## Backlog (unsorted)
 
-### rather sooner
+### rather sooner (before v1)
 
 * [ ] add more classic game boards: backgammon, mills, solitaire
 * [ ] more helper/marker overlays (arrows, areas, )
@@ -38,7 +40,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] system assets (always there, not part of template)
 * [ ] table passwords
 * [ ] use 'v' to paste / clone
-* [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] right-click on table (add piece, change table)
 * [ ] delete items from library
 * [ ] when dragging pieces, move those on top of the original piece too
@@ -60,17 +61,17 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] randomize button on dicemat
 * [ ] don't roll dice on transparent part of dicemat
 * [ ] add dice on dicemat
-* [ ] generate average piece color during build and upload
+* [ ] generate average piece color during build
 * [ ] catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] hide .../data/... from URLs (via .htaccess)
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] obfuscate/hash room name
 * [ ] docs how to make table/template `.zip`s
-* [ ] add more integration/API tests (edge cases during CRUD)
 * [ ] API Docs
 * [ ] API check: sides correspond to asset
+* [ ] automated deployment tests for new zip/tgz packages after build
 
-### rather later
+### rather later (after v1)
 
 * bulk manipulation of assets (delete, edit, change type)
 * show even more infos in media browser
