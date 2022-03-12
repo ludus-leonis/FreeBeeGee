@@ -4,16 +4,18 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ## v0.14.0 - Verbose Vicuna
 
-This is a breaking release, changing IDs. Old snapshots/rooms will no longer work.
+This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no longer work.
 
 ### Notable changes
 
+* added support for multiple icons/badges per token - toggle them in the edit window
 * added laser-pointer, settings and measure mode to tutorial
+* added PHP 8.1 support
+* improved feedback when creating rooms or uploading snapshots / assets fails
 
 ### Other changes
 
 * added demo mode - separate build necessary
-* added PHP 8.1 support
 * added auto-migration of rooms from compatible engine versions
 * added option to force-migrate rooms from incompatible engine versions - might loose data
 * added better feedback when uploading incompatible templates/snapshots
@@ -29,6 +31,8 @@ This is a breaking release, changing IDs. Old snapshots/rooms will no longer wor
 * changed RPG template tiles to paper material
 * changed RPG letter/symbol token into two
 * changed API - backgrounds now part of server JSON, not room JSON
+* changed 'tag' to 'badge'
+
 
 ## v0.13.0 - Colorful Cobra
 
