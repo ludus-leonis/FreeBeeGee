@@ -63,18 +63,18 @@ export function modalEdit (piece) {
     // label
     _('#piece-label').value = piece.t?.[0] ?? ''
 
-    // tag
+    // badges
     const badges = _('#piece-badges')
-    for (const tag of getLibrary().tag) {
-      const badge = _('span.toggle-icon').create().css({
-        backgroundImage: `url('${getAssetURL(tag)}'`
+    for (const badge of getLibrary().badge) {
+      const span = _('span.toggle-icon').create().css({
+        backgroundImage: `url('${getAssetURL(badge)}'`
       }).on('click', () => {
-        badge.toggle('.active')
+        span.toggle('.active')
       })
-      if (piece.b?.includes(tag.id)) badge.add('.active')
-      badge.tag = tag
-      badge.title = prettyName(tag.name)
-      badges.add(badge)
+      if (piece.b?.includes(badge.id)) span.add('.active')
+      span.badge = badge
+      span.title = prettyName(badge.name)
+      badges.add(span)
     }
 
     // piece number
@@ -432,8 +432,8 @@ function modalOk () {
   }
 
   const b = []
-  for (const badge of _('#piece-badges .active').nodes()) {
-    b.push(badge.tag.id)
+  for (const node of _('#piece-badges .active').nodes()) {
+    b.push(node.badge.id)
   }
   if (!equalsJSON(piece.b, b)) {
     updates.b = b

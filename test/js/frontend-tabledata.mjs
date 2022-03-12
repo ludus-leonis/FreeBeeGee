@@ -833,7 +833,7 @@ const roomJSON = `
       "type": "other",
       "id": "dd07ac49818bc000"
     }],
-    "tag": []
+    "badge": []
   },
   "template": {
     "type": "grid-square",

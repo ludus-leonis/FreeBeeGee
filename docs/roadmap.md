@@ -23,7 +23,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] check write permissions in data folder
     * [X] use shorter IDs
     * [X] update all templates to new IDs
-    * [ ] internally rename tag -> badge
+    * [X] internally rename tag -> badge
   * [X] review docs
     * [X] install + write access
   * [X] review + run tests

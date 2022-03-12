@@ -39,7 +39,7 @@ class FreeBeeGeeAPI
     private $maxRoomGridSize = 256;
     private $maxAssetSize = 1024 * 1024;
     private $types = ['grid-square', 'grid-hex'];
-    private $assetTypes = ['overlay', 'tile', 'token', 'other', 'tag'];
+    private $assetTypes = ['overlay', 'tile', 'token', 'other', 'badge'];
     private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
 
     /**
@@ -358,7 +358,7 @@ class FreeBeeGeeAPI
             || !mkdir($folder . 'assets/overlay', 0777, true)
             || !mkdir($folder . 'assets/tile', 0777, true)
             || !mkdir($folder . 'assets/token', 0777, true)
-            || !mkdir($folder . 'assets/tag', 0777, true)
+            || !mkdir($folder . 'assets/badge', 0777, true)
         ) {
             $this->api->sendError(500, 'can\'t write on server');
         }
@@ -666,7 +666,7 @@ class FreeBeeGeeAPI
                 default: // scan for asset filenames
                     if (
                         !preg_match(
-                            '/^assets\/(overlay|tile|token|other|tag)\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
+                            '/^assets\/(overlay|tile|token|other|badge)\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
                             $entry['name']
                         )
                     ) {
@@ -1826,7 +1826,7 @@ class FreeBeeGeeAPI
             $this->assertWritable('rooms/' . $roomName . '/assets/overlay/');
             $this->assertWritable('rooms/' . $roomName . '/assets/tile/');
             $this->assertWritable('rooms/' . $roomName . '/assets/token/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/tag/');
+            $this->assertWritable('rooms/' . $roomName . '/assets/badge/');
         }
     }
 

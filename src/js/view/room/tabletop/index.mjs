@@ -385,7 +385,7 @@ export function setPiece (piece, select = false) {
       let i = 1
       let iconExtra
       for (const id of piece.b ?? []) {
-        const asset = findAsset(id, 'tag')
+        const asset = findAsset(id, 'badge')
         if (asset) {
           const img = _(i <= 3 ? 'img.icon' : 'img.icon.icon-extra').create()
           if (i === 3) iconExtra = img

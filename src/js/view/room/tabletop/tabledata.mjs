@@ -48,7 +48,7 @@ export const assetTypes = [
   'token',
   'overlay',
   'other',
-  'tag'
+  'badge'
 ]
 
 export const TYPE_SQUARE = 'grid-square'
