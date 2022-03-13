@@ -44,7 +44,9 @@ import {
   iconDownload,
   iconHelp,
   iconQuit,
-  iconRuler
+  iconRuler,
+  iconNote,
+  iconSettings
 } from '../../lib/icons.mjs'
 
 import {
@@ -74,6 +76,7 @@ import {
   flipSelected,
   randomSelected,
   deleteSelected,
+  createNote,
   url
 } from '../../view/room/tabletop/index.mjs'
 
@@ -267,61 +270,56 @@ export function popupPiece (id) {
     <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
+    <hr>
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
     <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
   `
 
   _('#tabletop').add(popup)
 
-  _('#popper .edit').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    editSelected()
-  })
-
-  _('#popper .rotate').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    rotateSelected()
-  })
-
-  _('#popper .flip').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    flipSelected()
-  })
-
-  _('#popper .random').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    randomSelected()
-  })
-
-  _('#popper .top').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    toTopSelected()
-  })
-
-  _('#popper .bottom').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    toBottomSelected()
-  })
-
-  _('#popper .delete').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    deleteSelected()
-  })
-
-  _('#popper .clone').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    cloneSelected(getMouseCoords())
-  })
+  popupClick('#popper .edit', () => { editSelected() })
+  popupClick('#popper .rotate', () => { rotateSelected() })
+  popupClick('#popper .flip', () => { flipSelected() })
+  popupClick('#popper .random', () => { randomSelected() })
+  popupClick('#popper .top', () => { toTopSelected() })
+  popupClick('#popper .bottom', () => { toBottomSelected() })
+  popupClick('#popper .delete', () => { deleteSelected() })
+  popupClick('#popper .clone', () => { cloneSelected(getMouseCoords()) })
 
   createPopper(_('#' + id).node(), popup.node(), {
+    placement: 'right'
+  })
+  popup.add('.show')
+}
+
+/**
+ * Show the popup menu for the table.
+ */
+export function popupTable () {
+  const coords = getMouseCoords()
+
+  const anchor = _('#popper-anchor.popup-anchor').create()
+  const popup = _('#popper.popup.is-content').create()
+
+  popup.innerHTML = `
+    <a class="popup-menu add" href="#">${iconAdd}Add piece</a>
+    <a class="popup-menu note" href="#">${iconNote}Add note</a>
+    <hr>
+    <a class="popup-menu settings" href="#">${iconSettings}Settings</a>
+  `
+
+  _('#tabletop').add(anchor)
+  anchor.css({
+    left: `${coords.x}px`,
+    top: `${coords.y}px`
+  })
+  _('#tabletop').add(popup)
+
+  popupClick('#popper .add', () => { modalLibrary(coords) })
+  popupClick('#popper .note', () => { createNote(coords) })
+  popupClick('#popper .settings', () => { modalSettings() })
+
+  createPopper(anchor.node(), popup.node(), {
     placement: 'right'
   })
   popup.add('.show')
@@ -666,4 +664,20 @@ function runStatuslineLoop () {
 
 function fakeTabularNums (text) {
   return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
+}
+
+/**
+ * Handle the click on a popup menu item.
+ *
+ * Will hide the popup and then run a callback.
+ *
+ * @param {String} selector CSS selector for menu item.
+ * @param {callback} callback Method to call.
+ */
+function popupClick (selector, callback) {
+  _(selector).on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    callback()
+  })
 }

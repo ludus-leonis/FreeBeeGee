@@ -61,4 +61,17 @@
       }
     }
   }
+
+  hr {
+    margin-bottom: $spacing-tiny;
+    margin-top: $spacing-tiny;
+  }
+}
+
+.popup-anchor {
+  background-color: transparent;
+  display: block;
+  height: 1px;
+  position: absolute;
+  width: 1px;
 }

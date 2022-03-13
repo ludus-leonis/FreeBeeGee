@@ -17,6 +17,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] serverless demo mode
 * [X] PHP 8.1 support
 * [X] add _.zip system template - always added to each template/snapshot
+* [X] add right-click popup for table (add piece, change table)
 * [ ] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
@@ -40,7 +41,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] set default/start table other than 1 in template
 * [ ] table passwords
 * [ ] use 'v' to paste / clone
-* [ ] right-click on table (add piece, change table)
 * [ ] delete items from library
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dragging some pieces should not change z (e.g. dicemat)
@@ -83,6 +83,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * moving
 * option to force-install templates with invalid versions
 * I18N
+* rotate desk 180°
+* native zoom function
 * pinboard for handouts
 * undo (limited)
 * better tablet / touch support

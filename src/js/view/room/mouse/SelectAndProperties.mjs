@@ -31,6 +31,7 @@ import {
 
 import {
   popupPiece,
+  popupTable,
   updateSelection,
   setCursor
 } from '../../../view/room/index.mjs'
@@ -49,8 +50,12 @@ export class SelectAndProperties extends MouseButtonHandler {
 
     findRealClickTarget(mousedown, getMouseCoords()).then(target => {
       updateSelection(target)
-      if (target && target.classList.contains('piece')) {
-        popupPiece(target.id)
+      if (target) {
+        if (target.classList.contains('piece')) {
+          popupPiece(target.id)
+        }
+      } else {
+        popupTable()
       }
     })
   }

@@ -480,7 +480,10 @@ export function unselectPieces (layer = 'all') {
   for (const node of document.querySelectorAll(filter + ' .piece.is-selected')) {
     node.classList.remove('is-selected')
   }
-  _('#popper').delete() // make sure popup is gone
+
+  // make sure popup is gone
+  _('#popper').delete()
+  _('#popper-anchor').delete()
 }
 
 /**

@@ -9,9 +9,9 @@ This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no
 ### Notable changes
 
 * added support for multiple icons/badges per token - toggle them in the edit window
-* added laser-pointer, settings and measure mode to tutorial
+* added right-click-popup for table - to access the library and settings
 * added PHP 8.1 support
-* improved feedback when creating rooms or uploading snapshots / assets fails
+* improved feedback on configuration issues (server permissions, upload limits)
 
 ### Other changes
 
@@ -25,6 +25,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no
 * added more unit and API integration tests
 * added check for write permissions in data folder during setup/room create
 * added _.zip system template - always added to each template/snapshot
+* added to tutorial: laser-pointer, settings, measure mode
 * fixed pieces sometimes getting selected when clicking in transparent areas
 * fixed loading of rooms of older versions
 * changed default max room size to 16MB and max room count to 32 - customize them in server.json
