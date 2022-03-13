@@ -363,7 +363,7 @@ export function populatePieceDefaults (piece, headers = null) {
       piece._meta.feature = 'POINTER'
     } else {
       switch (asset.name) {
-        case 'dicemat':
+        case '_.dicemat':
           piece._meta.feature = 'DICEMAT'
           break
         case 'discard':

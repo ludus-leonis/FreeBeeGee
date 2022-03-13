@@ -15,6 +15,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no
 
 ### Other changes
 
+* added number token (0..9)
 * added demo mode - separate build necessary
 * added auto-migration of rooms from compatible engine versions
 * added option to force-migrate rooms from incompatible engine versions - might loose data
