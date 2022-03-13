@@ -157,7 +157,7 @@ export const PREFS = {
   GRID: { name: 'grid', default: 0 },
   LOS: { name: 'los', default: false },
   SCROLL: { name: 'scroll', default: {} },
-  BACKGROUND: { name: 'background', default: 5 }, // wood
+  BACKGROUND: { name: 'background', default: 7 }, // wood
   QUALITY: { name: 'quality', default: 3 },
   DISCLAIMER: { name: 'disclaimer', default: false },
   TAB_HELP: { name: 'tabHelp', default: 'tab-1' },

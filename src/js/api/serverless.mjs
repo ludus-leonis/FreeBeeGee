@@ -316,10 +316,12 @@ function api (data, headers) {
         freeRooms: 128,
         root: root + 'api',
         backgrounds: [
+          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#747e86', scroller: '#636f78' },
           { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2e5d3c', scroller: '#1b3c25' },
           { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#646260', scroller: '#494540' },
           { name: 'Marble', image: 'img/desktop-marble.jpg', color: '#b4a999', scroller: '#80725e' },
           { name: 'Metal', image: 'img/desktop-metal.jpg', color: '#515354', scroller: '#3e3e3e' },
+          { name: 'Pinboard', image: 'img/desktop-pinboard.jpg', color: '#bc8c6c', scroller: '#a2775b' },
           { name: 'Rock', image: 'img/desktop-rock.jpg', color: '#5c5d5a', scroller: '#393930' },
           { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#57514d', scroller: '#3e3935' }
         ]

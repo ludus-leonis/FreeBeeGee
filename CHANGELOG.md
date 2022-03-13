@@ -10,6 +10,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no
 
 * added support for multiple icons/badges per token - toggle them in the edit window
 * added right-click-popup for table - to access the library and settings
+* added more table backgrounds: carpet & cork/pinboard
 * added PHP 8.1 support
 * improved feedback on configuration issues (server permissions, upload limits)
 

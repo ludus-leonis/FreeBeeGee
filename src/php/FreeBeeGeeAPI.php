@@ -432,10 +432,12 @@ class FreeBeeGeeAPI
     private function getBackgrounds(): array
     {
         return [
+            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#747e86', '#636f78'),
             $this->getBackground('Casino', 'img/desktop-casino.jpg', '#2e5d3c', '#1b3c25'),
             $this->getBackground('Concrete', 'img/desktop-concrete.jpg', '#646260', '#494540'),
             $this->getBackground('Marble', 'img/desktop-marble.jpg', '#b4a999', '#80725e'),
             $this->getBackground('Metal', 'img/desktop-metal.jpg', '#515354', '#3e3e3e'),
+            $this->getBackground('Pinboard', 'img/desktop-pinboard.jpg', '#bc8c6c', '#a2775b'),
             $this->getBackground('Rock', 'img/desktop-rock.jpg', '#5c5d5a', '#393930'),
             $this->getBackground('Wood', 'img/desktop-wood.jpg', '#57514d', '#3e3935'),
         ];
