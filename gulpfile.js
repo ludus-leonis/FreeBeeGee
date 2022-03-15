@@ -437,10 +437,19 @@ function demo (name) {
         svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
       }))
       .pipe(gulp.dest(dirs.cache + '/templates/' + name))
-  }, () => { // step 2: copy to demo folder
+  })
+}
+
+function demoDeploy (name) {
+  return gulp.series(() => {
     return gulp.src([
       dirs.cache + '/templates/' + name + '/**/*',
       'src/misc/demo/templates/' + name + '/**/*'
+    ])
+      .pipe(gulp.dest(dirs.demo + '/' + name))
+  }, () => {
+    return gulp.src([
+      dirs.cache + '/templates/_/**/*'
     ])
       .pipe(gulp.dest(dirs.demo + '/' + name))
   })
@@ -450,6 +459,11 @@ gulp.task('demo-Classic', demo('Classic'))
 gulp.task('demo-RPG', demo('RPG'))
 gulp.task('demo-Hex', demo('Hex'))
 gulp.task('demo-Tutorial', demo('Tutorial'))
+gulp.task('demo-System', demo('_'))
+gulp.task('demo-deploy-Classic', demoDeploy('Classic'))
+gulp.task('demo-deploy-RPG', demoDeploy('RPG'))
+gulp.task('demo-deploy-Hex', demoDeploy('Hex'))
+gulp.task('demo-deploy-Tutorial', demoDeploy('Tutorial'))
 
 gulp.task('demo', gulp.series('clean', () => {
   demomode = true
@@ -464,6 +478,11 @@ gulp.task('demo', gulp.series('clean', () => {
   'demo-RPG',
   'demo-Hex',
   'demo-Tutorial',
+  'demo-System',
+  'demo-deploy-Classic',
+  'demo-deploy-RPG',
+  'demo-deploy-Hex',
+  'demo-deploy-Tutorial',
   'fonts',
   'img',
   'favicon'

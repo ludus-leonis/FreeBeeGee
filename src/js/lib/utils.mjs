@@ -424,14 +424,14 @@ export function equalsJSON (a, b) {
 // --- string & text -----------------------------------------------------------
 
 /**
- * Generate a hex ID.
+ * Generate an alphanumeric ID.
  *
- * @param {Number} digits Length of ID, defaults to 16.
+ * @param {Number} digits Length of ID, defaults to 8.
  * @return {String} Random Hex-string.
  */
-export function hexId (digits = 16) {
+export function anId (digits = 8) {
   // taken from https://stackoverflow.com/questions/58325771/how-to-generate-random-hex-string-in-javascript
-  return [...Array(digits)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
+  return 'X' + [...Array(digits - 1)].map(() => Math.floor(Math.random() * 36).toString(36)).join('')
 }
 
 /**

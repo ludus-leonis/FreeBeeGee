@@ -10,24 +10,24 @@ This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no
 
 * added support for multiple icons/badges per token - toggle them in the edit window
 * added right-click-popup for table - to access the library and settings
-* added more table backgrounds: carpet & cork/pinboard
-* added PHP 8.1 support
+* added more table backgrounds
+* added PHP 8.1 support (7.2 and 7.3 are deprecated now but should still work)
 * improved feedback on configuration issues (server permissions, upload limits)
 
 ### Other changes
 
 * added number token (0..9)
-* added demo mode - separate build necessary
 * added auto-migration of rooms from compatible engine versions
-* added option to force-migrate rooms from incompatible engine versions - might loose data
+* added option to force-migrate rooms from incompatible engine versions
 * added better feedback when uploading incompatible templates/snapshots
 * added better feedback when uploading too large snapshots
 * added better feedback when existing rooms fail after server updates
 * added better feedback when library upload fails
-* added more unit and API integration tests
+* added to tutorial: laser-pointer, settings, measure mode
 * added check for write permissions in data folder during setup/room create
 * added _.zip system template - always added to each template/snapshot
-* added to tutorial: laser-pointer, settings, measure mode
+* added demo mode - separate build necessary
+* added more unit and API integration tests
 * fixed pieces sometimes getting selected when clicking in transparent areas
 * fixed loading of rooms of older versions
 * changed default max room size to 16MB and max room count to 32 - customize them in server.json

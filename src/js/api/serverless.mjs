@@ -38,7 +38,7 @@ import {
   setStoreValue,
   removeStoreValue,
   epoch,
-  hexId
+  anId
 } from '../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -58,8 +58,8 @@ export function demoFetchOrThrow (_, path, data = {}, headers = false) {
       Number.parseInt(path.replace(/\/$/, '').replace(/.*\//, '')),
       data, headers
     )
-  } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/tables\/[0-9]+\/pieces\/[0-9a-f]+\/$/)) {
-    const matches = path.match(/^api\/rooms\/([a-zA-Z0-9]+)\/tables\/([0-9]+)\/pieces\/([0-9a-f]+)\/$/)
+  } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/tables\/[0-9]+\/pieces\/[a-zA-Z0-9_-]+\/$/)) {
+    const matches = path.match(/^api\/rooms\/([a-zA-Z0-9]+)\/tables\/([0-9]+)\/pieces\/([a-zA-Z0-9_-]+)\/$/)
     return apiRoomTablePieces(matches[1], Number.parseInt(matches[2]), matches[3], data, headers)
   } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/tables\/[0-9]+\/pieces\/$/)) {
     const matches = path.match(/^api\/rooms\/([a-zA-Z0-9]+)\/tables\/([0-9]+)\/pieces\/$/)
@@ -142,13 +142,12 @@ function updateDigest (roomName, key, data) {
  * @return {Object} The added item with the new ID.
  */
 function add (array, item) {
-  if (item.a?.match(/^fffffffffffffff/)) { // system pieces
+  if (item.a?.match(/^ZZZZZZZ/)) { // system pieces
     del(array, 'id', item.a) // no duplicates
     item.id = item.a
     item.expires = epoch(8)
   } else {
-    // taken from https://stackoverflow.com/questions/58325771/how-to-generate-random-hex-string-in-javascript
-    item.id = hexId()
+    item.id = anId()
   }
 
   array.push(item)
@@ -192,7 +191,7 @@ function patch (array, key, value, patch) {
       for (const field in patch) {
         item[field] = patch[field]
       }
-      if (item.a?.match(/^fffffffffffffff/)) item.expires = epoch(8)
+      if (item.a?.match(/^ZZZZZZZ/)) item.expires = epoch(8)
       return item
     }
   }
@@ -309,8 +308,8 @@ function api (data, headers) {
   switch (data.method) {
     case 'GET':
       return delayPromise(200, {
-        version: '0.14.0-dev',
-        engine: '1.1.0',
+        version: '$VERSION$',
+        engine: '$ENGINE$',
         ttl: -1,
         snapshotUploads: false,
         freeRooms: 128,
