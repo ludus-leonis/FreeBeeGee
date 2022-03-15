@@ -3,7 +3,7 @@
  *       pieces. Does not do any API calls, only operates on pre-downloaded
  *       data. Does not know about DOM/nodes.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -39,12 +39,16 @@ import {
   mod
 } from '../../../lib/utils.mjs'
 
+import {
+  DEMO_MODE
+} from '../../../api/index.mjs'
+
 export const assetTypes = [
   'tile',
   'token',
   'overlay',
   'other',
-  'tag'
+  'badge'
 ]
 
 export const TYPE_SQUARE = 'grid-square'
@@ -75,8 +79,8 @@ export function nameToLayer (name) {
 }
 
 export const ID = {
-  POINTER: 'ffffffffffffffff',
-  LOS: 'fffffffffffffffe'
+  POINTER: 'ZZZZZZZZ',
+  LOS: 'ZZZZZZZY'
 }
 
 /**
@@ -142,14 +146,22 @@ export function findAssetByAlias (name, layer = 'any') {
  * Get the URL for an asset media.
  *
  * @param {Object} asset Asset to get URL for.
- * @param {Number} side Side/media to get, -1 = base.
+ * @param {Number} side Side/media to get, -1 = base. Defaults to 0 = first side.
  * @return {String} URL to be used in url() or img.src.
  */
-export function getAssetURL (asset, side) {
-  if (side === -1) {
-    return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
+export function getAssetURL (asset, side = 0) {
+  if (DEMO_MODE) {
+    if (side === -1) {
+      return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`
+    } else {
+      return `demo/${getTemplate().name}/assets/${asset.type}/${asset.media[side]}`
+    }
   } else {
-    return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
+    if (side === -1) {
+      return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
+    } else {
+      return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
+    }
   }
 }
 
@@ -351,10 +363,10 @@ export function populatePieceDefaults (piece, headers = null) {
       piece._meta.feature = 'POINTER'
     } else {
       switch (asset.name) {
-        case 'dicemat':
+        case '_.dicemat':
           piece._meta.feature = 'DICEMAT'
           break
-        case 'discard':
+        case '_.discard':
           piece._meta.feature = 'DISCARD'
           break
       }
@@ -641,17 +653,22 @@ export function splitAssetFilename (assetName) {
  * @param {Object} piece Piece to check.
  * @param {Number} x X-coordiante in px.
  * @param {Number} y Y-coordiante in px.
- * @return {Boolean} True if pixel at x/y is transparent, false otherwise.
+ * @return {Promise(Boolean)} True if pixel at x/y is transparent, false otherwise.
  */
 export function isSolid (piece, x, y) {
-  if (!piece) return true // no piece = no checking
-  if (piece?.l === 'token') return true // token are always round & solid
-  if (!piece._meta?.mask) return true // no mask = no checking possible
+  if (
+    !piece || // no piece = no checking
+    piece.l === 'token' || // token are always round & solid
+    !piece._meta?.mask // no mask = no checking possible
+  ) return Promise.resolve(true)
 
   // now do the hit detection
-  const img = new Image() // eslint-disable-line no-undef
-  img.src = piece._meta.mask
-  if (img.complete) {
+  return new Promise((resolve, reject) => {
+    const img = new Image() // eslint-disable-line no-undef
+    img.addEventListener('load', () => resolve(img))
+    img.addEventListener('error', (err) => reject(err))
+    img.src = piece._meta.mask
+  }).then(img => {
     const template = getTemplate()
 
     const width = piece.w * template.gridSize
@@ -684,67 +701,72 @@ export function isSolid (piece, x, y) {
     ctx.drawImage(img, sX, sY, sW, sH, 0, 0, c.width, c.height)
     const alpha = ctx.getImageData(x / scale, y / scale, 1, 1).data[3]
     return alpha > 4 // alpha value
-  } else {
-    return true // image was not already loaded
-  }
+  }).catch(() => {
+    return true // we can't load the image so our best guess is it is solid
+  })
 }
 
 /**
  * Click-thru transparent areas of clickable pieces.
  *
- * If clicked on an 100% alpha area, try to find a better target for the event
- * by traversing all layers + object on the same coordnate.
+ * If clicked on an 100% alpha area, try to find a better target
+ * for the event by traversing all layers + object on the same coordnate.
  *
  * @param {Object} event JavaScript evend that was triggered on a click.
  * @param {Object} coords {x, y} of the current mouse coordinates.
+ * @param return Promise of the real click target.
  */
 export function findRealClickTarget (event, coords) {
-  // in most cases the hit item will be the correct one
-  if (event.target.piece &&
-    event.target.piece.id !== ID.POINTER &&
-    event.target.piece.id !== ID.LOS &&
-    isSolid(event.target.piece, event.offsetX, event.offsetY)) {
-    return event.target
-  }
-
-  // seems the initial target is transparent. now traverse all layers.
+  // find all potential pieces in all layers.
+  const pieces = []
+  if (event.target.piece) pieces.push(event.target.piece)
   const index = event.target.piece ? nameToLayer(event.target.piece.l) : LAYERS.length - 1
   for (const layer of LAYERS.slice().reverse()) {
     if (nameToLayer(layer) <= index && isLayerActive(layer)) { // we don't need to check higher layers
-      for (const piece of sortZ(findPiecesWithin({
+      pieces.push(...sortZ(findPiecesWithin({
         left: coords.x,
         top: coords.y,
         right: coords.x,
         bottom: coords.y
-      }, layer))) {
-        switch (piece.id) {
-          case event.target.piece?.id: // don't doublecheck
-          case ID.POINTER: // not selectable
-          case ID.LOS: // not selectable
-            continue
-        }
-
-        //  compensate center
-        const oX = coords.x - piece.x
-        const oY = coords.y - piece.y
-        let tX = oX
-        let tY = oY
-
-        // compensate rotation clockwise
-        if (piece.r > 0) {
-          const rs = Math.sin(piece.r * Math.PI / 180)
-          const rc = Math.cos(piece.r * Math.PI / 180)
-          tX = oX * rc + oY * rs
-          tY = -oX * rs + oY * rc
-        }
-
-        tX += piece._meta.originWidthPx / 2
-        tY += piece._meta.originHeightPx / 2
-        if (isSolid(piece, tX, tY)) {
-          return _('#' + piece.id).node()
-        }
-      }
+      }, layer)))
     }
   }
-  return null // no better target available
+
+  return _iterateClickTargetsAsync(pieces, coords)
+}
+
+function _iterateClickTargetsAsync (pieces, coords) {
+  if (pieces.length <= 0) return Promise.resolve(null) // no better target available
+  const piece = pieces.shift()
+
+  switch (piece.id) {
+    case ID.POINTER: // not selectable
+    case ID.LOS: // not selectable
+      return _iterateClickTargetsAsync(pieces, coords) // iterate promise
+  }
+
+  //  compensate center
+  const oX = coords.x - piece.x
+  const oY = coords.y - piece.y
+  let tX = oX
+  let tY = oY
+
+  // compensate rotation clockwise
+  if (piece.r > 0) {
+    const rs = Math.sin(piece.r * Math.PI / 180)
+    const rc = Math.cos(piece.r * Math.PI / 180)
+    tX = oX * rc + oY * rs
+    tY = -oX * rs + oY * rc
+  }
+
+  tX += piece._meta.originWidthPx / 2
+  tY += piece._meta.originHeightPx / 2
+
+  return isSolid(piece, tX, tY).then(solid => {
+    if (solid) {
+      return Promise.resolve(_('#' + piece.id).node())
+    } else {
+      return _iterateClickTargetsAsync(pieces, coords) // iterate promise
+    }
+  })
 }

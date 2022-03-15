@@ -1,5 +1,5 @@
 /**
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  *
  * @license This file is part of FreeBeeGee.
  *
@@ -41,7 +41,9 @@ import {
   setStoreValue,
   toggleFullscreen,
   shuffle,
-  sortByString
+  sortByString,
+  bytesToIso,
+  equalsJSON
 } from '../../src/js/lib/utils.mjs'
 
 describe('Frontend - utils.mjs - HTML', function () {
@@ -421,6 +423,24 @@ describe('Frontend - utils.mjs - Math', function () {
   })
 })
 
+describe('Frontend - utils.mjs - Datastructures', function () {
+  it('equalsJSON()', function () {
+    expect(equalsJSON(undefined, undefined)).to.be.eql(true)
+
+    expect(equalsJSON(1, 1)).to.be.eql(true)
+    expect(equalsJSON(2, 1)).to.be.eql(false)
+    expect(equalsJSON(1, 2)).to.be.eql(false)
+
+    expect(equalsJSON([1, 2], [1, 2])).to.be.eql(true)
+    expect(equalsJSON([2, 1], [1, 2])).to.be.eql(false)
+    expect(equalsJSON([1, 2], [2, 1])).to.be.eql(false)
+    expect(equalsJSON(undefined, [])).to.be.eql(true)
+    expect(equalsJSON([], undefined)).to.be.eql(true)
+    expect(equalsJSON(null, [])).to.be.eql(true)
+    expect(equalsJSON([], null)).to.be.eql(true)
+  })
+})
+
 describe('Frontend - utils.mjs - Text', function () {
   it('uuid()', function () {
     expect(uuid(0)).to.be.eql('00000000-0000-4000-8000-000000000000')
@@ -473,6 +493,18 @@ describe('Frontend - utils.mjs - Text', function () {
       { id: 'three' },
       { id: 'two' }
     ])
+  })
+
+  it('bytesToIso()', function () {
+    expect(bytesToIso(0)).to.be.eql('0 bytes')
+    expect(bytesToIso(1)).to.be.eql('1 byte')
+    expect(bytesToIso(2)).to.be.eql('2 bytes')
+    expect(bytesToIso(1023)).to.be.eql('1023 bytes')
+    expect(bytesToIso(1024)).to.be.eql('1 kB')
+    expect(bytesToIso(1024 * 1024 - 1)).to.be.eql('1023 kB')
+    expect(bytesToIso(1024 * 1024)).to.be.eql('1 MB')
+    expect(bytesToIso(1024 * 1024 * 1024 - 1)).to.be.eql('1023 MB')
+    expect(bytesToIso(1024 * 1024 * 1024)).to.be.eql('1 GB')
   })
 
   it('prettyName()', function () {

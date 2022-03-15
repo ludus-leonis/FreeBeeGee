@@ -2,84 +2,59 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.13 - Colorful Cobra
+## v0.15 - ???
 
-* [X] change backgrounds from room to server setting
-* [X] damage status icons for RPG/Hex templates
-* [X] predefined piece colors
-* [X] LOS-ruler
-* [X] advanced grid settings (minor + major grid)
-* [X] add separate color sets in templates for piece's borders and backgrounds
-* [X] add hotkeys to flip/rotate backwards
-* [X] generate average piece color during upload
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] "RPG" template glass tiles transparency
-    * [X] dice rolling
-    * [X] match library preview to show default color "none"
-    * [X] refactor all JS-CSS changes to custom properties
-    * [X] don't count default pieces' backsides as side in library
-    * [X] browser caching artwork from previous template in same room
-    * [X] remove old/unused room properties
-    * [X] upload form sometimes resets selection
-    * [X] rotating border highlights
-  * [X] review docs
-  * [X] review + run tests
-    * [X] document how to run tests
-    * [X] add more PHP unit tests
-    * [X] add more JS unit tests
-  * [X] bump version/codename & update CHANGELOG
-  * [X] update screenshots
+* [ ] table: dragging some pieces should not change z (e.g. dicemat)
+* [ ] table: native zoom function
+* [ ] content: more classic game boards - backgammon, mills, solitaire, ...
+* [ ] content: more helper/marker overlays (arrows, areas, )
+* [ ] snapshot: set default/start table other than 1 in template
+* [ ] system: table passwords
+* [ ] library: delete assets UI
+* [ ] build: automated deployment tests for new zip/tgz packages after build
+* [ ] protect pieces (no-delete, no-move)
+* [ ] pieces: inline-edit notes
+* [ ] API: hide .../data/... from URLs (via .htaccess)
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] library: select-border sometimes cutoff
+  * [ ] review docs
+  * [ ] review + run tests
+  * [ ] bump version/codename & update CHANGELOG
+  * [ ] update screenshots
 
-## Backlog (unsorted)
+## Backlog
 
-### rather sooner
+### rather sooner (before v1)
 
-* [ ] fix isSolid image loading
-* [ ] autofix older rooms (or be more tolerant)
-* [ ] add more integration/API tests (edge cases during CRUD)
-* [ ] system assets (always there, not part of template)
-* [ ] table passwords
-* [ ] use 'v' to paste / clone
-* [ ] automated deployment tests for new zip/tgz packages after build
-* [ ] demo mode (serverless?)
-* [ ] more helper/marker overlays (arrows, areas, )
-* [ ] provide clearer feedback when uploading incompatible templates / parsing errors happen
-* [ ] right-click on table (add piece, change table)
-* [ ] set default/start table other than 1 in template
-* [ ] delete items from library
+* [ ] library: edit asset UI
+* [ ] library: show/indicate backside/all sides in tile browser
+* [ ] system: template colors as masks (dice, areas)
 * [ ] when dragging pieces, move those on top of the original piece too
-* [ ] dragging some pieces should not change z (e.g. dicemat)
 * [ ] multi-select stuff
 * [ ] move / copy setups between tables
-* [ ] protect pieces (no-delete, no-move)
-* [ ] show backside/all sides in tile browser
 * [ ] dedicated HP/Mana/Value field(s)
-* [ ] meta-piece: supply heap
-* [ ] support for stacks/decks of cards
+* [ ] piece: supply heap
+* [ ] piece: cards / card-decks
   * [ ] shuffle deck/stack
 * [ ] player secrets (e.g. for goal cards, hidden rolling, ...)
-* [ ] better sticky notes (auto-size text)
-* [ ] manipulation of single assets in library (edit, change type)
-* [ ] more tabletop settings in UI (e.g. grid)
 * [ ] reduce impact of "back" button
 * [ ] "layer not active" hint when dragging nothing
-* [ ] randomize button on dicemat
-* [ ] don't roll dice on transparent part of dicemat
-* [ ] add dice on dicemat
-* [ ] generic marker overlay (X, ?, ...)
-* [ ] add more classic game boards: backgammon, mills, solitaire
-* [ ] generate average piece color during build and upload
-* [ ] catch all unhandled warnings/exceptions in PHP API and return 500
-* [ ] hide .../data/... from URLs (via .htaccess)
+* [ ] dicemat: randomize button
+* [ ] dicemat: don't roll dice on transparent parts
+* [ ] dicemat: count dice values
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
-* [ ] obfuscate/hash room name
+* [ ] API: obfuscate/hash room name
 * [ ] docs how to make table/template `.zip`s
-* [ ] API Docs
+* [ ] API: check sides correspond to asset
+* [ ] build: generate average piece color
+* [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
+* [ ] docs: API Docs
 
-### rather later
+### rather later (unsorted, after v1)
 
+* better sticky notes (auto-size text)
 * bulk manipulation of assets (delete, edit, change type)
 * show even more infos in media browser
 * overlay-grid-on-tile option
@@ -88,8 +63,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * shuffle
   * object selection
   * moving
-* option to force-install templates with invalid versions
 * I18N
+* rotate desk 180°
 * pinboard for handouts
 * undo (limited)
 * better tablet / touch support
@@ -101,24 +76,20 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * link to subtable in url via /roomname#1
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
-* point-somewhere feature
 * detail-pane to the right for selected item
 * move stuff via cursor keys
 * rename table
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals
 * arbitrary snap (e.g. 1px)
-* tabs / multiple desks
 * multi-panes / splitscreen / split.js
 * measure range (in fields)
-* delay dragndrop till min 2px are moved to avoid jigging
 * auto-z based on tile position
 * better fix dragndrop when 'drop' outside
 * dark mode css
 * library window usability
   * add without closing
   * nicer cards/selection
-  * multiselect + create
   * asset adding: (re)set token size 2x2->3x4
 * FreeDOM: Emmet '~' support
 * shared notepad / scratchpad / piece of paper / postits
@@ -126,7 +97,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * admins, players, spectators
   * vote for new admin / gm
 * cache/resuse/symlink same assets in different table folders (via sha256?)
-* common shadow layer for tile layer
 * download map/table as PDF for printing
 * cutcenes / message panels
 * labels looking like piece of paper sticking out

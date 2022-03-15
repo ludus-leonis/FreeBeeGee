@@ -1,7 +1,7 @@
 /**
  * @file All JSON/Rest calls FreeBeeGee needs.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -19,7 +19,13 @@
 
 /* global FormData */
 
+import {
+  demoFetchOrThrow
+} from '../api/serverless.mjs'
+
 // --- public endpoint calls ---------------------------------------------------
+
+export const DEMO_MODE = ('true' === '$DEMOMODE$')
 
 /**
  * Error class when the API responds with an unexpected HTTP code.
@@ -62,7 +68,7 @@ export function apiGetTemplates () {
  * @return {Promise} Promise containing JSON/Object payload.
  */
 export function apiGetRoom (roomName, headers = false) {
-  return getJson([200, 400], 'api/rooms/' + roomName + '/', headers)
+  return getJson([200, 400, 404], 'api/rooms/' + roomName + '/', headers)
 }
 
 /**
@@ -87,6 +93,7 @@ export function apiPostRoom (room, snapshot) {
   formData.append('name', room.name)
   if (room.template) formData.append('template', room.template)
   if (room.auth) formData.append('auth', room.auth)
+  if (room.convert !== undefined) formData.append('convert', room.convert)
   if (snapshot) formData.append('snapshot', snapshot)
 
   return fetchOrThrow([201], 'api/rooms/', {
@@ -243,9 +250,10 @@ let mock = 0 // mock mode for unit testing, 0 = off
  * @param {Boolean} headers If true, the HTTP headers will be added as '_headers'
  *                          to the JSON reply.
  * @return {Promse} Promise of a JSON object.
- * @throw {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
+ * @throws {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
 function fetchOrThrow (expectedStatus, path, data = {}, headers = false) {
+  if (DEMO_MODE) return demoFetchOrThrow(expectedStatus, path, data, headers)
   if (mock === 1) return Promise.resolve({ expectedStatus, path, data, headers })
   return globalThis.fetch(path, data)
     .then(response => {
@@ -266,7 +274,7 @@ function fetchOrThrow (expectedStatus, path, data = {}, headers = false) {
           // was an error
           if (expectedStatus.includes(response.status)) {
             if (headers) {
-              return { headers: response.headers, body: json }
+              return { status: response.status, headers: response.headers, body: json }
             }
             return json
           } else { // unexpected status code

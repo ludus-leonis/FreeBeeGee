@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021 Markus Leupold-Löwenthal
+ * Copyright 2021-2022 Markus Leupold-Löwenthal
  *
  * @license This file is part of FreeBeeGee.
  *
@@ -32,6 +32,7 @@ class JSONRestAPI
         '(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?'
          . '(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/';
 
+    private $http = true; // PHP may set/change http stuff. disable for unit tests.
     private $apiDirFS = null; // e.g. /var/www/www.mysite.com/api/
     private $apiRoot = null;  // URL-parent-folder of the API, e.g. /api
     private $routes = [ // all registered routes
@@ -67,6 +68,18 @@ class JSONRestAPI
         $scriptDir = dirname(__FILE__);
         $this->apiDirFS = $scriptDir . '/';
         $this->apiRoot = substr($scriptDir, strlen($_SERVER['DOCUMENT_ROOT']));
+    }
+
+    /**
+     * Change API dir.
+     *
+     * Only to be used for debugging/unit testing.
+     */
+    public function debugApiDir(
+        string $dir
+    ) {
+        $this->apiDirFS = $dir;
+        $this->http = false;
     }
 
     /**
@@ -211,19 +224,37 @@ class JSONRestAPI
      * @param string $field Field name for error message.
      * @param mixed $value The value to check.
      * @param string[] $values Possible values as array.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return mixed The matching item from the array.
      */
     public function assertEnum(
         string $field,
         $value,
-        array $values
+        array $values,
+        bool $send = true
     ) {
         if ($value !== null) {
             if (in_array($value, $values)) {
-                return $value;
+                if (is_numeric($value) === is_numeric($values[0])) { // extra check for PHP7
+                    switch (gettype($values[0])) {
+                        case 'integer':
+                            return (int) $value;
+                        case 'double':
+                            return (double) $value;
+                        case 'boolean':
+                            return (bool) $value;
+                        default:
+                            return $value;
+                    }
+                }
             }
         }
-        $this->sendError(400, "invalid JSON: $field invalid");
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field invalid");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -235,19 +266,26 @@ class JSONRestAPI
      * @param string $field Field name for error message.
      * @param mixed $value The value to check.
      * @param string $pattern RegExp to check against. Excluding '/^' and '$/'.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return string The parsed value.
      */
     public function assertString(
         string $field,
         $value,
-        string $pattern
+        string $pattern,
+        bool $send = true
     ) {
         if ($value !== null) {
             if (preg_match('/^' . $pattern . '$/', $value)) {
                 return $value;
             }
         }
-        $this->sendError(400, "invalid JSON: $field does not match $pattern");
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field does not match $pattern");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -258,18 +296,25 @@ class JSONRestAPI
      *
      * @param string $field Field name for error message.
      * @param mixed $value The value to check.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return string The parsed value.
      */
     public function assertSemver(
         string $field,
-        $value
+        $value,
+        bool $send = true
     ) {
-        if ($value !== null) {
+        if ($value !== null && is_string($value)) {
             if (preg_match(JSONRestAPI::REGEXP_SEMVER, $value)) {
                 return $value;
             }
         }
-        $this->sendError(400, "invalid JSON: $field is not a Semver version string.");
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field is not a Semver version string.");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -283,6 +328,8 @@ class JSONRestAPI
      * @param string $pattern RegExp to check against. Excluding '/^' and '$/'.
      * @param int $minLength Minimum length of array. Defaults to 1.
      * @param int $maxLength Maximum length of array. Defaults to unlimited.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return array The parsed strings as array.
      */
     public function assertStringArray(
@@ -290,9 +337,12 @@ class JSONRestAPI
         $values,
         string $pattern,
         int $minLength = 1,
-        int $maxLength = PHP_INT_MAX
+        int $maxLength = PHP_INT_MAX,
+        bool $send = true
     ) {
-        $this->assertArray($field, $values, $minLength, $maxLength);
+        if (!$this->assertArray($field, $values, $minLength, $maxLength, $send)) {
+            return null;
+        }
         $array = [];
         foreach ($values as $value) {
             $trimmed = trim($value);
@@ -303,7 +353,38 @@ class JSONRestAPI
         if (sizeof($array) === sizeof($values)) {
             return $array;
         }
-        $this->sendError(400, "invalid JSON: $field entries do not match $pattern");
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field entries do not match $pattern");
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Check/convert if data is an object.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $values The value(s) to check.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
+     * @return object The parsed object.
+     */
+    public function assertObject(
+        string $field,
+        $values,
+        bool $send = true
+    ) {
+        if ($values !== null && gettype($values) === 'object') {
+            return $values;
+        }
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field is not an object");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -316,20 +397,27 @@ class JSONRestAPI
      * @param mixed $values The value(s) to check.
      * @param int $minLength Minimum length of array. Defaults to 1.
      * @param int $maxLength Maximum length of array. Defaults to unlimited.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return array The parsed array.
      */
     public function assertArray(
         string $field,
         $values,
         int $minLength = 1,
-        int $maxLength = PHP_INT_MAX
+        int $maxLength = PHP_INT_MAX,
+        bool $send = true
     ) {
         if ($values !== null && gettype($values) === 'array') {
             if (sizeof($values) >= $minLength && sizeof($values) <= $maxLength) {
                 return $values;
             }
         }
-        $this->sendError(400, "invalid JSON: $field is not an array of length $minLength - $maxLength");
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field is not an array of length $minLength - $maxLength");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -341,18 +429,25 @@ class JSONRestAPI
      * @param string $field Field name for error message.
      * @param mixed $values The value(s) to check.
      * @param int $minLength Minimum length of array.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return array The parsed array.
      */
     public function assertObjectArray(
         string $field,
         $values,
         int $minLength = 0,
-        int $maxLength = PHP_INT_MAX
+        int $maxLength = PHP_INT_MAX,
+        bool $send = true
     ) {
-        $objects = $this->assertArray($field, $values, $minLength, $maxLength);
+        $objects = $this->assertArray($field, $values, $minLength, $maxLength, $send);
         foreach ($objects as $object) {
             if (gettype($object) !== 'object') {
-                $this->sendError(400, "invalid JSON: $field is not an array of (only) objects");
+                if ($send) {
+                    $this->sendError(400, "invalid JSON: $field is not an array of (only) objects");
+                } else {
+                    return null;
+                }
             }
         }
         return $objects;
@@ -371,21 +466,28 @@ class JSONRestAPI
      * @param mixed $value The value to check.
      * @param int $min Minimum value. Defaults to 1.
      * @param int $max Maximum value. Defaults to 256.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return int The parsed value.
      */
     public function assertInteger(
         string $field,
         $value,
         int $min = 1,
-        int $max = 256
-    ): int {
-        if ($value !== null) {
+        int $max = 256,
+        bool $send = true
+    ) {
+        if (is_numeric($value)) {
             $i = (int) $value;
             if ($i >= $min && $i <= $max) {
                 return $i;
             }
         }
-        $this->sendError(400, "invalid JSON: $field not between $min and $max");
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field not between $min and $max");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -400,6 +502,8 @@ class JSONRestAPI
      * @param int $max Maximum value. Defaults to 256.
      * @param int $minLength Minimum length of array.
      * @param int $maxLength Maximum length of array.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return array The parsed strings as array.
      */
     public function assertIntegerArray(
@@ -408,22 +512,27 @@ class JSONRestAPI
         int $min = 1,
         int $max = 256,
         int $minLength = 1,
-        int $maxLength = PHP_INT_MAX
+        int $maxLength = PHP_INT_MAX,
+        bool $send = true
     ) {
-        $this->assertArray($field, $values, $minLength, $maxLength);
+        if (!$this->assertArray($field, $values, $minLength, $maxLength, $send)) {
+            return null;
+        }
         $array = [];
         foreach ($values as $value) {
             $i = (int) $value;
-            if ($i >= $min && $i <= $max) {
+            if (is_numeric($value) && $i >= $min && $i <= $max) {
                 array_push($array, $i);
             }
         }
         if (sizeof($array) === sizeof($values)) {
             return $array;
         }
-        print_r($array);
-        print_r($values);
-        $this->sendError(400, "invalid JSON: some $field entries are not integers $min - $max");
+        if ($send) {
+            $this->sendError(400, "invalid JSON: some $field entries are not integers $min - $max");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -434,16 +543,29 @@ class JSONRestAPI
      *
      * @param string $field Field name for error message.
      * @param mixed $value The value to check.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return bool The parsed value.
      */
     public function assertBoolean(
         string $field,
-        $value
+        $value,
+        bool $send = true
     ): int {
         if ($value === true || $value === false) {
             return $value;
         }
-        $this->sendError(400, "invalid JSON: $field not a boolean");
+        if ($value === "true") {
+            return true;
+        }
+        if ($value === "false") {
+            return false;
+        }
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field not a boolean");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -456,16 +578,33 @@ class JSONRestAPI
      *
      * @param string $field Field name for error message.
      * @param mixed $value The value to check.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
+     * @param int $maxSize Optional. Maximum (decoded) size of blob. Defaults to 1MB.
      * @return int The parsed value.
      */
     public function assertBase64(
         string $field,
-        $value
+        $value,
+        int $maxSize = 1024 * 1024,
+        bool $send = true
     ): string {
-        if (base64_encode(base64_decode($value, true)) === $value) {
+        $decoded = base64_decode($value, true);
+        if (strlen($decoded) > $maxSize) {
+            if ($send) {
+                $this->sendError(400, "invalid JSON: $field too large.", 'UPLOAD_SIZE', [$maxSize]);
+            } else {
+                return null;
+            }
+        }
+        if (base64_encode($decoded) === $value) {
             return $value;
         }
-        $this->sendError(400, "invalid JSON: $field not valid base64-encoded data.");
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field not valid base64-encoded data.");
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -474,22 +613,32 @@ class JSONRestAPI
      * @param string $field Field name for error message.
      * @param mixed $value The value to check.
      * @param string[] $properties Properties to find in object.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
      * @return int The parsed item.
      */
     public function assertHasProperties(
         string $field,
         $value,
-        $properties
+        $properties,
+        bool $send = true
     ): object {
         if ($value !== null && gettype($value) === 'object') {
             foreach ($properties as $property) {
                 if (!\property_exists($value, $property)) {
-                    print_r($value);
-                    $this->sendError(400, 'invalid JSON: ' . $property . ' missing');
+                    if ($send) {
+                        $this->sendError(400, 'invalid JSON: ' . $property . ' missing');
+                    } else {
+                        return null;
+                    }
                 }
             }
         } else {
-            $this->sendError(400, "invalid JSON: $field invalid " . gettype($value));
+            if ($send) {
+                $this->sendError(400, "invalid JSON: $field invalid " . gettype($value));
+            } else {
+                return null;
+            }
         }
         return $value;
     }
@@ -497,12 +646,12 @@ class JSONRestAPI
     // --- payload helpers -----------------------------------------------------
 
     /**
-     * Convert incoming payload from form-data to Json.
+     * Convert incoming payload from form-data to JSON.
      *
      * @return object Incoming data JSON string if successfull, or null
      *                if request was not 'multipart/form-data'.
      */
-    public function multipartToJson()
+    public function multipartToJSON()
     {
         foreach ($_SERVER as $header => $headerValue) {
             if (preg_match('/^content.type$/i', $header) && substr($headerValue, 0, 19) === 'multipart/form-data') {
@@ -527,36 +676,55 @@ class JSONRestAPI
      * To be used on JSON provided by the client to check for syntax errors. Will
      * send an 400-error to the client and terminate further execution if invalid.
      *
+     * @param string $field Field name for error message.
      * @param string $data User-provided data/string.
      * @return object Parsed JSON data if successfull.
      */
-    public function assertJson(
+    public function assertJSON(
+        string $field,
         ?string $data
-    ): object {
+    ) {
         $decoded = json_decode($data);
         if ($decoded === null) {
-            $this->sendError(400, 'invalid JSON');
+            $this->sendError(400, $field . ' is not valid JSON');
         }
         return $decoded;
     }
 
     /**
-     * Assert that user-data is in JSON format.
+     * Assert that user-data is in JSON format and an object.
      *
      * To be used on JSON provided by the client to check for syntax errors. Will
      * send an 400-error to the client and terminate further execution if invalid.
      *
+     * @param string $field Field name for error message.
      * @param string $data User-provided data/string.
      * @return object Parsed JSON data if successfull.
      */
-    public function assertJsonArray(
+    public function assertJSONObject(
+        string $field,
+        ?string $data
+    ): object {
+        $decoded = $this->assertJSON($field, $data);
+        return $this->assertObject($field, $decoded);
+    }
+
+    /**
+     * Assert that user-data is in JSON format and an array.
+     *
+     * To be used on JSON provided by the client to check for syntax errors. Will
+     * send an 400-error to the client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param string $data User-provided data/string.
+     * @return object Parsed JSON data if successfull.
+     */
+    public function assertJSONArray(
+        string $field,
         ?string $data
     ): array {
-        $decoded = json_decode($data);
-        if ($decoded === null) {
-            $this->sendError(400, 'invalid JSON array');
-        }
-        return $this->assertObjectArray('array', $decoded, 1);
+        $decoded = $this->assertJSON($field, $data);
+        return $this->assertObjectArray($field, $decoded);
     }
 
     /**
@@ -606,18 +774,63 @@ class JSONRestAPI
         string $location = null,
         string $digest = null
     ): void {
-        http_response_code($code);
-        header('Servertime: ' . time());
-        if ($location) {
-            header('Location: ' . $location);
+        if ($this->http) { // regular mode uses HTTP replies
+            http_response_code($code);
+            header('Servertime: ' . time());
+            if ($location) {
+                header('Location: ' . $location);
+            }
+            if ($digest) {
+                header('Digest: ' . $digest);
+            }
+            if ($body !== null) {
+                echo $body;
+            }
+            die;
+        } else { // during tests we want to capture errors as exceptions
+            throw new \Exception($body, $code);
         }
-        if ($digest) {
-            header('Digest: ' . $digest);
+    }
+
+    /**
+     * Send an JSON error to the client for invalid PHP upload sizes.
+     *
+     * Will also terminate execution after sending.
+     */
+    public function sendErrorPHPUploadSize(): void
+    {
+        $this->sendError(400, 'upload too big', 'PHP_SIZE', [
+            min($this->getIniBytes('post_max_size'), $this->getIniBytes('upload_max_filesize')),
+        ]);
+    }
+
+    /**
+     * Get a php.ini value as bytes.
+     *
+     * @param string $key Key to fetch from php.ini.
+     * @return int Value. Expanded to bytes if byte shorthand like '8M' is used in php.ini.
+     */
+    private function getIniBytes(
+        string $key
+    ): int {
+        $value = trim(ini_get($key));
+        $unit = strtolower($value[strlen($value) - 1]);
+        $bytes = (int)$value;
+        switch ($unit) {
+            case 't':
+                $bytes *= 1024;
+                // fall-through
+            case 'g':
+                $bytes *= 1024;
+                // fall-through
+            case 'm':
+                $bytes *= 1024;
+                // fall-through
+            case 'k':
+                $bytes *= 1024;
         }
-        if ($body !== null) {
-            echo $body;
-        }
-        die;
+
+        return $bytes;
     }
 
     // --- file locking --------------------------------------------------------
@@ -736,6 +949,25 @@ class JSONRestAPI
     }
 
     /**
+     * Make sure a JSON file exists by touching it with a default content.
+     *
+     * @param string $path Full path to file.
+     * @param string $content Content to write in file if it does not exist.
+     * @return object Loaded & parsed JSON (Object or Array).
+     */
+    public static function touchAndReadJSON(
+        string $path,
+        string $content = '{}'
+    ) {
+        if (is_file($path)) {
+            touch($path);
+        } else {
+            file_put_contents($path, $content);
+        }
+        return json_decode(file_get_contents($path));
+    }
+
+    /**
      * Create a random ID.
      *
      * @param string $seed Optional seed for randomness.
@@ -750,6 +982,39 @@ class JSONRestAPI
             $data = random_bytes(8);
         }
         return bin2hex($data);
+    }
+
+    /**
+     * Generate a compact ID.
+     *
+     * As some browser still have problems with non-html5-ids, we make sure
+     * it starts with a letter.
+     *
+     * @param int $seed Optional seed for predictable randomness.
+     * @return string 8-digit base-64 string, e.g. 'a2-Jc5Xe'.
+     */
+    public static function id64(
+        int $seed = null
+    ): string {
+        $letters = 'abcdefghijklmnopqrstuvwxyz'
+            . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $digits = '0123456789'
+            . 'abcdefghijklmnopqrstuvwxyz-'
+            . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_'; // 64 digits
+        $id = [];
+        if ($seed) {
+            $id[] = $letters[($seed >> (0 * 6)) % 52]; // letter first
+            for ($i = 1; $i < 8; $i++) {
+                $id[] = $digits[($seed >> ($i * 6)) % 64];
+            }
+        } else {
+            $data = random_bytes(8);
+            $id[] = $letters[ord($data[0]) % 52]; // letter first
+            for ($i = 1; $i < 8; $i++) {
+                $id[] = $digits[ord($data[$i]) % 64];
+            }
+        }
+        return implode($id);
     }
 
     /**
@@ -826,6 +1091,28 @@ class JSONRestAPI
     }
 
     /**
+     * Calculate a room's size on disk.
+     *
+     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @return int Size of room in bytes.
+     */
+    public function getDirectorySize(
+        string $path
+    ) {
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($path),
+            \RecursiveIteratorIterator::LEAVES_ONLY
+        );
+        $size = 0;
+        foreach ($iterator as $filename => $file) {
+            if (!$file->isDir()) {
+                $size += $file->getSize();
+            }
+        }
+        return $size;
+    }
+
+    /**
      * Delete a directory recursively.
      *
      * As sanity precaution it will only operate on directories blow the API.
@@ -845,7 +1132,7 @@ class JSONRestAPI
                             self::deleteDir($path . '/' . $file);
                         }
                     } else {
-                        unlink($path . '/' . $file);
+                        @unlink($path . '/' . $file);
                     }
                 }
                 rmdir($path);

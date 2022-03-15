@@ -1,7 +1,7 @@
 /**
  * @file Various error dialogs
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -40,22 +40,25 @@ import {
  */
 export function runError (code, options) {
   switch (code) {
-    case 'ROOM_INVALID_ENGINE':
+    case 'INVALID_ENGINE':
       runErrorRoomDeprecated(options)
       break
-    case 'UNEXPECTED': // 5
+    case 'UNEXPECTED':
       runErrorUnexpected(options)
       break
-    case 'TABLE_GONE': // 4
+    case 'ROOM_GONE':
       runErrorRoomGone(options)
       break
-    case 'NO_SLOT': // 3
+    case 'ROOM_INVALID':
+      runErrorRoomDeprecated(options)
+      break
+    case 'NO_SLOT':
       runErrorNoSlotAvailable()
       break
-    case 'FULL': // 2
+    case 'FULL':
       runErrorOverCapacity()
       break
-    case 'UPDATE': // 1
+    case 'UPDATE':
       runErrorUpdate()
       break
     case 'UNKNOWN':
@@ -80,7 +83,7 @@ function detectProblem () {
         .then(text => {
           if (response.status === 200) {
             if (text.search(/This file is part of FreeBeeGee/) >= 0) {
-              error.innerHTML = '<p>PHP is not enabled on this server. FreeBeeGee can\'t run without PHP :(</p>'
+              error.innerHTML = '<p>PHP is not enabled on this server. FreeBeeGee can\'t run without PHP 😞</p>'
               throw missing // abort further diagnosis
             } else if (
               !text.search(/{/) >= 0 || // output does not start with json object
@@ -170,9 +173,11 @@ function runErrorRoomDeprecated (roomName) {
   createScreen(
     'Room outdated ...',
     `
-      <p class="is-wrapping">Room <strong>${roomName}</strong> has been created by an incompatible FreeBeeGee version.</p>
+      <p class="is-wrapping">Room <strong>${roomName}</strong> contains invalid data. It has probably been created by an older FreeBeeGee version.</p>
 
       <p>We are sorry, but it can not be run on this server. Please choose another room.</p>
+
+      <p>Alternately, you can try to <a href="./api/rooms/${roomName}/snapshot/?tzo=${new Date().getTimezoneOffset() * -1}">download a snapshot</a> and re-upload it, so it gets converted to the current version.</p>
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `

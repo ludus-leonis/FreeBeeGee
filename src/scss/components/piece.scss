@@ -1,4 +1,4 @@
-// Copyright 2021 Markus Leupold-Löwenthal
+// Copyright 2021-2022 Markus Leupold-Löwenthal
 //
 // This file is part of FreeBeeGee.
 //
@@ -35,9 +35,11 @@ $piece-shadow-other: 3px 3px 4px $color-black-50a;
 
 // --- 'random' piece attributes -----------------------------------------------
 
-$piece-ids: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' 'a' 'b' 'c' 'd' 'e' 'f';
-$piece-jitter-a: (-1) (-.866) (-.733) (-.6) (-.466) (-.333) (-.2) (-.066) .066 .2 .333 .466 .6 .733 1 0;
-$piece-jitter-b: .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .1 0; // last = f = none
+$piece-ids: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' '_' '-' 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p' 'q' 'r' 's' 't' 'u' 'v' 'w' 'x' 'y' 'z' 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N' 'O' 'P' 'Q' 'R' 'S' 'T' 'U' 'V' 'W' 'X' 'Y' 'Z';
+
+$piece-jitter-a: (-1) (-.97) (-.94) (-.91) (-.88) (-.84) (-.81) (-.78) (-.75) (-.72) (-.69) (-.66) (-.63) (-.59) (-.56) (-.53) (-.5) (-.47) (-.44) (-.41) (-.38) (-.34) (-.31) (-.28) (-.25) (-.22) (-.19) (-.16) (-.13) (-.09) (-.06) (-.03) .03 .06 .09 .13 .16 .19 .22 .25 .28 .31 .34 .38 .41 .44 .47 .5 .53 .56 .59 .63 .66 .69 .72 .75 .78 .81 .84 .88 .91 .94 1 0;
+
+$piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 .67 .72 .28 .31 .5 .09 .47 .92 .38 .22 .95 .14 .84 .63 .88 .13 .83 .8 .61 .3 .05 .44 .03 .89 .36 .23 .17 .59 .64 .75 .45 .34 .78 .73 .2 .25 .58 .39 .41 .52 .86 .19 .94 .08 .66 .55 .81 0; // last = f = none
 
 @mixin piece-rotate($r, $amount) { // random rotation of pieces
   @each $id in $piece-ids {
@@ -46,9 +48,6 @@ $piece-jitter-b: .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .
 
     &[id^='#{$id}'] {
       transform: rotate($r + $amount * $jitter);
-      #{'--debug-r'}: $r;
-      #{'--debug-amount'}: $amount;
-      #{'--debug-jitter'}: $jitter;
     }
   }
 }
@@ -197,19 +196,40 @@ $piece-jitter-b: .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .
     white-space: nowrap;
     z-index: 99; // within the piece
 
+    .icon-ellipsis {
+      color: $color-gray-25;
+    }
+
     .icon {
+      display: inline-block;
       height: 1em;
       margin-top: 0;
       width: 1em;
 
+      &.icon-extra {
+        display: none;
+      }
+
       &:not(:first-child) {
-        margin-left: $spacing-micro;
+        margin-left: px(2);
+
+        &:first-of-type {
+          margin-left: $spacing-micro;
+        }
       }
     }
   }
 
   &:hover > .label {
     font-size: px(16);
+
+    .icon-ellipsis {
+      display: none;
+    }
+
+    .icon.icon-extra {
+      display: inline-block;
+    }
   }
 
   // --- backsides -------------------------------------------------------------
@@ -316,6 +336,8 @@ $piece-jitter-b: .266 .533 .8 .066 .333 .6 .866 .133 .4 .666 .933 .2 .466 .733 .
       $shadow-270,
       $shadow-300
     );
+    background-image: var(--fbg-material), var(--fbg-image);
+    background-size: 256px, cover;
     border-radius: $piece-corner-radius;
   }
 

@@ -53,8 +53,8 @@ npm run test:api
 docker rm -f freebeegee
 ```
 
-This will try to start a local PHP 8.0 server on port 8765. If you change the port, don't forget to change it in `test/api.js`, too.
+This will try to start a local PHP 8.0 server on port 8765. If you change the port or use a different PHP version, don't forget to change it at the bottom of `test/utils/chai.js`, too.
 
 Hint: You don't have to receate the container (run + rm) if you run the tests multiple times. But you have to run `npm run gulp dist-test` every time, as failed tests might leave the server in an invalid state.
 
-Hint: You can try other PHP versions by tweaking the `Dockerfile` and adapting the last lines of `test/api.js` accordingly.
+Hint: You can try other PHP versions by tweaking the `Dockerfile` and adapting the last lines of `test/utils/chai.js` accordingly.

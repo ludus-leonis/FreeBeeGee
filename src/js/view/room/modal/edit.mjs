@@ -1,7 +1,7 @@
 /**
  * @file Handles the piece editor modal.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -34,11 +34,13 @@ import {
 
 import {
   TYPE_HEX,
-  stickyNoteColors
+  stickyNoteColors,
+  getAssetURL
 } from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
-  prettyName
+  prettyName,
+  equalsJSON
 } from '../../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -61,22 +63,19 @@ export function modalEdit (piece) {
     // label
     _('#piece-label').value = piece.t?.[0] ?? ''
 
-    // tag
-    const pieceTag = _('#piece-tag')
-    const pieceTagNone = _('option').create('none')
-    pieceTagNone.value = ''
-    pieceTag.add(pieceTagNone)
-    let pieceTagFound = false
-    for (const tag of getLibrary().tag) {
-      const option = _('option').create(prettyName(tag.name))
-      option.value = tag.name
-      if (tag.name === piece.b?.[0]) {
-        pieceTagFound = true
-        option.selected = true
-      }
-      pieceTag.add(option)
+    // badges
+    const badges = _('#piece-badges')
+    for (const badge of getLibrary().badge) {
+      const span = _('span.toggle-icon').create().css({
+        backgroundImage: `url('${getAssetURL(badge)}'`
+      }).on('click', () => {
+        span.toggle('.active')
+      })
+      if (piece.b?.includes(badge.id)) span.add('.active')
+      span.badge = badge
+      span.title = prettyName(badge.name)
+      badges.add(span)
     }
-    if (!pieceTagFound) pieceTagNone.selected = true
 
     // piece number
     const pieceNo = _('#piece-number')
@@ -113,7 +112,7 @@ export function modalEdit (piece) {
     // rotate
     const pieceR = _('#piece-r')
     for (let r = 0; r < 360; r += getTemplate().type === TYPE_HEX ? 60 : 90) {
-      const option = _('option').create(r === 0 ? 'normal' : r + '°')
+      const option = _('option').create(r === 0 ? '0°' : r + '°')
       option.value = r
       if (r === piece.r) option.selected = true
       pieceR.add(option)
@@ -224,8 +223,22 @@ function getModalBody (piece) {
 }
 
 function getModalToken (piece) {
-  const pieceClass = piece._meta.hasColor ? 'col-lg-3' : 'is-hidden'
-  const borderClass = piece._meta.hasBorder ? 'col-lg-3' : 'col-lg-6'
+  let colorClass = 'is-hidden'
+  let borderClass = 'is-hidden'
+  let otherClass = 'col-lg-3'
+
+  if (piece._meta.hasColor && piece._meta.hasBorder) {
+    colorClass = 'col-lg-2'
+    borderClass = 'col-lg-2'
+    otherClass = 'col-lg-2'
+  } else if (piece._meta.hasBorder) {
+    borderClass = 'col-lg-4'
+    otherClass = 'col-lg-2'
+  } else if (piece._meta.hasColor) {
+    colorClass = 'col-lg-4'
+    otherClass = 'col-lg-2'
+  }
+
   return `
     <form class="container">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
@@ -235,36 +248,36 @@ function getModalToken (piece) {
           <input id="piece-label" name="piece-label" type="text" maxlength="32">
         </div>
         <div class="col-12 col-lg-4">
-          <label for="piece-tag">Icon</label>
-          <select id="piece-tag" name="piece-w"></select>
-        </div>
-        <div class="col-6 col-lg-3">
-          <label for="piece-w">Width</label>
-          <select id="piece-w" name="piece-w"></select>
-        </div>
-        <div class="col-6 col-lg-3">
-          <label for="piece-h">Height</label>
-          <select id="piece-h" name="piece-h"></select>
-        </div>
-        <div class="col-6 col-lg-3">
-          <label for="piece-r">Rotate</label>
-          <select id="piece-r" name="piece-r"></select>
-        </div>
-        <div class="col-6 col-lg-3">
-          <label for="piece-side">Side</label>
-          <select id="piece-side" name="piece-side"></select>
-        </div>
-        <div class="col-6 ${pieceClass}">
-          <label for="piece-color">Color</label>
-          <select id="piece-color" name="piece-color"></select>
+          <label for="piece-number">Number</label>
+          <select id="piece-number" name="piece-number"></select>
         </div>
         <div class="col-6 ${borderClass}">
           <label for="piece-border">Border</label>
           <select id="piece-border" name="piece-border"></select>
         </div>
-        <div class="col-6">
-          <label for="piece-number">Number</label>
-          <select id="piece-number" name="piece-number"></select>
+        <div class="col-6 ${colorClass}">
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
+        </div>
+        <div class="col-6 ${otherClass}">
+          <label for="piece-side">Side</label>
+          <select id="piece-side" name="piece-side"></select>
+        </div>
+        <div class="col-6 ${otherClass}">
+          <label for="piece-r">Rotate</label>
+          <select id="piece-r" name="piece-r"></select>
+        </div>
+        <div class="col-6 ${otherClass}">
+          <label for="piece-w">Width</label>
+          <select id="piece-w" name="piece-w"></select>
+        </div>
+        <div class="col-6 ${otherClass}">
+          <label for="piece-h">Height</label>
+          <select id="piece-h" name="piece-h"></select>
+        </div>
+        <div class="col-12">
+          <label for="piece-badges">Badges</label>
+          <div id="piece-badges" class="toggle-box"></div>
         </div>
       </div>
     </form>
@@ -404,51 +417,49 @@ function modalOk () {
   const piece = _('#modal').node().piece
   const updates = {}
 
-  let value = _('#piece-label').value.trim()
+  const label = _('#piece-label').value.trim()
   if (piece.t?.length > 0) { // piece had label
-    if (value.length <= 0) {
+    if (label.length <= 0) {
       updates.l = piece.l
       updates.t = []
-    } else if (value !== piece.t?.[0]) {
+    } else if (label !== piece.t?.[0]) {
       updates.l = piece.l
-      updates.t = [value]
+      updates.t = [label]
     }
-  } else if (value?.length > 0) {
+  } else if (label?.length > 0) {
     updates.l = piece.l
-    updates.t = [value]
+    updates.t = [label]
   }
 
-  value = _('#piece-tag').value
-  if (piece.b?.length > 0) { // piece had tag
-    if (value.length <= 0) {
-      updates.b = []
-    } else if (value !== piece.b?.[0]) {
-      updates.b = [value]
-    }
-  } else if (value?.length > 0) {
-    updates.b = [value]
+  const b = []
+  for (const node of _('#piece-badges .active').nodes()) {
+    b.push(node.badge.id)
+  }
+  if (!equalsJSON(piece.b, b)) {
+    updates.b = b
   }
 
-  value = Number(_('#piece-w').value)
-  if (value !== piece.w) updates.w = value
-
-  value = Number(_('#piece-h').value)
-  if (value !== piece.h) updates.h = value
-
-  value = Number(_('#piece-r').value)
-  if (value !== piece.r) updates.r = value
-
-  value = Number(_('#piece-side').value)
-  if (value !== piece.s) updates.s = value
-
-  value = Number(_('#piece-color').value)
-  const value2 = Number(_('#piece-border').value)
-  if (value !== piece.c[0] || value2 !== piece.c[1]) {
-    updates.c = [value, value2]
+  const w = Number(_('#piece-w').value)
+  const h = Number(_('#piece-h').value)
+  if (w !== piece.w || h !== piece.h) { // always send both
+    updates.w = w
+    updates.h = h
   }
 
-  value = Number(_('#piece-number').value)
-  if (value !== piece.n) updates.n = value
+  const r = Number(_('#piece-r').value)
+  if (r !== piece.r) updates.r = r
+
+  const side = Number(_('#piece-side').value)
+  if (side !== piece.s) updates.s = side
+
+  const c = Number(_('#piece-color').value)
+  const c2 = Number(_('#piece-border').value)
+  if (c !== piece.c[0] || c2 !== piece.c[1]) {
+    updates.c = [c, c2]
+  }
+
+  const n = Number(_('#piece-number').value)
+  if (n !== piece.n) updates.n = n
 
   editPiece(piece.id, updates)
   getModal().hide()

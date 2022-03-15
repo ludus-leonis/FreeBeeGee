@@ -1,5 +1,5 @@
 /**
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  *
  * @license This file is part of FreeBeeGee.
  *
@@ -817,23 +817,23 @@ const roomJSON = `
       "id": "f45f27b57498c3be",
       "base": "classic.a.1x1x0.png"
     }, {
-      "media": ["dicemat.4x4x1.jpg", "##BACK##"],
+      "media": ["_.dicemat.4x4x1.jpg", "##BACK##"],
       "w": 4,
       "h": 4,
       "bg": "#808080",
-      "name": "dicemat",
+      "name": "_.dicemat",
       "type": "other",
       "id": "bb07ac49818bc000"
     }, {
-      "media": ["discard.4x4x1.png"],
+      "media": ["_.discard.4x4x1.png"],
       "w": 4,
       "h": 4,
       "bg": "#808080",
-      "name": "discard",
+      "name": "_.discard",
       "type": "other",
       "id": "dd07ac49818bc000"
     }],
-    "tag": []
+    "badge": []
   },
   "template": {
     "type": "grid-square",

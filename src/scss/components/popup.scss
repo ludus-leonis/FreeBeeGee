@@ -1,4 +1,4 @@
-// Copyright 2021 Markus Leupold-Löwenthal
+// Copyright 2021-2022 Markus Leupold-Löwenthal
 //
 // This file is part of FreeBeeGee.
 //
@@ -61,4 +61,17 @@
       }
     }
   }
+
+  hr {
+    margin-bottom: $spacing-tiny;
+    margin-top: $spacing-tiny;
+  }
+}
+
+.popup-anchor {
+  background-color: transparent;
+  display: block;
+  height: 1px;
+  position: absolute;
+  width: 1px;
 }

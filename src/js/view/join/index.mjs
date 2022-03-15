@@ -1,7 +1,7 @@
 /**
  * @file The join-room screen.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -34,22 +34,23 @@ import {
 } from '../../state/index.mjs'
 
 import {
-  runError
-} from '../../view/error/index.mjs'
-
-import {
   getGetParameter,
   generateName,
   generateUsername
 } from '../../lib/utils.mjs'
 
 import {
+  DEMO_MODE,
   apiGetRoom
 } from '../../api/index.mjs'
 
 import {
   navigateToRoom
 } from '../../app.mjs'
+
+import {
+  runError
+} from '../../view/error/index.mjs'
 
 /** Limit room names like hilariousGazingPenguin */
 const roomNameMaxLength = 48
@@ -73,21 +74,28 @@ export function runJoin (roomName) {
  * Show a join-room dialog.
  */
 function showJoinDialog () {
+  const ttl = getServerInfo().ttl
+  const intro = DEMO_MODE
+    ? '<p>Welcome to the FreeBeeGee Demo!</p>'
+    : ''
+  const intro2 = DEMO_MODE
+    ? '<p>For this demo <strong>no data is stored on the server</strong>. If you clear your browser\'s site/cache data, your rooms &amp; tables will be gone.</p>'
+    : ''
   createScreen(
     'Pick a room',
     `
+      ${intro}
       <label for="name">Room name</label>
       <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${roomNameMaxLength}" pattern="[a-zA-Z0-9]{8,${roomNameMaxLength}}">
       <p class="p-small spacing-tiny">Min. 8 characters - no spaces or funky letters, please.</p>
-
-      <!--label for="user">Your name</label-->
-      <input id="user" name="user" type="hidden" placeholder="Jolie Average">
-      <!--p class="p-small spacing-tiny">Will be visible to other players in this room.</p-->
+      ${intro2}
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Enter</a>
     `,
 
-    `This server deletes rooms after ${getServerInfo().ttl}h of inactivity.`
+    ttl > 0
+      ? `This server deletes rooms after ${ttl}h of inactivity.`
+      : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 
   const name = _('#name')
@@ -166,13 +174,15 @@ function ok () {
  * @param {String} roomName Room name.
  */
 function openOrCreate (name) {
-  apiGetRoom(name)
-    .then((room) => {
-      if (room._error) {
-        runError(room._error, name)
-      } else {
-        runRoom(room)
+  apiGetRoom(name, true)
+    .then((response) => {
+      if (response.status === 400) {
+        runError('ROOM_INVALID', name)
+      } else if (response.status === 200) {
+        runRoom(response.body)
+      } else { // 404
+        createRoomView(name)
       }
     })
-    .catch(() => createRoomView(name))
+    .catch(() => runError())
 }

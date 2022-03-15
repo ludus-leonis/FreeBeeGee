@@ -2,6 +2,42 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.14.0 - Verbose Vicuna
+
+This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no longer work.
+
+### Notable changes
+
+* added support for multiple icons/badges per token - toggle them in the edit window
+* added right-click-popup for table - to access the library and settings
+* added more table backgrounds
+* added PHP 8.1 support (7.2 and 7.3 are deprecated now but should still work)
+* improved feedback on configuration issues (server permissions, upload limits)
+
+### Other changes
+
+* added number token (0..9)
+* added auto-migration of rooms from compatible engine versions
+* added option to force-migrate rooms from incompatible engine versions
+* added better feedback when uploading incompatible templates/snapshots
+* added better feedback when uploading too large snapshots
+* added better feedback when existing rooms fail after server updates
+* added better feedback when library upload fails
+* added to tutorial: laser-pointer, settings, measure mode
+* added check for write permissions in data folder during setup/room create
+* added _.zip system template - always added to each template/snapshot
+* added demo mode - separate build necessary
+* added more unit and API integration tests
+* fixed pieces sometimes getting selected when clicking in transparent areas
+* fixed loading of rooms of older versions
+* changed default max room size to 16MB and max room count to 32 - customize them in server.json
+* changed IDs to 8-digit 64-base strings
+* changed RPG template tiles to paper material
+* changed RPG letter/symbol token into two
+* changed API - backgrounds now part of server JSON, not room JSON
+* changed 'tag' to 'badge'
+
+
 ## v0.13.0 - Colorful Cobra
 
 ### Notable changes
@@ -10,6 +46,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added measure mode / line-of-sight tool - press m to toggle
 * added more damage status icons for RPG/Hex templates (acid, fire, ...)
 * added grid option minor (dots) or major (lines) to settings
+* improved piece rendering - nicer highlights & material texture
 
 ### Other changes
 

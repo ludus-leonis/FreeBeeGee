@@ -18,3 +18,6 @@ RewriteRule "\.json" - [F]
 RewriteCond %{REQUEST_FILENAME} !-f
 # RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ ./index.php?path=$1 [NC,L,QSA]
+
+# PHP
+php_flag display_startup_errors off

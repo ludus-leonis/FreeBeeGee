@@ -1,5 +1,5 @@
 /**
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  *
  * @license This file is part of FreeBeeGee.
  *
@@ -20,9 +20,15 @@ const p = require('./package.json')
 const gulp = require('gulp')
 const rnd = Math.floor(Math.random() * 10000000)
 
+let demomode = false
+let site = './'
+
+const subdir = '' // '/xyz/abc'
+
 const dirs = {
   build: 'dist',
-  site: 'dist/' + p.name,
+  site: 'dist/' + p.name + subdir,
+  demo: 'dist/' + p.name + subdir + '/demo',
   docs: 'dist/docs/',
   cache: '.cache'
 }
@@ -30,10 +36,10 @@ const dirs = {
 gulp.task('clean', () => {
   const del = require('del')
   return del([
-    [dirs.site] + '/**/*',
-    [dirs.site] + '/**/.*',
-    [dirs.build] + '/*zip',
-    [dirs.build] + '/*gz'
+    `${dirs.build}/${p.name}/**/*`,
+    `${dirs.build}/${p.name}/**/.*`,
+    `${dirs.build}/*zip`,
+    `${dirs.build}/*gz`
   ])
 })
 
@@ -111,6 +117,8 @@ function replace (pipe) {
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))
     .pipe(repl('$COLOR$', p.color, { skipBinary: true }))
     .pipe(repl('$URL$', p.homepage, { skipBinary: true }))
+    .pipe(repl('$DEMOMODE$', demomode, { skipBinary: true }))
+    .pipe(repl('$SITE$', site, { skipBinary: true }))
 }
 
 gulp.task('fonts', () => {
@@ -184,9 +192,12 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/app.mjs',
     'src/js/main.mjs',
     'src/js/api/index.mjs',
-    'src/js/state/index.mjs',
+    'src/js/api/serverless.mjs',
     'src/js/lib/FreeDOM.mjs',
     'src/js/lib/utils.mjs',
+    'src/js/lib/icons.mjs',
+    'src/js/state/index.mjs',
+
     'src/js/view/modal.mjs',
     'src/js/view/screen.mjs',
     'src/js/view/create/index.mjs',
@@ -196,17 +207,21 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/view/room/index.mjs',
     'src/js/view/room/hotkeys.mjs',
     'src/js/view/room/sync.mjs',
-    'src/js/view/room/mouse/_MouseButtonHandler.mjs',
-    'src/js/view/room/mouse/index.mjs',
-    'src/js/view/room/mouse/Los.mjs',
-    'src/js/view/room/mouse/SelectAndDrag.mjs',
-    'src/js/view/room/mouse/Grab.mjs',
-    'src/js/view/room/tabletop/index.mjs',
-    'src/js/view/room/tabletop/tabledata.mjs',
+    'src/js/view/room/modal/demo.mjs',
+    'src/js/view/room/modal/disabled.mjs',
     'src/js/view/room/modal/edit.mjs',
     'src/js/view/room/modal/help.mjs',
     'src/js/view/room/modal/inactive.mjs',
-    'src/js/view/room/modal/library.mjs'
+    'src/js/view/room/modal/library.mjs',
+    'src/js/view/room/modal/settings.mjs',
+    'src/js/view/room/mouse/_MouseButtonHandler.mjs',
+    'src/js/view/room/mouse/Grab.mjs',
+    'src/js/view/room/mouse/index.mjs',
+    'src/js/view/room/mouse/Los.mjs',
+    'src/js/view/room/mouse/SelectAndDrag.mjs',
+    'src/js/view/room/mouse/SelectAndProperties.mjs',
+    'src/js/view/room/tabletop/index.mjs',
+    'src/js/view/room/tabletop/tabledata.mjs'
   ], {
     paths: ['src/js']
   }).transform(babelify.configure({
@@ -332,6 +347,7 @@ gulp.task('template-Classic', template('Classic'))
 gulp.task('template-RPG', template('RPG'))
 gulp.task('template-Hex', template('Hex'))
 gulp.task('template-Tutorial', template('Tutorial'))
+gulp.task('template-System', template('_'))
 
 gulp.task('build', gulp.parallel(
   'js-main',
@@ -343,6 +359,7 @@ gulp.task('build', gulp.parallel(
   'template-Hex',
   'template-Classic',
   'template-Tutorial',
+  'template-System',
   'fonts',
   'img',
   'favicon'
@@ -350,17 +367,16 @@ gulp.task('build', gulp.parallel(
 
 gulp.task('dist', gulp.parallel('build'))
 
-gulp.task('dist-test', gulp.series('clean', 'dist', () => {
+gulp.task('dist-test', gulp.series('clean', () => {
+  // switch to a version with no zeroes for better testing
+  p.versionEngine = p.versionEngineTest
+  return gulp.src('package.json')
+}, 'dist', () => {
   return replace(gulp.src([
     'test/data/server.json'
   ]))
     .pipe(gulp.dest(dirs.site + '/api/data'))
 }))
-
-gulp.task('release', gulp.series(
-  'clean',
-  'build'
-))
 
 // --- release targets ---------------------------------------------------------
 
@@ -401,6 +417,76 @@ gulp.task('release', gulp.series(
   'package-tgz',
   'package-zip'
 ))
+
+// --- demo mode (serverless) targets ------------------------------------------
+
+function demo (name) {
+  const image = require('gulp-image')
+  const changed = require('gulp-changed')
+
+  return gulp.series(() => { // step 1: optimize & cache content
+    return replace(gulp.src('src/templates/' + name + '/**/*'))
+      .pipe(changed(dirs.cache + '/templates/' + name))
+      .pipe(image({
+        optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+        pngquant: ['--speed=1', '--force', 256],
+        zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+        jpegRecompress: ['--strip', '--quality', 'high', '--min', 60, '--max', 85],
+        mozjpeg: ['-optimize', '-progressive'],
+        gifsicle: ['--optimize'],
+        svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+      }))
+      .pipe(gulp.dest(dirs.cache + '/templates/' + name))
+  })
+}
+
+function demoDeploy (name) {
+  return gulp.series(() => {
+    return gulp.src([
+      dirs.cache + '/templates/' + name + '/**/*',
+      'src/misc/demo/templates/' + name + '/**/*'
+    ])
+      .pipe(gulp.dest(dirs.demo + '/' + name))
+  }, () => {
+    return gulp.src([
+      dirs.cache + '/templates/_/**/*'
+    ])
+      .pipe(gulp.dest(dirs.demo + '/' + name))
+  })
+}
+
+gulp.task('demo-Classic', demo('Classic'))
+gulp.task('demo-RPG', demo('RPG'))
+gulp.task('demo-Hex', demo('Hex'))
+gulp.task('demo-Tutorial', demo('Tutorial'))
+gulp.task('demo-System', demo('_'))
+gulp.task('demo-deploy-Classic', demoDeploy('Classic'))
+gulp.task('demo-deploy-RPG', demoDeploy('RPG'))
+gulp.task('demo-deploy-Hex', demoDeploy('Hex'))
+gulp.task('demo-deploy-Tutorial', demoDeploy('Tutorial'))
+
+gulp.task('demo', gulp.series('clean', () => {
+  demomode = true
+  site = 'https://freebeegee.org/'
+  return gulp.src('tools')
+}, gulp.parallel(
+  'js-main',
+  'sass',
+  'html',
+  'js-vendor',
+  'demo-Classic',
+  'demo-RPG',
+  'demo-Hex',
+  'demo-Tutorial',
+  'demo-System',
+  'demo-deploy-Classic',
+  'demo-deploy-RPG',
+  'demo-deploy-Hex',
+  'demo-deploy-Tutorial',
+  'fonts',
+  'img',
+  'favicon'
+)))
 
 // --- default target ----------------------------------------------------------
 

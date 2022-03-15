@@ -1,7 +1,7 @@
 {
   "ttl": 48,
   "maxRooms": 16,
-  "maxRoomSizeMB": 4,
+  "maxRoomSizeMB": 16,
   "snapshotUploads": true,
   "passwordCreate": "$2y$12$De/CBGzPRxb6zsZTn.35FOtOE1BMCBvKdSKBliCgidR0ckPeTZuJq"
 }

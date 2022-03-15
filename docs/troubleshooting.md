@@ -21,11 +21,14 @@ Here are a few things you can try:
 
 See the [install instructions](INSTALL.md). You have to set a password first (or disable it).
 
-## I can't upload a snapshot (that I downloaded from the same server)
+## FreeBeeGee rejects snapshot uploads as too large.
 
-There are two main reasons for that:
+This can have multiple reasons. Hover on the (?) icon of the error message to find out why.
 
-* You updated FreeBeeGee in the mean time. While still a version zero (v0.*), snapshots are not guaranteed to work with newer versions.
-* Your Snapshot has become larger than the server upload limit. See the [install instructions](INSTALL.md) how to increase that limit.
+* Your webserver might limit upload sizes. Check your httpd.conf. Managed web hosters might also have an option for that in their web console.
+* PHP might limit uploads. Check your php.ini. Managed web hosters might also have an option for that in their web console.
+* FreeBeeGee might limit uploads. Check your `api/data/server.json` to increase the limit.
 
-If the snapshot is custom made or from another server, your best bet is to open the browser console (F12) and check for errors during upload. You might discover missing or invalid files that way.
+## FreeBeeGee is missing stuff or showing strange boxes after converting a snapshot.
+
+This can't be avoided when uploading older snapshots that use features that changed or were removed. Most of the time your library should be fine, but pices on the table might be missing. The boxes are a hint for you what is missing. Remove them and add the pices again, or empty the table and start from scratch.

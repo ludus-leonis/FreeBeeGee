@@ -1,7 +1,7 @@
 /**
  * @file Handles moving around stuff on the tabletop, plus selection states.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -31,6 +31,7 @@ import {
 
 import {
   popupPiece,
+  popupTable,
   updateSelection,
   setCursor
 } from '../../../view/room/index.mjs'
@@ -47,13 +48,16 @@ export class SelectAndProperties extends MouseButtonHandler {
   push (mousedown) {
     mousedown.preventDefault()
 
-    const target = findRealClickTarget(mousedown, getMouseCoords())
-    updateSelection(target)
-    if (!target) return // no real click
-
-    if (target.classList.contains('piece')) {
-      popupPiece(target.id)
-    }
+    findRealClickTarget(mousedown, getMouseCoords()).then(target => {
+      updateSelection(target)
+      if (target) {
+        if (target.classList.contains('piece')) {
+          popupPiece(target.id)
+        }
+      } else {
+        popupTable()
+      }
+    })
   }
 
   drag (mousemove) {

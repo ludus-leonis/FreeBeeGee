@@ -2,7 +2,7 @@
  * @file The room handling. Mainly in charge of UI, menus and managing the
  *       tabletop canvas itself - but not the stuff on the tabletop.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -27,8 +27,32 @@ import {
 } from '../../app.mjs'
 
 import {
+  iconLogo,
+  iconDice,
+  iconToken,
+  iconOverlay,
+  iconTile,
+  iconAdd,
+  iconEdit,
+  iconRotate,
+  iconFlip,
+  iconTop,
+  iconBottom,
+  iconClone,
+  iconDelete,
+  iconShuffle,
+  iconDownload,
+  iconHelp,
+  iconQuit,
+  iconRuler,
+  iconNote,
+  iconSettings
+} from '../../lib/icons.mjs'
+
+import {
   loadRoom,
   getRoom,
+  getServerInfo,
   PREFS,
   cleanupStore,
   getServerPreference,
@@ -52,6 +76,7 @@ import {
   flipSelected,
   randomSelected,
   deleteSelected,
+  createNote,
   url
 } from '../../view/room/tabletop/index.mjs'
 
@@ -81,6 +106,14 @@ import {
 } from '../../view/room/modal/help.mjs'
 
 import {
+  modalDisabled
+} from '../../view/room/modal/disabled.mjs'
+
+import {
+  modalDemo
+} from '../../view/room/modal/demo.mjs'
+
+import {
   modalSettings,
   changeQuality
 } from '../../view/room/modal/settings.mjs'
@@ -89,6 +122,10 @@ import {
   clamp,
   brightness
 } from '../../lib/utils.mjs'
+
+import {
+  DEMO_MODE
+} from '../../api/index.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -233,61 +270,56 @@ export function popupPiece (id) {
     <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
+    <hr>
     <a class="popup-menu clone" href="#">${iconClone}Clone</a>
     <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
   `
 
   _('#tabletop').add(popup)
 
-  _('#popper .edit').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    editSelected()
-  })
-
-  _('#popper .rotate').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    rotateSelected()
-  })
-
-  _('#popper .flip').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    flipSelected()
-  })
-
-  _('#popper .random').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    randomSelected()
-  })
-
-  _('#popper .top').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    toTopSelected()
-  })
-
-  _('#popper .bottom').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    toBottomSelected()
-  })
-
-  _('#popper .delete').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    deleteSelected()
-  })
-
-  _('#popper .clone').on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    cloneSelected(getMouseCoords())
-  })
+  popupClick('#popper .edit', () => { editSelected() })
+  popupClick('#popper .rotate', () => { rotateSelected() })
+  popupClick('#popper .flip', () => { flipSelected() })
+  popupClick('#popper .random', () => { randomSelected() })
+  popupClick('#popper .top', () => { toTopSelected() })
+  popupClick('#popper .bottom', () => { toBottomSelected() })
+  popupClick('#popper .delete', () => { deleteSelected() })
+  popupClick('#popper .clone', () => { cloneSelected(getMouseCoords()) })
 
   createPopper(_('#' + id).node(), popup.node(), {
+    placement: 'right'
+  })
+  popup.add('.show')
+}
+
+/**
+ * Show the popup menu for the table.
+ */
+export function popupTable () {
+  const coords = getMouseCoords()
+
+  const anchor = _('#popper-anchor.popup-anchor').create()
+  const popup = _('#popper.popup.is-content').create()
+
+  popup.innerHTML = `
+    <a class="popup-menu add" href="#">${iconAdd}Add piece</a>
+    <a class="popup-menu note" href="#">${iconNote}Add note</a>
+    <hr>
+    <a class="popup-menu settings" href="#">${iconSettings}Settings</a>
+  `
+
+  _('#tabletop').add(anchor)
+  anchor.css({
+    left: `${coords.x}px`,
+    top: `${coords.y}px`
+  })
+  _('#tabletop').add(popup)
+
+  popupClick('#popper .add', () => { modalLibrary(coords) })
+  popupClick('#popper .note', () => { createNote(coords) })
+  popupClick('#popper .settings', () => { modalSettings() })
+
+  createPopper(anchor.node(), popup.node(), {
     placement: 'right'
   })
   popup.add('.show')
@@ -367,7 +399,9 @@ export function updateStatusline () {
     hour: '2-digit',
     minute: '2-digit'
   })
-  const message = fakeTabularNums(`${time} • Table ${getTableNo()}`)
+  const message = DEMO_MODE
+    ? fakeTabularNums(`<a href="https://freebeegee.org/">FreeBeeGee</a> • ${time} • Table ${getTableNo()}`)
+    : fakeTabularNums(`${time} • Table ${getTableNo()}`)
   const status = _('#room .status')
   if (status.innerHTML !== message) {
     status.innerHTML = message
@@ -406,12 +440,13 @@ export function setupBackground (
   gridType = getRoomPreference(PREFS.GRID)
 ) {
   const room = getRoom()
+  const server = getServerInfo()
 
-  bgIndex = clamp(0, bgIndex, room.backgrounds.length - 1)
+  bgIndex = clamp(0, bgIndex, server.backgrounds.length - 1)
 
   updateRoom().css({
-    '--fbg-tabletop-color': room.backgrounds[bgIndex].color,
-    '--fbg-tabletop-image': url(room.backgrounds[bgIndex].image)
+    '--fbg-tabletop-color': server.backgrounds[bgIndex].color,
+    '--fbg-tabletop-image': url(server.backgrounds[bgIndex].image)
   })
 
   // setup background / wallpaper + grid
@@ -419,7 +454,7 @@ export function setupBackground (
   if (gridType > 0) {
     _('#tabletop').add('.has-grid')
 
-    const color = brightness(room.backgrounds[bgIndex].color) < 92 ? 'white' : 'black'
+    const color = brightness(server.backgrounds[bgIndex].color) < 92 ? 'white' : 'black'
     const style = gridType > 1 ? 'major' : 'minor'
     const shape = room.template?.type === TYPE_HEX ? 'hex' : 'square'
     _('#tabletop').css({ '--fbg-tabletop-grid': url(`img/grid-${shape}-${style}-${color}.svg`) })
@@ -427,9 +462,9 @@ export function setupBackground (
 
   // setup scroller
   scroller.css({ // this is for moz://a
-    scrollbarColor: `${room.backgrounds[bgIndex].scroller} ${room.backgrounds[bgIndex].color}`,
-    '--fbg-color-scroll-fg': room.backgrounds[bgIndex].scroller,
-    '--fbg-color-scroll-bg': room.backgrounds[bgIndex].color
+    scrollbarColor: `${server.backgrounds[bgIndex].scroller} ${server.backgrounds[bgIndex].color}`,
+    '--fbg-color-scroll-fg': server.backgrounds[bgIndex].scroller,
+    '--fbg-color-scroll-bg': server.backgrounds[bgIndex].color
   })
 
   // store for future reference
@@ -518,7 +553,7 @@ function setupRoom () {
         <div>
           <button id="btn-h" class="btn-icon" title="Help [h]">${iconHelp}</button>
 
-          <a id="btn-snap" class="btn-icon" title="Download snapshot" href='./api/rooms/${room.name}/snapshot/'>${iconDownload}</a>
+          <a id="btn-snap" class="btn-icon" title="Download snapshot">${iconDownload}</a>
 
           <button id="btn-q" class="btn-icon" title="Leave room">${iconQuit}</button>
         </div>
@@ -575,7 +610,6 @@ function setupRoom () {
   // setup remaining menu
   _('#btn-h').on('click', () => modalHelp())
   _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
-  _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
 
   setupBackground()
 
@@ -586,7 +620,21 @@ function setupRoom () {
   // load + setup content
   setTableNo(getRoomPreference(PREFS.TABLE), false)
   runStatuslineLoop()
-  startAutoSync(() => { autoTrackScrollPosition() })
+
+  // start autosyncing after a short delay to reduce server load a bit
+  setTimeout(() => {
+    startAutoSync(() => { autoTrackScrollPosition() })
+  }, 100)
+
+  if (DEMO_MODE) {
+    _('#btn-snap').on('click', () => modalDisabled('would have downloaded a snapshot (a.k.a. savegame) of your whole room as <code>.zip</code> by now'))
+    if (!getRoomPreference(PREFS.DISCLAIMER)) {
+      setRoomPreference(PREFS.DISCLAIMER, true)
+      modalDemo()
+    }
+  } else {
+    _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
+  }
 }
 
 let scrollFetcherTimeout = -1
@@ -618,38 +666,18 @@ function fakeTabularNums (text) {
   return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
 }
 
-const iconLogo = '<svg xmlns="http://www.w3.org/2000/svg" stroke-linejoin="round" stroke-linecap="round" stroke-width="2" stroke="currentColor" fill="none" height="24" width="24" viewBox="0 0 24 24"><rect rx="4" height="24" width="24" fill="#262626" stroke="none"/><path stroke="#40bfbf" d="M2.566 7.283L12 12l9.434-4.717L12 2.566z" stroke-width="1.88678"/><path stroke="#bf40bf" d="M2.566 16.717L12 21.434l9.434-4.717" stroke-width="1.88678"/><path stroke="#fff" d="M2.566 12L12 16.717 21.434 12" stroke-width="1.88678"/></svg>'
-
-const iconDice = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
-
-const iconToken = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.52 19c.64-2.2 1.84-3 3.22-3h6.52c1.38 0 2.58.8 3.22 3"/><circle cx="12" cy="10" r="3"/><circle cx="12" cy="12" r="10"/></svg>'
-
-const iconOverlay = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect></svg>'
-
-const iconTile = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>'
-
-const iconAdd = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>'
-
-const iconEdit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>'
-
-const iconRotate = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>'
-
-const iconFlip = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>'
-
-const iconTop = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>'
-
-const iconBottom = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="7 13 12 18 17 13"></polyline><polyline points="7 6 12 11 17 6"></polyline></svg>'
-
-const iconClone = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>'
-
-const iconDelete = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>'
-
-const iconShuffle = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>'
-
-const iconDownload = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 17 12 21 16 17"></polyline><line x1="12" y1="12" x2="12" y2="21"></line><path d="M20.88 18.09A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.29"></path></svg>'
-
-const iconHelp = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>'
-
-const iconQuit = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>'
-
-const iconRuler = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.46 16.942l2.12 2.127M10.582 13.407l2.119 2.126M14.117 11.285l2.12 2.127M16.239 7.75l2.119 2.126M2.092 16.239L16.238 2.093l5.658 5.658L7.751 21.897z"/></svg>'
+/**
+ * Handle the click on a popup menu item.
+ *
+ * Will hide the popup and then run a callback.
+ *
+ * @param {String} selector CSS selector for menu item.
+ * @param {callback} callback Method to call.
+ */
+function popupClick (selector, callback) {
+  _(selector).on('click', click => {
+    click.preventDefault()
+    _('#popper').remove('.show')
+    callback()
+  })
+}

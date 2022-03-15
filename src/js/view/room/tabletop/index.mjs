@@ -2,7 +2,7 @@
  * @file The actual tabletop stuff. Mainly in charge of state -> DOM
  *       propagation. Does not manipulate data nor does it do API calls.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -25,7 +25,8 @@ import {
   clamp,
   shuffle,
   recordTime,
-  brightness
+  brightness,
+  equalsJSON
 } from '../../../lib/utils.mjs'
 
 import {
@@ -52,7 +53,6 @@ import {
   TYPE_HEX,
   ID,
   findAsset,
-  findAssetByAlias,
   findPiece,
   findPiecesWithin,
   getAssetURL,
@@ -333,10 +333,12 @@ function createOrUpdatePieceDOM (piece, select) {
       }
     } else {
       const asset = findAsset(piece.a)
-      div.css({
-        '--fbg-color': asset.bg,
-        '--fbg-color-invert': brightness(asset.bg) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
-      })
+      if (asset) {
+        div.css({
+          '--fbg-color': asset.bg,
+          '--fbg-color-invert': brightness(asset.bg) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+        })
+      }
     }
 
     // border color
@@ -372,7 +374,7 @@ function createOrUpdatePieceDOM (piece, select) {
 export function setPiece (piece, select = false) {
   const node = createOrUpdatePieceDOM(piece, select)
 
-  if (node.piece.t?.[0] !== piece.t?.[0] || node.piece.b?.[0] !== piece.b?.[0]) { // update label on change
+  if (node.piece.t?.[0] !== piece.t?.[0] || !equalsJSON(node.piece.b, piece.b)) { // update label on change
     _('#' + piece.id + ' .label').delete()
     if (piece.t?.[0] || piece.b?.[0]) {
       const label = _('.label').create()
@@ -380,12 +382,20 @@ export function setPiece (piece, select = false) {
         const span = _('span').create(piece.t[0])
         label.add(span)
       }
-      if (piece.b?.length >= 1) {
-        const asset = findAssetByAlias(piece.b?.[0], 'tag')
+      let i = 1
+      let iconExtra
+      for (const id of piece.b ?? []) {
+        const asset = findAsset(id, 'badge')
         if (asset) {
-          const img = _('img.icon').create()
+          const img = _(i <= 3 ? 'img.icon' : 'img.icon.icon-extra').create()
+          if (i === 3) iconExtra = img
+          if (i === 4) {
+            label.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
+            iconExtra.add('.icon-extra')
+          }
           img.src = getAssetURL(asset, 0)
           label.add(img)
+          i++
         }
       }
       node.add(label)
@@ -470,7 +480,10 @@ export function unselectPieces (layer = 'all') {
   for (const node of document.querySelectorAll(filter + ' .piece.is-selected')) {
     node.classList.remove('is-selected')
   }
-  _('#popper').delete() // make sure popup is gone
+
+  // make sure popup is gone
+  _('#popper').delete()
+  _('#popper-anchor').delete()
 }
 
 /**

@@ -1,7 +1,7 @@
 /**
  * @file The create-a-room screen.
  * @module
- * @copyright 2021 Markus Leupold-Löwenthal
+ * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -18,6 +18,14 @@
  */
 
 import _ from '../../lib/FreeDOM.mjs'
+
+import {
+  iconHelp
+} from '../../lib/icons.mjs'
+
+import {
+  bytesToIso
+} from '../../lib/utils.mjs'
 
 import {
   createScreen,
@@ -57,6 +65,8 @@ export function createRoomView (name) {
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
     : 'Let us know what game we may prepare for you.'
 
+  const ttl = getServerInfo().ttl
+
   createScreen(
     'Open new room',
     `
@@ -67,12 +77,14 @@ export function createRoomView (name) {
 
         <p class="server-feedback"></p>
 
-        <label class="upload-label" for="uploadFile">Upload</label>
+        <label class="upload-label" for="uploadFile">Upload snapshot</label>
         <label class="upload-group" for="uploadFile">
           <div id="uploadInput" class="is-input placeholder">Select .zip</div>
           <input id="uploadFile" type="file" accept=".zip", class="is-hidden" />
         </label>
         <p class="upload-text p-small spacing-tiny">Got no snapshots? Pick an <label for="mode" class="is-link">existing template</label> instead.</p>
+        <div id="server-feedback-form"></div>
+
         <label id="template-label" class="template-label" for="template">Template</label>
         <select id="template" class="template" name="template">
           <option value="RPG" selected>RPG</option>
@@ -83,12 +95,15 @@ export function createRoomView (name) {
         <input id="password" type="password" placeholder="* * * * * *">
         <p class="p-small spacing-tiny">This server requires a password to create rooms.</p>
       ` : '') + `
+
         <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Open &amp; enter!</a>
         <p class="p-small is-faded is-center">Wrong room? <a href="./">Pick another</a>.</p>
       </div>
     `,
 
-    `This server deletes rooms after ${getServerInfo().ttl}h of inactivity.`
+    ttl > 0
+      ? `This server deletes rooms after ${ttl}h of inactivity.`
+      : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 
   apiGetTemplates()
@@ -98,9 +113,14 @@ export function createRoomView (name) {
       for (const template of templates) {
         const option = _('option').create(template)
         option.value = template
-        if (template === 'RPG') option.selected = true
+        if (template === 'Tutorial') option.selected = true
         t.add(option)
       }
+    })
+
+  _('#mode')
+    .on('change', change => {
+      reset()
     })
 
   _('#template')
@@ -119,6 +139,19 @@ export function createRoomView (name) {
   _('#template').focus()
 }
 
+/**
+ * Reset all error indicators on template<->upload switch.
+ */
+function reset () {
+  _('#template').remove('.invalid')
+  _('#uploadInput').remove('.invalid')
+  _('.server-feedback').remove('.show')
+  _('#server-feedback-form').innerHTML = ''
+}
+
+/**
+ * Validate file upload.
+ */
 function validate () {
   if (_('#mode').checked) { // upload mode
     if (_('#uploadFile').value.length <= 0) {
@@ -156,6 +189,11 @@ function ok (name) {
     room.template = _('#template').value
   }
 
+  room.convert = false
+  if (_('#server-feedback-form').hasAny('.show')) {
+    room.convert = _('#convert').checked
+  }
+
   addRoom(room, snapshot)
     .then((remoteRoom) => {
       navigateToRoom(remoteRoom.name)
@@ -167,13 +205,38 @@ function ok (name) {
         switch (error.status) {
           case 400:
             switch (error.body._error) {
-              case 'TEMPLATE_JSON_INVALID_ENGINE':
-                serverFeedback(`The selected template requires engine <strong>${error.body._messages[1]}</strong> and can't be run on this server (engine <strong>${error.body._messages[2]}</strong>). Please choose another template.`)
+              case 'FILE_PERMISSIONS':
+                serverFeedback(`
+                  FreeBeeGee is missing file-permissions on the server and can't create rooms right now.
+                  <span class="is-icon" title="Admins should check '${error.body._messages[0]}' to be writable.">${iconHelp}</span>
+                `)
                 _('#uploadInput').add('.invalid')
                 _('#template').add('.invalid').focus()
                 break
-              case 'SIZE_EXCEEDED':
-                serverFeedback('The selected template is too large (or we are out of disk space). Please try again later or choose a smaller one.')
+              case 'INVALID_ENGINE':
+                serverFeedback(
+                  `This snapshot was created using engine
+                    <strong>v${error.body._messages[1]}</strong>. It is
+                    not compatible with this server, which runs engine
+                    <strong>v${error.body._messages[2]}</strong>.
+                    You may try to convert it below.
+                  `, '<input id="convert" type="checkbox"><label for="convert" class="p-medium">Try to convert - may loose content.</label>')
+                _('#uploadInput').add('.invalid')
+                _('#template').add('.invalid').focus()
+                break
+              case 'ROOM_SIZE':
+                serverFeedback(`
+                  The snapshot is too large. This FreeBeeGee server limits ZIPs and their content to ${bytesToIso(error.body._messages[1])}.
+                  <span class="is-icon" title="Admins can change the limit in FBG's server.json.">${iconHelp}</span>
+                `)
+                _('#uploadInput').add('.invalid')
+                _('#template').add('.invalid').focus()
+                break
+              case 'PHP_SIZE':
+                serverFeedback(`
+                  The snapshot is too large. The current limit is ${bytesToIso(error.body._messages[1])}.
+                  <span class="is-icon" title="Admins should check the php.ini upload settings.">${iconHelp}</span>
+                `)
                 _('#uploadInput').add('.invalid')
                 _('#template').add('.invalid').focus()
                 break
@@ -181,7 +244,7 @@ function ok (name) {
               case 'TEMPLATE_JSON_INVALID':
               case 'STATE_JSON_INVALID':
               default:
-                serverFeedback('The selected template contains errors and can\'t be added to your room. Please choose another template.')
+                serverFeedback('The selected snapshot contains errors and can\'t be loaded.')
                 console.error(error.body._messages)
                 _('#uploadInput').add('.invalid')
                 _('#template').add('.invalid').focus()
@@ -192,7 +255,10 @@ function ok (name) {
             _('#password').add('.invalid').focus().value = ''
             break
           case 413:
-            serverFeedback('This snapshot is too large. Please choose a smaller one.')
+            serverFeedback(`
+              The snapshot is too large. It was rejeced by the webserver (or a proxy).
+              <span class="is-icon" title="This is not an FBG issue. Admins should check the server's httpd.conf file.">${iconHelp}</span>
+            `)
             _('#uploadInput').add('.invalid')
             _('#template').add('.invalid').focus()
             break
