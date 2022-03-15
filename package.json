@@ -1,9 +1,9 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.14.0-dev",
+  "version": "0.14.0",
   "versionEngine": "2.0.0",
   "versionEngineTest": "2.3.4",
-  "codename": "Colorful Cobra",
+  "codename": "Verbose Vicuna",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",

@@ -2,39 +2,7 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.14 - Verbose Vicuna
-
-* [X] add support for multiple icons/badges per token
-* [X] change RPG template tiles to paper material
-* [X] add more PHP unit tests for room/template parsing
-* [X] move backgrounds from room to server
-* [X] add option to force-upgrade snapshots during upload
-* [X] auto-migrate rooms from compatible engine versions
-* [X] add better feedback when uploading incompatible templates
-* [X] add better feedback when snapshot upload fails
-* [X] add better feedback when existing rooms fail after server updates
-* [X] add better feedback when library upload fails
-* [X] serverless demo mode
-* [X] PHP 8.1 support
-* [X] add _.zip system template - always added to each template/snapshot
-* [X] add right-click popup for table (add piece, change table)
-* [ ] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] fix isSolid image loading
-    * [X] check write permissions in data folder
-    * [X] use shorter IDs
-    * [X] update all templates to new IDs
-    * [X] internally rename tag -> badge
-  * [X] review docs
-    * [X] install + write access
-  * [X] review + run tests
-  * [ ] bump version/codename & update CHANGELOG
-  * [X] update screenshots
-
-## Backlog
-
-### rather sooner (before v1)
+## v0.15 - ???
 
 * [ ] table: dragging some pieces should not change z (e.g. dicemat)
 * [ ] table: native zoom function
@@ -42,15 +10,30 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] content: more helper/marker overlays (arrows, areas, )
 * [ ] snapshot: set default/start table other than 1 in template
 * [ ] system: table passwords
-* [ ] library: select-border sometimes cutoff
 * [ ] library: delete assets UI
+* [ ] build: automated deployment tests for new zip/tgz packages after build
+* [ ] protect pieces (no-delete, no-move)
+* [ ] pieces: inline-edit notes
+* [ ] API: hide .../data/... from URLs (via .htaccess)
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] library: select-border sometimes cutoff
+  * [ ] review docs
+  * [ ] review + run tests
+  * [ ] bump version/codename & update CHANGELOG
+  * [ ] update screenshots
+
+## Backlog
+
+### rather sooner (before v1)
+
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] system: template colors as masks (dice, areas)
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] multi-select stuff
 * [ ] move / copy setups between tables
-* [ ] protect pieces (no-delete, no-move)
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] piece: supply heap
 * [ ] piece: cards / card-decks
@@ -62,12 +45,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
-* [ ] API: hide .../data/... from URLs (via .htaccess)
 * [ ] API: obfuscate/hash room name
 * [ ] docs how to make table/template `.zip`s
 * [ ] API: check sides correspond to asset
 * [ ] build: generate average piece color
-* [ ] build: automated deployment tests for new zip/tgz packages after build
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
 
