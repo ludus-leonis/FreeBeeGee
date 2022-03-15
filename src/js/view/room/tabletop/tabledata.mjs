@@ -366,7 +366,7 @@ export function populatePieceDefaults (piece, headers = null) {
         case '_.dicemat':
           piece._meta.feature = 'DICEMAT'
           break
-        case 'discard':
+        case '_.discard':
           piece._meta.feature = 'DISCARD'
           break
       }

@@ -105,11 +105,11 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEqualsCanonicalizing([
             'template.json',
             'LICENSE.md',
-            'assets/overlay/area.1x1.1x1x1.svg',
-            'assets/other/dicemat.4x4x1.transparent-wood.jpg',
-            'assets/tile/go.9x9x1.svg',
-            'assets/token/generic.plain.1x1x2.0d0d0d.svg',
-            'assets/token/generic.plain.1x1x1.ffffff.svg',
+            'assets/overlay/aab.1x1.1x1x1.svg',
+            'assets/other/aaa.4x4x1.transparent-wood.jpg',
+            'assets/tile/aac.9x9x1.svg',
+            'assets/token/aad.plain.1x1x1.ffffff.svg',
+            'assets/token/aad.plain.1x1x2.0d0d0d.svg',
             'tables/1.json',
             'tables/2.json',
         ], $validEntries);

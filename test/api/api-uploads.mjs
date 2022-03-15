@@ -47,7 +47,7 @@ const _ = { // asset count in system template
   other: 3,
   overlay: 5,
   tile: 2,
-  token: 3
+  token: 4
 }
 
 function testApiZipMinimal (api, version, room) {
@@ -127,20 +127,20 @@ function testApiZipFull (api, version, room) {
       expect(body.library).to.be.an('object')
       expect(body.library.other).to.be.an('array')
       expect(body.library.other.length).to.be.eql(1 + _.other)
-      expect(body.library.other[0].name).to.be.eql('aaa')
-      expect(body.library.other[0].w).to.be.eql(4)
+      expect(body.library.other[body.library.other.length - 1].name).to.be.eql('aaa')
+      expect(body.library.other[body.library.other.length - 1].w).to.be.eql(4)
       expect(body.library.overlay).to.be.an('array')
       expect(body.library.overlay.length).to.be.eql(1 + _.overlay)
-      expect(body.library.overlay[0].name).to.be.eql('aab.1x1')
-      expect(body.library.overlay[0].w).to.be.eql(1)
+      expect(body.library.overlay[body.library.overlay.length - 1].name).to.be.eql('aab.1x1')
+      expect(body.library.overlay[body.library.overlay.length - 1].w).to.be.eql(1)
       expect(body.library.tile).to.be.an('array')
       expect(body.library.tile.length).to.be.eql(1 + _.tile)
-      expect(body.library.tile[0].name).to.be.eql('aac')
-      expect(body.library.tile[0].w).to.be.eql(9)
+      expect(body.library.tile[body.library.tile.length - 1].name).to.be.eql('aac')
+      expect(body.library.tile[body.library.tile.length - 1].w).to.be.eql(9)
       expect(body.library.token).to.be.an('array')
       expect(body.library.token.length).to.be.eql(1 + _.token)
-      expect(body.library.token[0].name).to.be.eql('aad.plain')
-      expect(body.library.token[0].w).to.be.eql(1)
+      expect(body.library.token[body.library.token.length - 1].name).to.be.eql('aad.plain')
+      expect(body.library.token[body.library.token.length - 1].w).to.be.eql(1)
       expect(body.template).to.be.an('object')
       expect(body.template.type).to.be.eql('grid-square')
       expect(body.template.gridSize).to.be.eql(64)
