@@ -2,6 +2,17 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.15.0 - ??? ???
+
+### Notable changes
+
+* none yet
+
+### Other changes
+
+* none yet
+
+
 ## v0.14.0 - Verbose Vicuna
 
 This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no longer work.

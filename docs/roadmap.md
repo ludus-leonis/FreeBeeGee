@@ -15,6 +15,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] protect pieces (no-delete, no-move)
 * [ ] pieces: inline-edit notes
 * [ ] API: hide .../data/... from URLs (via .htaccess)
+* [ ] API: obfuscate/hash room name
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
@@ -45,7 +46,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
-* [ ] API: obfuscate/hash room name
 * [ ] docs how to make table/template `.zip`s
 * [ ] API: check sides correspond to asset
 * [ ] build: generate average piece color
