@@ -4,18 +4,18 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.15 - ???
 
+* [X] add Docker build
+* [ ] build: automated deployment tests for new zip/tgz packages after build
+* [ ] system: table passwords
 * [ ] table: dragging some pieces should not change z (e.g. dicemat)
 * [ ] table: native zoom function
+* [ ] system: template colors as masks (dice, areas)
 * [ ] content: more classic game boards - backgammon, mills, solitaire, ...
 * [ ] content: more helper/marker overlays (arrows, areas, )
 * [ ] snapshot: set default/start table other than 1 in template
-* [ ] system: table passwords
 * [ ] library: delete assets UI
-* [ ] build: automated deployment tests for new zip/tgz packages after build
 * [ ] protect pieces (no-delete, no-move)
 * [ ] pieces: inline-edit notes
-* [ ] API: hide .../data/... from URLs (via .htaccess)
-* [ ] API: obfuscate/hash room name
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
@@ -31,7 +31,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
-* [ ] system: template colors as masks (dice, areas)
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] multi-select stuff
 * [ ] move / copy setups between tables
@@ -48,6 +47,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] docs how to make table/template `.zip`s
 * [ ] API: check sides correspond to asset
+* [ ] API: hide .../data/... from URLs (via .htaccess)
+* [ ] API: obfuscate/hash room name
 * [ ] build: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs

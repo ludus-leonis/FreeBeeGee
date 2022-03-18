@@ -64,13 +64,15 @@ There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/li
 * PHP 7.3 / 7.4 / 8.0 / 8.1 with `zip` extension
 * Apache with `.htaccess` / `mod_rewrite` support
 
+-- or --
+
+* Docker
+
 ### Client
 
 Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.
 
 ## Installation
-
-Download the latest release from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases). Extract the `*.tar.gz`/`*.zip` into a folder on your web-server and you are (almost) ready to go - FreeBeeGee comes with reasonable, secure defaults.
 
 Read the [Setup & Config](docs/INSTALL.md) docs for full install instructions and how to setup your mandatory server password.
 

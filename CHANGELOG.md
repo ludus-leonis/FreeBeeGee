@@ -10,7 +10,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
-* none yet
+* added Docker build
 
 
 ## v0.14.0 - Verbose Vicuna

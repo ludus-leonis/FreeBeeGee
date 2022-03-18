@@ -42,6 +42,7 @@
     "chai-http": "^4.3.0",
     "chai-match": "^1.1.1",
     "del": "*",
+    "docker-cli-js": "^2.9.0",
     "eslint": "^8.11.0",
     "gulp": "*",
     "gulp-autoprefixer": "^8.0.0",

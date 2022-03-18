@@ -22,7 +22,8 @@ If the requirements are not met, FreeBeeGee will try to find out what is missing
 
 Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.
 
-## Installation
+
+## Basic installation
 
 If the server requirements are met, installation is as simple as:
 
@@ -37,6 +38,20 @@ Per default, FreeBeeGee comes with a simple `.htaccess` file with the same conte
 `.htaccess_full` also contains rules how to enforce https and to supress 'www.', but they are disabled by default. Enable them if needed.
 
 Finally, review the `terms.html` and don't forget to update your GDPR / privacy statement in `privacy.html`. Consider neither of them as legal advice - if in doubt, consult a lawyer.
+
+
+## Alternate installation - Docker
+
+If you are using [Docker](https://en.wikipedia.org/wiki/Docker_(software)) on your server, you can also install & run FreeBeeGee as a container. It comes with a pre-configured Apache webserver and PHP.
+
+```
+FBGPASS=supersecret docker run -d -e FBGPASS -p 8888:80 ghcr.io/ludus-leonis/freebeegee:latest
+```
+
+Please pick a better password (!).
+
+FreeBeeGee sould be running now at `http://localhost:8888/`. If you want to persist room data, mount avolume at `/var/www/html/api/data`.
+
 
 ## Configuration
 

@@ -384,6 +384,7 @@ gulp.task('package-tgz', function () {
   const tar = require('gulp-tar')
   const gzip = require('gulp-gzip')
   const sort = require('gulp-sort')
+  const rename = require('gulp-rename')
 
   return gulp.src([
     dirs.site + '/**/*',
@@ -393,6 +394,8 @@ gulp.task('package-tgz', function () {
     .pipe(sort())
     .pipe(tar(p.name + '-' + p.version + '.tar'))
     .pipe(gzip({ gzipOptions: { level: 9 } }))
+    .pipe(gulp.dest(dirs.build))
+    .pipe(rename(p.name + '-current.tar.gz'))
     .pipe(gulp.dest(dirs.build))
 })
 
@@ -417,6 +420,26 @@ gulp.task('release', gulp.series(
   'package-tgz',
   'package-zip'
 ))
+
+// 'release-docker' requires locally installed docker!
+gulp.task('release-docker', gulp.series('release', (done) => {
+  const cli = require('docker-cli-js')
+  const docker = new cli.Docker({ echo: true })
+  docker.command('build --no-cache -t ghcr.io/ludus-leonis/freebeegee:latest .')
+    .then(() => {
+      done()
+    })
+}, (done) => {
+  const cli = require('docker-cli-js')
+  const docker = new cli.Docker({ echo: true })
+  docker.command('tag ghcr.io/ludus-leonis/freebeegee:latest ghcr.io/ludus-leonis/freebeegee:' + p.version)
+    .then(() => {
+      done()
+    })
+}, (done) => {
+  // run :api tests
+  done()
+}))
 
 // --- demo mode (serverless) targets ------------------------------------------
 
