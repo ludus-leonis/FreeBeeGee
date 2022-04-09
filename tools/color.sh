@@ -30,6 +30,7 @@ while (( "$#" )); do
   COLOR=${COLOR#\#}
 
   # remove color info
+  NAME="${NAME%%.[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]-wood}"
   NAME="${NAME%%.[a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9][a-fA-F0-9]}"
 
   mv "$FILE" "$NAME.$COLOR.$EXT"

@@ -45,12 +45,12 @@ Finally, review the `terms.html` and don't forget to update your GDPR / privacy 
 If you are using [Docker](https://en.wikipedia.org/wiki/Docker_(software)) on your server, you can also install & run FreeBeeGee as a container. It comes with a pre-configured Apache webserver and PHP.
 
 ```
-FBGPASS=supersecret docker run -d -e FBGPASS -p 8888:80 ghcr.io/ludus-leonis/freebeegee:latest
+FBGPASS=supersecret docker run -d -e FBGPASS -p 8765:80 ghcr.io/ludus-leonis/freebeegee:latest
 ```
 
 Please pick a better password (!).
 
-FreeBeeGee sould be running now at `http://localhost:8888/`. If you want to persist room data, mount avolume at `/var/www/html/api/data`.
+FreeBeeGee sould be running now at `http://localhost:8765/`. If you want to persist room data, mount a volume at `/var/www/html/api/data`.
 
 
 ## Configuration
