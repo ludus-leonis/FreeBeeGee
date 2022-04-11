@@ -83,6 +83,8 @@ import {
 } from '../../view/room/tabletop/index.mjs'
 
 import {
+  FEATURE_DICEMAT,
+  FEATURE_DISCARD,
   TYPE_HEX,
   getSetupCenter,
   findPiece
@@ -270,7 +272,7 @@ export function popupPiece (id) {
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
     <a class="popup-menu flip ${piece._meta.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
-    <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
+    <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === FEATURE_DICEMAT) ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
     ${(piece.f & FLAG_NO_CLONE && piece.f & FLAG_NO_DELETE) ? '' : '<hr>'}
@@ -351,10 +353,7 @@ export function updateMenu () {
     if (piece._meta.sides <= 2) {
       _('#btn-hash').add('.disabled')
     }
-    if (piece._meta.feature === 'DICEMAT') {
-      _('#btn-hash').remove('.disabled')
-    }
-    if (piece._meta.feature === 'DICEMAT') {
+    if ([FEATURE_DICEMAT, FEATURE_DISCARD].includes(piece._meta.feature)) {
       _('#btn-hash').remove('.disabled')
     }
     if (piece.f & FLAG_NO_CLONE) {

@@ -11,6 +11,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* fixed dragging some pieces should not change z (e.g. dicemat)
 * added Docker build
 
 

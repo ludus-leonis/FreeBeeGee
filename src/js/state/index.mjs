@@ -49,6 +49,7 @@ import {
 } from '../view/error/index.mjs'
 
 import {
+  FEATURE_DICEMAT,
   findPiece,
   populatePiecesDefaults,
   populateTemplateDefaults,
@@ -358,7 +359,11 @@ export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
   const patch = {}
   if (x != null) patch.x = x
   if (y != null) patch.y = y
-  if (z != null) patch.z = z
+  const piece = findPiece(pieceId)
+  if (piece._meta.feature !== FEATURE_DICEMAT) {
+    if (z != null) patch.z = z
+  }
+
   return patchPiece(pieceId, sanitizePiecePatch(patch), sync)
 }
 

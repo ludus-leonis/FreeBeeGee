@@ -51,6 +51,8 @@ import {
 } from '../../../view/room/index.mjs'
 
 import {
+  FEATURE_DICEMAT,
+  FEATURE_DISCARD,
   TYPE_HEX,
   ID,
   findAsset,
@@ -203,10 +205,10 @@ export function randomSelected () {
   getSelected().each(node => {
     const piece = findPiece(node.id)
     switch (piece._meta.feature) {
-      case 'DICEMAT': // dicemat: randomize all pieces on it
+      case FEATURE_DICEMAT: // dicemat: randomize all pieces on it
         randomDicemat(piece)
         break
-      case 'DISCARD': // dicard pile: randomize & center & flip all pieces on it
+      case FEATURE_DISCARD: // dicard pile: randomize & center & flip all pieces on it
         randomDiscard(piece)
         break
       default: // ordinary piece
@@ -867,7 +869,7 @@ function randomDicemat (dicemat) {
   }
 
   for (const piece of findPiecesWithin(getPieceBounds(dicemat), dicemat.l)) {
-    if (piece._meta.feature === 'DICEMAT') continue // don't touch the dicemat
+    if (piece._meta.feature === FEATURE_DICEMAT) continue // don't touch the dicemat
 
     // pick one random position
     let coord = { x: 0, y: 0 }
@@ -909,7 +911,7 @@ function randomDiscard (discard) {
   shuffle(z)
 
   for (const piece of stack) {
-    if (piece._meta.feature === 'DISCARD') continue // don't touch the discard pile piece
+    if (piece._meta.feature === FEATURE_DISCARD) continue // don't touch the discard pile piece
 
     // detect the side to flip them to
     if (stackSide < 0) {

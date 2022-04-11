@@ -7,7 +7,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] repo: add Docker build
 * [ ] repo: automated deployment tests for new zip/tgz packages after build
 * [X] system: table passwords
-* [ ] table: dragging some pieces should not change z (e.g. dicemat)
+* [X] table: dragging some pieces should not change z (e.g. dicemat)
 * [ ] table: native zoom function
 * [ ] system: template colors as masks (dice, areas)
 * [ ] content: more classic game boards - backgammon, mills, solitaire, ...
@@ -19,6 +19,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] library: select-border sometimes cutoff
   * [ ] review docs
   * [ ] review + run tests
+  * [ ] review tutorial
   * [ ] bump version/codename & update CHANGELOG
   * [ ] update screenshots
 

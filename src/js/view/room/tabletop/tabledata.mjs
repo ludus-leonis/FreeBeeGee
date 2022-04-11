@@ -316,6 +316,9 @@ export function populateTemplateDefaults (template, headers = null) {
   return template
 }
 
+export const FEATURE_DICEMAT = 'DICEMAT'
+export const FEATURE_DISCARD = 'DISCARD'
+
 /**
  * Add default piece values to all properties that the API might omit.
  *
@@ -368,10 +371,10 @@ export function populatePieceDefaults (piece, headers = null) {
     } else {
       switch (asset.name) {
         case '_.dicemat':
-          piece._meta.feature = 'DICEMAT'
+          piece._meta.feature = FEATURE_DICEMAT
           break
         case '_.discard':
-          piece._meta.feature = 'DISCARD'
+          piece._meta.feature = FEATURE_DISCARD
           break
       }
     }
