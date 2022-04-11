@@ -30,6 +30,7 @@ import {
 } from '../../../lib/utils.mjs'
 
 import {
+  FLAG_NO_CLONE,
   getRoom,
   getTemplate,
   getTable,
@@ -123,6 +124,7 @@ export function editSelected () {
 export function cloneSelected (xy) {
   getSelected().each(node => {
     const piece = findPiece(node.id)
+    if (piece.f & FLAG_NO_CLONE) return
     const snapped = snap(xy.x, xy.y)
     piece.x = snapped.x
     piece.y = snapped.y

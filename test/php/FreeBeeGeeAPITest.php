@@ -621,7 +621,8 @@ final class FreeBeeGeeAPITest extends TestCase
             "w": 7,
             "t": ["text"],
             "c": [1, 2],
-            "b": ["12345678", "abcdefgh"]
+            "b": ["12345678", "abcdefgh"],
+            "f": 3
         }');
         $this->assertMatchesRegularExpression($this->REGEXP_ID, $piece->id);
         $this->assertEquals("5X9-7_fb", $piece->id);
@@ -639,6 +640,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(["text"], $piece->t);
         $this->assertEquals([1, 2], $piece->c);
         $this->assertEquals(["12345678", "abcdefgh"], $piece->b);
+        $this->assertEquals(3, $piece->f);
 
         $piece = $this->fbg->cleanupPieceJSON('{
             "id":"5X9-7_fb",
@@ -655,7 +657,8 @@ final class FreeBeeGeeAPITest extends TestCase
             "w": 2,
             "t": [""],
             "c": [0, 0, 0],
-            "b": ["invalid-asset-id"]
+            "b": ["invalid-asset-id"],
+            "f": 0
         }');
         $this->assertEqualsCanonicalizing(
             ['id', 'l', 'a', 'x', 'y', 'z', 'w', 'expires'],
@@ -688,7 +691,8 @@ final class FreeBeeGeeAPITest extends TestCase
             "t": false,
             "c": false,
             "b": false,
-            "extra": false
+            "extra": false,
+            "f": false
         }');
         $this->assertEqualsCanonicalizing(
             ['id', 'l', 'a', 'x', 'y', 'z'],

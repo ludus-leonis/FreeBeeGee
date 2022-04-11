@@ -28,10 +28,10 @@ namespace com\ludusleonis\freebeegee;
 class FreeBeeGeeAPI
 {
     private $ID_ASSET_POINTER = 'ZZZZZZZZ';
-    private $ID_ASSET_LOS = 'ZZZZZZZY';
-    private $ID_ASSET_NONE = 'NO_ASSET';
-    private $ID_ACCESS_ANY = '00000000-0000-0000-0000-000000000000';
-    private $REGEXP_ID = '^[0-9a-zA-Z_-]{8}$';
+    private $ID_ASSET_LOS     = 'ZZZZZZZY';
+    private $ID_ASSET_NONE    = 'NO_ASSET';
+    private $ID_ACCESS_ANY    = '00000000-0000-0000-0000-000000000000';
+    private $REGEXP_ID    = '^[0-9a-zA-Z_-]{8}$';
     private $REGEXP_COLOR = '^#[0-9a-fA-F]{6}$';
     private $version = '$VERSION$';
     private $engine = '$ENGINE$';
@@ -42,6 +42,10 @@ class FreeBeeGeeAPI
     private $types = ['grid-square', 'grid-hex'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'badge'];
     private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
+
+    private $FLAG_NO_DELETE = 0b00000001;
+    private $FLAG_NO_CLONE  = 0b00000010;
+    private $FLAG_NO_MOVE   = 0b00000100;
 
     /**
      * Constructor - setup our routes.
@@ -1177,6 +1181,11 @@ class FreeBeeGeeAPI
                         }
                     }
                     break;
+                case 'f':
+                    if ($this->api->assertInteger('f', $value, 0b00000001, 0b11111111, false)) {
+                        $out->$property = $value;
+                    }
+                    break;
             }
         }
 
@@ -1277,6 +1286,9 @@ class FreeBeeGeeAPI
                     break;
                 case 'b':
                     $validated->b = $this->api->assertStringArray('b', $value, $this->REGEXP_ID, 0, 128);
+                    break;
+                case 'f':
+                    $validated->f = $this->api->assertInteger('f', $value, 0b00000000, 0b11111111);
                     break;
                 case 'expires':
                     // ignore as we do not honor externaly set expires

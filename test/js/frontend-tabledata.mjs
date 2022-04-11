@@ -358,6 +358,7 @@ describe('Frontend - tabledata.mjs', function () {
       s: 4, // asset has 3 sides
       n: 17,
       t: ['one', 'more', 'time'],
+      f: 0b100000101,
       expires: expires
     }
     expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({
@@ -375,6 +376,7 @@ describe('Frontend - tabledata.mjs', function () {
       s: 1,
       n: 1,
       t: ['one', 'more', 'time'],
+      f: 0b00000101,
       expires: expires
     })
   })
@@ -388,7 +390,7 @@ describe('Frontend - tabledata.mjs', function () {
 
   it('populatePieceDefaults()', function () {
     const p1 = populatePieceDefaults({})
-    expect(Object.keys(p1)).to.have.members(['l', 'w', 'h', 's', 'c', 'r', 'n', 't', 'b', '_meta'])
+    expect(Object.keys(p1)).to.have.members(['l', 'w', 'h', 's', 'c', 'r', 'n', 't', 'b', 'f', '_meta'])
     expect(p1.w).to.be.eql(1)
     expect(p1.h).to.be.eql(1)
     expect(p1.s).to.be.eql(0)
@@ -397,6 +399,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p1.c[1]).to.be.eql(0)
     expect(p1.r).to.be.eql(0)
     expect(p1.n).to.be.eql(0)
+    expect(p1.f).to.be.eql(0)
     expect(p1.t.length).to.be.eql(0)
     expect(p1.b.length).to.be.eql(0)
     expect(p1._meta.widthPx).to.be.eql(64)

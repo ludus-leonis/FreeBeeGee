@@ -12,7 +12,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] system: template colors as masks (dice, areas)
 * [ ] content: more classic game boards - backgammon, mills, solitaire, ...
 * [ ] content: more helper/marker overlays (arrows, areas, )
-* [ ] protect pieces (no-delete, no-move)
+* [X] protected pieces: no-delete, no-clone, no-move
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring

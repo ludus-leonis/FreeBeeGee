@@ -49,6 +49,7 @@ import {
 } from '../view/error/index.mjs'
 
 import {
+  findPiece,
   populatePiecesDefaults,
   populateTemplateDefaults,
   clampToTableSize,
@@ -422,6 +423,24 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
   )
 }
 
+export const FLAG_NO_DELETE = 0b00000001
+export const FLAG_NO_CLONE = 0b00000010
+export const FLAG_NO_MOVE = 0b00000100
+
+/**
+ * Update the falgs of a piece/token.
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {String} pieceId ID of piece to change.
+ * @param {Number} f New flag bits.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
+ */
+export function flagPiece (pieceId, f = 0, sync = true) {
+  return patchPiece(pieceId, sanitizePiecePatch({ f }), sync)
+}
+
 /**
  * Edit multiple properties of a piece of the current table.
  *
@@ -450,6 +469,7 @@ export function editPiece (pieceId, updates, sync = true) {
  * @param {Object} sync Optional. If true (default), trigger table sync.
  */
 export function deletePiece (pieceId, sync = true) {
+  if (findPiece(pieceId)?.f & FLAG_NO_DELETE) return Promise.resolve() // can't delete those
   return apiDeletePiece(room.name, getTableNo(), pieceId, getToken())
     .catch(error => apiError(error, room.name))
     .finally(() => {

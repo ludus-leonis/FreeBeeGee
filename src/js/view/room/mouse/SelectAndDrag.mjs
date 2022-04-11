@@ -22,6 +22,7 @@ import {
 } from '../../../view/room/mouse/_MouseButtonHandler.mjs'
 
 import {
+  FLAG_NO_MOVE,
   movePiece
 } from '../../../state/index.mjs'
 
@@ -77,6 +78,8 @@ export class SelectAndDrag extends MouseButtonHandler {
       }
 
       if (!target.classList.contains('piece')) return // we only drag pieces
+      if (target.piece?.f & FLAG_NO_MOVE) return // we do not drag frozen pieces
+
       setCursor('.cursor-grab')
 
       this.dragging = target.cloneNode(true)

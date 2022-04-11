@@ -20,6 +20,9 @@
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
+  FLAG_NO_MOVE,
+  FLAG_NO_DELETE,
+  FLAG_NO_CLONE,
   getLibrary,
   getTemplate,
   editPiece
@@ -179,6 +182,11 @@ export function modalEdit (piece) {
       }
     }
 
+    // flags
+    _('#piece-no-move').checked = piece.f & FLAG_NO_MOVE
+    _('#piece-no-delete').checked = piece.f & FLAG_NO_DELETE
+    _('#piece-no-clone').checked = piece.f & FLAG_NO_CLONE
+
     _('#modal-footer').innerHTML = `
       <button id='btn-close' type="button" class="btn">Cancel</button>
       <button id='btn-ok' type="button" class="btn btn-primary">Apply</button>
@@ -222,6 +230,15 @@ function getModalBody (piece) {
   }
 }
 
+const protect = `
+  <div class="col-12">
+    <label>Protect</label>
+    <input id="piece-no-move" type="checkbox"><label for="piece-no-move" class="p-medium">no move</label>
+    <input id="piece-no-clone" type="checkbox"><label for="piece-no-clone" class="p-medium">no clone</label>
+    <input id="piece-no-delete" type="checkbox"><label for="piece-no-delete" class="p-medium">no delete</label>
+  </div>
+`
+
 function getModalToken (piece) {
   let colorClass = 'is-hidden'
   let borderClass = 'is-hidden'
@@ -240,7 +257,7 @@ function getModalToken (piece) {
   }
 
   return `
-    <form class="container">
+    <form class="container modal-edit modal-edit-token">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
         <div class="col-12 col-lg-8">
@@ -279,6 +296,7 @@ function getModalToken (piece) {
           <label for="piece-badges">Badges</label>
           <div id="piece-badges" class="toggle-box"></div>
         </div>
+        ${protect}
       </div>
     </form>
   `
@@ -286,7 +304,7 @@ function getModalToken (piece) {
 
 function getModalOther () {
   return `
-    <form class="container">
+    <form class="container modal-edit modal-edit-other">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
         <div class="col-12">
@@ -321,6 +339,7 @@ function getModalOther () {
           <label for="piece-number">Number</label>
           <select id="piece-number" name="piece-number"></select>
         </div>
+        ${protect}
       </div>
     </form>
   `
@@ -328,7 +347,7 @@ function getModalOther () {
 
 function getModalTile () {
   return `
-    <form class="container">
+    <form class="container modal-edit modal-edit-tile">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
         <div class="col-12">
@@ -363,6 +382,7 @@ function getModalTile () {
           <label for="piece-number">Number</label>
           <select id="piece-number" name="piece-number"></select>
         </div>
+        ${protect}
       </div>
     </form>
   `
@@ -370,7 +390,7 @@ function getModalTile () {
 
 function getModalNote () {
   return `
-    <form class="container">
+    <form class="container modal-edit modal-edit-note">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
         <div class="col-12">
@@ -405,6 +425,7 @@ function getModalNote () {
           <label for="piece-number">Number</label>
           <select id="piece-number" name="piece-number"></select>
         </div>
+        ${protect}
       </div>
     </form>
   `
@@ -460,6 +481,12 @@ function modalOk () {
 
   const n = Number(_('#piece-number').value)
   if (n !== piece.n) updates.n = n
+
+  let f = 0
+  if (_('#piece-no-move').checked) f |= FLAG_NO_MOVE
+  if (_('#piece-no-delete').checked) f |= FLAG_NO_DELETE
+  if (_('#piece-no-clone').checked) f |= FLAG_NO_CLONE
+  if (f !== piece.f) updates.f = f
 
   editPiece(piece.id, updates)
   getModal().hide()

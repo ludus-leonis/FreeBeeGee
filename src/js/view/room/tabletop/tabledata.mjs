@@ -279,6 +279,9 @@ export function sanitizePiecePatch (patch, pieceId = null) {
       case 'r':
         result[field] = mod(patch[field], 360)
         break
+      case 'f':
+        result[field] = patch[field] & 0b11111111
+        break
       case 'l':
       case 'id':
       case 'a':
@@ -332,6 +335,7 @@ export function populatePieceDefaults (piece, headers = null) {
   piece.n = piece.n ?? 0
   piece.t = piece.t ?? []
   piece.b = piece.b ?? []
+  piece.f = piece.f ?? 0
 
   // add client-side meta information for piece
   piece._meta = {}

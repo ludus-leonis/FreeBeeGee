@@ -50,6 +50,8 @@ import {
 } from '../../lib/icons.mjs'
 
 import {
+  FLAG_NO_CLONE,
+  FLAG_NO_DELETE,
   loadRoom,
   getRoom,
   getServerInfo,
@@ -271,9 +273,9 @@ export function popupPiece (id) {
     <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
-    <hr>
-    <a class="popup-menu clone" href="#">${iconClone}Clone</a>
-    <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
+    ${(piece.f & FLAG_NO_CLONE && piece.f & FLAG_NO_DELETE) ? '' : '<hr>'}
+    <a class="popup-menu clone ${(piece.f & FLAG_NO_CLONE) ? 'disabled' : ''}" href="#">${iconClone}Clone</a>
+    <a class="popup-menu delete ${(piece.f & FLAG_NO_DELETE) ? 'disabled' : ''}" href="#">${iconDelete}Delete</a>
   `
 
   _('#tabletop').add(popup)
@@ -351,6 +353,15 @@ export function updateMenu () {
     }
     if (piece._meta.feature === 'DICEMAT') {
       _('#btn-hash').remove('.disabled')
+    }
+    if (piece._meta.feature === 'DICEMAT') {
+      _('#btn-hash').remove('.disabled')
+    }
+    if (piece.f & FLAG_NO_CLONE) {
+      _('#btn-c').add('.disabled')
+    }
+    if (piece.f & FLAG_NO_DELETE) {
+      _('#btn-del').add('.disabled')
     }
   } else {
     menu.remove('.disabled')

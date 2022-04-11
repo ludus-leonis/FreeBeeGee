@@ -1011,6 +1011,56 @@ function testApiPieceB (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
+function testApiPieceF (api, version, room) {
+  openTestroom(api, room, 'Classic')
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, f: -1 }
+  }, body => {
+    expect(body._messages[0]).to.match(/ f not between/)
+  }, 400)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, f: 0b100000000 }
+  }, body => {
+    expect(body._messages[0]).to.match(/ f not between/)
+  }, 400)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, f: 'three' }
+  }, body => {
+    expect(body._messages[0]).to.match(/ f not between/)
+  }, 400)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, f: [3] }
+  }, body => {
+    expect(body._messages[0]).to.match(/ f not between/)
+  }, 400)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, f: '3' }
+  }, body => {
+    expect(body.f).not.to.be.eq('3')
+    expect(body.f).to.be.eq(3)
+  }, 201)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, f: 3.9 }
+  }, body => {
+    expect(body.f).not.to.be.eq(3.9)
+    expect(body.f).to.be.eq(3)
+  }, 201)
+
+  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+    expect(body.length).to.be.eql(2)
+  })
+
+  closeTestroom(api, room)
+}
+
+// -----------------------------------------------------------------------------
+
 function testApiPieceExpires (api, version, room) {
   openTestroom(api, room, 'Classic')
 
@@ -1101,6 +1151,7 @@ describe('API - pieces', function () {
     describe('valid c', () => testApiPieceC(api, version, room))
     describe('valid t', () => testApiPieceT(api, version, room))
     describe('valid b', () => testApiPieceB(api, version, room))
+    describe('valid f', () => testApiPieceF(api, version, room))
     describe('valid expires', () => testApiPieceExpires(api, version, room))
   })
 })

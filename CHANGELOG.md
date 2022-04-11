@@ -7,6 +7,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 ### Notable changes
 
 * added table passwords
+* added protected pieces: no-delete, no-clone, no-move
 
 ### Other changes
 

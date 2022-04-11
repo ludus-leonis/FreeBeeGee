@@ -211,6 +211,9 @@ In addition, a *piece* can have the following optional properties. If omitted, t
 `b`
 : An array of IDs of *piece*. Each entry corresponds to one asset of type `badge`. Those are usually displayed in their label.
 
+`f`
+: An bitarray of flags of a *piece*. Depending on the *piece* the bits can represent different options/features/modes active for it.
+
 ### Special pieces
 
 A *piece* with `id` and `a` set to `ZZZZZZZZ` represents the (laser)pointer. There can only be one on the table.
