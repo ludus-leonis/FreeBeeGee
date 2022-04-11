@@ -30,6 +30,7 @@ import {
   getRoom,
   getServerInfo,
   deleteRoom,
+  setRoomPassword,
   getTableNo,
   setTableNo,
   PREFS,
@@ -200,15 +201,26 @@ export function modalSettings () {
                 </div>
               </div>
 
+              <hr>
               <p><input id="dangerRoom" type="checkbox"><label for="dangerRoom">Enable danger zone - no undo below!</label></p>
 
               <div class="container spacing-small">
                 <div class="row">
                   <div class="col-12 col-sm-8">
+                    <label for="room-password">Room password</label>
+                    <input id="room-password" type="password" placeholder="* * * * * *">
+                  </div>
+                  <div class="col-12 col-sm-4">
+                    <label for="btn-room-password d-none d-sm-block">&nbsp;</label>
+                    <button id="btn-room-password" class="btn btn-wide" disabled>Set password</button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-sm-8">
                     <p>Deleting your room will permanently erase it and its library.</p>
                   </div>
                   <div class="col-12 col-sm-4">
-                    <button id="btn-table-delete" class="btn btn-wide" disabled>Delete room</button>
+                    <button id="btn-room-delete" class="btn btn-wide" disabled>Delete room</button>
                   </div>
                 </div>
               </div>
@@ -241,9 +253,11 @@ export function modalSettings () {
 
   _('#dangerRoom').on('click', () => {
     if (_('#dangerRoom').checked) {
-      _('#btn-table-delete').disabled = false
+      _('#btn-room-delete').disabled = false
+      _('#btn-room-password').disabled = false
     } else {
-      _('#btn-table-delete').disabled = true
+      _('#btn-room-delete').disabled = true
+      _('#btn-room-password').disabled = true
     }
   })
 
@@ -279,7 +293,11 @@ export function modalSettings () {
     updateTable([])
     getModal().hide()
   })
-  _('#btn-table-delete').on('click', click => {
+  _('#btn-room-password').on('click', click => {
+    click.preventDefault()
+    setRoomPassword(_('#room-password').value.trim()).then(() => getModal().hide())
+  })
+  _('#btn-room-delete').on('click', click => {
     click.preventDefault()
     deleteRoom().then(() => navigateToJoin(getRoom().name))
   })

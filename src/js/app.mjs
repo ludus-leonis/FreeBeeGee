@@ -17,8 +17,21 @@
  */
 
 import {
-  runError
+  runError,
+  apiError
 } from './view/error/index.mjs'
+
+import {
+  createRoomView
+} from './view/create/index.mjs'
+
+import {
+  passwordView
+} from './view/password/index.mjs'
+
+import {
+  runRoom
+} from './view/room/index.mjs'
 
 import {
   runJoin
@@ -29,7 +42,8 @@ import {
 } from './state/index.mjs'
 
 import {
-  apiGetServerInfo
+  apiGetServerInfo,
+  apiPostRoomAuth
 } from './api/index.mjs'
 
 /**
@@ -62,6 +76,31 @@ export function navigateToRoom (roomName) {
 }
 
 /**
+ * Faceless, transparent authentication.
+ *
+ * If ok, it continues to the room/table. If it fails, it displays the necessary
+ * screen.
+ */
+export function auth (roomName, password) {
+  // try to login
+  apiPostRoomAuth(roomName, {
+    password
+  }, true)
+    .then((auth) => {
+      if (auth.status === 200) {
+        runRoom(roomName, auth.body.token)
+      } else if (auth.status === 403) {
+        passwordView(roomName)
+      } else if (auth.status === 404) {
+        createRoomView(roomName)
+      } else {
+        runError()
+      }
+    })
+    .catch(error => apiError(error, roomName))
+}
+
+/**
  * Main entry point for the app. Will route the page to the proper code.
  */
 export function route () {
@@ -82,11 +121,11 @@ export function route () {
         } else if (path.endsWith('/')) {
           globalThis.location = path.substr(0, path.length - 1)
         } else {
-          runJoin(path.replace(/^.*\//, ''))
+          auth(path.replace(/^.*\//, ''))
         }
       }
     })
-    .catch(error => runError('UNKNOWN', error))
+    .catch(error => apiError(error))
 }
 
 /**

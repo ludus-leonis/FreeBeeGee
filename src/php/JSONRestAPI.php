@@ -897,9 +897,9 @@ class JSONRestAPI
      *
      * @param string $path Path to file to read.
      * @param string $lockFile Optional path to lock file. Defaults to <datadir>/.flock
-     * @return string The file's content.
+     * @return string The file's content, or false on error/non existing file.
      */
-    public function fileGetContentsLocked(
+    public function fileGetLocked(
         string $path,
         ?string $lockFile
     ): string {
@@ -907,6 +907,22 @@ class JSONRestAPI
         $content = file_get_contents($path);
         $this->unlockLock($lock);
         return $content;
+    }
+
+    /**
+     * Read a Json file using a shared lock.
+     *
+     * Calls waitForReadLock - see there for more infos.
+     *
+     * @param string $path Path to file to read.
+     * @param string $lockFile Optional path to lock file. Defaults to <datadir>/.flock
+     * @return object The parsed object.
+     */
+    public function jsonGetLocked(
+        string $path,
+        ?string $lockFile
+    ): \stdClass {
+        return json_decode($this->fileGetLocked($path, $lockFile) ?? '{}');
     }
 
     /**

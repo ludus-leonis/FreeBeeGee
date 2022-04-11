@@ -38,12 +38,20 @@ import {
 
 import dateformat from 'dateformat'
 
+function dstOffset () { // return 60/120 depending if DST is off or on
+  const now = new Date()
+  return Math.max(
+    new Date(now.getFullYear(), 0, 1).getTimezoneOffset(),
+    new Date(now.getFullYear(), 6, 1).getTimezoneOffset()
+  ) !== now.getTimezoneOffset() ? 120 : 60
+}
+
 // -----------------------------------------------------------------------------
 
 function testApiSnapshotClassic (api, version, room) {
   openTestroom(api, room, 'Classic')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=60`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
@@ -59,12 +67,12 @@ function testApiSnapshotClassic (api, version, room) {
 
   testGetBuffer(api, () => `/rooms/${room}/snapshot/`, headers => {
     const now = new Date()
-    now.setHours(now.getHours() - 1)
+    now.setHours(now.getHours() - dstOffset() / 60)
     const date = dateformat(now, 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {}, 200)
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=120`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset() + 60}`, headers => {
     const now = new Date()
     now.setHours(now.getHours() + 1)
     const date = dateformat(now, 'yyyy-mm-dd-HHMM')
@@ -79,7 +87,7 @@ function testApiSnapshotClassic (api, version, room) {
 function testApiSnapshotRPG (api, version, room) {
   openTestroom(api, room, 'RPG')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=60`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
@@ -101,7 +109,7 @@ function testApiSnapshotRPG (api, version, room) {
 function testApiSnapshotHex (api, version, room) {
   openTestroom(api, room, 'Hex')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=60`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
@@ -123,7 +131,7 @@ function testApiSnapshotHex (api, version, room) {
 function testApiSnapshotTutorial (api, version, room) {
   openTestroom(api, room, 'Tutorial')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=60`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {

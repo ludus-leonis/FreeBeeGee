@@ -6,7 +6,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
-* none yet
+* added table passwords
 
 ### Other changes
 

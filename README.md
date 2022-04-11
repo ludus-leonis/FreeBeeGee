@@ -31,7 +31,6 @@ Your game. Your data.
 **Note:** This is an development version. A few rather major features are still missing:
 
 * While you can upload images/tiles/pieces via the web-UI, editing them is quite limited.
-* No room passwords yet. Anyone who knows a room name can join it. That is partly by design, but it would be nice to have that option.
 
 The good news is: You can still use FreeBeeGee today to play! Those features will arrive sooner or later. There is a [roadmap](docs/roadmap.md) for details.
 

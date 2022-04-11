@@ -197,11 +197,12 @@ export function getViewportCenterTile () {
  * Initialize and start the room/tabletop screen.
  *
  * @param {String} name Name of room, e.g. hilariousGazingPenguin.
+ * @param {String} token API access token for this room.
  */
-export function runRoom (room) {
-  console.info('$NAME$ v$VERSION$, room ' + room.name)
+export function runRoom (name, token) {
+  console.info('$NAME$ v$VERSION$, room ' + name)
 
-  loadRoom(room.name)
+  loadRoom(name, token)
     .then(() => setupRoom())
 }
 

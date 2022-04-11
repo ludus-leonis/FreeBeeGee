@@ -22,12 +22,6 @@ import _ from '../../lib/FreeDOM.mjs'
 import {
   createScreen
 } from '../../view/screen.mjs'
-import {
-  createRoomView
-} from '../../view/create/index.mjs'
-import {
-  runRoom
-} from '../../view/room/index.mjs'
 
 import {
   getServerInfo
@@ -40,40 +34,22 @@ import {
 } from '../../lib/utils.mjs'
 
 import {
-  DEMO_MODE,
-  apiGetRoom
+  DEMO_MODE
 } from '../../api/index.mjs'
 
 import {
   navigateToRoom
 } from '../../app.mjs'
 
-import {
-  runError
-} from '../../view/error/index.mjs'
-
 /** Limit room names like hilariousGazingPenguin */
 const roomNameMaxLength = 48
 
 /**
- * Show the enter-name dialog or skip it if name was already given.
+ * Show the enter-name dialog.
  *
  * @param {String} roomName Room name.
  */
-export function runJoin (roomName) {
-  if (roomName) {
-    openOrCreate(roomName)
-  } else {
-    showJoinDialog()
-  }
-}
-
-// -----------------------------------------------------------------------------
-
-/**
- * Show a join-room dialog.
- */
-function showJoinDialog () {
+export function runJoin () {
   const ttl = getServerInfo().ttl
   const intro = DEMO_MODE
     ? '<p>Welcome to the FreeBeeGee Demo!</p>'
@@ -156,6 +132,8 @@ function showJoinDialog () {
   _('#ok').on('click', click => { click.preventDefault(); ok() })
 }
 
+// -----------------------------------------------------------------------------
+
 /**
  * Initiates actual room-join after user clicks OK.
  */
@@ -166,23 +144,4 @@ function ok () {
   } else {
     navigateToRoom(_('#name').valueOrPlaceholder())
   }
-}
-
-/**
- * Try to open/init a room. If it does not exist, show the create screen.
- *
- * @param {String} roomName Room name.
- */
-function openOrCreate (name) {
-  apiGetRoom(name, true)
-    .then((response) => {
-      if (response.status === 400) {
-        runError('ROOM_INVALID', name)
-      } else if (response.status === 200) {
-        runRoom(response.body)
-      } else { // 404
-        createRoomView(name)
-      }
-    })
-    .catch(() => runError())
 }

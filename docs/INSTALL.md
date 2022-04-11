@@ -69,7 +69,7 @@ The server config file is found in `api/data/server.json`:
 }
 ```
 
-### Passwords
+### Admin passwords
 
 `passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join rooms. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
 
@@ -77,7 +77,7 @@ The server config file is found in `api/data/server.json`:
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
 ```
 
-FreeBeeGee ships with an unknown password. No rooms can be created until you either set one or explicitly disable it.
+FreeBeeGee ships with an unknown admin password. No rooms can be created until you either set one or explicitly disable it.
 
 ### Uploads
 

@@ -19,11 +19,11 @@
  */
 
 import {
+  getToken,
   getRoom,
   reloadRoom,
   getTableNo,
   fetchTable,
-  errorRoomGone,
   isTabActive
 } from '../../state/index.mjs'
 
@@ -35,6 +35,10 @@ import {
   clamp,
   recordTime
 } from '../../lib/utils.mjs'
+
+import {
+  apiError
+} from '../../view/error/index.mjs'
 
 import {
   updateRoom
@@ -183,7 +187,7 @@ function checkRoomDigests (
   const room = getRoom()
   const start = Date.now()
   lastNetworkActivity = Date.now()
-  return apiGetRoomDigest(room.name)
+  return apiGetRoomDigest(room.name, getToken())
     .then(digest => {
       const table = getTableNo()
       recordTime('sync-network', Date.now() - start)
@@ -215,7 +219,7 @@ function checkRoomDigests (
 
       return 0
     })
-    .catch(error => errorRoomGone(error))
+    .catch(error => apiError(error, room.name))
 }
 
 /**
@@ -259,7 +263,7 @@ function syncRoom (
       updateRoom()
       return false
     })
-    .catch(error => errorRoomGone(error))
+    .catch(error => apiError(error, getRoom().name))
 }
 
 /**

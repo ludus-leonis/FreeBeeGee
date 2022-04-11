@@ -70,6 +70,8 @@ export function demoFetchOrThrow (_, path, data = {}, headers = false) {
     return apiRoomTemplate(path.substr(10).replace(/\/.*$/, ''), data, headers)
   } else if (path.match(/^api\/rooms\/$/)) {
     return apiRoom(undefined, data, headers)
+  } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/auth\/$/)) {
+    return apiRoomAuth(path.substr(10).replace(/\/.*$/, ''), data, headers)
   } else if (path === 'api/templates/') {
     return apiTemplates(data, headers)
   } else if (path === 'api/') {
@@ -341,6 +343,28 @@ function apiTemplates (data, headers) {
   switch (data.method) {
     case 'GET':
       return delayPromise(200, ['Classic', 'Hex', 'RPG', 'Tutorial'], headers)
+    default:
+      throw new UnexpectedStatus(501, 'not implemented for demo')
+  }
+}
+
+/**
+ * Fake-fetch /api/rooms/[roomName]/auth/.
+ *
+ * @param {String} roomName Room name to fetch.
+ * @param {Object} data Original fetch()'s data object.
+ * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @return {Promise} Delayed promise of the API content.
+ */
+function apiRoomAuth (roomName, data, headers) {
+  switch (data.method) {
+    case 'POST':
+    case 'PATCH':
+      if (getRoom(roomName)) {
+        return delayPromise(200, { token: '00000000-0000-0000-0000-000000000000' }, headers)
+      } else {
+        return delayPromise(404, {}, headers)
+      }
     default:
       throw new UnexpectedStatus(501, 'not implemented for demo')
   }

@@ -15,4 +15,26 @@
   .mode:checked ~ .template-text {
     display: none;
   }
+
+  .enablepassword {
+    + label + label,
+    + label + label + input,
+    + label + label + input + p {
+      display: none;
+    }
+
+    &:checked {
+      display: none;
+
+      + label {
+        display: none;
+      }
+
+      + label + label,
+      + label + label + input,
+      + label + label + input + p {
+        display: inherit;
+      }
+    }
+  }
 }
