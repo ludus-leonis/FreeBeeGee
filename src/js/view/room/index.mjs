@@ -83,6 +83,10 @@ import {
 } from '../../view/room/tabletop/index.mjs'
 
 import {
+  LAYER_TILE,
+  LAYER_OVERLAY,
+  LAYER_TOKEN,
+  LAYER_OTHER,
   FEATURE_DICEMAT,
   FEATURE_DISCARD,
   TYPE_HEX,
@@ -213,7 +217,7 @@ export function runRoom (name, token) {
 /**
  * Toggle one of the layers on/off for selection.
  *
- * @param {String} layer Either 'tile', 'overlay' or 'token'.
+ * @param {String} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN.
  */
 export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
@@ -591,7 +595,7 @@ function setupRoom () {
 
   // setup menu for layers
   let undefinedCount = 0
-  for (const layer of ['token', 'overlay', 'tile', 'other']) {
+  for (const layer of [LAYER_TOKEN, LAYER_OVERLAY, LAYER_TILE, LAYER_OTHER]) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
     const prop = getRoomPreference(PREFS['LAYER' + layer])
     if (prop === true) toggleLayer(layer) // stored enabled
@@ -599,8 +603,8 @@ function setupRoom () {
   }
   if (undefinedCount >= 4) {
     // default if store was empty
-    toggleLayer('other')
-    toggleLayer('token')
+    toggleLayer(LAYER_OTHER)
+    toggleLayer(LAYER_TOKEN)
   }
 
   if (getRoomPreference(PREFS.LOS)) toggleLos()

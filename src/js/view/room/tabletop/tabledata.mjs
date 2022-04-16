@@ -43,14 +43,6 @@ import {
   DEMO_MODE
 } from '../../../api/index.mjs'
 
-export const assetTypes = [
-  'tile',
-  'token',
-  'overlay',
-  'other',
-  'badge'
-]
-
 export const TYPE_SQUARE = 'grid-square'
 export const TYPE_HEX = 'grid-hex'
 
@@ -62,12 +54,25 @@ export const stickyNoteColors = [
   { name: 'Pink', value: '#f4a0c6' }
 ]
 
+export const LAYER_TILE = 'tile'
+export const LAYER_OVERLAY = 'overlay'
+export const LAYER_NOTE = 'note'
+export const LAYER_TOKEN = 'token'
+export const LAYER_OTHER = 'other'
 export const LAYERS = [ // reverse order
-  'tile',
-  'overlay',
-  'note',
-  'token',
-  'other'
+  LAYER_TILE,
+  LAYER_OVERLAY,
+  LAYER_NOTE,
+  LAYER_TOKEN,
+  LAYER_OTHER
+]
+
+export const assetTypes = [
+  LAYER_TILE,
+  LAYER_TOKEN,
+  LAYER_OVERLAY,
+  LAYER_OTHER,
+  'badge'
 ]
 
 function layerToName (layer) {
@@ -261,7 +266,7 @@ export function sanitizePiecePatch (patch, pieceId = null) {
     switch (field) {
       case 'c':
         result[field] = []
-        colors = p?.l === 'note' ? stickyNoteColors.length : (t.colors.length + 1)
+        colors = p?.l === LAYER_NOTE ? stickyNoteColors.length : (t.colors.length + 1)
         if (patch[field][0] !== undefined) result[field].push(mod(patch[field][0], colors))
         if (patch[field][1] !== undefined) result[field].push(mod(patch[field][1], t.borders.length + 1))
         break
@@ -395,8 +400,8 @@ export function populatePieceDefaults (piece, headers = null) {
     } else {
       piece._meta.hasColor = false
     }
-    piece._meta.hasBorder = piece.l === 'token'
-    if (asset.type === 'token' || piece._meta.hasColor === true || bgImage.match(/(jpg|jpeg)$/i)) {
+    piece._meta.hasBorder = piece.l === LAYER_TOKEN
+    if (asset.type === LAYER_TOKEN || piece._meta.hasColor === true || bgImage.match(/(jpg|jpeg)$/i)) {
       piece._meta.hasHighlight = true
     } else {
       piece._meta.hasHighlight = false
@@ -440,7 +445,7 @@ export function populatePiecesDefaults (pieces, headers = null) {
 /**
  * Determine the lowest z-index in use by the pieces in a layer.
  *
- * @param {String} layer Name of a layer, e.g. 'tile'.
+ * @param {String} layer Name of a layer, e.g. LAYER_TILE.
  * @param {Object} area Bounding rect in px to check pieces at least partly within.
  * @return {Number} Lowest CSS z-index, or 0 if layer is empty.
  */
@@ -472,7 +477,7 @@ export function sortZ (pieces) {
 /**
  * Determine the highest z-index in use by the pieces in a layer.
  *
- * @param {String} layer Name of a layer, e.g. 'tile'.
+ * @param {String} layer Name of a layer, e.g. LAYER_TILE.
  * @param {Object} area Bounding rect in px to check pieces at least partly within.
  * @return {Number} Highest CSS z-index, or 0 if area in layer is empty.
  */
@@ -676,7 +681,7 @@ export function splitAssetFilename (assetName) {
 export function isSolid (piece, x, y) {
   if (
     !piece || // no piece = no checking
-    piece.l === 'token' || // token are always round & solid
+    piece.l === LAYER_TOKEN || // token are always round & solid
     !piece._meta?.mask // no mask = no checking possible
   ) return Promise.resolve(true)
 

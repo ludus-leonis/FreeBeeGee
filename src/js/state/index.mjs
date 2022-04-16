@@ -50,6 +50,7 @@ import {
 } from '../view/error/index.mjs'
 
 import {
+  LAYER_TOKEN,
   FEATURE_DICEMAT,
   findPiece,
   populatePiecesDefaults,
@@ -160,7 +161,7 @@ export function isLayerActive (layer) {
 }
 
 export const PREFS = {
-  TOKEN: { name: 'token', default: '00000000-0000-0000-0000-000000000000' },
+  TOKEN: { name: LAYER_TOKEN, default: '00000000-0000-0000-0000-000000000000' },
   TABLE: { name: 'table', default: 1 },
   LAYERother: { name: 'layer5', default: true },
   LAYERtoken: { name: 'layer4', default: true },

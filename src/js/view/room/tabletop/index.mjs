@@ -53,6 +53,11 @@ import {
 import {
   FEATURE_DICEMAT,
   FEATURE_DISCARD,
+  LAYER_TILE,
+  LAYER_OVERLAY,
+  LAYER_NOTE,
+  LAYER_TOKEN,
+  LAYER_OTHER,
   TYPE_HEX,
   ID,
   findAsset,
@@ -167,7 +172,7 @@ export function cycleColor (outline = false) {
   getSelected().each(node => {
     const piece = findPiece(node.id)
     switch (piece.l) {
-      case 'note':
+      case LAYER_NOTE:
         // always change base color
         colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         break
@@ -281,7 +286,7 @@ function createOrUpdatePieceDOM (piece, select) {
     div.delete()
   }
   if (!div.unique()) { // (re)create
-    const node = piece.l === 'note' ? noteToNode(piece) : pieceToNode(piece)
+    const node = piece.l === LAYER_NOTE ? noteToNode(piece) : pieceToNode(piece)
     node.piece = {}
     _piece = {}
     if (selection.includes(piece.id)) node.add('.is-selected')
@@ -301,9 +306,10 @@ function createOrUpdatePieceDOM (piece, select) {
     })
   }
   if (_piece.r !== piece.r) {
-    div
-      .remove('.is-rotate-*')
-      .add('.is-rotate-' + piece.r)
+    div.remove('.is-rotate-*')
+    if (piece.l !== LAYER_OTHER) {
+      div.add('.is-rotate-' + piece.r)
+    }
   }
   if (_piece.w !== piece.w || _piece.h !== piece.h) {
     div
@@ -312,14 +318,14 @@ function createOrUpdatePieceDOM (piece, select) {
   }
   if (_piece.n !== piece.n) {
     div.remove('.is-n', '.is-n-*')
-    if (piece.l === 'token' && piece.n !== 0) {
+    if (piece.l === LAYER_TOKEN && piece.n !== 0) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
 
   if (_piece.c?.[0] !== piece.c[0] || _piece.c?.[1] !== piece.c[1]) {
     // (background) color
-    if (piece.l === 'note') {
+    if (piece.l === LAYER_NOTE) {
       div.css({
         '--fbg-color': stickyNoteColors[piece.c[0]].value,
         '--fbg-color-invert': brightness(stickyNoteColors[piece.c[0]].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
@@ -333,7 +339,7 @@ function createOrUpdatePieceDOM (piece, select) {
           '--fbg-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
-    } else if (piece.l === 'overlay' || piece.l === 'other') {
+    } else if (piece.l === LAYER_OVERLAY || piece.l === LAYER_OTHER) {
       // no color
     } else {
       const asset = findAsset(piece.a)
@@ -476,7 +482,7 @@ export function toBottomSelected () {
 /**
  * Clear the selection of pieces.
  *
- * @param {String} layer Either 'tile', 'overlay' or 'token' to clear a specific
+ * @param {String} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN to clear a specific
  *                       layer, or 'all' for all layers.
  */
 export function unselectPieces (layer = 'all') {
@@ -562,7 +568,7 @@ export function pieceToNode (piece) {
       node.add(inner)
     }
 
-    if (asset.type !== 'overlay' && asset.type !== 'other') {
+    if (asset.type !== LAYER_OVERLAY && asset.type !== LAYER_OTHER) {
       if (!asset.bg.match(/^[0-9][0-9]?$/)) {
         // color information is html color or 'transparent' -> apply
         node.css({ '--fbg-color': asset.bg })
@@ -621,12 +627,12 @@ export function url (file, pin = true) {
 export function createNote (xy) {
   const snapped = snap(xy.x, xy.y)
   createPieces([{
-    l: 'note',
+    l: LAYER_NOTE,
     w: 3,
     h: 3,
     x: snapped.x,
     y: snapped.y,
-    z: getMaxZ('note') + 1
+    z: getMaxZ(LAYER_NOTE) + 1
   }], true)
 }
 
@@ -709,12 +715,12 @@ export function pointTo (coords) {
 
   createPieces([{ // always create (even if it is a move)
     a: ID.POINTER,
-    l: 'other',
+    l: LAYER_OTHER,
     w: 1,
     h: 1,
     x: snapped.x,
     y: snapped.y,
-    z: getMaxZ('other') + 1
+    z: getMaxZ(LAYER_OTHER) + 1
   }])
 }
 
@@ -728,12 +734,12 @@ export function losTo (x, y, w, h) {
   if (w !== 0 || h !== 0) {
     createPieces([{
       a: ID.LOS,
-      l: 'other',
+      l: LAYER_OTHER,
       x: x,
       y: y,
       w: w,
       h: h,
-      z: getMaxZ('other') + 1
+      z: getMaxZ(LAYER_OTHER) + 1
     }])
   }
 }
@@ -972,13 +978,13 @@ function removeObsoletePieces (keepIds) {
  */
 function setItem (piece, selected) {
   switch (piece.l) {
-    case 'tile':
-    case 'token':
-    case 'overlay':
-    case 'other':
+    case LAYER_TILE:
+    case LAYER_TOKEN:
+    case LAYER_OVERLAY:
+    case LAYER_OTHER:
       setPiece(piece, selected)
       break
-    case 'note':
+    case LAYER_NOTE:
       setNote(piece, selected)
       break
     default:

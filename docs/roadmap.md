@@ -16,7 +16,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] refactor pieces scss
-    * [ ] disable rotate for dice (again)
+    * [X] disable rotate for other-pieces
     * [ ] same-shape pieces flicker if one is flipped
     * [ ] count _ assets against room size limit
     * [X] dicemat to-bottom not working

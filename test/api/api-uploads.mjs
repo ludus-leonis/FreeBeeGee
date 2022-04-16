@@ -195,7 +195,7 @@ function testApiImageUpload (api, version, room) {
       format: 'jpg',
       h: 2,
       w: 3,
-      type: 'tile',
+      type: LAYER_TILE,
       name: 'upload.test'
     }
   }, body => {
@@ -204,7 +204,7 @@ function testApiImageUpload (api, version, room) {
     expect(body.format).to.be.eql('jpg')
     expect(body.h).to.be.eql(2)
     expect(body.w).to.be.eql(3)
-    expect(body.type).to.be.eql('tile')
+    expect(body.type).to.be.eql(LAYER_TILE)
     expect(body.name).to.be.eql('upload.test')
   }, 201)
 
@@ -222,7 +222,7 @@ function testApiImageUpload (api, version, room) {
     expect(body.library.tile[index].bg).to.be.eql('#808080')
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
-    expect(body.library.tile[index].type).to.be.eql('tile')
+    expect(body.library.tile[index].type).to.be.eql(LAYER_TILE)
     expect(body.library.tile[index].name).to.be.eql('upload.test')
   }, 200)
 

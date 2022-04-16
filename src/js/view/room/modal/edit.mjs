@@ -37,6 +37,11 @@ import {
 
 import {
   TYPE_HEX,
+  LAYER_TILE,
+  LAYER_OVERLAY,
+  LAYER_NOTE,
+  LAYER_TOKEN,
+  LAYER_OTHER,
   stickyNoteColors,
   getAssetURL
 } from '../../../view/room/tabletop/tabledata.mjs'
@@ -136,7 +141,7 @@ export function modalEdit (piece) {
     // piece color
     const pieceColor = _('#piece-color')
     const template = getTemplate()
-    if (piece.l === 'note') {
+    if (piece.l === LAYER_NOTE) {
       for (let c = 0; c < stickyNoteColors.length; c++) {
         const option = _('option').create(stickyNoteColors[c].name)
         option.value = c
@@ -161,7 +166,7 @@ export function modalEdit (piece) {
 
     // border color
     const borderColor = _('#piece-border')
-    if (piece.l === 'note') {
+    if (piece.l === LAYER_NOTE) {
       const option = _('option').create('none')
       option.value = 0
       option.selected = true
@@ -217,14 +222,14 @@ export function modalEdit (piece) {
 
 function getModalBody (piece) {
   switch (piece.l) {
-    case 'note':
+    case LAYER_NOTE:
       return getModalNote(piece)
-    case 'tile':
-    case 'overlay':
+    case LAYER_TILE:
+    case LAYER_OVERLAY:
       return getModalTile(piece)
-    case 'other':
+    case LAYER_OTHER:
       return getModalOther(piece)
-    case 'token':
+    case LAYER_TOKEN:
     default:
       return getModalToken(piece)
   }
