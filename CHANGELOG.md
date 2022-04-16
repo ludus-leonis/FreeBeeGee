@@ -17,7 +17,8 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 * fixed dragging some pieces should not change z (e.g. dicemat)
 * added Docker build
-* added multicolor assets
+* added multicolor / colormask assets
+* added random material offsets
 
 
 ## v0.14.0 - Verbose Vicuna

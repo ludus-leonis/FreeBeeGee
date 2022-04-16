@@ -4,13 +4,13 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.15 - Protecting Porpoise
 
-* [X] repo: add Docker build
+* [X] repo: Docker build
 * [X] system: table passwords
 * [X] table: dragging some pieces should not change z (e.g. dicemat)
-* [X] system: added color masks for dice, areas, zones and pins
+* [X] system: color masks for dice, areas, zones and pins
 * [ ] content: more classic game boards - backgammon, mills, solitaire, ...
 * [X] content: more helper/marker overlays (pin, areas)
-* [ ] system: random material offset
+* [X] system: random material offset
 * [X] protected pieces: no-delete, no-clone, no-move
 * [ ] pre-release
   * [X] bump dependencies

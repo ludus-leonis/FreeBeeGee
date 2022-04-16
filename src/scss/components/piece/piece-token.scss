@@ -138,6 +138,13 @@
   // --- material ---
   background-image: var(--fbg-material), var(--fbg-image);
   background-size: 256px, cover;
+  @each $id in $piece-ids {
+    $i: index($piece-ids, $id);
+
+    &[id^='#{$id}'] {
+      background-position: calc(256px / 64 * $i) calc(192px * $i), 0;
+    }
+  }
 
   &.is-border-0 {
     &.is-n::after {
@@ -148,5 +155,12 @@
   &.has-decal {
     background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
     background-size: 256px, cover, cover;
+    @each $id in $piece-ids {
+      $i: index($piece-ids, $id);
+
+      &[id^='#{$id}'] {
+        background-position: calc(256px / 64 * $i) calc(192px * $i), 0, 0;
+      }
+    }
   }
 }
