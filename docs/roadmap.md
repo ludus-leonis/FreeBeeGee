@@ -19,7 +19,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] disable rotate for dice (again)
     * [ ] same-shape pieces flicker if one is flipped
     * [ ] count _ assets against room size limit
-    * [ ] dicemat to-bottom not working
+    * [X] dicemat to-bottom not working
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial

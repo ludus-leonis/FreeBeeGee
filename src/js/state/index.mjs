@@ -362,8 +362,16 @@ export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
   const patch = {}
   if (x != null) patch.x = x
   if (y != null) patch.y = y
-  if (findPiece(pieceId)?._meta?.feature !== FEATURE_DICEMAT) {
-    if (z != null) patch.z = z
+  if (z != null) {
+    if (findPiece(pieceId)?._meta?.feature === FEATURE_DICEMAT) {
+      if (x || y) {
+        // ignore z on move
+      } else {
+        patch.z = z // don't ignore z if only z changes
+      }
+    } else {
+      patch.z = z
+    }
   }
 
   return patchPiece(pieceId, sanitizePiecePatch(patch), sync)
