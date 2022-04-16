@@ -302,7 +302,15 @@ function getModalToken (piece) {
   `
 }
 
-function getModalOther () {
+function getModalOther (piece) {
+  let colorClass = 'is-hidden'
+  let otherClass = 'col-lg-4'
+
+  if (piece._meta.hasColor) {
+    colorClass = 'col-lg-3'
+    otherClass = 'col-lg-3'
+  }
+
   return `
     <form class="container modal-edit modal-edit-other">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
@@ -311,11 +319,15 @@ function getModalOther () {
           <label for="piece-label">Label</label>
           <input id="piece-label" name="piece-label" type="text" maxlength="32">
         </div>
-        <div class="col-4">
+        <div class="col-6 ${colorClass}">
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
+        </div>
+        <div class="col-6 ${otherClass}">
           <label for="piece-w">Width</label>
           <select id="piece-w" name="piece-w"></select>
         </div>
-        <div class="col-4">
+        <div class="col-6 ${otherClass}">
           <label for="piece-h">Height</label>
           <select id="piece-h" name="piece-h"></select>
         </div>
@@ -323,13 +335,9 @@ function getModalOther () {
           <label for="piece-r">Rotate</label>
           <select id="piece-r" name="piece-r"></select>
         </div>
-        <div class="col-4">
+        <div class="col-6 ${otherClass}">
           <label for="piece-side">Side</label>
           <select id="piece-side" name="piece-side"></select>
-        </div>
-        <div class="col-6 is-hidden">
-          <label for="piece-color">Color</label>
-          <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
           <label for="piece-border">Border</label>
@@ -345,7 +353,23 @@ function getModalOther () {
   `
 }
 
-function getModalTile () {
+function getModalTile (piece) {
+  let colorClass = 'is-hidden'
+  let sideClass = 'is-hidden'
+  let otherClass = 'col-lg-3'
+
+  if (piece._meta.hasColor && piece._meta.sides >= 2) {
+    colorClass = 'col-lg-4'
+    sideClass = 'col-lg-2'
+    otherClass = 'col-lg-2'
+  } else if (piece._meta.hasColor) {
+    colorClass = 'col-lg-3'
+    otherClass = 'col-lg-3'
+  } else if (piece._meta.sides >= 2) {
+    sideClass = 'col-lg-3'
+    otherClass = 'col-lg-3'
+  }
+
   return `
     <form class="container modal-edit modal-edit-tile">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
@@ -354,25 +378,25 @@ function getModalTile () {
           <label for="piece-label">Label</label>
           <input id="piece-label" name="piece-label" type="text" maxlength="32">
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 ${colorClass}">
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
+        </div>
+        <div class="col-6 ${otherClass}">
           <label for="piece-w">Width</label>
           <select id="piece-w" name="piece-w"></select>
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 ${otherClass}">
           <label for="piece-h">Height</label>
           <select id="piece-h" name="piece-h"></select>
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 ${otherClass}">
           <label for="piece-r">Rotate</label>
           <select id="piece-r" name="piece-r"></select>
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 ${sideClass}">
           <label for="piece-side">Side</label>
           <select id="piece-side" name="piece-side"></select>
-        </div>
-        <div class="col-6 is-hidden">
-          <label for="piece-color">Color</label>
-          <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
           <label for="piece-border">Border</label>

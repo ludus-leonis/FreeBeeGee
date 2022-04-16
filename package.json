@@ -3,7 +3,7 @@
   "version": "0.15.0-dev",
   "versionEngine": "2.0.0",
   "versionEngineTest": "2.3.4",
-  "codename": "??? ???",
+  "codename": "Protecting Porpoise",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",

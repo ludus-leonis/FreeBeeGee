@@ -977,6 +977,14 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('transparent', $asset->bg);
         $this->assertEquals('paper', $asset->tx);
         $this->assertEquals('soSo', $asset->name);
+
+        $asset = FreeBeeGeeAPI::fileToAsset('soSo.2x3xX-wood.jpg');
+        $this->assertEquals(['soSo.2x3xX-wood.jpg'], $asset->media);
+        $this->assertEquals(2, $asset->w);
+        $this->assertEquals(3, $asset->h);
+        $this->assertEquals('X', $asset->s);
+        $this->assertEquals('wood', $asset->tx);
+        $this->assertEquals('soSo', $asset->name);
     }
 
     public function testrtrimArray()

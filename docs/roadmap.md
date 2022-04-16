@@ -2,32 +2,36 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.15 - ???
+## v0.15 - Protecting Porpoise
 
 * [X] repo: add Docker build
-* [ ] repo: automated deployment tests for new zip/tgz packages after build
 * [X] system: table passwords
 * [X] table: dragging some pieces should not change z (e.g. dicemat)
-* [ ] table: native zoom function
-* [ ] system: template colors as masks (dice, areas)
+* [X] system: added color masks for dice, areas, zones and pins
 * [ ] content: more classic game boards - backgammon, mills, solitaire, ...
-* [ ] content: more helper/marker overlays (arrows, areas, )
+* [X] content: more helper/marker overlays (pin, areas)
+* [ ] system: random material offset
 * [X] protected pieces: no-delete, no-clone, no-move
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] library: select-border sometimes cutoff
+    * [X] refactor pieces scss
+    * [ ] disable rotate for dice (again)
+    * [ ] same-shape pieces flicker if one is flipped
+    * [ ] count _ assets against room size limit
+    * [ ] dicemat to-bottom not working
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
-  * [ ] bump version/codename & update CHANGELOG
+  * [ ] bump engine, version/codename & update CHANGELOG
   * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
-* [ ] system: password-protect assets, too
+* [ ] repo: automated deployment tests for new zip/tgz packages after build
+* [ ] table: native zoom function
 * [ ] snapshot: set default/start table other than 1 in template
 * [ ] library: delete assets UI
 * [ ] library: edit asset UI
@@ -47,6 +51,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
+* [ ] system: password-protect assets, too
 * [ ] docs how to make table/template `.zip`s
 * [ ] API: check sides correspond to asset
 * [ ] API: hide .../data/... from URLs (via .htaccess)
@@ -54,6 +59,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] repo: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
+* [ ] Firefox: filter + 180° bug
 
 ### rather later (unsorted, after v1)
 

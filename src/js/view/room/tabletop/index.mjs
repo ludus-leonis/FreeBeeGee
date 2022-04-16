@@ -324,8 +324,6 @@ function createOrUpdatePieceDOM (piece, select) {
         '--fbg-color': stickyNoteColors[piece.c[0]].value,
         '--fbg-color-invert': brightness(stickyNoteColors[piece.c[0]].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
       })
-    } else if (piece.l === 'overlay' || piece.l === 'other') {
-      // no color
     } else if (piece._meta.hasColor) {
       if (piece.c[0] === 0) { // no/default color
         div.remove('--fbg-color', '--fbg-color-invert')
@@ -335,6 +333,8 @@ function createOrUpdatePieceDOM (piece, select) {
           '--fbg-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
+    } else if (piece.l === 'overlay' || piece.l === 'other') {
+      // no color
     } else {
       const asset = findAsset(piece.a)
       if (asset) {
@@ -555,6 +555,11 @@ export function pieceToNode (piece) {
       })
     } else {
       node.remove('--fbg-material')
+    }
+    if (asset.mask) {
+      node.add('.has-mask')
+      const inner = _('.masked').create().css({ '--fbg-mask': url(getAssetURL(asset, -2)) })
+      node.add(inner)
     }
 
     if (asset.type !== 'overlay' && asset.type !== 'other') {
@@ -777,7 +782,7 @@ export function createLosPiece (x, y, width, height) {
   svg.setAttribute('fill', 'none')
   svg.setAttribute('viewBox', `0 0 ${Math.abs(width) + padding * 2} ${Math.abs(height) + padding * 2}`)
   svg.setAttribute('stroke', 'black')
-  svg.classList.add('piece', 'piece-other', 'is-los')
+  svg.classList.add('piece', 'piece-other', 'piece-los')
 
   // base line
   const base = document.createElementNS('http://www.w3.org/2000/svg', 'path')

@@ -57,7 +57,7 @@ export function testJsonGet (api, path, payloadTests, status = 200, token = unde
     const request = chai.request(api)
       .get(path())
       .set('content-type', 'application/json')
-    if (token) request.set('Authorization', token())
+    if (token) request.set('aUtHoRiZaTiOn', token())
     request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
@@ -97,7 +97,7 @@ export function testGetBuffer (api, path, headerTests, payloadTests, status = 20
     const request = chai.request(api)
       .get(path())
       .set('content-type', 'application/octet-stream')
-    if (token) request.set('Authorization', token())
+    if (token) request.set('aUtHoRiZaTiOn', token())
     request
       .buffer()
       .parse(binaryParser)
@@ -162,7 +162,7 @@ export function testJsonPost (api, path, payload, payloadTests, status = 200, to
       .post(path())
       .set('content-type', 'application/json')
       .send(payload())
-    if (token) request.set('Authorization', token())
+    if (token) request.set('aUtHoRiZaTiOn', token())
     request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
@@ -193,7 +193,7 @@ export function testJsonPut (api, path, payload, payloadTests, status = 200, tok
       .put(path())
       .set('content-type', 'application/json')
       .send(payload())
-    if (token) request.set('Authorization', token())
+    if (token) request.set('aUtHoRiZaTiOn', token())
     request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
@@ -224,7 +224,7 @@ export function testJsonPatch (api, path, payload, payloadTests, status = 200, t
       .patch(path())
       .set('content-type', 'application/json')
       .send(payload())
-    if (token) request.set('Authorization', token())
+    if (token) request.set('aUtHoRiZaTiOn', token())
     request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
@@ -251,7 +251,7 @@ export function testJsonDelete (api, path, status = 204, token = undefined) {
     const request = chai.request(api)
       .delete(path())
       .set('content-type', 'application/json')
-    if (token) request.set('Authorization', token())
+    if (token) request.set('aUtHoRiZaTiOn', token())
     request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null

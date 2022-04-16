@@ -146,21 +146,27 @@ export function findAssetByAlias (name, layer = 'any') {
  * Get the URL for an asset media.
  *
  * @param {Object} asset Asset to get URL for.
- * @param {Number} side Side/media to get, -1 = base. Defaults to 0 = first side.
+ * @param {Number} side Side/media to get, -2 = mask, -1 = base. Defaults to 0=first.
  * @return {String} URL to be used in url() or img.src.
  */
 export function getAssetURL (asset, side = 0) {
   if (DEMO_MODE) {
-    if (side === -1) {
-      return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`
-    } else {
-      return `demo/${getTemplate().name}/assets/${asset.type}/${asset.media[side]}`
+    switch (side) {
+      case -2:
+        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.mask}`
+      case -1:
+        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`
+      default:
+        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.media[side]}`
     }
   } else {
-    if (side === -1) {
-      return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
-    } else {
-      return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
+    switch (side) {
+      case -2:
+        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.mask}`
+      case -1:
+        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
+      default:
+        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
     }
   }
 }
@@ -327,13 +333,17 @@ export const FEATURE_DISCARD = 'DISCARD'
  * @return {Object} Piece for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
+  const colors = getTemplate().colors
+
   piece.l = layerToName(piece.l ?? 0)
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? piece.w
   piece.s = piece.s ?? 0
   piece.c = piece.c ?? [0, 0]
   piece.c[0] = piece.c[0] ?? 0
+  piece.c[0] = piece.c[0] <= colors.length ? piece.c[0] : 0
   piece.c[1] = piece.c[1] ?? 0
+  piece.c[1] = piece.c[1] <= colors.length ? piece.c[1] : 0
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
   piece.t = piece.t ?? []
@@ -365,6 +375,7 @@ export function populatePieceDefaults (piece, headers = null) {
   if (asset) {
     const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
+    if (asset.mask) piece._meta.mask = getAssetURL(asset, -2)
     piece._meta.sides = asset.media.length ?? 1
     if (asset.id === ID.POINTER) {
       piece._meta.feature = 'POINTER'

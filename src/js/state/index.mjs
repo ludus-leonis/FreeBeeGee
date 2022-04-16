@@ -25,6 +25,7 @@ import {
 } from '../lib/utils.mjs'
 
 import {
+  UnexpectedStatus,
   apiGetTable,
   apiPutTable,
   apiGetRoom,
@@ -308,12 +309,14 @@ export function loadRoom (name, t) {
     .then(response => {
       if (response.status === 400) {
         runError('ROOM_INVALID', name)
-      } else {
+      } else if (response.status === 200) {
         _setRoom(response.body)
         return response
+      } else {
+        apiError(new UnexpectedStatus(response.status, response.body), name)
       }
     })
-    .catch(error => apiError(error, room.name))
+    .catch(error => apiError(error, name))
 }
 
 /**
@@ -359,8 +362,7 @@ export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
   const patch = {}
   if (x != null) patch.x = x
   if (y != null) patch.y = y
-  const piece = findPiece(pieceId)
-  if (piece._meta.feature !== FEATURE_DICEMAT) {
+  if (findPiece(pieceId)?._meta?.feature !== FEATURE_DICEMAT) {
     if (z != null) patch.z = z
   }
 

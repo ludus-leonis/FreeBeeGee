@@ -44,8 +44,8 @@ import * as fs from 'fs'
 let data = null
 
 const _ = { // asset count in system template
-  other: 3,
-  overlay: 5,
+  other: 16,
+  overlay: 10,
   tile: 2,
   token: 4
 }
@@ -83,9 +83,9 @@ function testApiZipMinimal (api, version, room) {
       expect(body.template.version).to.be.eql(p.version)
       expect(body.template.engine).to.be.eql('2.3.0')
       expect(body.template.colors).to.be.an('array')
-      expect(body.template.colors.length).to.be.eql(8)
+      expect(body.template.colors.length).to.be.eql(13)
       expect(body.template.borders).to.be.an('array')
-      expect(body.template.borders.length).to.be.eql(8)
+      expect(body.template.borders.length).to.be.eql(13)
       expect(body.credits).to.be.eql('This template does not provide license information.')
     }, 201)
 

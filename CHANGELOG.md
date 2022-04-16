@@ -2,17 +2,22 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.15.0 - ??? ???
+## v0.15.0 - Protecting Porpoise
 
 ### Notable changes
 
 * added table passwords
-* added protected pieces: no-delete, no-clone, no-move
+* added protected pieces - prevent delete, clone and/or move
+* added dice in 13 colors
+* added area overlay in 13 colors
+* added pin overlay in 13 colors
+* added zone overlay in 13 colors
 
 ### Other changes
 
 * fixed dragging some pieces should not change z (e.g. dicemat)
 * added Docker build
+* added multicolor assets
 
 
 ## v0.14.0 - Verbose Vicuna

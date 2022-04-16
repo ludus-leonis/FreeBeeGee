@@ -292,11 +292,19 @@ class FreeBeeGeeAPI
             if (property_exists($meta, 'token')) {
                 if ($meta->token !== $this->ID_ACCESS_ANY) {
                     $headers = function_exists('apache_request_headers') ? apache_request_headers() : [];
-                    if (!isset($headers['Authorization'])) {
-                        $this->api->sendError(401, 'not authorized');
+                    $authorized = false;
+                    foreach ($headers as $header => $value) {
+                        if (strtolower($header) === 'authorization') { // headers are case-insensitive
+                            if ($meta->token === $value) {
+                                $authorized = true;
+                            } else {
+                                $this->api->sendError(403, 'forbidden ' . $roomName);
+                            }
+                            break; // terminate after first unsuccessful authorization header
+                        }
                     }
-                    if ($meta->token !== $headers['Authorization']) {
-                        $this->api->sendError(403, 'forbidden ' . $roomName);
+                    if (!$authorized) {
+                        $this->api->sendError(401, 'not authorized');
                     }
                 }
             }
@@ -444,13 +452,18 @@ class FreeBeeGeeAPI
     {
         return [
             (object) [ 'name ' => 'Black', 'value' => '#202020' ],
-            (object) [ 'name ' => 'Red', 'value' => '#b01c16' ],
+            (object) [ 'name ' => 'White', 'value' => '#e8e8e8' ],
+            (object) [ 'name ' => 'Red', 'value' => '#b32d35' ],
             (object) [ 'name ' => 'Orange', 'value' => '#b05a11' ],
             (object) [ 'name ' => 'Yellow', 'value' => '#af9700' ],
             (object) [ 'name ' => 'Green', 'value' => '#317501' ],
+            (object) [ 'name ' => 'Cyan', 'value' => '#40bfbf' ],
             (object) [ 'name ' => 'Blue', 'value' => '#3387b0' ],
             (object) [ 'name ' => 'Indigo', 'value' => '#2e4d7b' ],
             (object) [ 'name ' => 'Violet', 'value' => '#730fb1' ],
+            (object) [ 'name ' => 'Magenta', 'value' => '#bf40bf' ],
+            (object) [ 'name ' => 'Gray A', 'value' => '#606060' ],
+            (object) [ 'name ' => 'Gray B', 'value' => '#a0a0a0' ],
         ];
     }
 
@@ -577,12 +590,6 @@ class FreeBeeGeeAPI
             $lastAsset = null;
             foreach (glob($roomFolder . 'assets/' . $type . '/*') as $filename) {
                 $asset = FreeBeeGeeAPI::fileToAsset(basename($filename));
-                $asset->type = $type;
-
-                // this ID only has to be unique within the room, but should be reproducable
-                // therefore we use a fast hash and even only use parts of it
-                $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
-                $asset->id = $this->generateId(abs(crc32($idBase))); // avoid neg. values on 32bit systems
 
                 if (
                     $lastAsset === null
@@ -597,15 +604,24 @@ class FreeBeeGeeAPI
                         }
                         array_push($assets[$type], $lastAsset);
                     }
-                    if (preg_match('/^X+$/', $asset->s)) { // this is a back side
-                        $asset->back = $asset->media[0];
-                        $asset->media = [];
-                    } elseif ((int)$asset->s === 0) { // this is a background layer
-                        $asset->base = $asset->media[0];
-                        $asset->media = [];
+                    $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
+                    $lastAsset = (object) [
+                        'id' => $this->generateId(abs(crc32($idBase))), // avoid neg. values on 32bit systems
+                        'name' => $asset->name,
+                        'type' => $type,
+                        'w' => $asset->w,
+                        'h' => $asset->h,
+                        'bg' => $asset->bg,
+                        'media' => []
+                    ];
+                    if (property_exists($asset, 'tx')) {
+                        $lastAsset->tx = $asset->tx;
                     }
-                    unset($asset->s); // we don't keep the side in the JSON data
-                    $lastAsset = $asset;
+                }
+                if (preg_match('/^X+$/', $asset->s)) { // this is a mask
+                    $lastAsset->mask = $asset->media[0];
+                } elseif ((int)$asset->s === 0) { // this is a background layer
+                    $lastAsset->base = $asset->media[0];
                 } else {
                     // this is another side of the same asset. add it to the existing one.
                     array_push($lastAsset->media, $asset->media[0]);
