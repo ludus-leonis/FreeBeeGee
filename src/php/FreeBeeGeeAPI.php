@@ -237,7 +237,7 @@ class FreeBeeGeeAPI
     private function getRoomFolder(
         string $roomName
     ): string {
-        return $this->api->getDataDir() . 'rooms/' . $roomName . '/';
+        return $this->api->getDataDir("rooms/$roomName/");
     }
 
     /**
@@ -249,8 +249,8 @@ class FreeBeeGeeAPI
      */
     private function getServerConfig()
     {
-        if (is_file($this->api->getDataDir() . 'server.json')) {
-            $config = json_decode(file_get_contents($this->api->getDataDir() . 'server.json'));
+        if (is_file($this->api->getDataDir('server.json'))) {
+            $config = json_decode(file_get_contents($this->api->getDataDir('server.json')));
             $config->version = '$VERSION$';
             $config->engine = '$ENGINE$';
             $config->maxAssetSize = $this->maxAssetSize;
@@ -332,10 +332,10 @@ class FreeBeeGeeAPI
         }
 
         // count rooms
-        $dir = $this->api->getDataDir() . 'rooms/';
+        $dir = $this->api->getDataDir('rooms/');
         $count = 0;
         if (is_dir($dir)) {
-            $count = sizeof(scandir($this->api->getDataDir() . 'rooms/')) - 2; // do not count . and ..
+            $count = sizeof(scandir($this->api->getDataDir('rooms/'))) - 2; // do not count . and ..
         }
 
         return $json->maxRooms > $count ? $json->maxRooms - $count : 0;
@@ -352,7 +352,7 @@ class FreeBeeGeeAPI
     private function deleteOldRooms(
         $maxAgeSec
     ) {
-        $dir = $this->api->getDataDir() . 'rooms/';
+        $dir = $this->api->getDataDir('rooms/');
         $now = time();
         if (is_dir($dir)) {
             $rooms = scandir($dir);
@@ -406,9 +406,9 @@ class FreeBeeGeeAPI
         }
 
         // unzip system template next if it exists, possibly overwriting assets
-        if (is_file($this->api->getDataDir() . 'templates/_.zip')) {
+        if (is_file($this->api->getDataDir('templates/_.zip'))) {
             $zip = new \ZipArchive();
-            if ($zip->open($this->api->getDataDir() . 'templates/_.zip') === true) {
+            if ($zip->open($this->api->getDataDir('templates/_.zip')) === true) {
                 $zip->extractTo($folder);
                 $zip->close();
             } else {
@@ -679,7 +679,10 @@ class FreeBeeGeeAPI
         bool $ignoreEngine = false
     ): array {
         $valid = [];
-        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024;
+
+        // available room size = config size minus system zip size
+        $systemTemplateSize = $this->getZipSize($this->api->getDataDir('templates/_.zip'));
+        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024 - $systemTemplateSize;
 
         // basic sanity tests
         if (filesize($zipPath) > $sizeLeft) {
@@ -1515,7 +1518,7 @@ class FreeBeeGeeAPI
     private function getTemplates()
     {
         $templates = [];
-        foreach (glob($this->api->getDataDir() . 'templates/*zip') as $filename) {
+        foreach (glob($this->api->getDataDir('templates/*zip')) as $filename) {
             $zip = pathinfo($filename);
             if ($zip['filename'] != '_') { // don't add system template
                 $templates[] = $zip['filename'];
@@ -1700,7 +1703,7 @@ class FreeBeeGeeAPI
                 }
                 $zipPath = $_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid';
             } else {
-                $zipPath = $this->api->getDataDir() . 'templates/' . $validated->template . '.zip';
+                $zipPath = $this->api->getDataDir("templates/$validated->template.zip");
             }
 
             // doublecheck template / snapshot
@@ -1964,9 +1967,9 @@ class FreeBeeGeeAPI
     public function assertFilePermissions(
         $roomName = null
     ) {
-        $data = $this->api->getDataDir();
+        $roomsDir = $this->api->getDataDir('/rooms/');
         $this->assertWritable('');
-        if (is_dir($data . '/rooms/')) {
+        if (is_dir($roomsDir)) {
             $this->assertWritable('rooms/');
         }
         if ($roomName) {
@@ -1988,9 +1991,9 @@ class FreeBeeGeeAPI
     public function assertWritable(
         $dataDir
     ) {
-        $data = $this->api->getDataDir();
-        if (is_dir($data . '/' . $dataDir) && !is_writable($data . '/' . $dataDir)) {
-            $this->api->sendError(400, 'api/data/' . $dataDir, 'FILE_PERMISSIONS');
+        $data = $this->api->getDataDir($dataDir);
+        if (is_dir($data) && !is_writable($data)) {
+            $this->api->sendError(400, 'api/data' . $dataDir, 'FILE_PERMISSIONS');
         }
     }
 
@@ -2217,7 +2220,7 @@ class FreeBeeGeeAPI
         $maxSize = $this->getServerConfig()->maxRoomSizeMB  * 1024 * 1024;
         $blob = base64_decode($asset->base64);
         if ($folderSize + strlen($blob) > $maxSize) {
-            $this->api->sendError(400, 'snapshot too big', 'ROOM_SIZE', [$maxSize - $folderSize]);
+            $this->api->sendError(400, 'asset too big', 'ROOM_SIZE', [$maxSize - $folderSize]);
         }
 
         // determine asset path elements
@@ -2433,6 +2436,30 @@ class FreeBeeGeeAPI
             $asset->bg = '#808080';
         }
         return $asset;
+    }
+
+    /**
+     * Get a ZIP's extracted size.
+     *
+     * Counts all included files.
+     *
+     * @param string $zipPath Path to ZIP.
+     * @return int Total size in byte.
+     */
+    public function getZipSize(
+        string $zipPath
+    ): int {
+        $zipSize = 0;
+        if (is_file($zipPath)) {
+            $zip = new \ZipArchive();
+            if (!$zip->open($zipPath)) {
+                $this->api->sendError(400, 'can\'t open zip', 'ZIP_INVALID');
+            }
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $zipSize += $zip->statIndex($i)['size'];
+            }
+        }
+        return $zipSize;
     }
 
     /**

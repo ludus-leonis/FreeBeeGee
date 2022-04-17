@@ -17,8 +17,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bugfixes + refactoring
     * [X] refactor pieces scss
     * [X] disable rotate for other-pieces
-    * [ ] same-shape pieces flicker if one is flipped
-    * [ ] count _ assets against room size limit
+    * [X] count _ assets against room size limit
     * [X] dicemat to-bottom not working
   * [ ] review docs
   * [ ] review + run tests
@@ -36,6 +35,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] library: delete assets UI
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
+* [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] pieces: inline-edit notes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] multi-select stuff

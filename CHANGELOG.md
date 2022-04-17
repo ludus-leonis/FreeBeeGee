@@ -20,6 +20,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added random material offsets
 * fixed dragging some pieces should not change z (e.g. dicemat)
 * fixed disable-rotate for other-pieces
+* fixed _ assets not counting against room size limit
 
 
 ## v0.14.0 - Verbose Vicuna

@@ -42,6 +42,13 @@ import {
   pieceFull
 } from './utils/data.mjs'
 
+import {
+  LAYER_TILE,
+  LAYER_TOKEN,
+  LAYER_OVERLAY,
+  LAYER_OTHER
+} from '../../src/js/view/room/tabletop/tabledata.mjs'
+
 // -----------------------------------------------------------------------------
 
 let data = null

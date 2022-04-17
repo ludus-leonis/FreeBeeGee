@@ -37,6 +37,10 @@ import {
   testZIPUpload
 } from './utils/chai.mjs'
 
+import {
+  LAYER_TILE
+} from '../../src/js/view/room/tabletop/tabledata.mjs'
+
 import * as fs from 'fs'
 
 // -----------------------------------------------------------------------------
@@ -45,7 +49,7 @@ let data = null
 
 const _ = { // asset count in system template
   other: 16,
-  overlay: 10,
+  overlay: 11,
   tile: 2,
   token: 4
 }

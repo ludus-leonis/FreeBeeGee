@@ -88,17 +88,19 @@ class JSONRestAPI
      * Might be used by derived classes to store API data (e.g. JSON). This is
      * the same directory this php file is in.
      *
+     * @param string $subpath Optional sub-path to append.
      * @return string FS path to data dir, e.g. '/var/www/www.mysite.com/api/'
      */
-    public function getDataDir(): string
-    {
+    public function getDataDir(
+        string $subpath = ''
+    ): string {
         $dir = $this->apiDirFS . 'data/';
         if (!is_dir($dir)) { // create dir on the fly
             if (!mkdir($dir, 0777, true)) {
                 $this->sendError(500, 'can\'t create API data dir');
             }
         }
-        return $dir;
+        return $dir . $subpath;
     }
 
     /**
@@ -849,7 +851,7 @@ class JSONRestAPI
     public function waitForWriteLock(
         ?string $lockFile
     ) {
-        $lockFile = $lockFile ?? $this->getDataDir() . '.flock';
+        $lockFile = $lockFile ?? $this->getDataDir('.flock');
 
         $lock = fopen($lockFile, 'w');
         if (flock($lock, LOCK_EX)) {  // acquire an exclusive lock
@@ -869,7 +871,7 @@ class JSONRestAPI
     public function waitForReadLock(
         ?string $lockFile
     ) {
-        $lockFile = $lockFile ?? $this->getDataDir() . '.flock';
+        $lockFile = $lockFile ?? $this->getDataDir('.flock');
 
         $lock = fopen($lockFile, 'w');
         if (flock($lock, LOCK_SH)) {  // acquire a shared lock

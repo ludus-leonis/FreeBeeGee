@@ -317,7 +317,7 @@ function testApiSnapshotVersions (api, version, room) {
 function blob (mb) {
   const chars = [...Array(256)].map((s, i) => String.fromCharCode(i))
   var result = []
-  for (let i = 0; i < mb * 1024 * 1024; i++) {
+  for (let i = 0; i < mb * 0.825 * 1024 * 1024; i++) { // 0.825 is the compression ratio
     const rnd = Math.floor(Math.random() * 256)
     result.push(chars[rnd])
   }
@@ -339,6 +339,7 @@ function testApiSnapshotSize (api, version, room) {
       zip.addFile('LICENSE.md', Buffer.from('you may'))
     }),
     body => {
+      expect(body._error).to.be.eql('PHP_SIZE')
     }, 400)
 
   // 65MB - size exceeds webserver
@@ -353,15 +354,31 @@ function testApiSnapshotSize (api, version, room) {
       zip.addFile('LICENSE.md', Buffer.from('you may'))
     }),
     body => {
+      expect(body).to.be.eql({})
     }, 413, false)
 
-  // 1MB - size ok
+  // 15MB - too large, as system assets are too much
   testZIPUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < 15; i++) {
+        zip.addFile(`blob${i}.bin`, Buffer.from(b))
+      }
+      zip.addFile('LICENSE.md', Buffer.from('you may'))
+    }),
+    body => {
+      expect(body._error).to.be.eql('ROOM_SIZE')
+    }, 400)
+
+  // 14MB - barely ok including system assets
+  testZIPUpload(api,
+    () => '/rooms/',
+    () => { return room },
+    () => { return 'apitests' },
+    () => zipCreate(zip => {
+      for (let i = 0; i < 14; i++) {
         zip.addFile(`blob${i}.bin`, Buffer.from(b))
       }
       zip.addFile('LICENSE.md', Buffer.from('you may'))
