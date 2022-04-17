@@ -2,28 +2,18 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.15 - Protecting Porpoise
+## v0.16 - ??? ???
 
-* [X] repo: Docker build
-* [X] system: table passwords
-* [X] table: dragging some pieces should not change z (e.g. dicemat)
-* [X] system: color masks for dice, areas, zones and pins
-* [X] content: more classic game boards - backgammon, mills, solitaire, ...
-* [X] content: more helper/marker overlays (pin, areas)
-* [X] system: random material offset
-* [X] protected pieces: no-delete, no-clone, no-move
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] refactor pieces scss
-    * [X] disable rotate for other-pieces
-    * [X] count _ assets against room size limit
-    * [X] dicemat to-bottom not working
-  * [X] review docs
-  * [X] review + run tests
-  * [X] review tutorial
-  * [X] bump engine, version/codename & update CHANGELOG
-  * [X] update screenshots
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] measure mode and isSolid bug
+    * [ ] flip + no bug
+  * [ ] review docs
+  * [ ] review + run tests
+  * [ ] review tutorial
+  * [ ] bump engine, version/codename & update CHANGELOG
+  * [ ] update screenshots
 
 ## Backlog
 

@@ -1,9 +1,9 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.15.0",
+  "version": "0.16.0-dev",
   "versionEngine": "2.1.0",
   "versionEngineTest": "2.3.4",
-  "codename": "Protecting Porpoise",
+  "codename": "??? ???",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",
