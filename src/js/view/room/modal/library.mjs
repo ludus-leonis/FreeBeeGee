@@ -110,7 +110,7 @@ export function modalLibrary (xy) {
           <label for="tab-1" class="tabs-tab">Tiles</label>
           <label for="tab-2" class="tabs-tab">Overlays</label>
           <label for="tab-3" class="tabs-tab">Token</label>
-          <label for="tab-4" class="tabs-tab">Dice &amp; Cards</label>
+          <label for="tab-4" class="tabs-tab">Dice</label>
           <label for="tab-5" class="tabs-tab">Upload</label>
         </div>
         <div class="tabs-content">

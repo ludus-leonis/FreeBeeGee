@@ -19,10 +19,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] disable rotate for other-pieces
     * [X] count _ assets against room size limit
     * [X] dicemat to-bottom not working
-  * [ ] review docs
-  * [ ] review + run tests
-  * [ ] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
+  * [X] review docs
+  * [X] review + run tests
+  * [X] review tutorial
+  * [X] bump engine, version/codename & update CHANGELOG
   * [ ] update screenshots
 
 ## Backlog

@@ -9,9 +9,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added table passwords
 * added protected pieces - prevent delete, clone and/or move
 * added dice in 13 colors
-* added area overlay in 13 colors
-* added pin overlay in 13 colors
-* added zone overlay in 13 colors
+* added area, pin and zone overlays in 13 colors
 * added Backgammon, Mills, Solitaire, Oware, Pachisi and TicTacToe to Classic template
 
 ### Other changes

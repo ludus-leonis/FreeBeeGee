@@ -14,25 +14,25 @@ Your game. Your data.
 
 * Browser-based 2D virtual tabletop for board- and role-playing games.
 * Easy-to-use drag'n'drop interface. Keyboard hotkeys for power-users.
-* Invite friends by sending them a room's unique URL.
+* Invite friends by sending them a room's unique URL. Room passwords optional.
 * Multiple tables per room. Use them for different game setups or dungeon levels.
 * Tile-/grid-based. Supports square and hex layouts, with snapping.
-* Classic dungeon tiles and 200+ monster token included.
+* Classic game boards, dungeon tiles and 200+ monster token included.
 * Separate layers for tiles, overlays and tokens.
 * Asset browser for your token/tiles. Individual libraries per room.
 * Sticky notes and dice trays.
 * Templates to setup tables and populate your library from.
 * Transfer individual rooms between servers. Or keep an offline backup.
 * Privacy friendly. No user tracking. No 3rd-party scripts. Rooms are deleted after some (configurable) time, usually 48h.
-* File & folder-based. No database required.
-* Easy to install and maintain.
+* File & folder-based. No database required. Easy to install and maintain.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
 
 **Note:** This is an development version. A few rather major features are still missing:
 
 * While you can upload images/tiles/pieces via the web-UI, editing them is quite limited.
+* No multi-select yet.
 
-The good news is: You can still use FreeBeeGee today to play! Those features will arrive sooner or later. There is a [roadmap](docs/roadmap.md) for details.
+The good news is: You can still use FreeBeeGee today to play! Those features will arrive sooner or later. There is a (rough) [roadmap](docs/roadmap.md) for details.
 
 ## Screenshots
 
@@ -51,7 +51,7 @@ FreeBeeGee follows the [KISS principle](https://en.wikipedia.org/wiki/KISS_princ
 * A game scripting engine or programming environment.
 * An AI to play against.
 * A 3D or physics engine with dazzling visual effects.
-* A campaign management tool.
+* A campaign/game management tool.
 * A community management tool.
 
 There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/limitations of this project.

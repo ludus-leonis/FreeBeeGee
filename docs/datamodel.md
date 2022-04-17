@@ -6,7 +6,7 @@ It is not necessary to read/understand this to use FBG. This information is here
 
 ## IDs
 
-Various objects have IDs. FreeBeeGee uses random 8-character-strings composed of uppercase and lowercase letters, digits, '_' and '-'. That's 64 possible characters and roughly 10^14 combinations. E.g.:
+Various objects have IDs. FreeBeeGee uses compact random 8-character-strings composed of uppercase and lowercase letters, digits, '_' and '-'. That's 64 possible characters and roughly 10^14 combinations. For maximum browser compatibility, IDs always start with a letter. E.g.:
 
 ```
 "id": "FpO1J-Tg"
@@ -59,6 +59,9 @@ Optional fields:
 
 `tx`
 : The texture of the *asset*. Defaults to 'none'. See *Media filenames* below for possible values.
+
+`mask`
+: An image to be used as alpha-mask during rendering. Allows arbitrary shapes or even partly-transparent assets.
 
 ### Media filenames
 
