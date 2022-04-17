@@ -2,6 +2,26 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.15.0 - Protecting Porpoise
+
+### Notable changes
+
+* added table passwords
+* added protected pieces - prevent delete, clone and/or move
+* added dice in 13 colors
+* added area, pin and zone overlays in 13 colors
+* added Backgammon, Mills, Solitaire, Oware, Pachisi and TicTacToe to Classic template
+
+### Other changes
+
+* added Docker build
+* added multicolor / colormask assets
+* added random material offsets
+* fixed dragging some pieces should not change z (e.g. dicemat)
+* fixed disable-rotate for other-pieces
+* fixed _ assets not counting against room size limit
+
+
 ## v0.14.0 - Verbose Vicuna
 
 This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no longer work.

@@ -43,14 +43,6 @@ import {
   DEMO_MODE
 } from '../../../api/index.mjs'
 
-export const assetTypes = [
-  'tile',
-  'token',
-  'overlay',
-  'other',
-  'badge'
-]
-
 export const TYPE_SQUARE = 'grid-square'
 export const TYPE_HEX = 'grid-hex'
 
@@ -62,12 +54,25 @@ export const stickyNoteColors = [
   { name: 'Pink', value: '#f4a0c6' }
 ]
 
+export const LAYER_TILE = 'tile'
+export const LAYER_OVERLAY = 'overlay'
+export const LAYER_NOTE = 'note'
+export const LAYER_TOKEN = 'token'
+export const LAYER_OTHER = 'other'
 export const LAYERS = [ // reverse order
-  'tile',
-  'overlay',
-  'note',
-  'token',
-  'other'
+  LAYER_TILE,
+  LAYER_OVERLAY,
+  LAYER_NOTE,
+  LAYER_TOKEN,
+  LAYER_OTHER
+]
+
+export const assetTypes = [
+  LAYER_TILE,
+  LAYER_TOKEN,
+  LAYER_OVERLAY,
+  LAYER_OTHER,
+  'badge'
 ]
 
 function layerToName (layer) {
@@ -146,21 +151,27 @@ export function findAssetByAlias (name, layer = 'any') {
  * Get the URL for an asset media.
  *
  * @param {Object} asset Asset to get URL for.
- * @param {Number} side Side/media to get, -1 = base. Defaults to 0 = first side.
+ * @param {Number} side Side/media to get, -2 = mask, -1 = base. Defaults to 0=first.
  * @return {String} URL to be used in url() or img.src.
  */
 export function getAssetURL (asset, side = 0) {
   if (DEMO_MODE) {
-    if (side === -1) {
-      return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`
-    } else {
-      return `demo/${getTemplate().name}/assets/${asset.type}/${asset.media[side]}`
+    switch (side) {
+      case -2:
+        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.mask}`
+      case -1:
+        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`
+      default:
+        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.media[side]}`
     }
   } else {
-    if (side === -1) {
-      return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
-    } else {
-      return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
+    switch (side) {
+      case -2:
+        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.mask}`
+      case -1:
+        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
+      default:
+        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
     }
   }
 }
@@ -255,7 +266,7 @@ export function sanitizePiecePatch (patch, pieceId = null) {
     switch (field) {
       case 'c':
         result[field] = []
-        colors = p?.l === 'note' ? stickyNoteColors.length : (t.colors.length + 1)
+        colors = p?.l === LAYER_NOTE ? stickyNoteColors.length : (t.colors.length + 1)
         if (patch[field][0] !== undefined) result[field].push(mod(patch[field][0], colors))
         if (patch[field][1] !== undefined) result[field].push(mod(patch[field][1], t.borders.length + 1))
         break
@@ -278,6 +289,9 @@ export function sanitizePiecePatch (patch, pieceId = null) {
         break
       case 'r':
         result[field] = mod(patch[field], 360)
+        break
+      case 'f':
+        result[field] = patch[field] & 0b11111111
         break
       case 'l':
       case 'id':
@@ -313,6 +327,9 @@ export function populateTemplateDefaults (template, headers = null) {
   return template
 }
 
+export const FEATURE_DICEMAT = 'DICEMAT'
+export const FEATURE_DISCARD = 'DISCARD'
+
 /**
  * Add default piece values to all properties that the API might omit.
  *
@@ -321,17 +338,22 @@ export function populateTemplateDefaults (template, headers = null) {
  * @return {Object} Piece for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
+  const colors = getTemplate().colors
+
   piece.l = layerToName(piece.l ?? 0)
   piece.w = piece.w ?? 1
   piece.h = piece.h ?? piece.w
   piece.s = piece.s ?? 0
   piece.c = piece.c ?? [0, 0]
   piece.c[0] = piece.c[0] ?? 0
+  piece.c[0] = piece.c[0] <= colors.length ? piece.c[0] : 0
   piece.c[1] = piece.c[1] ?? 0
+  piece.c[1] = piece.c[1] <= colors.length ? piece.c[1] : 0
   piece.r = piece.r ?? 0
   piece.n = piece.n ?? 0
   piece.t = piece.t ?? []
   piece.b = piece.b ?? []
+  piece.f = piece.f ?? 0
 
   // add client-side meta information for piece
   piece._meta = {}
@@ -358,16 +380,17 @@ export function populatePieceDefaults (piece, headers = null) {
   if (asset) {
     const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
+    if (asset.mask) piece._meta.mask = getAssetURL(asset, -2)
     piece._meta.sides = asset.media.length ?? 1
     if (asset.id === ID.POINTER) {
       piece._meta.feature = 'POINTER'
     } else {
       switch (asset.name) {
         case '_.dicemat':
-          piece._meta.feature = 'DICEMAT'
+          piece._meta.feature = FEATURE_DICEMAT
           break
         case '_.discard':
-          piece._meta.feature = 'DISCARD'
+          piece._meta.feature = FEATURE_DISCARD
           break
       }
     }
@@ -377,8 +400,8 @@ export function populatePieceDefaults (piece, headers = null) {
     } else {
       piece._meta.hasColor = false
     }
-    piece._meta.hasBorder = piece.l === 'token'
-    if (asset.type === 'token' || piece._meta.hasColor === true || bgImage.match(/(jpg|jpeg)$/i)) {
+    piece._meta.hasBorder = piece.l === LAYER_TOKEN
+    if (asset.type === LAYER_TOKEN || piece._meta.hasColor === true || bgImage.match(/(jpg|jpeg)$/i)) {
       piece._meta.hasHighlight = true
     } else {
       piece._meta.hasHighlight = false
@@ -422,7 +445,7 @@ export function populatePiecesDefaults (pieces, headers = null) {
 /**
  * Determine the lowest z-index in use by the pieces in a layer.
  *
- * @param {String} layer Name of a layer, e.g. 'tile'.
+ * @param {String} layer Name of a layer, e.g. LAYER_TILE.
  * @param {Object} area Bounding rect in px to check pieces at least partly within.
  * @return {Number} Lowest CSS z-index, or 0 if layer is empty.
  */
@@ -454,7 +477,7 @@ export function sortZ (pieces) {
 /**
  * Determine the highest z-index in use by the pieces in a layer.
  *
- * @param {String} layer Name of a layer, e.g. 'tile'.
+ * @param {String} layer Name of a layer, e.g. LAYER_TILE.
  * @param {Object} area Bounding rect in px to check pieces at least partly within.
  * @return {Number} Highest CSS z-index, or 0 if area in layer is empty.
  */
@@ -658,7 +681,7 @@ export function splitAssetFilename (assetName) {
 export function isSolid (piece, x, y) {
   if (
     !piece || // no piece = no checking
-    piece.l === 'token' || // token are always round & solid
+    piece.l === LAYER_TOKEN || // token are always round & solid
     !piece._meta?.mask // no mask = no checking possible
   ) return Promise.resolve(true)
 

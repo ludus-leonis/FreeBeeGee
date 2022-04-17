@@ -30,7 +30,7 @@ export const DEMO_MODE = ('true' === '$DEMOMODE$')
 /**
  * Error class when the API responds with an unexpected HTTP code.
  *
- * Not necessarily an 'error', just something unexpected the caller might like
+ * Not necessarily an 'error', just something the caller might like
  * to react on.
  */
 export class UnexpectedStatus extends Error {
@@ -61,24 +61,50 @@ export function apiGetTemplates () {
 }
 
 /**
- * API GET /rooms/:roomName/
+ * API POST /rooms/:roomName/auth/
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {Object} auth Authentification data object (password).
  * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetRoom (roomName, headers = false) {
-  return getJson([200, 400, 404], 'api/rooms/' + roomName + '/', headers)
+export function apiPostRoomAuth (roomName, auth, headers = false) {
+  return postJson([200, 403, 404], `api/rooms/${roomName}/auth/`, auth, null, headers)
+}
+
+/**
+ * API PATCH /rooms/:roomName/auth/
+ *
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {Object} patch Partial auth JSON/Object to send.
+ * @param {String} token API access token.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPatchRoomAuth (roomName, patch, token) {
+  return patchJson([200], `api/rooms/${roomName}/auth/`, patch, token)
+}
+
+/**
+ * API GET /rooms/:roomName/
+ *
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {String} token API access token.
+ * @param {Boolean} headers If true, replay with a header/payload object.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiGetRoom (roomName, token, headers = false) {
+  return getJson([200, 400, 404], `api/rooms/${roomName}/`, token, headers)
 }
 
 /**
  * API GET /rooms/:roomName/digest/
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetRoomDigest (roomName) {
-  return getJson([200], 'api/rooms/' + roomName + '/digest/')
+export function apiGetRoomDigest (roomName, token) {
+  return getJson([200], `api/rooms/${roomName}/digest/`, token)
 }
 
 /**
@@ -86,30 +112,33 @@ export function apiGetRoomDigest (roomName) {
  *
  * @param {Object} room Room meta-JSON/Object to send.
  * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostRoom (room, snapshot) {
+export function apiPostRoom (room, snapshot, token) {
   const formData = new FormData()
   formData.append('name', room.name)
   if (room.template) formData.append('template', room.template)
   if (room.auth) formData.append('auth', room.auth)
+  if (room.password) formData.append('password', room.password)
   if (room.convert !== undefined) formData.append('convert', room.convert)
   if (snapshot) formData.append('snapshot', snapshot)
 
   return fetchOrThrow([201], 'api/rooms/', {
     method: 'POST',
     body: formData
-  })
+  }, token)
 }
 
 /**
  * API DELETE /rooms/:roomName/
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeleteRoom (roomName) {
-  return deleteJson([204], 'api/rooms/' + roomName + '/')
+export function apiDeleteRoom (roomName, token) {
+  return deleteJson([204], `api/rooms/${roomName}/`, token)
 }
 
 /**
@@ -117,10 +146,11 @@ export function apiDeleteRoom (roomName) {
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Object} patch Partial piece JSON/Object to send.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchTemplate (roomName, patch) {
-  return patchJson([200], 'api/rooms/' + roomName + '/template/', patch)
+export function apiPatchTemplate (roomName, patch, token) {
+  return patchJson([200], `api/rooms/${roomName}/template/`, patch, token)
 }
 
 /**
@@ -128,11 +158,12 @@ export function apiPatchTemplate (roomName, patch) {
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} tableId Number of table (0-9), 1 = normal.
+ * @param {String} token API access token.
  * @param {Boolean} headers If true, replay with a header/payload object.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetTable (roomName, tableId, headers = false) {
-  return getJson([200], 'api/rooms/' + roomName + '/tables/' + tableId + '/', headers)
+export function apiGetTable (roomName, tableId, token, headers = false) {
+  return getJson([200], `api/rooms/${roomName}/tables/${tableId}/`, token, headers)
 }
 
 /**
@@ -141,10 +172,11 @@ export function apiGetTable (roomName, tableId, headers = false) {
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} tableId Number of table (0-9), 1 = normal.
  * @param {Array} table The new room table (array of pieces).
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutTable (roomName, tableId, table) {
-  return putJson([200], 'api/rooms/' + roomName + '/tables/' + tableId + '/', table)
+export function apiPutTable (roomName, tableId, table, token) {
+  return putJson([200], `api/rooms/${roomName}/tables/${tableId}/`, table, token)
 }
 
 /**
@@ -152,10 +184,11 @@ export function apiPutTable (roomName, tableId, table) {
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} tableId Number of table (0-9), 1 = normal.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiHeadTable (roomName, tableId) {
-  return head('api/rooms/' + roomName + '/tables/' + tableId + '/')
+export function apiHeadTable (roomName, tableId, token) {
+  return head(`api/rooms/${roomName}/tables/${tableId}/`, token)
 }
 
 /**
@@ -164,10 +197,11 @@ export function apiHeadTable (roomName, tableId) {
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} tableId Number of table (0-9), 1 = normal.
  * @param {Object} piece Piece JSON/Object to send.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutPiece (roomName, tableId, piece) {
-  return putJson([200], 'api/rooms/' + roomName + '/tables/' + tableId + '/pieces/' + piece.id + '/', piece)
+export function apiPutPiece (roomName, tableId, piece, token) {
+  return putJson([200], `api/rooms/${roomName}/tables/${tableId}/pieces/${piece.id}/`, piece, token)
 }
 
 /**
@@ -177,10 +211,11 @@ export function apiPutPiece (roomName, tableId, piece) {
  * @param {Number} tableId Number of table (0-9), 1 = normal.
  * @param {String} pieceId Piece-ID (ID) of piece to patch.
  * @param {Object} patch Partial piece JSON/Object to send.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPiece (roomName, tableId, pieceId, patch) {
-  return patchJson([200], 'api/rooms/' + roomName + '/tables/' + tableId + '/pieces/' + pieceId + '/', patch)
+export function apiPatchPiece (roomName, tableId, pieceId, patch, token) {
+  return patchJson([200], `api/rooms/${roomName}/tables/${tableId}/pieces/${pieceId}/`, patch, token)
 }
 
 /**
@@ -189,10 +224,11 @@ export function apiPatchPiece (roomName, tableId, pieceId, patch) {
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} tableId Number of table (0-9), 1 = normal.
  * @param {Array} patches Array of partial pieces to send.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPieces (roomName, tableId, patches) {
-  return patchJson([200], 'api/rooms/' + roomName + '/tables/' + tableId + '/pieces/', patches)
+export function apiPatchPieces (roomName, tableId, patches, token) {
+  return patchJson([200], `api/rooms/${roomName}/tables/${tableId}/pieces/`, patches, token)
 }
 
 /**
@@ -201,10 +237,11 @@ export function apiPatchPieces (roomName, tableId, patches) {
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} tableId Number of table (0-9), 1 = normal.
  * @param {String} pieceId Piece-ID (ID) of piece to delete.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeletePiece (roomName, tableId, pieceId) {
-  return deleteJson([204], 'api/rooms/' + roomName + '/tables/' + tableId + '/pieces/' + pieceId + '/')
+export function apiDeletePiece (roomName, tableId, pieceId, token) {
+  return deleteJson([204], `api/rooms/${roomName}/tables/${tableId}/pieces/${pieceId}/`, token)
 }
 
 /**
@@ -213,10 +250,11 @@ export function apiDeletePiece (roomName, tableId, pieceId) {
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Number} tableId Number of table (0-9), 1 = normal.
  * @param {Object} piece Piece JSON/Object to send.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostPiece (roomName, tableId, piece) {
-  return postJson([201], 'api/rooms/' + roomName + '/tables/' + tableId + '/pieces/', piece)
+export function apiPostPiece (roomName, tableId, piece, token) {
+  return postJson([201], `api/rooms/${roomName}/tables/${tableId}/pieces/`, piece, token)
 }
 
 /**
@@ -224,10 +262,11 @@ export function apiPostPiece (roomName, tableId, piece) {
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Object} asset Asset JSON/Object to send.
+ * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostAsset (roomName, asset) {
-  return postJson([201], 'api/rooms/' + roomName + '/assets/', asset)
+export function apiPostAsset (roomName, asset, token) {
+  return postJson([201], `api/rooms/${roomName}/assets/`, asset, token)
 }
 
 /**
@@ -253,8 +292,8 @@ let mock = 0 // mock mode for unit testing, 0 = off
  * @throws {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
 function fetchOrThrow (expectedStatus, path, data = {}, headers = false) {
-  if (DEMO_MODE) return demoFetchOrThrow(expectedStatus, path, data, headers)
-  if (mock === 1) return Promise.resolve({ expectedStatus, path, data, headers })
+  if (DEMO_MODE) return demoFetchOrThrow(expectedStatus, path, data, headers) // for serverless mode
+  if (mock === 1) return Promise.resolve({ expectedStatus, path, data, headers }) // for unit tests
   return globalThis.fetch(path, data)
     .then(response => {
       return response.text()
@@ -315,13 +354,15 @@ function head (path) {
  *
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
+ * @param {String} token API access token.
  * @param {Boolean} headers If true, reply with a headers/payload object.
  * @return {Promse} Promise of a JSON object.
  */
-function getJson (expectedStatus, path, headers = false) {
+function getJson (expectedStatus, path, token, headers = false) {
   return fetchOrThrow(expectedStatus, path, {
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: token
     }
   }, headers)
 }
@@ -334,16 +375,19 @@ function getJson (expectedStatus, path, headers = false) {
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
  * @param {Object} data Optional playload for request.
+ * @param {String} token API access token.
+ * @param {Boolean} headers If true, reply with a headers/payload object.
  * @return {Promse} Promise of a JSON object.
  */
-function postJson (expectedStatus, path, data) {
+function postJson (expectedStatus, path, data, token, headers = false) {
   return fetchOrThrow(expectedStatus, path, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: token
     }
-  })
+  }, headers)
 }
 
 /**
@@ -354,16 +398,19 @@ function postJson (expectedStatus, path, data) {
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
  * @param {Object} data Optional playload for request.
+ * @param {String} token API access token.
+ * @param {Boolean} headers If true, reply with a headers/payload object.
  * @return {Promse} Promise of a JSON object.
  */
-function putJson (expectedStatus, path, data) {
+function putJson (expectedStatus, path, data, token, headers = false) {
   return fetchOrThrow(expectedStatus, path, {
     method: 'PUT',
     body: JSON.stringify(data),
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: token
     }
-  })
+  }, headers)
 }
 
 /**
@@ -374,16 +421,19 @@ function putJson (expectedStatus, path, data) {
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
  * @param {Object} data Optional playload for request.
+ * @param {String} token API access token.
+ * @param {Boolean} headers If true, reply with a headers/payload object.
  * @return {Promse} Promise of a JSON object.
  */
-function patchJson (expectedStatus, path, data) {
+function patchJson (expectedStatus, path, data, token, headers = false) {
   return fetchOrThrow(expectedStatus, path, {
     method: 'PATCH',
     body: JSON.stringify(data),
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: token
     }
-  })
+  }, headers)
 }
 
 /**
@@ -393,13 +443,16 @@ function patchJson (expectedStatus, path, data) {
  *
  * @param {Number} expectedStatus The HTTP status expected.
  * @param {String} path The URL to call. Can be relative.
+ * @param {Boolean} headers If true, reply with a headers/payload object.
+ * @param {String} token API access token.
  * @return {Promse} Promise of a JSON object. Usually empty.
  */
-function deleteJson (expectedStatus, path) {
+function deleteJson (expectedStatus, path, token, headers = false) {
   return fetchOrThrow(expectedStatus, path, {
     method: 'DELETE',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      Authorization: token
     }
-  })
+  }, headers)
 }

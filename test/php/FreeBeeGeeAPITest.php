@@ -48,7 +48,7 @@ final class FreeBeeGeeAPITest extends TestCase
     }
 
     private function createApi(
-        $fs = false,
+        $fs = false, // if true, the API will be modified to write into a temp dir
         $docroot = '/src/php'
     ): object {
         global $_SERVER;
@@ -621,7 +621,8 @@ final class FreeBeeGeeAPITest extends TestCase
             "w": 7,
             "t": ["text"],
             "c": [1, 2],
-            "b": ["12345678", "abcdefgh"]
+            "b": ["12345678", "abcdefgh"],
+            "f": 3
         }');
         $this->assertMatchesRegularExpression($this->REGEXP_ID, $piece->id);
         $this->assertEquals("5X9-7_fb", $piece->id);
@@ -639,6 +640,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(["text"], $piece->t);
         $this->assertEquals([1, 2], $piece->c);
         $this->assertEquals(["12345678", "abcdefgh"], $piece->b);
+        $this->assertEquals(3, $piece->f);
 
         $piece = $this->fbg->cleanupPieceJSON('{
             "id":"5X9-7_fb",
@@ -655,7 +657,8 @@ final class FreeBeeGeeAPITest extends TestCase
             "w": 2,
             "t": [""],
             "c": [0, 0, 0],
-            "b": ["invalid-asset-id"]
+            "b": ["invalid-asset-id"],
+            "f": 0
         }');
         $this->assertEqualsCanonicalizing(
             ['id', 'l', 'a', 'x', 'y', 'z', 'w', 'expires'],
@@ -688,7 +691,8 @@ final class FreeBeeGeeAPITest extends TestCase
             "t": false,
             "c": false,
             "b": false,
-            "extra": false
+            "extra": false,
+            "f": false
         }');
         $this->assertEqualsCanonicalizing(
             ['id', 'l', 'a', 'x', 'y', 'z'],
@@ -707,15 +711,15 @@ final class FreeBeeGeeAPITest extends TestCase
         // setup
         $this->fbg->installSnapshot('tooOldRoom', $this->pathToTestData('empty.zip'), []);
         $this->fbg->cleanupRoom('tooOldRoom');
-        $folder = $this->tempDir . '/data/rooms/tooOldRoom/';
-        $this->assertTrue(is_dir($folder));
+        $meta = $this->fbg->getRoomMeta('tooOldRoom');
+        $this->assertTrue(is_dir($meta->folder));
 
         // load ordinary room
         $this->assertHTTPStatus(function () {
-            $room = $this->fbg->getRoom('tooOldRoom');
+            $room = $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
         }, 200);
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $template = json_decode(file_get_contents($folder . 'template.json'));
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
         $this->assertEquals('2.3.4', $room->engine);
         $this->assertEquals('2.3.0', $template->engine);
 
@@ -724,13 +728,13 @@ final class FreeBeeGeeAPITest extends TestCase
         $room->dirty = 'dirty';
         $room->template->engine = '3.2.0';
         $template->engine = '3.2.0';
-        file_put_contents($folder . 'room.json', json_encode($room));
-        file_put_contents($folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'room.json', json_encode($room));
+        file_put_contents($meta->folder . 'template.json', json_encode($template));
         $this->assertHTTPStatus(function () {
-            $this->fbg->getRoom('tooOldRoom');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
         }, 400, '/INVALID_ENGINE.*3.2.0/');
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $template = json_decode(file_get_contents($folder . 'template.json'));
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
         $this->assertEquals('3.2.3', $room->engine);
         $this->assertEquals('dirty', $room->dirty);
         $this->assertEquals('3.2.0', $template->engine);
@@ -740,13 +744,13 @@ final class FreeBeeGeeAPITest extends TestCase
         $room->dirty = 'dirty';
         $room->template->engine = '1.2.0';
         $template->engine = '1.2.0';
-        file_put_contents($folder . 'room.json', json_encode($room));
-        file_put_contents($folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'room.json', json_encode($room));
+        file_put_contents($meta->folder . 'template.json', json_encode($template));
         $this->assertHTTPStatus(function () {
-            $this->fbg->getRoom('tooOldRoom');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
         }, 400, '/INVALID_ENGINE.*1.2.0/');
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $template = json_decode(file_get_contents($folder . 'template.json'));
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
         $this->assertEquals('1.2.3', $room->engine);
         $this->assertEquals('dirty', $room->dirty);
         $this->assertEquals('1.2.0', $template->engine);
@@ -756,13 +760,13 @@ final class FreeBeeGeeAPITest extends TestCase
         $room->dirty = 'dirty';
         $room->template->engine = '2.4.0';
         $template->engine = '2.4.0';
-        file_put_contents($folder . 'room.json', json_encode($room));
-        file_put_contents($folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'room.json', json_encode($room));
+        file_put_contents($meta->folder . 'template.json', json_encode($template));
         $this->assertHTTPStatus(function () {
-            $this->fbg->getRoom('tooOldRoom');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
         }, 400, '/INVALID_ENGINE.*2.4.0/');
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $template = json_decode(file_get_contents($folder . 'template.json'));
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
         $this->assertEquals('2.4.0', $room->engine);
         $this->assertEquals('dirty', $room->dirty);
         $this->assertEquals('2.4.0', $template->engine);
@@ -772,14 +776,14 @@ final class FreeBeeGeeAPITest extends TestCase
         $room->dirty = 'dirty';
         $room->template->engine = '2.2.0';
         $template->engine = '2.2.0';
-        file_put_contents($folder . 'room.json', json_encode($room));
-        file_put_contents($folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'room.json', json_encode($room));
+        file_put_contents($meta->folder . 'template.json', json_encode($template));
         $room = json_decode($this->assertHTTPStatus(function () {
-            $this->fbg->getRoom('tooOldRoom');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $template = json_decode(file_get_contents($folder . 'template.json'));
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
         $this->assertEquals('2.3.4', $room->engine);
         $this->assertObjectNotHasAttribute('dirty', $room);
         $this->assertEquals('2.3.0', $template->engine);
@@ -789,14 +793,14 @@ final class FreeBeeGeeAPITest extends TestCase
         $room->dirty = 'dirty';
         $room->template->engine = '2.3.0';
         $template->engine = '2.3.0';
-        file_put_contents($folder . 'room.json', json_encode($room));
-        file_put_contents($folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'room.json', json_encode($room));
+        file_put_contents($meta->folder . 'template.json', json_encode($template));
         $room = json_decode($this->assertHTTPStatus(function () {
-            $this->fbg->getRoom('tooOldRoom');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $template = json_decode(file_get_contents($folder . 'template.json'));
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
         $this->assertEquals('2.3.4', $room->engine);
         $this->assertObjectNotHasAttribute('dirty', $room);
         $this->assertEquals('2.3.0', $template->engine);
@@ -806,14 +810,14 @@ final class FreeBeeGeeAPITest extends TestCase
         $room->dirty = 'dirty';
         $room->template->engine = '2.3.0';
         $template->engine = '2.3.0';
-        file_put_contents($folder . 'room.json', json_encode($room));
-        file_put_contents($folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'room.json', json_encode($room));
+        file_put_contents($meta->folder . 'template.json', json_encode($template));
         $room = json_decode($this->assertHTTPStatus(function () {
-            $this->fbg->getRoom('tooOldRoom');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $template = json_decode(file_get_contents($folder . 'template.json'));
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
         $this->assertEquals('2.3.4', $room->engine);
         $this->assertEquals('dirty', $room->dirty);
         $this->assertEquals('2.3.0', $template->engine);
@@ -823,14 +827,14 @@ final class FreeBeeGeeAPITest extends TestCase
         $room->dirty = 'dirty';
         $room->template->engine = '2.3.0';
         $template->engine = '2.3.0';
-        file_put_contents($folder . 'room.json', json_encode($room));
-        file_put_contents($folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'room.json', json_encode($room));
+        file_put_contents($meta->folder . 'template.json', json_encode($template));
         $room = json_decode($this->assertHTTPStatus(function () {
-            $this->fbg->getRoom('tooOldRoom');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $template = json_decode(file_get_contents($folder . 'template.json'));
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
         $this->assertEquals('2.3.4', $room->engine);
         $this->assertObjectNotHasAttribute('dirty', $room);
         $this->assertEquals('2.3.0', $template->engine);
@@ -973,6 +977,14 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('transparent', $asset->bg);
         $this->assertEquals('paper', $asset->tx);
         $this->assertEquals('soSo', $asset->name);
+
+        $asset = FreeBeeGeeAPI::fileToAsset('soSo.2x3xX-wood.jpg');
+        $this->assertEquals(['soSo.2x3xX-wood.jpg'], $asset->media);
+        $this->assertEquals(2, $asset->w);
+        $this->assertEquals(3, $asset->h);
+        $this->assertEquals('X', $asset->s);
+        $this->assertEquals('wood', $asset->tx);
+        $this->assertEquals('soSo', $asset->name);
     }
 
     public function testrtrimArray()
@@ -1006,5 +1018,19 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('11.22.0', FreeBeeGeeAPI::unpatchSemver('11.22.33'));
 
         $this->assertEquals('1.2.0-1.2.3', FreeBeeGeeAPI::unpatchSemver('1.2.3-1.2.3'));
+    }
+
+    public function testGet(): void
+    {
+        $o = (object) [
+            'one' => 1,
+            'two' => 2,
+            'null' => null,
+        ];
+        $this->assertEquals(1, FreeBeeGeeAPI::get($o, 'one'));
+        $this->assertEquals(2, FreeBeeGeeAPI::get($o, 'two'));
+        $this->assertEquals(null, FreeBeeGeeAPI::get($o, 'null'));
+        $this->assertEquals(null, FreeBeeGeeAPI::get($o, 'undefined'));
+        $this->assertEquals(null, FreeBeeGeeAPI::get($o, 'One'));
     }
 }

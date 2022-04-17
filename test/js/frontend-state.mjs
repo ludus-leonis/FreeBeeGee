@@ -23,6 +23,7 @@ import { expect } from 'chai'
 import { _setMock } from '../../src/js/api/index.mjs'
 
 import {
+  LAYER_TOKEN,
   populatePieceDefaults
 } from '../../src/js/view/room/tabletop/tabledata.mjs'
 
@@ -384,7 +385,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
     r = splitRequest(await addAsset({
       name: 'room',
       format: 'png',
-      type: 'token',
+      type: LAYER_TOKEN,
       w: 1,
       h: 2,
       base64: '...content...',

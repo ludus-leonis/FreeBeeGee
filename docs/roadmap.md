@@ -2,35 +2,41 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.15 - ???
+## v0.15 - Protecting Porpoise
 
-* [ ] table: dragging some pieces should not change z (e.g. dicemat)
-* [ ] table: native zoom function
-* [ ] content: more classic game boards - backgammon, mills, solitaire, ...
-* [ ] content: more helper/marker overlays (arrows, areas, )
-* [ ] snapshot: set default/start table other than 1 in template
-* [ ] system: table passwords
-* [ ] library: delete assets UI
-* [ ] build: automated deployment tests for new zip/tgz packages after build
-* [ ] protect pieces (no-delete, no-move)
-* [ ] pieces: inline-edit notes
-* [ ] API: hide .../data/... from URLs (via .htaccess)
-* [ ] pre-release
-  * [ ] bump dependencies
-  * [ ] bugfixes + refactoring
-    * [ ] library: select-border sometimes cutoff
-  * [ ] review docs
-  * [ ] review + run tests
-  * [ ] bump version/codename & update CHANGELOG
-  * [ ] update screenshots
+* [X] repo: Docker build
+* [X] system: table passwords
+* [X] table: dragging some pieces should not change z (e.g. dicemat)
+* [X] system: color masks for dice, areas, zones and pins
+* [X] content: more classic game boards - backgammon, mills, solitaire, ...
+* [X] content: more helper/marker overlays (pin, areas)
+* [X] system: random material offset
+* [X] protected pieces: no-delete, no-clone, no-move
+* [X] pre-release
+  * [X] bump dependencies
+  * [X] bugfixes + refactoring
+    * [X] refactor pieces scss
+    * [X] disable rotate for other-pieces
+    * [X] count _ assets against room size limit
+    * [X] dicemat to-bottom not working
+  * [X] review docs
+  * [X] review + run tests
+  * [X] review tutorial
+  * [X] bump engine, version/codename & update CHANGELOG
+  * [X] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
+* [ ] repo: automated deployment tests for new zip/tgz packages after build
+* [ ] table: native zoom function
+* [ ] snapshot: set default/start table other than 1 in template
+* [ ] library: delete assets UI
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
-* [ ] system: template colors as masks (dice, areas)
+* [ ] bug: png maps make pieces flicker when cursor changes
+* [ ] pieces: inline-edit notes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] multi-select stuff
 * [ ] move / copy setups between tables
@@ -45,12 +51,15 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
-* [ ] API: obfuscate/hash room name
+* [ ] system: password-protect assets, too
 * [ ] docs how to make table/template `.zip`s
 * [ ] API: check sides correspond to asset
-* [ ] build: generate average piece color
+* [ ] API: hide .../data/... from URLs (via .htaccess)
+* [ ] API: obfuscate/hash room name
+* [ ] repo: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
+* [ ] Firefox: filter + 180° bug
 
 ### rather later (unsorted, after v1)
 

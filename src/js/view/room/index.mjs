@@ -50,6 +50,8 @@ import {
 } from '../../lib/icons.mjs'
 
 import {
+  FLAG_NO_CLONE,
+  FLAG_NO_DELETE,
   loadRoom,
   getRoom,
   getServerInfo,
@@ -81,6 +83,12 @@ import {
 } from '../../view/room/tabletop/index.mjs'
 
 import {
+  LAYER_TILE,
+  LAYER_OVERLAY,
+  LAYER_TOKEN,
+  LAYER_OTHER,
+  FEATURE_DICEMAT,
+  FEATURE_DISCARD,
   TYPE_HEX,
   getSetupCenter,
   findPiece
@@ -197,18 +205,19 @@ export function getViewportCenterTile () {
  * Initialize and start the room/tabletop screen.
  *
  * @param {String} name Name of room, e.g. hilariousGazingPenguin.
+ * @param {String} token API access token for this room.
  */
-export function runRoom (room) {
-  console.info('$NAME$ v$VERSION$, room ' + room.name)
+export function runRoom (name, token) {
+  console.info('$NAME$ v$VERSION$, room ' + name)
 
-  loadRoom(room.name)
+  loadRoom(name, token)
     .then(() => setupRoom())
 }
 
 /**
  * Toggle one of the layers on/off for selection.
  *
- * @param {String} layer Either 'tile', 'overlay' or 'token'.
+ * @param {String} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN.
  */
 export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
@@ -267,12 +276,12 @@ export function popupPiece (id) {
     <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
     <a class="popup-menu flip ${piece._meta.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
-    <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === 'DICEMAT') ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
+    <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === FEATURE_DICEMAT) ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
     <a class="popup-menu top" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
-    <hr>
-    <a class="popup-menu clone" href="#">${iconClone}Clone</a>
-    <a class="popup-menu delete" href="#">${iconDelete}Delete</a>
+    ${(piece.f & FLAG_NO_CLONE && piece.f & FLAG_NO_DELETE) ? '' : '<hr>'}
+    <a class="popup-menu clone ${(piece.f & FLAG_NO_CLONE) ? 'disabled' : ''}" href="#">${iconClone}Clone</a>
+    <a class="popup-menu delete ${(piece.f & FLAG_NO_DELETE) ? 'disabled' : ''}" href="#">${iconDelete}Delete</a>
   `
 
   _('#tabletop').add(popup)
@@ -348,8 +357,14 @@ export function updateMenu () {
     if (piece._meta.sides <= 2) {
       _('#btn-hash').add('.disabled')
     }
-    if (piece._meta.feature === 'DICEMAT') {
+    if ([FEATURE_DICEMAT, FEATURE_DISCARD].includes(piece._meta.feature)) {
       _('#btn-hash').remove('.disabled')
+    }
+    if (piece.f & FLAG_NO_CLONE) {
+      _('#btn-c').add('.disabled')
+    }
+    if (piece.f & FLAG_NO_DELETE) {
+      _('#btn-del').add('.disabled')
     }
   } else {
     menu.remove('.disabled')
@@ -580,7 +595,7 @@ function setupRoom () {
 
   // setup menu for layers
   let undefinedCount = 0
-  for (const layer of ['token', 'overlay', 'tile', 'other']) {
+  for (const layer of [LAYER_TOKEN, LAYER_OVERLAY, LAYER_TILE, LAYER_OTHER]) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
     const prop = getRoomPreference(PREFS['LAYER' + layer])
     if (prop === true) toggleLayer(layer) // stored enabled
@@ -588,8 +603,8 @@ function setupRoom () {
   }
   if (undefinedCount >= 4) {
     // default if store was empty
-    toggleLayer('other')
-    toggleLayer('token')
+    toggleLayer(LAYER_OTHER)
+    toggleLayer(LAYER_TOKEN)
   }
 
   if (getRoomPreference(PREFS.LOS)) toggleLos()

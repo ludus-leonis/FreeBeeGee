@@ -22,7 +22,8 @@ If the requirements are not met, FreeBeeGee will try to find out what is missing
 
 Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.
 
-## Installation
+
+## Basic installation
 
 If the server requirements are met, installation is as simple as:
 
@@ -37,6 +38,20 @@ Per default, FreeBeeGee comes with a simple `.htaccess` file with the same conte
 `.htaccess_full` also contains rules how to enforce https and to supress 'www.', but they are disabled by default. Enable them if needed.
 
 Finally, review the `terms.html` and don't forget to update your GDPR / privacy statement in `privacy.html`. Consider neither of them as legal advice - if in doubt, consult a lawyer.
+
+
+## Alternate installation - Docker
+
+If you are using [Docker](https://en.wikipedia.org/wiki/Docker_(software)) on your server, you can also install & run FreeBeeGee as a container. It comes with a pre-configured Apache webserver and PHP.
+
+```
+FBGPASS=supersecret docker run -d -e FBGPASS -p 8765:80 ghcr.io/ludus-leonis/freebeegee:latest
+```
+
+Please, please pick a better password (!).
+
+FreeBeeGee sould be running now at `http://localhost:8765/`. If you want to persist room data, mount a volume for `/var/www/html/api/data`.
+
 
 ## Configuration
 
@@ -54,7 +69,7 @@ The server config file is found in `api/data/server.json`:
 }
 ```
 
-### Passwords
+### Admin passwords
 
 `passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join rooms. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
 
@@ -62,7 +77,7 @@ The server config file is found in `api/data/server.json`:
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
 ```
 
-FreeBeeGee ships with an unknown password. No rooms can be created until you either set one or explicitly disable it.
+FreeBeeGee ships with an unknown admin password. No rooms can be created until you either set one or explicitly disable it.
 
 ### Uploads
 

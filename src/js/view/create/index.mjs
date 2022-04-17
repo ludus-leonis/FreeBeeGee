@@ -42,6 +42,7 @@ import {
 } from '../../state/index.mjs'
 
 import {
+  DEMO_MODE,
   apiGetTemplates,
   UnexpectedStatus
 } from '../../api/index.mjs'
@@ -68,21 +69,33 @@ export function createRoomView (name) {
   const ttl = getServerInfo().ttl
 
   createScreen(
-    'Open new room',
+    'Create room',
     `
       <div class="page-create">
         <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
         <input id="mode" class="mode is-hidden" type="checkbox">
-        <p class="is-wrapping">Room <strong>${name}</strong> does not exist yet. Feel free to open it!</p>
+        <p class="is-wrapping">
+          Room <strong>${name}</strong> does not exist yet. Feel free to create it!
+        </p>
 
         <p class="server-feedback"></p>
+
+        ` + (getServerInfo().createPassword ? `
+          <label for="password">Admin password</label>
+          <input id="password" type="password" placeholder="* * * * * *">
+          <p class="p-small spacing-tiny">
+            Only admins can create rooms on this server.
+          </p>
+        ` : '') + `
 
         <label class="upload-label" for="uploadFile">Upload snapshot</label>
         <label class="upload-group" for="uploadFile">
           <div id="uploadInput" class="is-input placeholder">Select .zip</div>
           <input id="uploadFile" type="file" accept=".zip", class="is-hidden" />
         </label>
-        <p class="upload-text p-small spacing-tiny">Got no snapshots? Pick an <label for="mode" class="is-link">existing template</label> instead.</p>
+        <p class="upload-text p-small spacing-tiny">
+          Got no snapshots? Pick an <label for="mode" class="is-link">existing template</label> instead.
+        </p>
         <div id="server-feedback-form"></div>
 
         <label id="template-label" class="template-label" for="template">Template</label>
@@ -90,14 +103,21 @@ export function createRoomView (name) {
           <option value="RPG" selected>RPG</option>
         </select>
         <p class="template-text p-small spacing-tiny">${templateHelp}</p>
-      ` + (getServerInfo().createPassword ? `
-        <label for="password">Password</label>
-        <input id="password" type="password" placeholder="* * * * * *">
-        <p class="p-small spacing-tiny">This server requires a password to create rooms.</p>
-      ` : '') + `
 
-        <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Open &amp; enter!</a>
-        <p class="p-small is-faded is-center">Wrong room? <a href="./">Pick another</a>.</p>
+        ` + (!DEMO_MODE ? `
+          <input id="enablepassword" class="enablepassword" type="checkbox">
+          <label for="enablepassword" class="p-medium">Password-protect room</label>
+          <label for="roompwd">Room password</label>
+          <input id="roompwd" name="roompwd" type="password">
+          <p class="p-small spacing-tiny">
+            Will be needed to join. Leave empty for no password.
+          </p>
+        ` : '') + `
+
+        <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Create</a>
+        <p class="p-small is-faded is-center">
+          Wrong room? <a href="./">Pick another</a>.
+        </p>
       </div>
     `,
 
@@ -134,6 +154,11 @@ export function createRoomView (name) {
   _('#password')
     .on('blur', blur => { _('#password').remove('.invalid') })
     .on('keydown', keydown => { if (keydown.keyCode === 13) validate() && ok(name) })
+
+  _('#roompwd')
+    .on('blur', blur => { _('#roompwd').remove('.invalid') })
+    .on('keydown', keydown => { if (keydown.keyCode === 13) validate() && ok(name) })
+
   _('#ok').on('click', click => { click.preventDefault(); validate() && ok(name) })
 
   _('#template').focus()
@@ -174,9 +199,14 @@ function ok (name) {
     name: name
   }
 
+  const roompwd = _('#roompwd').value ?? null
+  if (roompwd !== null) {
+    room.password = roompwd.trim()
+  }
+
   const password = _('#password').value ?? null
   if (password !== null) {
-    room.auth = password
+    room.auth = password.trim()
   }
 
   let snapshot = null
@@ -266,7 +296,7 @@ function ok (name) {
             runError('FULL')
             break
           default:
-            runError('UNEXPECTED', error)
+            runError('BUG', error)
         }
       }
     })

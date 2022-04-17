@@ -1,0 +1,166 @@
+// Copyright 2021-2022 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Gaming pieces on the virtual gaming board. E.g. tiles and tokens.
+///
+/// @access public
+////
+
+.piece-token {
+  border-radius: $piece-tile-size;
+  margin: $piece-margin;
+
+  $is-n-size: 1rem;
+
+  // different labels for square tokens
+  @for $v from 1 through 32 {
+    &.is-w-#{$v}.is-h-#{$v} {
+      align-items: flex-start; // mainly for labels
+
+      .label {
+        $label-offset-x: -10px;
+        top: $piece-tile-size * $v - $piece-margin * 2 + $label-offset-x;
+        transform-origin: center math.div($piece-tile-size * $v - $piece-margin * 2 - 1, -2) - $label-offset-x;
+      }
+    }
+  }
+
+  &.is-n::after {
+    align-items: center;
+    background-color: var(--fbg-color);
+    border-radius: 100%;
+    color: var(--fbg-color-invert);
+    display: flex;
+    flex-direction: row;
+    font-size: .85em;
+    font-weight: 600;
+    height: $is-n-size;
+    justify-content: center;
+    margin-top: math.div($is-n-size, -2);
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: $is-n-size;
+  }
+
+  &.has-border.is-n::after {
+    background-color: var(--fbg-border-color);
+    color: var(--fbg-border-color-invert);
+  }
+
+  &.is-n-1::after { content: '1'; }
+  &.is-n-2::after { content: '2'; }
+  &.is-n-3::after { content: '3'; }
+  &.is-n-4::after { content: '4'; }
+  &.is-n-5::after { content: '5'; }
+  &.is-n-6::after { content: '6'; }
+  &.is-n-7::after { content: '7'; }
+  &.is-n-8::after { content: '8'; }
+  &.is-n-9::after { content: '9'; }
+  &.is-n-10::after { content: 'A'; }
+  &.is-n-11::after { content: 'B'; }
+  &.is-n-12::after { content: 'C'; }
+  &.is-n-13::after { content: 'D'; }
+  &.is-n-14::after { content: 'E'; }
+  &.is-n-15::after { content: 'F'; }
+
+  @include piece-jitter(3px);
+
+  @for $x from 1 through 32 {
+    &.is-w-#{$x} { width: $x * $piece-tile-size - $piece-border-size * 2; }
+  }
+
+  @for $y from 1 through 32 {
+    &.is-h-#{$y} {
+      height: $y * $piece-tile-size - $piece-border-size * 2;
+    }
+  }
+
+  .backside { // disable backsides for tokens
+    border-radius: $piece-tile-size;
+    mask-image: none !important; // sass-lint:disable-line no-important
+  }
+
+  &.is-border-0 {
+    &.is-n::after {
+      background-color: var(--fbg-color);
+      color: var(--fbg-color-invert);
+    }
+  }
+}
+
+// --- quality settings --------------------------------------------------------
+
+.is-quality-medium .piece-token {
+  @include shadows(
+    $shadow-flat-0,
+    $shadow-flat-60,
+    $shadow-flat-90,
+    $shadow-flat-120,
+    $shadow-flat-180,
+    $shadow-flat-240,
+    $shadow-flat-270,
+    $shadow-flat-300
+  );
+}
+
+.is-quality-high .piece-token,
+.is-quality-ultra .piece-token {
+  // --- shadows ---
+  @include shadows(
+    $shadow-0,
+    $shadow-60,
+    $shadow-90,
+    $shadow-120,
+    $shadow-180,
+    $shadow-240,
+    $shadow-270,
+    $shadow-300
+  );
+
+  // --- material ---
+  background-image: var(--fbg-material), var(--fbg-image);
+  background-size: 256px, cover;
+  @each $id in $piece-ids {
+    $i: index($piece-ids, $id);
+
+    &[id^='#{$id}'] {
+      background-position: calc(256px / 64 * $i) calc(192px * $i), 0;
+    }
+  }
+
+  &.is-border-0 {
+    &.is-n::after {
+      opacity: .85;
+    }
+  }
+
+  &.has-decal {
+    background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
+    background-size: 256px, cover, cover;
+    @each $id in $piece-ids {
+      $i: index($piece-ids, $id);
+
+      &[id^='#{$id}'] {
+        background-position: calc(256px / 64 * $i) calc(192px * $i), 0, 0;
+      }
+    }
+  }
+}

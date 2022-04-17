@@ -32,22 +32,46 @@ import {
   navigateReload
 } from '../../app.mjs'
 
+import {
+  stopAutoSync
+} from '../room/sync.mjs'
+
+export function apiError (error, roomName, ignore = []) {
+  if (error instanceof UnexpectedStatus) { // API error
+    if (ignore.includes(error.status)) {
+      return null // semi-expected error that is silently ignored
+    }
+    stopAutoSync()
+    switch (error.status) {
+      case 401:
+        runError('BUG', error)
+        return null
+      case 403:
+        navigateReload() // force reload to reset data + show password screen
+        return null
+      case 404:
+        runErrorRoomGone()
+        return null
+    }
+  }
+
+  runError('BUG', error)
+  return null
+}
+
 /**
  * Show an error dialog.
  *
  * @param {String} code Code of error message to show.
- * @param {*} options Options / stuff to simply forwart to the error.
+ * @param {*} options Options / stuff to simply forward to the error.
  */
 export function runError (code, options) {
   switch (code) {
     case 'INVALID_ENGINE':
       runErrorRoomDeprecated(options)
       break
-    case 'UNEXPECTED':
-      runErrorUnexpected(options)
-      break
-    case 'ROOM_GONE':
-      runErrorRoomGone(options)
+    case 'BUG':
+      runErrorBug(options)
       break
     case 'ROOM_INVALID':
       runErrorRoomDeprecated(options)
@@ -137,11 +161,18 @@ function detectProblem () {
  * Error screen be shown when an existing room disappeared. Probably the admin
  * deleted/closed it.
  */
-function runErrorUnexpected (error) {
+function runErrorBug (error) {
   console.error('*that* was unexpected!', error, error.body) // only log if error is serious
 
   if (!'$VERSION$'.endsWith('dev')) {
-    runErrorClientGeneric() // show nice error message if not in development mode
+    createScreen(
+      'We are sorry ...',
+      `
+        <p>We are currently experiencing technical difficulties. You might have found a bug here. Please try again, but if the issue persists, please consider reporting it.</p>
+        <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
+      `
+    )
+    _('#ok').on('click', click => { navigateReload() })
   }
 }
 
@@ -149,20 +180,16 @@ function runErrorUnexpected (error) {
  * Error screen be shown when an existing room disappeared. Probably the admin
  * deleted/closed it.
  */
-function runErrorRoomGone (roomName, error) {
-  if (error instanceof UnexpectedStatus && error.status !== 404) {
-    console.error('room gone', error) // only log if error is serious
-  }
-
+function runErrorRoomGone () {
   createScreen(
     'Room gone ...',
     `
-      <p class="is-wrapping">Room <strong>${roomName}</strong> does not exist (any more).</p>
+      <p class="is-wrapping">This room does not exist (any more).</p>
 
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Restart</a>
     `
   )
-  _('#ok').on('click', click => { navigateToJoin(roomName) })
+  _('#ok').on('click', click => { navigateToJoin() })
 }
 
 /**
@@ -250,18 +277,4 @@ function runErrorServerGeneric () {
     `
   )
   detectProblem()
-}
-
-/**
- * A generic server error to be shown when the unexcepted happened.
- */
-function runErrorClientGeneric () {
-  createScreen(
-    'We are sorry ...',
-    `
-      <p>We are currently experiencing technical difficulties. You might have found a bug here. Please try again, but if the issue persists, please consider reporting it.</p>
-      <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
-    `
-  )
-  _('#ok').on('click', click => { navigateReload() })
 }

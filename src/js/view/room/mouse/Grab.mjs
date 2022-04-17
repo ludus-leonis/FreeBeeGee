@@ -1,5 +1,5 @@
 /**
- * @file Handles moving around stuff on the tabletop, plus selection states.
+ * @file Handles moving/scrolling the tabletop.
  * @module
  * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.

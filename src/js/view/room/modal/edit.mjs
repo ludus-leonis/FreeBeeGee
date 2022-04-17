@@ -20,6 +20,9 @@
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
+  FLAG_NO_MOVE,
+  FLAG_NO_DELETE,
+  FLAG_NO_CLONE,
   getLibrary,
   getTemplate,
   editPiece
@@ -34,6 +37,11 @@ import {
 
 import {
   TYPE_HEX,
+  LAYER_TILE,
+  LAYER_OVERLAY,
+  LAYER_NOTE,
+  LAYER_TOKEN,
+  LAYER_OTHER,
   stickyNoteColors,
   getAssetURL
 } from '../../../view/room/tabletop/tabledata.mjs'
@@ -133,7 +141,7 @@ export function modalEdit (piece) {
     // piece color
     const pieceColor = _('#piece-color')
     const template = getTemplate()
-    if (piece.l === 'note') {
+    if (piece.l === LAYER_NOTE) {
       for (let c = 0; c < stickyNoteColors.length; c++) {
         const option = _('option').create(stickyNoteColors[c].name)
         option.value = c
@@ -158,7 +166,7 @@ export function modalEdit (piece) {
 
     // border color
     const borderColor = _('#piece-border')
-    if (piece.l === 'note') {
+    if (piece.l === LAYER_NOTE) {
       const option = _('option').create('none')
       option.value = 0
       option.selected = true
@@ -178,6 +186,11 @@ export function modalEdit (piece) {
         borderColor.add(option)
       }
     }
+
+    // flags
+    _('#piece-no-move').checked = piece.f & FLAG_NO_MOVE
+    _('#piece-no-delete').checked = piece.f & FLAG_NO_DELETE
+    _('#piece-no-clone').checked = piece.f & FLAG_NO_CLONE
 
     _('#modal-footer').innerHTML = `
       <button id='btn-close' type="button" class="btn">Cancel</button>
@@ -209,18 +222,27 @@ export function modalEdit (piece) {
 
 function getModalBody (piece) {
   switch (piece.l) {
-    case 'note':
+    case LAYER_NOTE:
       return getModalNote(piece)
-    case 'tile':
-    case 'overlay':
+    case LAYER_TILE:
+    case LAYER_OVERLAY:
       return getModalTile(piece)
-    case 'other':
+    case LAYER_OTHER:
       return getModalOther(piece)
-    case 'token':
+    case LAYER_TOKEN:
     default:
       return getModalToken(piece)
   }
 }
+
+const protect = `
+  <div class="col-12">
+    <label>Protect</label>
+    <input id="piece-no-move" type="checkbox"><label for="piece-no-move" class="p-medium">no move</label>
+    <input id="piece-no-clone" type="checkbox"><label for="piece-no-clone" class="p-medium">no clone</label>
+    <input id="piece-no-delete" type="checkbox"><label for="piece-no-delete" class="p-medium">no delete</label>
+  </div>
+`
 
 function getModalToken (piece) {
   let colorClass = 'is-hidden'
@@ -240,7 +262,7 @@ function getModalToken (piece) {
   }
 
   return `
-    <form class="container">
+    <form class="container modal-edit modal-edit-token">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
         <div class="col-12 col-lg-8">
@@ -279,25 +301,38 @@ function getModalToken (piece) {
           <label for="piece-badges">Badges</label>
           <div id="piece-badges" class="toggle-box"></div>
         </div>
+        ${protect}
       </div>
     </form>
   `
 }
 
-function getModalOther () {
+function getModalOther (piece) {
+  let colorClass = 'is-hidden'
+  let otherClass = 'col-lg-4'
+
+  if (piece._meta.hasColor) {
+    colorClass = 'col-lg-3'
+    otherClass = 'col-lg-3'
+  }
+
   return `
-    <form class="container">
+    <form class="container modal-edit modal-edit-other">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
         <div class="col-12">
           <label for="piece-label">Label</label>
           <input id="piece-label" name="piece-label" type="text" maxlength="32">
         </div>
-        <div class="col-4">
+        <div class="col-6 ${colorClass}">
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
+        </div>
+        <div class="col-6 ${otherClass}">
           <label for="piece-w">Width</label>
           <select id="piece-w" name="piece-w"></select>
         </div>
-        <div class="col-4">
+        <div class="col-6 ${otherClass}">
           <label for="piece-h">Height</label>
           <select id="piece-h" name="piece-h"></select>
         </div>
@@ -305,13 +340,9 @@ function getModalOther () {
           <label for="piece-r">Rotate</label>
           <select id="piece-r" name="piece-r"></select>
         </div>
-        <div class="col-4">
+        <div class="col-6 ${otherClass}">
           <label for="piece-side">Side</label>
           <select id="piece-side" name="piece-side"></select>
-        </div>
-        <div class="col-6 is-hidden">
-          <label for="piece-color">Color</label>
-          <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
           <label for="piece-border">Border</label>
@@ -321,39 +352,56 @@ function getModalOther () {
           <label for="piece-number">Number</label>
           <select id="piece-number" name="piece-number"></select>
         </div>
+        ${protect}
       </div>
     </form>
   `
 }
 
-function getModalTile () {
+function getModalTile (piece) {
+  let colorClass = 'is-hidden'
+  let sideClass = 'is-hidden'
+  let otherClass = 'col-lg-3'
+
+  if (piece._meta.hasColor && piece._meta.sides >= 2) {
+    colorClass = 'col-lg-4'
+    sideClass = 'col-lg-2'
+    otherClass = 'col-lg-2'
+  } else if (piece._meta.hasColor) {
+    colorClass = 'col-lg-3'
+    otherClass = 'col-lg-3'
+  } else if (piece._meta.sides >= 2) {
+    sideClass = 'col-lg-3'
+    otherClass = 'col-lg-3'
+  }
+
   return `
-    <form class="container">
+    <form class="container modal-edit modal-edit-tile">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
         <div class="col-12">
           <label for="piece-label">Label</label>
           <input id="piece-label" name="piece-label" type="text" maxlength="32">
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 ${colorClass}">
+          <label for="piece-color">Color</label>
+          <select id="piece-color" name="piece-color"></select>
+        </div>
+        <div class="col-6 ${otherClass}">
           <label for="piece-w">Width</label>
           <select id="piece-w" name="piece-w"></select>
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 ${otherClass}">
           <label for="piece-h">Height</label>
           <select id="piece-h" name="piece-h"></select>
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 ${otherClass}">
           <label for="piece-r">Rotate</label>
           <select id="piece-r" name="piece-r"></select>
         </div>
-        <div class="col-6 col-lg-3">
+        <div class="col-6 ${sideClass}">
           <label for="piece-side">Side</label>
           <select id="piece-side" name="piece-side"></select>
-        </div>
-        <div class="col-6 is-hidden">
-          <label for="piece-color">Color</label>
-          <select id="piece-color" name="piece-color"></select>
         </div>
         <div class="col-6 is-hidden">
           <label for="piece-border">Border</label>
@@ -363,6 +411,7 @@ function getModalTile () {
           <label for="piece-number">Number</label>
           <select id="piece-number" name="piece-number"></select>
         </div>
+        ${protect}
       </div>
     </form>
   `
@@ -370,7 +419,7 @@ function getModalTile () {
 
 function getModalNote () {
   return `
-    <form class="container">
+    <form class="container modal-edit modal-edit-note">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
         <div class="col-12">
@@ -405,6 +454,7 @@ function getModalNote () {
           <label for="piece-number">Number</label>
           <select id="piece-number" name="piece-number"></select>
         </div>
+        ${protect}
       </div>
     </form>
   `
@@ -460,6 +510,12 @@ function modalOk () {
 
   const n = Number(_('#piece-number').value)
   if (n !== piece.n) updates.n = n
+
+  let f = 0
+  if (_('#piece-no-move').checked) f |= FLAG_NO_MOVE
+  if (_('#piece-no-delete').checked) f |= FLAG_NO_DELETE
+  if (_('#piece-no-clone').checked) f |= FLAG_NO_CLONE
+  if (f !== piece.f) updates.f = f
 
   editPiece(piece.id, updates)
   getModal().hide()

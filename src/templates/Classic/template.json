@@ -9,27 +9,33 @@
 
   "colors": [
     { "name": "Black", "value": "#202020" },
-    { "name": "Red", "value": "#b01c16" },
+    { "name": "White", "value": "#e8e8e8" },
+    { "name": "Red", "value": "#b32d35" },
     { "name": "Orange", "value": "#b05a11" },
     { "name": "Yellow", "value": "#af9700" },
     { "name": "Green", "value": "#317501" },
+    { "name": "Cyan", "value": "#40bfbf" },
     { "name": "Blue", "value": "#3387b0" },
     { "name": "Indigo", "value": "#2e4d7b" },
     { "name": "Violet", "value": "#730fb1" },
+    { "name": "Magenta", "value": "#bf40bf" },
     { "name": "Gray A", "value": "#606060" },
-    { "name": "Gray B", "value": "#a0a0a0" },
-    { "name": "White", "value": "#e8e8e8" }
+    { "name": "Gray B", "value": "#a0a0a0" }
   ],
 
   "borders": [
     { "name": "Black", "value": "#202020" },
-    { "name": "Red", "value": "#b01c16" },
+    { "name": "White", "value": "#e8e8e8" },
+    { "name": "Red", "value": "#b32d35" },
     { "name": "Orange", "value": "#b05a11" },
     { "name": "Yellow", "value": "#af9700" },
     { "name": "Green", "value": "#317501" },
+    { "name": "Cyan", "value": "#40bfbf" },
     { "name": "Blue", "value": "#3387b0" },
     { "name": "Indigo", "value": "#2e4d7b" },
     { "name": "Violet", "value": "#730fb1" },
-    { "name": "White", "value": "#e8e8e8" }
+    { "name": "Magenta", "value": "#bf40bf" },
+    { "name": "Gray A", "value": "#606060" },
+    { "name": "Gray B", "value": "#a0a0a0" }
   ]
 }

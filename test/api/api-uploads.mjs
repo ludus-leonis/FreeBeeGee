@@ -37,6 +37,10 @@ import {
   testZIPUpload
 } from './utils/chai.mjs'
 
+import {
+  LAYER_TILE
+} from '../../src/js/view/room/tabletop/tabledata.mjs'
+
 import * as fs from 'fs'
 
 // -----------------------------------------------------------------------------
@@ -44,8 +48,8 @@ import * as fs from 'fs'
 let data = null
 
 const _ = { // asset count in system template
-  other: 3,
-  overlay: 5,
+  other: 16,
+  overlay: 11,
   tile: 2,
   token: 4
 }
@@ -83,9 +87,9 @@ function testApiZipMinimal (api, version, room) {
       expect(body.template.version).to.be.eql(p.version)
       expect(body.template.engine).to.be.eql('2.3.0')
       expect(body.template.colors).to.be.an('array')
-      expect(body.template.colors.length).to.be.eql(8)
+      expect(body.template.colors.length).to.be.eql(13)
       expect(body.template.borders).to.be.an('array')
-      expect(body.template.borders.length).to.be.eql(8)
+      expect(body.template.borders.length).to.be.eql(13)
       expect(body.credits).to.be.eql('This template does not provide license information.')
     }, 201)
 
@@ -195,7 +199,7 @@ function testApiImageUpload (api, version, room) {
       format: 'jpg',
       h: 2,
       w: 3,
-      type: 'tile',
+      type: LAYER_TILE,
       name: 'upload.test'
     }
   }, body => {
@@ -204,7 +208,7 @@ function testApiImageUpload (api, version, room) {
     expect(body.format).to.be.eql('jpg')
     expect(body.h).to.be.eql(2)
     expect(body.w).to.be.eql(3)
-    expect(body.type).to.be.eql('tile')
+    expect(body.type).to.be.eql(LAYER_TILE)
     expect(body.name).to.be.eql('upload.test')
   }, 201)
 
@@ -222,7 +226,7 @@ function testApiImageUpload (api, version, room) {
     expect(body.library.tile[index].bg).to.be.eql('#808080')
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
-    expect(body.library.tile[index].type).to.be.eql('tile')
+    expect(body.library.tile[index].type).to.be.eql(LAYER_TILE)
     expect(body.library.tile[index].name).to.be.eql('upload.test')
   }, 200)
 

@@ -32,6 +32,7 @@ import AdmZip from 'adm-zip'
 export const REGEXP_ID = /^[a-zA-Z0-9_-]{8}$/
 export const REGEXP_DIGEST = /^crc32:-?[0-9]+$/
 export const p = JSON.parse(fs.readFileSync('package.json'))
+export const ACCESS_ANY = '00000000-0000-0000-0000-000000000000'
 
 // --- request helpers ---------------------------------------------------------
 
@@ -49,19 +50,21 @@ chai
  * @param {function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
- * @param {object} forward Data to forward to the payload callback.
+ * @param {string} token Optional API token method.
  */
-export function testJsonGet (api, path, payloadTests, status = 200, forward = null) {
+export function testJsonGet (api, path, payloadTests, status = 200, token = undefined) {
   it(`GET ${api}${path()}`, function (done) {
-    chai.request(api)
+    const request = chai.request(api)
       .get(path())
       .set('content-type', 'application/json')
+    if (token) request.set('aUtHoRiZaTiOn', token())
+    request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
         expect(res, res.text).to.have.status(status)
         expect(res, res.text).to.be.json
         expect(res.body).to.be.not.null
-        payloadTests(res.body, forward)
+        payloadTests(res.body)
         done()
       })
   })
@@ -87,12 +90,15 @@ const binaryParser = function (res, cb) {
  * @param {function} headerTests Callback function. Will recieve the headers for further checking.
  * @param {function} payloadTests Callback function. Will recieve raw payload.
  * @param {number} status Expected HTTP status.
+ * @param {string} token Optional API token method.
  */
-export function testGetBuffer (api, path, headerTests, payloadTests, status = 200) {
+export function testGetBuffer (api, path, headerTests, payloadTests, status = 200, token = undefined) {
   it(`GET ${api}${path()}`, function (done) {
-    chai.request(api)
+    const request = chai.request(api)
       .get(path())
       .set('content-type', 'application/octet-stream')
+    if (token) request.set('aUtHoRiZaTiOn', token())
+    request
       .buffer()
       .parse(binaryParser)
       .end(function (err, res) {
@@ -148,13 +154,16 @@ export function testZIPUpload (api, path, name, auth, upload, payloadTests, stat
  * @param {function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
+ * @param {string} token Optional API token method.
  */
-export function testJsonPost (api, path, payload, payloadTests, status = 200) {
+export function testJsonPost (api, path, payload, payloadTests, status = 200, token = undefined) {
   it(`POST ${api}${path()}`, function (done) {
-    chai.request(api)
+    const request = chai.request(api)
       .post(path())
       .set('content-type', 'application/json')
       .send(payload())
+    if (token) request.set('aUtHoRiZaTiOn', token())
+    request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
         expect(res, res.text).to.have.status(status)
@@ -176,13 +185,16 @@ export function testJsonPost (api, path, payload, payloadTests, status = 200) {
  * @param {function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
-*/
-export function testJsonPut (api, path, payload, payloadTests, status = 200) {
+ * @param {string} token Optional API token method.
+ */
+export function testJsonPut (api, path, payload, payloadTests, status = 200, token = undefined) {
   it(`PUT ${api}${path()}`, function (done) {
-    chai.request(api)
+    const request = chai.request(api)
       .put(path())
       .set('content-type', 'application/json')
       .send(payload())
+    if (token) request.set('aUtHoRiZaTiOn', token())
+    request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
         expect(res, res.text).to.have.status(status)
@@ -204,13 +216,16 @@ export function testJsonPut (api, path, payload, payloadTests, status = 200) {
  * @param {function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
+ * @param {string} token Optional API token method.
  */
-export function testJsonPatch (api, path, payload, payloadTests, status = 200) {
+export function testJsonPatch (api, path, payload, payloadTests, status = 200, token = undefined) {
   it(`PATCH ${api}${path()}`, function (done) {
-    chai.request(api)
+    const request = chai.request(api)
       .patch(path())
       .set('content-type', 'application/json')
       .send(payload())
+    if (token) request.set('aUtHoRiZaTiOn', token())
+    request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
         expect(res, res.text).to.have.status(status)
@@ -229,17 +244,22 @@ export function testJsonPatch (api, path, payload, payloadTests, status = 200) {
  * @param {string} api Server URL to API root.
  * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
  * @param {number} status Expected HTTP status. Defaults to 204 = gone.
-*/
-export function testJsonDelete (api, path, status = 204) {
+ * @param {string} token Optional API token method.
+ */
+export function testJsonDelete (api, path, status = 204, token = undefined) {
   it(`DELETE ${api}${path()}`, function (done) {
-    chai.request(api)
+    const request = chai.request(api)
       .delete(path())
       .set('content-type', 'application/json')
+    if (token) request.set('aUtHoRiZaTiOn', token())
+    request
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
         expect(res, res.text).to.have.status(status)
         expect(res.body).to.be.not.null
-        expect(res.body).to.be.eql({}) // API returns empty json objects as "no content"
+        if (![401, 403, 404].includes(status)) {
+          expect(res.body).to.be.eql({}) // API returns empty json objects as "no content"
+        }
         done()
       })
   })
@@ -253,13 +273,16 @@ export function testJsonDelete (api, path, status = 204) {
  * @param {string} api Server URL to API root.
  * @param {string} room Room name to create.
  * @param {string} template Template to use for room.
+ * @param {string} password Optional password for the room.
+ * @return {string} API token for that room.
  */
-export function openTestroom (api, room, template) {
+export function openTestroom (api, room, template, password = undefined) {
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
       template: template,
-      auth: 'apitests'
+      auth: 'apitests',
+      password: password
     }
   }, body => {
     expect(body).to.be.an('object')
@@ -319,13 +342,13 @@ export function zipToc (buffer) {
 export function runTests (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
 
-  // const api = 'http://playPHP.local/api'
-  // describe('PHP 7.2', function () { what(api.replace(/PHP/, '72'), '72', `${room}72`) })
-  // describe('PHP 7.3', function () { what(api.replace(/PHP/, '73'), '73', `${room}73`) })
-  // describe('PHP 7.4', function () { what(api.replace(/PHP/, '74'), '74', `${room}74`) })
-  // describe('PHP 8.0', function () { what(api.replace(/PHP/, '80'), '80', `${room}80`) })
-  // describe('PHP 8.1', function () { what(api.replace(/PHP/, '81'), '81', `${room}81`) })
+  const api = 'http://playPHP.local/api'
+  describe('PHP 7.2', function () { what(api.replace(/PHP/, '72'), '72', `${room}72`) })
+  describe('PHP 7.3', function () { what(api.replace(/PHP/, '73'), '73', `${room}73`) })
+  describe('PHP 7.4', function () { what(api.replace(/PHP/, '74'), '74', `${room}74`) })
+  describe('PHP 8.0', function () { what(api.replace(/PHP/, '80'), '80', `${room}80`) })
+  describe('PHP 8.1', function () { what(api.replace(/PHP/, '81'), '81', `${room}81`) })
 
-  const api = 'http://localhost:8765/api'
-  describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
+  // const api = 'http://localhost:8765/api'
+  // describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
 }

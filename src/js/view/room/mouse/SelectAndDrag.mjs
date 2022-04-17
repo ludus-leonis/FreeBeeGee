@@ -22,6 +22,7 @@ import {
 } from '../../../view/room/mouse/_MouseButtonHandler.mjs'
 
 import {
+  FLAG_NO_MOVE,
   movePiece
 } from '../../../state/index.mjs'
 
@@ -77,6 +78,8 @@ export class SelectAndDrag extends MouseButtonHandler {
       }
 
       if (!target.classList.contains('piece')) return // we only drag pieces
+      if (target.piece?.f & FLAG_NO_MOVE) return // we do not drag frozen pieces
+
       setCursor('.cursor-grab')
 
       this.dragging = target.cloneNode(true)
@@ -84,8 +87,8 @@ export class SelectAndDrag extends MouseButtonHandler {
       this.dragging.piece = findPiece(target.id)
 
       this.dragging.style.zIndex = 999999999 // drag visually on top of everything
-      this.dragging.classList.add('dragging')
-      this.dragging.classList.add('dragging-hidden') // hide new item till it gets moved (1)
+      this.dragging.classList.add('is-dragging')
+      this.dragging.classList.add('is-dragging-hidden') // hide new item till it gets moved (1)
       target.parentNode.appendChild(this.dragging)
 
       this.dragging.startX = mousedown.clientX // no need to compensate, as we
@@ -97,7 +100,7 @@ export class SelectAndDrag extends MouseButtonHandler {
 
   drag (mousemove) {
     if (this.isDragging()) {
-      this.dragging.classList.remove('dragging-hidden') // we are moving now (1)
+      this.dragging.classList.remove('is-dragging-hidden') // we are moving now (1)
       moveNodeToSnapped(
         this.dragging,
         this.dragging.piece.x + mousemove.clientX - this.dragging.startX,

@@ -1,0 +1,92 @@
+// Copyright 2021-2022 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Gaming pieces on the virtual gaming board. E.g. tiles and tokens.
+///
+/// @access public
+////
+
+// --- quality settings --------------------------------------------------------
+
+.is-quality-medium .piece-tile {
+  @include shadows(
+    $shadow-flat-0,
+    $shadow-flat-60,
+    $shadow-flat-90,
+    $shadow-flat-120,
+    $shadow-flat-180,
+    $shadow-flat-240,
+    $shadow-flat-270,
+    $shadow-flat-300
+  );
+}
+
+.is-quality-high .piece-tile,
+.is-quality-ultra .piece-tile {
+  @include shadows(
+    $shadow-0,
+    $shadow-60,
+    $shadow-90,
+    $shadow-120,
+    $shadow-180,
+    $shadow-240,
+    $shadow-270,
+    $shadow-300
+  );
+  background-image: var(--fbg-material), var(--fbg-image);
+  background-size: 256px, cover;
+  @each $id in $piece-ids {
+    $i: index($piece-ids, $id);
+
+    &[id^='#{$id}'] {
+      background-position: calc(256px / 64 * $i) calc(192px * $i), 0;
+    }
+  }
+  border-radius: $piece-corner-radius;
+
+  &.has-decal {
+    background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
+    background-size: 256px, cover, cover;
+    @each $id in $piece-ids {
+      $i: index($piece-ids, $id);
+
+      &[id^='#{$id}'] {
+        background-position: calc(256px / 64 * $i) calc(192px * $i), 0, 0;
+      }
+    }
+  }
+}
+
+.is-quality-ultra .piece-tile {
+  @include piece-rotate(0deg, $piece-rotate);
+  @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+    &.is-w-#{$x} { transform: none; }
+    &.is-y-#{$x} { transform: none; }
+  }
+  @each $r in $piece-rotations {
+    &.is-rotate-#{$r} {
+      @include piece-rotate($r * 1deg, $piece-rotate);
+      @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
+        &.is-w-#{$x} { transform: rotate($r * 1deg); }
+        &.is-y-#{$x} { transform: rotate($r * 1deg); }
+      }
+    }
+  }
+}

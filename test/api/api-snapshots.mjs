@@ -38,12 +38,20 @@ import {
 
 import dateformat from 'dateformat'
 
+function dstOffset () { // return 60/120 depending if DST is off or on
+  const now = new Date()
+  return Math.max(
+    new Date(now.getFullYear(), 0, 1).getTimezoneOffset(),
+    new Date(now.getFullYear(), 6, 1).getTimezoneOffset()
+  ) !== now.getTimezoneOffset() ? 120 : 60
+}
+
 // -----------------------------------------------------------------------------
 
 function testApiSnapshotClassic (api, version, room) {
   openTestroom(api, room, 'Classic')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=60`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
@@ -59,12 +67,12 @@ function testApiSnapshotClassic (api, version, room) {
 
   testGetBuffer(api, () => `/rooms/${room}/snapshot/`, headers => {
     const now = new Date()
-    now.setHours(now.getHours() - 1)
+    now.setHours(now.getHours() - dstOffset() / 60)
     const date = dateformat(now, 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {}, 200)
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=120`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset() + 60}`, headers => {
     const now = new Date()
     now.setHours(now.getHours() + 1)
     const date = dateformat(now, 'yyyy-mm-dd-HHMM')
@@ -79,7 +87,7 @@ function testApiSnapshotClassic (api, version, room) {
 function testApiSnapshotRPG (api, version, room) {
   openTestroom(api, room, 'RPG')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=60`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
@@ -101,7 +109,7 @@ function testApiSnapshotRPG (api, version, room) {
 function testApiSnapshotHex (api, version, room) {
   openTestroom(api, room, 'Hex')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=60`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
@@ -123,17 +131,17 @@ function testApiSnapshotHex (api, version, room) {
 function testApiSnapshotTutorial (api, version, room) {
   openTestroom(api, room, 'Tutorial')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=60`, headers => {
+  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
     const entries = zipToc(buffer)
-    expect(entries.length).to.be.gte(100)
-    expect(entries.length).to.be.lte(150)
+    expect(entries.length).to.be.gte(225)
+    expect(entries.length).to.be.lte(275)
     expect(entries).to.contain('LICENSE.md')
     expect(entries).to.contain('template.json')
     expect(entries).to.contain('tables/6.json')
-    expect(entries).to.contain('assets/token/orc.1x1x1.5-wood.svg')
+    expect(entries).to.contain('assets/token/orc.1x1x1.6-wood.svg')
     expect(entries).not.to.contain('room.json')
     expect(entries).not.to.contain('snapshot.zip')
   }, 200)
@@ -309,7 +317,7 @@ function testApiSnapshotVersions (api, version, room) {
 function blob (mb) {
   const chars = [...Array(256)].map((s, i) => String.fromCharCode(i))
   var result = []
-  for (let i = 0; i < mb * 1024 * 1024; i++) {
+  for (let i = 0; i < mb * 0.825 * 1024 * 1024; i++) { // 0.825 is the compression ratio
     const rnd = Math.floor(Math.random() * 256)
     result.push(chars[rnd])
   }
@@ -331,6 +339,7 @@ function testApiSnapshotSize (api, version, room) {
       zip.addFile('LICENSE.md', Buffer.from('you may'))
     }),
     body => {
+      expect(body._error).to.be.eql('PHP_SIZE')
     }, 400)
 
   // 65MB - size exceeds webserver
@@ -345,15 +354,31 @@ function testApiSnapshotSize (api, version, room) {
       zip.addFile('LICENSE.md', Buffer.from('you may'))
     }),
     body => {
+      expect(body).to.be.eql({})
     }, 413, false)
 
-  // 1MB - size ok
+  // 15MB - too large, as system assets are too much
   testZIPUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      for (let i = 0; i < 1; i++) {
+      for (let i = 0; i < 15; i++) {
+        zip.addFile(`blob${i}.bin`, Buffer.from(b))
+      }
+      zip.addFile('LICENSE.md', Buffer.from('you may'))
+    }),
+    body => {
+      expect(body._error).to.be.eql('ROOM_SIZE')
+    }, 400)
+
+  // 14MB - barely ok including system assets
+  testZIPUpload(api,
+    () => '/rooms/',
+    () => { return room },
+    () => { return 'apitests' },
+    () => zipCreate(zip => {
+      for (let i = 0; i < 14; i++) {
         zip.addFile(`blob${i}.bin`, Buffer.from(b))
       }
       zip.addFile('LICENSE.md', Buffer.from('you may'))

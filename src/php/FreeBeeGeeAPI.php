@@ -28,9 +28,10 @@ namespace com\ludusleonis\freebeegee;
 class FreeBeeGeeAPI
 {
     private $ID_ASSET_POINTER = 'ZZZZZZZZ';
-    private $ID_ASSET_LOS = 'ZZZZZZZY';
-    private $ID_ASSET_NONE = 'NO_ASSET';
-    private $REGEXP_ID = '^[0-9a-zA-Z_-]{8}$';
+    private $ID_ASSET_LOS     = 'ZZZZZZZY';
+    private $ID_ASSET_NONE    = 'NO_ASSET';
+    private $ID_ACCESS_ANY    = '00000000-0000-0000-0000-000000000000';
+    private $REGEXP_ID    = '^[0-9a-zA-Z_-]{8}$';
     private $REGEXP_COLOR = '^#[0-9a-fA-F]{6}$';
     private $version = '$VERSION$';
     private $engine = '$ENGINE$';
@@ -41,6 +42,10 @@ class FreeBeeGeeAPI
     private $types = ['grid-square', 'grid-hex'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'badge'];
     private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
+
+    private $FLAG_NO_DELETE = 0b00000001;
+    private $FLAG_NO_CLONE  = 0b00000010;
+    private $FLAG_NO_MOVE   = 0b00000100;
 
     /**
      * Constructor - setup our routes.
@@ -55,24 +60,23 @@ class FreeBeeGeeAPI
         // --- GET ---
 
         $this->api->register('GET', '/rooms/:rid/digest/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->getRoomDigest($data['rid']);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $fbg->getRoomDigest($meta);
         });
 
         $this->api->register('GET', '/rooms/:rid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->getRoom($data['rid']);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $fbg->getRoom($meta);
         });
 
         $this->api->register('GET', '/rooms/:rid/tables/:tid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->getTable($data['rid'], $data['tid']);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $fbg->getTable($meta, $data['tid']);
+        });
+
+        $this->api->register('GET', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
+            $meta = $this->getRoomMeta($data['rid']);
+            $fbg->getPiece($meta, $data['tid'], $data['pid']);
         });
 
         $this->api->register('GET', '/', function ($fbg, $data) {
@@ -84,18 +88,9 @@ class FreeBeeGeeAPI
         });
 
         $this->api->register('GET', '/rooms/:rid/snapshot/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $tzo = array_key_exists('tzo', $_GET) ? intval($_GET['tzo']) : 0;
-                $fbg->getSnapshot($data['rid'], $tzo);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
-        });
-
-        $this->api->register('GET', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->getPiece($data['rid'], $data['tid'], $data['pid']);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $tzo = array_key_exists('tzo', $_GET) ? intval($_GET['tzo']) : 0;
+            $fbg->getSnapshot($meta, $tzo);
         });
 
         $this->api->register('GET', '/issues/', function ($fbg, $data) {
@@ -105,19 +100,15 @@ class FreeBeeGeeAPI
         // --- POST ---
 
         $this->api->register('POST', '/rooms/:rid/tables/:tid/pieces/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $piece = $this->api->assertJSONObject('piece', $payload);
-                $fbg->createPiece($data['rid'], $data['tid'], $piece);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $piece = $this->api->assertJSONObject('piece', $payload);
+            $fbg->createPiece($meta, $data['tid'], $piece);
         });
 
         $this->api->register('POST', '/rooms/:rid/assets/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $asset = $this->api->assertJSONObject('asset', $payload);
-                $fbg->createAssetLocked($data['rid'], $asset);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $asset = $this->api->assertJSONObject('asset', $payload);
+            $fbg->createAssetLocked($meta, $asset);
         });
 
         $this->api->register('POST', '/rooms/', function ($fbg, $data, $payload) {
@@ -134,64 +125,60 @@ class FreeBeeGeeAPI
             $fbg->createRoomLocked($room);
         });
 
+        $this->api->register('POST', '/rooms/:rid/auth/?', function ($fbg, $data, $payload) {
+            $fbg->auth($data['rid'], $this->api->assertJSONObject('auth', $payload));
+        });
+
         // --- PUT ---
 
         $this->api->register('PUT', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $piece = $this->api->assertJSONObject('piece', $payload);
-                $fbg->replacePiece($data['rid'], $data['tid'], $data['pid'], $piece);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $piece = $this->api->assertJSONObject('piece', $payload);
+            $fbg->replacePiece($meta, $data['tid'], $data['pid'], $piece);
         });
 
         $this->api->register('PUT', '/rooms/:rid/tables/:tid/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $table = $this->api->assertJSONArray('table', $payload);
-                $fbg->putTableLocked($data['rid'], $data['tid'], $table);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $table = $this->api->assertJSONArray('table', $payload);
+            $fbg->putTableLocked($meta, $data['tid'], $table);
         });
 
         // --- PATCH ---
 
         $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $patch = $this->api->assertJSONObject('piece', $payload);
-                $fbg->updatePiece($data['rid'], $data['tid'], $data['pid'], $patch);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $patch = $this->api->assertJSONObject('piece', $payload);
+            $fbg->updatePiece($meta, $data['tid'], $data['pid'], $patch);
         });
 
         $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $patches = $this->api->assertJSONArray('pieces', $payload);
-                $fbg->updatePieces($data['rid'], $data['tid'], $patches);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $patches = $this->api->assertJSONArray('pieces', $payload);
+            $fbg->updatePieces($meta, $data['tid'], $patches);
         });
 
         $this->api->register('PATCH', '/rooms/:rid/template/', function ($fbg, $data, $payload) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $patch = $this->api->assertJSONObject('template', $payload);
-                $fbg->updateRoomTemplateLocked($data['rid'], $patch);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $patch = $this->api->assertJSONObject('template', $payload);
+            $fbg->updateRoomTemplateLocked($meta, $patch);
+        });
+
+        $this->api->register('PATCH', '/rooms/:rid/auth/', function ($fbg, $data, $payload) {
+            $meta = $this->getRoomMeta($data['rid']);
+            $patch = $this->api->assertJSONObject('auth', $payload);
+            $fbg->updateAuthLocked($meta, $patch);
         });
 
         // --- DELETE ---
 
         $this->api->register('DELETE', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->deletePiece($data['rid'], $data['tid'], $data['pid'], true);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $fbg->deletePiece($meta, $data['tid'], $data['pid'], true);
         });
 
         $this->api->register('DELETE', '/rooms/:rid/?', function ($fbg, $data) {
-            if (is_dir($this->getRoomFolder($data['rid']))) {
-                $fbg->deleteRoom($data['rid']);
-            }
-            $this->api->sendError(404, 'not found: ' . $data['rid']);
+            $meta = $this->getRoomMeta($data['rid']);
+            $fbg->deleteRoom($meta);
         });
     }
 
@@ -250,7 +237,7 @@ class FreeBeeGeeAPI
     private function getRoomFolder(
         string $roomName
     ): string {
-        return $this->api->getDataDir() . 'rooms/' . $roomName . '/';
+        return $this->api->getDataDir("rooms/$roomName/");
     }
 
     /**
@@ -262,8 +249,8 @@ class FreeBeeGeeAPI
      */
     private function getServerConfig()
     {
-        if (is_file($this->api->getDataDir() . 'server.json')) {
-            $config = json_decode(file_get_contents($this->api->getDataDir() . 'server.json'));
+        if (is_file($this->api->getDataDir('server.json'))) {
+            $config = json_decode(file_get_contents($this->api->getDataDir('server.json')));
             $config->version = '$VERSION$';
             $config->engine = '$ENGINE$';
             $config->maxAssetSize = $this->maxAssetSize;
@@ -285,6 +272,51 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Do some basic checks on the room (exists, password), then reads meta.json.
+     *
+     * Terminates execution if something is fishy.
+     *
+     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param string $token Access token.
+     * @return object Parsed meta.json.
+     */
+    public function getRoomMeta(
+        string $roomName
+    ) {
+        $folder = $this->getRoomFolder($roomName);
+        if (is_file($folder . 'meta.json')) {
+            $meta = json_decode($this->api->fileGetLocked(
+                $folder . 'meta.json',
+                $folder . '.flock'
+            ));
+            if (property_exists($meta, 'token')) {
+                if ($meta->token !== $this->ID_ACCESS_ANY) {
+                    $headers = function_exists('apache_request_headers') ? apache_request_headers() : [];
+                    $authorized = false;
+                    foreach ($headers as $header => $value) {
+                        if (strtolower($header) === 'authorization') { // headers are case-insensitive
+                            if ($meta->token === $value) {
+                                $authorized = true;
+                            } else {
+                                $this->api->sendError(403, 'forbidden ' . $roomName);
+                            }
+                            break; // terminate after first unsuccessful authorization header
+                        }
+                    }
+                    if (!$authorized) {
+                        $this->api->sendError(401, 'not authorized');
+                    }
+                }
+            }
+            $meta->name = $roomName;
+            $meta->folder = $folder;
+            $meta->lock = $folder . '.flock';
+            return $meta;
+        }
+        $this->api->sendError(404, 'not found: ' . $roomName);
+    }
+
+    /**
      * Calculate the available / free rooms on this server.
      *
      * Done by counting the sub-folders in the ../rooms/ folder.
@@ -300,10 +332,10 @@ class FreeBeeGeeAPI
         }
 
         // count rooms
-        $dir = $this->api->getDataDir() . 'rooms/';
+        $dir = $this->api->getDataDir('rooms/');
         $count = 0;
         if (is_dir($dir)) {
-            $count = sizeof(scandir($this->api->getDataDir() . 'rooms/')) - 2; // do not count . and ..
+            $count = sizeof(scandir($this->api->getDataDir('rooms/'))) - 2; // do not count . and ..
         }
 
         return $json->maxRooms > $count ? $json->maxRooms - $count : 0;
@@ -317,9 +349,10 @@ class FreeBeeGeeAPI
      *
      * @param int $maxAgeSec Maximum age of inactive room in Seconds.
      */
-    private function deleteOldRooms($maxAgeSec)
-    {
-        $dir = $this->api->getDataDir() . 'rooms/';
+    private function deleteOldRooms(
+        $maxAgeSec
+    ) {
+        $dir = $this->api->getDataDir('rooms/');
         $now = time();
         if (is_dir($dir)) {
             $rooms = scandir($dir);
@@ -373,9 +406,9 @@ class FreeBeeGeeAPI
         }
 
         // unzip system template next if it exists, possibly overwriting assets
-        if (is_file($this->api->getDataDir() . 'templates/_.zip')) {
+        if (is_file($this->api->getDataDir('templates/_.zip'))) {
             $zip = new \ZipArchive();
-            if ($zip->open($this->api->getDataDir() . 'templates/_.zip') === true) {
+            if ($zip->open($this->api->getDataDir('templates/_.zip')) === true) {
                 $zip->extractTo($folder);
                 $zip->close();
             } else {
@@ -419,13 +452,18 @@ class FreeBeeGeeAPI
     {
         return [
             (object) [ 'name ' => 'Black', 'value' => '#202020' ],
-            (object) [ 'name ' => 'Red', 'value' => '#b01c16' ],
+            (object) [ 'name ' => 'White', 'value' => '#e8e8e8' ],
+            (object) [ 'name ' => 'Red', 'value' => '#b32d35' ],
             (object) [ 'name ' => 'Orange', 'value' => '#b05a11' ],
             (object) [ 'name ' => 'Yellow', 'value' => '#af9700' ],
             (object) [ 'name ' => 'Green', 'value' => '#317501' ],
+            (object) [ 'name ' => 'Cyan', 'value' => '#40bfbf' ],
             (object) [ 'name ' => 'Blue', 'value' => '#3387b0' ],
             (object) [ 'name ' => 'Indigo', 'value' => '#2e4d7b' ],
             (object) [ 'name ' => 'Violet', 'value' => '#730fb1' ],
+            (object) [ 'name ' => 'Magenta', 'value' => '#bf40bf' ],
+            (object) [ 'name ' => 'Gray A', 'value' => '#606060' ],
+            (object) [ 'name ' => 'Gray B', 'value' => '#a0a0a0' ],
         ];
     }
 
@@ -449,7 +487,7 @@ class FreeBeeGeeAPI
      * Will update the table.json of a table with the new piece. By replacing the
      * corresponding JSON Array item with the new one via ID reference.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
      * @param object $piece The parsed & validated piece to update.
      * @param bool $create If true, this piece must not exist.
@@ -457,18 +495,18 @@ class FreeBeeGeeAPI
      * @return object The updated piece.
      */
     private function updatePieceTableLocked(
-        string $roomName,
+        object $meta,
         string $tid,
         object $piece,
         bool $create,
         bool $patch
     ): object {
-        $folder = $this->getRoomFolder($roomName);
-        $lock = $this->api->waitForWriteLock($folder . '.flock');
+        $lock = $this->api->waitForWriteLock($meta->lock);
+        $file = $meta->folder . 'tables/' . $tid . '.json';
 
         $oldTable = [];
-        if (is_file($folder . 'tables/' . $tid . '.json')) {
-            $oldTable = json_decode(file_get_contents($folder . 'tables/' . $tid . '.json'));
+        if (is_file($file)) {
+            $oldTable = json_decode(file_get_contents($file));
         }
         $result = $piece;
 
@@ -527,7 +565,7 @@ class FreeBeeGeeAPI
                 $this->api->sendError(404, 'not found: ' . $piece->id);
             }
         }
-        $this->writeAsJSONAndDigest($folder, 'tables/' . $tid . '.json', $newTable);
+        $this->writeAsJSONAndDigest($meta->folder, 'tables/' . $tid . '.json', $newTable);
         $this->api->unlockLock($lock);
 
         return $result;
@@ -552,12 +590,6 @@ class FreeBeeGeeAPI
             $lastAsset = null;
             foreach (glob($roomFolder . 'assets/' . $type . '/*') as $filename) {
                 $asset = FreeBeeGeeAPI::fileToAsset(basename($filename));
-                $asset->type = $type;
-
-                // this ID only has to be unique within the room, but should be reproducable
-                // therefore we use a fast hash and even only use parts of it
-                $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
-                $asset->id = $this->generateId(abs(crc32($idBase))); // avoid neg. values on 32bit systems
 
                 if (
                     $lastAsset === null
@@ -572,15 +604,24 @@ class FreeBeeGeeAPI
                         }
                         array_push($assets[$type], $lastAsset);
                     }
-                    if (preg_match('/^X+$/', $asset->s)) { // this is a back side
-                        $asset->back = $asset->media[0];
-                        $asset->media = [];
-                    } elseif ((int)$asset->s === 0) { // this is a background layer
-                        $asset->base = $asset->media[0];
-                        $asset->media = [];
+                    $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
+                    $lastAsset = (object) [
+                        'id' => $this->generateId(abs(crc32($idBase))), // avoid neg. values on 32bit systems
+                        'name' => $asset->name,
+                        'type' => $type,
+                        'w' => $asset->w,
+                        'h' => $asset->h,
+                        'bg' => $asset->bg,
+                        'media' => []
+                    ];
+                    if (property_exists($asset, 'tx')) {
+                        $lastAsset->tx = $asset->tx;
                     }
-                    unset($asset->s); // we don't keep the side in the JSON data
-                    $lastAsset = $asset;
+                }
+                if (preg_match('/^X+$/', $asset->s)) { // this is a mask
+                    $lastAsset->mask = $asset->media[0];
+                } elseif ((int)$asset->s === 0) { // this is a background layer
+                    $lastAsset->base = $asset->media[0];
                 } else {
                     // this is another side of the same asset. add it to the existing one.
                     array_push($lastAsset->media, $asset->media[0]);
@@ -638,7 +679,10 @@ class FreeBeeGeeAPI
         bool $ignoreEngine = false
     ): array {
         $valid = [];
-        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024;
+
+        // available room size = config size minus system zip size
+        $systemTemplateSize = $this->getZipSize($this->api->getDataDir('templates/_.zip'));
+        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024 - $systemTemplateSize;
 
         // basic sanity tests
         if (filesize($zipPath) > $sizeLeft) {
@@ -1156,6 +1200,11 @@ class FreeBeeGeeAPI
                         }
                     }
                     break;
+                case 'f':
+                    if ($this->api->assertInteger('f', $value, 0b00000001, 0b11111111, false)) {
+                        $out->$property = $value;
+                    }
+                    break;
             }
         }
 
@@ -1257,6 +1306,9 @@ class FreeBeeGeeAPI
                 case 'b':
                     $validated->b = $this->api->assertStringArray('b', $value, $this->REGEXP_ID, 0, 128);
                     break;
+                case 'f':
+                    $validated->f = $this->api->assertInteger('f', $value, 0b00000000, 0b11111111);
+                    break;
                 case 'expires':
                     // ignore as we do not honor externaly set expires
                 default:
@@ -1335,6 +1387,9 @@ class FreeBeeGeeAPI
                     break;
                 case 'template':
                     $validated->$property = $this->api->assertString('template', $value, '[A-Za-z0-9]{1,99}');
+                    break;
+                case 'password':
+                    $validated->$property = $this->api->assertString('password', $value, '..*');
                     break;
                 default:
                     // ignore extra fields
@@ -1463,7 +1518,7 @@ class FreeBeeGeeAPI
     private function getTemplates()
     {
         $templates = [];
-        foreach (glob($this->api->getDataDir() . 'templates/*zip') as $filename) {
+        foreach (glob($this->api->getDataDir('templates/*zip')) as $filename) {
             $zip = pathinfo($filename);
             if ($zip['filename'] != '_') { // don't add system template
                 $templates[] = $zip['filename'];
@@ -1480,6 +1535,7 @@ class FreeBeeGeeAPI
      * @param string $colorAvg Hex fallback color, e.g. '#808080'.
      * @param string $colorScroll Hex color for scrollbar, e.g. '#606060'.
      * @param string $gridColor Checker overlay to use ('white' or 'black').
+     * @return stdClass Populated background object.
      */
     private function getBackground(
         string $name,
@@ -1496,6 +1552,98 @@ class FreeBeeGeeAPI
     }
 
     // --- room handling endpoints ---------------------------------------------
+
+    /**
+     * Authenticate / login to a room.
+     *
+     * Grants access if the room is not protected or the caller knows either the
+     * current token or the room password.
+     *
+     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $payload Parsed auth data from client.
+     */
+    public function auth(
+        string $roomName,
+        object $payload
+    ) {
+        $folder = $this->getRoomFolder($roomName);
+        if (is_dir($folder)) {
+            $meta = $this->api->jsonGetLocked($folder . 'meta.json', "$folder.flock");
+            $token = $this->get($meta, 'token');
+            if (
+                $token === $this->ID_ACCESS_ANY ||
+                $token === $this->get($payload, 'token') ||
+                password_verify($this->get($payload, 'password') ?? '', $this->get($meta, 'password') ?? '')
+            ) {
+                $this->api->sendReply(200, json_encode((object) ['token' => $token]));
+            }
+            $this->api->sendError(403, "forbidden $roomName");
+        }
+        $this->api->sendError(404, "not found: $roomName");
+    }
+
+    /**
+     * Change authentication information. Usually the password.
+     *
+     * @param object $meta Room's parsed `meta.json`.
+     * @param object $payload Parsed auth data from client.
+     */
+    public function updateAuthLocked(
+        object $meta,
+        object $payload
+    ) {
+        // currently only password changes are possible
+        if (property_exists($payload, 'password')) {
+            $meta2 = $this->writeMetaFile($meta->name, $payload->password, $meta->lock);
+            $this->api->sendReply(200, json_encode((object) ['token' => $meta2->token]));
+        }
+
+        $this->api->sendReply(400, 'invalid request');
+    }
+
+    /**
+     * Create or update the meta.json.
+     *
+     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param string $password New password, or null/'' to remove current password.
+     * @param string $lockfile Optional lock file.
+     */
+    private function writeMetaFile(
+        string $roomName,
+        $password,
+        $writeLockFile
+    ) {
+        if ($writeLockFile) {
+            $lock = $this->api->waitForWriteLock($writeLockFile);
+        }
+
+        $folder = $this->getRoomFolder($roomName);
+        $meta = json_decode(
+            is_file($folder . 'meta.json')
+            ? file_get_contents($folder . 'meta.json')
+            : '{}'
+        );
+        $meta->token = $this->get($meta, 'token') ?? $this->ID_ACCESS_ANY;
+
+        if (!$password || $password === '') { // remove password
+            $meta = (object)[
+                'token' => $this->ID_ACCESS_ANY,
+            ];
+        } else { // add/re-set password, keep token if it not the generic one
+            $meta->password = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+            if ($meta->token === $this->ID_ACCESS_ANY) {
+                $meta->token = $this->api->uuid();
+            }
+        }
+
+        file_put_contents($folder . 'meta.json', json_encode($meta));
+
+        if ($writeLockFile) {
+            $this->api->unlockLock($lock);
+        }
+
+        return $meta;
+    }
 
     /**
      * Setup a new room.
@@ -1555,7 +1703,7 @@ class FreeBeeGeeAPI
                 }
                 $zipPath = $_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid';
             } else {
-                $zipPath = $this->api->getDataDir() . 'templates/' . $validated->template . '.zip';
+                $zipPath = $this->api->getDataDir("templates/$validated->template.zip");
             }
 
             // doublecheck template / snapshot
@@ -1569,6 +1717,10 @@ class FreeBeeGeeAPI
             }
 
             $lock = $this->api->waitForWriteLock($folder . '.flock');
+            if (property_exists($validated, 'password')) {
+                $this->writeMetaFile($validated->name, $validated->password, null);
+            }
+
             $this->installSnapshot($validated->name, $zipPath, $validEntries);
             $room = $this->cleanupRoom($validated->name);
             $this->api->unlockLock($lock);
@@ -1578,7 +1730,7 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Check an existing room folder and fix it where necessary.
+     * Check an existing (or just created) room folder and fix it where necessary.
      *
      * Useful after installing new snapshots or when loading older rooms. Assumes
      * the caller has locked the directory.
@@ -1615,6 +1767,11 @@ class FreeBeeGeeAPI
         }
         if (!is_file($folder . 'LICENSE.md')) {
             file_put_contents($folder . 'LICENSE.md', 'This template does not provide license information.');
+        }
+        if (!is_file($folder . 'meta.json')) {
+            file_put_contents($folder . 'meta.json', json_encode((object) [
+                'token' => $this->ID_ACCESS_ANY,
+            ]));
         }
 
         // (re)create room.json
@@ -1687,11 +1844,11 @@ class FreeBeeGeeAPI
      *
      * Will terminate with 200 or an error.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param object $patch Parcial parsed template from client.
      */
     public function updateRoomTemplateLocked(
-        string $roomName,
+        object $meta,
         object $patch
     ) {
         $validated = $this->validateTemplate($patch, false);
@@ -1709,67 +1866,56 @@ class FreeBeeGeeAPI
             }
         }
 
-        $folder = $this->getRoomFolder($roomName);
-        $lock = $this->api->waitForWriteLock($folder . '.flock');
+        $lock = $this->api->waitForWriteLock($meta->lock);
 
         // update template.json
-        $templateFS = json_decode(file_get_contents($folder . 'template.json'));
+        $templateFS = json_decode(file_get_contents($meta->folder . 'template.json'));
         if (isset($template->gridWidth)) {
             $templateFS->gridWidth = $template->gridWidth;
         }
         if (isset($template->gridHeight)) {
             $templateFS->gridHeight = $template->gridHeight;
         }
-        $this->writeAsJSONAndDigest($folder, 'template.json', $templateFS);
+        $this->writeAsJSONAndDigest($meta->folder, 'template.json', $templateFS);
 
         // update room.json
-        $roomFS = json_decode(file_get_contents($folder . 'room.json'));
+        $roomFS = json_decode(file_get_contents($meta->folder . 'room.json'));
         $roomFS->template = $templateFS;
         $roomFS->width = $templateFS->gridWidth * $templateFS->gridSize;
         $roomFS->height = $templateFS->gridHeight * $templateFS->gridSize;
-        $this->writeAsJSONAndDigest($folder, 'room.json', $roomFS);
+        $this->writeAsJSONAndDigest($meta->folder, 'room.json', $roomFS);
 
         $this->api->unlockLock($lock);
         $this->api->sendReply(200, json_encode($templateFS));
     }
 
     /**
-     * Get room metadata.
+     * Get room data.
      *
      * Will return the room.json from a room's folder. Will also check if room
      * is deprecated and/or can be upgraded on the fly.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      */
     public function getRoom(
-        string $roomName
+        object $meta
     ) {
-        $folder = $this->getRoomFolder($roomName);
-        if (is_dir($folder)) {
-            $roomJson = $this->api->fileGetContentsLocked(
-                $folder . 'room.json',
-                $folder . '.flock'
-            );
-            $room = json_decode($roomJson);
-            if (!isset($room->engine) || $room->engine !== $this->engine) {
-                // room is from an older FBG version
-                if ($this->api->semverSatisfies($this->engine, '^' . $room->template->engine, true)) {
-                    // room can be converted
-                    $this->cleanupRoom($roomName);
-                    $roomJson = $this->api->fileGetContentsLocked(
-                        $folder . 'room.json',
-                        $folder . '.flock'
-                    );
-                } else {
-                    // room can't be converted
-                    $this->api->sendError(400, 'template.json: engine mismatch', 'INVALID_ENGINE', [
-                        $room->template->engine, $this->engine
-                    ]);
-                }
+        $roomJson = $this->api->fileGetLocked($meta->folder . 'room.json', $meta->lock);
+        $room = json_decode($roomJson);
+        if (!isset($room->engine) || $room->engine !== $this->engine) {
+            // room is from an older FBG version
+            if ($this->api->semverSatisfies($this->engine, '^' . $room->template->engine, true)) {
+                // room can be converted
+                $this->cleanupRoom($meta->name);
+                $roomJson = $this->api->fileGetLocked($meta->folder . 'room.json', $meta->lock);
+            } else {
+                // room can't be converted
+                $this->api->sendError(400, 'template.json: engine mismatch', 'INVALID_ENGINE', [
+                    $room->template->engine, $this->engine
+                ]);
             }
-            $this->api->sendReply(200, $roomJson, null, 'crc32:' . crc32($roomJson));
         }
-        $this->api->sendError(404, 'not found: ' . $roomName);
+        $this->api->sendReply(200, $roomJson, null, 'crc32:' . crc32($roomJson));
     }
 
     /**
@@ -1777,31 +1923,23 @@ class FreeBeeGeeAPI
      *
      * Will return the digest.json from a room's folder.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      */
     public function getRoomDigest(
-        string $roomName
+        object $meta
     ) {
-        $folder = $this->getRoomFolder($roomName);
-        if (is_dir($folder)) {
-            $this->api->sendReply(200, $this->api->fileGetContentsLocked(
-                $folder . 'digest.json',
-                $folder . '.flock'
-            ));
-        }
-        $this->api->sendError(404, 'not found: ' . $roomName);
+        $this->api->sendReply(200, $this->api->fileGetLocked($meta->folder . 'digest.json', $meta->lock));
     }
 
     /**
      * Delete a whole room.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      */
     public function deleteRoom(
-        string $roomName
+        object $meta
     ) {
-        $this->api->deleteDir($this->getRoomFolder($roomName));
-
+        $this->api->deleteDir($meta->folder);
         $this->api->sendReply(204, '');
     }
 
@@ -1829,9 +1967,9 @@ class FreeBeeGeeAPI
     public function assertFilePermissions(
         $roomName = null
     ) {
-        $data = $this->api->getDataDir();
+        $roomsDir = $this->api->getDataDir('/rooms/');
         $this->assertWritable('');
-        if (is_dir($data . '/rooms/')) {
+        if (is_dir($roomsDir)) {
             $this->assertWritable('rooms/');
         }
         if ($roomName) {
@@ -1853,9 +1991,9 @@ class FreeBeeGeeAPI
     public function assertWritable(
         $dataDir
     ) {
-        $data = $this->api->getDataDir();
-        if (is_dir($data . '/' . $dataDir) && !is_writable($data . '/' . $dataDir)) {
-            $this->api->sendError(400, 'api/data/' . $dataDir, 'FILE_PERMISSIONS');
+        $data = $this->api->getDataDir($dataDir);
+        if (is_dir($data) && !is_writable($data)) {
+            $this->api->sendError(400, 'api/data' . $dataDir, 'FILE_PERMISSIONS');
         }
     }
 
@@ -1864,26 +2002,17 @@ class FreeBeeGeeAPI
      *
      * Returns the [0-9].json containing all pieces on the table.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param int $tid Table id / number, e.g. 2.
      */
     public function getTable(
-        string $roomName,
+        object $meta,
         string $tid
     ) {
         $this->assertTableNo($tid);
-        $folder = $this->getRoomFolder($roomName);
-        if (is_dir($folder)) {
-            $body = '[]';
-            if (is_file($folder . 'tables/' . $tid . '.json')) {
-                $body = $this->api->fileGetContentsLocked(
-                    $folder . 'tables/' . $tid . '.json',
-                    $folder . '.flock'
-                );
-            }
-            $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
-        }
-        $this->api->sendError(404, 'not found: ' . $roomName);
+        $file = $meta->folder . 'tables/' . $tid . '.json';
+        $body = is_file($file) ? $this->api->fileGetLocked($file, $meta->lock) : '[]';
+        $this->api->sendReply(200, $body, null, 'crc32:' . crc32($body));
     }
 
     /**
@@ -1891,22 +2020,21 @@ class FreeBeeGeeAPI
      *
      * Can be used to reset a table or to revert to a save.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param int $tid Table id / number, e.g. 2.
      * @param array $table Parsed new table (array of pieces) from client.
      */
     public function putTableLocked(
-        string $roomName,
+        object $meta,
         string $tid,
         array $table
     ) {
         $this->assertTableNo($tid);
-        $folder = $this->getRoomFolder($roomName);
         $newTable = $this->validateTable($tid, $table);
         $newTable = $this->cleanupTable($newTable, true);
 
-        $lock = $this->api->waitForWriteLock($folder . '.flock');
-        $this->writeAsJSONAndDigest($folder, 'tables/' . $tid . '.json', $newTable);
+        $lock = $this->api->waitForWriteLock($meta->lock);
+        $this->writeAsJSONAndDigest($meta->folder, 'tables/' . $tid . '.json', $newTable);
         $this->api->unlockLock($lock);
 
         $this->api->sendReply(200, json_encode($newTable));
@@ -1915,12 +2043,12 @@ class FreeBeeGeeAPI
     /**
      * Add a new piece to a table.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
      * @param object $data Full parsed piece from client.
      */
     public function createPiece(
-        string $roomName,
+        object $meta,
         string $tid,
         object $data
     ) {
@@ -1939,7 +2067,7 @@ class FreeBeeGeeAPI
         } else {
             $piece->id = $this->generateId();
         }
-        $created = $this->updatePieceTableLocked($roomName, $tid, $piece, true, false);
+        $created = $this->updatePieceTableLocked($meta, $tid, $piece, true, false);
         $this->api->sendReply(201, json_encode($created));
     }
 
@@ -1948,32 +2076,25 @@ class FreeBeeGeeAPI
      *
      * Not very performant, but also not needed very often ;)
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceId Id of piece.
      */
     public function getPiece(
-        string $roomName,
+        object $meta,
         string $tid,
         string $pieceId
     ) {
         $this->assertTableNo($tid);
-        $folder = $this->getRoomFolder($roomName);
-
-        if (is_file($folder . 'tables/' . $tid . '.json')) {
-            $table = json_decode($this->api->fileGetContentsLocked(
-                $folder . 'tables/' . $tid . '.json',
-                $folder . '.flock'
-            ));
-
-            foreach ($table as $piece) {
-                if ($piece->id === $pieceId) {
-                    $this->api->sendReply(200, json_encode($piece));
-                }
+        $file = $meta->folder . 'tables/' . $tid . '.json';
+        $body = is_file($file) ? $this->api->fileGetLocked($file, $meta->lock) : '[]';
+        $table = json_decode($body);
+        foreach ($table as $piece) {
+            if ($piece->id === $pieceId) {
+                $this->api->sendReply(200, json_encode($piece));
             }
         }
-
-        $this->api->sendError(404, 'not found: piece ' . $pieceId . ' in room ' . $roomName . ' on table ' . $tid);
+        $this->api->sendError(404, "not found: piece $pieceId in room $meta->name on table $tid");
     }
 
     /**
@@ -1981,13 +2102,13 @@ class FreeBeeGeeAPI
      *
      * Will discard all old piece data except the ID.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceID ID of the piece to update.
      * @param string $data Parsed piece from the client.
      */
     public function replacePiece(
-        string $roomName,
+        object $meta,
         string $tid,
         string $pieceId,
         object $data
@@ -1995,7 +2116,7 @@ class FreeBeeGeeAPI
         $this->assertTableNo($tid);
         $patch = $this->validatePiece($data, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false, false);
+        $updatedPiece = $this->updatePieceTableLocked($meta, $tid, $patch, false, false);
         $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
@@ -2004,13 +2125,13 @@ class FreeBeeGeeAPI
      *
      * Can overwrite the whole piece or only patch a few fields.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceID ID of the piece to update.
      * @param object $piece Full or parcial parsed piece from client.
      */
     public function updatePiece(
-        string $roomName,
+        object $meta,
         string $tid,
         string $pieceId,
         object $piece
@@ -2018,7 +2139,7 @@ class FreeBeeGeeAPI
         $this->assertTableNo($tid);
         $patch = $this->validatePiece($piece, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $updatedPiece = $this->updatePieceTableLocked($roomName, $tid, $patch, false, true);
+        $updatedPiece = $this->updatePieceTableLocked($meta, $tid, $patch, false, true);
         $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
@@ -2027,12 +2148,12 @@ class FreeBeeGeeAPI
      *
      * Can overwrite a whole piece or only patch a few fields.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
      * @param array $patches Array of full or parcial parsed pieces from client.
      */
     public function updatePieces(
-        string $roomName,
+        object $meta,
         string $tid,
         array $patches
     ) {
@@ -2047,7 +2168,7 @@ class FreeBeeGeeAPI
         // looks good. do the update(s).
         $updatedPieces = [];
         foreach ($patches as $patch) {
-            $updatedPieces[] = $this->updatePieceTableLocked($roomName, $tid, $patch, false, true);
+            $updatedPieces[] = $this->updatePieceTableLocked($meta, $tid, $patch, false, true);
         }
 
         $this->api->sendReply(200, json_encode($updatedPieces));
@@ -2058,13 +2179,13 @@ class FreeBeeGeeAPI
      *
      * Will not remove it from the library.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
      * @param string $pieceID ID of the piece to delete.
      * @param bool $sendReply If true, send a HTTP reply after deletion.
      */
     public function deletePiece(
-        string $roomName,
+        object $meta,
         string $tid,
         string $pieceId,
         bool $sendReply
@@ -2076,7 +2197,7 @@ class FreeBeeGeeAPI
         $piece->l = PHP_INT_MIN;
         $piece->id = $pieceId;
 
-        $this->updatePieceTableLocked($roomName, $tid, $piece, false, false);
+        $this->updatePieceTableLocked($meta, $tid, $piece, false, false);
         if ($sendReply) {
             $this->api->sendReply(204, '');
         }
@@ -2085,22 +2206,21 @@ class FreeBeeGeeAPI
     /**
      * Add a new asset to the library of a room.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param object $data Full paresed asset data from client.
      */
     public function createAssetLocked(
-        string $roomName,
+        object $meta,
         object $data
     ) {
         $asset = $this->validateAsset($data);
 
         // check remaining size
-        $folder = $this->getRoomFolder($roomName);
-        $folderSize = $this->api->getDirectorySize($folder);
+        $folderSize = $this->api->getDirectorySize($meta->folder);
         $maxSize = $this->getServerConfig()->maxRoomSizeMB  * 1024 * 1024;
         $blob = base64_decode($asset->base64);
         if ($folderSize + strlen($blob) > $maxSize) {
-            $this->api->sendError(400, 'snapshot too big', 'ROOM_SIZE', [$maxSize - $folderSize]);
+            $this->api->sendError(400, 'asset too big', 'ROOM_SIZE', [$maxSize - $folderSize]);
         }
 
         // determine asset path elements
@@ -2108,13 +2228,13 @@ class FreeBeeGeeAPI
             str_replace('#', '', $asset->bg) . '.' . $asset->format;
 
         // output file data
-        $lock = $this->api->waitForWriteLock($folder . '.flock');
-        file_put_contents($folder . 'assets/' . $asset->type . '/' . $filename, $blob);
+        $lock = $this->api->waitForWriteLock($meta->lock);
+        file_put_contents($meta->folder . 'assets/' . $asset->type . '/' . $filename, $blob);
 
         // regenerate library JSON
-        $room = json_decode(file_get_contents($folder . 'room.json'));
-        $room->library = $this->generateLibraryJSON($roomName);
-        $this->writeAsJSONAndDigest($folder, 'room.json', $room);
+        $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $room->library = $this->generateLibraryJSON($meta->name);
+        $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);
 
         // return asset (without large blob)
         $this->api->unlockLock($lock);
@@ -2127,30 +2247,29 @@ class FreeBeeGeeAPI
      *
      * Will zip the room folder and provide that zip.
      *
-     * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
+     * @param object $meta Room's parsed `meta.json`.
      * @param int $timeZone Timezone offset of the client in minutes to UTC,
      *                         as reported by the client.
      */
     public function getSnapshot(
-        string $roomName,
+        object $meta,
         int $timeZoneOffset
     ) {
-        $folder = realpath($this->getRoomFolder($roomName));
-
         // get all files to zip and sort them
         $toZip = [];
         $iterator = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($folder),
+            new \RecursiveDirectoryIterator($meta->folder),
             \RecursiveIteratorIterator::LEAVES_ONLY
         );
         foreach ($iterator as $filename => $file) {
             if (!$file->isDir()) {
                 $absolutePath = $file->getRealPath();
-                $relativePath = substr($absolutePath, strlen($folder) + 1);
+                $relativePath = substr($absolutePath, strlen($meta->folder));
                 switch ($relativePath) { // filter those files away
                     case '.flock':
                     case 'snapshot.zip':
                     case 'room.json':
+                    case 'meta.json':
                     case 'digest.json':
                         break; // they don't go into the zip
                     default:
@@ -2161,7 +2280,7 @@ class FreeBeeGeeAPI
         ksort($toZip);
 
         // now zip them
-        $zipName = $folder . '/snapshot.zip';
+        $zipName = $meta->folder . 'snapshot.zip';
         $zip = new \ZipArchive();
         $zip->open($zipName, \ZipArchive::CREATE | \ZipArchive::OVERWRITE);
         foreach ($toZip as $relative => $absolute) {
@@ -2179,7 +2298,7 @@ class FreeBeeGeeAPI
 
         // send and delete temporary file
         header('Content-disposition: attachment; filename=' .
-            $roomName . '.' . $time->format('Y-m-d-Hi') . '.zip');
+            $meta->name . '.' . $time->format('Y-m-d-Hi') . '.zip');
         header('Content-type: application/zip');
         readfile($zipName);
         unlink($zipName);
@@ -2222,6 +2341,25 @@ class FreeBeeGeeAPI
     }
 
     // --- statics -------------------------------------------------------------
+
+    /**
+     * Get a possibly undefined property of an object.
+     *
+     * To avoid a PHP8 warning.
+     *
+     * @param stdClass $obj Object.
+     * @param string $property Name of property.
+     * @return mixed Property value or null if property does not exist.
+     */
+    public static function get(
+        \stdClass $obj,
+        string $property
+    ) {
+        if (property_exists($obj, $property)) {
+            return $obj->$property;
+        }
+        return null;
+    }
 
     /**
      * Set a semvers 3rd number (patch) to 0.
@@ -2298,6 +2436,30 @@ class FreeBeeGeeAPI
             $asset->bg = '#808080';
         }
         return $asset;
+    }
+
+    /**
+     * Get a ZIP's extracted size.
+     *
+     * Counts all included files.
+     *
+     * @param string $zipPath Path to ZIP.
+     * @return int Total size in byte.
+     */
+    public function getZipSize(
+        string $zipPath
+    ): int {
+        $zipSize = 0;
+        if (is_file($zipPath)) {
+            $zip = new \ZipArchive();
+            if (!$zip->open($zipPath)) {
+                $this->api->sendError(400, 'can\'t open zip', 'ZIP_INVALID');
+            }
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $zipSize += $zip->statIndex($i)['size'];
+            }
+        }
+        return $zipSize;
     }
 
     /**

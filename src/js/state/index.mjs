@@ -25,6 +25,7 @@ import {
 } from '../lib/utils.mjs'
 
 import {
+  UnexpectedStatus,
   apiGetTable,
   apiPutTable,
   apiGetRoom,
@@ -36,19 +37,21 @@ import {
   apiDeletePiece,
   apiPostPiece,
   apiPostAsset,
-  UnexpectedStatus
+  apiPatchRoomAuth
 } from '../api/index.mjs'
 
 import {
-  syncNow,
-  stopAutoSync
+  syncNow
 } from '../view/room/sync.mjs'
 
 import {
-  runError
+  runError,
+  apiError
 } from '../view/error/index.mjs'
 
 import {
+  FEATURE_DICEMAT,
+  findPiece,
   populatePiecesDefaults,
   populateTemplateDefaults,
   clampToTableSize,
@@ -75,6 +78,15 @@ export function getServerInfo () {
  */
 export function setServerInfo (info) {
   serverInfo = info
+}
+
+/**
+ * Get the current API token.
+ *
+ * @return {Object} Token
+ */
+export function getToken () {
+  return token
 }
 
 /**
@@ -148,6 +160,7 @@ export function isLayerActive (layer) {
 }
 
 export const PREFS = {
+  TOKEN: { name: 'token', default: '00000000-0000-0000-0000-000000000000' },
   TABLE: { name: 'table', default: 1 },
   LAYERother: { name: 'layer5', default: true },
   LAYERtoken: { name: 'layer4', default: true },
@@ -280,26 +293,30 @@ export function cleanupStore () {
  * @return {Promise} Promise of room data object.
  */
 export function reloadRoom () {
-  return loadRoom(room.name)
+  return loadRoom(room.name, token)
 }
 
 /**
  * (Re)Fetch the room's state from the API and cache it
  *
  * @param {String} name The current table name.
+ * @param {String} t The current API token.
  * @return {Promise} Promise of room data object.
  */
-export function loadRoom (name) {
-  return apiGetRoom(name, true)
+export function loadRoom (name, t) {
+  token = t
+  return apiGetRoom(name, getToken(), true)
     .then(response => {
       if (response.status === 400) {
         runError('ROOM_INVALID', name)
-      } else {
+      } else if (response.status === 200) {
         _setRoom(response.body)
         return response
+      } else {
+        apiError(new UnexpectedStatus(response.status, response.body), name)
       }
     })
-    .catch(error => errorRoomGone(error))
+    .catch(error => apiError(error, name))
 }
 
 /**
@@ -311,8 +328,8 @@ export function loadRoom (name) {
  * @param {Object} sync Optional. If true (default), trigger table sync.
  */
 export function patchTemplate (template, sync = true) {
-  return apiPatchTemplate(room.name, template)
-    .catch(error => errorUnexpected404(error))
+  return apiPatchTemplate(room.name, template, getToken())
+    .catch(error => apiError(error, room.name, [404]))
     .finally(() => {
       if (sync) syncNow()
     })
@@ -326,7 +343,7 @@ export function patchTemplate (template, sync = true) {
  * @return {Object} Promise of created room metadata object.
  */
 export function addRoom (room, snapshot) {
-  return apiPostRoom(room, snapshot)
+  return apiPostRoom(room, snapshot, getToken())
 }
 
 /**
@@ -345,7 +362,18 @@ export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
   const patch = {}
   if (x != null) patch.x = x
   if (y != null) patch.y = y
-  if (z != null) patch.z = z
+  if (z != null) {
+    if (findPiece(pieceId)?._meta?.feature === FEATURE_DICEMAT) {
+      if (x || y) {
+        // ignore z on move
+      } else {
+        patch.z = z // don't ignore z if only z changes
+      }
+    } else {
+      patch.z = z
+    }
+  }
+
   return patchPiece(pieceId, sanitizePiecePatch(patch), sync)
 }
 
@@ -410,6 +438,24 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
   )
 }
 
+export const FLAG_NO_DELETE = 0b00000001
+export const FLAG_NO_CLONE = 0b00000010
+export const FLAG_NO_MOVE = 0b00000100
+
+/**
+ * Update the falgs of a piece/token.
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {String} pieceId ID of piece to change.
+ * @param {Number} f New flag bits.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
+ */
+export function flagPiece (pieceId, f = 0, sync = true) {
+  return patchPiece(pieceId, sanitizePiecePatch({ f }), sync)
+}
+
 /**
  * Edit multiple properties of a piece of the current table.
  *
@@ -438,8 +484,9 @@ export function editPiece (pieceId, updates, sync = true) {
  * @param {Object} sync Optional. If true (default), trigger table sync.
  */
 export function deletePiece (pieceId, sync = true) {
-  return apiDeletePiece(room.name, getTableNo(), pieceId)
-    .catch(error => errorUnexpected(error))
+  if (findPiece(pieceId)?.f & FLAG_NO_DELETE) return Promise.resolve() // can't delete those
+  return apiDeletePiece(room.name, getTableNo(), pieceId, getToken())
+    .catch(error => apiError(error, room.name))
     .finally(() => {
       if (sync) syncNow()
     })
@@ -454,8 +501,8 @@ export function deletePiece (pieceId, sync = true) {
  * @param {Object} sync Optional. If true (default), trigger table sync.
  */
 export function updateTable (table, sync = true) {
-  return apiPutTable(room.name, getTableNo(), table)
-    .catch(error => errorUnexpected(error))
+  return apiPutTable(room.name, getTableNo(), table, getToken())
+    .catch(error => apiError(error, room.name))
     .finally(() => {
       if (sync) syncNow()
     })
@@ -503,7 +550,7 @@ export function createPieces (pieces, selected = false, selectIds = [], sync = t
 }
 
 export function addAsset (data) {
-  return apiPostAsset(room.name, data)
+  return apiPostAsset(room.name, data, getToken())
 }
 
 /**
@@ -512,7 +559,18 @@ export function addAsset (data) {
  * @return {Promise} Promise of deletion to wait for.
  */
 export function deleteRoom () {
-  return apiDeleteRoom(room.name)
+  return apiDeleteRoom(room.name, getToken())
+}
+
+/**
+ * Set/change the current room password.
+ *
+ * @return {Promise} Promise of change to wait for.
+ */
+export function setRoomPassword (password) {
+  return apiPatchRoomAuth(room.name, {
+    password: password
+  }, getToken())
 }
 
 /**
@@ -522,39 +580,15 @@ export function deleteRoom () {
  * @return {Promise} Promise of a table object.
  */
 export function fetchTable (no) {
-  return apiGetTable(room.name, no, true)
+  return apiGetTable(room.name, no, getToken(), true)
     .then(table => {
       _setTable(no, populatePiecesDefaults(table.body, table.headers))
       return table
     })
-    .catch(error => errorRoomGone(error))
+    .catch(error => apiError(error, room.name))
 }
 
 // --- HTTP error handling -----------------------------------------------------
-
-export function errorUnexpected (error) {
-  runError('UNEXPECTED', error)
-  return null
-}
-
-export function errorUnexpected404 (error) {
-  if (error instanceof UnexpectedStatus && error.status === 404) {
-    // 404 are semi-expected, silently ignore them
-  } else {
-    errorUnexpected(error)
-  }
-  return null
-}
-
-export function errorRoomGone (error) {
-  if (error instanceof UnexpectedStatus) {
-    runError('ROOM_GONE', room.name, error)
-    stopAutoSync()
-  } else {
-    errorUnexpected(error)
-  }
-  return null
-}
 
 /**
  * Is the browser/tab currently active/visible?
@@ -604,6 +638,7 @@ export function _setRoom (data) {
 // --- internal ----------------------------------------------------------------
 
 let serverInfo = null /** stores the server meta info JSON */
+let token = null /** stores the API token for this room */
 let room = null /** stores the room meta info JSON */
 let tableNo = 1 /** stores the currently visible table index */
 const tables = [[], [], [], [], [], [], [], [], [], []] /** caches the tables 0..9 **/
@@ -639,8 +674,8 @@ function stripPiece (piece) {
  */
 function patchPiece (pieceId, patch, sync = true) {
   if (patch.l) patch.l = nameToLayer(patch.l)
-  return apiPatchPiece(room.name, getTableNo(), pieceId, patch)
-    .catch(error => errorUnexpected404(error))
+  return apiPatchPiece(room.name, getTableNo(), pieceId, patch, getToken())
+    .catch(error => apiError(error, room.name, [404]))
     .finally(() => {
       if (sync) syncNow()
     })
@@ -659,8 +694,8 @@ function patchPieces (patches, sync = true) {
     if (patch.l) patch.l = nameToLayer(patch.l)
     sane.push(sanitizePiecePatch(patch, patch.id))
   }
-  return apiPatchPieces(room.name, getTableNo(), sane)
-    .catch(error => errorUnexpected404(error))
+  return apiPatchPieces(room.name, getTableNo(), sane, getToken())
+    .catch(error => apiError(error, room.name, [404]))
     .finally(() => {
       if (sync) syncNow()
     })
@@ -675,11 +710,11 @@ function patchPieces (patches, sync = true) {
  */
 function createPiece (piece, sync = true) {
   if (piece.l) piece.l = nameToLayer(piece.l)
-  return apiPostPiece(room.name, getTableNo(), stripPiece(piece))
+  return apiPostPiece(room.name, getTableNo(), stripPiece(piece), getToken())
     .then(piece => {
       return piece.id
     })
-    .catch(error => errorUnexpected(error))
+    .catch(error => apiError(error, room.name))
     .finally(() => {
       if (sync) syncNow()
     })
