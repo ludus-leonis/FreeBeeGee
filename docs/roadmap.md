@@ -12,9 +12,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] content: more helper/marker overlays (pin, areas)
 * [X] system: random material offset
 * [X] protected pieces: no-delete, no-clone, no-move
-* [ ] pre-release
+* [X] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] refactor pieces scss
     * [X] disable rotate for other-pieces
     * [X] count _ assets against room size limit
@@ -23,7 +23,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] review + run tests
   * [X] review tutorial
   * [X] bump engine, version/codename & update CHANGELOG
-  * [ ] update screenshots
+  * [X] update screenshots
 
 ## Backlog
 
