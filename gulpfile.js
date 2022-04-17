@@ -488,7 +488,7 @@ gulp.task('demo-deploy-RPG', demoDeploy('RPG'))
 gulp.task('demo-deploy-Hex', demoDeploy('Hex'))
 gulp.task('demo-deploy-Tutorial', demoDeploy('Tutorial'))
 
-gulp.task('demo', gulp.series('clean', () => {
+gulp.task('demo', gulp.series('clean', 'clean-cache', () => {
   demomode = true
   site = 'https://freebeegee.org/'
   return gulp.src('tools')
@@ -502,13 +502,14 @@ gulp.task('demo', gulp.series('clean', () => {
   'demo-Hex',
   'demo-Tutorial',
   'demo-System',
-  'demo-deploy-Classic',
-  'demo-deploy-RPG',
-  'demo-deploy-Hex',
-  'demo-deploy-Tutorial',
   'fonts',
   'img',
   'favicon'
+), gulp.parallel(
+  'demo-deploy-Classic',
+  'demo-deploy-RPG',
+  'demo-deploy-Hex',
+  'demo-deploy-Tutorial'
 )))
 
 // --- default target ----------------------------------------------------------
