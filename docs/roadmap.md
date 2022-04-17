@@ -8,7 +8,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] system: table passwords
 * [X] table: dragging some pieces should not change z (e.g. dicemat)
 * [X] system: color masks for dice, areas, zones and pins
-* [ ] content: more classic game boards - backgammon, mills, solitaire, ...
+* [X] content: more classic game boards - backgammon, mills, solitaire, ...
 * [X] content: more helper/marker overlays (pin, areas)
 * [X] system: random material offset
 * [X] protected pieces: no-delete, no-clone, no-move

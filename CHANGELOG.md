@@ -12,6 +12,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added area overlay in 13 colors
 * added pin overlay in 13 colors
 * added zone overlay in 13 colors
+* added Backgammon, Mills, Solitaire, Oware, Pachisi and TicTacToe to Classic template
 
 ### Other changes
 
