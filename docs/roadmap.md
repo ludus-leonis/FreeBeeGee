@@ -4,9 +4,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.16 - ??? ???
 
+* [X] content: add wall overlay
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
+    * [X] area overlays are hard to select
     * [ ] measure mode and isSolid bug
     * [ ] flip + no bug
   * [ ] review docs
