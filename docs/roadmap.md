@@ -5,12 +5,19 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.16 - ??? ???
 
 * [X] content: add wall overlay
+* [X] content: add circle overlay
+* [ ] engine: shift-drag to disable grid snap
+* [ ] engine: multi-select stuff
+* [ ] engine: set default/start table other than 1 in template
+* [ ] ui: password wrong message
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] area overlays are hard to select
+    * [ ] snapshot download not working with password rooms
     * [ ] measure mode and isSolid bug
-    * [ ] flip + no bug
+    * [ ] move dice more
+    * [ ] flip + number bug
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
@@ -23,16 +30,15 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] repo: automated deployment tests for new zip/tgz packages after build
 * [ ] table: native zoom function
-* [ ] snapshot: set default/start table other than 1 in template
 * [ ] library: delete assets UI
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] pieces: inline-edit notes
 * [ ] when dragging pieces, move those on top of the original piece too
-* [ ] multi-select stuff
 * [ ] move / copy setups between tables
 * [ ] dedicated HP/Mana/Value field(s)
+* [ ] engine: overlay-grid-on-tile flag
 * [ ] piece: supply heap
 * [ ] piece: cards / card-decks
   * [ ] shuffle deck/stack
@@ -58,7 +64,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * better sticky notes (auto-size text)
 * bulk manipulation of assets (delete, edit, change type)
 * show even more infos in media browser
-* overlay-grid-on-tile option
 * sounds
   * dice-roll
   * shuffle
@@ -79,10 +84,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * send to previous position for pieces
 * detail-pane to the right for selected item
 * move stuff via cursor keys
-* rename table
+* rename room
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals
-* arbitrary snap (e.g. 1px)
 * multi-panes / splitscreen / split.js
 * measure range (in fields)
 * auto-z based on tile position

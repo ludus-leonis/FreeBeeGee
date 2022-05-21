@@ -7,7 +7,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
-* added wall overlay
+* added circle & wall overlay
 
 ### Other changes
 
