@@ -415,6 +415,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p1._meta.mask).to.be.eql(undefined)
     expect(p1._meta.feature).to.be.eql(undefined)
     expect(p1._meta.expires).to.be.eql(undefined)
+    expect(p1._meta.isBack).to.be.eql(undefined)
 
     const p2 = populatePieceDefaults(JSON.parse(pieceJSON2), headers())
     expect(p2.w).to.be.eql(2)
@@ -436,6 +437,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p2._meta.mask).to.be.eql(undefined)
     expect(p2._meta.feature).to.be.eql('DISCARD')
     expect(p2._meta.expires).to.be.gte(new Date())
+    expect(p2._meta.isBack).to.be.eql(false)
 
     const p3 = populatePieceDefaults({ a: 'dd07ac49' })
     expect(p3._meta.feature).to.be.eql('DISCARD')

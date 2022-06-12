@@ -438,14 +438,25 @@ export function updateSelectionDOM (hidePopup = true) {
 export function setPiece (piece) {
   const node = createOrUpdatePieceDOM(piece)
 
-  if (node.piece.t?.[0] !== piece.t?.[0] || !equalsJSON(node.piece.b, piece.b)) { // update label on change
-    _('#' + piece.id + ' .label').delete()
-    if (piece.t?.[0] || piece.b?.[0]) {
-      const label = _('.label').create()
+  // set the label
+  if (piece.t?.[0] || piece.b?.[0]) { // make sure label bubble is there
+    let changed = node.piece.t?.[0] !== piece.t?.[0] || !equalsJSON(node.piece.b, piece.b)
+
+    if (!_('#' + piece.id + ' .label').exists()) {
+      node.add(_('.label>span').create())
+      changed = true
+    }
+
+    // update content if it has changed
+    if (changed) {
+      const content = _('#' + piece.id + ' .label').empty()
+
+      // update text part
       if (piece.t?.length >= 1) {
-        const span = _('span').create(piece.t[0])
-        label.add(span)
+        content.add(_('span').create(piece.t[0]))
       }
+
+      // update icon part
       let i = 1
       let iconExtra
       for (const id of piece.b ?? []) {
@@ -454,16 +465,17 @@ export function setPiece (piece) {
           const img = _(i <= 3 ? 'img.icon' : 'img.icon.icon-extra').create()
           if (i === 3) iconExtra = img
           if (i === 4) {
-            label.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
+            content.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
             iconExtra.add('.icon-extra')
           }
           img.src = getAssetURL(asset, 0)
-          label.add(img)
+          content.add(img)
           i++
         }
       }
-      node.add(label)
     }
+  } else { // remove label bubble
+    _('#' + piece.id + ' .label').delete()
   }
 
   node.piece = piece // store piece for future delta-checking
@@ -585,7 +597,7 @@ export function pieceToNode (piece) {
   } else {
     if (asset.media[piece.s] === MEDIA_BACK) { // backside piece
       const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
-      node = _(`.piece.piece-${asset.type}`).create().css({
+      node = _(`.piece.piece-${asset.type}.piece-backside`).create().css({
         '--fbg-mask': url(uriMask)
       })
 

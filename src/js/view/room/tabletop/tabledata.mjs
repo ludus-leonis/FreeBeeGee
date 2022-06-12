@@ -41,6 +41,10 @@ import {
 } from '../../../lib/utils.mjs'
 
 import {
+  MEDIA_BACK
+} from '../../../view/room/tabletop/index.mjs'
+
+import {
   DEMO_MODE
 } from '../../../api/index.mjs'
 
@@ -429,6 +433,11 @@ export function populatePieceDefaults (piece, headers = null) {
       piece._meta.hasHighlight = true
     } else {
       piece._meta.hasHighlight = false
+    }
+    if (asset.media[piece.s] === MEDIA_BACK) {
+      piece._meta.isBack = true
+    } else {
+      piece._meta.isBack = false
     }
   }
 

@@ -13,7 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] area overlays are hard to select
     * [ ] snapshot download not working with password rooms
     * [ ] measure mode and isSolid bug
-    * [ ] flip + number bug
+    * [X] flip + number bug
     * [ ] flip + isSolid bug
     * [ ] no grab cursor when grabbing on notes & popups
     * [ ] MMB drag sometimes sticks / cursor fix

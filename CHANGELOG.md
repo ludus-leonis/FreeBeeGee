@@ -13,6 +13,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 ### Other changes
 
 * fixed area overlays are hard to select
+* fixed flipped number/label handling
 
 
 ## v0.15.0 - Protecting Porpoise
