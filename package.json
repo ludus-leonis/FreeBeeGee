@@ -3,7 +3,7 @@
   "version": "0.16.0-dev",
   "versionEngine": "2.1.0",
   "versionEngineTest": "2.3.4",
-  "codename": "??? ???",
+  "codename": "Selecting Seal",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",
@@ -33,17 +33,17 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.17.9",
-    "@babel/preset-env": "^7.16.11",
+    "@babel/core": "^7.18.0",
+    "@babel/preset-env": "^7.18.0",
     "adm-zip": "^0.5.9",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
     "chai": "^4.3.6",
     "chai-http": "^4.3.0",
     "chai-match": "^1.1.1",
-    "del": "*",
+    "del": "^6.1.0",
     "docker-cli-js": "^2.9.0",
-    "eslint": "^8.13.0",
+    "eslint": "^8.16.0",
     "gulp": "*",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-changed": "^4.0.3",
@@ -65,13 +65,13 @@
     "gulp-svgo": "^2.2.1",
     "gulp-tar": "^3.1.0",
     "gulp-zip": "^5.0.2",
-    "mocha": "^9.2.2",
-    "sass": "^1.50.0",
+    "mocha": "^10.0.0",
+    "sass": "^1.52.1",
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.5",
     "bootstrap": "^5.1.3",
-    "marked": "^4.0.13"
+    "marked": "^4.0.16"
   }
 }

@@ -88,14 +88,14 @@ describe('Frontend - tabledata.mjs', function () {
       setTableNo(i, false)
       if (i === TEST_STATE) {
         expect(findPiece()).to.be.eql(null)
-        expect(findPiece('f45f27b57498c3be')).to.be.eql(null)
-        expect(findPiece('fe008a4da3b2511e')).to.be.an('object')
-        expect(findPiece('fe008a4da3b2511e').id).to.be.eql('fe008a4da3b2511e')
+        expect(findPiece('f45f27b5')).to.be.eql(null)
+        expect(findPiece('fe008a4d')).to.be.an('object')
+        expect(findPiece('fe008a4d').id).to.be.eql('fe008a4d')
       } else {
         setTableNo(i, false)
         expect(findPiece()).to.be.eql(null)
-        expect(findPiece('f45f27b57498c3be')).to.be.eql(null)
-        expect(findPiece('fe008a4da3b2511e')).to.be.eql(null)
+        expect(findPiece('f45f27b5')).to.be.eql(null)
+        expect(findPiece('fe008a4d')).to.be.eql(null)
       }
     }
   })
@@ -106,20 +106,20 @@ describe('Frontend - tabledata.mjs', function () {
 
       // invalid searches
       expect(findAsset()).to.be.eql(null)
-      expect(findAsset('f9d05a1ecec3ecb8')).to.be.eql(null)
+      expect(findAsset('f9d05a1e')).to.be.eql(null)
 
       // valid default searches
-      expect(findAsset('f45f27b57498c3be')).to.be.an('object')
-      expect(findAsset('f45f27b57498c3be').id).to.be.eql('f45f27b57498c3be')
+      expect(findAsset('f45f27b5')).to.be.an('object')
+      expect(findAsset('f45f27b5').id).to.be.eql('f45f27b5')
 
       // valid limited searches
-      expect(findAsset('f45f27b57498c3be', LAYER_OTHER)).to.be.an('object')
-      expect(findAsset('f45f27b57498c3be', LAYER_OTHER).id).to.be.eql('f45f27b57498c3be')
+      expect(findAsset('f45f27b5', LAYER_OTHER)).to.be.an('object')
+      expect(findAsset('f45f27b5', LAYER_OTHER).id).to.be.eql('f45f27b5')
 
       // invalid limited searches
-      expect(findAsset('f45f27b57498c3be', LAYER_TILE)).to.be.eql(null)
-      expect(findAsset('f45f27b57498c3be', LAYER_TOKEN)).to.be.eql(null)
-      expect(findAsset('f45f27b57498c3be', LAYER_OVERLAY)).to.be.eql(null)
+      expect(findAsset('f45f27b5', LAYER_TILE)).to.be.eql(null)
+      expect(findAsset('f45f27b5', LAYER_TOKEN)).to.be.eql(null)
+      expect(findAsset('f45f27b5', LAYER_OVERLAY)).to.be.eql(null)
     }
   })
 
@@ -129,17 +129,17 @@ describe('Frontend - tabledata.mjs', function () {
 
       // invalid searches
       expect(findAssetByAlias()).to.be.eql(null)
-      expect(findAssetByAlias('f9d05a1ecec3ecb8')).to.be.eql(null)
-      expect(findAssetByAlias('f45f27b57498c3be')).to.be.eql(null)
-      expect(findAssetByAlias('f45f27b57498c3be', 'nolayer')).to.be.eql(null)
+      expect(findAssetByAlias('f9d05a1e')).to.be.eql(null)
+      expect(findAssetByAlias('f45f27b5')).to.be.eql(null)
+      expect(findAssetByAlias('f45f27b5', 'nolayer')).to.be.eql(null)
 
       // valid default searches
       expect(findAssetByAlias('classic.a')).to.be.an('object')
-      expect(findAssetByAlias('classic.a').id).to.be.eql('f45f27b57498c3be')
+      expect(findAssetByAlias('classic.a').id).to.be.eql('f45f27b5')
 
       // valid limited searches
       expect(findAssetByAlias('classic.a', LAYER_OTHER)).to.be.an('object')
-      expect(findAssetByAlias('classic.a', LAYER_OTHER).id).to.be.eql('f45f27b57498c3be')
+      expect(findAssetByAlias('classic.a', LAYER_OTHER).id).to.be.eql('f45f27b5')
 
       // invalid limited searches
       expect(findAssetByAlias('classic.a', LAYER_TILE)).to.be.eql(null)
@@ -150,7 +150,7 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getAssetURL()', function () {
-    const asset = findAsset('f45f27b57498c3be')
+    const asset = findAsset('f45f27b5')
 
     expect(getAssetURL(asset, -1)).to.be.eql(
       'api/data/rooms/testroom/assets/other/classic.a.1x1x0.png'
@@ -280,15 +280,15 @@ describe('Frontend - tabledata.mjs', function () {
 
     let patch = {}
     expect(sanitizePiecePatch(patch)).to.be.eql({})
-    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({})
+    expect(sanitizePiecePatch(patch, 'fe008a4d')).to.be.eql({})
 
     patch = { unknown: 1, another: 2 }
     expect(sanitizePiecePatch(patch)).to.be.eql({})
-    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({})
+    expect(sanitizePiecePatch(patch, 'fe008a4d')).to.be.eql({})
 
     patch = {
-      id: 'fe008a4da3b2511e',
-      a: 'f45f27b57498c3be',
+      id: 'fe008a4d',
+      a: 'f45f27b5',
       b: 'blind',
       c: [1, 2],
       x: 111,
@@ -307,13 +307,13 @@ describe('Frontend - tabledata.mjs', function () {
     expect(sanitizePiecePatch(patch)).to.be.eql(patch)
     expect(sanitizePiecePatch(patch, 'invalid')).not.to.be.eq(patch) // check for new object
     expect(sanitizePiecePatch(patch, 'invalid')).to.be.eql(patch)
-    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).not.to.be.eq(patch) // check for new object
-    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql(patch)
+    expect(sanitizePiecePatch(patch, 'fe008a4d')).not.to.be.eq(patch) // check for new object
+    expect(sanitizePiecePatch(patch, 'fe008a4d')).to.be.eql(patch)
 
     // check too low values
     patch = {
-      id: 'fe008a4da3b2511e',
-      a: 'f45f27b57498c3be',
+      id: 'fe008a4d',
+      a: 'f45f27b5',
       b: 'blind',
       c: [-1, -9], // 3 colors in template
       x: -111,
@@ -328,9 +328,9 @@ describe('Frontend - tabledata.mjs', function () {
       t: ['one', 'more', 'time'],
       expires: -expires
     }
-    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({
-      id: 'fe008a4da3b2511e',
-      a: 'f45f27b57498c3be',
+    expect(sanitizePiecePatch(patch, 'fe008a4d')).to.be.eql({
+      id: 'fe008a4d',
+      a: 'f45f27b5',
       b: 'blind',
       c: [3, 3],
       x: 0,
@@ -348,8 +348,8 @@ describe('Frontend - tabledata.mjs', function () {
 
     // check too high values
     patch = {
-      id: 'fe008a4da3b2511e',
-      a: 'f45f27b57498c3be',
+      id: 'fe008a4d',
+      a: 'f45f27b5',
       b: 'blind',
       c: [4, 10], // 3 colors in template
       x: 11111,
@@ -365,9 +365,9 @@ describe('Frontend - tabledata.mjs', function () {
       f: 0b100000101,
       expires: expires
     }
-    expect(sanitizePiecePatch(patch, 'fe008a4da3b2511e')).to.be.eql({
-      id: 'fe008a4da3b2511e',
-      a: 'f45f27b57498c3be',
+    expect(sanitizePiecePatch(patch, 'fe008a4d')).to.be.eql({
+      id: 'fe008a4d',
+      a: 'f45f27b5',
       b: 'blind',
       c: [0, 2],
       x: 3071,
@@ -437,10 +437,10 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p2._meta.feature).to.be.eql('DISCARD')
     expect(p2._meta.expires).to.be.gte(new Date())
 
-    const p3 = populatePieceDefaults({ a: 'dd07ac49818bc000' })
+    const p3 = populatePieceDefaults({ a: 'dd07ac49' })
     expect(p3._meta.feature).to.be.eql('DISCARD')
 
-    const p4 = populatePieceDefaults({ a: 'bb07ac49818bc000' })
+    const p4 = populatePieceDefaults({ a: 'bb07ac49' })
     expect(p4._meta.feature).to.be.eql('DICEMAT')
   })
 
@@ -584,8 +584,8 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('createPieceFromAsset()', function () {
-    const piece = createPieceFromAsset('bb07ac49818bc000')
-    expect(piece.a).to.be.eql('bb07ac49818bc000')
+    const piece = createPieceFromAsset('bb07ac49')
+    expect(piece.a).to.be.eql('bb07ac49')
     expect(piece.l).to.be.eql(LAYER_OTHER)
     expect(piece.w).to.be.eql(4)
     expect(piece.h).to.be.eql(4)
@@ -618,8 +618,8 @@ describe('Frontend - tabledata.mjs', function () {
     piece3.x = 50000
     piece3.y = 60000
     clampToTableSize(piece3)
-    expect(piece3.x).to.be.eql(47 * 64)
-    expect(piece3.y).to.be.eql(31 * 64)
+    expect(piece3.x).to.be.eql(3071)
+    expect(piece3.y).to.be.eql(2047)
 
     const piece4 = populatePieceDefaults(JSON.parse(pieceJSON))
     piece4.x = 50000
@@ -627,23 +627,12 @@ describe('Frontend - tabledata.mjs', function () {
     piece4.w = 3
     piece4.h = 2
     clampToTableSize(piece4)
-    expect(piece4.x).to.be.eql((47 - 2) * 64)
-    expect(piece4.y).to.be.eql((31 - 1) * 64)
+    expect(piece4.x).to.be.eql(3071)
+    expect(piece4.y).to.be.eql(2047)
   })
 
   it('snap()', function () { // hint - more in-depth snapping tests in utils-test
-    const room = JSON.parse(roomJSON)
-
-    // grid-room snapping
-    room.template.type = 'grid-square'
-    _setRoom(room)
     expect(snap(31, -1).x).to.be.eql(32)
-    expect(snap(31, -1).y).to.be.eql(0)
-
-    // hex-room snapping
-    room.template.type = 'grid-hex'
-    _setRoom(room)
-    expect(snap(31, -1).x).to.be.eql(37)
     expect(snap(31, -1).y).to.be.eql(0)
   })
 
@@ -708,9 +697,9 @@ describe('Frontend - tabledata.mjs', function () {
 
 const pieceJSON = `
 {
-  "id": "fe008a4da3b2511e",
+  "id": "fe008a4d",
   "l": 5,
-  "a": "f45f27b57498c3be",
+  "a": "f45f27b5",
   "x": 256,
   "y": 192,
   "z": 13,
@@ -719,9 +708,9 @@ const pieceJSON = `
 
 const pieceJSON2 = `
 {
-  "id": "fe008a4da3b2511e",
+  "id": "fe008a4d",
   "l": 5,
-  "a": "dd07ac49818bc000",
+  "a": "dd07ac49",
   "x": 256,
   "y": 192,
   "w": 2,
@@ -735,50 +724,50 @@ const pieceJSON2 = `
 const tableJSON = `
 [{
   "l": 1,
-  "a": "c065574908de7702",
+  "a": "c0655749",
   "w": 3,
   "h": 2,
   "x": 960,
   "y": 128,
   "z": 58,
-  "id": "437e26b90281e34e"
+  "id": "437e26b9"
 }, {
-  "id": "0e13b377e39574bc",
+  "id": "0e13b377",
   "l": 1,
-  "a": "da30d95f34341fc0",
+  "a": "da30d95f",
   "x": 768,
   "y": 256,
   "z": 65,
   "r": 90
 }, {
   "l": 1,
-  "a": "89bd84cc218186eb",
+  "a": "89bd84cc",
   "x": 1344,
   "y": 192,
   "z": 56,
-  "id": "9754d0c014e39cd9",
+  "id": "9754d0c0",
   "r": 90
 }, {
   "l": 4,
-  "a": "b7662212e5f3c6f9",
+  "a": "b7662212",
   "x": 768,
   "y": 704,
   "z": 35,
   "w": 2,
   "h": 2,
-  "id": "49d045e1712c4148"
+  "id": "49d045e1"
 }, {
   "l": 4,
-  "a": "b7662212e5f3c6f9",
+  "a": "b7662212",
   "x": 960,
   "y": 640,
   "z": 34,
-  "id": "b785cb505677f977"
+  "id": "b785cb50"
 }]`
 
 const roomJSON = `
 {
-  "id": "f9d05a1ecec3ecb8",
+  "id": "f9d05a1e",
   "name": "testroom",
   "engine": "0.3.0",
   "background": {
@@ -794,7 +783,7 @@ const roomJSON = `
       "bg": "#808080",
       "name": "area.1x1",
       "type": "overlay",
-      "id": "7261fff0158e27bc"
+      "id": "7261fff0"
     }],
     "tile": [{
       "media": ["altar.3x2x1.transparent.png", "##BACK##"],
@@ -803,7 +792,7 @@ const roomJSON = `
       "bg": "transparent",
       "name": "altar",
       "type": "tile",
-      "id": "5b150d84cee577dc"
+      "id": "5b150d84"
     }],
     "token": [{
       "media": ["aasimar.1x1x1.piece.svg", "##BACK##"],
@@ -812,7 +801,7 @@ const roomJSON = `
       "bg": "piece",
       "name": "aasimar",
       "type": "token",
-      "id": "484d7d45fdc27afa"
+      "id": "484d7d45"
     }],
     "other": [{
       "media": ["classic.a.1x1x1.svg", "classic.a.1x1x2.svg", "classic.a.1x1x3.svg"],
@@ -821,7 +810,7 @@ const roomJSON = `
       "bg": "#808080",
       "name": "classic.a",
       "type": "other",
-      "id": "f45f27b57498c3be",
+      "id": "f45f27b5",
       "base": "classic.a.1x1x0.png"
     }, {
       "media": ["_.dicemat.4x4x1.jpg", "##BACK##"],
@@ -830,7 +819,7 @@ const roomJSON = `
       "bg": "#808080",
       "name": "_.dicemat",
       "type": "other",
-      "id": "bb07ac49818bc000"
+      "id": "bb07ac49"
     }, {
       "media": ["_.discard.4x4x1.png"],
       "w": 4,
@@ -838,7 +827,7 @@ const roomJSON = `
       "bg": "#808080",
       "name": "_.discard",
       "type": "other",
-      "id": "dd07ac49818bc000"
+      "id": "dd07ac49"
     }],
     "badge": []
   },

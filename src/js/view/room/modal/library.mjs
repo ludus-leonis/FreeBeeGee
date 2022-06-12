@@ -68,6 +68,10 @@ import {
 } from '../../../view/room/tabletop/index.mjs'
 
 import {
+  selectionClear
+} from '../../../view/room/tabletop/selection.mjs'
+
+import {
   modalDisabled
 } from '../../../view/room/modal/disabled.mjs'
 
@@ -558,6 +562,7 @@ function modalOk () {
     offsetZ += 1
   })
   if (pieces.length > 0) {
+    selectionClear()
     createPieces(pieces, true)
     getModal().hide()
   }

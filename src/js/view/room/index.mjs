@@ -18,13 +18,19 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { createPopper } from '@popperjs/core'
-
 import _ from '../../lib/FreeDOM.mjs'
 
 import {
   navigateToJoin
 } from '../../app.mjs'
+
+import {
+  selectionGetPieces,
+  selectionGetFeatures,
+  isSelectedId,
+  selectNode,
+  selectionClear
+} from './tabletop/selection.mjs'
 
 import {
   iconLogo,
@@ -44,14 +50,10 @@ import {
   iconDownload,
   iconHelp,
   iconQuit,
-  iconRuler,
-  iconNote,
-  iconSettings
+  iconRuler
 } from '../../lib/icons.mjs'
 
 import {
-  FLAG_NO_CLONE,
-  FLAG_NO_DELETE,
   loadRoom,
   getRoom,
   getServerInfo,
@@ -69,7 +71,6 @@ import {
 } from '../../state/index.mjs'
 
 import {
-  unselectPieces,
   editSelected,
   rotateSelected,
   cloneSelected,
@@ -78,7 +79,6 @@ import {
   flipSelected,
   randomSelected,
   deleteSelected,
-  createNote,
   url
 } from '../../view/room/tabletop/index.mjs'
 
@@ -87,11 +87,8 @@ import {
   LAYER_OVERLAY,
   LAYER_TOKEN,
   LAYER_OTHER,
-  FEATURE_DICEMAT,
-  FEATURE_DISCARD,
   TYPE_HEX,
-  getSetupCenter,
-  findPiece
+  getSetupCenter
 } from '../../view/room/tabletop/tabledata.mjs'
 
 import {
@@ -225,7 +222,7 @@ export function toggleLayer (layer) {
   if (_('#btn-' + layer + '.active').exists()) {
     setRoomPreference(PREFS['LAYER' + layer], true)
   } else {
-    unselectPieces(layer)
+    selectionClear(layer)
     setRoomPreference(PREFS['LAYER' + layer], false)
   }
 }
@@ -264,77 +261,6 @@ export function toggleGrid (value) {
 }
 
 /**
- * Show the popup menu for a piece.
- *
- * @param {String} id Id of piece.
- */
-export function popupPiece (id) {
-  const piece = findPiece(id)
-  const popup = _('#popper.popup.is-content').create()
-
-  popup.innerHTML = `
-    <a class="popup-menu edit" href="#">${iconEdit}Edit</a>
-    <a class="popup-menu rotate" href="#">${iconRotate}Rotate</a>
-    <a class="popup-menu flip ${piece._meta.sides > 1 ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
-    <a class="popup-menu random ${(piece._meta.sides > 2 || piece._meta.feature === FEATURE_DICEMAT) ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
-    <a class="popup-menu top" href="#">${iconTop}To top</a>
-    <a class="popup-menu bottom" href="#">${iconBottom}To bottom</a>
-    ${(piece.f & FLAG_NO_CLONE && piece.f & FLAG_NO_DELETE) ? '' : '<hr>'}
-    <a class="popup-menu clone ${(piece.f & FLAG_NO_CLONE) ? 'disabled' : ''}" href="#">${iconClone}Clone</a>
-    <a class="popup-menu delete ${(piece.f & FLAG_NO_DELETE) ? 'disabled' : ''}" href="#">${iconDelete}Delete</a>
-  `
-
-  _('#tabletop').add(popup)
-
-  popupClick('#popper .edit', () => { editSelected() })
-  popupClick('#popper .rotate', () => { rotateSelected() })
-  popupClick('#popper .flip', () => { flipSelected() })
-  popupClick('#popper .random', () => { randomSelected() })
-  popupClick('#popper .top', () => { toTopSelected() })
-  popupClick('#popper .bottom', () => { toBottomSelected() })
-  popupClick('#popper .delete', () => { deleteSelected() })
-  popupClick('#popper .clone', () => { cloneSelected(getMouseCoords()) })
-
-  createPopper(_('#' + id).node(), popup.node(), {
-    placement: 'right'
-  })
-  popup.add('.show')
-}
-
-/**
- * Show the popup menu for the table.
- */
-export function popupTable () {
-  const coords = getMouseCoords()
-
-  const anchor = _('#popper-anchor.popup-anchor').create()
-  const popup = _('#popper.popup.is-content').create()
-
-  popup.innerHTML = `
-    <a class="popup-menu add" href="#">${iconAdd}Add piece</a>
-    <a class="popup-menu note" href="#">${iconNote}Add note</a>
-    <hr>
-    <a class="popup-menu settings" href="#">${iconSettings}Settings</a>
-  `
-
-  _('#tabletop').add(anchor)
-  anchor.css({
-    left: `${coords.x}px`,
-    top: `${coords.y}px`
-  })
-  _('#tabletop').add(popup)
-
-  popupClick('#popper .add', () => { modalLibrary(coords) })
-  popupClick('#popper .note', () => { createNote(coords) })
-  popupClick('#popper .settings', () => { modalSettings() })
-
-  createPopper(anchor.node(), popup.node(), {
-    placement: 'right'
-  })
-  popup.add('.show')
-}
-
-/**
  * Update the menu's disabled buttons.
  *
  * Mostly based on if a piece is selected or not.
@@ -342,32 +268,24 @@ export function popupTable () {
 export function updateMenu () {
   // (de)activate menu
   const menu = _('.menu-selected')
-  const selected = _('.is-selected').nodes()
+  const pieces = selectionGetPieces()
 
   _('.menu-selected button').remove('.disabled')
-  if (selected.length <= 0) {
+  _('.menu-selected button').add('.disabled')
+  if (pieces.length <= 0) {
     menu.add('.disabled')
-  } else if (selected.length === 1) {
-    const piece = findPiece(selected[0].id)
-    menu.remove('.disabled')
-    if (piece._meta.sides <= 1) {
-      _('#btn-f').add('.disabled')
-      _('#btn-hash').add('.disabled')
-    }
-    if (piece._meta.sides <= 2) {
-      _('#btn-hash').add('.disabled')
-    }
-    if ([FEATURE_DICEMAT, FEATURE_DISCARD].includes(piece._meta.feature)) {
-      _('#btn-hash').remove('.disabled')
-    }
-    if (piece.f & FLAG_NO_CLONE) {
-      _('#btn-c').add('.disabled')
-    }
-    if (piece.f & FLAG_NO_DELETE) {
-      _('#btn-del').add('.disabled')
-    }
   } else {
     menu.remove('.disabled')
+
+    const features = selectionGetFeatures()
+    if (features.edit) _('#btn-e').remove('.disabled')
+    if (features.rotate) _('#btn-r').remove('.disabled')
+    if (features.flip) _('#btn-f').remove('.disabled')
+    if (features.random) _('#btn-hash').remove('.disabled')
+    if (features.top) _('#btn-t').remove('.disabled')
+    if (features.bottom) _('#btn-b').remove('.disabled')
+    if (features.clone) _('#btn-c').remove('.disabled')
+    if (features.delete) _('#btn-del').remove('.disabled')
   }
 }
 
@@ -490,32 +408,26 @@ export function setupBackground (
 /**
  * Check if we need to update the select state after user clicked somewhere.
  *
- * @param {Element} element The HTML node the user clicked on. Unselect all if null.
+ * @param {Element} node The HTML node the user clicked on. Unselect all if null.
+ * @param {Boolean} toggle If false (default), selection replaces all previous.
+ *                         If true, selection is added/removed (crtl-click).
  */
-export function updateSelection (element) {
-  // unselect everything if 'nothing' was clicked
-  if (!element) {
-    unselectPieces()
-    updateMenu()
-    return
+export function updateSelection (node, toggle = false) {
+  if (toggle) {
+    if (node) {
+      selectNode(node, true)
+    } else {
+      // do nothing = keep selection
+    }
+  } else {
+    if (node) {
+      if (!isSelectedId(node.piece?.id)) {
+        selectNode(node)
+      }
+    } else {
+      selectionClear()
+    }
   }
-
-  // remove selection from all elements if we clicked on the background or on a piece
-  if (element.id === 'tabletop' || element.classList.contains('piece') || element.classList.contains('backside')) {
-    unselectPieces()
-  }
-
-  // add selection to clicked element (if it is a piece)
-  if (element.classList.contains('piece')) {
-    element.classList.add('is-selected')
-  }
-
-  // add selection to parent (if it is a backside piece)
-  if (element.classList.contains('backside')) {
-    element.parentElement.classList.add('is-selected')
-  }
-
-  updateMenu()
 }
 
 // --- internal ----------------------------------------------------------------
@@ -679,20 +591,4 @@ function runStatuslineLoop () {
 
 function fakeTabularNums (text) {
   return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
-}
-
-/**
- * Handle the click on a popup menu item.
- *
- * Will hide the popup and then run a callback.
- *
- * @param {String} selector CSS selector for menu item.
- * @param {callback} callback Method to call.
- */
-function popupClick (selector, callback) {
-  _(selector).on('click', click => {
-    click.preventDefault()
-    _('#popper').remove('.show')
-    callback()
-  })
 }

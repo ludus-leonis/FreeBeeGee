@@ -2,22 +2,21 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.16 - ??? ???
+## v0.16 - Selecting Seal
 
 * [X] content: add wall overlay
 * [X] content: add circle overlay
-* [ ] engine: shift-drag to disable grid snap
-* [ ] engine: multi-select stuff
-* [ ] engine: set default/start table other than 1 in template
-* [ ] ui: password wrong message
+* [X] engine: multi-select stuff
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] area overlays are hard to select
     * [ ] snapshot download not working with password rooms
     * [ ] measure mode and isSolid bug
-    * [ ] move dice more
     * [ ] flip + number bug
+    * [ ] flip + isSolid bug
+    * [ ] no grab cursor when grabbing on notes & popups
+    * [ ] MMB drag sometimes sticks / cursor fix
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
@@ -28,6 +27,17 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] engine: shift-drag to disable grid snap
+* [ ] engine: set default table other than 1 in template
+* [ ] engine: set default enabled layers in template
+* [ ] engine: option to rotate group vs individual pieces
+* [ ] engine: protect api objects in JS code
+* [ ] wood/material für upload token
+* [ ] ui: move dice more
+* [ ] ui: clipboard ctrl+c/v/x
+* [ ] engine: set default/start table other than 1 in template
+* [ ] ui: show edit form when creating new notes
+* [ ] ui: password wrong message
 * [ ] repo: automated deployment tests for new zip/tgz packages after build
 * [ ] table: native zoom function
 * [ ] library: delete assets UI

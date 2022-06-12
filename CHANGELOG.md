@@ -3,10 +3,11 @@
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
 
-## v0.16.0 - ??? ???
+## v0.16.0 - Selecting Seal
 
 ### Notable changes
 
+* added multi-select
 * added circle & wall overlay
 
 ### Other changes

@@ -30,11 +30,18 @@ import {
 } from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
-  popupPiece,
-  popupTable,
   updateSelection,
   setCursor
 } from '../../../view/room/index.mjs'
+
+import {
+  popupPiece,
+  popupTable
+} from '../../../view/room/tabletop/popup.mjs'
+
+import {
+  updateSelectionDOM
+} from '../../../view/room/tabletop/index.mjs'
 
 export class SelectAndProperties extends MouseButtonHandler {
   isPreDrag () {
@@ -49,14 +56,15 @@ export class SelectAndProperties extends MouseButtonHandler {
     mousedown.preventDefault()
 
     findRealClickTarget(mousedown, getMouseCoords()).then(target => {
-      updateSelection(target)
+      updateSelection(target, mousedown.ctrlKey)
       if (target) {
         if (target.classList.contains('piece')) {
-          popupPiece(target.id)
+          popupPiece(target.piece)
         }
       } else {
-        popupTable()
+        popupTable(getMouseCoords())
       }
+      updateSelectionDOM(false)
     })
   }
 

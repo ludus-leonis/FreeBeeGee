@@ -60,6 +60,10 @@ import {
   ID
 } from '../view/room/tabletop/tabledata.mjs'
 
+import {
+  selectionAdd
+} from '../view/room/tabletop/selection.mjs'
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -120,13 +124,13 @@ export function getTableNo () {
  * Triggers API fetch & updates table.
  *
  * @param {Number} no Table to set (1..9).
- * @param {Boolean} sync Force sync after setting status.
+ * @param {Boolean} sync Force sync after setting status. Unit tests might disable that.
  */
 export function setTableNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     tableNo = no
     setRoomPreference(PREFS.TABLE, tableNo)
-    if (sync) syncNow([], true)
+    if (sync) syncNow(true)
   }
 }
 
@@ -359,22 +363,24 @@ export function addRoom (room, snapshot) {
  * @param {Object} sync Optional. If true (default), trigger table sync.
  */
 export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
-  const patch = {}
-  if (x != null) patch.x = x
-  if (y != null) patch.y = y
-  if (z != null) {
-    if (findPiece(pieceId)?._meta?.feature === FEATURE_DICEMAT) {
-      if (x || y) {
-        // ignore z on move
-      } else {
-        patch.z = z // don't ignore z if only z changes
-      }
-    } else {
-      patch.z = z
-    }
-  }
+  return patchPiece(pieceId, movePiecePatch(pieceId, x, y, z), sync)
+}
 
-  return patchPiece(pieceId, sanitizePiecePatch(patch), sync)
+/**
+ * Set the x/y/z of a piece of the current table.
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {Object} moves Array of objects {id, x, y, z} like movePiece().
+ * @param {Object} sync Optional. If true (default), trigger table sync.
+ */
+export function movePieces (moves, sync = true) {
+  const patches = []
+  for (const move of moves) {
+    patches.push(movePiecePatch(move.id, move.x, move.y, move.z))
+  }
+  return patchPieces(patches, sync)
 }
 
 /**
@@ -527,25 +533,22 @@ export function updatePieces (pieces, sync = true) {
  * Will do only one state refresh after creating all items in the list.
  *
  * @param {Array} pieces (Full) pieces to crate.
- * @param {Boolean} selected If true, the pieces should be selected after
- *                           creating them. Defaults to false.
- * @param {Array} selectIds Ids to select when done. Auto-populated in recursion.
- * @param {Object} sync Optional. If true (default), trigger table sync.
+ * @param {boolean} select Optional. If false (default), created pieces will not be selected.
+ * @param {boolean} sync Optional. If true (default), trigger table sync.
  */
-export function createPieces (pieces, selected = false, selectIds = [], sync = true) {
+export function createPieces (pieces, select = false, sync = true) {
   let final = false
 
   if (!pieces || pieces.length <= 0) return Promise.resolve({})
   let piece = pieces.shift()
   if (piece.a !== ID.LOS) piece = clampToTableSize(piece)
-  return createPiece(piece, false)
+  return createPiece(piece, select, false)
     .then(id => {
-      selectIds.push(id)
       if (pieces.length === 0) final = true
-      if (pieces.length > 0) return createPieces(pieces, selected, selectIds, sync)
+      if (pieces.length > 0) return createPieces(pieces, select, sync)
     })
     .finally(() => {
-      if (final && sync) syncNow(selected ? selectIds : [], true)
+      if (final && sync) syncNow(true)
     })
 }
 
@@ -690,6 +693,7 @@ function patchPiece (pieceId, patch, sync = true) {
  */
 function patchPieces (patches, sync = true) {
   const sane = []
+  if (patches.length <= 0) return // nothing to do!
   for (const patch of patches) {
     if (patch.l) patch.l = nameToLayer(patch.l)
     sane.push(sanitizePiecePatch(patch, patch.id))
@@ -705,17 +709,47 @@ function patchPieces (patches, sync = true) {
  * Create a piece on the server.
  *
  * @param {Object} piece The full piece to send to the server.
- * @param {Object} sync Optional. If true (default), trigger table sync.
+ * @param {boolean} select Optional. If false (default), piece will not get selected.
+ * @param {boolean} sync Optional. If true (default), trigger table sync.
  * @return {Object} Promise of the ID of the new piece.
  */
-function createPiece (piece, sync = true) {
+function createPiece (piece, select = false, sync = true) {
   if (piece.l) piece.l = nameToLayer(piece.l)
   return apiPostPiece(room.name, getTableNo(), stripPiece(piece), getToken())
     .then(piece => {
+      selectionAdd(piece.id, true)
       return piece.id
     })
     .catch(error => apiError(error, room.name))
     .finally(() => {
       if (sync) syncNow()
     })
+}
+
+/**
+ * Create a patch object for a piece move.
+ *
+ * @param {String} pieceId ID of piece to change.
+ * @param {?Number} x New x. Will not be changed if null.
+ * @param {?Number} y New y. Will not be changed if null.
+ * @param {?Number} z New z. Will not be changed if null.
+ * @return {Piece} A JSON patch ready to be sent to the API.
+ */
+export function movePiecePatch (pieceId, x = null, y = null, z = null) {
+  const patch = { id: pieceId }
+  if (x != null) patch.x = x
+  if (y != null) patch.y = y
+  if (z != null) {
+    if (findPiece(pieceId)?._meta?.feature === FEATURE_DICEMAT) {
+      if (x || y) {
+        // ignore z on move
+      } else {
+        patch.z = z // don't ignore z if only z changes
+      }
+    } else {
+      patch.z = z
+    }
+  }
+
+  return sanitizePiecePatch(patch)
 }

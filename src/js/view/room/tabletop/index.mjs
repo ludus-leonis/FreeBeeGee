@@ -26,11 +26,13 @@ import {
   shuffle,
   recordTime,
   brightness,
-  equalsJSON
+  equalsJSON,
+  sortByNumber
 } from '../../../lib/utils.mjs'
 
 import {
   FLAG_NO_CLONE,
+  FLAG_NO_MOVE,
   getRoom,
   getTemplate,
   getTable,
@@ -39,10 +41,21 @@ import {
   deletePiece,
   numberPiece,
   flipPiece,
-  movePiece,
+  movePieces,
+  movePiecePatch,
   colorPiece,
   rotatePiece
 } from '../../../state/index.mjs'
+
+import {
+  selectionGetPieces,
+  selectionGetIds,
+  selectionAdd,
+  selectionClear,
+  selectionGetFeatures,
+  findMaxZBelowSelection,
+  findMinZBelowSelection
+} from './selection.mjs'
 
 import {
   updateStatusline,
@@ -64,7 +77,6 @@ import {
   findPiece,
   findPiecesWithin,
   getAssetURL,
-  getMinZ,
   getMaxZ,
   getTopLeftPx,
   getPieceBounds,
@@ -80,18 +92,13 @@ import {
   modalSettings
 } from '../../../view/room/modal/settings.mjs'
 
+import {
+  popupHide
+} from '../../../view/room/tabletop/popup.mjs'
+
 // --- public ------------------------------------------------------------------
 
 export const MEDIA_BACK = '##BACK##'
-
-/**
- * Get all currently selected pieces.
- *
- * @return {FreeDOM} Selected DOM nodes.
- */
-export function getSelected () {
-  return _('#tabletop .is-selected')
-}
 
 /**
  * Delete the currently selected piece from the room.
@@ -99,7 +106,11 @@ export function getSelected () {
  * Will silently fail if nothing is selected.
  */
 export function deleteSelected () {
-  getSelected().each(node => deletePiece(node.id))
+  if (!selectionGetFeatures().delete) return
+
+  for (const piece of selectionGetPieces()) {
+    deletePiece(piece.id)
+  }
 }
 
 /**
@@ -115,33 +126,57 @@ export function settings () {
  * Will silently fail if nothing is selected.
  */
 export function editSelected () {
-  const selected = getSelected()
-  if (selected.exists()) {
-    modalEdit(findPiece(selected.node().id))
+  if (!selectionGetFeatures().edit) return
+
+  const selected = selectionGetPieces()
+  if (selected.length === 1) {
+    modalEdit(findPiece(selected[0].id))
   }
 }
 
 /**
- * Clone the currently selected piece to a given position.
+ * Clone the currently selected piece(s) to a given position.
  *
  * Will silently fail if nothing is selected.
  *
  * @param {Object} tile Grid x/y position (in tiles).
  */
 export function cloneSelected (xy) {
-  getSelected().each(node => {
-    const piece = findPiece(node.id)
-    if (piece.f & FLAG_NO_CLONE) return
-    const snapped = snap(xy.x, xy.y)
-    piece.x = snapped.x
-    piece.y = snapped.y
-    piece.z = getMaxZ(piece.l) + 1
-    if (piece.n > 0) { // increase piece letter (if it has one)
-      piece.n = piece.n + 1
-      if (piece.n >= 16) piece.n = 1
+  const clones = []
+  const features = selectionGetFeatures()
+  const bounds = features.boundingBox
+  if (!features.clone) return
+
+  const room = getRoom()
+
+  // make sure the clone fits on the table
+  xy.x = clamp(bounds.w / 2, xy.x, room.width - 1 - bounds.w / 2)
+  xy.y = clamp(bounds.h / 2, xy.y, room.height - 1 - bounds.h / 2)
+
+  const zLower = findMaxZBelowSelection(xy.x, xy.y)
+  const zUpper = {} // one z per layer
+  for (const piece of sortByNumber(selectionGetPieces(), 'z', 0)) {
+    if (piece.f & FLAG_NO_CLONE) continue
+    const selectionOffset = {
+      x: piece.x - bounds.x,
+      y: piece.y - bounds.y
     }
-    createPieces([piece], true)
-  })
+    const snapped = snap(xy.x + selectionOffset.x, xy.y + selectionOffset.y)
+    const clone = JSON.parse(JSON.stringify(piece))
+    clone.x = snapped.x
+    clone.y = snapped.y
+    zUpper[clone.l] = (zUpper[clone.l] ?? 0) + 1 // init or increase
+    clone.z = (zLower[clone.l] ?? 0) + zUpper[clone.l]
+    if (clone.n > 0) { // increase clone letter (if it has one)
+      clone.n = clone.n + 1
+      if (clone.n >= 16) clone.n = 1
+    }
+    clones.push(clone)
+  }
+  if (clones.length > 0) {
+    selectionClear()
+    createPieces(clones, true)
+  }
 }
 
 /**
@@ -152,38 +187,43 @@ export function cloneSelected (xy) {
  * @param {Boolean} forward If true (default), will cycle forward, otherwise backward.
  */
 export function flipSelected (forward = true) {
-  getSelected().each(node => {
-    const piece = findPiece(node.id)
+  if (!selectionGetFeatures().flip) return
+
+  for (const piece of selectionGetPieces()) {
     if (piece._meta.sides > 1) {
       flipPiece(piece.id, mod(forward ? (piece.s + 1) : (piece.s - 1), piece._meta.sides))
     }
-  })
+  }
 }
 
 /**
- * Switch the piece/outline color of the currently selected piece.
+ * Switch the piece/border color of the currently selected piece.
  *
  * Will cycle through all available colors and silently fail if nothing is selected.
  *
- * @param {boolean} outline If true, this will cycle the outline color. If false/unset,
- *                          it will cycle the piece color.
+ * @param {boolean} border If true, this will cycle the border color.
  */
-export function cycleColor (outline = false) {
-  getSelected().each(node => {
-    const piece = findPiece(node.id)
+export function colorSelected (border = false) {
+  if (border) {
+    if (!selectionGetFeatures().border) return
+  } else {
+    if (!selectionGetFeatures().color) return
+  }
+
+  for (const piece of selectionGetPieces()) {
     switch (piece.l) {
       case LAYER_NOTE:
         // always change base color
         colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         break
       default:
-        if (outline) {
+        if (border) {
           colorPiece(piece.id, piece.c[0], piece.c[1] + 1)
         } else {
           colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         }
     }
-  })
+  }
 }
 
 /**
@@ -192,10 +232,13 @@ export function cycleColor (outline = false) {
  * Will cycle through all states
  */
 export function numberSelected (delta) {
-  _('#tabletop .piece-token.is-selected').each(node => {
-    const piece = findPiece(node.id)
-    numberPiece(piece.id, piece.n + delta) // 0=nothing, 1-9, A-F
-  })
+  if (!selectionGetFeatures().number) return
+
+  for (const piece of selectionGetPieces()) {
+    if (piece.l === LAYER_TOKEN) {
+      numberPiece(piece.id, piece.n + delta) // 0=nothing, 1-9, A-F
+    }
+  }
 }
 
 /**
@@ -207,8 +250,10 @@ export function numberSelected (delta) {
  */
 export function randomSelected () {
   const template = getTemplate()
-  getSelected().each(node => {
-    const piece = findPiece(node.id)
+
+  if (!selectionGetFeatures().random) return
+
+  for (const piece of selectionGetPieces()) {
     switch (piece._meta.feature) {
       case FEATURE_DICEMAT: // dicemat: randomize all pieces on it
         randomDicemat(piece)
@@ -230,14 +275,14 @@ export function randomSelected () {
           const y = Math.abs(clamp(0, piece.y + slideY * offset, (template.gridHeight - 1) * template.gridSize))
           // send to server
           updatePieces([{
-            id: node.id,
+            id: piece.id,
             s: Math.floor(Math.random() * piece._meta.sides),
             x: x,
             y: y
           }])
         }
     }
-  })
+  }
 }
 
 /**
@@ -266,10 +311,9 @@ export function setTableSurface (no) {
  * detect necessary changes.
  *
  * @param {Object} piece The piece's full data object.
- * @param {Boolean} select If true, the piece should be get selected.
  * @return {FreeDOM} Created or updated node.
  */
-function createOrUpdatePieceDOM (piece, select) {
+function createOrUpdatePieceDOM (piece) {
   let selection = []
 
   // reuse existing DOM node if possible, only (re)create on major changes
@@ -281,16 +325,15 @@ function createOrUpdatePieceDOM (piece, select) {
     _piece.h !== piece.h ||
     _piece.s !== piece.s
   ) {
-    selection = _('#tabletop .is-selected').id
-    if (!Array.isArray(selection)) selection = [selection] // make sure we use lists here
+    selection = selectionGetIds()
     div.delete()
   }
   if (!div.unique()) { // (re)create
     const node = piece.l === LAYER_NOTE ? noteToNode(piece) : pieceToNode(piece)
-    node.piece = {}
+    node.piece = _piece
     _piece = {}
-    if (selection.includes(piece.id)) node.add('.is-selected')
     _('#layer-' + piece.l).add(node)
+    if (selection.includes(piece.id)) selectionAdd(piece.id)
   }
 
   // update dom infos + classes (position, rotation ...)
@@ -366,23 +409,34 @@ function createOrUpdatePieceDOM (piece, select) {
     }
   }
 
-  // update select status
-  if (select && _('#tabletop.layer-' + piece.l + '-enabled').exists()) {
-    unselectPieces()
-    div.add('.is-selected')
-  }
-
   return div
+}
+
+/**
+ * Propagate selection of data/state to DOM.
+ *
+ * @param {boolean} hidePopup If true (default) it will also hide the popup.
+ */
+export function updateSelectionDOM (hidePopup = true) {
+  const selection = selectionGetIds()
+  _('#tabletop .piece').each(node => {
+    if (selection.includes(node.id)) {
+      _(node).add('.is-selected')
+    } else {
+      _(node).remove('.is-selected')
+    }
+  })
+  updateMenu()
+  if (hidePopup) popupHide()
 }
 
 /**
  * Add or re-set a piece.
  *
  * @param {Object} piece The piece's full data object.
- * @param {Boolean} select If true, the piece will also get selected. Defaults to false.
  */
-export function setPiece (piece, select = false) {
-  const node = createOrUpdatePieceDOM(piece, select)
+export function setPiece (piece) {
+  const node = createOrUpdatePieceDOM(piece)
 
   if (node.piece.t?.[0] !== piece.t?.[0] || !equalsJSON(node.piece.b, piece.b)) { // update label on change
     _('#' + piece.id + ' .label').delete()
@@ -419,10 +473,9 @@ export function setPiece (piece, select = false) {
  * Add or re-set a sticky note.
  *
  * @param {Object} pieceJson The note's full data object.
- * @param {Boolean} select If true, the note will also get selected. Defaults to false.
  */
-export function setNote (note, select = false) {
-  const node = createOrUpdatePieceDOM(note, select)
+export function setNote (note) {
+  const node = createOrUpdatePieceDOM(note)
 
   if (node.piece.t?.[0] !== note.t?.[0]) { // update note on change
     node.node().innerHTML = note.t?.[0] ?? ''
@@ -441,12 +494,13 @@ export function setNote (note, select = false) {
 export function rotateSelected (cw = true) {
   const template = getTemplate()
 
-  getSelected().each(node => {
-    const piece = findPiece(node.id)
+  if (!selectionGetFeatures().rotate) return
+
+  for (const piece of selectionGetPieces()) {
     const increment = template.type === TYPE_HEX ? 60 : 90
     const r = cw ? (piece.r + increment) : (piece.r - increment)
     rotatePiece(piece.id, r)
-  })
+  }
 }
 
 /**
@@ -455,13 +509,20 @@ export function rotateSelected (cw = true) {
  * Will silently fail if nothing is selected.
  */
 export function toTopSelected () {
-  for (const node of document.querySelectorAll('.piece.is-selected')) {
-    const piece = findPiece(node.id)
-    const maxZ = getMaxZ(piece.l)
-    if (piece.z < maxZ) {
-      movePiece(piece.id, null, null, maxZ + 1)
+  const features = selectionGetFeatures()
+  if (!features.top) return
+
+  const zLower = findMaxZBelowSelection(features.boundingBox.x, features.boundingBox.y)
+  const zUpper = {} // one z per layer
+  const toMove = []
+  for (const piece of sortByNumber(selectionGetPieces(), 'z', 0)) {
+    zUpper[piece.l] = (zUpper[piece.l] ?? 0) + 1 // init or increase
+    const z = (zLower[piece.l] ?? 0) + zUpper[piece.l]
+    if (piece.z !== z) {
+      toMove.push(movePiecePatch(piece.id, null, null, z))
     }
   }
+  if (toMove.length > 0) movePieces(toMove)
 }
 
 /**
@@ -470,30 +531,20 @@ export function toTopSelected () {
  * Will silently fail if nothing is selected.
  */
 export function toBottomSelected () {
-  for (const node of document.querySelectorAll('.piece.is-selected')) {
-    const piece = findPiece(node.id)
-    const minZ = getMinZ(piece.l)
-    if (piece.z > minZ) {
-      movePiece(piece.id, null, null, minZ - 1)
+  const features = selectionGetFeatures()
+  if (!features.bottom) return
+
+  const zLower = findMinZBelowSelection(features.boundingBox.x, features.boundingBox.y)
+  const zUpper = {} // one z per layer
+  const toMove = []
+  for (const piece of sortByNumber(selectionGetPieces(), 'z', 0).reverse()) {
+    zUpper[piece.l] = (zUpper[piece.l] ?? 0) - 1 // init or decrease
+    const z = (zLower[piece.l] ?? 0) + zUpper[piece.l]
+    if (piece.z !== z) {
+      toMove.push(movePiecePatch(piece.id, null, null, z))
     }
   }
-}
-
-/**
- * Clear the selection of pieces.
- *
- * @param {String} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN to clear a specific
- *                       layer, or 'all' for all layers.
- */
-export function unselectPieces (layer = 'all') {
-  const filter = layer === 'all' ? '' : '.layer-' + layer
-  for (const node of document.querySelectorAll(filter + ' .piece.is-selected')) {
-    node.classList.remove('is-selected')
-  }
-
-  // make sure popup is gone
-  _('#popper').delete()
-  _('#popper-anchor').delete()
+  if (toMove.length > 0) movePieces(toMove)
 }
 
 /**
@@ -678,9 +729,8 @@ export function moveContent (offsetX, offsetY) {
  * Will add new, update existing and delete obsolte pieces.
  *
  * @param {Array} tableNo Table number to display.
- * @param {Array} selectIds Optional array of IDs to re-select after update.
  */
-export function updateTabletop (tableNo, selectIds = []) {
+export function updateTabletop (tableNo) {
   const tableData = getTable(tableNo)
   const start = Date.now()
 
@@ -688,12 +738,12 @@ export function updateTabletop (tableNo, selectIds = []) {
 
   const keepIds = []
   cleanupTable()
-  for (const item of tableData) {
-    setItem(item, selectIds.includes(item.id))
-    keepIds.push(item.id)
+  for (const piece of tableData) {
+    setItem(piece)
+    keepIds.push(piece.id)
   }
   removeObsoletePieces(keepIds)
-  updateMenu()
+  updateSelectionDOM()
   updateStatusline()
 
   recordTime('sync-ui', Date.now() - start)
@@ -745,21 +795,17 @@ export function losTo (x, y, w, h) {
 }
 
 /**
- * Move a (dragging) piece to the current mouse position.
+ * Move a (dragging) piece to a coord.
  *
  * @param {Element} element The HTML node to update.
  * @param {Number} x New x coordinate in px.
  * @param {Number} y New y coordinate in px.
  */
-export function moveNodeToSnapped (element, x, y) {
-  const template = getTemplate()
+export function moveNodeTo (element, x, y) {
+  if (element.piece.f & FLAG_NO_MOVE) return // we do not move frozen pieces
 
-  x = clamp(0, x, template._meta.widthPx - 0 - 1)
-  y = clamp(0, y, template._meta.heightPx - 0 - 1)
-
-  const snapped = snap(x, y)
-  element.x = Math.max(0, snapped.x)
-  element.y = Math.max(0, snapped.y)
+  element.x = x
+  element.y = y
 
   const tl = getTopLeftPx(element.piece, element.x, element.y)
   element.style.left = tl.left
@@ -767,7 +813,7 @@ export function moveNodeToSnapped (element, x, y) {
 }
 
 /**
- * Create an asset node for invalid assets / ids.
+ * Create an asset node for LOS pointers.
  *
  * @param {Number} x X-coordinate of starting point in px.
  * @param {Number} y Y-coordinate of starting point in px.
@@ -821,10 +867,49 @@ export function createLosPiece (x, y, width, height) {
   shade.setAttribute('stroke-width', stroke - 1)
   svg.appendChild(shade)
 
+  // position
   svg.style.left = (width < 0 ? x + width : x) - stroke / 2 + 'px'
   svg.style.top = (height < 0 ? y + height : y) - stroke / 2 + 'px'
   svg.style.width = Math.abs(width) + stroke + 'px'
   svg.style.height = Math.abs(height) + stroke + 'px'
+  svg.style.zIndex = 999999999
+
+  return _(svg)
+}
+
+/**
+ * Create an asset node for selection areas.
+ *
+ * @param {Number} x X-coordinate of starting point in px.
+ * @param {Number} y Y-coordinate of starting point in px.
+ * @param {Number} w Width in px. Can be negative.
+ * @param {Number} h Height in px. Can be negative.
+ * @return {FreeDOM} dummy node.
+ */
+export function createSelectPiece (x, y, width, height) {
+  // container svg
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  svg.setAttribute('fill', 'none')
+  svg.setAttribute('viewBox', `0 0 ${Math.abs(width)} ${Math.abs(height)}`)
+  // svg.classList.add('piece', 'piece-other', 'piece-select')
+
+  // rect
+  const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
+  rect.setAttribute('x', 0)
+  rect.setAttribute('y', 0)
+  rect.setAttribute('width', Math.abs(width))
+  rect.setAttribute('height', Math.abs(height))
+  rect.setAttribute('stroke', '#bf40bf')
+  rect.setAttribute('stroke-width', 4)
+  rect.setAttribute('fill', '#bf40bf')
+  rect.setAttribute('fill-opacity', 0.25)
+  svg.appendChild(rect)
+
+  // position
+  svg.style.left = (width < 0 ? x + width : x) + 'px'
+  svg.style.top = (height < 0 ? y + height : y) + 'px'
+  svg.style.width = Math.abs(width) + 'px'
+  svg.style.height = Math.abs(height) + 'px'
   svg.style.zIndex = 999999999
 
   return _(svg)
@@ -974,18 +1059,17 @@ function removeObsoletePieces (keepIds) {
  * Trigger UI update for new/changed server items.
  *
  * @param {Object} piece Piece to add/update.
- * @param {Boolean} selected If true, this item will be selected.
  */
-function setItem (piece, selected) {
+function setItem (piece) {
   switch (piece.l) {
     case LAYER_TILE:
     case LAYER_TOKEN:
     case LAYER_OVERLAY:
     case LAYER_OTHER:
-      setPiece(piece, selected)
+      setPiece(piece)
       break
     case LAYER_NOTE:
-      setNote(piece, selected)
+      setNote(piece)
       break
     default:
       // ignore unkown piece type

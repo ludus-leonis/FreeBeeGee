@@ -21,29 +21,40 @@
 import { expect } from 'chai'
 
 import {
-  mod,
-  clamp,
-  snapGrid,
-  snapHex,
-  hash,
-  recordTime,
-  toCamelCase,
-  unCamelCase,
-  prettyName,
-  unprettyName,
-  toTitleCase,
-  intersect,
-  uuid,
-  brightness,
-  getDimensionsRotated,
   getGetParameter,
   getStoreValue,
   setStoreValue,
   toggleFullscreen,
+
+  isAll,
+  isAny,
+  isNone,
+
+  mod,
+  clamp,
+  snapGrid,
+  snapHex,
   shuffle,
-  sortByString,
+  intersect,
+  contains,
+  getDimensionsRotated,
+
+  equalsJSON,
+
+  uuid,
   bytesToIso,
-  equalsJSON
+  hash,
+  toTitleCase,
+  toCamelCase,
+  unCamelCase,
+  sortByString,
+  sortByNumber,
+  prettyName,
+  unprettyName,
+
+  recordTime,
+
+  brightness
 } from '../../src/js/lib/utils.mjs'
 
 describe('Frontend - utils.mjs - HTML', function () {
@@ -107,6 +118,29 @@ describe('Frontend - utils.mjs - HTML', function () {
     expect(brightness('#FF00FF')).to.be.eql(170)
     expect(brightness('#ffffff')).to.be.eql(255)
     expect(brightness('#FFFFFF')).to.be.eql(255)
+  })
+})
+
+describe('Frontend - utils.mjs - Arrays', function () {
+  it('isAll()', function () {
+    expect(isAll([1, 1, 1], i => i === 1)).to.be.eql(true)
+    expect(isAll([1, 1, 2], i => i === 1)).to.be.eql(false)
+    expect(isAll([1, 1, 2], i => i === 2)).to.be.eql(false)
+    expect(isAll([{ id: 1 }, { id: 2 }], i => i.id === 2)).to.be.eql(false)
+  })
+
+  it('isAny()', function () {
+    expect(isAny([1, 1, 1], i => i === 1)).to.be.eql(true)
+    expect(isAny([1, 1, 2], i => i === 1)).to.be.eql(true)
+    expect(isAny([1, 1, 2], i => i === 2)).to.be.eql(true)
+    expect(isAny([{ id: 1 }, { id: 2 }], i => i.id === 2)).to.be.eql(true)
+  })
+
+  it('isNone()', function () {
+    expect(isNone([1, 1, 1], i => i === 3)).to.be.eql(true)
+    expect(isNone([1, 1, 2], i => i === 2)).to.be.eql(false)
+    expect(isNone([1, 1, 2], i => i === 1)).to.be.eql(false)
+    expect(isNone([{ id: 1 }, { id: 2 }], i => i.id === 3)).to.be.eql(true)
   })
 })
 
@@ -380,6 +414,63 @@ describe('Frontend - utils.mjs - Math', function () {
     )).to.be.eql(false)
   })
 
+  it('contains()', function () {
+    expect(contains(
+      { left: -100, top: -100, right: 100, bottom: 100 },
+      { left: -100, top: -100, right: 100, bottom: 100 }
+    )).to.be.eql(true)
+
+    expect(contains(
+      { left: -100, top: -100, right: 100, bottom: 100 },
+      { left: -100, top: -100, right: 100, bottom: 99 }
+    )).to.be.eql(true)
+
+    expect(contains(
+      { left: -100, top: -100, right: 100, bottom: 100 },
+      { left: -100, top: -100, right: 99, bottom: 100 }
+    )).to.be.eql(true)
+
+    expect(contains(
+      { left: -100, top: -100, right: 100, bottom: 100 },
+      { left: -100, top: -99, right: 100, bottom: 100 }
+    )).to.be.eql(true)
+
+    expect(contains(
+      { left: -100, top: -100, right: 100, bottom: 100 },
+      { left: -99, top: -100, right: 100, bottom: 100 }
+    )).to.be.eql(true)
+
+    expect(contains(
+      { left: -100, top: -100, right: 100, bottom: 100 },
+      { left: -99, top: -99, right: 99, bottom: 99 }
+    )).to.be.eql(true)
+
+    expect(contains(
+      { left: -100, top: -100, right: 100, bottom: 99 },
+      { left: -100, top: -100, right: 100, bottom: 100 }
+    )).to.be.eql(false)
+
+    expect(contains(
+      { left: -100, top: -100, right: 99, bottom: 100 },
+      { left: -100, top: -100, right: 100, bottom: 100 }
+    )).to.be.eql(false)
+
+    expect(contains(
+      { left: -100, top: -99, right: 100, bottom: 100 },
+      { left: -100, top: -100, right: 100, bottom: 100 }
+    )).to.be.eql(false)
+
+    expect(contains(
+      { left: -99, top: -100, right: 100, bottom: 100 },
+      { left: -100, top: -100, right: 100, bottom: 100 }
+    )).to.be.eql(false)
+
+    expect(contains(
+      { left: -99, top: -99, right: 99, bottom: 99 },
+      { left: -100, top: -100, right: 100, bottom: 100 }
+    )).to.be.eql(false)
+  })
+
   it('getDimensionsRotated()', function () {
     expect(getDimensionsRotated(1, 1, 0)).to.be.eql({ w: 1, h: 1 })
     expect(getDimensionsRotated(1, 1, 90)).to.be.eql({ w: 1, h: 1 })
@@ -492,6 +583,46 @@ describe('Frontend - utils.mjs - Text', function () {
       { id: 'one' },
       { id: 'three' },
       { id: 'two' }
+    ])
+  })
+
+  it('sortByNumber()', function () {
+    expect(sortByNumber([], 'none')).to.be.eql([])
+    expect(sortByNumber([
+      { z: '15' },
+      { z: '-4' },
+      { z: '8' }
+    ], 'z')).to.be.eql([
+      { z: '-4' },
+      { z: '8' },
+      { z: '15' }
+    ])
+    expect(sortByNumber([
+      { z: '15' },
+      { z: '-4' },
+      { }
+    ], 'z', 0)).to.be.eql([
+      { z: '-4' },
+      { },
+      { z: '15' }
+    ])
+    expect(sortByNumber([
+      { z: '15' },
+      { z: '-4' },
+      { }
+    ], 'z', -99999999999)).to.be.eql([
+      { },
+      { z: '-4' },
+      { z: '15' }
+    ])
+    expect(sortByNumber([
+      { z: '15' },
+      { z: '-4' },
+      { }
+    ], 'z', 99999999999)).to.be.eql([
+      { z: '-4' },
+      { z: '15' },
+      { }
     ])
   })
 
