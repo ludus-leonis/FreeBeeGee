@@ -8,7 +8,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] content: add circle overlay
 * [X] engine: multi-select stuff
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] area overlays are hard to select
     * [ ] snapshot download not working with password rooms
