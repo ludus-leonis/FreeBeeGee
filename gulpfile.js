@@ -128,40 +128,19 @@ gulp.task('fonts', () => {
     .pipe(gulp.dest(dirs.site + '/fonts/'))
 })
 
-function svg2png (svg, outname, size) {
-  const svg2png = require('gulp-svg2png')
-  const image = require('gulp-image')
-  const rename = require('gulp-rename')
-  const changed = require('gulp-changed')
-  return gulp.src(svg)
-    .pipe(rename(outname))
-    .pipe(changed(dirs.cache + '/favicon'))
-    .pipe(svg2png({ width: size, height: size }))
-    .pipe(image({
-      optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
-      pngquant: ['--speed=1', '--force', 256],
-      zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent']
-    }))
-}
-
 // convert -background none icon.svg -define icon:auto-resize=32,16 favicon.ico
 gulp.task('favicon', gulp.series(gulp.parallel(
   // step 1 - generate cached icons
   () => {
     return gulp.src([
       'src/favicon/icon.svg',
-      'src/favicon/favicon.ico', // note: .ico is not (re)generated yet
-      'src/favicon/manifest.webmanifest'
+      'src/favicon/manifest.webmanifest',
+      // pre-converted icons based on icon.svg
+      'src/favicon/favicon.ico',
+      'src/favicon/png/512.png',
+      'src/favicon/png/apple-touch-icon.png',
+      'src/favicon/png/192.png'
     ])
-      .pipe(gulp.dest(dirs.cache + '/favicon'))
-  }, () => {
-    return svg2png('src/favicon/icon.svg', '512.png', 512)
-      .pipe(gulp.dest(dirs.cache + '/favicon'))
-  }, () => {
-    return svg2png('src/favicon/icon.svg', 'apple-touch-icon.png', 180)
-      .pipe(gulp.dest(dirs.cache + '/favicon'))
-  }, () => {
-    return svg2png('src/favicon/icon.svg', '192.png', 192)
       .pipe(gulp.dest(dirs.cache + '/favicon'))
   }
 ), () => {

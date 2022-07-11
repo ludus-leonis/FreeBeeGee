@@ -61,7 +61,6 @@
     "gulp-sort": "^2.0.0",
     "gulp-sourcemaps": "*",
     "gulp-standard": "*",
-    "gulp-svg2png": "^2.0.2",
     "gulp-svgo": "^2.2.1",
     "gulp-tar": "^3.1.0",
     "gulp-zip": "^5.0.2",

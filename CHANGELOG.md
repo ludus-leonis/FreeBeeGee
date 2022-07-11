@@ -14,6 +14,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 * fixed area overlays are hard to select
 * fixed flipped number/label handling
+* fixed npm build / removed broken gulp-svg2png
 
 
 ## v0.15.0 - Protecting Porpoise

@@ -3,3 +3,4 @@ node_modules
 .~lock*
 /docs/gen
 /.cache
+.phpunit.result.cache
