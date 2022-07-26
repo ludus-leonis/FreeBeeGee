@@ -16,8 +16,35 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-const p = require('./package.json')
-const gulp = require('gulp')
+import p from './package.json' assert { type: 'json' }
+
+import autoprefixer from 'gulp-autoprefixer'
+import babelify from 'babelify'
+import browserify from 'browserify'
+import changed from 'gulp-changed'
+import cli from 'docker-cli-js'
+import concat from 'gulp-concat'
+import del from 'del'
+import gulp from 'gulp'
+import gzip from 'gulp-gzip'
+import image from 'gulp-image'
+import jsdoc from 'gulp-jsdoc3'
+import phpcs from 'gulp-phpcs'
+import phplint from 'gulp-phplint'
+import rename from 'gulp-rename'
+import repl from 'gulp-replace'
+import sassLint from 'gulp-sass-lint'
+import sort from 'gulp-sort'
+import source from 'vinyl-source-stream'
+import sourcemaps from 'gulp-sourcemaps'
+import standard from 'gulp-standard'
+import tar from 'gulp-tar'
+import zip from 'gulp-zip'
+
+import dartSass from 'sass';
+import gulpSass from 'gulp-sass';
+const sass = gulpSass(dartSass);
+
 const rnd = Math.floor(Math.random() * 10000000)
 
 let demomode = false
@@ -34,7 +61,6 @@ const dirs = {
 }
 
 gulp.task('clean', () => {
-  const del = require('del')
   return del([
     `${dirs.build}/${p.name}/**/*`,
     `${dirs.build}/${p.name}/**/.*`,
@@ -44,7 +70,6 @@ gulp.task('clean', () => {
 })
 
 gulp.task('clean-cache', () => {
-  const del = require('del')
   return del([
     dirs.cache
   ])
@@ -53,7 +78,6 @@ gulp.task('clean-cache', () => {
 // --- testing targets ---------------------------------------------------
 
 gulp.task('test-js', () => {
-  const standard = require('gulp-standard')
 
   return gulp.src(['src/js/**/*js'])
     .pipe(gulp.dest('/tmp/gulp-pre'))
@@ -66,7 +90,6 @@ gulp.task('test-js', () => {
 })
 
 gulp.task('test-sass', () => {
-  const sassLint = require('gulp-sass-lint')
   return gulp.src(['src/scss/**/*.s+(a|c)ss'])
     .pipe(sassLint({ configFile: '.sass-lint.yml' }))
     .pipe(sassLint.format())
@@ -74,9 +97,6 @@ gulp.task('test-sass', () => {
 })
 
 gulp.task('test-php', () => {
-  const phpcs = require('gulp-phpcs')
-  const phplint = require('gulp-phplint')
-
   return gulp.src([
     'src/php/**/*.php'
   ])
@@ -96,8 +116,6 @@ gulp.task('tests', gulp.series('test-sass', 'test-js', 'test-php'))
 // --- docs targets ------------------------------------------------------------
 
 gulp.task('docs-js', () => {
-  const jsdoc = require('gulp-jsdoc3')
-
   return gulp.src([
     'src/**/*.js'
   ], { read: false })
@@ -107,7 +125,6 @@ gulp.task('docs-js', () => {
 // --- build targets -----------------------------------------------------------
 
 function replace (pipe) {
-  const repl = require('gulp-replace')
   return pipe
     .pipe(repl('$NAME$', p.name, { skipBinary: true }))
     .pipe(repl('$VERSION$', p.version, { skipBinary: true }))
@@ -152,8 +169,6 @@ gulp.task('favicon', gulp.series(gulp.parallel(
 }))
 
 gulp.task('js-vendor', () => {
-  const concat = require('gulp-concat')
-
   return replace(gulp.src([
     'node_modules/@popperjs/core/dist/umd/popper.min.js',
     'node_modules/bootstrap/dist/js/bootstrap.bundle.min.js'
@@ -163,10 +178,6 @@ gulp.task('js-vendor', () => {
 })
 
 gulp.task('js-main', gulp.series('test-js', () => {
-  const browserify = require('browserify')
-  const babelify = require('babelify')
-  const source = require('vinyl-source-stream')
-
   return replace(browserify([
     'src/js/app.mjs',
     'src/js/main.mjs',
@@ -211,11 +222,6 @@ gulp.task('js-main', gulp.series('test-js', () => {
 }))
 
 gulp.task('sass', gulp.series('test-sass', () => {
-  const sass = require('gulp-sass')(require('sass'))
-  const concat = require('gulp-concat')
-  const autoprefixer = require('gulp-autoprefixer')
-  const sourcemaps = require('gulp-sourcemaps')
-
   return replace(gulp.src([
     'src/scss/style.scss'
   ]))
@@ -250,9 +256,6 @@ gulp.task('html', () => {
 
 gulp.task('img', gulp.series(() => {
   // step 1 - optimize backgrounds in high quality
-  const image = require('gulp-image')
-  const changed = require('gulp-changed')
-
   return gulp.src([
     'src/img/**/*.jpg'
   ])
@@ -269,9 +272,6 @@ gulp.task('img', gulp.series(() => {
     .pipe(gulp.dest(dirs.cache + '/img'))
 }, () => {
   // step 2 - optimize other assets
-  const image = require('gulp-image')
-  const changed = require('gulp-changed')
-
   return gulp.src([
     'src/img/**/*.svg',
     'src/img/**/*.png'
@@ -298,10 +298,6 @@ gulp.task('img', gulp.series(() => {
 }))
 
 function template (name) {
-  const image = require('gulp-image')
-  const changed = require('gulp-changed')
-  const zip = require('gulp-zip')
-
   return gulp.series(() => { // step 1: optimize & cache content
     return replace(gulp.src('src/templates/' + name + '/**/*'))
       .pipe(changed(dirs.cache + '/templates/' + name))
@@ -360,11 +356,6 @@ gulp.task('dist-test', gulp.series('clean', () => {
 // --- release targets ---------------------------------------------------------
 
 gulp.task('package-tgz', function () {
-  const tar = require('gulp-tar')
-  const gzip = require('gulp-gzip')
-  const sort = require('gulp-sort')
-  const rename = require('gulp-rename')
-
   return gulp.src([
     dirs.site + '/**/*',
     '!*.css.map',
@@ -379,9 +370,6 @@ gulp.task('package-tgz', function () {
 })
 
 gulp.task('package-zip', function () {
-  const zip = require('gulp-zip')
-  const sort = require('gulp-sort')
-
   return gulp.src([
     dirs.site + '/**/*',
     '!*.css.map',
@@ -402,14 +390,12 @@ gulp.task('release', gulp.series(
 
 // 'release-docker' requires locally installed docker!
 gulp.task('release-docker', gulp.series('release', (done) => {
-  const cli = require('docker-cli-js')
   const docker = new cli.Docker({ echo: true })
   docker.command('build --no-cache -t ghcr.io/ludus-leonis/freebeegee:latest .')
     .then(() => {
       done()
     })
 }, (done) => {
-  const cli = require('docker-cli-js')
   const docker = new cli.Docker({ echo: true })
   docker.command('tag ghcr.io/ludus-leonis/freebeegee:latest ghcr.io/ludus-leonis/freebeegee:' + p.version)
     .then(() => {
@@ -423,9 +409,6 @@ gulp.task('release-docker', gulp.series('release', (done) => {
 // --- demo mode (serverless) targets ------------------------------------------
 
 function demo (name) {
-  const image = require('gulp-image')
-  const changed = require('gulp-changed')
-
   return gulp.series(() => { // step 1: optimize & cache content
     return replace(gulp.src('src/templates/' + name + '/**/*'))
       .pipe(changed(dirs.cache + '/templates/' + name))
