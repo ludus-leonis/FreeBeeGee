@@ -32,6 +32,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: set default enabled layers in template
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
+* [ ] engine: add material + shade for backsides
 * [ ] wood/material für upload token
 * [ ] ui: move dice more
 * [ ] ui: clipboard ctrl+c/v/x
