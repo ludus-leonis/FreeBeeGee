@@ -41,10 +41,6 @@ import {
 } from '../../../lib/utils.mjs'
 
 import {
-  MEDIA_BACK
-} from '../../../view/room/tabletop/index.mjs'
-
-import {
   DEMO_MODE
 } from '../../../api/index.mjs'
 
@@ -434,11 +430,6 @@ export function populatePieceDefaults (piece, headers = null) {
     } else {
       piece._meta.hasHighlight = false
     }
-    if (asset.media[piece.s] === MEDIA_BACK) {
-      piece._meta.isBack = true
-    } else {
-      piece._meta.isBack = false
-    }
   }
 
   // header/expires information
@@ -712,6 +703,7 @@ export function splitAssetFilename (assetName) {
  * @return {Promise(Boolean)} True if pixel at x/y is transparent, false otherwise.
  */
 export function isSolid (piece, x, y) {
+  console.log('isSolid', piece)
   if (
     !piece || // no piece = no checking
     piece.l === LAYER_TOKEN || // token are always round & solid

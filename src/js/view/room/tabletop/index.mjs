@@ -98,8 +98,6 @@ import {
 
 // --- public ------------------------------------------------------------------
 
-export const MEDIA_BACK = '##BACK##'
-
 /**
  * Delete the currently selected piece from the room.
  *
@@ -595,28 +593,17 @@ export function pieceToNode (piece) {
         node = createInvalidPiece(piece.l)
     }
   } else {
-    if (asset.media[piece.s] === MEDIA_BACK) { // backside piece
-      const uriMask = asset.base ? getAssetURL(asset, -1) : getAssetURL(asset, 0)
-      node = _(`.piece.piece-${asset.type}.piece-backside`).create().css({
-        '--fbg-mask': url(uriMask)
+    const uriSide = getAssetURL(asset, piece.s)
+    if (asset.base) { // layered asset
+      const uriBase = getAssetURL(asset, -1)
+      node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
+        '--fbg-image': url(uriBase),
+        '--fbg-decal': url(uriSide)
       })
-
-      // create inner div as we can't image-mask the outer without cutting the shadow
-      const inner = _('.backside').create()
-      node.add(inner)
-    } else { // regular piece
-      const uriSide = getAssetURL(asset, piece.s)
-      if (asset.base) { // layered asset
-        const uriBase = getAssetURL(asset, -1)
-        node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
-          '--fbg-image': url(uriBase),
-          '--fbg-decal': url(uriSide)
-        })
-      } else { // regular asset
-        node = _(`.piece.piece-${asset.type}`).create().css({
-          '--fbg-image': url(uriSide)
-        })
-      }
+    } else { // regular asset
+      node = _(`.piece.piece-${asset.type}`).create().css({
+        '--fbg-image': url(uriSide)
+      })
     }
     if (asset.tx) {
       node.css({

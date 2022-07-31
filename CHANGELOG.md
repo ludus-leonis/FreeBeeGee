@@ -9,11 +9,13 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 * added multi-select
 * added circle & wall overlay
+* removed default backsides for pieces
 
 ### Other changes
 
 * fixed area overlays are hard to select
 * fixed flipped number/label handling
+* fixed laser-pointer / los-line selectable
 * fixed npm build / removed broken gulp-svg2png
 * changed gulpfile.js to use imports & bumped dependencies
 

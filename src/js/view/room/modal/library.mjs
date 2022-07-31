@@ -62,7 +62,6 @@ import {
 } from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
-  MEDIA_BACK,
   pieceToNode,
   url
 } from '../../../view/room/tabletop/index.mjs'
@@ -538,7 +537,7 @@ function assetToPreview (asset) {
   if (asset.w > 2 || asset.h > 2) {
     tag = `${asset.w}x${asset.h}`
   }
-  if (asset.media.length > 1 && asset.media[1] !== MEDIA_BACK) {
+  if (asset.media.length > 1) {
     tag += `:${asset.media.length}`
   }
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))

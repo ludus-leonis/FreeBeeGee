@@ -599,9 +599,6 @@ class FreeBeeGeeAPI
                 ) {
                     // this is a new asset. write out the old.
                     if ($lastAsset !== null) {
-                        if (count($lastAsset->media) === 1) { // add backside to 1-sided asset
-                            $lastAsset->media[] = '##BACK##';
-                        }
                         array_push($assets[$type], $lastAsset);
                     }
                     $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
@@ -628,9 +625,6 @@ class FreeBeeGeeAPI
                 }
             }
             if ($lastAsset !== null) { // don't forget the last one!
-                if (count($lastAsset->media) === 1) { // add backside to 1-sided asset
-                    $lastAsset->media[] = '##BACK##';
-                }
                 array_push($assets[$type], $lastAsset);
             }
         }

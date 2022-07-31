@@ -103,21 +103,6 @@ export function selectNode (node, toggle = false) {
       selectionClear()
       selectionAdd(node.piece.id)
     }
-
-    // // remove selection from all elements if we clicked on a piece
-    // if (node.classList.contains('piece') || node.classList.contains('backside')) {
-    //   selectionClear()
-    // }
-    //
-    // // add selection to clicked node (if it is a piece)
-    // if (node.classList.contains('piece')) {
-    //   selectionAdd(node.piece.id)
-    // }
-    //
-    // // add selection to parent (if it is a backside piece)
-    // if (node.classList.contains('backside')) {
-    //   selectionAdd(node.parentElement.piece.id)
-    // }
   }
 }
 

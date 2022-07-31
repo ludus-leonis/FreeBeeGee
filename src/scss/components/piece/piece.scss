@@ -230,30 +230,6 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
     }
   }
 
-  // --- backsides -------------------------------------------------------------
-
-  .backside {
-    background-image: url('img/backside.svg');
-    background-repeat: repeat;
-    background-size: 64px;
-    height: 100%;
-    mask-image: var(--fbg-mask);
-    mask-size: 100%;
-    pointer-events: none;
-    transform: scaleX(-1);
-    width: 100%;
-  }
-
-  &.piece-backside { // hide stuff of flipped pieces
-    .label {
-      display: none;
-    }
-
-    &.is-n::after {
-      display: none;
-    }
-  }
-
   // --- piece masks -----------------------------------------------------------
 
   &.has-mask {

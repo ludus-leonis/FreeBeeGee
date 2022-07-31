@@ -7,14 +7,13 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] content: add wall overlay
 * [X] content: add circle overlay
 * [X] engine: multi-select stuff
+* [X] engine: remove default backsides for pieces
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] area overlays are hard to select
     * [ ] snapshot download not working with password rooms
-    * [ ] measure mode and isSolid bug
-    * [X] flip + number bug
-    * [ ] flip + isSolid bug
+    * [X] measure mode and isSolid bug
     * [ ] no grab cursor when grabbing on notes & popups
     * [ ] MMB drag sometimes sticks / cursor fix
   * [ ] review docs
@@ -32,8 +31,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: set default enabled layers in template
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] engine: add material + shade for backsides
 * [ ] wood/material für upload token
+* [ ] ui: tooltip explanation for '3x3:3' in library window
 * [ ] ui: move dice more
 * [ ] ui: clipboard ctrl+c/v/x
 * [ ] engine: set default/start table other than 1 in template
