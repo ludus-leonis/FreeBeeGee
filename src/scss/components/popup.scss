@@ -51,6 +51,10 @@
       margin-right: .5em;
     }
 
+    .cursor-grab & {
+      cursor: grabbing;
+    }
+
     &.disabled {
       color: $color-gray-25;
       cursor: not-allowed;

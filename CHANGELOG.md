@@ -17,6 +17,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * fixed flipped number/label handling
 * fixed laser-pointer / los-line selectable
 * fixed npm build / removed broken gulp-svg2png
+* fixed no grab-cursor when grabbing notes & popups
 * changed gulpfile.js to use imports & bumped dependencies
 
 ## v0.15.0 - Protecting Porpoise
