@@ -23,6 +23,8 @@
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
+import shajs from 'sha.js'
+
 import {
   runTests,
   openTestroom,
@@ -32,6 +34,7 @@ import {
   testJsonPatch,
   testJsonDelete,
   testGetBuffer,
+  testGetBufferQuery,
   expect,
   closeTestroom
 } from './utils/chai.mjs'
@@ -128,6 +131,7 @@ function test20x (api, version, room) {
   testJsonGet(api, () => `/rooms/${room}/tables/1/`, body => {}, 200, () => token)
   testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, body => {}, 200, () => token)
   testGetBuffer(api, () => `/rooms/${room}/snapshot/`, header => {}, body => {}, 200, () => token)
+  testGetBufferQuery(api, () => `/rooms/${room}/snapshot/`, header => {}, body => {}, 200, () => shajs('sha256').update(`fbg-${token}`).digest('hex'))
 
   testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 400, () => token)
   testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 400, () => token)

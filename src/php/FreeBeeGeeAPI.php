@@ -291,16 +291,22 @@ class FreeBeeGeeAPI
             ));
             if (property_exists($meta, 'token')) {
                 if ($meta->token !== $this->ID_ACCESS_ANY) {
-                    $headers = function_exists('apache_request_headers') ? apache_request_headers() : [];
                     $authorized = false;
-                    foreach ($headers as $header => $value) {
-                        if (strtolower($header) === 'authorization') { // headers are case-insensitive
-                            if ($meta->token === $value) {
-                                $authorized = true;
-                            } else {
-                                $this->api->sendError(403, 'forbidden ' . $roomName);
+                    if (array_key_exists('token', $_GET)) {
+                        if ($_GET['token'] === hash('sha256', 'fbg-' . $meta->token)) {
+                            $authorized = true;
+                        }
+                    } else {
+                        $headers = function_exists('apache_request_headers') ? apache_request_headers() : [];
+                        foreach ($headers as $header => $value) {
+                            if (strtolower($header) === 'authorization') { // headers are case-insensitive
+                                if ($meta->token === $value) {
+                                    $authorized = true;
+                                } else {
+                                    $this->api->sendError(403, 'forbidden ' . $roomName);
+                                }
+                                break; // terminate after first unsuccessful authorization header
                             }
-                            break; // terminate after first unsuccessful authorization header
                         }
                     }
                     if (!$authorized) {

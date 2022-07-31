@@ -18,6 +18,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import shajs from 'sha.js'
+
 import _ from '../../lib/FreeDOM.mjs'
 
 import {
@@ -67,7 +69,8 @@ import {
   setTablePreference,
   getTableNo,
   setTableNo,
-  getTemplate
+  getTemplate,
+  getToken
 } from '../../state/index.mjs'
 
 import {
@@ -560,7 +563,12 @@ function setupRoom () {
       modalDemo()
     }
   } else {
-    _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=` + new Date().getTimezoneOffset() * -1
+    if (getToken()) {
+      const token = shajs('sha256').update(`fbg-${getToken()}`).digest('hex')
+      _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=${new Date().getTimezoneOffset() * -1}&token=${token}`
+    } else {
+      _('#btn-snap').href = `./api/rooms/${room.name}/snapshot/?tzo=${new Date().getTimezoneOffset() * -1}`
+    }
   }
 }
 
