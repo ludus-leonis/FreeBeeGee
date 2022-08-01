@@ -16,7 +16,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import p from './package.json' assert { type: 'json' }
+import { readFileSync } from 'fs'
 
 import autoprefixer from 'gulp-autoprefixer'
 import babelify from 'babelify'
@@ -41,11 +41,12 @@ import standard from 'gulp-standard'
 import tar from 'gulp-tar'
 import zip from 'gulp-zip'
 
-import dartSass from 'sass';
-import gulpSass from 'gulp-sass';
-const sass = gulpSass(dartSass);
+import dartSass from 'sass'
+import gulpSass from 'gulp-sass'
+const sass = gulpSass(dartSass)
 
 const rnd = Math.floor(Math.random() * 10000000)
+const p = JSON.parse(readFileSync('./package.json'))
 
 let demomode = false
 let site = './'
@@ -78,7 +79,6 @@ gulp.task('clean-cache', () => {
 // --- testing targets ---------------------------------------------------
 
 gulp.task('test-js', () => {
-
   return gulp.src(['src/js/**/*js'])
     .pipe(gulp.dest('/tmp/gulp-pre'))
     .pipe(gulp.dest('/tmp/gulp-post'))

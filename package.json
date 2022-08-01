@@ -3,6 +3,7 @@
   "version": "0.16.0-dev",
   "versionEngine": "2.1.0",
   "versionEngineTest": "2.3.4",
+  "type": "module",
   "codename": "Selecting Seal",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
@@ -15,7 +16,6 @@
     "type": "git",
     "url": "https://github.com/ludus-leonis/FreeBeeGee"
   },
-  "type": "module",
   "bugs": {
     "url": "https://github.com/ludus-leonis/FreeBeeGee/issues"
   },
@@ -45,7 +45,11 @@
     "dateformat": "^5.0.3",
     "del": "^6.1.1",
     "docker-cli-js": "^2.9.0",
-    "eslint": "^8.17.0",
+    "eslint": "^8.20.0",
+    "eslint-config-standard": "^17.0.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-n": "^15.2.4",
+    "eslint-plugin-promise": "^6.0.0",
     "gulp": "*",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-changed": "^4.0.3",
