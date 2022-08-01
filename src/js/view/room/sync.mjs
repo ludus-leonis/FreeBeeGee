@@ -70,21 +70,19 @@ export function startAutoSync (callback = null) {
 /**
  * Trigger a poll, independent of time that passed since last poll.
  *
- * @param {String[]} selectId List of IDs to be re-selected after successfull
- *                            update.
  * @param {Function} forceUIUpdate Do UI update even if digest didn't change.
  */
-export function syncNow (selectedIds = [], forceUIUpdate = false) {
+export function syncNow (forceUIUpdate = false) {
   if (isAutoSync()) {
     if (forceUIUpdate) {
       scheduleSync(0, () => {
-        updateTabletop(getTableNo(), selectedIds)
+        updateTabletop(getTableNo())
       })
     } else {
       scheduleSync(0)
     }
   } else {
-    fetchAndUpdateTable(getTableNo(), selectedIds)
+    fetchAndUpdateTable(getTableNo())
   }
 }
 
@@ -181,9 +179,7 @@ function scheduleSync (ms = 0, callback = null) {
  *
  * @return {Promise} Promise of an integer. 0 = no sync, 1+ = table to sync.
  */
-function checkRoomDigests (
-  selectIds = []
-) {
+function checkRoomDigests () {
   const room = getRoom()
   const start = Date.now()
   lastNetworkActivity = Date.now()
@@ -194,7 +190,7 @@ function checkRoomDigests (
 
       // verify room metadata
       if (digest['room.json'] !== lastDigests['room.json']) {
-        return syncRoom(selectIds).then(() => { touch(true); return table })
+        return syncRoom().then(() => { touch(true); return table })
       }
 
       // verify currently active table hasn't changed
@@ -227,20 +223,15 @@ function checkRoomDigests (
  *
  * Is in charge of updating the table once on changes, but not of (re)scheduling
  * itself.
- *
- * @param {String[]} selectIds IDs of items to (re)select after sync.
  */
-function fetchAndUpdateTable (
-  dirtyTable,
-  selectIds = []
-) {
+function fetchAndUpdateTable (dirtyTable) {
   lastNetworkActivity = Date.now()
   return fetchTable(dirtyTable)
     .then(table => {
       lastDigests[`tables/${dirtyTable}.json`] = table.headers.get('digest')
 
       if (dirtyTable === getTableNo()) {
-        updateTabletop(dirtyTable, selectIds) // use cleanedup data
+        updateTabletop(dirtyTable) // use cleanedup data
       }
     })
 }
@@ -251,11 +242,8 @@ function fetchAndUpdateTable (
  * Is in charge of fetching the current room state and trigger data/UI updates,
  * but not of scheduling itself.
  *
- * @param {String[]} selectIds IDs of items to (re)select after sync.
  */
-function syncRoom (
-  selectIds = []
-) {
+function syncRoom () {
   lastNetworkActivity = Date.now()
   return reloadRoom()
     .then(room => {

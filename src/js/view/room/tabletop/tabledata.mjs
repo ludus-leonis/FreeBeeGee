@@ -35,6 +35,7 @@ import {
   snapGrid,
   snapHex,
   intersect,
+  contains,
   getDimensionsRotated,
   mod
 } from '../../../lib/utils.mjs'
@@ -85,7 +86,8 @@ export function nameToLayer (name) {
 
 export const ID = {
   POINTER: 'ZZZZZZZZ',
-  LOS: 'ZZZZZZZY'
+  LOS: 'ZZZZZZZY',
+  SELECT: 'ZZZZZZZZX'
 }
 
 /**
@@ -210,7 +212,7 @@ export function getPieceBounds (piece) {
 }
 
 /**
- * Find all pieces within a grid area.
+ * Find all pieces at least parcially within a grid area.
  *
  * @param {Object} rect Rectangle object, containing top/left/bottom/right.
  * @param {String} layer Optional name of layer to search within. Defaults to 'all'.
@@ -223,6 +225,28 @@ export function findPiecesWithin (rect, layer = 'all', no = getTableNo()) {
   for (const piece of getTable(no)) {
     if (piece.l === layer || layer === 'all') {
       if (intersect(rect, getPieceBounds(piece))) {
+        pieces.push(piece)
+      }
+    }
+  }
+
+  return pieces
+}
+
+/**
+ * Find all pieces 100% within a grid area.
+ *
+ * @param {Object} rect Rectangle object, containing top/left/bottom/right.
+ * @param {String} layer Optional name of layer to search within. Defaults to 'all'.
+ * @param {Number} no Table number, defaults to current one.
+ * @returns {Array} Array of nodes/pieces that are in or touch that area.
+ */
+export function findPiecesContained (rect, layer = 'all', no = getTableNo()) {
+  const pieces = []
+
+  for (const piece of getTable(no)) {
+    if (piece.l === layer || layer === 'all') {
+      if (contains(rect, getPieceBounds(piece))) {
         pieces.push(piece)
       }
     }
@@ -369,10 +393,10 @@ export function populatePieceDefaults (piece, headers = null) {
     piece._meta.originWidthPx = piece.w * template.gridSize
     piece._meta.originHeightPx = piece.h * template.gridSize
     const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
-    piece._meta.widthPx = rect.w
-    piece._meta.heightPx = rect.h
-    piece._meta.originOffsetXPx = (piece._meta.originWidthPx - rect.w) / 2
-    piece._meta.originOffsetYPx = (piece._meta.originHeightPx - rect.h) / 2
+    piece._meta.widthPx = Math.round(rect.w)
+    piece._meta.heightPx = Math.round(rect.h)
+    piece._meta.originOffsetXPx = Math.round((piece._meta.originWidthPx - rect.w) / 2)
+    piece._meta.originOffsetYPx = Math.round((piece._meta.originHeightPx - rect.h) / 2)
   }
 
   // add client-side meta information for asset
@@ -572,15 +596,15 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
 }
 
 /**
- * Make sure a piece is fully on the room by clipping x/y based on its size.
+ * Make sure a piece is on the room by clipping x/y based on table size.
  *
  * @param {Object} item Piece to clamp.
  * @return {Object} Clamped piece.
  */
 export function clampToTableSize (piece) {
-  const template = getTemplate()
-  piece.x = clamp(0, piece.x, (template.gridWidth - piece.w) * template.gridSize)
-  piece.y = clamp(0, piece.y, (template.gridHeight - piece.h) * template.gridSize)
+  const room = getRoom()
+  piece.x = clamp(0, piece.x, room.width - 1)
+  piece.y = clamp(0, piece.y, room.height - 1)
   return piece
 }
 
@@ -679,6 +703,7 @@ export function splitAssetFilename (assetName) {
  * @return {Promise(Boolean)} True if pixel at x/y is transparent, false otherwise.
  */
 export function isSolid (piece, x, y) {
+  console.log('isSolid', piece)
   if (
     !piece || // no piece = no checking
     piece.l === LAYER_TOKEN || // token are always round & solid

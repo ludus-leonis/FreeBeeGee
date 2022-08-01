@@ -93,11 +93,6 @@
     }
   }
 
-  .backside { // disable backsides for tokens
-    border-radius: $piece-tile-size;
-    mask-image: none !important; // sass-lint:disable-line no-important
-  }
-
   &.is-border-0 {
     &.is-n::after {
       background-color: var(--fbg-color);

@@ -113,6 +113,36 @@ export function testGetBuffer (api, path, headerTests, payloadTests, status = 20
 }
 
 /**
+ * GET an any endpoint, do common HTTP tests on it, and then run payload-
+ * specific tests. Used for non-JSON endpoints e.g. data blobs.
+ *
+ * @param {string} api Server URL to API root.
+ * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {function} headerTests Callback function. Will recieve the headers for further checking.
+ * @param {function} payloadTests Callback function. Will recieve raw payload.
+ * @param {number} status Expected HTTP status.
+ * @param {string} token Optional API token method. Passed in query string, not in header, as if clicking links.
+ */
+export function testGetBufferQuery (api, path, headerTests, payloadTests, status = 200, token = undefined) {
+  it(`GET ${api}${path()}?token=...`, function (done) {
+    const request = chai.request(api)
+      .get(path())
+      .set('content-type', 'application/octet-stream')
+    if (token) request.query({ token: token() })
+    request
+      .buffer()
+      .parse(binaryParser)
+      .end(function (err, res) {
+        expect(err, err && err.rawResponse).to.be.null
+        expect(res, res.text).to.have.status(status)
+        headerTests(res.headers)
+        payloadTests(res.body)
+        done()
+      })
+  })
+}
+
+/**
  * Upload a file to an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
  * specific tests.
  *
@@ -342,13 +372,13 @@ export function zipToc (buffer) {
 export function runTests (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
 
-  const api = 'http://playPHP.local/api'
-  describe('PHP 7.2', function () { what(api.replace(/PHP/, '72'), '72', `${room}72`) })
-  describe('PHP 7.3', function () { what(api.replace(/PHP/, '73'), '73', `${room}73`) })
-  describe('PHP 7.4', function () { what(api.replace(/PHP/, '74'), '74', `${room}74`) })
-  describe('PHP 8.0', function () { what(api.replace(/PHP/, '80'), '80', `${room}80`) })
-  describe('PHP 8.1', function () { what(api.replace(/PHP/, '81'), '81', `${room}81`) })
+  // const api = 'http://playPHP.local/api'
+  // describe('PHP 7.2', function () { what(api.replace(/PHP/, '72'), '72', `${room}72`) })
+  // describe('PHP 7.3', function () { what(api.replace(/PHP/, '73'), '73', `${room}73`) })
+  // describe('PHP 7.4', function () { what(api.replace(/PHP/, '74'), '74', `${room}74`) })
+  // describe('PHP 8.0', function () { what(api.replace(/PHP/, '80'), '80', `${room}80`) })
+  // describe('PHP 8.1', function () { what(api.replace(/PHP/, '81'), '81', `${room}81`) })
 
-  // const api = 'http://localhost:8765/api'
-  // describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
+  const api = 'http://localhost:8765/api'
+  describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
 }

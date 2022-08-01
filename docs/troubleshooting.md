@@ -31,4 +31,4 @@ This can have multiple reasons. Hover on the (?) icon of the error message to fi
 
 ## FreeBeeGee is missing stuff or showing strange boxes after converting a snapshot.
 
-This can't be avoided when uploading older snapshots that use features that changed or were removed. Most of the time your library should be fine, but pices on the table might be missing. The boxes are a hint for you what is missing. Remove them and add the pices again, or empty the table and start from scratch.
+This can't be avoided when uploading older snapshots that use features that changed or were removed. Most of the time your library should be fine, but pieces on the table might be missing. The boxes are a hint for you what is missing. Remove them and add the pieces again, or empty the table and start from scratch.

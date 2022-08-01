@@ -104,13 +104,4 @@
       }
     }
   }
-
-  // shift background texture on different tables a bit
-  // @for $t from 2 through 9 {
-  //   &.table-#{$t} {
-  //     background-position:
-  //     0 0,
-  //     48px * ($t - 1) * (($t % 2) - .5) * 2 48px * ($t - 1) * (($t % 2) - .5) * -2;
-  //   }
-  // }
 }

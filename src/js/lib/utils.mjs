@@ -158,7 +158,7 @@ export function toggleFullscreen () {
  *
  * @param {Object} image Element to shrink (image, canvas).
  * @param {Number} dimension Size to shrink to.
- * @return Canvas with resized image. Does not honor aspect ratio and will deform.
+ * @return {Canvas} Canvas with resized image. Does not honor aspect ratio and will deform.
  */
 export function resizeImage (image, dimension) {
   const canvas = document.createElement('canvas')
@@ -167,6 +167,50 @@ export function resizeImage (image, dimension) {
   var ctx = canvas.getContext('2d')
   ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, dimension, dimension)
   return canvas
+}
+
+// --- Arrays ------------------------------------------------------------------
+
+/**
+ * Check if all items of an array fullfill something.
+ *
+ * @param {Array} items Array of items to check.
+ * @param {function} check Callback (item) => {}. Supposed to return true or false.
+ * @return {Boolean} True, if all items check out. False if not.
+ */
+export function isAll (items, check) {
+  for (const item of items) {
+    if (!check(item)) return false
+  }
+  return true
+}
+
+/**
+ * Check if any item of an array fullfills something.
+ *
+ * @param {Array} items Array of items to check.
+ * @param {function} check Callback (item) => {}. Supposed to return true or false.
+ * @return {Boolean} True, if one items check out. False if not.
+ */
+export function isAny (items, check) {
+  for (const item of items) {
+    if (check(item)) return true
+  }
+  return false
+}
+
+/**
+ * Check if no item of an array fullfills something.
+ *
+ * @param {Array} items Array of items to check.
+ * @param {function} check Callback (item) => {}. Supposed to return true or false.
+ * @return {Boolean} True, if no items check out. False if not.
+ */
+export function isNone (items, check) {
+  for (const item of items) {
+    if (check(item)) return false
+  }
+  return true
 }
 
 // --- math --------------------------------------------------------------------
@@ -356,6 +400,20 @@ export function intersect (rect1, rect2) {
 }
 
 /**
+ * Determine if one rectacle is 100% within another.
+ *
+ * @param {Object} larger Rect, containing of top/left/bottom/right.
+ * @param {Object} smaller Rect, containing of top/left/bottom/right.
+ * @returns {Boolean} True if they intersect.
+ */
+export function contains (larger, smaller) {
+  return (smaller.left >= larger.left &&
+    smaller.right <= larger.right &&
+    smaller.top >= larger.top &&
+    smaller.bottom <= larger.bottom)
+}
+
+/**
  * Calculate the width and height of the bounding box of a rotated rectangle.
  *
  * @param {Number} w Width of original rectangle.
@@ -535,6 +593,20 @@ export function sortByString (objects, property) {
     const valueA = (a[property] ?? '').toLowerCase()
     const valueB = (b[property] ?? '').toLowerCase()
     return valueA < valueB ? -1 : +(valueA > valueB)
+  })
+}
+
+/**
+ * Sort an array of objects by number property.
+ *
+ * @param {Array} objects Array to sort.
+ * @param {String} property Property to sort by.
+ * @param {number} fallback A default value for objects without that property.
+ * @return {Array} Sorted array.
+ */
+export function sortByNumber (objects, property, fallback = 0) {
+  return objects.sort((a, b) => {
+    return (a[property] ?? fallback) - (b[property] ?? fallback)
   })
 }
 

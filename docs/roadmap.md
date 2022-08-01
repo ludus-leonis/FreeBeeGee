@@ -2,23 +2,19 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.15 - Protecting Porpoise
+## v0.16 - Selecting Seal
 
-* [X] repo: Docker build
-* [X] system: table passwords
-* [X] table: dragging some pieces should not change z (e.g. dicemat)
-* [X] system: color masks for dice, areas, zones and pins
-* [X] content: more classic game boards - backgammon, mills, solitaire, ...
-* [X] content: more helper/marker overlays (pin, areas)
-* [X] system: random material offset
-* [X] protected pieces: no-delete, no-clone, no-move
+* [X] content: add wall overlay
+* [X] content: add circle overlay
+* [X] engine: multi-select stuff
+* [X] engine: remove default backsides for pieces
 * [X] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
-    * [X] refactor pieces scss
-    * [X] disable rotate for other-pieces
-    * [X] count _ assets against room size limit
-    * [X] dicemat to-bottom not working
+    * [X] area overlays are hard to select
+    * [X] snapshot download not working with password rooms
+    * [X] measure mode and isSolid bug
+    * [X] no grab-cursor when grabbing notes & popups
   * [X] review docs
   * [X] review + run tests
   * [X] review tutorial
@@ -29,18 +25,30 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] bug: MMB drag sometimes sticks / cursor fix
+* [ ] engine: shift-drag to disable grid snap
+* [ ] engine: set default table other than 1 in template
+* [ ] engine: set default enabled layers in template
+* [ ] engine: option to rotate group vs individual pieces
+* [ ] engine: protect api objects in JS code
+* [ ] wood/material für upload token
+* [ ] ui: tooltip explanation for '3x3:3' in library window
+* [ ] ui: move dice more
+* [ ] ui: clipboard ctrl+c/v/x
+* [ ] engine: set default/start table other than 1 in template
+* [ ] ui: show edit form when creating new notes
+* [ ] ui: password wrong message
 * [ ] repo: automated deployment tests for new zip/tgz packages after build
 * [ ] table: native zoom function
-* [ ] snapshot: set default/start table other than 1 in template
 * [ ] library: delete assets UI
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] pieces: inline-edit notes
 * [ ] when dragging pieces, move those on top of the original piece too
-* [ ] multi-select stuff
 * [ ] move / copy setups between tables
 * [ ] dedicated HP/Mana/Value field(s)
+* [ ] engine: overlay-grid-on-tile flag
 * [ ] piece: supply heap
 * [ ] piece: cards / card-decks
   * [ ] shuffle deck/stack
@@ -66,7 +74,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * better sticky notes (auto-size text)
 * bulk manipulation of assets (delete, edit, change type)
 * show even more infos in media browser
-* overlay-grid-on-tile option
 * sounds
   * dice-roll
   * shuffle
@@ -87,10 +94,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * send to previous position for pieces
 * detail-pane to the right for selected item
 * move stuff via cursor keys
-* rename table
+* rename room
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals
-* arbitrary snap (e.g. 1px)
 * multi-panes / splitscreen / split.js
 * measure range (in fields)
 * auto-z based on tile position

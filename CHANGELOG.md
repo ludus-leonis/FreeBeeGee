@@ -2,6 +2,25 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+
+## v0.16.0 - Selecting Seal
+
+### Notable changes
+
+* added multi-select
+* added circle & wall overlay
+* removed default backsides for pieces
+
+### Other changes
+
+* fixed area overlays are hard to select
+* fixed snapshot download not working with password rooms
+* fixed laser-pointer / los-line selectable
+* fixed no grab-cursor when grabbing notes & popups
+* fixed npm build / removed broken gulp-svg2png
+* changed gulpfile.js to use imports & bumped dependencies
+
+
 ## v0.15.0 - Protecting Porpoise
 
 ### Notable changes
@@ -86,6 +105,7 @@ This is a breaking release, changing IDs. Old snapshots/rooms will (probably) no
 * fixed rotating border highlights
 * fixed upload form sometimes resets selection
 
+
 ## v0.12.0 - Hexing Heron
 
 This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
@@ -117,6 +137,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * updated datamodel docs
 * removed `gridSize` from templates - templates snap to their grid size if snapping is on
 
+
 ## v0.11.0 - Troubled Trout
 
 This is a breaking release, changing internal data structures. Old snapshots/rooms will no longer work.
@@ -140,6 +161,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * fixed API tests
 * updated docs
 * refactored pieces border->color
+
 
 ## v0.10.0 - Pointing Pony
 
@@ -165,6 +187,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * added basic frontend JS unit tests
 * added more technical documentation & TOC
 
+
 ## v0.9.0 - Happy Hamster
 
 ### Notable changes
@@ -187,6 +210,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * bumped dependencies & fixed scss deprecations
 * removed reset-table feature (now obsolete due to subtables)
 
+
 ## v0.8.0 - Resizing Rhinoceros
 
 ### Noteable changes
@@ -203,6 +227,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * fixed rotated pieces placement next to table border
 * fixed uploaded token border color bug
 * docs/requirements update
+
 
 ## v0.7.0 - Uploading Unicorn
 
@@ -233,6 +258,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 
 * fixed missing animation for moving pieces
 * added IfModule for PHP-instructions in .htaccess'
+
 
 ## v0.6 - Sticky Starling
 
@@ -273,6 +299,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * moved some filters to ultra quality
 * fixed reset/clean table bug in Firefox
 
+
 ## v0.5 - Random Rabbit
 
 ### Notable changes
@@ -292,13 +319,16 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * updated unit tests
 * updated help dialog
 
+
 ## v0.4.2
 
 * fixed create-table error due case-sensitive http headers for POST requests
 
+
 ## v0.4.1
 
 * fixed piece-delete bug
+
 
 ## v0.4.0 - Zipping Zebra
 
@@ -314,6 +344,7 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * added token numbers (letters)
 * added logo icon to readme
 * fixed logo font
+
 
 ## v0.3.0 - Clicking Crab
 
@@ -336,9 +367,11 @@ This is a breaking release, changing internal data structures. Old snapshots/roo
 * fixed maximum tile size in editor, added F2 editor hotkey
 * updated dependencies
 
+
 ## v0.2.0 - Public Parrot
 
 * first public release
+
 
 ## v0.1.0 - Internal Ibis
 

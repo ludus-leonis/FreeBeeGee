@@ -203,20 +203,18 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
     .icon {
       display: inline-block;
       height: 1em;
-      margin-top: 0;
+      margin-left: px(1);
+      margin-right: px(1);
+      margin-top: px(-1);
       width: 1em;
 
       &.icon-extra {
         display: none;
       }
+    }
 
-      &:not(:first-child) {
-        margin-left: px(2);
-
-        &:first-of-type {
-          margin-left: $spacing-micro;
-        }
-      }
+    span + .icon {
+      margin-left: $spacing-micro;
     }
   }
 
@@ -229,24 +227,6 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
 
     .icon.icon-extra {
       display: inline-block;
-    }
-  }
-
-  // --- backsides -------------------------------------------------------------
-
-  .backside {
-    background-image: url('img/backside.svg');
-    background-repeat: repeat;
-    background-size: 64px;
-    height: 100%;
-    mask-image: var(--fbg-mask);
-    mask-size: 100%;
-    pointer-events: none;
-    transform: scaleX(-1);
-    width: 100%;
-
-    + .label {
-      display: none; // hide labels of flipped pieces
     }
   }
 

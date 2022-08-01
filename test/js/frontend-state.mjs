@@ -16,7 +16,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global describe, it */
+/* global describe, it, beforeEach */
 
 import { expect } from 'chai'
 
@@ -71,7 +71,15 @@ function splitRequest (request) {
   }
 }
 
+function setupTestData () {
+  setTableNo(1, false)
+}
+
 describe('Frontend - state.mjs - basics', function () {
+  beforeEach(function () {
+    setupTestData()
+  })
+
   it('getServerInfo()', function () {
     setServerInfo(undefined)
     expect(getServerInfo()).to.be.eql(undefined)
@@ -101,7 +109,7 @@ describe('Frontend - state.mjs - basics', function () {
 
     _setRoom(JSON.parse(roomJSON))
     expect(getRoom()).to.be.an('object')
-    expect(getRoom().id).to.be.eql('f9d05a1ecec3ecb8')
+    expect(getRoom().id).to.be.eql('f9d05a1e')
     expect(getTemplate()).to.be.an('object')
     expect(getTemplate().type).to.be.eql('grid-square')
     expect(getLibrary()).to.be.an('object')
@@ -116,7 +124,7 @@ describe('Frontend - state.mjs - basics', function () {
 
     expect(getTable(1)).to.be.an('array')
     expect(getTable(1).length).to.be.eql(1)
-    expect(getTable(1)[0].id).to.be.eql('fe008a4da3b2511e')
+    expect(getTable(1)[0].id).to.be.eql('fe008a4d')
 
     expect(getTable(2)).to.be.eql([])
   })
@@ -129,7 +137,7 @@ describe('Frontend - state.mjs - basics', function () {
 
     expect(getTable()).to.be.an('array')
     expect(getTable().length).to.be.eql(1)
-    expect(getTable()[0].id).to.be.eql('fe008a4da3b2511e')
+    expect(getTable()[0].id).to.be.eql('fe008a4d')
 
     setTableNo(2, false)
     expect(getTableNo()).to.be.eql(2)
@@ -188,18 +196,21 @@ describe('Frontend - state.mjs - API request JSON', function () {
     r = splitRequest(await movePiece('c0de', 3, 4, 5, false))
     expect(r.method).to.be.eql('PATCH')
     expect(r.path).to.match(/^api\/rooms\/testroom\/tables\/2\/pieces\/c0de\/$/)
-    expect(Object.keys(r.body)).to.have.members(['x', 'y', 'z'])
+    expect(Object.keys(r.body)).to.have.members(['id', 'x', 'y', 'z'])
+    expect(r.body.id).to.be.eql('c0de')
     expect(r.body.x).to.be.eql(3)
     expect(r.body.y).to.be.eql(4)
     expect(r.body.z).to.be.eql(5)
 
     r = splitRequest(await movePiece('c0de', 6, 7, undefined, false))
-    expect(Object.keys(r.body)).to.have.members(['x', 'y'])
+    expect(Object.keys(r.body)).to.have.members(['id', 'x', 'y'])
+    expect(r.body.id).to.be.eql('c0de')
     expect(r.body.x).to.be.eql(6)
     expect(r.body.y).to.be.eql(7)
 
     r = splitRequest(await movePiece('c0de', undefined, undefined, 10, false))
-    expect(Object.keys(r.body)).to.have.members(['z'])
+    expect(Object.keys(r.body)).to.have.members(['id', 'z'])
+    expect(r.body.id).to.be.eql('c0de')
     expect(r.body.z).to.be.eql(10)
   })
 
@@ -295,14 +306,14 @@ describe('Frontend - state.mjs - API request JSON', function () {
     expect(r.body.c[1]).to.be.eql(1)
 
     // test on exisiting note (0..4 colors)
-    r = splitRequest(await colorPiece('00008a4da3b2511e', 3, 4, false))
+    r = splitRequest(await colorPiece('00008a4d', 3, 4, false))
     expect(r.method).to.be.eql('PATCH')
     expect(Object.keys(r.body)).to.have.members(['c'])
     expect(r.body.c[0]).to.be.eql(3)
     expect(r.body.c[1]).to.be.eql(0)
 
-    // test on exisiting pice (0..2 colors)
-    r = splitRequest(await colorPiece('fe008a4da3b2511e', 5, 6, false))
+    // test on exisiting piece (0..2 colors)
+    r = splitRequest(await colorPiece('fe008a4d', 5, 6, false))
     expect(r.method).to.be.eql('PATCH')
     expect(Object.keys(r.body)).to.have.members(['c'])
     expect(r.body.c[0]).to.be.eql(1)
@@ -341,9 +352,9 @@ describe('Frontend - state.mjs - API request JSON', function () {
     expect(r.path).to.match(/^api\/rooms\/testroom\/tables\/2\/pieces\/c0de\/$/)
     expect(r.body).to.be.eql(undefined)
 
-    r = splitRequest(await deletePiece('fe008a4da3b2511e', false))
+    r = splitRequest(await deletePiece('fe008a4d', false))
     expect(r.method).to.be.eql('DELETE')
-    expect(r.path).to.match(/^api\/rooms\/testroom\/tables\/2\/pieces\/fe008a4da3b2511e\/$/)
+    expect(r.path).to.match(/^api\/rooms\/testroom\/tables\/2\/pieces\/fe008a4d\/$/)
     expect(r.body).to.be.eql(undefined)
   })
 
@@ -419,13 +430,13 @@ describe('Frontend - state.mjs - API request JSON', function () {
 
 const serverJSON = '{"version":"0.13.0","engine":"2.0.0","ttl":48,"snapshotUploads":true,"freeRooms":127,"root":"/api","backgrounds":[{"name":"Casino","image":"img/desktop-casino.jpg","color":"#2e5d3c","scroller":"#1b3c25"},{"name":"Concrete","image":"img/desktop-concrete.jpg","color":"#646260","scroller":"#494540"},{"name":"Marble","image":"img/desktop-marble.jpg","color":"#b4a999","scroller":"#80725e"},{"name":"Metal","image":"img/desktop-metal.jpg","color":"#515354","scroller":"#3e3e3e"},{"name":"Rock","image":"img/desktop-rock.jpg","color":"#5c5d5a","scroller":"#393930"},{"name":"Wood","image":"img/desktop-wood.jpg","color":"#57514d","scroller":"#3e3935"}]}'
 
-const pieceJSON = '{"id":"fe008a4da3b2511e","l":1,"a":"f45f27b57498c3be","x":256,"y":192,"z":13,"s":4}'
+const pieceJSON = '{"id":"fe008a4d","l":1,"a":"f45f27b5","x":256,"y":192,"z":13,"s":4}'
 
-const noteJSON = '{"id":"00008a4da3b2511e","l":3,"a":"f45f27b57498c3be","x":256,"y":192,"z":13,"s":4}'
+const noteJSON = '{"id":"00008a4d","l":3,"a":"f45f27b5","x":256,"y":192,"z":13,"s":4}'
 
 const roomJSON = `
 {
-  "id": "f9d05a1ecec3ecb8",
+  "id": "f9d05a1e",
   "name": "testroom",
   "engine": "0.3.0",
   "background": {
@@ -441,7 +452,7 @@ const roomJSON = `
       "color": "#808080",
       "name": "area.1x1",
       "type": "overlay",
-      "id": "7261fff0158e27bc"
+      "id": "7261fff0"
     }],
     "tile": [{
       "media": ["altar.3x2x1.transparent.png", "##BACK##"],
@@ -450,7 +461,7 @@ const roomJSON = `
       "color": "transparent",
       "name": "altar",
       "type": "tile",
-      "id": "5b150d84cee577dc"
+      "id": "5b150d84"
     }],
     "token": [{
       "media": ["aasimar.1x1x1.piece.svg", "##BACK##"],
@@ -459,7 +470,7 @@ const roomJSON = `
       "color": "piece",
       "name": "aasimar",
       "type": "token",
-      "id": "484d7d45fdc27afa"
+      "id": "484d7d45"
     }],
     "other": [{
       "media": ["classic.a.1x1x1.svg", "classic.a.1x1x2.svg", "classic.a.1x1x3.svg"],
@@ -468,7 +479,7 @@ const roomJSON = `
       "color": "#808080",
       "name": "classic.a",
       "type": "other",
-      "id": "f45f27b57498c3be",
+      "id": "f45f27b5",
       "base": "classic.a.1x1x0.png"
     }],
     "note": []

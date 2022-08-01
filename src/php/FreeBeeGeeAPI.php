@@ -291,16 +291,22 @@ class FreeBeeGeeAPI
             ));
             if (property_exists($meta, 'token')) {
                 if ($meta->token !== $this->ID_ACCESS_ANY) {
-                    $headers = function_exists('apache_request_headers') ? apache_request_headers() : [];
                     $authorized = false;
-                    foreach ($headers as $header => $value) {
-                        if (strtolower($header) === 'authorization') { // headers are case-insensitive
-                            if ($meta->token === $value) {
-                                $authorized = true;
-                            } else {
-                                $this->api->sendError(403, 'forbidden ' . $roomName);
+                    if (array_key_exists('token', $_GET)) {
+                        if ($_GET['token'] === hash('sha256', 'fbg-' . $meta->token)) {
+                            $authorized = true;
+                        }
+                    } else {
+                        $headers = function_exists('apache_request_headers') ? apache_request_headers() : [];
+                        foreach ($headers as $header => $value) {
+                            if (strtolower($header) === 'authorization') { // headers are case-insensitive
+                                if ($meta->token === $value) {
+                                    $authorized = true;
+                                } else {
+                                    $this->api->sendError(403, 'forbidden ' . $roomName);
+                                }
+                                break; // terminate after first unsuccessful authorization header
                             }
-                            break; // terminate after first unsuccessful authorization header
                         }
                     }
                     if (!$authorized) {
@@ -599,9 +605,6 @@ class FreeBeeGeeAPI
                 ) {
                     // this is a new asset. write out the old.
                     if ($lastAsset !== null) {
-                        if (count($lastAsset->media) === 1) { // add backside to 1-sided asset
-                            $lastAsset->media[] = '##BACK##';
-                        }
                         array_push($assets[$type], $lastAsset);
                     }
                     $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
@@ -628,9 +631,6 @@ class FreeBeeGeeAPI
                 }
             }
             if ($lastAsset !== null) { // don't forget the last one!
-                if (count($lastAsset->media) === 1) { // add backside to 1-sided asset
-                    $lastAsset->media[] = '##BACK##';
-                }
                 array_push($assets[$type], $lastAsset);
             }
         }

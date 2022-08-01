@@ -26,6 +26,8 @@
 $piece-note-glue: rgba(0, 0, 0, .02);
 $piece-note-rotate: 4deg;
 
+// cursor: grabbing !important; // sass-lint:disable-line no-important
+
 .piece-note {
   @extend %flex-center-center;
   @include typography-font($typography-font-list-hand, 400, px(32), 1.15em, .025em);
@@ -35,12 +37,17 @@ $piece-note-rotate: 4deg;
   border-bottom-left-radius: 1px 90%;
   border-bottom-right-radius: 50% 4px;
   color: var(--fbg-color-invert);
+  cursor: default;
   font-variant-ligatures: none;
   overflow: hidden;
   padding: $spacing-small;
   position: relative;
   text-align: center;
   word-break: break-word;
+
+  .cursor-grab & {
+    cursor: grabbing;
+  }
 
   // --- reduce text size on small notes ---
 

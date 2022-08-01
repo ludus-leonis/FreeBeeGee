@@ -64,7 +64,7 @@
 }
 
 .cursor-grab {
-  cursor: grabbing;
+  cursor: grabbing !important; // sass-lint:disable-line no-important
 }
 
 .cursor-cross {

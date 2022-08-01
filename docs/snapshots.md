@@ -37,7 +37,7 @@ Note that all files have to be in the root folder of the `ZIP`! Usually you want
 │  ├─ tile/
 │  │  ├─ corridor.4x1x1.png
 │  │  └─ room.6x6x1.png
-│  ├─ tag/
+│  ├─ badge/
 │  │  ├─ stunned.png
 │  │  └─ invisible.png
 │  └─ other/
