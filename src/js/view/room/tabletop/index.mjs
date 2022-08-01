@@ -1010,7 +1010,7 @@ function randomDiscard (discard) {
 
     // detect the side to flip them to
     if (stackSide < 0) {
-      // fip all pices, based on the state of the first one
+      // fip all pieces, based on the state of the first one
       if (piece.s === 0) {
         stackSide = Math.max(0, piece._meta.sides - 1)
       } else {

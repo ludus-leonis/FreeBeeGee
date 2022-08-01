@@ -20,6 +20,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * fixed npm build / removed broken gulp-svg2png
 * changed gulpfile.js to use imports & bumped dependencies
 
+
 ## v0.15.0 - Protecting Porpoise
 
 ### Notable changes

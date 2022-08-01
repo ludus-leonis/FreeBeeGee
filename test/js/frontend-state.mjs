@@ -312,7 +312,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
     expect(r.body.c[0]).to.be.eql(3)
     expect(r.body.c[1]).to.be.eql(0)
 
-    // test on exisiting pice (0..2 colors)
+    // test on exisiting piece (0..2 colors)
     r = splitRequest(await colorPiece('fe008a4d', 5, 6, false))
     expect(r.method).to.be.eql('PATCH')
     expect(Object.keys(r.body)).to.have.members(['c'])

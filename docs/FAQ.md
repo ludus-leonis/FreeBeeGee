@@ -26,7 +26,3 @@ Most of the data processing is done by the clients, in JavaScript. The server mo
 ## What about concurrent data access?
 
 Each game is an isolated folder on the server. The vast majority of requests to the API are read-requests for static JSON files. Rare write-requests that change those files peak at ~1 request per second per game in typical games. That's when players are shifting pieces on the board. We are fine with simple file-based locking in combination with one lock file per running game.
-
-## Do you like CGA?
-
-Well, ...

@@ -112,21 +112,6 @@ Sometimes it is useful for an *asset* to have a common base layer and the indivi
 `base`
 : When present, this field indicates a media file (not necessarily listed in `media`) to be rendered, too.
 
-### Default back sides
-
-A single-sided *asset* can have a default back side (showing the FBG logo), so it can be flipped over. This is indicated by using `##BACK##` as image name:
-
-```json
-{
-  ...
-  "media": [
-    "room.4x4x1.808674.jpg",
-    "##BACK##"
-  ],
-  ...
-}
-```
-
 ## Library
 
 The *library* object holds information about each *asset*, sorted by *asset* type.
@@ -265,10 +250,10 @@ A *template*, a.k.a. snapshot, describes a table setup for a particular game.
 : The FBG engine this *template* should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
 
 `colors`
-: An array of (background) colors available to pieces on the table. Key-Value pairs with `name` and a `value` / RGB hex code. If empty, pices can't have dynamic colors.
+: An array of (background) colors available to pieces on the table. Key-Value pairs with `name` and a `value` / RGB hex code. If empty, pieces can't have dynamic colors.
 
 `borders`
-: An (optional) series of border colors available to pieces. Key-Value pairs with `name` and a `value` / RGB hex code. If empty/missing, pices can't have dynamic colors.
+: An (optional) series of border colors available to pieces. Key-Value pairs with `name` and a `value` / RGB hex code. If empty/missing, pieces can't have dynamic colors.
 
 The remaining *template* properties depend on the game type.
 

@@ -8,24 +8,24 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] content: add circle overlay
 * [X] engine: multi-select stuff
 * [X] engine: remove default backsides for pieces
-* [ ] pre-release
+* [X] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] area overlays are hard to select
     * [X] snapshot download not working with password rooms
     * [X] measure mode and isSolid bug
     * [X] no grab-cursor when grabbing notes & popups
-    * [ ] MMB drag sometimes sticks / cursor fix
-  * [ ] review docs
-  * [ ] review + run tests
-  * [ ] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] update screenshots
+  * [X] review docs
+  * [X] review + run tests
+  * [X] review tutorial
+  * [X] bump engine, version/codename & update CHANGELOG
+  * [X] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
+* [ ] bug: MMB drag sometimes sticks / cursor fix
 * [ ] engine: shift-drag to disable grid snap
 * [ ] engine: set default table other than 1 in template
 * [ ] engine: set default enabled layers in template
