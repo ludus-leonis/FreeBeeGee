@@ -4,41 +4,35 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.16 - Selecting Seal
 
-* [X] content: add wall overlay
-* [X] content: add circle overlay
-* [X] engine: multi-select stuff
-* [X] engine: remove default backsides for pieces
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] area overlays are hard to select
-    * [X] snapshot download not working with password rooms
-    * [X] measure mode and isSolid bug
-    * [X] no grab-cursor when grabbing notes & popups
-  * [X] review docs
-  * [X] review + run tests
-  * [X] review tutorial
-  * [X] bump engine, version/codename & update CHANGELOG
-  * [X] update screenshots
+* [ ] engine: shift-drag to disable grid snap
+* [ ] engine: set default table other than 1 in template
+* [ ] engine: set default enabled layers in template
+* [ ] ui: pick material for uploaded pieces
+* [ ] ui: tooltip explanation for '3x3:3' in library window
+* [ ] ui: password wrong message
+* [ ] ui: clipboard ctrl+c/v/x between tables
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] simplify engine version change + unit tests
+    * [ ] RPG template goblin empty label
+    * [ ] simplify/automate more deployment steps
+    * [ ] automated deployment tests for new zip/tgz packages after build
+    * [ ] bug: MMB drag sometimes sticks / cursor fix
+  * [ ] review docs
+  * [ ] review + run tests
+  * [ ] review tutorial
+  * [ ] bump engine, version/codename & update CHANGELOG
+  * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
-* [ ] bug: MMB drag sometimes sticks / cursor fix
-* [ ] engine: shift-drag to disable grid snap
-* [ ] engine: set default table other than 1 in template
-* [ ] engine: set default enabled layers in template
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] wood/material für upload token
-* [ ] ui: tooltip explanation for '3x3:3' in library window
 * [ ] ui: move dice more
-* [ ] ui: clipboard ctrl+c/v/x
-* [ ] engine: set default/start table other than 1 in template
 * [ ] ui: show edit form when creating new notes
-* [ ] ui: password wrong message
-* [ ] repo: automated deployment tests for new zip/tgz packages after build
 * [ ] table: native zoom function
 * [ ] library: delete assets UI
 * [ ] library: edit asset UI
@@ -46,7 +40,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] pieces: inline-edit notes
 * [ ] when dragging pieces, move those on top of the original piece too
-* [ ] move / copy setups between tables
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] engine: overlay-grid-on-tile flag
 * [ ] piece: supply heap
@@ -54,7 +47,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] shuffle deck/stack
 * [ ] player secrets (e.g. for goal cards, hidden rolling, ...)
 * [ ] reduce impact of "back" button
-* [ ] "layer not active" hint when dragging nothing
 * [ ] dicemat: randomize button
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values

@@ -125,7 +125,7 @@ export function modalHelp () {
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
             <p><span class="key">r</span>/<span class="key">R</span> Rotate piece clockwise/counter-clockwise.</p>
-            <p><span class="key">f</span>/<span class="key">F</span> Flip piece forward/backward. Some pieces have more than two sides.</p>
+            <p><span class="key">f</span>/<span class="key">F</span> Flip piece forward/backward. Pieces can have one, two or even more sides.</p>
             <p><span class="key">o</span> Change piece color (if a piece supports that).</p>
             <p><span class="key">O</span> Change outline/border color (token only).</p>
             <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
