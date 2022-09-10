@@ -24,7 +24,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] popup closes when other player interacts with table
     * [ ] creating notes not resetting selection
     * [ ] simplify engine version change + unit tests
-    * [ ] RPG template goblin empty label
+    * [X] empty goblin label in RPG template
     * [ ] no grid in low quality mode
     * [ ] simplify/automate more deployment steps
     * [ ] automated deployment tests for new zip/tgz packages after build
