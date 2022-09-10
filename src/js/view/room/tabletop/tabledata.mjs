@@ -621,9 +621,12 @@ export function clampToTableSize (piece) {
  *                     1 = centers,
  *                     2 = centers + corners,
  *                     3 = centers + corners + sides (default)
+ *                     4 = no snap
  * @return {Object} Closest grid vertex to original x/y as {x, y}.
  */
 export function snap (x, y, lod = 3) {
+  if (lod >= 4) return { x: Math.round(x), y: Math.round(y) } // disabled snap
+
   const template = getTemplate()
   if (template.snap === false) {
     return snapGrid(x, y, 8, 3) // snap to 4px

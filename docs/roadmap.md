@@ -7,10 +7,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] faq: reporting bugs
 * [ ] faq: own templates
 * [ ] faq: installing templates
-* [ ] engine: shift-drag to disable grid snap
 * [ ] engine: set default table other than 1 in template
 * [ ] engine: set default enabled layers in template
 * [ ] engine: specify default template in server.json
+* [X] ui: shift-drag to disable grid snap
 * [X] ui: animate rotations
 * [ ] ui: library: pick material for uploads
 * [ ] ui: library: set default type to tile for larger uploads

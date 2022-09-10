@@ -350,7 +350,6 @@ function createOrUpdatePieceDOM (piece) {
     div.remove('.is-r-*')
     if (piece.l !== LAYER_OTHER) {
       div.add(`.is-r-${piece.r}`)
-      console.log(Math.abs(_piece.r - piece.r))
       if (Math.abs(_piece.r - piece.r) > 180) {
         div.add(`.is-delay-r-${_piece.r}`)
       }
@@ -750,9 +749,7 @@ export function updateTabletop (tableNo) {
   updateStatusline()
 
   setTimeout(() => { // remove temporary transition classes
-    console.log('remove delay start')
     _('.piece[class*="is-delay-"]').each(node => {
-      console.log('remove delay', node)
       _(node).remove('.is-delay-*')
     })
   }, 10)

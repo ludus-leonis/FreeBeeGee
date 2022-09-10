@@ -6,6 +6,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
+* added shift-drag to disable grid snap while dragging
 * added animation to rotating pieces
 
 ### Other changes

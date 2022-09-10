@@ -112,7 +112,7 @@ export class SelectAndDrag extends MouseButtonHandler {
       this.selectContinue()
       mousemove.preventDefault()
     } else if (this.isMoving()) {
-      this.dragContinue()
+      this.dragContinue(mousemove.shiftKey)
       mousemove.preventDefault()
     }
   }
@@ -238,7 +238,7 @@ export class SelectAndDrag extends MouseButtonHandler {
     setCursor('.cursor-grab')
   }
 
-  dragContinue () {
+  dragContinue (shiftKey) {
     const room = getRoom()
     const coords = getMouseCoords()
     const clampCoords = {
@@ -249,7 +249,8 @@ export class SelectAndDrag extends MouseButtonHandler {
     // how far to shift all selected pieces so they still snap afterwards?
     const offset = snap(
       this.selectionBounds.x + clampCoords.x - this.selectionBounds.startX,
-      this.selectionBounds.y + clampCoords.y - this.selectionBounds.startY
+      this.selectionBounds.y + clampCoords.y - this.selectionBounds.startY,
+      shiftKey ? 4 : undefined
     )
     offset.x -= this.selectionBounds.x
     offset.y -= this.selectionBounds.y
