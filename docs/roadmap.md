@@ -2,20 +2,30 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.16 - Selecting Seal
+## v0.17 - ??? ???
 
+* [ ] faq: reporting bugs
+* [ ] faq: own templates
+* [ ] faq: installing templates
 * [ ] engine: shift-drag to disable grid snap
 * [ ] engine: set default table other than 1 in template
 * [ ] engine: set default enabled layers in template
-* [ ] ui: pick material for uploaded pieces
-* [ ] ui: tooltip explanation for '3x3:3' in library window
+* [ ] engine: specify default template in server.json
+* [X] ui: animate rotations
+* [ ] ui: library: pick material for uploads
+* [ ] ui: library: set default type to tile for larger uploads
+* [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: password wrong message
 * [ ] ui: clipboard ctrl+c/v/x between tables
+* [ ] ui: ellipsis for long labels
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
+    * [ ] popup closes when other player interacts with table
+    * [ ] creating notes not resetting selection
     * [ ] simplify engine version change + unit tests
     * [ ] RPG template goblin empty label
+    * [ ] no grid in low quality mode
     * [ ] simplify/automate more deployment steps
     * [ ] automated deployment tests for new zip/tgz packages after build
     * [ ] bug: MMB drag sometimes sticks / cursor fix
@@ -50,6 +60,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: randomize button
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
+* [ ] ui: doubleclick handling?
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
 * [ ] docs how to make table/template `.zip`s

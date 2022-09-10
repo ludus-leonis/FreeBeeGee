@@ -37,7 +37,7 @@
       .label {
         $label-offset-x: -10px;
         top: $piece-tile-size * $v - $piece-margin * 2 + $label-offset-x;
-        transform-origin: center math.div($piece-tile-size * $v - $piece-margin * 2 - 1, -2) - $label-offset-x;
+        transform-origin: center math.round(math.div($piece-tile-size * $v - $piece-margin * 2 - 1, -2)) - $label-offset-x;
       }
     }
   }
@@ -81,8 +81,6 @@
   &.is-n-14::after { content: 'E'; }
   &.is-n-15::after { content: 'F'; }
 
-  @include piece-jitter(3px);
-
   @for $x from 1 through 32 {
     &.is-w-#{$x} { width: $x * $piece-tile-size - $piece-border-size * 2; }
   }
@@ -104,37 +102,16 @@
 // --- quality settings --------------------------------------------------------
 
 .is-quality-medium .piece-token {
-  @include shadows(
-    $shadow-flat-0,
-    $shadow-flat-60,
-    $shadow-flat-90,
-    $shadow-flat-120,
-    $shadow-flat-180,
-    $shadow-flat-240,
-    $shadow-flat-270,
-    $shadow-flat-300
-  );
+  filter: drop-shadow($shadow-flat);
 }
 
 .is-quality-high .piece-token,
 .is-quality-ultra .piece-token {
-  // --- shadows ---
-  @include shadows(
-    $shadow-0,
-    $shadow-60,
-    $shadow-90,
-    $shadow-120,
-    $shadow-180,
-    $shadow-240,
-    $shadow-270,
-    $shadow-300
-  );
-
-  // --- material ---
   background-image: var(--fbg-material), var(--fbg-image);
   background-size: 256px, cover;
-  @each $id in $piece-ids {
-    $i: index($piece-ids, $id);
+  filter: drop-shadow($shadow);
+  @each $id in $random-ids {
+    $i: index($random-ids, $id);
 
     &[id^='#{$id}'] {
       background-position: calc(256px / 64 * $i) calc(192px * $i), 0;
@@ -150,8 +127,8 @@
   &.has-decal {
     background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
     background-size: 256px, cover, cover;
-    @each $id in $piece-ids {
-      $i: index($piece-ids, $id);
+    @each $id in $random-ids {
+      $i: index($random-ids, $id);
 
       &[id^='#{$id}'] {
         background-position: calc(256px / 64 * $i) calc(192px * $i), 0, 0;

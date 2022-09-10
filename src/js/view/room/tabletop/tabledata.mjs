@@ -37,7 +37,8 @@ import {
   intersect,
   contains,
   getDimensionsRotated,
-  mod
+  mod,
+  hash
 } from '../../../lib/utils.mjs'
 
 import {
@@ -190,9 +191,12 @@ export function getAssetURL (asset, side = 0) {
  * @return {Object} CSS-ready px String as { top: '', left: ''}.
  **/
 export function getTopLeftPx (piece, x = piece.x, y = piece.y) {
+  const jitterX = piece.l === LAYER_TOKEN ? Math.abs(hash('x' + piece.id)) % 5 - 2 : 0
+  const jitterY = piece.l === LAYER_TOKEN ? Math.abs(hash('y' + piece.id)) % 5 - 2 : 0
+
   return {
-    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + 'px',
-    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + 'px'
+    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + jitterX + 'px',
+    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + jitterY + 'px'
   }
 }
 
@@ -703,7 +707,6 @@ export function splitAssetFilename (assetName) {
  * @return {Promise(Boolean)} True if pixel at x/y is transparent, false otherwise.
  */
 export function isSolid (piece, x, y) {
-  console.log('isSolid', piece)
   if (
     !piece || // no piece = no checking
     piece.l === LAYER_TOKEN || // token are always round & solid

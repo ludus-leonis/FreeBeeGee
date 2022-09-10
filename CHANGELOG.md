@@ -2,6 +2,15 @@
 
 Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.17.0
+
+### Notable changes
+
+* added animation to rotating pieces
+
+### Other changes
+
+* TBD
 
 ## v0.16.0 - Selecting Seal
 

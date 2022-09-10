@@ -69,10 +69,6 @@ $piece-note-rotate: 4deg;
   &.is-w-4 {
     font-size: 1.5em;
   }
-
-  &.is-rotate-180 {
-    align-items: center;
-  }
 }
 
 // --- quality settings --------------------------------------------------------
@@ -97,11 +93,5 @@ $piece-note-rotate: 4deg;
     width: 15%;
   }
 
-  @include piece-rotate(0deg, $piece-note-rotate);
-
-  @each $r in $piece-rotations {
-    &.is-rotate-#{$r} {
-      @include piece-rotate($r, $piece-note-rotate);
-    }
-  }
+  @include rotate-random($piece-note-rotate);
 }

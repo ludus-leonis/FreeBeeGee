@@ -29,8 +29,7 @@ Your game. Your data.
 
 **Note:** This is an development version. A few rather major features are still missing:
 
-* While you can upload images/tiles/pieces via the web-UI, editing them is quite limited.
-* No multi-select yet.
+* While you can upload images/tiles/pieces via the web-UI, editing them afterwards is quite limited.
 
 The good news is: You can still use FreeBeeGee today to play! Those features will arrive sooner or later. There is a (rough) [roadmap](docs/roadmap.md) for details.
 
@@ -69,7 +68,7 @@ There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/li
 
 ### Client
 
-Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.
+Any recent HTML5-capable browser should do. Mobile/touch device support is a bit limited for now.
 
 ## Installation
 

@@ -275,8 +275,8 @@ export function randomSelected () {
           updatePieces([{
             id: piece.id,
             s: Math.floor(Math.random() * piece._meta.sides),
-            x: x,
-            y: y
+            x,
+            y
           }])
         }
     }
@@ -347,9 +347,13 @@ function createOrUpdatePieceDOM (piece) {
     })
   }
   if (_piece.r !== piece.r) {
-    div.remove('.is-rotate-*')
+    div.remove('.is-r-*')
     if (piece.l !== LAYER_OTHER) {
-      div.add('.is-rotate-' + piece.r)
+      div.add(`.is-r-${piece.r}`)
+      console.log(Math.abs(_piece.r - piece.r))
+      if (Math.abs(_piece.r - piece.r) > 180) {
+        div.add(`.is-delay-r-${_piece.r}`)
+      }
     }
   }
   if (_piece.w !== piece.w || _piece.h !== piece.h) {
@@ -744,6 +748,14 @@ export function updateTabletop (tableNo) {
   removeObsoletePieces(keepIds)
   updateSelectionDOM()
   updateStatusline()
+
+  setTimeout(() => { // remove temporary transition classes
+    console.log('remove delay start')
+    _('.piece[class*="is-delay-"]').each(node => {
+      console.log('remove delay', node)
+      _(node).remove('.is-delay-*')
+    })
+  }, 10)
 
   recordTime('sync-ui', Date.now() - start)
 }

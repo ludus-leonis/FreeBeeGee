@@ -4,7 +4,7 @@
   "versionEngine": "2.2.0",
   "versionEngineTest": "2.3.4",
   "type": "module",
-  "codename": "Selecting Seal",
+  "codename": "??? ???",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",
