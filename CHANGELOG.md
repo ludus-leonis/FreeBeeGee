@@ -10,6 +10,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* fixed no grid visible in low quality mode
 * fixed empty goblin label in RPG template
 
 ## v0.16.0 - Selecting Seal
