@@ -12,7 +12,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: specify default template in server.json
 * [X] ui: shift-drag to disable grid snap
 * [X] ui: animate rotations
-* [ ] ui: library: pick material for uploads
+* [X] ui: library: pick material during uploads
 * [ ] ui: library: set default type to tile for larger uploads
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: password wrong message

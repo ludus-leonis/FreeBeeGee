@@ -41,6 +41,7 @@ class FreeBeeGeeAPI
     private $maxAssetSize = 1024 * 1024;
     private $types = ['grid-square', 'grid-hex'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'badge'];
+    private $assetTextures = ['paper', 'wood'];
     private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
 
     private $FLAG_NO_DELETE = 0b00000001;
@@ -1447,6 +1448,9 @@ class FreeBeeGeeAPI
                         '#[a-fA-F0-9]{6}|transparent|piece'
                     );
                     break;
+                case 'tx':
+                    $validated->tx = $this->api->assertEnum('tx', $value, $this->assetTextures);
+                    break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
             }
@@ -2225,7 +2229,11 @@ class FreeBeeGeeAPI
 
         // determine asset path elements
         $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' .
-            str_replace('#', '', $asset->bg) . '.' . $asset->format;
+            str_replace('#', '', $asset->bg);
+        if ($asset->tx ?? null) {
+            $filename .= '.' . $asset->tx;
+        }
+        $filename .= '.' . $asset->format;
 
         // output file data
         $lock = $this->api->waitForWriteLock($meta->lock);
@@ -2390,7 +2398,7 @@ class FreeBeeGeeAPI
         if (
             // group.name.1x2x3.808080.png
             preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?(-[^\.-]+)?\.[a-zA-Z0-9]+$/',
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
@@ -2417,7 +2425,9 @@ class FreeBeeGeeAPI
 
             if (sizeof($matches) >= 7) {
                 switch ($matches[6]) {
+                    case '.paper':
                     case '-paper':
+                    case '.wood':
                     case '-wood':
                         $asset->tx = substr($matches[6], 1);
                         break;

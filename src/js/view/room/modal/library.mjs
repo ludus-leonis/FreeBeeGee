@@ -130,17 +130,21 @@ export function modalLibrary (xy) {
               <label for="upload-name">Name</label>
               <input id="upload-name" name="name" type="text" placeholder="custom" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9-]+( [a-zA-Z0-9-]+)*(, [a-zA-Z0-9-]+)?( [a-zA-Z0-9-]+)*$">
             </div>
-            <div class="col-12 col-lg-2">
+            <div class="col-6 col-lg-1">
+              <label for="upload-w">Width</label>
+              <select id="upload-w" name="width"></select>
+            </div>
+            <div class="col-6 col-lg-1">
+              <label for="upload-h">Height</label>
+              <select id="upload-h" name="height"></select>
+            </div>
+            <div class="col-6 col-lg-2">
               <label for="upload-type">Type</label>
               <select id="upload-type" name="type"></select>
             </div>
             <div class="col-6 col-lg-2">
-              <label for="upload-w">Width</label>
-              <select id="upload-w" name="width"></select>
-            </div>
-            <div class="col-6 col-lg-2">
-              <label for="upload-h">Height</label>
-              <select id="upload-h" name="height"></select>
+              <label for="upload-h">Material</label>
+              <select id="upload-material" name="material"></select>
             </div>
             <div class="col-12">
               <label class="upload-group" for="upload-file">
@@ -267,7 +271,7 @@ function setupFooter () {
  */
 function averageColor (dataUrl) {
   _('#upload-color').value = '#808080' // color detection is async, so use interim-default
-  var image = new Image() // eslint-disable-line no-undef
+  const image = new Image() // eslint-disable-line no-undef
   image.onload = function () {
     // shrink in 2 steps for more accurate average
     const canvas8 = resizeImage(image, 8)
@@ -327,12 +331,17 @@ function modalUpload () {
     const data = {
       name: unprettyName(name.value),
       format: file.type === 'image/png' ? 'png' : 'jpg',
-      type: type,
+      type,
       w: Number(_('#upload-w').value),
       h: Number(_('#upload-h').value),
       base64: _('.upload-preview .piece').node().style.backgroundImage
-        .replace(/^[^,]*,/, '')
+        .replace(/^.*,/, '')
         .replace(/".*/, '')
+    }
+
+    const material = _('#upload-material').value
+    if (material && material !== 'none') {
+      data.tx = material
     }
 
     // set bg color
@@ -432,6 +441,20 @@ function setupTabUpload () {
   }
   height.on('change', change => updatePreview())
 
+  // height
+  const material = _('#upload-material')
+  const none = _('option').create('none')
+  none.selected = true
+  none.value = 'none'
+  material.add(none)
+  const paper = _('option').create('Paper')
+  paper.value = 'paper'
+  material.add(paper)
+  const wood = _('option').create('Wood')
+  wood.value = 'wood'
+  material.add(wood)
+  material.on('change', change => updatePreview())
+
   _('#upload-color').value = '#808080'
 
   _('#upload-file').on('change', change => updatePreview(true))
@@ -449,16 +472,24 @@ function updatePreview (parseImage = false) {
   const file = _('#upload-file').files[0]
   if (parseImage) {
     const parts = splitAssetFilename(file.name)
-    if (_('#upload-name').value.length <= 0) { // guess defaults for form
-      if (parts.w) _('#upload-w').value = parts.w
-      if (parts.h) _('#upload-h').value = parts.h
-      if (parts.name) {
-        _('#upload-name').value = prettyName(parts.name)
-      }
+
+    if (parts.w) _('#upload-w').value = parts.w
+    if (parts.h) _('#upload-h').value = parts.h
+    if (parts.name) {
+      _('#upload-name').value = prettyName(parts.name)
+    }
+    if (['wood', 'paper'].includes(parts.tx)) {
+      _('#upload-material').value = parts.tx
+    } else {
+      _('#upload-material').value = 'none'
+    }
+    if ([LAYER_TILE, LAYER_TOKEN].includes(parts.type)) {
+      _('#upload-type').value = parts.type
     }
   }
 
   const type = _('#upload-type').value
+  const material = _('#upload-material').value
   const w = _('#upload-w').value
   const h = _('#upload-h').value
 
@@ -469,6 +500,7 @@ function updatePreview (parseImage = false) {
   } else if (w > 8 || h > 8) {
     preview.add('.is-deflate-2x')
   } else if (w > 2 || h > 2) {
+    // nothing
   } else {
     preview.add('.is-inflate-2x')
   }
@@ -480,6 +512,11 @@ function updatePreview (parseImage = false) {
   } else {
     piece.css({ '--fbg-color': '#202020' })
   }
+  if (type === LAYER_TOKEN) {
+    piece.add('.has-highlight')
+  }
+  piece.css({ '--fbg-material': url(`img/material-${material}.png`) })
+
   preview.add(piece)
 
   // set preview background image
@@ -487,8 +524,8 @@ function updatePreview (parseImage = false) {
     const reader = new FileReader()
     reader.addEventListener('load', event => {
       _('.upload-preview .piece').css({
-        backgroundImage: `url("${event.target.result}")`,
-        backgroundSize: 'cover'
+        backgroundImage: `var(--fbg-material), url("${event.target.result}")`,
+        backgroundSize: '256px, cover'
       })
       _('#upload-color').value = averageColor(event.target.result)
     }, false)

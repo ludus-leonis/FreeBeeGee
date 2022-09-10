@@ -8,6 +8,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 
 * added shift-drag to disable grid snap while dragging
 * added animation to rotating pieces
+* added option to pick piece material (paper, wood) during image upload
 
 ### Other changes
 

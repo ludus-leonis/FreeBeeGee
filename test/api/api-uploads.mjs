@@ -207,6 +207,7 @@ function testApiImageUpload (api, version, room) {
       h: 2,
       w: 3,
       type: LAYER_TILE,
+      tx: 'wood',
       name: 'upload.test'
     }
   }, body => {
@@ -217,6 +218,7 @@ function testApiImageUpload (api, version, room) {
     expect(body.w).to.be.eql(3)
     expect(body.type).to.be.eql(LAYER_TILE)
     expect(body.name).to.be.eql('upload.test')
+    expect(body.tx).to.be.eql('wood')
   }, 201)
 
   // library must contain asset now
@@ -229,16 +231,17 @@ function testApiImageUpload (api, version, room) {
 
     expect(body.library.tile[index].id).to.be.an('string')
     expect(body.library.tile[index].media).to.be.an('array')
-    expect(body.library.tile[index].media[0]).to.be.eql('upload.test.3x2x1.808080.jpg')
+    expect(body.library.tile[index].media[0]).to.be.eql('upload.test.3x2x1.808080.wood.jpg')
     expect(body.library.tile[index].bg).to.be.eql('#808080')
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
     expect(body.library.tile[index].type).to.be.eql(LAYER_TILE)
     expect(body.library.tile[index].name).to.be.eql('upload.test')
+    expect(body.library.tile[index].tx).to.be.eql('wood')
   }, 200)
 
   // check asset blob
-  testGetBuffer(api, () => `/data/rooms/${room}/assets/tile/upload.test.3x2x1.808080.jpg`, () => {}, (buffer) => {
+  testGetBuffer(api, () => `/data/rooms/${room}/assets/tile/upload.test.3x2x1.808080.wood.jpg`, () => {}, (buffer) => {
     expect(buffer.toString('utf-8')).to.be.eql(image)
   }, 200)
 

@@ -665,35 +665,50 @@ export function getSetupCenter (no = getTableNo()) {
 }
 
 /**
- * Extract parts (group, name, size, etc.) from an asset filename.
+ * Extract parts (group, name, size, etc.) from an asset filename and guess best type.
  *
  * @param {String} assetName Asset filename.
  * @return {Object} Parsed elements.
  */
 export function splitAssetFilename (assetName) {
   const data = {}
-  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/)
+
+  let match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
-    data.w = Number(match[2])
-    data.h = Number(match[3])
-    data.s = Number(match[4])
-    data.bg = match[5]
-    return data
   }
+
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
     data.s = Number(match[4])
-    return data
   }
-  match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
+
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
-    return data
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = Number(match[4])
+    data.bg = match[5]
   }
+
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)([.-][a-z]+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.name = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = Number(match[4])
+    data.bg = match[5]
+    data.tx = match[6].substr(1)
+  }
+
+  // guess the asset type
+  if (data.w) data.type = LAYER_TILE
+  if (data.w === data.h && data.w <= 3) data.type = LAYER_TOKEN
+
   return data
 }
 

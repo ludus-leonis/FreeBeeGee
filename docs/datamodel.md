@@ -68,7 +68,7 @@ Optional fields:
 Media (image) files should be named using the following scheme. This allows FBG to sort them automatically into the *library* and set their meta data.
 
 ```
-mainName[.secondaryName].{x}x{y}x{s}[.bg[-texture]].{ext}
+mainName[.secondaryName].{x}x{y}x{s}[.bg[.texture]].{ext}
 ```
 
 `mainName`
@@ -90,7 +90,7 @@ mainName[.secondaryName].{x}x{y}x{s}[.bg[-texture]].{ext}
 : An optional background color/style for this *asset*. Will be visible as placeholder during image loading, and shine thrugh in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, a number (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash). If missing, it defaults to `0`.
 
 `texture`
-: An optional texture for the *asset*. If present, an additional shade/texture will be applied on top of the media image to give it a rougher look. Can be `none`, `paper` or `wood`.
+: An optional texture for the *asset*. If present, an additional shade/texture will be applied on top of the media image to give it a rougher look. Can be `paper` or `wood`.
 
 ### Base images
 
