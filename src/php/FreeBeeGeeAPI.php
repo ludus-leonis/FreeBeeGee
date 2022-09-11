@@ -41,6 +41,7 @@ class FreeBeeGeeAPI
     private $maxAssetSize = 1024 * 1024;
     private $types = ['grid-square', 'grid-hex'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'badge'];
+    private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
     private $assetTextures = ['paper', 'wood'];
     private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
 
@@ -837,6 +838,9 @@ class FreeBeeGeeAPI
                 case 'table':
                     $validated->$property = $this->api->assertInteger('table', $value, 1, 9);
                     break;
+                case 'layersEnabled':
+                    $validated->$property = $this->api->assertEnumArray('layersEnabled', $value, $this->layers, 0, 99);
+                    break;
                 case 'snap':
                     $validated->$property = $this->api->assertBoolean('snap', $value);
                     break;
@@ -985,6 +989,10 @@ class FreeBeeGeeAPI
                 case 'table':
                     $out->$property =
                         $this->api->assertInteger('table', $value, 1, 9, false) ?: 1;
+                    break;
+                case 'layersEnabled':
+                    $out->$property =
+                        $this->api->assertEnumArray('layersEnabled', $value, $this->layers, 0, 99, false) ?: [];
                     break;
                 case 'snap':
                     $out->$property =

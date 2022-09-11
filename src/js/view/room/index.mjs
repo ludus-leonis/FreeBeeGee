@@ -518,8 +518,15 @@ function setupRoom () {
   }
   if (undefinedCount >= 4) {
     // default if store was empty
-    toggleLayer(LAYER_OTHER)
-    toggleLayer(LAYER_TOKEN)
+    if (getTemplate().layersEnabled) {
+      if (getTemplate().layersEnabled.includes(LAYER_OTHER)) toggleLayer(LAYER_OTHER)
+      if (getTemplate().layersEnabled.includes(LAYER_TOKEN)) toggleLayer(LAYER_TOKEN)
+      if (getTemplate().layersEnabled.includes(LAYER_OVERLAY)) toggleLayer(LAYER_OVERLAY)
+      if (getTemplate().layersEnabled.includes(LAYER_TILE)) toggleLayer(LAYER_TILE)
+    } else {
+      toggleLayer(LAYER_OTHER)
+      toggleLayer(LAYER_TOKEN)
+    }
   }
 
   if (getRoomPreference(PREFS.LOS)) toggleLos()

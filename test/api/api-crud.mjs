@@ -154,6 +154,7 @@ function testApiCrudTemplate (api, version, room) {
       gridWidth: 44,
       gridHeight: 55,
       table: 8,
+      layersEnabled: ['note'],
       version: '9.8.7',
       engine: '8.7.6',
       colors: [{}],

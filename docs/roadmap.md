@@ -8,14 +8,13 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] faq: own templates
 * [ ] faq: installing templates
 * [X] engine: set default table other than 1 in template
-* [ ] engine: set default enabled layers in template
+* [X] engine: set default enabled layers in template
 * [X] engine: specify default template in server.json
 * [X] ui: shift-drag to disable grid snap
 * [X] ui: animate rotations
 * [X] ui: library: pick material during uploads
 * [X] ui: library: set default type to tile for larger uploads
 * [ ] ui: password wrong message
-* [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] ui: ellipsis for long labels
 * [ ] pre-release
   * [ ] bump dependencies
@@ -38,6 +37,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
 * [ ] ui: move dice more

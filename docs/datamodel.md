@@ -253,6 +253,9 @@ A *template*, a.k.a. snapshot, describes a table setup for a particular game.
 `table`
 : An (optional) table number 1-9 to start on if the user does not have a preference stored for it yet. Useful if each table has a setup corresponding to player count, and starting at e.g. default 4 seems better than 1.
 
+`layersEnabled`
+: An (optional) array of layers to be enabled on room create. Can contain `tile`, `token`, `overlay` and/or `other`. If omitted, the default setting is to enable `token` and `other`. (Hint: The `note` layer is always enabled.)
+
 `colors`
 : An array of (background) colors available to pieces on the table. Key-Value pairs with `name` and a `value` / RGB hex code. If empty, pieces can't have dynamic colors.
 
