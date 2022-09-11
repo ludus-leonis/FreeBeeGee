@@ -61,10 +61,11 @@ The server config file is found in `api/data/server.json`:
 
 ```
 {
-  "ttl": 48,                // hours of inactivity after a room gets deleted
-  "maxRooms": 32,           // maximum concurrent rooms allowed
-  "maxRoomSizeMB": 16,      // maximum size per room folder / snapshot / template
-  "snapshotUploads": false, // set to true to enable snapshot upload on room create
+  "ttl": 48,                     // hours of inactivity after a room gets deleted
+  "maxRooms": 32,                // maximum concurrent rooms allowed
+  "maxRoomSizeMB": 16,           // maximum size per room folder / snapshot / template
+  "defaultTemplate": "Tutorial", // will be pre-selected in the create-room dialog
+  "snapshotUploads": false,      // set to true to enable snapshot upload on room create
   "passwordCreate": "................."
 }
 ```

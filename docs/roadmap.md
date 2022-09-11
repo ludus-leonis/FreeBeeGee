@@ -9,12 +9,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] faq: installing templates
 * [ ] engine: set default table other than 1 in template
 * [ ] engine: set default enabled layers in template
-* [ ] engine: specify default template in server.json
+* [X] engine: specify default template in server.json
 * [X] ui: shift-drag to disable grid snap
 * [X] ui: animate rotations
 * [X] ui: library: pick material during uploads
 * [X] ui: library: set default type to tile for larger uploads
-* [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: password wrong message
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] ui: ellipsis for long labels
@@ -43,6 +42,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: protect api objects in JS code
 * [ ] ui: move dice more
 * [ ] ui: show edit form when creating new notes
+* [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] table: native zoom function
 * [ ] library: delete assets UI
 * [ ] library: edit asset UI

@@ -129,11 +129,18 @@ export function createRoomView (name) {
   apiGetTemplates()
     .then(templates => {
       const t = _('#template')
+
+      // determine preselected template (with fallbacks)
+      console.log(getServerInfo(), templates)
+      let preselected = templates.length > 0 ? templates[0] : 'none'
+      if (templates.includes('Tutorial')) preselected = 'Tutorial'
+      if (templates.includes(getServerInfo().defaultTemplate)) preselected = getServerInfo().defaultTemplate
+
       t.innerHTML = ''
       for (const template of templates) {
         const option = _('option').create(template)
         option.value = template
-        if (template === 'Tutorial') option.selected = true
+        if (template === preselected) option.selected = true
         t.add(option)
       }
     })

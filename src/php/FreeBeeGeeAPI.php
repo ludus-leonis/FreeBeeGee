@@ -264,6 +264,7 @@ class FreeBeeGeeAPI
                     "maxRooms": 32,
                     "maxRoomSizeMB": 16,
                     "snapshotUploads": false,
+                    "defaultTemplate": "Tutorial",
                     "passwordCreate": "$2y$12$ZLUoJ7k6JODIgKk6et8ire6XxGDlCS4nupZo9NyJvSnomZ6lgFKGa",
                     "version": "$VERSION$",
                     "engine": "$ENGINE$"
@@ -1480,6 +1481,7 @@ class FreeBeeGeeAPI
         $info->engine = $server->engine;
         $info->ttl = $server->ttl;
         $info->snapshotUploads = $server->snapshotUploads;
+        $info->defaultTemplate = $server->defaultTemplate ?? 'Tutorial';
         $info->freeRooms = $this->getFreeRooms($server);
         $info->root = $this->api->getAPIPath();
 

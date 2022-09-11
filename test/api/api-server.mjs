@@ -35,10 +35,11 @@ import {
 function testApiServerInfo (api) {
   testJsonGet(api, () => '/', body => {
     expect(body).to.be.an('object')
-    expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'backgrounds', 'engine', 'root', 'snapshotUploads'])
+    expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'defaultTemplate', 'backgrounds', 'engine', 'root', 'snapshotUploads'])
     expect(body.createPassword).to.be.eql(true)
     expect(body.freeRooms).to.be.eql(16)
     expect(body.ttl).to.be.eql(48)
+    expect(body.defaultTemplate).to.be.eql('Tutorial')
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.root).to.be.eql('/api')
     expect(body.snapshotUploads).to.be.eql(true)
