@@ -548,7 +548,7 @@ function setupRoom () {
   enableDragAndDrop('#tabletop')
 
   // load + setup content
-  setTableNo(getRoomPreference(PREFS.TABLE), false)
+  setTableNo(getRoomPreference(PREFS.TABLE) ?? getTemplate()?.table ?? 1, false)
   runStatuslineLoop()
 
   // start autosyncing after a short delay to reduce server load a bit

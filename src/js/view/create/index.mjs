@@ -131,7 +131,6 @@ export function createRoomView (name) {
       const t = _('#template')
 
       // determine preselected template (with fallbacks)
-      console.log(getServerInfo(), templates)
       let preselected = templates.length > 0 ? templates[0] : 'none'
       if (templates.includes('Tutorial')) preselected = 'Tutorial'
       if (templates.includes(getServerInfo().defaultTemplate)) preselected = getServerInfo().defaultTemplate

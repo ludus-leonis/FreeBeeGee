@@ -834,6 +834,9 @@ class FreeBeeGeeAPI
                     $validated->$property =
                         $this->api->assertInteger('gridHeight', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
                     break;
+                case 'table':
+                    $validated->$property = $this->api->assertInteger('table', $value, 1, 9);
+                    break;
                 case 'snap':
                     $validated->$property = $this->api->assertBoolean('snap', $value);
                     break;
@@ -978,6 +981,10 @@ class FreeBeeGeeAPI
                             $this->maxRoomGridSize,
                             false
                         ) ?: '32';
+                    break;
+                case 'table':
+                    $out->$property =
+                        $this->api->assertInteger('table', $value, 1, 9, false) ?: 1;
                     break;
                 case 'snap':
                     $out->$property =

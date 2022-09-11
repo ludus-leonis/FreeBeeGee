@@ -165,7 +165,7 @@ export function isLayerActive (layer) {
 
 export const PREFS = {
   TOKEN: { name: 'token', default: '00000000-0000-0000-0000-000000000000' },
-  TABLE: { name: 'table', default: 1 },
+  TABLE: { name: 'table', default: null },
   LAYERother: { name: 'layer5', default: true },
   LAYERtoken: { name: 'layer4', default: true },
   LAYERnote: { name: 'layer3', default: false },

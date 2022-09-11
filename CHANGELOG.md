@@ -13,6 +13,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 ### Other changes
 
 * added defaultTemplate setting to server.json
+* added initial table setting to template.json
 * added autodetection of piece type and size based on image dimensions in upload modal
 * fixed no grid visible in low quality mode
 * fixed empty goblin label in RPG template
