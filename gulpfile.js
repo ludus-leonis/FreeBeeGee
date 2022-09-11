@@ -410,15 +410,11 @@ gulp.task('release', gulp.series(
 gulp.task('release-docker', gulp.series('release', (done) => {
   const docker = new cli.Docker({ echo: true })
   docker.command('build --no-cache -t ghcr.io/ludus-leonis/freebeegee:latest .')
-    .then(() => {
-      done()
-    })
+    .then(() => { done() })
 }, (done) => {
   const docker = new cli.Docker({ echo: true })
   docker.command('tag ghcr.io/ludus-leonis/freebeegee:latest ghcr.io/ludus-leonis/freebeegee:' + p.version)
-    .then(() => {
-      done()
-    })
+    .then(() => { done() })
 }, (done) => {
   // run :api tests
   done()
@@ -468,7 +464,7 @@ gulp.task('demo-deploy-RPG', demoDeploy('RPG'))
 gulp.task('demo-deploy-Hex', demoDeploy('Hex'))
 gulp.task('demo-deploy-Tutorial', demoDeploy('Tutorial'))
 
-gulp.task('demo', gulp.series('clean', 'clean-cache', () => {
+gulp.task('demo', gulp.series('clean', () => {
   demomode = true
   site = 'https://freebeegee.org/'
   return gulp.src('tools')
@@ -490,7 +486,17 @@ gulp.task('demo', gulp.series('clean', 'clean-cache', () => {
   'demo-deploy-RPG',
   'demo-deploy-Hex',
   'demo-deploy-Tutorial'
-)))
+), () => {
+  return del([
+    `${dirs.build}/demo`
+  ])
+}, () => {
+  return gulp.src([
+    `${dirs.site}/**/*`,
+    `${dirs.site}/.htaccess*`
+  ])
+    .pipe(gulp.dest(`${dirs.build}/demo`))
+}))
 
 // --- default target ----------------------------------------------------------
 

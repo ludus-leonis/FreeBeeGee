@@ -24,7 +24,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] simplify engine version change + unit tests
     * [X] empty goblin label in RPG template
     * [X] no grid visible in low quality mode
-    * [ ] simplify/automate more deployment steps
+    * [X] simplify/automate more deployment steps
     * [ ] automated deployment tests for new zip/tgz packages after build
     * [ ] bug: MMB drag sometimes sticks / cursor fix
   * [ ] review docs
@@ -40,6 +40,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
+* [ ] simplify/automate more deployment steps (ongoing)
 * [ ] ui: move dice more
 * [ ] ui: show edit form when creating new notes
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window

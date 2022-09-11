@@ -22,7 +22,8 @@
     "gulp": "gulp",
     "mocha": "mocha",
     "test:api": "mocha test/api",
-    "test:unit": "mocha test/js"
+    "test:unit": "mocha test/js",
+    "generate:demo": "mocha test/demo"
   },
   "license": "AGPL-3.0-or-later",
   "color": "#40bfbf",
