@@ -13,7 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] ui: shift-drag to disable grid snap
 * [X] ui: animate rotations
 * [X] ui: library: pick material during uploads
-* [ ] ui: library: set default type to tile for larger uploads
+* [X] ui: library: set default type to tile for larger uploads
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: password wrong message
 * [ ] ui: clipboard ctrl+c/v/x between tables

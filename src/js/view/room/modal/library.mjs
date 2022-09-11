@@ -128,7 +128,7 @@ export function modalLibrary (xy) {
             </div>
             <div class="col-12 col-lg-6">
               <label for="upload-name">Name</label>
-              <input id="upload-name" name="name" type="text" placeholder="custom" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9-]+( [a-zA-Z0-9-]+)*(, [a-zA-Z0-9-]+)?( [a-zA-Z0-9-]+)*$">
+              <input id="upload-name" name="name" type="text" placeholder="e.g. 'Sorcerer'" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9-]+( [a-zA-Z0-9-]+)*(, [a-zA-Z0-9-]+)?( [a-zA-Z0-9-]+)*$">
             </div>
             <div class="col-6 col-lg-1">
               <label for="upload-w">Width</label>
@@ -458,21 +458,21 @@ function setupTabUpload () {
   _('#upload-color').value = '#808080'
 
   _('#upload-file').on('change', change => updatePreview(true))
+  blob = null
 
   updatePreview()
 }
+
+let blob = null
 
 /**
  * Update the upload WYSIWYG preview based on the selected infos.
  */
 function updatePreview (parseImage = false) {
-  const preview = _('.modal-library .upload-preview').remove('.is-*')
-  preview.innerHTML = ''
-
   const file = _('#upload-file').files[0]
-  if (parseImage) {
-    const parts = splitAssetFilename(file.name)
 
+  if (file && parseImage) {
+    const parts = splitAssetFilename(file.name)
     if (parts.w) _('#upload-w').value = parts.w
     if (parts.h) _('#upload-h').value = parts.h
     if (parts.name) {
@@ -486,24 +486,61 @@ function updatePreview (parseImage = false) {
     if ([LAYER_TILE, LAYER_TOKEN].includes(parts.type)) {
       _('#upload-type').value = parts.type
     }
+
+    const reader = new FileReader()
+    reader.addEventListener('load', event => {
+      blob = event.target.result
+
+      _('#upload-color').value = averageColor(blob)
+
+      // guess type/dimensions if no info was in filename
+      if (!parts.w) {
+        const image = new Image() // eslint-disable-line no-undef
+        image.src = blob
+        image.onload = () => {
+          const tilesize = 64 // in px
+          const aspect = image.width / image.height
+          const square = aspect > 0.9 && aspect < 1.1
+          const tilesX = Math.round(image.width / tilesize) || 1
+          const tilesY = Math.round(image.height / tilesize) || 1
+          if (square) {
+            if (tilesX <= 4) {
+              _('#upload-type').value = LAYER_TOKEN
+              _('#upload-w').value = tilesX
+              _('#upload-h').value = tilesX
+            } else {
+              _('#upload-type').value = LAYER_TILE
+              _('#upload-w').value = Math.min(tilesX, 32)
+              _('#upload-h').value = Math.min(tilesY, 32)
+            }
+          } else {
+            _('#upload-type').value = LAYER_TILE
+            _('#upload-w').value = Math.min(tilesX, 32)
+            _('#upload-h').value = Math.min(tilesY, 32)
+          }
+          updatePreviewDOM(blob)
+        }
+      } else {
+        updatePreviewDOM(blob)
+      }
+    }, false)
+    reader.readAsDataURL(file)
+  } else {
+    updatePreviewDOM(blob)
   }
+}
+
+/**
+ * Create a new preview piece.
+ */
+function updatePreviewDOM (blob) {
+  const preview = _('.modal-library .upload-preview').remove('.is-*')
+  preview.innerHTML = ''
 
   const type = _('#upload-type').value
   const material = _('#upload-material').value
   const w = _('#upload-w').value
   const h = _('#upload-h').value
-
-  if (w > 16 || h > 16) {
-    preview.add('.is-deflate-4x')
-  } else if (w > 12 || h > 12) {
-    preview.add('.is-deflate-3x')
-  } else if (w > 8 || h > 8) {
-    preview.add('.is-deflate-2x')
-  } else if (w > 2 || h > 2) {
-    // nothing
-  } else {
-    preview.add('.is-inflate-2x')
-  }
 
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
@@ -517,26 +554,32 @@ function updatePreview (parseImage = false) {
   }
   piece.css({ '--fbg-material': url(`img/material-${material}.png`) })
 
-  preview.add(piece)
-
-  // set preview background image
-  if (file) {
-    const reader = new FileReader()
-    reader.addEventListener('load', event => {
-      _('.upload-preview .piece').css({
-        backgroundImage: `var(--fbg-material), url("${event.target.result}")`,
-        backgroundSize: '256px, cover'
-      })
-      _('#upload-color').value = averageColor(event.target.result)
-    }, false)
-    reader.readAsDataURL(file)
+  if (w > 16 || h > 16) {
+    preview.add('.is-deflate-4x')
+  } else if (w > 12 || h > 12) {
+    preview.add('.is-deflate-3x')
+  } else if (w > 8 || h > 8) {
+    preview.add('.is-deflate-2x')
+  } else if (w > 2 || h > 2) {
+    // nothing
   } else {
+    preview.add('.is-inflate-2x')
+  }
+
+  if (blob) { // image loaded
+    piece.css({
+      backgroundImage: `var(--fbg-material), url("${blob}")`,
+      backgroundSize: '256px, cover'
+    })
+  } else { // show upload placeholder
     piece.css({
       backgroundImage: url('img/upload.svg'),
       backgroundSize: '25%',
       backgroundRepeat: 'no-repeat'
     })
   }
+
+  preview.add(piece)
 }
 
 /**
