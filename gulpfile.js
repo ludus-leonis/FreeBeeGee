@@ -342,11 +342,29 @@ gulp.task('build', gulp.parallel(
 
 gulp.task('dist', gulp.parallel('build'))
 
-gulp.task('dist-test', gulp.series('clean', () => {
-  // switch to a version with no zeroes for better testing
-  p.versionEngine = p.versionEngineTest
-  return gulp.src('package.json')
-}, 'dist', () => {
+// --- testing targets ---------------------------------------------------------
+
+gulp.task('test-zips', gulp.parallel(() => {
+  return replace(gulp.src([
+    'test/data/snapshots/full/**/*'
+  ]))
+    .pipe(zip('full.zip'))
+    .pipe(gulp.dest(dirs.cache + '/snapshots'))
+}, () => {
+  return replace(gulp.src([
+    'test/data/snapshots/empty/**/*'
+  ]))
+    .pipe(zip('empty.zip'))
+    .pipe(gulp.dest(dirs.cache + '/snapshots'))
+}, () => {
+  return replace(gulp.src([
+    'test/data/snapshots/extra/**/*'
+  ]))
+    .pipe(zip('extra.zip'))
+    .pipe(gulp.dest(dirs.cache + '/snapshots'))
+}))
+
+gulp.task('dist-test', gulp.series('clean', 'test-zips', 'dist', () => {
   return replace(gulp.src([
     'test/data/server.json'
   ]))

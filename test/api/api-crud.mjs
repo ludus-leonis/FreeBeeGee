@@ -72,7 +72,7 @@ function testApiCrudRoom (api, version, room) {
     expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
     expect(body.id).to.match(REGEXP_ID)
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngineTest)
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.width).to.be.eql(3072)
     expect(body.height).to.be.eql(2048)
     expect(body.library).to.be.an('object')
@@ -87,7 +87,7 @@ function testApiCrudRoom (api, version, room) {
     expect(body.template.gridWidth).to.be.eql(48)
     expect(body.template.gridHeight).to.be.eql(32)
     expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql('2.3.0')
+    expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
     expect(body.template.colors).to.be.an('array')
     expect(body.template.borders).to.be.an('array')
   }, 201)
@@ -98,7 +98,7 @@ function testApiCrudRoom (api, version, room) {
     expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
     expect(body.id).to.match(REGEXP_ID)
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngineTest)
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.width).to.be.eql(3072)
     expect(body.height).to.be.eql(2048)
     expect(body.library).to.be.an('object')
@@ -113,7 +113,7 @@ function testApiCrudRoom (api, version, room) {
     expect(body.template.gridWidth).to.be.eql(48)
     expect(body.template.gridHeight).to.be.eql(32)
     expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql('2.3.0')
+    expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
     expect(body.template.colors).to.be.an('array')
     expect(body.template.borders).to.be.an('array')
   }, 200)
@@ -141,7 +141,7 @@ function testApiCrudTemplate (api, version, room) {
     expect(body.template.gridWidth).to.be.eql(48)
     expect(body.template.gridHeight).to.be.eql(32)
     expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql('2.3.0')
+    expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
     expect(body.template.colors).to.be.an('array')
     expect(body.template.colors.length).to.be.gte(2)
     expect(body.template.borders.length).to.be.gte(2)
@@ -167,7 +167,7 @@ function testApiCrudTemplate (api, version, room) {
     expect(body.gridWidth).to.be.eql(44)
     expect(body.gridHeight).to.be.eql(55)
     expect(body.version).to.be.eql(p.version)
-    expect(body.engine).to.be.eql('2.3.0')
+    expect(body.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
     expect(body.colors).to.be.an('array')
     expect(body.colors.length).to.be.gte(2)
     expect(body.borders.length).to.be.gte(2)
@@ -182,7 +182,7 @@ function testApiCrudTemplate (api, version, room) {
     expect(body.template.gridWidth).to.be.eql(44)
     expect(body.template.gridHeight).to.be.eql(55)
     expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql('2.3.0')
+    expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
     expect(body.template.colors).to.be.an('array')
     expect(body.template.colors.length).to.be.gte(2)
     expect(body.template.borders.length).to.be.gte(2)

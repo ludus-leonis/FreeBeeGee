@@ -170,7 +170,7 @@ function testApiSnapshotUpload (api, version, room) {
 // -----------------------------------------------------------------------------
 
 function testApiSnapshotVersions (api, version, room) {
-  const v = p.versionEngineTest.split('.')
+  const v = p.versionEngine.split('.')
   v[0] = Number.parseInt(v[0])
   v[1] = Number.parseInt(v[1])
   v[2] = Number.parseInt(v[2])

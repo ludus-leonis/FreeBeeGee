@@ -1,0 +1,1 @@
+This snapshot does not provide license information.

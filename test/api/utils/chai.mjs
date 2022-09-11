@@ -364,7 +364,7 @@ export function zipToc (buffer) {
 // -----------------------------------------------------------------------------
 
 /**
- * Run thests against one or more servers, runnding differet PHP version.
+ * Run the tests against one or more servers, running differet PHP version.
  *
  * @param {function} what Function to call to run the tests. Will recieve the API
  *                        URL, the PHP version and a suggested room name.
@@ -372,13 +372,13 @@ export function zipToc (buffer) {
 export function runTests (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
 
-  const api = 'http://playPHP.local/api'
+  // const api = 'http://playPHP.local/api'
   // describe('PHP 7.2', function () { what(api.replace(/PHP/, '72'), '72', `${room}72`) })
   // describe('PHP 7.3', function () { what(api.replace(/PHP/, '73'), '73', `${room}73`) })
   // describe('PHP 7.4', function () { what(api.replace(/PHP/, '74'), '74', `${room}74`) })
   // describe('PHP 8.0', function () { what(api.replace(/PHP/, '80'), '80', `${room}80`) })
-  describe('PHP 8.1', function () { what(api.replace(/PHP/, '81'), '81', `${room}81`) })
+  // describe('PHP 8.1', function () { what(api.replace(/PHP/, '81'), '81', `${room}81`) })
 
-  // const api = 'http://localhost:8765/api'
-  // describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
+  const api = 'http://localhost:8765/api'
+  describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
 }

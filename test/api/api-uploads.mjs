@@ -68,7 +68,7 @@ function testApiZipMinimal (api, version, room) {
       expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
       expect(body.id).to.match(REGEXP_ID)
       expect(body.name).to.be.eql(room)
-      expect(body.engine).to.be.eql(p.versionEngineTest)
+      expect(body.engine).to.be.eql(p.versionEngine)
       expect(body.width).to.be.eql(3072)
       expect(body.height).to.be.eql(2048)
       expect(body.library).to.be.an('object')
@@ -88,7 +88,7 @@ function testApiZipMinimal (api, version, room) {
       expect(body.template.gridWidth).to.be.eql(48)
       expect(body.template.gridHeight).to.be.eql(32)
       expect(body.template.version).to.be.eql(p.version)
-      expect(body.template.engine).to.be.eql('2.3.0')
+      expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
       expect(body.template.colors).to.be.an('array')
       expect(body.template.colors.length).to.be.eql(13)
       expect(body.template.borders).to.be.an('array')
@@ -122,13 +122,13 @@ function testApiZipFull (api, version, room) {
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => { return fs.readFileSync('test/data/full.zip') },
+    () => { return fs.readFileSync('.cache/snapshots/full.zip') },
     body => {
       expect(body).to.be.an('object')
       expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
       expect(body.id).to.match(REGEXP_ID)
       expect(body.name).to.be.eql(room)
-      expect(body.engine).to.be.eql(p.versionEngineTest)
+      expect(body.engine).to.be.eql(p.versionEngine)
       expect(body.width).to.be.eql(3072)
       expect(body.height).to.be.eql(2048)
       expect(body.library).to.be.an('object')
@@ -157,8 +157,8 @@ function testApiZipFull (api, version, room) {
       expect(body.template.gridSize).to.be.eql(64)
       expect(body.template.gridWidth).to.be.eql(48)
       expect(body.template.gridHeight).to.be.eql(32)
-      expect(body.template.version).to.be.eql('1.2.3')
-      expect(body.template.engine).to.be.eql('2.3.0')
+      expect(body.template.version).to.be.eql(p.version)
+      expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
       expect(body.template.colors).to.be.an('array')
       expect(body.template.colors.length).to.be.eql(1)
       expect(body.credits).to.contain('I am a license.')

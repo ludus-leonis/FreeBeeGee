@@ -54,13 +54,13 @@ final class FreeBeeGeeAPITest extends TestCase
         global $_SERVER;
         $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__, 3) . $docroot;
         $fbg = new FreeBeeGeeAPI();
-        $fbg->setDebug(sys_get_temp_dir() . '/php-fbg/', $this->p->version, $this->p->versionEngineTest);
+        $fbg->setDebug(sys_get_temp_dir() . '/php-fbg/', $this->p->version, $this->p->versionEngine);
         if ($fs) {
             $this->tempDir = sys_get_temp_dir() . '/php-fbg/' . time() . '/';
             if (!is_dir($this->tempDir)) {
                 mkdir($this->tempDir, 0777, true);
             }
-            $fbg->setDebug($this->tempDir, $this->p->version, $this->p->versionEngineTest);
+            $fbg->setDebug($this->tempDir, $this->p->version, $this->p->versionEngine);
         }
         return $fbg;
     }
@@ -68,6 +68,11 @@ final class FreeBeeGeeAPITest extends TestCase
     private function pathToTestData($relative)
     {
         return dirname(__FILE__, 2) . '/data/' . $relative;
+    }
+
+    private function pathToCache($relative)
+    {
+        return dirname(__FILE__, 3) . '/.cache/' . $relative;
     }
 
     private function assertHTTPStatus(callable $testcode, int $status, string $match = '')
@@ -87,21 +92,28 @@ final class FreeBeeGeeAPITest extends TestCase
         }
     }
 
+    private function semver(string $original, $major, $minor, $patch) {
+        $parts = explode('.', $original);
+        return (is_string($major) ? $major : (intval($parts[0]) + $major))
+            . '.' . (is_string($minor) ? $minor : (intval($parts[1]) + $minor))
+            . '.' . (is_string($patch) ? $patch : (intval($parts[2]) + $patch));
+    }
+
     // --- tests ---------------------------------------------------------------
 
     public function testValidateSnapshot()
     {
-        $validEntries = $this->fbg->validateSnapshot($this->pathToTestData('empty.zip'));
+        $validEntries = $this->fbg->validateSnapshot($this->pathToCache('snapshots/empty.zip'));
         $this->assertEqualsCanonicalizing([], $validEntries);
 
-        $validEntries = $this->fbg->validateSnapshot($this->pathToTestData('extra.zip'));
+        $validEntries = $this->fbg->validateSnapshot($this->pathToCache('snapshots/extra.zip'));
         $this->assertEqualsCanonicalizing([
             'template.json',
             'LICENSE.md',
             'tables/1.json'
         ], $validEntries);
 
-        $validEntries = $this->fbg->validateSnapshot($this->pathToTestData('full.zip'));
+        $validEntries = $this->fbg->validateSnapshot($this->pathToCache('snapshots/full.zip'));
         $this->assertEqualsCanonicalizing([
             'template.json',
             'LICENSE.md',
@@ -707,138 +719,144 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(0, $piece->z);
     }
 
-    public function testLoadOldRoom()
+    public function testVersionMismatch()
     {
         // setup
-        $this->fbg->installSnapshot('tooOldRoom', $this->pathToTestData('empty.zip'), []);
-        $this->fbg->cleanupRoom('tooOldRoom');
-        $meta = $this->fbg->getRoomMeta('tooOldRoom');
+        $this->fbg->installSnapshot('versionMismatchRoom', $this->pathToCache('snapshots/empty.zip'), []);
+        $this->fbg->cleanupRoom('versionMismatchRoom');
+        $meta = $this->fbg->getRoomMeta('versionMismatchRoom');
         $this->assertTrue(is_dir($meta->folder));
 
         // load ordinary room
         $this->assertHTTPStatus(function () {
-            $room = $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
+            $room = $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 200);
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $template = json_decode(file_get_contents($meta->folder . 'template.json'));
-        $this->assertEquals('2.3.4', $room->engine);
-        $this->assertEquals('2.3.0', $template->engine);
+        $this->assertEquals($this->p->versionEngine, $room->engine);
+        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $template->engine); // got patched
 
-        // room engine too new for us (major)
-        $room->engine = '3.2.3';
+        // major room engine too new for us (major + 1) will reject
+        $version = $this->semver($this->p->versionEngine, 1, 0, 0);
+        $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = '3.2.0';
-        $template->engine = '3.2.0';
+        $room->template->engine = $version;
+        $template->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
         file_put_contents($meta->folder . 'template.json', json_encode($template));
         $this->assertHTTPStatus(function () {
-            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
-        }, 400, '/INVALID_ENGINE.*3.2.0/');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
+        }, 400, '/INVALID_ENGINE.*' . $version . '/');
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $template = json_decode(file_get_contents($meta->folder . 'template.json'));
-        $this->assertEquals('3.2.3', $room->engine);
+        $this->assertEquals($version, $room->engine); // room/engine unchanged
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals('3.2.0', $template->engine);
+        $this->assertEquals($version, $template->engine);
 
-        // room engine too old for us (major)
-        $room->engine = '1.2.3';
+        // major room engine too old for us (major - 1) will reject
+        $version = $this->semver($this->p->versionEngine, -1, 0, 0);
+        $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = '1.2.0';
-        $template->engine = '1.2.0';
+        $room->template->engine = $version;;
+        $template->engine = $version;;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
         file_put_contents($meta->folder . 'template.json', json_encode($template));
         $this->assertHTTPStatus(function () {
-            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
-        }, 400, '/INVALID_ENGINE.*1.2.0/');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
+        }, 400, '/INVALID_ENGINE.*' . $version . '/');
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $template = json_decode(file_get_contents($meta->folder . 'template.json'));
-        $this->assertEquals('1.2.3', $room->engine);
+        $this->assertEquals($version, $room->engine); // room/engine unchanged
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals('1.2.0', $template->engine);
+        $this->assertEquals($version, $template->engine);
 
-        // room engine too new for us (minor)
-        $room->engine = '2.4.0';
+        // minor room engine too new for us (minor + 1) will reject
+        $version = $this->semver($this->p->versionEngine, 0, 1, 0);
+        $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = '2.4.0';
-        $template->engine = '2.4.0';
+        $room->template->engine = $version;
+        $template->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
         file_put_contents($meta->folder . 'template.json', json_encode($template));
         $this->assertHTTPStatus(function () {
-            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
-        }, 400, '/INVALID_ENGINE.*2.4.0/');
+            $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
+        }, 400, '/INVALID_ENGINE.*' . $version . '/');
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $template = json_decode(file_get_contents($meta->folder . 'template.json'));
-        $this->assertEquals('2.4.0', $room->engine);
+        $this->assertEquals($version, $room->engine); // room/engine unchanged
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals('2.4.0', $template->engine);
+        $this->assertEquals($version, $template->engine);
 
-        // room engine old but not too old for us (minor) will clean room
-        $room->engine = '2.2.3';
+        // minor room engine older (minor - 1) will auto-update room
+        $version = $this->semver($this->p->versionEngine, 0, -1, 0);
+        $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = '2.2.0';
-        $template->engine = '2.2.0';
+        $room->template->engine = $version;
+        $template->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
         file_put_contents($meta->folder . 'template.json', json_encode($template));
         $room = json_decode($this->assertHTTPStatus(function () {
-            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
+            $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $template = json_decode(file_get_contents($meta->folder . 'template.json'));
-        $this->assertEquals('2.3.4', $room->engine);
+        $this->assertEquals($this->p->versionEngine, $room->engine); // uses current engine now
         $this->assertObjectNotHasAttribute('dirty', $room);
-        $this->assertEquals('2.3.0', $template->engine);
+        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $template->engine); // got patched
 
-        // room with older patch level will clean room
-        $room->engine = '2.3.2';
+        // room with older patch level (-1) will auto-update room
+        $version = $this->semver($this->p->versionEngine, 0, 0, -1);
+        $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = '2.3.0';
-        $template->engine = '2.3.0';
+        $room->template->engine = $version;
+        $template->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
         file_put_contents($meta->folder . 'template.json', json_encode($template));
         $room = json_decode($this->assertHTTPStatus(function () {
-            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
+            $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $template = json_decode(file_get_contents($meta->folder . 'template.json'));
-        $this->assertEquals('2.3.4', $room->engine);
+        $this->assertEquals($this->p->versionEngine, $room->engine); // uses current engine now
         $this->assertObjectNotHasAttribute('dirty', $room);
-        $this->assertEquals('2.3.0', $template->engine);
+        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $template->engine); // got patched
 
-        // room with equal patch level won't clean room
-        $room->engine = '2.3.4';
+        // room with equal patch level won't touch room
+        $version = $this->p->versionEngine;
+        $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = '2.3.0';
-        $template->engine = '2.3.0';
+        $room->template->engine = $version;
+        $template->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
         file_put_contents($meta->folder . 'template.json', json_encode($template));
         $room = json_decode($this->assertHTTPStatus(function () {
-            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
+            $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $template = json_decode(file_get_contents($meta->folder . 'template.json'));
-        $this->assertEquals('2.3.4', $room->engine);
+        $this->assertEquals($this->p->versionEngine, $room->engine); // uses current engine
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals('2.3.0', $template->engine);
+        $this->assertEquals($version, $template->engine);
 
-        // room with higher patch level will clean room
-        $room->engine = '2.3.13';
+        // room with newer patch level (+1) will reject
+        $version = $this->semver($this->p->versionEngine, 0, 0, 1);
+        $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = '2.3.0';
-        $template->engine = '2.3.0';
+        $room->template->engine = $version;
+        $template->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
         file_put_contents($meta->folder . 'template.json', json_encode($template));
-        $room = json_decode($this->assertHTTPStatus(function () {
-            $this->fbg->getRoom($this->fbg->getRoomMeta('tooOldRoom'));
-        }, 200)->getMessage());
-        $this->assertEquals($this->fbg->getEngine(), $room->engine);
+        $this->assertHTTPStatus(function () {
+            $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
+        }, 400, '/INVALID_ENGINE.*' . $version . '/');
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $template = json_decode(file_get_contents($meta->folder . 'template.json'));
-        $this->assertEquals('2.3.4', $room->engine);
-        $this->assertObjectNotHasAttribute('dirty', $room);
-        $this->assertEquals('2.3.0', $template->engine);
+        $this->assertEquals($version, $room->engine); // room/engine unchanged
+        $this->assertEquals('dirty', $room->dirty);
+        $this->assertEquals($version, $template->engine);
     }
 
     public function testSetIfMissing()

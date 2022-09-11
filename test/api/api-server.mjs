@@ -24,6 +24,7 @@
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
 import {
+  p,
   expect,
   runTests,
   testJsonGet
@@ -38,7 +39,7 @@ function testApiServerInfo (api) {
     expect(body.createPassword).to.be.eql(true)
     expect(body.freeRooms).to.be.eql(16)
     expect(body.ttl).to.be.eql(48)
-    expect(body.engine).to.be.eql('2.3.4')
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.root).to.be.eql('/api')
     expect(body.snapshotUploads).to.be.eql(true)
     expect(body.version).to.match(/^[0-9]+\.[0-9]+\.[0-9]+/)
