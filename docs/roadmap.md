@@ -4,9 +4,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.17 - ??? ???
 
-* [ ] faq: reporting bugs
-* [ ] faq: own templates
-* [ ] faq: installing templates
+* [X] faq: reporting bugs
+* [X] faq: own templates
+* [X] faq: installing templates
 * [X] engine: set default table other than 1 in template
 * [X] engine: set default enabled layers in template
 * [X] engine: specify default template in server.json
@@ -42,6 +42,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: protect api objects in JS code
 * [ ] simplify/automate more deployment steps (ongoing)
 * [ ] ui: move dice more
+* [ ] unify wording snapshot + template
 * [ ] ui: show edit form when creating new notes
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] table: native zoom function
