@@ -15,7 +15,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] ui: library: pick material during uploads
 * [X] ui: library: set default type to tile for larger uploads
 * [X] ui: password wrong message
-* [ ] ui: ellipsis for long labels
+* [X] ui: ellipsis for long labels
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
@@ -29,14 +29,16 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] align js linters
   * [X] review docs
   * [ ] review + run tests
-  * [ ] review tutorial
+  * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] update screenshots
+  * [X] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
+* [ ] don't select LOS after placement
+* [ ] wrong mouse curson on notes in (measure mode)
 * [ ] table: native zoom function
 * [ ] add bcrypt tools page
 * [ ] ui: clipboard ctrl+c/v/x between tables

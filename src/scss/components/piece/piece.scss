@@ -141,10 +141,6 @@ $piece-rotate: 1deg;
     white-space: nowrap;
     z-index: 99; // within the piece
 
-    .icon-ellipsis {
-      color: $color-gray-25;
-    }
-
     .icon {
       display: inline-block;
       height: 1em;
@@ -152,10 +148,6 @@ $piece-rotate: 1deg;
       margin-right: px(1);
       margin-top: px(-1);
       width: 1em;
-
-      &.icon-extra {
-        display: none;
-      }
     }
 
     span + .icon {
@@ -163,16 +155,30 @@ $piece-rotate: 1deg;
     }
   }
 
-  &:hover > .label {
+  // --- label ellipsis ---
+
+  .label.ellipsis {
+    max-width: 1.5 * $piece-tile-size;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+  }
+
+  @for $x from 2 through 32 {
+    &.is-w-#{$x} {
+      .label.ellipsis {
+        max-width: $x * $piece-tile-size;
+      }
+
+      &:hover .label {
+        max-width: unset;
+      }
+    }
+  }
+
+  &:hover .label {
     font-size: px(16);
-
-    .icon-ellipsis {
-      display: none;
-    }
-
-    .icon.icon-extra {
-      display: inline-block;
-    }
+    max-width: unset;
   }
 
   // --- piece masks -----------------------------------------------------------

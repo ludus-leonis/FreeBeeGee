@@ -443,7 +443,7 @@ export function setPiece (piece) {
     let changed = node.piece.t?.[0] !== piece.t?.[0] || !equalsJSON(node.piece.b, piece.b)
 
     if (!_('#' + piece.id + ' .label').exists()) {
-      node.add(_('.label>span').create())
+      node.add(_('.label.ellipsis>span').create())
       changed = true
     }
 
@@ -457,20 +457,20 @@ export function setPiece (piece) {
       }
 
       // update icon part
-      let i = 1
-      let iconExtra
+      // let i = 1
+      // let iconExtra
       for (const id of piece.b ?? []) {
         const asset = findAsset(id, 'badge')
         if (asset) {
-          const img = _(i <= 3 ? 'img.icon' : 'img.icon.icon-extra').create()
-          if (i === 3) iconExtra = img
-          if (i === 4) {
-            content.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
-            iconExtra.add('.icon-extra')
-          }
+          const img = _('img.icon').create()
+          // if (i === 3) iconExtra = img
+          // if (i === 4) {
+          //   content.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
+          //   iconExtra.add('.icon-extra')
+          // }
           img.src = getAssetURL(asset, 0)
           content.add(img)
-          i++
+          // i++
         }
       }
     }

@@ -19,6 +19,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added infos how to file bugs to the docs
 * added infos how to use snapshots and templates to the docs
 * added password-wrong message on login screen
+* added ellipsis for long piece label texts
 * fixed adding notes does not reset selection
 * fixed popup closing when other player interacts with table
 * fixed no grid visible in low quality mode
