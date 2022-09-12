@@ -8,7 +8,7 @@ A virtual gaming tabletop you can host on your own server.
 
 Your game. Your data.
 
-[FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Patreon](https://www.patreon.com/LudusLeonis) | [Documentation](docs/DOCS.md)
+[FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Patreon](https://www.patreon.com/LudusLeonis) | [Docs](docs/DOCS.md)
 
 ## Key features
 
@@ -17,12 +17,12 @@ Your game. Your data.
 * Invite friends by sending them a room's unique URL. Room passwords optional.
 * Multiple tables per room. Use them for different game setups or dungeon levels.
 * Tile-/grid-based. Supports square and hex layouts, with snapping.
-* Classic game boards, dungeon tiles and 200+ monster token included.
+* Classic game boards, dungeon tiles and 200+ monster token included. Upload your own, too.
 * Separate layers for tiles, overlays and tokens.
 * Asset browser for your token/tiles. Individual libraries per room.
 * Sticky notes and dice trays.
 * Templates to setup tables and populate your library from.
-* Transfer individual rooms between servers. Or keep an offline backup.
+* Easily transfer rooms between servers. Or keep an `*.zip` as offline backup.
 * Privacy friendly. No user tracking. No 3rd-party scripts. Rooms are deleted after some (configurable) time, usually 48h.
 * File & folder-based. No database required. Easy to install and maintain.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
@@ -53,8 +53,6 @@ FreeBeeGee follows the [KISS principle](https://en.wikipedia.org/wiki/KISS_princ
 * A campaign/game management tool.
 * A community management tool.
 
-There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/limitations of this project.
-
 ## Requirements
 
 ### Server
@@ -68,11 +66,11 @@ There is also a [FAQ](docs/FAQ.md) explaining some of the technical decisions/li
 
 ### Client
 
-Any recent HTML5-capable browser should do. Mobile/touch device support is a bit limited for now.
+Any recent HTML5-capable browser should do. Mobile/touch device support is a bit limited for now, but should be good enough for spectators.
 
 ## Installation
 
-Read the [Setup & Config](docs/INSTALL.md) docs for full install instructions and how to setup your mandatory server password.
+Read the [Setup & Config](docs/INSTALL.md) docs for full install instructions and how to set your mandatory server password.
 
 ## License
 

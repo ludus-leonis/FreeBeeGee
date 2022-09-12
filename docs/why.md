@@ -1,4 +1,4 @@
-# FAQ (technical)
+# Why?
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It hopes to give insights into FreeBeeGee's design goals and technical decisions. tldr:
 

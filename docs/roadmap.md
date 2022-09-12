@@ -17,7 +17,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] ui: password wrong message
 * [ ] ui: ellipsis for long labels
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] popup closing when other player interacts with table
     * [X] adding notes does not reset selection
@@ -27,7 +27,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] simplify/automate more deployment steps
     * [ ] bug: MMB drag sometimes sticks / cursor fix
     * [X] align js linters
-  * [ ] review docs
+  * [X] review docs
   * [ ] review + run tests
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -38,6 +38,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ### rather sooner (before v1)
 
 * [ ] table: native zoom function
+* [ ] add bcrypt tools page
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
