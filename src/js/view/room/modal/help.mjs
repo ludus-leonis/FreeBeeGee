@@ -91,7 +91,9 @@ export function modalHelp () {
 
             <h2>Pieces</h2>
 
-            <p>To <strong>select</strong> a piece, left-click on it. It will get highlighted. However, you can only select pieces if their layer is currently active. Use the top three buttons in the menu to (de)activate layers. To <strong>move</strong> a selected piece, just drag'n'drop it.</p>
+            <p>To <strong>select</strong> a piece, left-click on it. It will get highlighted. However, you can only select pieces if their layer is currently active. Use the top buttons in the menu or press  to (de)activate layers. You can multi-select pieces by holding down the left mouse button and dragging a selection box, or by holding down <span class="key">Ctrl</span> while left-clicking on individual pieces.</p>
+
+            <p>To <strong>move</strong> your selection, just drag'n'drop it. It will snap to the table grid per default. Press <span class="key">Shift</span> while dragging to disable snapping.</p>
 
             <p>To <strong>edit</strong> a piece, either select it and use the menu-icons on your left, or right-click the piece and use the context menu. There you can <strong>rotate</strong>, <strong>flip</strong>, <strong>clone</strong> and <strong>delete</strong> a selected piece, as well as <strong>label</strong> it.</p>
 
@@ -107,17 +109,18 @@ export function modalHelp () {
 
             <h2>Measure mode</h2>
 
-            <p>Use the ruler icon or press <span class="key">m</span> to toggle measure mode. Useful to check line-of-sight in many games. While in this mode, press and hold the left mouse button to drag a line across the table. Only you will see the line - to share it with other players press space.</p>
+            <p>Use the ruler icon or press <span class="key">m</span> to toggle measure mode. Useful to check line-of-sight in many games. While in this mode, press and hold the left mouse button to drag a line across the table. Only you will see the line - press space to share it with other players.</p>
 
           </div>
           <div class="hotkeys">
-            <p>The following general hotkeys are available. Hotkeys are case-sensitve.</p>
+            <p>The following general hotkeys are available. Hotkeys are <strong>case-sensitve</strong>.</p>
+
             <p><span class="key">1</span> / <span class="key">2</span> / <span class="key">3</span> / <span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
             <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library window opened.</p>
             <p><span class="key">n</span> Add a new sticky note at the current mouse cursor position.</p>
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>
             <p><span class="key">Alt</span> / <span class="key">Ctrl</span> plus <span class="key">1</span> - <span class="key">9</span> Switch to another table (1 to 9).</p>
-            <p><span class="key">g</span> Toggle table grid overlay.</p>
+            <p><span class="key">g</span> Toggle table grid.</p>
             <p><span class="key">m</span> Toggle measure mode.</p>
             <p><span class="key">F11</span> Toggle fullscreen.</p>
             <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
@@ -125,7 +128,7 @@ export function modalHelp () {
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
             <p><span class="key">r</span>/<span class="key">R</span> Rotate piece clockwise/counter-clockwise.</p>
-            <p><span class="key">f</span>/<span class="key">F</span> Flip piece forward/backward. Some pieces have more than two sides.</p>
+            <p><span class="key">f</span>/<span class="key">F</span> Flip piece forward/backward. Pieces can have one, two or even more sides.</p>
             <p><span class="key">o</span> Change piece color (if a piece supports that).</p>
             <p><span class="key">O</span> Change outline/border color (token only).</p>
             <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
@@ -135,6 +138,8 @@ export function modalHelp () {
             <p><span class="key">Del</span> Delete selected piece.</p>
             <p><span class="key">&lt;</span> / <span class="key">&gt;</span> Decrease/increase token letter. Hint: Only works for tokens!</p>
 
+            <p><span class="key">Ctrl</span> Hold while selecting to multi-select.</p>
+            <p><span class="key">Shift</span> Hold while moving pieces to disable snapping.</p>
           </div>
           <div class="copyright">
             <h2>Room assets</h2>

@@ -14,6 +14,8 @@ Execute the tests via:
 
 ```sh
 cd /path/to/gitroot
+npm install
+npm run gulp test-zips
 phpunit test/
 ```
 

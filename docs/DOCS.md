@@ -16,7 +16,6 @@
 
 * The [Installation Instructions](INSTALL.md) will get you started.
 * The [Troubleshooting Instructions](troubleshooting.md) might help, too.
-* The [Frequently Asked Questions (FAQ)](FAQ.md) explain a few design decisions.
 
 ## Developer Documentation
 
@@ -30,3 +29,4 @@
 
 * The full [Changelog](../CHANGELOG.md) of every change made to FreeBeeGee.
 * The [License](../LICENSE.md) of FreeBeeGee.
+* The [Why?](why.md) explains a few technical decisions.

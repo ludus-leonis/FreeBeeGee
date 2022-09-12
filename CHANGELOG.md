@@ -1,7 +1,30 @@
 # FreeBeeGee CHANGELOG
 
-Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
+Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.17.0 - Rotating Rook
+
+### Notable changes
+
+* added shift-drag to disable snapping while dragging
+* added animation to rotating pieces
+* added option to pick piece material (paper, wood) during image upload
+
+### Other changes
+
+* added autodetection of piece type and size based on image dimensions in upload modal
+* added defaultTemplate setting to server.json
+* added layersEnabled setting to template.json
+* added initial table setting to template.json
+* added infos how to file bugs to the docs
+* added infos how to use snapshots and templates to the docs
+* added password-wrong message on login screen
+* added ellipsis for long piece label texts
+* fixed adding notes does not reset selection
+* fixed popup closing when other player interacts with table
+* fixed no grid visible in low quality mode
+* fixed empty goblin label in RPG template
+* fixed hardcoded engine versions in integration tests
 
 ## v0.16.0 - Selecting Seal
 

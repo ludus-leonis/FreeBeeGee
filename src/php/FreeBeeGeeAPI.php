@@ -41,6 +41,8 @@ class FreeBeeGeeAPI
     private $maxAssetSize = 1024 * 1024;
     private $types = ['grid-square', 'grid-hex'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'badge'];
+    private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
+    private $assetTextures = ['paper', 'wood'];
     private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
 
     private $FLAG_NO_DELETE = 0b00000001;
@@ -263,6 +265,7 @@ class FreeBeeGeeAPI
                     "maxRooms": 32,
                     "maxRoomSizeMB": 16,
                     "snapshotUploads": false,
+                    "defaultTemplate": "Tutorial",
                     "passwordCreate": "$2y$12$ZLUoJ7k6JODIgKk6et8ire6XxGDlCS4nupZo9NyJvSnomZ6lgFKGa",
                     "version": "$VERSION$",
                     "engine": "$ENGINE$"
@@ -832,6 +835,12 @@ class FreeBeeGeeAPI
                     $validated->$property =
                         $this->api->assertInteger('gridHeight', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
                     break;
+                case 'table':
+                    $validated->$property = $this->api->assertInteger('table', $value, 1, 9);
+                    break;
+                case 'layersEnabled':
+                    $validated->$property = $this->api->assertEnumArray('layersEnabled', $value, $this->layers, 0, 99);
+                    break;
                 case 'snap':
                     $validated->$property = $this->api->assertBoolean('snap', $value);
                     break;
@@ -976,6 +985,14 @@ class FreeBeeGeeAPI
                             $this->maxRoomGridSize,
                             false
                         ) ?: '32';
+                    break;
+                case 'table':
+                    $out->$property =
+                        $this->api->assertInteger('table', $value, 1, 9, false) ?: 1;
+                    break;
+                case 'layersEnabled':
+                    $out->$property =
+                        $this->api->assertEnumArray('layersEnabled', $value, $this->layers, 0, 99, false) ?: [];
                     break;
                 case 'snap':
                     $out->$property =
@@ -1447,6 +1464,9 @@ class FreeBeeGeeAPI
                         '#[a-fA-F0-9]{6}|transparent|piece'
                     );
                     break;
+                case 'tx':
+                    $validated->tx = $this->api->assertEnum('tx', $value, $this->assetTextures);
+                    break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
             }
@@ -1476,6 +1496,7 @@ class FreeBeeGeeAPI
         $info->engine = $server->engine;
         $info->ttl = $server->ttl;
         $info->snapshotUploads = $server->snapshotUploads;
+        $info->defaultTemplate = $server->defaultTemplate ?? 'Tutorial';
         $info->freeRooms = $this->getFreeRooms($server);
         $info->root = $this->api->getAPIPath();
 
@@ -2225,7 +2246,11 @@ class FreeBeeGeeAPI
 
         // determine asset path elements
         $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' .
-            str_replace('#', '', $asset->bg) . '.' . $asset->format;
+            str_replace('#', '', $asset->bg);
+        if ($asset->tx ?? null) {
+            $filename .= '.' . $asset->tx;
+        }
+        $filename .= '.' . $asset->format;
 
         // output file data
         $lock = $this->api->waitForWriteLock($meta->lock);
@@ -2390,7 +2415,7 @@ class FreeBeeGeeAPI
         if (
             // group.name.1x2x3.808080.png
             preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?(-[^\.-]+)?\.[a-zA-Z0-9]+$/',
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
@@ -2417,7 +2442,9 @@ class FreeBeeGeeAPI
 
             if (sizeof($matches) >= 7) {
                 switch ($matches[6]) {
+                    case '.paper':
                     case '-paper':
+                    case '.wood':
                     case '-wood':
                         $asset->tx = substr($matches[6], 1);
                         break;

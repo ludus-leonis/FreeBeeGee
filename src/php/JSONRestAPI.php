@@ -253,7 +253,7 @@ class JSONRestAPI
             }
         }
         if ($send) {
-            $this->sendError(400, "invalid JSON: $field invalid");
+            $this->sendError(400, "invalid JSON: $field invalid domain value");
         } else {
             return null;
         }
@@ -453,6 +453,34 @@ class JSONRestAPI
             }
         }
         return $objects;
+    }
+
+    /**
+     * Check/convert if data is array of strings.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $values The value(s) to check.
+     * @param int $minLength Minimum length of array.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
+     * @return array The parsed array.
+     */
+    public function assertEnumArray(
+        string $field,
+        $values,
+        $enum,
+        int $minLength = 0,
+        int $maxLength = PHP_INT_MAX,
+        bool $send = true
+    ) {
+        $entries = $this->assertArray($field, $values, $minLength, $maxLength, $send);
+        foreach ($entries as $entry) {
+            $this->assertEnum($field, $entry, $enum, $send);
+        }
+        return $entries;
     }
 
     /**

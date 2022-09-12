@@ -3,5 +3,6 @@
   "maxRooms": 16,
   "maxRoomSizeMB": 16,
   "snapshotUploads": true,
+  "defaultTemplate": "Tutorial",
   "passwordCreate": "$2y$12$De/CBGzPRxb6zsZTn.35FOtOE1BMCBvKdSKBliCgidR0ckPeTZuJq"
 }

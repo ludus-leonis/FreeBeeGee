@@ -4,3 +4,4 @@ node_modules
 /docs/gen
 /.cache
 .phpunit.result.cache
+/shot0*

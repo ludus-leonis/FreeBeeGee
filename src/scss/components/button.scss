@@ -28,19 +28,21 @@
 @mixin button-color($color-text, $color-bg, $color-border) {
   $btn-primary-glow: rgba($color-border, .25);
 
+  // hint: we need some !important's here as BS 5.2+ startet using very specific selectors
+
   &,
   &:hover,
   &:visited,
   &:active,
   &:focus,
   &:active:focus {
-    background-color: $color-bg;
-    border-color: $color-border;
-    color: $color-text;
+    background-color: $color-bg !important; // sass-lint:disable-line no-important
+    border-color: $color-border !important; // sass-lint:disable-line no-important
+    color: $color-text !important; // sass-lint:disable-line no-important
   }
 
   &:focus {
-    box-shadow: 0 0 0 px(4) $btn-primary-glow;
+    box-shadow: 0 0 0 px(4) $btn-primary-glow !important; // sass-lint:disable-line no-important
   }
 
   &.active,

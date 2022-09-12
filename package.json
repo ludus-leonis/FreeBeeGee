@@ -1,10 +1,9 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.16.0",
-  "versionEngine": "2.2.0",
-  "versionEngineTest": "2.3.4",
+  "version": "0.17.0",
+  "versionEngine": "2.3.1",
   "type": "module",
-  "codename": "Selecting Seal",
+  "codename": "Rotating Rook",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",
@@ -23,7 +22,8 @@
     "gulp": "gulp",
     "mocha": "mocha",
     "test:api": "mocha test/api",
-    "test:unit": "mocha test/js"
+    "test:unit": "mocha test/js",
+    "generate:demo": "mocha test/demo"
   },
   "license": "AGPL-3.0-or-later",
   "color": "#40bfbf",
@@ -43,7 +43,7 @@
     "chai-http": "^4.3.0",
     "chai-match": "^1.1.1",
     "dateformat": "^5.0.3",
-    "del": "^6.1.1",
+    "del": "^7.0.0",
     "docker-cli-js": "^2.9.0",
     "eslint": "^8.20.0",
     "eslint-config-standard": "^17.0.0",
@@ -55,6 +55,7 @@
     "gulp-changed": "^4.0.3",
     "gulp-concat": "*",
     "gulp-decompress": "^3.0.0",
+    "gulp-eslint-new": "^1.6.0",
     "gulp-gzip": "^1.4.2",
     "gulp-image": "^6.3.1",
     "gulp-jsdoc3": "^3.0.0",
@@ -66,7 +67,6 @@
     "gulp-sass-lint": "*",
     "gulp-sort": "^2.0.0",
     "gulp-sourcemaps": "*",
-    "gulp-standard": "*",
     "gulp-tar": "^3.1.0",
     "gulp-zip": "^5.0.2",
     "mocha": "^10.0.0",

@@ -165,12 +165,12 @@ export function isLayerActive (layer) {
 
 export const PREFS = {
   TOKEN: { name: 'token', default: '00000000-0000-0000-0000-000000000000' },
-  TABLE: { name: 'table', default: 1 },
-  LAYERother: { name: 'layer5', default: true },
-  LAYERtoken: { name: 'layer4', default: true },
-  LAYERnote: { name: 'layer3', default: false },
-  LAYERoverlay: { name: 'layer2', default: false },
-  LAYERtile: { name: 'layer1', default: false },
+  TABLE: { name: 'table', default: null },
+  LAYERother: { name: 'layer5', default: undefined },
+  LAYERtoken: { name: 'layer4', default: undefined },
+  LAYERnote: { name: 'layer3', default: undefined },
+  LAYERoverlay: { name: 'layer2', default: undefined },
+  LAYERtile: { name: 'layer1', default: undefined },
   GRID: { name: 'grid', default: 0 },
   LOS: { name: 'los', default: false },
   SCROLL: { name: 'scroll', default: {} },
@@ -278,7 +278,7 @@ export function cleanupStore () {
   const entries = []
   for (const key of Object.keys(store)) {
     if (key.startsWith('freebeegee-')) {
-      entries.push({ key: key, t: JSON.parse(store.getItem(key)).t })
+      entries.push({ key, t: JSON.parse(store.getItem(key)).t })
     }
   }
   entries.sort((a, b) => a.t - b.t)
@@ -572,7 +572,7 @@ export function deleteRoom () {
  */
 export function setRoomPassword (password) {
   return apiPatchRoomAuth(room.name, {
-    password: password
+    password
   }, getToken())
 }
 

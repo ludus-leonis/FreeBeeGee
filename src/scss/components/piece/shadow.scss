@@ -1,0 +1,89 @@
+// Copyright 2021-2022 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// shadow.scss
+///
+/// Helpers that calculate highlights and shadows.
+///
+/// @group abstracts
+/// @access public
+////
+
+$shadow-direction-origin: 120deg;
+$shadow-direction: $shadow-direction-origin - 90deg; // CSS origin is north
+$shadow-highlight-width: 1.5px;
+
+:root {
+  #{'--fbg-r-sin'}: math.sin($shadow-direction);
+  #{'--fbg-r-cos'}: math.cos($shadow-direction);
+  #{'--fbg-shadow-length'}: 2px;
+}
+
+@each $r in $rotate-steps {
+  .is-r-#{$r} {
+    #{'--fbg-r-sin'}: math.sin($shadow-direction + ($r * 1deg));
+    #{'--fbg-r-cos'}: math.cos($shadow-direction + ($r * 1deg));
+  }
+}
+
+.is-delay-r-300 {
+  #{'--fbg-r-sin'}: math.sin($shadow-direction - 60deg);
+  #{'--fbg-r-cos'}: math.cos($shadow-direction - 60deg);
+}
+
+.is-delay-r-270 {
+  #{'--fbg-r-sin'}: math.sin($shadow-direction - 90deg);
+  #{'--fbg-r-cos'}: math.cos($shadow-direction - 90deg);
+}
+
+.is-delay-r-0 {
+  #{'--fbg-r-sin'}: math.sin($shadow-direction);
+  #{'--fbg-r-cos'}: math.cos($shadow-direction);
+}
+
+/// Return a drop-shadow value for the configured shadow.
+///
+/// @example scss
+///   shadow(2px, #001122)
+///
+/// @param {length} $blur The amount of blur.
+/// @param {length} $color The color of the shadow
+/// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
+@function shadow($blur, $color) {
+  @return
+  calc(var(--fbg-r-sin) * var(--fbg-shadow-length))
+  calc(var(--fbg-r-cos) * var(--fbg-shadow-length))
+  $blur
+  $color;
+}
+
+/// Return a box-shadow highlight and darklight value for the configured light source.
+///
+/// @example scss
+///   highlight()
+///
+/// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
+@function highlight() {
+  @return
+  calc(var(--fbg-r-sin) * $shadow-highlight-width) calc(var(--fbg-r-cos) * $shadow-highlight-width) .5px 0 $color-white-15a inset,
+  calc(var(--fbg-r-sin) * -1 * $shadow-highlight-width) calc(var(--fbg-r-cos) * -1 * $shadow-highlight-width) .5px 0 $color-black-20a inset;
+}
+
+$shadow: shadow(2px, $color-black-65a);
+
+$shadow-flat: shadow(0, $color-black-35a);

@@ -32,7 +32,7 @@ import {
  *
  * @param {String} name The room name the user entered in the join dialog.
  */
-export function passwordView (name) {
+export function passwordView (name, first) {
   createScreen(
     'Room password required',
     `
@@ -63,6 +63,10 @@ export function passwordView (name) {
     .on('blur', blur => { _('#roompwd').remove('.invalid') })
     .on('keydown', keydown => { if (keydown.keyCode === 13) ok(name) })
   _('#ok').on('click', click => { click.preventDefault(); ok(name) })
+
+  if (!first) {
+    _('.server-feedback').add('.show').innerHTML = 'Please enter a correct password.'
+  }
 
   _('#roompwd').focus()
 }

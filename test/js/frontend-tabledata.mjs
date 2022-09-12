@@ -301,7 +301,7 @@ describe('Frontend - tabledata.mjs', function () {
       s: 0,
       n: 8,
       t: ['one', 'more', 'time'],
-      expires: expires
+      expires
     }
     expect(sanitizePiecePatch(patch)).not.to.be.eq(patch) // check for new object
     expect(sanitizePiecePatch(patch)).to.be.eql(patch)
@@ -363,7 +363,7 @@ describe('Frontend - tabledata.mjs', function () {
       n: 17,
       t: ['one', 'more', 'time'],
       f: 0b100000101,
-      expires: expires
+      expires
     }
     expect(sanitizePiecePatch(patch, 'fe008a4d')).to.be.eql({
       id: 'fe008a4d',
@@ -381,7 +381,7 @@ describe('Frontend - tabledata.mjs', function () {
       n: 1,
       t: ['one', 'more', 'time'],
       f: 0b00000101,
-      expires: expires
+      expires
     })
   })
 
@@ -651,47 +651,115 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('splitAssetFilename()', function () {
-    const a1 = splitAssetFilename('door.1x2x3.jpg')
-    expect(a1.name).to.be.eql('door')
-    expect(a1.w).to.be.eql(1)
-    expect(a1.h).to.be.eql(2)
-    expect(a1.s).to.be.eql(3)
-    expect(a1.bg).to.be.eql(undefined)
+    let asset
 
-    const b1 = splitAssetFilename('door.1x2x3.123456.jpg')
-    expect(b1.name).to.be.eql('door')
-    expect(b1.w).to.be.eql(1)
-    expect(b1.h).to.be.eql(2)
-    expect(b1.s).to.be.eql(3)
-    expect(b1.bg).to.be.eql('123456')
+    asset = splitAssetFilename('door.1x2x3.jpg')
+    expect(asset.name).to.be.eql('door')
+    expect(asset.w).to.be.eql(1)
+    expect(asset.h).to.be.eql(2)
+    expect(asset.s).to.be.eql(3)
+    expect(asset.bg).to.be.eql(undefined)
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(LAYER_TILE)
 
-    const a2 = splitAssetFilename('dungeon.doorOpen.3x2x1.png')
-    expect(a2.name).to.be.eql('dungeon.doorOpen')
-    expect(a2.w).to.be.eql(3)
-    expect(a2.h).to.be.eql(2)
-    expect(a2.s).to.be.eql(1)
-    expect(a2.bg).to.be.eql(undefined)
+    asset = splitAssetFilename('door.1x2x3.123456.jpg')
+    expect(asset.name).to.be.eql('door')
+    expect(asset.w).to.be.eql(1)
+    expect(asset.h).to.be.eql(2)
+    expect(asset.s).to.be.eql(3)
+    expect(asset.bg).to.be.eql('123456')
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(LAYER_TILE)
 
-    const b2 = splitAssetFilename('dungeon.doorOpen.3x2x1.transparent.png')
-    expect(b2.name).to.be.eql('dungeon.doorOpen')
-    expect(b2.w).to.be.eql(3)
-    expect(b2.h).to.be.eql(2)
-    expect(b2.s).to.be.eql(1)
-    expect(b2.bg).to.be.eql('transparent')
+    asset = splitAssetFilename('dungeon.doorOpen.3x2x1.png')
+    expect(asset.name).to.be.eql('dungeon.doorOpen')
+    expect(asset.w).to.be.eql(3)
+    expect(asset.h).to.be.eql(2)
+    expect(asset.s).to.be.eql(1)
+    expect(asset.bg).to.be.eql(undefined)
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(LAYER_TILE)
 
-    const c1 = splitAssetFilename('tile.svg')
-    expect(c1.name).to.be.eql(LAYER_TILE)
-    expect(c1.w).to.be.eql(undefined)
-    expect(c1.h).to.be.eql(undefined)
-    expect(c1.s).to.be.eql(undefined)
-    expect(c1.bg).to.be.eql(undefined)
+    asset = splitAssetFilename('dungeon.doorOpen.3x2x1.transparent.png')
+    expect(asset.name).to.be.eql('dungeon.doorOpen')
+    expect(asset.w).to.be.eql(3)
+    expect(asset.h).to.be.eql(2)
+    expect(asset.s).to.be.eql(1)
+    expect(asset.bg).to.be.eql('transparent')
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(LAYER_TILE)
 
-    const a0 = splitAssetFilename('invalid')
-    expect(a0.name).to.be.eql(undefined)
-    expect(a0.w).to.be.eql(undefined)
-    expect(a0.h).to.be.eql(undefined)
-    expect(a0.s).to.be.eql(undefined)
-    expect(a0.bg).to.be.eql(undefined)
+    asset = splitAssetFilename('asdf.svg')
+    expect(asset.name).to.be.eql('asdf')
+    expect(asset.w).to.be.eql(undefined)
+    expect(asset.h).to.be.eql(undefined)
+    expect(asset.s).to.be.eql(undefined)
+    expect(asset.bg).to.be.eql(undefined)
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(undefined)
+
+    asset = splitAssetFilename('invalid')
+    expect(asset.name).to.be.eql(undefined)
+    expect(asset.w).to.be.eql(undefined)
+    expect(asset.h).to.be.eql(undefined)
+    expect(asset.s).to.be.eql(undefined)
+    expect(asset.bg).to.be.eql(undefined)
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(undefined)
+
+    asset = splitAssetFilename('dungeon.doorOpen.3x2x1.transparent.png')
+    expect(asset.name).to.be.eql('dungeon.doorOpen')
+    expect(asset.w).to.be.eql(3)
+    expect(asset.h).to.be.eql(2)
+    expect(asset.s).to.be.eql(1)
+    expect(asset.bg).to.be.eql('transparent')
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(LAYER_TILE)
+
+    asset = splitAssetFilename('monster.1x1x1.jpg')
+    expect(asset.name).to.be.eql('monster')
+    expect(asset.w).to.be.eql(1)
+    expect(asset.h).to.be.eql(1)
+    expect(asset.s).to.be.eql(1)
+    expect(asset.bg).to.be.eql(undefined)
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(LAYER_TOKEN)
+
+    asset = splitAssetFilename('monster.2x2x1.abcdef.jpg')
+    expect(asset.name).to.be.eql('monster')
+    expect(asset.w).to.be.eql(2)
+    expect(asset.h).to.be.eql(2)
+    expect(asset.s).to.be.eql(1)
+    expect(asset.bg).to.be.eql('abcdef')
+    expect(asset.tx).to.be.eql(undefined)
+    expect(asset.type).to.be.eql(LAYER_TOKEN)
+
+    asset = splitAssetFilename('tile.4x8x2.abcdef-wood.jpg')
+    expect(asset.name).to.be.eql('tile')
+    expect(asset.w).to.be.eql(4)
+    expect(asset.h).to.be.eql(8)
+    expect(asset.s).to.be.eql(2)
+    expect(asset.bg).to.be.eql('abcdef')
+    expect(asset.tx).to.be.eql('wood')
+    expect(asset.type).to.be.eql(LAYER_TILE)
+
+    asset = splitAssetFilename('monster.2x2x1.1-paper.jpg')
+    expect(asset.name).to.be.eql('monster')
+    expect(asset.w).to.be.eql(2)
+    expect(asset.h).to.be.eql(2)
+    expect(asset.s).to.be.eql(1)
+    expect(asset.bg).to.be.eql('1')
+    expect(asset.tx).to.be.eql('paper')
+    expect(asset.type).to.be.eql(LAYER_TOKEN)
+
+    asset = splitAssetFilename('monster.3x3x1.transparent.wood.jpg')
+    expect(asset.name).to.be.eql('monster')
+    expect(asset.w).to.be.eql(3)
+    expect(asset.h).to.be.eql(3)
+    expect(asset.s).to.be.eql(1)
+    expect(asset.bg).to.be.eql('transparent')
+    expect(asset.tx).to.be.eql('wood')
+    expect(asset.type).to.be.eql(LAYER_TOKEN)
   })
 })
 

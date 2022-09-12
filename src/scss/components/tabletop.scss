@@ -49,7 +49,7 @@
   }
 
   .is-quality-low & {
-    background-image: none !important; // sass-lint:disable-line no-important
+    background-image: var(--fbg-tabletop-grid) !important; // sass-lint:disable-line no-important
   }
 
   .is-quality-high & {

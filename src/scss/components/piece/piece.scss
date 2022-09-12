@@ -23,59 +23,14 @@
 /// @access public
 ////
 
+@import 'rotate';
+@import 'shadow';
+
 $piece-tile-size: 64px;
 $piece-border-size: 3px;
 $piece-margin: 3px;
 $piece-corner-radius: 2px;
-$piece-rotate: .5deg;
-
-$piece-rotations: 60 90 120 180 240 270 300;
-
-$piece-shadow-other: 3px 3px 4px $color-black-50a;
-
-// --- 'random' piece attributes -----------------------------------------------
-
-$piece-ids: '0' '1' '2' '3' '4' '5' '6' '7' '8' '9' '_' '-' 'a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p' 'q' 'r' 's' 't' 'u' 'v' 'w' 'x' 'y' 'z' 'A' 'B' 'C' 'D' 'E' 'F' 'G' 'H' 'I' 'J' 'K' 'L' 'M' 'N' 'O' 'P' 'Q' 'R' 'S' 'T' 'U' 'V' 'W' 'X' 'Y' 'Z';
-
-$piece-jitter-a: (-1) (-.97) (-.94) (-.91) (-.88) (-.84) (-.81) (-.78) (-.75) (-.72) (-.69) (-.66) (-.63) (-.59) (-.56) (-.53) (-.5) (-.47) (-.44) (-.41) (-.38) (-.34) (-.31) (-.28) (-.25) (-.22) (-.19) (-.16) (-.13) (-.09) (-.06) (-.03) .03 .06 .09 .13 .16 .19 .22 .25 .28 .31 .34 .38 .41 .44 .47 .5 .53 .56 .59 .63 .66 .69 .72 .75 .78 .81 .84 .88 .91 .94 1 0;
-
-$piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 .67 .72 .28 .31 .5 .09 .47 .92 .38 .22 .95 .14 .84 .63 .88 .13 .83 .8 .61 .3 .05 .44 .03 .89 .36 .23 .17 .59 .64 .75 .45 .34 .78 .73 .2 .25 .58 .39 .41 .52 .86 .19 .94 .08 .66 .55 .81 0; // last = f = none
-
-@mixin piece-rotate($r, $amount) { // random rotation of pieces
-  @each $id in $piece-ids {
-    $i: index($piece-ids, $id);
-    $jitter: nth($piece-jitter-a, $i);
-
-    &[id^='#{$id}'] {
-      transform: rotate($r + $amount * $jitter);
-    }
-  }
-}
-
-@mixin piece-jitter($amount) { // random translation of pieces
-  @each $id in $piece-ids {
-    $i: index($piece-ids, $id);
-    $jitter: nth($piece-jitter-a, $i);
-    $jitterb: nth($piece-jitter-b, $i);
-
-    &[id^='#{$id}'] {
-      // transform: rotate($r + $amount * $jitter);
-      transform: translate(
-        math.sin(180deg * $jitter) * $amount * $jitterb,
-          math.cos(180deg * $jitter) * $amount * $jitterb
-      );
-
-      @each $r in $piece-rotations {
-        &.is-rotate-#{$r} {
-          transform: rotate($r * 1deg) translate(
-            (math.sin($r * 1deg + 180deg * $jitter) * $amount * $jitterb),
-              (math.cos($r * 1deg + 180deg * $jitter) * $amount * $jitterb)
-          );
-        }
-      }
-    }
-  }
-}
+$piece-rotate: 1deg;
 
 // --- piece basics (size, ...) ------------------------------------------------
 
@@ -164,20 +119,10 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
   .is-quality-high &,
   .is-quality-ultra & {
     &.has-highlight {
-      box-shadow: highlight(0);
+      box-shadow: highlight();
 
       &.has-border {
-        box-shadow: highlight(0), 0 0 0 $piece-border-size var(--fbg-border-color) inset;
-      }
-
-      @each $r in $piece-rotations {
-        &.is-rotate-#{$r} {
-          box-shadow: highlight($r);
-
-          &.has-border {
-            box-shadow: highlight($r), 0 0 0 $piece-border-size var(--fbg-border-color) inset;
-          }
-        }
+        box-shadow: highlight(), 0 0 0 $piece-border-size var(--fbg-border-color) inset;
       }
     }
   }
@@ -196,10 +141,6 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
     white-space: nowrap;
     z-index: 99; // within the piece
 
-    .icon-ellipsis {
-      color: $color-gray-25;
-    }
-
     .icon {
       display: inline-block;
       height: 1em;
@@ -207,10 +148,6 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
       margin-right: px(1);
       margin-top: px(-1);
       width: 1em;
-
-      &.icon-extra {
-        display: none;
-      }
     }
 
     span + .icon {
@@ -218,16 +155,30 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
     }
   }
 
-  &:hover > .label {
+  // --- label ellipsis ---
+
+  .label.ellipsis {
+    max-width: 1.5 * $piece-tile-size;
+    overflow: hidden;
+    position: absolute;
+    text-overflow: ellipsis;
+  }
+
+  @for $x from 2 through 32 {
+    &.is-w-#{$x} {
+      .label.ellipsis {
+        max-width: $x * $piece-tile-size;
+      }
+
+      &:hover .label {
+        max-width: unset;
+      }
+    }
+  }
+
+  &:hover .label {
     font-size: px(16);
-
-    .icon-ellipsis {
-      display: none;
-    }
-
-    .icon.icon-extra {
-      display: inline-block;
-    }
+    max-width: unset;
   }
 
   // --- piece masks -----------------------------------------------------------
@@ -262,18 +213,6 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
     }
   }
 
-  // --- rotation --------------------------------------------------------------
-
-  @each $r in $piece-rotations {
-    &.is-rotate-#{$r} {
-      transform: rotate($r * 1deg);
-
-      .label {
-        transform: rotate($r * -1deg);
-      }
-    }
-  }
-
   // --- drag-n-drop -----------------------------------------------------------
 
   &.is-dragging {
@@ -285,30 +224,13 @@ $piece-jitter-b: .77 .27 .53 .42 .33 .7 .48 .56 .02 .91 .97 .16 .06 .11 .69 .98 
   }
 
   &:not(.is-dragging) {
-    $piece-transition: 200ms ease-out;
-    transition: left $piece-transition, top $piece-transition;
+    transition:
+    left $fbg-transition,
+    top $fbg-transition,
+    transform $fbg-transition,
+    filter $fbg-transition,
+    box-shadow $fbg-transition;
   }
-}
-
-@mixin shadows(
-  $rotate0,
-  $rotate60: $rotate0,
-  $rotate90: $rotate0,
-  $rotate120: $rotate0,
-  $rotate180: $rotate0,
-  $rotate240: $rotate0,
-  $rotate270: $rotate0,
-  $rotate300: $rotate0
-) {
-  filter: drop-shadow($rotate0);
-
-  &.is-rotate-60 { filter: drop-shadow($rotate60); }
-  &.is-rotate-90 { filter: drop-shadow($rotate90); }
-  &.is-rotate-120 { filter: drop-shadow($rotate120); }
-  &.is-rotate-180 { filter: drop-shadow($rotate180); }
-  &.is-rotate-240 { filter: drop-shadow($rotate240); }
-  &.is-rotate-270 { filter: drop-shadow($rotate270); }
-  &.is-rotate-300 { filter: drop-shadow($rotate300); }
 }
 
 // --- helpers -----------------------------------------------------------------

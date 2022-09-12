@@ -45,7 +45,7 @@ function testApiTemplateRPG (api, version, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngineTest)
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.library).to.be.an('object')
     expect(body.library.overlay.length).to.be.gte(5)
     expect(body.library.tile.length).to.be.gte(10)
@@ -75,7 +75,7 @@ function testApiTemplateHex (api, version, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngineTest)
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.library).to.be.an('object')
     expect(body.library.overlay.length).to.be.gte(0)
     expect(body.library.tile.length).to.be.gte(10)
@@ -105,7 +105,7 @@ function testApiTemplateClassic (api, version, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngineTest)
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.library).to.be.an('object')
     expect(body.library.overlay.length).to.be.gte(1)
     expect(body.library.tile.length).to.be.gte(3)
@@ -135,7 +135,7 @@ function testApiTemplateTutorial (api, version, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngineTest)
+    expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.library).to.be.an('object')
     expect(body.library.overlay.length).to.be.gte(1)
     expect(body.library.tile.length).to.be.gte(1)

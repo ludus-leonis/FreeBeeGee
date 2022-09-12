@@ -43,7 +43,9 @@ function dstOffset () { // return 60/120 depending if DST is off or on
   return Math.max(
     new Date(now.getFullYear(), 0, 1).getTimezoneOffset(),
     new Date(now.getFullYear(), 6, 1).getTimezoneOffset()
-  ) !== now.getTimezoneOffset() ? 120 : 60
+  ) !== now.getTimezoneOffset()
+    ? 120
+    : 60
 }
 
 // -----------------------------------------------------------------------------
@@ -170,7 +172,7 @@ function testApiSnapshotUpload (api, version, room) {
 // -----------------------------------------------------------------------------
 
 function testApiSnapshotVersions (api, version, room) {
-  const v = p.versionEngineTest.split('.')
+  const v = p.versionEngine.split('.')
   v[0] = Number.parseInt(v[0])
   v[1] = Number.parseInt(v[1])
   v[2] = Number.parseInt(v[2])
@@ -316,7 +318,7 @@ function testApiSnapshotVersions (api, version, room) {
 
 function blob (mb) {
   const chars = [...Array(256)].map((s, i) => String.fromCharCode(i))
-  var result = []
+  const result = []
   for (let i = 0; i < mb * 0.825 * 1024 * 1024; i++) { // 0.825 is the compression ratio
     const rnd = Math.floor(Math.random() * 256)
     result.push(chars[rnd])

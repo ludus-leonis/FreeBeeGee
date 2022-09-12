@@ -58,9 +58,9 @@ function gencrctable () {
 const crcTable = gencrctable()
 
 function crc32 (str) {
-  var crc = 0 ^ (-1)
+  let crc = 0 ^ (-1)
 
-  for (var i = 0; i < str.length; i++) {
+  for (let i = 0; i < str.length; i++) {
     crc = (crc >>> 8) ^ crcTable[(crc ^ str.charCodeAt(i)) & 0xFF]
   }
 

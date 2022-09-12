@@ -275,8 +275,8 @@ export function randomSelected () {
           updatePieces([{
             id: piece.id,
             s: Math.floor(Math.random() * piece._meta.sides),
-            x: x,
-            y: y
+            x,
+            y
           }])
         }
     }
@@ -347,9 +347,12 @@ function createOrUpdatePieceDOM (piece) {
     })
   }
   if (_piece.r !== piece.r) {
-    div.remove('.is-rotate-*')
+    div.remove('.is-r-*')
     if (piece.l !== LAYER_OTHER) {
-      div.add('.is-rotate-' + piece.r)
+      div.add(`.is-r-${piece.r}`)
+      if (Math.abs(_piece.r - piece.r) > 180) {
+        div.add(`.is-delay-r-${_piece.r}`)
+      }
     }
   }
   if (_piece.w !== piece.w || _piece.h !== piece.h) {
@@ -415,7 +418,7 @@ function createOrUpdatePieceDOM (piece) {
  *
  * @param {boolean} hidePopup If true (default) it will also hide the popup.
  */
-export function updateSelectionDOM (hidePopup = true) {
+export function updateSelectionDOM () {
   const selection = selectionGetIds()
   _('#tabletop .piece').each(node => {
     if (selection.includes(node.id)) {
@@ -425,7 +428,6 @@ export function updateSelectionDOM (hidePopup = true) {
     }
   })
   updateMenu()
-  if (hidePopup) popupHide()
 }
 
 /**
@@ -441,7 +443,7 @@ export function setPiece (piece) {
     let changed = node.piece.t?.[0] !== piece.t?.[0] || !equalsJSON(node.piece.b, piece.b)
 
     if (!_('#' + piece.id + ' .label').exists()) {
-      node.add(_('.label>span').create())
+      node.add(_('.label.ellipsis>span').create())
       changed = true
     }
 
@@ -455,20 +457,20 @@ export function setPiece (piece) {
       }
 
       // update icon part
-      let i = 1
-      let iconExtra
+      // let i = 1
+      // let iconExtra
       for (const id of piece.b ?? []) {
         const asset = findAsset(id, 'badge')
         if (asset) {
-          const img = _(i <= 3 ? 'img.icon' : 'img.icon.icon-extra').create()
-          if (i === 3) iconExtra = img
-          if (i === 4) {
-            content.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
-            iconExtra.add('.icon-extra')
-          }
+          const img = _('img.icon').create()
+          // if (i === 3) iconExtra = img
+          // if (i === 4) {
+          //   content.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
+          //   iconExtra.add('.icon-extra')
+          // }
           img.src = getAssetURL(asset, 0)
           content.add(img)
-          i++
+          // i++
         }
       }
     }
@@ -675,6 +677,7 @@ export function url (file, pin = true) {
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
 export function createNote (xy) {
+  selectionClear()
   const snapped = snap(xy.x, xy.y)
   createPieces([{
     l: LAYER_NOTE,
@@ -725,7 +728,7 @@ export function moveContent (offsetX, offsetY) {
 /**
  * Update the DOM to reflect the given table data.
  *
- * Will add new, update existing and delete obsolte pieces.
+ * Will add new, update existing and delete obsolete pieces.
  *
  * @param {Array} tableNo Table number to display.
  */
@@ -744,6 +747,12 @@ export function updateTabletop (tableNo) {
   removeObsoletePieces(keepIds)
   updateSelectionDOM()
   updateStatusline()
+
+  setTimeout(() => { // remove temporary transition classes
+    _('.piece[class*="is-delay-"]').each(node => {
+      _(node).remove('.is-delay-*')
+    })
+  }, 10)
 
   recordTime('sync-ui', Date.now() - start)
 }
@@ -784,10 +793,10 @@ export function losTo (x, y, w, h) {
     createPieces([{
       a: ID.LOS,
       l: LAYER_OTHER,
-      x: x,
-      y: y,
-      w: w,
-      h: h,
+      x,
+      y,
+      w,
+      h,
       z: getMaxZ(LAYER_OTHER) + 1
     }])
   }
@@ -1051,6 +1060,7 @@ function removeObsoletePieces (keepIds) {
   // delete ids that are still left
   for (const id of ids) {
     _('#' + id).delete()
+    popupHide(id)
   }
 }
 

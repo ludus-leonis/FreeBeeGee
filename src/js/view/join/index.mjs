@@ -76,7 +76,7 @@ export function runJoin () {
 
   const name = _('#name')
   name.on('keydown', keydown => {
-    var key = keydown.keyCode
+    const key = keydown.keyCode
 
     // allow letters + digits
     if (

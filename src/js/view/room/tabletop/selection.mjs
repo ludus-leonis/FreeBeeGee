@@ -234,17 +234,19 @@ export function findPiecesWithinSelection (x = undefined, y = undefined, padding
     x: x ? x - bounds.x : 0,
     y: y ? y - bounds.y : 0
   }
-  const rect = padding ? {
-    top: bounds.top + offset.y - 2,
-    bottom: bounds.bottom + offset.y + 2,
-    left: bounds.left + offset.x - 2,
-    right: bounds.right + offset.x + 2
-  } : {
-    top: bounds.top + offset.y,
-    bottom: bounds.bottom + offset.y,
-    left: bounds.left + offset.x,
-    right: bounds.right + offset.x
-  }
+  const rect = padding
+    ? {
+        top: bounds.top + offset.y - 2,
+        bottom: bounds.bottom + offset.y + 2,
+        left: bounds.left + offset.x - 2,
+        right: bounds.right + offset.x + 2
+      }
+    : {
+        top: bounds.top + offset.y,
+        bottom: bounds.bottom + offset.y,
+        left: bounds.left + offset.x,
+        right: bounds.right + offset.x
+      }
   return findPiecesWithin(rect)
 }
 

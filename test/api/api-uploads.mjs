@@ -68,7 +68,7 @@ function testApiZipMinimal (api, version, room) {
       expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
       expect(body.id).to.match(REGEXP_ID)
       expect(body.name).to.be.eql(room)
-      expect(body.engine).to.be.eql(p.versionEngineTest)
+      expect(body.engine).to.be.eql(p.versionEngine)
       expect(body.width).to.be.eql(3072)
       expect(body.height).to.be.eql(2048)
       expect(body.library).to.be.an('object')
@@ -88,7 +88,7 @@ function testApiZipMinimal (api, version, room) {
       expect(body.template.gridWidth).to.be.eql(48)
       expect(body.template.gridHeight).to.be.eql(32)
       expect(body.template.version).to.be.eql(p.version)
-      expect(body.template.engine).to.be.eql('2.3.0')
+      expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
       expect(body.template.colors).to.be.an('array')
       expect(body.template.colors.length).to.be.eql(13)
       expect(body.template.borders).to.be.an('array')
@@ -122,13 +122,13 @@ function testApiZipFull (api, version, room) {
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => { return fs.readFileSync('test/data/full.zip') },
+    () => { return fs.readFileSync('.cache/snapshots/full.zip') },
     body => {
       expect(body).to.be.an('object')
       expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
       expect(body.id).to.match(REGEXP_ID)
       expect(body.name).to.be.eql(room)
-      expect(body.engine).to.be.eql(p.versionEngineTest)
+      expect(body.engine).to.be.eql(p.versionEngine)
       expect(body.width).to.be.eql(3072)
       expect(body.height).to.be.eql(2048)
       expect(body.library).to.be.an('object')
@@ -157,8 +157,8 @@ function testApiZipFull (api, version, room) {
       expect(body.template.gridSize).to.be.eql(64)
       expect(body.template.gridWidth).to.be.eql(48)
       expect(body.template.gridHeight).to.be.eql(32)
-      expect(body.template.version).to.be.eql('1.2.3')
-      expect(body.template.engine).to.be.eql('2.3.0')
+      expect(body.template.version).to.be.eql(p.version)
+      expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
       expect(body.template.colors).to.be.an('array')
       expect(body.template.colors.length).to.be.eql(1)
       expect(body.credits).to.contain('I am a license.')
@@ -207,6 +207,7 @@ function testApiImageUpload (api, version, room) {
       h: 2,
       w: 3,
       type: LAYER_TILE,
+      tx: 'wood',
       name: 'upload.test'
     }
   }, body => {
@@ -217,6 +218,7 @@ function testApiImageUpload (api, version, room) {
     expect(body.w).to.be.eql(3)
     expect(body.type).to.be.eql(LAYER_TILE)
     expect(body.name).to.be.eql('upload.test')
+    expect(body.tx).to.be.eql('wood')
   }, 201)
 
   // library must contain asset now
@@ -229,16 +231,17 @@ function testApiImageUpload (api, version, room) {
 
     expect(body.library.tile[index].id).to.be.an('string')
     expect(body.library.tile[index].media).to.be.an('array')
-    expect(body.library.tile[index].media[0]).to.be.eql('upload.test.3x2x1.808080.jpg')
+    expect(body.library.tile[index].media[0]).to.be.eql('upload.test.3x2x1.808080.wood.jpg')
     expect(body.library.tile[index].bg).to.be.eql('#808080')
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
     expect(body.library.tile[index].type).to.be.eql(LAYER_TILE)
     expect(body.library.tile[index].name).to.be.eql('upload.test')
+    expect(body.library.tile[index].tx).to.be.eql('wood')
   }, 200)
 
   // check asset blob
-  testGetBuffer(api, () => `/data/rooms/${room}/assets/tile/upload.test.3x2x1.808080.jpg`, () => {}, (buffer) => {
+  testGetBuffer(api, () => `/data/rooms/${room}/assets/tile/upload.test.3x2x1.808080.wood.jpg`, () => {}, (buffer) => {
     expect(buffer.toString('utf-8')).to.be.eql(image)
   }, 200)
 

@@ -68,7 +68,7 @@ Optional fields:
 Media (image) files should be named using the following scheme. This allows FBG to sort them automatically into the *library* and set their meta data.
 
 ```
-mainName[.secondaryName].{x}x{y}x{s}[.bg[-texture]].{ext}
+mainName[.secondaryName].{x}x{y}x{s}[.bg[.texture]].{ext}
 ```
 
 `mainName`
@@ -90,7 +90,7 @@ mainName[.secondaryName].{x}x{y}x{s}[.bg[-texture]].{ext}
 : An optional background color/style for this *asset*. Will be visible as placeholder during image loading, and shine thrugh in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, a number (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash). If missing, it defaults to `0`.
 
 `texture`
-: An optional texture for the *asset*. If present, an additional shade/texture will be applied on top of the media image to give it a rougher look. Can be `none`, `paper` or `wood`.
+: An optional texture for the *asset*. If present, an additional shade/texture will be applied on top of the media image to give it a rougher look. Can be `paper` or `wood`.
 
 ### Base images
 
@@ -223,6 +223,7 @@ A *template*, a.k.a. snapshot, describes a table setup for a particular game.
   "type": "grid-square",
   "version": "1.0.1",
   "engine": "1.0.0",
+  "table": 1,
 
   "colors": [
     { "name":"black","value":"#000000" },
@@ -248,6 +249,12 @@ A *template*, a.k.a. snapshot, describes a table setup for a particular game.
 
 `engine`
 : The FBG engine this *template* should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
+
+`table`
+: An (optional) table number 1-9 to start on if the user does not have a preference stored for it yet. Useful if each table has a setup corresponding to player count, and starting at e.g. default 4 seems better than 1.
+
+`layersEnabled`
+: An (optional) array of layers to be enabled on room create. Can contain `tile`, `token`, `overlay` and/or `other`. If omitted, the default setting is to enable `token` and `other`. (Hint: The `note` layer is always enabled.)
 
 `colors`
 : An array of (background) colors available to pieces on the table. Key-Value pairs with `name` and a `value` / RGB hex code. If empty, pieces can't have dynamic colors.

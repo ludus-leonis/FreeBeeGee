@@ -37,7 +37,8 @@ import {
   intersect,
   contains,
   getDimensionsRotated,
-  mod
+  mod,
+  hash
 } from '../../../lib/utils.mjs'
 
 import {
@@ -190,9 +191,12 @@ export function getAssetURL (asset, side = 0) {
  * @return {Object} CSS-ready px String as { top: '', left: ''}.
  **/
 export function getTopLeftPx (piece, x = piece.x, y = piece.y) {
+  const jitterX = piece.l === LAYER_TOKEN ? Math.abs(hash('x' + piece.id)) % 5 - 2 : 0
+  const jitterY = piece.l === LAYER_TOKEN ? Math.abs(hash('y' + piece.id)) % 5 - 2 : 0
+
   return {
-    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + 'px',
-    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + 'px'
+    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + jitterX + 'px',
+    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + jitterY + 'px'
   }
 }
 
@@ -617,9 +621,12 @@ export function clampToTableSize (piece) {
  *                     1 = centers,
  *                     2 = centers + corners,
  *                     3 = centers + corners + sides (default)
+ *                     4 = no snap
  * @return {Object} Closest grid vertex to original x/y as {x, y}.
  */
 export function snap (x, y, lod = 3) {
+  if (lod >= 4) return { x: Math.round(x), y: Math.round(y) } // disabled snap
+
   const template = getTemplate()
   if (template.snap === false) {
     return snapGrid(x, y, 8, 3) // snap to 4px
@@ -658,35 +665,50 @@ export function getSetupCenter (no = getTableNo()) {
 }
 
 /**
- * Extract parts (group, name, size, etc.) from an asset filename.
+ * Extract parts (group, name, size, etc.) from an asset filename and guess best type.
  *
  * @param {String} assetName Asset filename.
  * @return {Object} Parsed elements.
  */
 export function splitAssetFilename (assetName) {
   const data = {}
-  let match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|piece)\.[a-zA-Z0-9]+$/)
+
+  let match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
-    data.w = Number(match[2])
-    data.h = Number(match[3])
-    data.s = Number(match[4])
-    data.bg = match[5]
-    return data
   }
+
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
     data.w = Number(match[2])
     data.h = Number(match[3])
     data.s = Number(match[4])
-    return data
   }
-  match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
+
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
-    return data
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = Number(match[4])
+    data.bg = match[5]
   }
+
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)([.-][a-z]+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.name = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = Number(match[4])
+    data.bg = match[5]
+    data.tx = match[6].substr(1)
+  }
+
+  // guess the asset type
+  if (data.w) data.type = LAYER_TILE
+  if (data.w === data.h && data.w <= 3) data.type = LAYER_TOKEN
+
   return data
 }
 
@@ -703,7 +725,6 @@ export function splitAssetFilename (assetName) {
  * @return {Promise(Boolean)} True if pixel at x/y is transparent, false otherwise.
  */
 export function isSolid (piece, x, y) {
-  console.log('isSolid', piece)
   if (
     !piece || // no piece = no checking
     piece.l === LAYER_TOKEN || // token are always round & solid
