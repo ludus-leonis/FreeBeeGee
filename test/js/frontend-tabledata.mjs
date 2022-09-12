@@ -381,7 +381,7 @@ describe('Frontend - tabledata.mjs', function () {
       n: 1,
       t: ['one', 'more', 'time'],
       f: 0b00000101,
-      expires: expires
+      expires
     })
   })
 

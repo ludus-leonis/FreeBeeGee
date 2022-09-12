@@ -793,10 +793,10 @@ export function losTo (x, y, w, h) {
     createPieces([{
       a: ID.LOS,
       l: LAYER_OTHER,
-      x: x,
-      y: y,
-      w: w,
-      h: h,
+      x,
+      y,
+      w,
+      h,
       z: getMaxZ(LAYER_OTHER) + 1
     }])
   }

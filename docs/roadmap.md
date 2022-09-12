@@ -41,6 +41,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
 * [ ] simplify/automate more deployment steps (ongoing)
+* [ ] build: align js linters
 * [ ] ui: move dice more
 * [ ] unify wording snapshot + template
 * [ ] ui: show edit form when creating new notes

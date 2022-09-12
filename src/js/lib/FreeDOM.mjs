@@ -3,7 +3,7 @@
  * @module
  * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
- * @version 1.0.1
+ * @version 1.0.2
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -346,8 +346,8 @@ class FreeDOM {
             if (cls === search) continue
           }
         })
+        return false
       }
-      return false
     }
     return true
   }

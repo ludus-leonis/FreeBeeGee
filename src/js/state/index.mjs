@@ -278,7 +278,7 @@ export function cleanupStore () {
   const entries = []
   for (const key of Object.keys(store)) {
     if (key.startsWith('freebeegee-')) {
-      entries.push({ key: key, t: JSON.parse(store.getItem(key)).t })
+      entries.push({ key, t: JSON.parse(store.getItem(key)).t })
     }
   }
   entries.sort((a, b) => a.t - b.t)
@@ -572,7 +572,7 @@ export function deleteRoom () {
  */
 export function setRoomPassword (password) {
   return apiPatchRoomAuth(room.name, {
-    password: password
+    password
   }, getToken())
 }
 

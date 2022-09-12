@@ -80,13 +80,15 @@ export function createRoomView (name) {
 
         <p class="server-feedback"></p>
 
-        ` + (getServerInfo().createPassword ? `
+        ` + (getServerInfo().createPassword
+      ? `
           <label for="password">Admin password</label>
           <input id="password" type="password" placeholder="* * * * * *">
           <p class="p-small spacing-tiny">
             Only admins can create rooms on this server.
           </p>
-        ` : '') + `
+        `
+      : '') + `
 
         <label class="upload-label" for="uploadFile">Upload snapshot</label>
         <label class="upload-group" for="uploadFile">
@@ -104,7 +106,8 @@ export function createRoomView (name) {
         </select>
         <p class="template-text p-small spacing-tiny">${templateHelp}</p>
 
-        ` + (!DEMO_MODE ? `
+        ` + (!DEMO_MODE
+      ? `
           <input id="enablepassword" class="enablepassword" type="checkbox">
           <label for="enablepassword" class="p-medium">Password-protect room</label>
           <label for="roompwd">Room password</label>
@@ -112,7 +115,8 @@ export function createRoomView (name) {
           <p class="p-small spacing-tiny">
             Will be needed to join. Leave empty for no password.
           </p>
-        ` : '') + `
+        `
+      : '') + `
 
         <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Create</a>
         <p class="p-small is-faded is-center">
@@ -202,7 +206,7 @@ function ok (name) {
   _('#ok').add('.is-spinner')
 
   const room = {
-    name: name
+    name
   }
 
   const roompwd = _('#roompwd').value ?? null

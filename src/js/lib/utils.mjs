@@ -164,7 +164,7 @@ export function resizeImage (image, dimension) {
   const canvas = document.createElement('canvas')
   canvas.width = dimension
   canvas.height = dimension
-  var ctx = canvas.getContext('2d')
+  const ctx = canvas.getContext('2d')
   ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, dimension, dimension)
   return canvas
 }

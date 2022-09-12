@@ -212,7 +212,7 @@ export function modalEdit (piece) {
 
     getModal().show()
 
-    var input = document.getElementById('piece-label')
+    const input = document.getElementById('piece-label')
     input.focus()
     input.select()
   }

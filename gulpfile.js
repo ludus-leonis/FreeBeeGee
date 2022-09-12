@@ -17,6 +17,7 @@
  */
 
 import { readFileSync } from 'fs'
+import { deleteAsync } from 'del'
 
 import autoprefixer from 'gulp-autoprefixer'
 import babelify from 'babelify'
@@ -24,7 +25,7 @@ import browserify from 'browserify'
 import changed from 'gulp-changed'
 import cli from 'docker-cli-js'
 import concat from 'gulp-concat'
-import del from 'del'
+import eslint from 'gulp-eslint-new'
 import gulp from 'gulp'
 import gzip from 'gulp-gzip'
 import image from 'gulp-image'
@@ -37,7 +38,6 @@ import sassLint from 'gulp-sass-lint'
 import sort from 'gulp-sort'
 import source from 'vinyl-source-stream'
 import sourcemaps from 'gulp-sourcemaps'
-import standard from 'gulp-standard'
 import tar from 'gulp-tar'
 import zip from 'gulp-zip'
 
@@ -61,8 +61,8 @@ const dirs = {
   cache: '.cache'
 }
 
-gulp.task('clean', () => {
-  return del([
+gulp.task('clean', async () => {
+  return await deleteAsync([
     `${dirs.build}/${p.name}/**/*`,
     `${dirs.build}/${p.name}/**/.*`,
     `${dirs.build}/*zip`,
@@ -70,8 +70,8 @@ gulp.task('clean', () => {
   ])
 })
 
-gulp.task('clean-cache', () => {
-  return del([
+gulp.task('clean-cache', async () => {
+  return await deleteAsync([
     dirs.cache
   ])
 })
@@ -82,11 +82,11 @@ gulp.task('test-js', () => {
   return gulp.src(['src/js/**/*js'])
     .pipe(gulp.dest('/tmp/gulp-pre'))
     .pipe(gulp.dest('/tmp/gulp-post'))
-    .pipe(standard())
-    .pipe(standard.reporter('default', {
-      breakOnError: true,
-      quiet: true
+    .pipe(eslint({
+      overrideConfigFile: '.eslintrc.cjs'
     }))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError())
 })
 
 gulp.task('test-sass', () => {
@@ -486,8 +486,8 @@ gulp.task('demo', gulp.series('clean', () => {
   'demo-deploy-RPG',
   'demo-deploy-Hex',
   'demo-deploy-Tutorial'
-), () => {
-  return del([
+), async () => {
+  return await deleteAsync([
     `${dirs.build}/demo`
   ])
 }, () => {
