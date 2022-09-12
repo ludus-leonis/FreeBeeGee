@@ -64,7 +64,7 @@ export class SelectAndProperties extends MouseButtonHandler {
       } else {
         popupTable(getMouseCoords())
       }
-      updateSelectionDOM(false)
+      updateSelectionDOM()
     })
   }
 

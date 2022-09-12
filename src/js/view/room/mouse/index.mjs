@@ -47,6 +47,10 @@ import {
   Los
 } from '../../../view/room/mouse/Los.mjs'
 
+import {
+  popupHide
+} from '../../../view/room/tabletop/popup.mjs'
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -148,6 +152,9 @@ let dragCurrent = null // current 'move' handler
  * @param {MouseEvent} mousedown The triggering mouse event.
  */
 function mouseDown (mousedown) {
+  if (![mousedown.target.id, mousedown.target.parentNode?.id].includes('popper')) {
+    popupHide()
+  }
   if (dragCurrent != null) { // cancel any drag in progress
     dragHandlers[dragCurrent].cancel()
     dragCurrent = null

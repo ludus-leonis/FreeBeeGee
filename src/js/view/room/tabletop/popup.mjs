@@ -73,6 +73,7 @@ export function popupPiece (piece) {
   const popup = _('#popper.popup.is-content').create()
   const f = selectionGetFeatures()
 
+  popup.node().for = piece.id
   popup.innerHTML = `
     <a class="popup-menu edit ${f.edit ? '' : 'disabled'}" href="#">${iconEdit}Edit</a>
     <a class="popup-menu rotate ${f.rotate ? '' : 'disabled'}" href="#">${iconRotate}Rotate</a>
@@ -138,9 +139,14 @@ export function popupTable (coords) {
 
 /**
  * Hide/remove the current popup (if any).
+ *
+ * @param {string} id If this optional ID is given, the popup is only removed if it belongs to it.
  */
-export function popupHide () {
-  _('#popper').delete()
+export function popupHide (id) {
+  console.log('popupHide', id)
+  const popper = _('#popper')
+  if (id && popper.exists() && popper.node().for !== id) return
+  popper.delete()
   _('#popper-anchor').delete()
 }
 

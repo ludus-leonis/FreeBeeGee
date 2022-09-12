@@ -418,7 +418,7 @@ function createOrUpdatePieceDOM (piece) {
  *
  * @param {boolean} hidePopup If true (default) it will also hide the popup.
  */
-export function updateSelectionDOM (hidePopup = true) {
+export function updateSelectionDOM () {
   const selection = selectionGetIds()
   _('#tabletop .piece').each(node => {
     if (selection.includes(node.id)) {
@@ -428,7 +428,6 @@ export function updateSelectionDOM (hidePopup = true) {
     }
   })
   updateMenu()
-  if (hidePopup) popupHide()
 }
 
 /**
@@ -728,7 +727,7 @@ export function moveContent (offsetX, offsetY) {
 /**
  * Update the DOM to reflect the given table data.
  *
- * Will add new, update existing and delete obsolte pieces.
+ * Will add new, update existing and delete obsolete pieces.
  *
  * @param {Array} tableNo Table number to display.
  */
@@ -1060,6 +1059,7 @@ function removeObsoletePieces (keepIds) {
   // delete ids that are still left
   for (const id of ids) {
     _('#' + id).delete()
+    popupHide(id)
   }
 }
 

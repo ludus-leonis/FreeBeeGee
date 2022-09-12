@@ -19,7 +19,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] popup closes when other player interacts with table
+    * [X] popup closing when other player interacts with table
     * [ ] creating notes not resetting selection
     * [X] simplify engine version change + unit tests
     * [X] empty goblin label in RPG template
@@ -27,6 +27,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] simplify/automate more deployment steps
     * [ ] automated deployment tests for new zip/tgz packages after build
     * [ ] bug: MMB drag sometimes sticks / cursor fix
+    * [X] align js linters
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
@@ -37,16 +38,15 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] table: native zoom function
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
 * [ ] simplify/automate more deployment steps (ongoing)
-* [ ] build: align js linters
 * [ ] ui: move dice more
 * [ ] unify wording snapshot + template
 * [ ] ui: show edit form when creating new notes
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
-* [ ] table: native zoom function
 * [ ] library: delete assets UI
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
