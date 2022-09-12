@@ -14,13 +14,14 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] ui: animate rotations
 * [X] ui: library: pick material during uploads
 * [X] ui: library: set default type to tile for larger uploads
+* [ ] ui: open edit window on note create
 * [ ] ui: password wrong message
 * [ ] ui: ellipsis for long labels
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] popup closing when other player interacts with table
-    * [ ] creating notes not resetting selection
+    * [X] adding notes does not reset selection
     * [X] simplify engine version change + unit tests
     * [X] empty goblin label in RPG template
     * [X] no grid visible in low quality mode

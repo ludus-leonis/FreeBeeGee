@@ -143,7 +143,6 @@ export function popupTable (coords) {
  * @param {string} id If this optional ID is given, the popup is only removed if it belongs to it.
  */
 export function popupHide (id) {
-  console.log('popupHide', id)
   const popper = _('#popper')
   if (id && popper.exists() && popper.node().for !== id) return
   popper.delete()

@@ -677,6 +677,7 @@ export function url (file, pin = true) {
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
 export function createNote (xy) {
+  selectionClear()
   const snapped = snap(xy.x, xy.y)
   createPieces([{
     l: LAYER_NOTE,

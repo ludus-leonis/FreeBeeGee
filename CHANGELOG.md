@@ -18,6 +18,8 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added initial table setting to template.json
 * added infos how to file bugs to the docs
 * added infos how to use snapshots and templates to the docs
+* fixed adding notes does not reset selection
+* fixed popup closing when other player interacts with table
 * fixed no grid visible in low quality mode
 * fixed empty goblin label in RPG template
 * fixed hardcoded engine versions in integration tests
