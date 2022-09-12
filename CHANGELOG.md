@@ -1,12 +1,12 @@
 # FreeBeeGee CHANGELOG
 
-Download current and previous versions from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
+Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
 ## v0.17.0
 
 ### Notable changes
 
-* added shift-drag to disable grid snap while dragging
+* added shift-drag to disable snapping while dragging
 * added animation to rotating pieces
 * added option to pick piece material (paper, wood) during image upload
 
@@ -18,6 +18,7 @@ Download current and previous versions from [https://github.com/ludus-leonis/Fre
 * added initial table setting to template.json
 * added infos how to file bugs to the docs
 * added infos how to use snapshots and templates to the docs
+* added password-wrong message on login screen
 * fixed adding notes does not reset selection
 * fixed popup closing when other player interacts with table
 * fixed no grid visible in low quality mode

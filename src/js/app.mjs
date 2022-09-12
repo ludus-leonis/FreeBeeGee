@@ -90,7 +90,7 @@ export function auth (roomName, password) {
       if (auth.status === 200) {
         runRoom(roomName, auth.body.token)
       } else if (auth.status === 403) {
-        passwordView(roomName)
+        passwordView(roomName, password === undefined)
       } else if (auth.status === 404) {
         createRoomView(roomName)
       } else {

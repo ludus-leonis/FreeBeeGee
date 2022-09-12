@@ -14,8 +14,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] ui: animate rotations
 * [X] ui: library: pick material during uploads
 * [X] ui: library: set default type to tile for larger uploads
-* [ ] ui: open edit window on note create
-* [ ] ui: password wrong message
+* [X] ui: password wrong message
 * [ ] ui: ellipsis for long labels
 * [ ] pre-release
   * [ ] bump dependencies
@@ -26,7 +25,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] empty goblin label in RPG template
     * [X] no grid visible in low quality mode
     * [X] simplify/automate more deployment steps
-    * [ ] automated deployment tests for new zip/tgz packages after build
     * [ ] bug: MMB drag sometimes sticks / cursor fix
     * [X] align js linters
   * [ ] review docs
@@ -44,10 +42,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
 * [ ] simplify/automate more deployment steps (ongoing)
+* [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] ui: move dice more
 * [ ] unify wording snapshot + template
 * [ ] ui: show edit form when creating new notes
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
+* [ ] ui: open edit window on note create
 * [ ] library: delete assets UI
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
