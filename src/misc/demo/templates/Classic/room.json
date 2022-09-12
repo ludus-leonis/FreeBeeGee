@@ -1,10 +1,10 @@
 {
- "id": "bt-2oWPf",
+ "id": "USumE2W5",
  "name": "demoroomclassic",
  "engine": "2.3.1",
  "template": {
   "engine": "2.3.0",
-  "version": "0.17.0-dev",
+  "version": "0.17.0",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 64,

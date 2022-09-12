@@ -2,43 +2,25 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.17 - ??? ???
+## v0.18 - ??? ???
 
-* [X] faq: reporting bugs
-* [X] faq: own templates
-* [X] faq: installing templates
-* [X] engine: set default table other than 1 in template
-* [X] engine: set default enabled layers in template
-* [X] engine: specify default template in server.json
-* [X] ui: shift-drag to disable grid snap
-* [X] ui: animate rotations
-* [X] ui: library: pick material during uploads
-* [X] ui: library: set default type to tile for larger uploads
-* [X] ui: password wrong message
-* [X] ui: ellipsis for long labels
+* [ ] TBD
 * [ ] pre-release
-  * [X] bump dependencies
+  * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [X] popup closing when other player interacts with table
-    * [X] adding notes does not reset selection
-    * [X] simplify engine version change + unit tests
-    * [X] empty goblin label in RPG template
-    * [X] no grid visible in low quality mode
-    * [X] simplify/automate more deployment steps
-    * [ ] bug: MMB drag sometimes sticks / cursor fix
-    * [X] align js linters
-  * [X] review docs
+  * [ ] review docs
   * [ ] review + run tests
-  * [X] review tutorial
+  * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
-  * [X] update screenshots
+  * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
-* [ ] don't select LOS after placement
-* [ ] wrong mouse curson on notes in (measure mode)
+* [ ] bug: MMB drag sometimes sticks / cursor fix
+* [ ] bug: don't select LOS after placement
+* [ ] bug: wrong mouse curson on notes in (measure mode)
 * [ ] table: native zoom function
 * [ ] add bcrypt tools page
 * [ ] ui: clipboard ctrl+c/v/x between tables
@@ -48,7 +30,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] ui: move dice more
 * [ ] unify wording snapshot + template
-* [ ] ui: show edit form when creating new notes
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: open edit window on note create
 * [ ] library: delete assets UI
@@ -77,7 +58,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] repo: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
-* [ ] Firefox: filter + 180° bug
+* [ ] bug: filter + 180° bug in firefox
 
 ### rather later (unsorted, after v1)
 
