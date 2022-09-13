@@ -2,6 +2,18 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+
+## v0.18.0 - ??? ???
+
+### Notable changes
+
+* none yet
+
+### Other changes
+
+* none yet
+
+
 ## v0.17.0 - Rotating Rook
 
 ### Notable changes

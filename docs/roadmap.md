@@ -4,10 +4,24 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.18 - ??? ???
 
-* [ ] TBD
+* [ ] template-template
+* [ ] table: native zoom function
+  * [ ] add zoom icon
+  * [ ] translate playfield
+  * [ ] untranslate popup
+  * [ ] fix mouse coords (drag, click, add)
+* [ ] token back sides
+* [ ] plain token
+* [ ] bcrypt tools page
+* [ ] library: delete assets UI
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
+    * [ ] unify wording snapshot + template
+    * [ ] don't select LOS after placement
+    * [ ] wrong mouse curson on notes in (measure mode)
+    * [ ] MMB drag sometimes sticks / cursor fix
+    * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
@@ -18,21 +32,14 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
-* [ ] bug: MMB drag sometimes sticks / cursor fix
-* [ ] bug: don't select LOS after placement
-* [ ] bug: wrong mouse curson on notes in (measure mode)
-* [ ] table: native zoom function
-* [ ] add bcrypt tools page
+* [ ] simplify/automate more deployment steps (ongoing)
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] simplify/automate more deployment steps (ongoing)
 * [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] ui: move dice more
-* [ ] unify wording snapshot + template
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: open edit window on note create
-* [ ] library: delete assets UI
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] bug: png maps make pieces flicker when cursor changes
@@ -71,7 +78,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * object selection
   * moving
 * I18N
-* rotate desk 180°
+* cones + attack zones
+* rotate desk 90° 180° 270°
 * pinboard for handouts
 * undo (limited)
 * better tablet / touch support
