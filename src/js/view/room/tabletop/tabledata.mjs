@@ -158,6 +158,9 @@ export function findAssetByAlias (name, layer = 'any') {
  * @return {String} URL to be used in url() or img.src.
  */
 export function getAssetURL (asset, side = 0) {
+  if (side >= asset.media.length) {
+    return 'img/material-none.png'
+  }
   if (DEMO_MODE) {
     switch (side) {
       case -2:
@@ -289,7 +292,7 @@ export function sanitizePiecePatch (patch, pieceId = null) {
   const t = getTemplate()
   const p = pieceId === null ? null : findPiece(pieceId)
   const result = {}
-  let asset, colors
+  let colors
   for (const field in patch) {
     switch (field) {
       case 'c':
@@ -309,8 +312,10 @@ export function sanitizePiecePatch (patch, pieceId = null) {
         result[field] = clamp(1, patch[field], 32)
         break
       case 's':
-        asset = findAsset(p?.a) ?? { media: ['x'] }
-        result[field] = mod(patch[field], asset.media.length)
+        result[field] = mod(
+          patch[field],
+          (p?._meta?.sides ?? findAsset(p?.a)?.media.length ?? 1) + (p?._meta?.sidesExtra ?? 0)
+        )
         break
       case 'n':
         result[field] = mod(patch[field], 16)
@@ -410,6 +415,8 @@ export function populatePieceDefaults (piece, headers = null) {
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     if (asset.mask) piece._meta.mask = getAssetURL(asset, -2)
     piece._meta.sides = asset.media.length ?? 1
+    piece._meta.sidesExtra = (piece.l === LAYER_TOKEN && piece._meta.sides === 1) ? 1 : 0
+
     if (asset.id === ID.POINTER) {
       piece._meta.feature = 'POINTER'
     } else {

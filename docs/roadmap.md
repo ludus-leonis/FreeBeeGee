@@ -10,7 +10,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] translate playfield
   * [ ] untranslate popup
   * [ ] fix mouse coords (drag, click, add)
-* [ ] token back sides
+* [X] token back sides
 * [ ] plain token
 * [ ] bcrypt tools page
 * [ ] library: delete assets UI
@@ -22,6 +22,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] wrong mouse curson on notes in (measure mode)
     * [ ] MMB drag sometimes sticks / cursor fix
     * [ ] simplify/automate more deployment steps (ongoing)
+    * [ ] html + notes
+    * [ ] handle side-2-only assets
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial

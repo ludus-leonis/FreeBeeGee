@@ -7,7 +7,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
-* none yet
+* added token backsides (again)
 
 ### Other changes
 

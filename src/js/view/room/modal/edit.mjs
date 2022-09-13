@@ -128,10 +128,13 @@ export function modalEdit (piece) {
 
     // side
     const pieceSide = _('#piece-side')
-    for (let s = 1; s <= piece._meta.sides; s++) {
+    const sides = piece._meta.sides + piece._meta.sidesExtra
+    for (let s = 1; s <= sides; s++) {
       let label = s
-      if (s === piece._meta.sides) label = 'back'
-      if (s === 1) label = 'front'
+      if (piece._meta.sides <= 1) {
+        if (s >= piece._meta.sides) label = 'Back'
+        if (s === 1) label = 'Front'
+      }
       const option = _('option').create(label)
       option.value = s - 1
       if (s - 1 === piece.s) option.selected = true

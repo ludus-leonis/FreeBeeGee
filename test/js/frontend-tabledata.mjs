@@ -419,7 +419,7 @@ describe('Frontend - tabledata.mjs', function () {
     const p2 = populatePieceDefaults(JSON.parse(pieceJSON2), headers())
     expect(p2.w).to.be.eql(2)
     expect(p2.h).to.be.eql(1)
-    expect(p2.s).to.be.eql(4)
+    expect(p2.s).to.be.eql(0)
     expect(p2.c.length).to.be.eql(2)
     expect(p2.c[0]).to.be.eql(0)
     expect(p2.c[1]).to.be.eql(0)
@@ -433,7 +433,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p2._meta.heightPx).to.be.eql(128)
     expect(p2._meta.originOffsetXPx).to.be.eql(32)
     expect(p2._meta.originOffsetYPx).to.be.eql(-32)
-    expect(p2._meta.mask).to.be.eql(undefined)
+    expect(p2._meta.mask).to.be.eql('api/data/rooms/testroom/assets/other/_.discard.4x4x1.png')
     expect(p2._meta.feature).to.be.eql('DISCARD')
     expect(p2._meta.expires).to.be.gte(new Date())
 
@@ -785,7 +785,7 @@ const pieceJSON2 = `
   "h": 1,
   "r": 90,
   "z": 13,
-  "s": 4,
+  "s": 0,
   "expires": ${nowEpoch() + 10}
 }` // discard item
 

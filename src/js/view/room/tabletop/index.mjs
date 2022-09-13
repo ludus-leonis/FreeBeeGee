@@ -188,8 +188,9 @@ export function flipSelected (forward = true) {
   if (!selectionGetFeatures().flip) return
 
   for (const piece of selectionGetPieces()) {
-    if (piece._meta.sides > 1) {
-      flipPiece(piece.id, mod(forward ? (piece.s + 1) : (piece.s - 1), piece._meta.sides))
+    const sides = piece._meta.sides + piece._meta.sidesExtra
+    if (sides > 1) {
+      flipPiece(piece.id, mod(piece.s + (forward ? +1 : -1), sides))
     }
   }
 }
@@ -624,6 +625,13 @@ export function pieceToNode (piece) {
       if (!asset.bg.match(/^[0-9][0-9]?$/)) {
         // color information is html color or 'transparent' -> apply
         node.css({ '--fbg-color': asset.bg })
+      }
+    }
+
+    // backsides
+    if (piece.l === LAYER_TOKEN && piece._meta.sidesExtra > 0) {
+      if (piece.s >= piece._meta.sides) {
+        node.add('.is-backside')
       }
     }
 

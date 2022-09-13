@@ -231,6 +231,16 @@ $piece-rotate: 1deg;
     filter $fbg-transition,
     box-shadow $fbg-transition;
   }
+
+  // --- backsides -------------------------------------------------------------
+
+  &.is-backside {
+    #{'--fbg-color'}: $color-backside !important; // sass-lint:disable-line no-important
+
+    .label {
+      display: none;
+    }
+  }
 }
 
 // --- helpers -----------------------------------------------------------------

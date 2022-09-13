@@ -191,7 +191,7 @@ export function selectionGetFeatures () {
       if (!piece._meta?.hasBorder) features.border = false
       if (piece.l !== LAYER_TOKEN) features.number = false
 
-      if ((piece._meta?.sides ?? 1) <= 1) features.flip = false
+      if ((piece._meta?.sides ?? 1) + (piece._meta?.sidesExtra ?? 0) <= 1) features.flip = false
       if (semi.includes(piece._meta?.feature)) features.flip = false
 
       if ((piece._meta?.sides ?? 1) <= 1 && !semi.includes(piece._meta?.feature)) features.random = false
