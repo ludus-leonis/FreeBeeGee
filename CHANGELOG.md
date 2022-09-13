@@ -11,7 +11,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
-* none yet
+* added plain token
 
 
 ## v0.17.0 - Rotating Rook

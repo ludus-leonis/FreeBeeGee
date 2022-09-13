@@ -51,7 +51,7 @@ const _ = { // asset count in system template
   other: 16,
   overlay: 17,
   tile: 2,
-  token: 4,
+  token: 5,
   badge: 2
 }
 

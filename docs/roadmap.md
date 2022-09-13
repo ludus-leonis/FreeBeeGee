@@ -11,7 +11,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] untranslate popup
   * [ ] fix mouse coords (drag, click, add)
 * [X] token back sides
-* [ ] plain token
+* [X] add plain token
 * [ ] bcrypt tools page
 * [ ] library: delete assets UI
 * [ ] pre-release
@@ -23,6 +23,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] MMB drag sometimes sticks / cursor fix
     * [ ] simplify/automate more deployment steps (ongoing)
     * [ ] html + notes
+    * [ ] rename assets n-wood to n.wood
     * [ ] handle side-2-only assets
   * [ ] review docs
   * [ ] review + run tests
