@@ -8,11 +8,12 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Notable changes
 
 * added token backsides (again)
+* added 'Dark', 'Leather' and 'Sand' backgrounds
 
 ### Other changes
 
 * added plain token
-
+* improved backgrounds
 
 ## v0.17.0 - Rotating Rook
 

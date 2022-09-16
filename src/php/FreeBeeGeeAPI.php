@@ -479,14 +479,17 @@ class FreeBeeGeeAPI
     private function getBackgrounds(): array
     {
         return [
-            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#747e86', '#636f78'),
-            $this->getBackground('Casino', 'img/desktop-casino.jpg', '#2e5d3c', '#1b3c25'),
-            $this->getBackground('Concrete', 'img/desktop-concrete.jpg', '#646260', '#494540'),
-            $this->getBackground('Marble', 'img/desktop-marble.jpg', '#b4a999', '#80725e'),
-            $this->getBackground('Metal', 'img/desktop-metal.jpg', '#515354', '#3e3e3e'),
-            $this->getBackground('Pinboard', 'img/desktop-pinboard.jpg', '#bc8c6c', '#a2775b'),
-            $this->getBackground('Rock', 'img/desktop-rock.jpg', '#5c5d5a', '#393930'),
-            $this->getBackground('Wood', 'img/desktop-wood.jpg', '#57514d', '#3e3935'),
+            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#31555E', '#4a818e'),
+            $this->getBackground('Casino', 'img/desktop-casino.jpg', '#2D5B3D', '#3a7750'),
+            $this->getBackground('Concrete', 'img/desktop-concrete.jpg', '#6C6964', '#494540'),
+            $this->getBackground('Dark', 'img/desktop-dark.jpg', '#212121', '#444444'),
+            $this->getBackground('Leather', 'img/desktop-leather.jpg', '#3C2D26', '#6a4b40'),
+            $this->getBackground('Marble', 'img/desktop-marble.jpg', '#B6AB99', '#80725e'),
+            $this->getBackground('Metal', 'img/desktop-metal.jpg', '#565859', '#3e3e3e'),
+            $this->getBackground('Pinboard', 'img/desktop-pinboard.jpg', '#C0A183', '#a2775b'),
+            $this->getBackground('Rock', 'img/desktop-rock.jpg', '#545450', '#393930'),
+            $this->getBackground('Sand', 'img/desktop-sand.jpg', '#D7D2BF', '#a19e8f'),
+            $this->getBackground('Wood', 'img/desktop-wood.jpg', '#524A43', '#3e3935'),
         ];
     }
 
