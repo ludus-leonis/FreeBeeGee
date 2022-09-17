@@ -72,7 +72,9 @@ The server config file is found in `api/data/server.json`:
 
 ### Admin passwords
 
-`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join rooms. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
+`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join rooms. Set it to an empty string (`""`) for no password.
+
+You can generate a password hash using any bcrypt tool you like. You can use the tool found on the `/tools` page after you installed FreeBeeGee. Another option is the `htpasswd` command that comes with Apache:
 
 ```
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'

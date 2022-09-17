@@ -4,11 +4,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.18 - Zooming Zokor
 
-* [ ] template-template
 * [X] native zoom function
 * [X] token back sides
 * [X] add plain token
-* [ ] bcrypt tools page
+* [X] bcrypt tools page
 * [ ] library: delete assets UI
 * [ ] pre-release
   * [ ] bump dependencies
@@ -32,6 +31,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] template-template
+* [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] more backgrounds: snow/ice
 * [ ] simplify/automate more deployment steps (ongoing)
 * [ ] ui: clipboard ctrl+c/v/x between tables
