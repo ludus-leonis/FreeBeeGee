@@ -85,7 +85,7 @@ export function modalHelp () {
               <li><strong>Tiles</strong> are assembled to form your game board. They can be corridors, caves and more.</li>
             </ul>
 
-            <p>Use your <strong>browser zoom</strong> buttons to zoom-in and zoom-out. Press <span class="key">F11</span> to toggle fullscreen.</p>
+            <p>Use <span class="key">+</span>/<span class="key">-</span>  to zoom-in and zoom-out. Press <span class="key">F11</span> to toggle fullscreen.</p>
 
             <p><strong>Shift-Click</strong> on the table to use a laser-pointer everyone will see for a few seconds.</p>
 
@@ -123,6 +123,7 @@ export function modalHelp () {
             <p><span class="key">g</span> Toggle table grid.</p>
             <p><span class="key">m</span> Toggle measure mode.</p>
             <p><span class="key">F11</span> Toggle fullscreen.</p>
+            <p><span class="key">+</span>/<span class="key">-</span> Zoom in/out.</p>
             <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>

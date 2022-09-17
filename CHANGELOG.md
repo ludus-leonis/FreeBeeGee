@@ -3,17 +3,19 @@
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
 
-## v0.18.0 - ??? ???
+## v0.18.0 - Zooming Zokor
 
 ### Notable changes
 
+* added table zoom: use '+'/'-' or set the zoom in the [S]ettings
+* added 'Dark', 'Leather', 'Sand' backgrounds
 * added token backsides (again)
-* added 'Dark', 'Leather' and 'Sand' backgrounds
 
 ### Other changes
 
 * added plain token
-* improved backgrounds
+* improved background image quality
+
 
 ## v0.17.0 - Rotating Rook
 
@@ -38,6 +40,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed no grid visible in low quality mode
 * fixed empty goblin label in RPG template
 * fixed hardcoded engine versions in integration tests
+
 
 ## v0.16.0 - Selecting Seal
 

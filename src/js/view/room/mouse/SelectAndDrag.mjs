@@ -157,13 +157,18 @@ export class SelectAndDrag extends MouseButtonHandler {
   }
 
   selectContinue () {
-    const coords = getMouseCoords()
-    this.multiselect.width = coords.x - this.multiselect.x
-    this.multiselect.height = coords.y - this.multiselect.y
+    const tableCoords = getMouseCoords()
+    this.multiselect.width = tableCoords.x - this.multiselect.x
+    this.multiselect.height = tableCoords.y - this.multiselect.y
 
     _(`#${ID.SELECT}-drag`).delete()
     if (this.multiselect.width !== 0 && this.multiselect.height !== 0) {
-      const svg = createSelectPiece(this.multiselect.x, this.multiselect.y, this.multiselect.width, this.multiselect.height)
+      const svg = createSelectPiece(
+        this.multiselect.x,
+        this.multiselect.y,
+        this.multiselect.width,
+        this.multiselect.height
+      )
       svg.id = `${ID.SELECT}-drag`
       _('#layer-other').add(svg)
     }

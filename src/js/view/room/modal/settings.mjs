@@ -47,6 +47,7 @@ import {
 } from '../../../view/modal.mjs'
 
 import {
+  ZOOM_LEVELS,
   moveContent
 } from '../../../view/room/tabletop/index.mjs'
 
@@ -56,6 +57,7 @@ import {
 
 import {
   setupBackground,
+  setupZoom,
   toggleGrid
 } from '../../../view/room/index.mjs'
 
@@ -88,12 +90,17 @@ export function modalSettings () {
             <div class="col-12">
               <p>This tab only affects what you can see, not the other players.</p>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="col-6 col-lg-3">
+              <label for="table-zoom">Zoom</label>
+              <select id="table-zoom" name="zoom"></select>
+              <p class="p-small spacing-tiny">Magnification</p>
+            </div>
+            <div class="col-6 col-lg-3">
               <label for="table-background">Background</label>
               <select id="table-background" name="background"></select>
               <p class="p-small spacing-tiny">Table texture.</p>
             </div>
-            <div class="col-12 col-lg-3">
+            <div class="col-6 col-lg-3">
               <label for="table-grid">Grid</label>
               <select id="table-grid" name="grid">
                 <option value="0" ${grid === 0 ? 'selected' : ''}>None</option>
@@ -103,7 +110,7 @@ export function modalSettings () {
               <p class="p-small spacing-tiny">Show grid?</p>
             </div>
 
-            <div class="col-12 col-lg-3">
+            <div class="col-6 col-lg-3">
               <label for="table-sub">Table</label>
               <select id="table-sub" name="table"></select>
               <p class="p-small spacing-tiny">Visible table.</p>
@@ -261,12 +268,20 @@ export function modalSettings () {
     }
   })
 
+  const zoom = _('#table-zoom')
+  for (const z of ZOOM_LEVELS) {
+    const option = _('option').create(z * 100 + '%')
+    option.value = z
+    if (z === getRoomPreference(PREFS.ZOOM)) option.selected = true
+    zoom.add(option)
+  }
+
   const server = getServerInfo()
   const backgrounds = _('#table-background')
-  for (let i = 0; i < server.backgrounds.length; i++) {
-    const option = _('option').create(server.backgrounds[i].name)
-    option.value = i
-    if (i === getServerPreference(PREFS.BACKGROUND)) option.selected = true
+  for (const background of server.backgrounds) {
+    const option = _('option').create(background.name)
+    option.value = background.name
+    if (background.name === getServerPreference(PREFS.BACKGROUND)) option.selected = true
     backgrounds.add(option)
   }
 
@@ -305,7 +320,8 @@ export function modalSettings () {
   // ---------------------------------------------------------------------------
 
   _('#table-grid').on('change', () => toggleGrid(Number.parseInt(_('#table-grid').value)))
-  _('#table-background').on('change', () => setupBackground(Number(_('#table-background').value)))
+  _('#table-zoom').on('change', () => setupZoom(Number(_('#table-zoom').value)))
+  _('#table-background').on('change', () => setupBackground(_('#table-background').value))
   _('#table-sub').on('change', () => setTableNo(Number(_('#table-sub').value)))
 
   _('#btn-table-tl').on('click', click => handleAlign(click, -1, -1))

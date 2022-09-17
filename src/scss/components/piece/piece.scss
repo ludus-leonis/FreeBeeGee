@@ -65,11 +65,11 @@ $piece-rotate: 1deg;
   background-position: center;
   background-size: cover;
   display: flex;
-  height: $piece-tile-size;
+  height: zoom($piece-tile-size);
   justify-content: center;
-  left: var(--fbg-x);
-  top: var(--fbg-y);
-  width: $piece-tile-size;
+  left: zoom(var(--fbg-x));
+  top: zoom(var(--fbg-y));
+  width: zoom($piece-tile-size);
   z-index: var(--fbg-z);
 
   $piece-tile-half: math.div($piece-tile-size, 2);
@@ -77,10 +77,10 @@ $piece-rotate: 1deg;
   &.is-selected {
     $selected-color: $color-secondary;
     filter:
-    drop-shadow(2px 0 0 $selected-color)
-    drop-shadow(0 2px 0 $selected-color)
-    drop-shadow(-2px 0 0 $selected-color)
-    drop-shadow(0 -2px 0 $selected-color) !important; // sass-lint:disable-line no-important
+    drop-shadow(zoom(2px) 0 0 $selected-color)
+    drop-shadow(0 zoom(2px) 0 $selected-color)
+    drop-shadow(zoom(-2px) 0 0 $selected-color)
+    drop-shadow(0 zoom(-2px) 0 $selected-color) !important; // sass-lint:disable-line no-important
   }
 
   &.is-invalid {
@@ -100,13 +100,13 @@ $piece-rotate: 1deg;
 
   @for $x from 1 through 32 {
     &.is-w-#{$x} {
-      width: $x * $piece-tile-size;
+      width: zoom($x * $piece-tile-size);
     }
   }
 
   @for $y from 1 through 32 {
     &.is-h-#{$y} {
-      height: $y * $piece-tile-size;
+      height: zoom($y * $piece-tile-size);
     }
   }
 
@@ -130,11 +130,13 @@ $piece-rotate: 1deg;
   // --- labels (flexbox positions) --------------------------------------------
 
   .label {
-    @extend %p-micro;
-
     background-color: $color-black-50a;
     border-radius: 2em;
     color: $color-white-100;
+    font-size: zoom(.6875em);
+    font-weight: 600;
+    letter-spacing: -.025em;
+    line-height: 1.1875em;
     padding: .125em .5em;
     pointer-events: none;
     position: relative;
@@ -177,7 +179,7 @@ $piece-rotate: 1deg;
   }
 
   &:hover .label {
-    font-size: px(16);
+    font-size: zoom(px(16));
     max-width: unset;
   }
 
@@ -229,6 +231,8 @@ $piece-rotate: 1deg;
     top $fbg-transition,
     transform $fbg-transition,
     filter $fbg-transition,
+    width $fbg-transition,
+    height $fbg-transition,
     box-shadow $fbg-transition;
   }
 

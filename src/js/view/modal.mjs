@@ -61,6 +61,12 @@ export function createModalRaw (html) {
     focus: true
   })
 
+  node.on('wheel', wheel => { // disable mouse zoom
+    if (event.ctrlKey) {
+      event.preventDefault()
+    }
+  })
+
   return node.node()
 }
 

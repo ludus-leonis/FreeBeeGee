@@ -2,14 +2,10 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.18 - ??? ???
+## v0.18 - Zooming Zokor
 
 * [ ] template-template
-* [ ] table: native zoom function
-  * [ ] add zoom icon
-  * [ ] translate playfield
-  * [ ] untranslate popup
-  * [ ] fix mouse coords (drag, click, add)
+* [X] native zoom function
 * [X] token back sides
 * [X] add plain token
 * [ ] bcrypt tools page
@@ -17,6 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
+    * [X] store wallpaper via name not index
     * [ ] unify wording snapshot + template
     * [ ] don't select LOS after placement
     * [ ] wrong mouse curson on notes in (measure mode)
@@ -35,6 +32,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] more backgrounds: snow/ice
 * [ ] simplify/automate more deployment steps (ongoing)
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces

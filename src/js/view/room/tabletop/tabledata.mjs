@@ -191,15 +191,15 @@ export function getAssetURL (asset, side = 0) {
  * @param {Object} piece A game piece to operate on.
  * @param {Number} x X coordinate of supposed center (defaults to piece.x)
  * @param {Number} y Y coordinate of supposed center (defaults to piece.y)
- * @return {Object} CSS-ready px String as { top: '', left: ''}.
+ * @return {Object} Numeric coordinates as { top, left }.
  **/
-export function getTopLeftPx (piece, x = piece.x, y = piece.y) {
+export function getTopLeft (piece, x = piece.x, y = piece.y) {
   const jitterX = piece.l === LAYER_TOKEN ? Math.abs(hash('x' + piece.id)) % 5 - 2 : 0
   const jitterY = piece.l === LAYER_TOKEN ? Math.abs(hash('y' + piece.id)) % 5 - 2 : 0
 
   return {
-    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + jitterX + 'px',
-    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + jitterY + 'px'
+    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + jitterX,
+    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + jitterY
   }
 }
 

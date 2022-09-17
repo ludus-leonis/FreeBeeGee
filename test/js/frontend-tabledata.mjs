@@ -34,7 +34,7 @@ import {
   findPiece,
   findAsset,
   findAssetByAlias,
-  getTopLeftPx,
+  getTopLeft,
   getPieceBounds,
   findPiecesWithin,
   findExpiredPieces,
@@ -163,11 +163,11 @@ describe('Frontend - tabledata.mjs', function () {
     )
   })
 
-  it('getTopLeftPx()', function () {
+  it('getTopLeft()', function () {
     const piece = populatePieceDefaults(JSON.parse(pieceJSON))
-    const xy = getTopLeftPx(piece)
-    expect(xy.left).to.be.eql((256 - 0 * 64 - 64 / 2) + 'px')
-    expect(xy.top).to.be.eql((192 - 0 * 64 - 64 / 2) + 'px')
+    const xy = getTopLeft(piece)
+    expect(xy.left).to.be.eql(256 - 0 * 64 - 64 / 2)
+    expect(xy.top).to.be.eql(192 - 0 * 64 - 64 / 2)
   })
 
   it('getPieceBounds()', function () {

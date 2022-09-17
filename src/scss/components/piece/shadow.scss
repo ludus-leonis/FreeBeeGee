@@ -66,9 +66,9 @@ $shadow-highlight-width: 1.5px;
 /// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function shadow($blur, $color) {
   @return
-  calc(var(--fbg-r-sin) * var(--fbg-shadow-length))
-  calc(var(--fbg-r-cos) * var(--fbg-shadow-length))
-  $blur
+  zoom(calc(var(--fbg-r-sin) * var(--fbg-shadow-length)))
+  zoom(calc(var(--fbg-r-cos) * var(--fbg-shadow-length)))
+  zoom($blur)
   $color;
 }
 
@@ -80,10 +80,10 @@ $shadow-highlight-width: 1.5px;
 /// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function highlight() {
   @return
-  calc(var(--fbg-r-sin) * $shadow-highlight-width) calc(var(--fbg-r-cos) * $shadow-highlight-width) .5px 0 $color-white-15a inset,
-  calc(var(--fbg-r-sin) * -1 * $shadow-highlight-width) calc(var(--fbg-r-cos) * -1 * $shadow-highlight-width) .5px 0 $color-black-20a inset;
+  zoom(calc(var(--fbg-r-sin) * $shadow-highlight-width)) zoom(calc(var(--fbg-r-cos) * $shadow-highlight-width)) zoom(.5px) 0 $color-white-15a inset,
+  zoom(calc(var(--fbg-r-sin) * -1 * $shadow-highlight-width)) zoom(calc(var(--fbg-r-cos) * -1 * $shadow-highlight-width)) zoom(.5px) 0 $color-black-20a inset;
 }
 
 $shadow: shadow(2px, $color-black-65a);
 
-$shadow-flat: shadow(0, $color-black-35a);
+$shadow-flat: shadow(0px, $color-black-35a); // sass-lint:disable-line zero-unit

@@ -23,7 +23,7 @@
 /// @access public
 ////
 
-$piece-other-shadow: 3px 3px 4px $color-black-50a;
+$piece-other-shadow: zoom(3px) zoom(3px) zoom(4px) $color-black-50a;
 
 .piece-other {
   #{'--fbg-color'}: transparent;

@@ -29,6 +29,7 @@ import {
 
 import {
   pointTo
+  // zoom
 } from '../../../view/room/tabletop/index.mjs'
 
 import {

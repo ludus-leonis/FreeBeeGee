@@ -82,7 +82,8 @@ import {
   flipSelected,
   randomSelected,
   deleteSelected,
-  url
+  url,
+  zoom
 } from '../../view/room/tabletop/index.mjs'
 
 import {
@@ -127,7 +128,6 @@ import {
 } from '../../view/room/modal/settings.mjs'
 
 import {
-  clamp,
   brightness
 } from '../../lib/utils.mjs'
 
@@ -158,7 +158,7 @@ export function setCursor (cursor) {
  *
  * @return {Object} Contains x and y in pixel.
  */
-export function getScrollPosition () {
+export function getScrollPositionNative () {
   return {
     x: scroller.scrollLeft,
     y: scroller.scrollTop
@@ -171,20 +171,20 @@ export function getScrollPosition () {
  * @return {Number} x X-coordinate.
  * @return {Number} y Y-coordinate.
  */
-export function setScrollPosition (x, y) {
+export function setScrollPositionNative (x, y) {
   scroller.node().scrollTo(x, y)
 }
 
 /**
  * Get current center of the viewport of the scroll position.
  *
- * @return {Object} Contains x and y in pixel.
+ * @return {Object} Contains tablespace x and y in pixel.
  */
-export function getViewportCenter () {
-  return {
+export function getViewCenter () {
+  return zoomCoordinates({
     x: scroller.scrollLeft + Math.floor(scroller.clientWidth / 2),
     y: scroller.scrollTop + Math.floor(scroller.clientHeight / 2)
-  }
+  }, -1)
 }
 
 /**
@@ -192,9 +192,9 @@ export function getViewportCenter () {
  *
  * @return {Object} Contains x and y in pixel.
  */
-export function getViewportCenterTile () {
+export function getViewCenterTile () {
   const template = getTemplate()
-  const pos = getViewportCenter()
+  const pos = getViewCenter()
   return {
     x: Math.floor(pos.x / template.gridSize),
     y: Math.floor(pos.y / template.gridSize)
@@ -320,9 +320,35 @@ export function updateRoom () {
 export function getTableCoordinates (windowX, windowY) {
   const origin = scroller.node().getBoundingClientRect()
 
-  return {
-    x: windowX + scroller.scrollLeft - origin.left,
-    y: windowY + scroller.scrollTop - origin.top
+  return zoomCoordinates({
+    x: windowX - origin.left + scroller.scrollLeft,
+    y: windowY - origin.top + scroller.scrollTop
+  }, -1)
+}
+
+/**
+ * Convert tablespace coordinates into DOM coordinates.
+ *
+ * Compensates for current table zoom level. Tries to cache/minimize room pref calls.
+ *
+ * @param {Object} coords {x, y} coordinates.
+ * @param {Number} direction 1 = multiply, -1 = divide
+ */
+export function zoomCoordinates (coords, direction = 1) {
+  if (coords.zoom) {
+    const zzoom = direction > 0 ? coords.zoom : (1 / coords.zoom)
+    return {
+      x: Math.round(coords.x * zzoom),
+      y: Math.round(coords.y * zzoom)
+    }
+  } else {
+    const zoom = getRoomPreference(PREFS.ZOOM)
+    const zzoom = direction > 0 ? zoom : (1 / zoom)
+    return {
+      zoom,
+      x: Math.round(coords.x * zzoom),
+      y: Math.round(coords.y * zzoom)
+    }
   }
 }
 
@@ -335,9 +361,11 @@ export function updateStatusline () {
     hour: '2-digit',
     minute: '2-digit'
   })
+  const zoom = getRoomPreference(PREFS.ZOOM)
+  const zoomText = zoom === 1 ? '' : ` • ${zoom * 100 + '%'}`
   const message = DEMO_MODE
-    ? fakeTabularNums(`<a href="https://freebeegee.org/">FreeBeeGee</a> • ${time} • Table ${getTableNo()}`)
-    : fakeTabularNums(`${time} • Table ${getTableNo()}`)
+    ? fakeTabularNums(`<a href="https://freebeegee.org/">FreeBeeGee</a> • ${time} • Table ${getTableNo()}${zoomText}`)
+    : fakeTabularNums(`${time} • Table ${getTableNo()}${zoomText}`)
   const status = _('#room .status')
   if (status.innerHTML !== message) {
     status.innerHTML = message
@@ -351,38 +379,66 @@ export function updateStatusline () {
  */
 export function restoreScrollPosition () {
   const last = getTablePreference(PREFS.SCROLL)
+  const zoom = getRoomPreference(PREFS.ZOOM)
+  const coords = {}
   if (last.x && last.y) {
-    scroller.node().scrollTo(
-      last.x - Math.floor(scroller.clientWidth / 2),
-      last.y - Math.floor(scroller.clientHeight / 2)
-    )
+    coords.x = last.x - Math.floor(scroller.clientWidth / 2 / zoom)
+    coords.y = last.y - Math.floor(scroller.clientHeight / 2 / zoom)
   } else {
     const center = getSetupCenter()
-    scroller.node().scrollTo(
-      Math.floor(center.x - scroller.clientWidth / 2),
-      Math.floor(center.y - scroller.clientHeight / 2)
-    )
+    coords.x = Math.floor(center.x - scroller.clientWidth / 2 / zoom)
+    coords.y = Math.floor(center.y - scroller.clientHeight / 2 / zoom)
   }
+  const zoomed = zoomCoordinates(coords)
+  scroller.node().scrollTo(zoomed.x, zoomed.y)
+}
+
+/**
+ * Set table magnification.
+ *
+ * @param {Number} zoom Zoom factor. 1 is no zoom / 100%.
+ */
+export function setupZoom (zoom) {
+  const center = getViewCenter()
+  setRoomPreference(PREFS.ZOOM, zoom)
+  const tabletop = _('#tabletop')
+  tabletop.remove('.is-zoom-*')
+  tabletop.add(`.is-zoom-${Math.trunc(zoom)}-${(zoom - Math.trunc(zoom)) * 100}`)
+
+  // remove temporary transition effects
+  tabletop.add('.is-delay-transition-none')
+  setTimeout(() => {
+    _('#tabletop').remove('.is-delay-*')
+  }, 10)
+
+  // move center of view
+  const newCenter = zoomCoordinates({
+    x: Math.floor(center.x - scroller.clientWidth / 2 / zoom),
+    y: Math.floor(center.y - scroller.clientHeight / 2 / zoom)
+  })
+  scroller.node().scrollTo(newCenter.x, newCenter.y)
+
+  updateStatusline()
 }
 
 /**
  * Set backround to given index + store it as preference.
  *
- * @param {Number} bgIndex Index of background. Will be clamped to the available ones.
+ * @param {String} bgName Name of background.
  * @param {Boolean} showGrid If true, the overlay grid will be drawn.
  */
 export function setupBackground (
-  bgIndex = getServerPreference(PREFS.BACKGROUND),
+  bgName = getServerPreference(PREFS.BACKGROUND),
   gridType = getRoomPreference(PREFS.GRID)
 ) {
   const room = getRoom()
   const server = getServerInfo()
 
-  bgIndex = clamp(0, bgIndex, server.backgrounds.length - 1)
+  const background = server.backgrounds.find(b => b.name === bgName) ?? server.backgrounds.find(b => b.name === 'Wood') ?? server.backgrounds[0]
 
   updateRoom().css({
-    '--fbg-tabletop-color': server.backgrounds[bgIndex].color,
-    '--fbg-tabletop-image': url(server.backgrounds[bgIndex].image)
+    '--fbg-tabletop-color': background.color,
+    '--fbg-tabletop-image': url(background.image)
   })
 
   // setup background / wallpaper + grid
@@ -390,21 +446,24 @@ export function setupBackground (
   if (gridType > 0) {
     _('#tabletop').add('.has-grid')
 
-    const color = brightness(server.backgrounds[bgIndex].color) < 92 ? 'white' : 'black'
+    const color = brightness(background.color) < 92 ? 'white' : 'black'
     const style = gridType > 1 ? 'major' : 'minor'
     const shape = room.template?.type === TYPE_HEX ? 'hex' : 'square'
-    _('#tabletop').css({ '--fbg-tabletop-grid': url(`img/grid-${shape}-${style}-${color}.svg`) })
+    _('#tabletop').css({
+      '--fbg-tabletop-grid': url(`img/grid-${shape}-${style}-${color}.svg`),
+      '--fbg-grid-x': room.template?.type === TYPE_HEX ? '110px' : '64px'
+    })
   }
 
   // setup scroller
   scroller.css({ // this is for moz://a
-    scrollbarColor: `${server.backgrounds[bgIndex].scroller} ${server.backgrounds[bgIndex].color}`,
-    '--fbg-color-scroll-fg': server.backgrounds[bgIndex].scroller,
-    '--fbg-color-scroll-bg': server.backgrounds[bgIndex].color
+    scrollbarColor: `${background.scroller} ${background.color}`,
+    '--fbg-color-scroll-fg': background.scroller,
+    '--fbg-color-scroll-bg': background.color
   })
 
   // store for future reference
-  setServerPreference(PREFS.BACKGROUND, bgIndex)
+  setServerPreference(PREFS.BACKGROUND, background.name)
   setRoomPreference(PREFS.GRID, gridType)
 }
 
@@ -532,7 +591,7 @@ function setupRoom () {
   if (getRoomPreference(PREFS.LOS)) toggleLos()
 
   // setup menu for selection
-  _('#btn-a').on('click', () => modalLibrary(getViewportCenter()))
+  _('#btn-a').on('click', () => modalLibrary(getViewCenter()))
   _('#btn-e').on('click', () => editSelected())
   _('#btn-r').on('click', () => rotateSelected())
   _('#btn-c').on('click', () => cloneSelected(getMouseCoords()))
@@ -549,8 +608,17 @@ function setupRoom () {
   _('#btn-q').on('click', () => navigateToJoin(getRoom().name))
 
   setupBackground()
+  setupZoom(getRoomPreference(PREFS.ZOOM))
 
   _('body').on('contextmenu', e => e.preventDefault())
+
+  // capture mousewheel
+  _('#room').on('wheel', wheel => {
+    if (event.ctrlKey) {
+      event.preventDefault()
+      zoom(Math.sign(event.deltaY * -1))
+    }
+  }, true)
 
   enableDragAndDrop('#tabletop')
 
@@ -588,7 +656,7 @@ function autoTrackScrollPosition () {
   _('#scroller').on('scroll', () => {
     clearTimeout(scrollFetcherTimeout)
     scrollFetcherTimeout = setTimeout(() => { // delay a bit to not/less fire during scroll
-      const pos = getViewportCenter()
+      const pos = getViewCenter()
       setTablePreference(PREFS.SCROLL, { x: pos.x, y: pos.y })
     }, 1000)
   })

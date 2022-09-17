@@ -47,7 +47,8 @@ import {
   createNote,
   colorSelected,
   toBottomSelected,
-  pointTo
+  pointTo,
+  zoom
 } from '../../view/room/tabletop/index.mjs'
 
 import {
@@ -204,6 +205,12 @@ function handleRoomKeys (keydown) {
         break
       case '#': // random side
         randomSelected()
+        break
+      case '+': // zoom in
+        zoom(1)
+        break
+      case '-': // zoom out
+        zoom(-1)
         break
       case '>': // increase No.
         numberSelected(1)

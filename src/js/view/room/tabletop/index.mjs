@@ -33,6 +33,7 @@ import {
 import {
   FLAG_NO_CLONE,
   FLAG_NO_MOVE,
+  PREFS,
   getRoom,
   getTemplate,
   getTable,
@@ -44,7 +45,8 @@ import {
   movePieces,
   movePiecePatch,
   colorPiece,
-  rotatePiece
+  rotatePiece,
+  getRoomPreference
 } from '../../../state/index.mjs'
 
 import {
@@ -60,7 +62,9 @@ import {
 import {
   updateStatusline,
   restoreScrollPosition,
-  updateMenu
+  updateMenu,
+  zoomCoordinates,
+  setupZoom
 } from '../../../view/room/index.mjs'
 
 import {
@@ -78,7 +82,7 @@ import {
   findPiecesWithin,
   getAssetURL,
   getMaxZ,
-  getTopLeftPx,
+  getTopLeft,
   getPieceBounds,
   snap,
   stickyNoteColors
@@ -97,6 +101,8 @@ import {
 } from '../../../view/room/tabletop/popup.mjs'
 
 // --- public ------------------------------------------------------------------
+
+export const ZOOM_LEVELS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
 
 /**
  * Delete the currently selected piece from the room.
@@ -340,10 +346,10 @@ function createOrUpdatePieceDOM (piece) {
   div = _('#' + piece.id) // fresh query
 
   if (_piece.x !== piece.x || _piece.y !== piece.y || _piece.z !== piece.z) {
-    const tl = getTopLeftPx(piece)
+    const tl = getTopLeft(piece)
     div.css({
-      '--fbg-x': tl.left,
-      '--fbg-y': tl.top,
+      '--fbg-x': tl.left + 'px',
+      '--fbg-y': tl.top + 'px',
       '--fbg-z': piece.z
     })
   }
@@ -819,13 +825,16 @@ export function losTo (x, y, w, h) {
  */
 export function moveNodeTo (element, x, y) {
   if (element.piece.f & FLAG_NO_MOVE) return // we do not move frozen pieces
+  if (element.x === x && element.y === y) return // no need to move to same place
 
   element.x = x
   element.y = y
 
-  const tl = getTopLeftPx(element.piece, element.x, element.y)
-  element.style.left = tl.left
-  element.style.top = tl.top
+  const tl = getTopLeft(element.piece, element.x, element.y)
+  const zoomed = zoomCoordinates({ x: tl.left, y: tl.top })
+
+  element.style.left = zoomed.x + 'px'
+  element.style.top = zoomed.y + 'px'
 }
 
 /**
@@ -838,6 +847,12 @@ export function moveNodeTo (element, x, y) {
  * @return {FreeDOM} dummy node.
  */
 export function createLosPiece (x, y, width, height) {
+  const zoom = getRoomPreference(PREFS.ZOOM)
+  x *= zoom
+  y *= zoom
+  width *= zoom
+  height *= zoom
+
   const stroke = 4
   const padding = stroke / 2
   const x1 = (width >= 0 ? padding : -width + padding)
@@ -903,11 +918,16 @@ export function createLosPiece (x, y, width, height) {
  * @return {FreeDOM} dummy node.
  */
 export function createSelectPiece (x, y, width, height) {
+  const zoom = getRoomPreference(PREFS.ZOOM)
+  x *= zoom
+  y *= zoom
+  width *= zoom
+  height *= zoom
+
   // container svg
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   svg.setAttribute('fill', 'none')
   svg.setAttribute('viewBox', `0 0 ${Math.abs(width)} ${Math.abs(height)}`)
-  // svg.classList.add('piece', 'piece-other', 'piece-select')
 
   // rect
   const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -929,6 +949,29 @@ export function createSelectPiece (x, y, width, height) {
   svg.style.zIndex = 999999999
 
   return _(svg)
+}
+
+/**
+ * Zoom in/out in available increments.
+ *
+ * @param {Number} direction If positive, zoom in. Otherwise zoom out.
+ */
+export function zoom (direction) {
+  const current = getRoomPreference(PREFS.ZOOM)
+
+  if (direction === 0) { // set to 100%
+    setupZoom(1)
+  } else if (direction > 0) { // zoom in
+    const next = ZOOM_LEVELS.filter(zoom => zoom > current)
+    if (next.length > 0) {
+      setupZoom(next[0])
+    }
+  } else { // zoom out
+    const next = ZOOM_LEVELS.filter(zoom => zoom < current)
+    if (next.length > 0) {
+      setupZoom(next.pop())
+    }
+  }
 }
 
 // --- internal ----------------------------------------------------------------

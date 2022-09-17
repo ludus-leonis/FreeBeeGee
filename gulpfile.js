@@ -264,8 +264,8 @@ gulp.task('img', gulp.series(() => {
       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
       pngquant: ['--speed=1', '--force', 256],
       zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-      jpegRecompress: ['--strip', '--quality', 'veryhigh', '--min', 92, '--max', 96],
-      mozjpeg: ['-optimize', '-progressive'],
+      jpegRecompress: ['--strip', '--quality', 'veryhigh', '--min', 70, '--max', 90],
+      mozjpeg: false, // ['-optimize', '-progressive']
       gifsicle: ['--optimize'],
       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
     }))
