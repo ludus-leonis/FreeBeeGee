@@ -8,7 +8,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Notable changes
 
 * added table zoom: use '+'/'-' or set the zoom in the [S]ettings
-* added 'Dark', 'Leather', 'Sand' backgrounds
+* added 'Dark', 'Leather', 'Sand' and 'Space' backgrounds
 * added token backsides (again)
 
 ### Other changes

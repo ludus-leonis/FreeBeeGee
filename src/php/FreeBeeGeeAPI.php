@@ -489,6 +489,7 @@ class FreeBeeGeeAPI
             $this->getBackground('Pinboard', 'img/desktop-pinboard.jpg', '#C0A183', '#a2775b'),
             $this->getBackground('Rock', 'img/desktop-rock.jpg', '#545450', '#393930'),
             $this->getBackground('Sand', 'img/desktop-sand.jpg', '#D7D2BF', '#a19e8f'),
+            $this->getBackground('Space', 'img/desktop-space.jpg', '#101010', '#404040'),
             $this->getBackground('Wood', 'img/desktop-wood.jpg', '#524A43', '#3e3935'),
         ];
     }
