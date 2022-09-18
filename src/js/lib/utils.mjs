@@ -700,7 +700,7 @@ export function generateUsername () {
 export function generateName () {
   return adjectives[Math.floor(Math.random() * adjectives.length)] +
   verbs[Math.floor(Math.random() * verbs.length)] +
-  generateAnimal
+  generateAnimal()
 }
 
 /**

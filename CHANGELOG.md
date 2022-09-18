@@ -17,6 +17,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added a bcrypt tool at URL `/tools`
 * fixed LOS selected
 * fixed wrong cursor on notes in measure mode
+* fixed asset filenames
 * improved library previews
 * improved grids
 * improved background image quality

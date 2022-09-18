@@ -21,8 +21,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] MMB drag sometimes sticks / cursor fix
     * [ ] simplify/automate more deployment steps (ongoing)
     * [ ] html + notes
-    * [ ] rename assets n-wood to n.wood
-    * [ ] handle side-2-only assets
+    * [X] rename assets n-wood to n.wood
+    * [ ] handle assets with missing or duplicate sides
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
