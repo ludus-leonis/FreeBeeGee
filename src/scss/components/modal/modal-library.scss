@@ -24,10 +24,22 @@
 ////
 
 @mixin modal-library-flate($bg-size-x, $bg-size-y, $scale) {
-  background-size: $bg-size-x $bg-size-y;
+  background-size: $bg-size-x $bg-size-y, calc(1536px * $scale);
 
   > * {
     transform: scale($scale);
+  }
+
+  &.is-even-x {
+    background-position: calc(50% + $bg-size-x / 2) 50%;
+  }
+
+  &.is-even-y {
+    background-position: 50% calc(50% + $bg-size-y / 2);
+  }
+
+  &.is-even-x.is-even-y {
+    background-position: calc(50% + $bg-size-x / 2) calc(50% + $bg-size-y / 2);
   }
 }
 
@@ -41,7 +53,7 @@
     .col-card {
       overflow: hidden;
 
-      .is-scale-2 {
+      .is-preview {
         cursor: pointer;
       }
 
@@ -53,11 +65,14 @@
       }
     }
 
-    .upload-preview {
+    .is-preview-upload {
       @extend %flex-center-center;
 
-      background-color: $color-gray-05;
+      background-color: var(--fbg-tabletop-color);
+      background-image: var(--fbg-tabletop-grid), var(--fbg-tabletop-image);
       background-position: center;
+      border-radius: $border-radius;
+      box-shadow: 0 0 16px $color-black-25a inset;
       cursor: pointer;
       max-height: 50vh;
       min-height: 50vh;
@@ -68,8 +83,7 @@
       }
 
       .is-template-grid-square & {
-        background-image: url('img/grid-square-minor-black.svg');
-        background-size: 64px;
+        @include modal-library-flate(64px, 64px, 1);
 
         &.is-inflate-2x { @include modal-library-flate(128px, 128px, 2) }
         &.is-deflate-2x { @include modal-library-flate(32px, 32px, .5) }
@@ -78,8 +92,7 @@
       }
 
       .is-template-grid-hex & {
-        background-image: url('img/grid-hex-minor-black.svg');
-        background-size: 110px 64px;
+        @include modal-library-flate(110px, 64px, 1);
 
         &.is-inflate-2x { @include modal-library-flate(220px, 128px, 2) }
         &.is-deflate-2x { @include modal-library-flate(55px, 32px, .5) }
@@ -120,86 +133,57 @@
 
 // --- preview tokens ----------------------------------------------------------
 
-@mixin is-max($bg-size-x, $bg-size-y, $image, $position) {
-  background-image: url($image);
-  background-position: $position;
-  background-size: $bg-size-x $bg-size-y;
-}
-
-.is-scale-2 { // fixed maximum size for preview in modals
-  background-color: $color-gray-05;
+.is-preview { // fixed maximum size for preview in modals
+  background-color: var(--fbg-tabletop-color);
+  background-image: var(--fbg-tabletop-image);
+  background-position: center;
   background-repeat: repeat;
   height: $piece-tile-size * 2;
   margin: 0 auto;
   position: relative;
   width: $piece-tile-size * 2;
 
+  .is-quality-low & {
+    background-image: none;
+  }
+
   &.is-selected { box-shadow: 0 0 0 $piece-border-size $color-secondary; }
-
-  .is-template-grid-square & {
-    &.is-max-1 {
-      @include is-max(64px, 64px, 'img/grid-square-minor-black.svg', center);
-    }
-
-    &.is-max-2 {
-      @include is-max(64px, 64px, 'img/grid-square-minor-black.svg', top left);
-    }
-
-    &.is-max-3 {
-      @include is-max(48px, 48px, 'img/grid-square-minor-black.svg', center);
-    }
-
-    &.is-max-4 {
-      @include is-max(32px, 32px, 'img/grid-square-minor-black.svg', top left);
-    }
-
-    &.is-max-5 {
-      @include is-max(25px, 25px, 'img/grid-square-minor-black.svg', center);
-    }
-  }
-
-  .is-template-grid-hex & {
-    &.is-max-1 {
-      @include is-max(110px, 64px, 'img/grid-hex-minor-black.svg', center);
-    }
-
-    &.is-max-2 {
-      @include is-max(110px, 64px, 'img/grid-hex-minor-black.svg', top left);
-    }
-
-    &.is-max-3 {
-      @include is-max(82px, 48px, 'img/grid-hex-minor-black.svg', center);
-    }
-
-    &.is-max-4 {
-      @include is-max(55px, 32px, 'img/grid-hex-minor-black.svg', top left);
-    }
-
-    &.is-max-5 {
-      @include is-max(43px, 25px, 'img/grid-hex-minor-black.svg', center);
-    }
-  }
 
   > .piece {
     left: 50%;
     position: absolute;
     top: 50%;
+
+    &.piece-token {
+      margin: 0;
+    }
   }
 
-  > .piece-token.is-max-1,
-  > .piece-token.is-max-2 {
-    margin: math.div($piece-border-size, 2);
-  }
+  @for $x from 1 through 2 {
+    &.is-max-#{$x} {
+      background-size: 768px;
 
-  > .is-max-1,
-  > .is-max-2 {
-    transform: translate(-50%, -50%) !important; // sass-lint:disable-line no-important
+      .piece {
+        transform: translate(-50%, -50%) !important; // sass-lint:disable-line no-important
+      }
+    }
   }
 
   @for $x from 3 through 32 {
-    > .is-max-#{$x} {
-      transform: scale(math.div(2, $x)) translate(-50%, -50%) !important; // sass-lint:disable-line no-important
-      transform-origin: top left;
+    &.is-max-#{$x} {
+      background-size: calc(1536px / $x);
+
+      .piece {
+        transform: scale(math.div(2, $x)) translate(-50%, -50%) !important; // sass-lint:disable-line no-important
+        transform-origin: top left;
+      }
     }
+  }
+}
+
+.is-quality-low {
+  .is-preview-upload,
+  .is-preview {
+    background-image: none !important; // sass-lint:disable-line no-important
   }
 }

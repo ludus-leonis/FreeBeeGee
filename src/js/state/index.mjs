@@ -21,7 +21,8 @@
 
 import {
   getStoreValue,
-  setStoreValue
+  setStoreValue,
+  brightness
 } from '../lib/utils.mjs'
 
 import {
@@ -50,14 +51,15 @@ import {
 } from '../view/error/index.mjs'
 
 import {
+  ID,
   FEATURE_DICEMAT,
+  TYPE_HEX,
   findPiece,
   populatePiecesDefaults,
   populateTemplateDefaults,
   clampToTableSize,
   nameToLayer,
-  sanitizePiecePatch,
-  ID
+  sanitizePiecePatch
 } from '../view/room/tabletop/tabledata.mjs'
 
 import {
@@ -142,6 +144,24 @@ export function setTableNo (no, sync = true) {
  */
 export function getTable (no = getTableNo()) {
   return tables[no]
+}
+
+/**
+ * Get current background image data.
+ */
+export function getBackground () {
+  const bgName = getServerPreference(PREFS.BACKGROUND)
+  const background = serverInfo.backgrounds.find(b => b.name === bgName) ?? serverInfo.backgrounds.find(b => b.name === 'Wood') ?? serverInfo.backgrounds[0]
+
+  if (!background.grid) { // determine matching grid file on the fly
+    const gridType = getRoomPreference(PREFS.GRID)
+    const color = brightness(background.color) < 92 ? 'white' : 'black'
+    const style = gridType > 1 ? 'major' : 'minor'
+    const shape = room.template?.type === TYPE_HEX ? 'hex' : 'square'
+    background.gridFile = `img/grid-${shape}-${style}-${color}.svg`
+  }
+
+  return background
 }
 
 /**

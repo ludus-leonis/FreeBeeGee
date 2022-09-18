@@ -9,9 +9,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] add plain token
 * [X] bcrypt tools page
 * [ ] library: delete assets UI
+* [X] use table background in token preview
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
+    * [X] filter + 180° bug in firefox
     * [X] store wallpaper via name not index
     * [ ] unify wording snapshot + template
     * [ ] don't select LOS after placement
@@ -31,9 +33,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
-* [ ] template-template
 * [ ] make side digit in 1x1x1 optional (= 1x1)
-* [ ] more backgrounds: snow/ice
 * [ ] simplify/automate more deployment steps (ongoing)
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
@@ -45,7 +45,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] bug: png maps make pieces flicker when cursor changes
-* [ ] pieces: inline-edit notes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] engine: overlay-grid-on-tile flag
@@ -60,17 +59,19 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui: doubleclick handling?
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
-* [ ] docs how to make table/template `.zip`s
+* [ ] docs: template-template
+* [ ] docs: how-to make table/template `.zip`s
 * [ ] API: check sides correspond to asset
 * [ ] API: hide .../data/... from URLs (via .htaccess)
 * [ ] API: obfuscate/hash room name
 * [ ] repo: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
-* [ ] bug: filter + 180° bug in firefox
+* [ ] more backgrounds: snow/ice
 
 ### rather later (unsorted, after v1)
 
+* pieces: inline-edit notes
 * better sticky notes (auto-size text)
 * bulk manipulation of assets (delete, edit, change type)
 * show even more infos in media browser

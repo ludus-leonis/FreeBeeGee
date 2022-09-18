@@ -30,7 +30,8 @@ import {
   unprettyName,
   sortByString,
   resizeImage,
-  bytesToIso
+  bytesToIso,
+  generateAnimal
 } from '../../../lib/utils.mjs'
 
 import {
@@ -48,7 +49,8 @@ import {
   setRoomPreference,
   addAsset,
   reloadRoom,
-  getTemplate
+  getTemplate,
+  getBackground
 } from '../../../state/index.mjs'
 
 import {
@@ -128,7 +130,7 @@ export function modalLibrary (xy) {
             </div>
             <div class="col-12 col-lg-6">
               <label for="upload-name">Name</label>
-              <input id="upload-name" name="name" type="text" placeholder="e.g. 'Sorcerer'" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9-]+( [a-zA-Z0-9-]+)*(, [a-zA-Z0-9-]+)?( [a-zA-Z0-9-]+)*$">
+              <input id="upload-name" name="name" type="text" placeholder="e.g. '${generateAnimal()}'" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9-]+( [a-zA-Z0-9-]+)*(, [a-zA-Z0-9-]+)?( [a-zA-Z0-9-]+)*$">
             </div>
             <div class="col-6 col-lg-1">
               <label for="upload-w">Width</label>
@@ -148,7 +150,7 @@ export function modalLibrary (xy) {
             </div>
             <div class="col-12">
               <label class="upload-group" for="upload-file">
-                <div class="upload-preview" title="Click to upload"></div>
+                <div class="is-preview-upload" title="Click to upload"></div>
                 <input id="upload-file" type="file" accept=".jpg,.jpeg,.png", class="is-hidden">
                 <input id="upload-color" type="hidden" class="is-hidden">
               </label>
@@ -160,6 +162,14 @@ export function modalLibrary (xy) {
         </div>
       </div>
     `
+
+    // bg image
+    const background = getBackground()
+    _('#modal').css({
+      '--fbg-tabletop-color': background.color,
+      '--fbg-tabletop-image': url(background.image),
+      '--fbg-tabletop-grid': url(background.gridFile)
+    })
 
     // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
@@ -210,7 +220,7 @@ function refreshTabs () {
   }
 
   // enable selection
-  _('#tabs-library .is-scale-2').on('click', click => {
+  _('#tabs-library .is-preview').on('click', click => {
     _(click.target).toggle('.is-selected')
 
     // update add button
@@ -334,7 +344,7 @@ function modalUpload () {
       type,
       w: Number(_('#upload-w').value),
       h: Number(_('#upload-h').value),
-      base64: _('.upload-preview .piece').node().style.backgroundImage
+      base64: _('.is-preview-upload .piece').node().style.backgroundImage
         .replace(/^.*,/, '')
         .replace(/".*/, '')
     }
@@ -534,13 +544,16 @@ function updatePreview (parseImage = false) {
  * Create a new preview piece.
  */
 function updatePreviewDOM (blob) {
-  const preview = _('.modal-library .upload-preview').remove('.is-*')
+  const preview = _('.modal-library .is-preview-upload').remove('.is-*').add('.is-preview-upload')
   preview.innerHTML = ''
 
   const type = _('#upload-type').value
   const material = _('#upload-material').value
   const w = _('#upload-w').value
   const h = _('#upload-h').value
+
+  if (w % 2 === 0) preview.add('.is-even-x')
+  if (h % 2 === 0) preview.add('.is-even-y')
 
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
@@ -566,6 +579,8 @@ function updatePreviewDOM (blob) {
     preview.add('.is-inflate-2x')
   }
 
+  // asdf grid offset odd/even
+
   if (blob) { // image loaded
     piece.css({
       backgroundImage: `var(--fbg-material), url("${blob}")`,
@@ -574,9 +589,15 @@ function updatePreviewDOM (blob) {
   } else { // show upload placeholder
     piece.css({
       backgroundImage: url('img/upload.svg'),
-      backgroundSize: '25%',
       backgroundRepeat: 'no-repeat'
     })
+    if (w <= 1 || h <= 1) {
+      piece.css({ backgroundSize: '32px' })
+    } else if (w <= 8 || h <= 8) {
+      piece.css({ backgroundSize: '64px' })
+    } else {
+      piece.css({ backgroundSize: '128px' })
+    }
   }
 
   preview.add(piece)
@@ -609,10 +630,11 @@ function assetToPreview (asset) {
     }
   }
 
-  const max = _('.is-scale-2').create(node)
+  const max = _('.is-preview').create(node)
+  if (asset.w % 2 === 0) max.add('.is-even-x')
+  if (asset.h % 2 === 0) max.add('.is-even-y')
 
   const card = _('.col-6.col-sm-4.col-md-3.col-lg-2.col-card').create(max)
-  node.add('.is-max-' + Math.max(asset.w, asset.h))
   max.add('.is-max-' + Math.max(asset.w, asset.h))
   let tag = ''
   if (asset.w > 2 || asset.h > 2) {

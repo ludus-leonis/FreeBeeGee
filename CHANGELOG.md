@@ -9,12 +9,14 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added table zoom: use '+'/'-' or set the zoom in the [S]ettings
 * added 'Dark', 'Leather', 'Sand' and 'Space' backgrounds
-* added token backsides (again)
+* added default token backsides (again)
 
 ### Other changes
 
 * added plain token
 * added a bcrypt tool at URL `/tools`
+* improved library previews
+* improved grids
 * improved background image quality
 
 

@@ -700,7 +700,16 @@ export function generateUsername () {
 export function generateName () {
   return adjectives[Math.floor(Math.random() * adjectives.length)] +
   verbs[Math.floor(Math.random() * verbs.length)] +
-  animals[Math.floor(Math.random() * animals.length)]
+  generateAnimal
+}
+
+/**
+ * Generate a name like 'hilariousGazingPenguin'.
+ *
+ * @return {String} Random name constisting of 3 parts (adjective, verb, noun).
+ */
+export function generateAnimal () {
+  return animals[Math.floor(Math.random() * animals.length)]
 }
 
 const fallbackStore = new Map() // in-memory fallback 'store'

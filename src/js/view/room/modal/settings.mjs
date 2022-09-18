@@ -321,7 +321,10 @@ export function modalSettings () {
 
   _('#table-grid').on('change', () => toggleGrid(Number.parseInt(_('#table-grid').value)))
   _('#table-zoom').on('change', () => setupZoom(Number(_('#table-zoom').value)))
-  _('#table-background').on('change', () => setupBackground(_('#table-background').value))
+  _('#table-background').on('change', () => {
+    setServerPreference(PREFS.BACKGROUND, _('#table-background').value)
+    setupBackground()
+  })
   _('#table-sub').on('change', () => setTableNo(Number(_('#table-sub').value)))
 
   _('#btn-table-tl').on('click', click => handleAlign(click, -1, -1))

@@ -58,11 +58,9 @@ import {
 import {
   loadRoom,
   getRoom,
-  getServerInfo,
   PREFS,
   cleanupStore,
   getServerPreference,
-  setServerPreference,
   getRoomPreference,
   setRoomPreference,
   getTablePreference,
@@ -70,7 +68,8 @@ import {
   getTableNo,
   setTableNo,
   getTemplate,
-  getToken
+  getToken,
+  getBackground
 } from '../../state/index.mjs'
 
 import {
@@ -126,10 +125,6 @@ import {
   modalSettings,
   changeQuality
 } from '../../view/room/modal/settings.mjs'
-
-import {
-  brightness
-} from '../../lib/utils.mjs'
 
 import {
   DEMO_MODE
@@ -422,19 +417,12 @@ export function setupZoom (zoom) {
 }
 
 /**
- * Set backround to given index + store it as preference.
- *
- * @param {String} bgName Name of background.
- * @param {Boolean} showGrid If true, the overlay grid will be drawn.
+ * Set backround to tabletop.
  */
-export function setupBackground (
-  bgName = getServerPreference(PREFS.BACKGROUND),
-  gridType = getRoomPreference(PREFS.GRID)
-) {
+export function setupBackground () {
   const room = getRoom()
-  const server = getServerInfo()
-
-  const background = server.backgrounds.find(b => b.name === bgName) ?? server.backgrounds.find(b => b.name === 'Wood') ?? server.backgrounds[0]
+  const gridType = getRoomPreference(PREFS.GRID)
+  const background = getBackground()
 
   updateRoom().css({
     '--fbg-tabletop-color': background.color,
@@ -445,12 +433,8 @@ export function setupBackground (
   _('#tabletop').remove('.has-grid', '--fbg-tabletop-grid')
   if (gridType > 0) {
     _('#tabletop').add('.has-grid')
-
-    const color = brightness(background.color) < 92 ? 'white' : 'black'
-    const style = gridType > 1 ? 'major' : 'minor'
-    const shape = room.template?.type === TYPE_HEX ? 'hex' : 'square'
     _('#tabletop').css({
-      '--fbg-tabletop-grid': url(`img/grid-${shape}-${style}-${color}.svg`),
+      '--fbg-tabletop-grid': url(background.gridFile),
       '--fbg-grid-x': room.template?.type === TYPE_HEX ? '110px' : '64px'
     })
   }
@@ -461,10 +445,6 @@ export function setupBackground (
     '--fbg-color-scroll-fg': background.scroller,
     '--fbg-color-scroll-bg': background.color
   })
-
-  // store for future reference
-  setServerPreference(PREFS.BACKGROUND, background.name)
-  setRoomPreference(PREFS.GRID, gridType)
 }
 
 /**

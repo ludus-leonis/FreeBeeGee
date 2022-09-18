@@ -41,7 +41,6 @@
   height: zoom(var(--fbg-tabletop-height));
   overflow: hidden;
   position: relative;
-  transition: width $fbg-transition, height $fbg-transition, background-size $fbg-transition;
   width: zoom(var(--fbg-tabletop-width));
 
   &.is-delay-transition-none {
