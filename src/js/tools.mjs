@@ -57,7 +57,6 @@ export function setupBcrypt () {
 function hash () {
   const in1 = _('#tool-in1').value.trim()
   const in2 = _('#tool-in2').value.trim()
-  console.log(in1, in2)
 
   if (in1 === in2 && in1.length > 0) {
     _('#tool-out').value = bcrypt.hashSync(in1, 12)

@@ -15,6 +15,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added plain token
 * added a bcrypt tool at URL `/tools`
+* fixed LOS selected
 * improved library previews
 * improved grids
 * improved background image quality

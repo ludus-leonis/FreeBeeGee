@@ -738,7 +738,7 @@ function createPiece (piece, select = false, sync = true) {
   if (piece.l) piece.l = nameToLayer(piece.l)
   return apiPostPiece(room.name, getTableNo(), stripPiece(piece), getToken())
     .then(piece => {
-      selectionAdd(piece.id, true)
+      if (select) selectionAdd(piece.id, true)
       return piece.id
     })
     .catch(error => apiError(error, room.name))

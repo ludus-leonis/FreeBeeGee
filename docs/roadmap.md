@@ -16,7 +16,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] filter + 180° bug in firefox
     * [X] store wallpaper via name not index
     * [ ] unify wording snapshot + template
-    * [ ] don't select LOS after placement
+    * [X] don't select LOS after placement
     * [ ] wrong mouse curson on notes in (measure mode)
     * [ ] MMB drag sometimes sticks / cursor fix
     * [ ] simplify/automate more deployment steps (ongoing)
