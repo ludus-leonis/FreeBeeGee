@@ -160,7 +160,7 @@ $piece-rotate: 1deg;
   // --- label ellipsis ---
 
   .label.ellipsis {
-    max-width: 1.5 * $piece-tile-size;
+    max-width: zoom(1.5 * $piece-tile-size);
     overflow: hidden;
     position: absolute;
     text-overflow: ellipsis;
@@ -169,7 +169,7 @@ $piece-rotate: 1deg;
   @for $x from 2 through 32 {
     &.is-w-#{$x} {
       .label.ellipsis {
-        max-width: $x * $piece-tile-size;
+        max-width: zoom($x * $piece-tile-size);
       }
 
       &:hover .label {
