@@ -68,5 +68,5 @@
 }
 
 .cursor-cross {
-  cursor: crosshair;
+  cursor: crosshair !important; // sass-lint:disable-line no-important
 }

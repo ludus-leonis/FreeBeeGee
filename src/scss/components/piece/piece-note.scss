@@ -50,6 +50,10 @@ $piece-note-rotate: 4deg;
     cursor: grabbing;
   }
 
+  .cursor-cross & {
+    cursor: crosshair;
+  }
+
   // --- reduce text size on small notes ---
 
   &.is-w-1 {
