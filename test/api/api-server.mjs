@@ -48,7 +48,7 @@ function testApiServerInfo (api) {
     expect(body.backgrounds.length).to.be.gte(5)
     expect(body.backgrounds[body.backgrounds.length - 1]).to.be.an('object')
     expect(body.backgrounds[body.backgrounds.length - 1].name).to.be.eql('Wood')
-    expect(body.backgrounds[body.backgrounds.length - 1].color).to.be.eql('#57514d')
+    expect(body.backgrounds[body.backgrounds.length - 1].color).to.be.eql('#524A43')
     expect(body.backgrounds[body.backgrounds.length - 1].scroller).to.be.eql('#3e3935')
     expect(body.backgrounds[body.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
   })
