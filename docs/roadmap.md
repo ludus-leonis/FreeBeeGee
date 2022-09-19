@@ -22,7 +22,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] simplify/automate more deployment steps (ongoing)
     * [ ] html + notes
     * [X] rename assets n-wood to n.wood
-    * [ ] handle assets with missing or duplicate sides
+    * [ ] handle assets with duplicate sides
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial

@@ -21,6 +21,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * improved library previews
 * improved grids
 * improved background image quality
+* improved duplicate asset handling
 
 
 ## v0.17.0 - Rotating Rook

@@ -603,6 +603,7 @@ class FreeBeeGeeAPI
             $lastAsset = null;
             foreach (glob($roomFolder . 'assets/' . $type . '/*') as $filename) {
                 $asset = FreeBeeGeeAPI::fileToAsset(basename($filename));
+                $mediaBase = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
 
                 if (
                     $lastAsset === null
@@ -610,11 +611,12 @@ class FreeBeeGeeAPI
                     || $lastAsset->w !== $asset->w
                     || $lastAsset->h !== $asset->h
                 ) {
+                    $idBase = $type . '/' . $mediaBase;
+
                     // this is a new asset. write out the old.
                     if ($lastAsset !== null) {
                         array_push($assets[$type], $lastAsset);
                     }
-                    $idBase = $type . '/' . $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
                     $lastAsset = (object) [
                         'id' => $this->generateId(abs(crc32($idBase))), // avoid neg. values on 32bit systems
                         'name' => $asset->name,
@@ -632,9 +634,10 @@ class FreeBeeGeeAPI
                     $lastAsset->mask = $asset->media[0];
                 } elseif ((int)$asset->s === 0) { // this is a background layer
                     $lastAsset->base = $asset->media[0];
-                } else {
-                    // this is another side of the same asset. add it to the existing one.
-                    array_push($lastAsset->media, $asset->media[0]);
+                } else { // another side of the same asset: add it to the existing one
+                    if (!$this->arrayContainsPrefix($lastAsset->media, $mediaBase)) { // no duplicates for same side
+                        array_push($lastAsset->media, $asset->media[0]);
+                    }
                 }
             }
             if ($lastAsset !== null) { // don't forget the last one!
@@ -2553,5 +2556,25 @@ class FreeBeeGeeAPI
             }
         }
         return $trimmed;
+    }
+
+    /**
+     * Check if a string array contains an item with a prefix.
+     *
+     * @param string $array Array of string to check.
+     * @param string $prefix (String) Prefix to look for.
+     * @return boolean True if one array element starts with $prefix.
+     */
+    public static function arrayContainsPrefix(
+        $array,
+        $prefix
+    ) {
+        $length = strlen($prefix);
+        foreach ($array as $item) {
+            if (substr($item, 0, $length) === $prefix) {
+                return true;
+            }
+        }
+        return false;
     }
 }

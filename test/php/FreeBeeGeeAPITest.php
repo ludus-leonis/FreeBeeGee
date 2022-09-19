@@ -1052,4 +1052,22 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(null, FreeBeeGeeAPI::get($o, 'undefined'));
         $this->assertEquals(null, FreeBeeGeeAPI::get($o, 'One'));
     }
+
+    public function testArrayContainsPrefix(): void
+    {
+        $array = [
+            'entryOne',
+            'entryTwo',
+            'entryThree'
+        ];
+        $this->assertEquals(true, FreeBeeGeeAPI::arrayContainsPrefix($array, ''));
+        $this->assertEquals(true, FreeBeeGeeAPI::arrayContainsPrefix($array, 'entry'));
+        $this->assertEquals(true, FreeBeeGeeAPI::arrayContainsPrefix($array, 'entryOne'));
+        $this->assertEquals(true, FreeBeeGeeAPI::arrayContainsPrefix($array, 'entryT'));
+        $this->assertEquals(true, FreeBeeGeeAPI::arrayContainsPrefix($array, 'entryThree'));
+        $this->assertEquals(false, FreeBeeGeeAPI::arrayContainsPrefix($array, 'ntry'));
+        $this->assertEquals(false, FreeBeeGeeAPI::arrayContainsPrefix($array, 'Three'));
+    }
+
+
 }
