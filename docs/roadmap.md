@@ -20,7 +20,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] wrong mouse curson on notes in (measure mode)
     * [X] rename assets n-wood to n.wood
     * [X] handle assets with duplicate sides
-    * [ ] spinner button label
+    * [X] spinner button label
     * [ ] MMB drag sometimes sticks / cursor fix
     * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] review docs

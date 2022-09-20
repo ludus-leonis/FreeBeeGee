@@ -20,6 +20,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed wrong cursor on notes in measure mode
 * fixed asset filenames
 * fixed wrong color names in autoconverted snapshots
+* fixed spinner button text
 * improved library previews
 * improved grids
 * improved background image quality

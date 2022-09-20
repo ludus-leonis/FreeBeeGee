@@ -123,11 +123,8 @@ export function modalLibrary (xy) {
           <div class="container"><div id="tab-overlays" class="row"></div></div>
           <div class="container"><div id="tab-tokens" class="row"></div></div>
           <div class="container"><div id="tab-other" class="row"></div></div>
-          <form class="container"><div id="tab-upload" class="row">
+          <form class="container spacing-small"><div id="tab-upload" class="row">
             <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
-            <div class="col-12">
-              <h3>Upload piece</h3>
-            </div>
             <div class="col-12 col-lg-6">
               <label for="upload-name">Name</label>
               <input id="upload-name" name="name" type="text" placeholder="e.g. '${generateAnimal()}'" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9-]+( [a-zA-Z0-9-]+)*(, [a-zA-Z0-9-]+)?( [a-zA-Z0-9-]+)*$">
