@@ -8,8 +8,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] token back sides
 * [X] add plain token
 * [X] bcrypt tools page
-* [ ] library: delete assets UI
 * [X] use table background in token preview
+* [ ] markdown notes
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
@@ -18,12 +18,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] unify wording snapshot + template
     * [X] don't select LOS after placement
     * [X] wrong mouse curson on notes in (measure mode)
-    * [ ] MMB drag sometimes sticks / cursor fix
-    * [ ] simplify/automate more deployment steps (ongoing)
-    * [ ] html + notes
     * [X] rename assets n-wood to n.wood
     * [X] handle assets with duplicate sides
     * [ ] spinner button label
+    * [ ] MMB drag sometimes sticks / cursor fix
+    * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
@@ -34,6 +33,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] library: delete assets UI
 * [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] simplify/automate more deployment steps (ongoing)
 * [ ] ui: clipboard ctrl+c/v/x between tables
