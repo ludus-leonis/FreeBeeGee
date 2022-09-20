@@ -52,12 +52,12 @@ export function apiGetServerInfo () {
 }
 
 /**
- * API GET /templates/
+ * API GET /snapshots/
  *
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetTemplates () {
-  return getJson([200], 'api/templates/')
+export function apiGetSnapshots () {
+  return getJson([200], 'api/snapshots/')
 }
 
 /**
@@ -111,18 +111,18 @@ export function apiGetRoomDigest (roomName, token) {
  * API POST /rooms/
  *
  * @param {Object} room Room meta-JSON/Object to send.
- * @param {Object} snapshot File input or null if no snapshot is to be uploaded.
+ * @param {Object} blob File input or null if no snapshot is to be uploaded.
  * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostRoom (room, snapshot, token) {
+export function apiPostRoom (room, blob, token) {
   const formData = new FormData()
   formData.append('name', room.name)
-  if (room.template) formData.append('template', room.template)
+  if (room.snapshot) formData.append('snapshot', room.snapshot)
   if (room.auth) formData.append('auth', room.auth)
   if (room.password) formData.append('password', room.password)
   if (room.convert !== undefined) formData.append('convert', room.convert)
-  if (snapshot) formData.append('snapshot', snapshot)
+  if (blob) formData.append('blob', blob)
 
   return fetchOrThrow([201], 'api/rooms/', {
     method: 'POST',
@@ -142,15 +142,15 @@ export function apiDeleteRoom (roomName, token) {
 }
 
 /**
- * API PATCH /rooms/:roomName/template/
+ * API PATCH /rooms/:roomName/setup/
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Object} patch Partial piece JSON/Object to send.
  * @param {String} token API access token.
  * @return {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchTemplate (roomName, patch, token) {
-  return patchJson([200], `api/rooms/${roomName}/template/`, patch, token)
+export function apiPatchSetup (roomName, patch, token) {
+  return patchJson([200], `api/rooms/${roomName}/setup/`, patch, token)
 }
 
 /**

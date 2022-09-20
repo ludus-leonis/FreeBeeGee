@@ -32,7 +32,7 @@ import {
   apiGetRoom,
   apiPostRoom,
   apiDeleteRoom,
-  apiPatchTemplate,
+  apiPatchSetup,
   apiPatchPiece,
   apiPatchPieces,
   apiDeletePiece,
@@ -56,7 +56,7 @@ import {
   TYPE_HEX,
   findPiece,
   populatePiecesDefaults,
-  populateTemplateDefaults,
+  populateSetupDefaults,
   clampToTableSize,
   nameToLayer,
   sanitizePiecePatch
@@ -105,12 +105,12 @@ export function getRoom () {
 }
 
 /**
- * Get the current table's template (cached).
+ * Get the current table's setup (cached).
  *
- * @return {Object} Current room's template metadata.
+ * @return {Object} Current room's setup metadata.
  */
-export function getTemplate () {
-  return getRoom()?.template
+export function getSetup () {
+  return getRoom()?.setup
 }
 
 /**
@@ -157,7 +157,7 @@ export function getBackground () {
     const gridType = getRoomPreference(PREFS.GRID)
     const color = brightness(background.color) < 92 ? 'white' : 'black'
     const style = gridType > 1 ? 'major' : 'minor'
-    const shape = room.template?.type === TYPE_HEX ? 'hex' : 'square'
+    const shape = room.setup?.type === TYPE_HEX ? 'hex' : 'square'
     background.gridFile = `img/grid-${shape}-${style}-${color}.svg`
   }
 
@@ -165,9 +165,9 @@ export function getBackground () {
 }
 
 /**
- * Get the current table's template (cached).
+ * Get the current table's library (cached).
  *
- * @return {Object} Current room's template metadata.
+ * @return {Object} Current room's library metadata.
  */
 export function getLibrary () {
   return getRoom()?.library
@@ -345,15 +345,15 @@ export function loadRoom (name, t) {
 }
 
 /**
- * Update the current template.
+ * Update the current setup.
  *
  * Supports partial updates.
  *
- * @param {Object} template (Partial) new template data.
+ * @param {Object} setup (Partial) new setup data.
  * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function patchTemplate (template, sync = true) {
-  return apiPatchTemplate(room.name, template, getToken())
+export function patchSetup (setup, sync = true) {
+  return apiPatchSetup(room.name, setup, getToken())
     .catch(error => apiError(error, room.name, [404]))
     .finally(() => {
       if (sync) syncNow()
@@ -653,7 +653,7 @@ export function _setTable (no, data) {
  */
 export function _setRoom (data) {
   if (data) {
-    data.template = populateTemplateDefaults(data.template)
+    data.setup = populateSetupDefaults(data.setup)
   }
 
   room = data

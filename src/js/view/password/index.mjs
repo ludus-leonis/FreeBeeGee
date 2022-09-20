@@ -36,7 +36,7 @@ export function passwordView (name, first) {
   createScreen(
     'Room password required',
     `
-      <div class="page-create">
+      <div class="page-setup">
         <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
         <input id="mode" class="mode is-hidden" type="checkbox">
         <p class="is-wrapping">

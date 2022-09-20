@@ -60,7 +60,7 @@ function testApiSnapshotClassic (api, version, room) {
     const entries = zipToc(buffer)
     expect(entries.length).to.be.gte(100)
     expect(entries).to.contain('LICENSE.md')
-    expect(entries).to.contain('template.json')
+    expect(entries).to.contain('setup.json')
     expect(entries).to.contain('tables/1.json')
     expect(entries).to.contain('assets/token/chess.bishop.1x1x1.0.wood.svg')
     expect(entries).not.to.contain('room.json')
@@ -96,7 +96,7 @@ function testApiSnapshotRPG (api, version, room) {
     const entries = zipToc(buffer)
     expect(entries.length).to.be.gte(100)
     expect(entries).to.contain('LICENSE.md')
-    expect(entries).to.contain('template.json')
+    expect(entries).to.contain('setup.json')
     expect(entries).to.contain('tables/1.json')
     expect(entries).to.contain('assets/tile/room.4x4.4x4x1.808674.paper.jpg')
     expect(entries).not.to.contain('room.json')
@@ -118,7 +118,7 @@ function testApiSnapshotHex (api, version, room) {
     const entries = zipToc(buffer)
     expect(entries.length).to.be.gte(100)
     expect(entries).to.contain('LICENSE.md')
-    expect(entries).to.contain('template.json')
+    expect(entries).to.contain('setup.json')
     expect(entries).to.contain('tables/1.json')
     expect(entries).to.contain('assets/tile/map.B.5x4x1.transparent.png')
     expect(entries).not.to.contain('room.json')
@@ -141,7 +141,7 @@ function testApiSnapshotTutorial (api, version, room) {
     expect(entries.length).to.be.gte(225)
     expect(entries.length).to.be.lte(275)
     expect(entries).to.contain('LICENSE.md')
-    expect(entries).to.contain('template.json')
+    expect(entries).to.contain('setup.json')
     expect(entries).to.contain('tables/6.json')
     expect(entries).to.contain('assets/token/orc.1x1x1.6.wood.svg')
     expect(entries).not.to.contain('room.json')
@@ -183,7 +183,7 @@ function testApiSnapshotVersions (api, version, room) {
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      zip.addFile('template.json', Buffer.from(`{
+      zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
         "version": "${p.version}",
         "engine": "${v[0]}.${v[1]}.0"
@@ -200,7 +200,7 @@ function testApiSnapshotVersions (api, version, room) {
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      zip.addFile('template.json', Buffer.from(`{
+      zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
         "version": "${p.version}",
         "engine": "${v[0]}.${v[1]}.${v[2]}"
@@ -217,7 +217,7 @@ function testApiSnapshotVersions (api, version, room) {
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      zip.addFile('template.json', Buffer.from(`{
+      zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
         "version": "${p.version}",
         "engine": "${v[0]}.${v[1]}.${v[2] - 1}"
@@ -234,7 +234,7 @@ function testApiSnapshotVersions (api, version, room) {
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      zip.addFile('template.json', Buffer.from(`{
+      zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
         "version": "${p.version}",
         "engine": "${v[0]}.${v[1]}.${v[2] + 1}"
@@ -251,7 +251,7 @@ function testApiSnapshotVersions (api, version, room) {
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      zip.addFile('template.json', Buffer.from(`{
+      zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
         "version": "${p.version}",
         "engine": "${v[0] + 1}.${v[1]}.0"
@@ -268,7 +268,7 @@ function testApiSnapshotVersions (api, version, room) {
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      zip.addFile('template.json', Buffer.from(`{
+      zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
         "version": "${p.version}",
         "engine": "${v[0] - 1}.${v[1]}.0"
@@ -285,7 +285,7 @@ function testApiSnapshotVersions (api, version, room) {
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      zip.addFile('template.json', Buffer.from(`{
+      zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
         "version": "${p.version}",
         "engine": "${v[0]}.${v[1] + 1}.0"
@@ -302,7 +302,7 @@ function testApiSnapshotVersions (api, version, room) {
     () => { return room },
     () => { return 'apitests' },
     () => zipCreate(zip => {
-      zip.addFile('template.json', Buffer.from(`{
+      zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
         "version": "${p.version}",
         "engine": "${v[0]}.${v[1] - 1}.0"

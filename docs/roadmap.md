@@ -15,14 +15,15 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bugfixes + refactoring
     * [X] filter + 180° bug in firefox
     * [X] store wallpaper via name not index
-    * [ ] unify wording snapshot + template
+    * [X] unify wording snapshot + template
     * [X] don't select LOS after placement
     * [X] wrong mouse curson on notes in (measure mode)
     * [ ] MMB drag sometimes sticks / cursor fix
     * [ ] simplify/automate more deployment steps (ongoing)
     * [ ] html + notes
     * [X] rename assets n-wood to n.wood
-    * [ ] handle assets with duplicate sides
+    * [X] handle assets with duplicate sides
+    * [ ] spinner button label
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
@@ -39,6 +40,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
 * [ ] automated deployment tests for new zip/tgz packages after build
+* [ ] snapshot download for demo mode
 * [ ] ui: move dice more
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: open edit window on note create
@@ -60,7 +62,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
 * [ ] docs: template-template
-* [ ] docs: how-to make table/template `.zip`s
+* [ ] docs: how-to make snapshot `.zip`s
 * [ ] API: check sides correspond to asset
 * [ ] API: hide .../data/... from URLs (via .htaccess)
 * [ ] API: obfuscate/hash room name

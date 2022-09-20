@@ -24,9 +24,9 @@ You have to set a password first (or disable it). See the [install instructions]
 
 ## How to use snapshots
 
-A snapshot is a `*.zip` files (a.k.a. savegame or backup) of your room. You can obtain it by using the download icon on the bottom left. You can use it to continue your game on the same or a different server - if the server admin enabled snapshot uploads. See the [install instructions](INSTALL.md) how to do this.
+A snapshot is a `*.zip` files (a.k.a. savegame or backup) of your room. You can obtain it by using the download icon on the bottom left. You can use it to continue your game on the same or a different server - if the other server admin enabled snapshot uploads. See the [install instructions](INSTALL.md) how to do this.
 
-Assuming snapshot upload is enabled on your server, you will see the sentence *You may also upload a snapshot instead* below the template dropdown:
+Assuming snapshot upload is enabled on a server, you will see the sentence *You may also upload a snapshot instead* below the snapshot dropdown:
 
 <img src="troubleshooting-snapshot1.png" width="320px">
 
@@ -44,20 +44,20 @@ This can have multiple reasons. Hover on the (?) icon of the error message to fi
 * PHP might limit uploads. Check your php.ini. Managed web hosters might also have an option for that in their web console.
 * FreeBeeGee might limit uploads. Check your `api/data/server.json` to increase the limit.
 
-## How to permanently install room templates
+## How to permanently install snapshots
 
-You can install any snapshot as room template. Both are `*.zip` files with pre-configured assets and table layouts. You can obtain a snapshot by downloading it from any room you have joined via the icon on the bottom left.
+You can install any snapshot on your server. They are just `*.zip` files with pre-configured assets and table layouts. You can obtain a snapshot by downloading it from any room you have joined via the icon on the bottom left.
 
-* Rename the `*.zip` file to something meaningfull, e.g. `Dungeon.zip` or `Chess.zip`.
-* Copy the renamed file into `.../api/data/templates/`.
+* Rename the `*.zip` file to something meaningfull, e.g. `Dungeon.zip` or `Chess.zip`. Snapshot names must not have spaces.
+* Copy the renamed file into `.../api/data/snapshots/`.
 
-Now *Dungeon* or *Chess* should appear in the template dropdown when you create new rooms.
+Now *Dungeon* or *Chess* should appear in the snapshot dropdown when you set up new rooms.
 
-In case the snapshot was from a different FreeBeeGee version, it will be converted each time you create a room with it. To avoid having to do this every time, save a new snapshot after opening the room, and repeat the steps above with the new `*.zip`.
+In case the snapshot was from a different FreeBeeGee version, it will be converted each time you set up a room with it. To avoid having to do this every time, save a new snapshot after opening the room, and repeat the steps above with the new `*.zip`.
 
-## Creating custom templates
+## Creating custom snapshots
 
-You can create custom game templates from scratch, too. Just create a `*.zip` file that follows the [FreeBeeGee snapshot format](snapshots.md). You can then upload your zip like any other snapshot, or install it as template on the serve (see above).
+You can create custom game snapshots from scratch, too. Just create a `*.zip` file that follows the [FreeBeeGee snapshot format](snapshots.md). You can then upload your zip like any other snapshot, or install it permanently on the server (see above).
 
 ## Pieces are missing after converting a snapshot
 

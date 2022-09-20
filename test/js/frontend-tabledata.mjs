@@ -38,7 +38,7 @@ import {
   getPieceBounds,
   findPiecesWithin,
   findExpiredPieces,
-  populateTemplateDefaults,
+  populateSetupDefaults,
   populatePieceDefaults,
   populatePiecesDefaults,
   sortZ,
@@ -315,7 +315,7 @@ describe('Frontend - tabledata.mjs', function () {
       id: 'fe008a4d',
       a: 'f45f27b5',
       b: 'blind',
-      c: [-1, -9], // 3 colors in template
+      c: [-1, -9], // 3 colors in setup
       x: -111,
       y: -222,
       z: -333,
@@ -351,7 +351,7 @@ describe('Frontend - tabledata.mjs', function () {
       id: 'fe008a4d',
       a: 'f45f27b5',
       b: 'blind',
-      c: [4, 10], // 3 colors in template
+      c: [4, 10], // 3 colors in setup
       x: 11111,
       y: 22222,
       z: 33333,
@@ -385,8 +385,8 @@ describe('Frontend - tabledata.mjs', function () {
     })
   })
 
-  it('populateTemplateDefaults()', function () {
-    const t1 = populateTemplateDefaults({})
+  it('populateSetupDefaults()', function () {
+    const t1 = populateSetupDefaults({})
     expect(Object.keys(t1)).to.have.members(['borders', '_meta'])
     expect(t1.borders).to.be.an('array')
     expect(t1._meta).to.be.an('object')
@@ -899,7 +899,7 @@ const roomJSON = `
     }],
     "badge": []
   },
-  "template": {
+  "setup": {
     "type": "grid-square",
     "version": "0.9.0-dev",
     "engine": "^0.3.0",
@@ -927,7 +927,7 @@ const roomJSON = `
       "value": "#ffffff"
     }]
   },
-  "credits": "test template",
+  "credits": "test snapshot",
   "width": 3072,
   "height": 2048
 }

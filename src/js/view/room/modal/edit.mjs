@@ -24,7 +24,7 @@ import {
   FLAG_NO_DELETE,
   FLAG_NO_CLONE,
   getLibrary,
-  getTemplate,
+  getSetup,
   editPiece
 } from '../../../state/index.mjs'
 
@@ -119,7 +119,7 @@ export function modalEdit (piece) {
 
     // rotate
     const pieceR = _('#piece-r')
-    for (let r = 0; r < 360; r += getTemplate().type === TYPE_HEX ? 60 : 90) {
+    for (let r = 0; r < 360; r += getSetup().type === TYPE_HEX ? 60 : 90) {
       const option = _('option').create(r === 0 ? '0°' : r + '°')
       option.value = r
       if (r === piece.r) option.selected = true
@@ -143,7 +143,7 @@ export function modalEdit (piece) {
 
     // piece color
     const pieceColor = _('#piece-color')
-    const template = getTemplate()
+    const setup = getSetup()
     if (piece.l === LAYER_NOTE) {
       for (let c = 0; c < stickyNoteColors.length; c++) {
         const option = _('option').create(stickyNoteColors[c].name)
@@ -159,8 +159,8 @@ export function modalEdit (piece) {
       pieceColor.add(option)
 
       // other colors
-      for (let c = 1; c <= template.colors.length; c++) {
-        const option = _('option').create(template.colors[c - 1].name)
+      for (let c = 1; c <= setup.colors.length; c++) {
+        const option = _('option').create(setup.colors[c - 1].name)
         option.value = c
         if (c === piece.c[0]) option.selected = true
         pieceColor.add(option)
@@ -182,8 +182,8 @@ export function modalEdit (piece) {
       borderColor.add(option)
 
       // other colors
-      for (let c = 1; c <= template.borders.length; c++) {
-        const option = _('option').create(template.borders[c - 1].name)
+      for (let c = 1; c <= setup.borders.length; c++) {
+        const option = _('option').create(setup.borders[c - 1].name)
         option.value = c
         if (c === piece.c[1]) option.selected = true
         borderColor.add(option)

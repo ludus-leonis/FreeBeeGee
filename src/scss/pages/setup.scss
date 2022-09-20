@@ -1,4 +1,4 @@
-.page-create {
+.page-setup {
   .mode {
     opacity: 0;
     position: absolute;
@@ -10,9 +10,9 @@
     display: none;
   }
 
-  .mode:checked ~ .template-label,
-  .mode:checked ~ .template,
-  .mode:checked ~ .template-text {
+  .mode:checked ~ .snapshot-label,
+  .mode:checked ~ .snapshot,
+  .mode:checked ~ .snapshot-text {
     display: none;
   }
 

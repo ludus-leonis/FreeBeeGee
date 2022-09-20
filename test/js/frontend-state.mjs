@@ -36,7 +36,7 @@ import {
   getTableNo,
   setTableNo,
   getRoom,
-  getTemplate,
+  getSetup,
   getLibrary,
   isTabActive,
   setTabActive,
@@ -47,7 +47,7 @@ import {
   setTablePreference,
   getTablePreference,
   colorPiece,
-  patchTemplate,
+  patchSetup,
   movePiece,
   rotatePiece,
   numberPiece,
@@ -90,7 +90,7 @@ describe('Frontend - state.mjs - basics', function () {
     expect(serverInfo.version).to.be.eql('0.13.0')
     expect(serverInfo.engine).to.be.eql('2.0.0')
     expect(serverInfo.ttl).to.be.eql(48)
-    expect(serverInfo.defaultTemplate).to.be.eql('Tutorial')
+    expect(serverInfo.defaultSnapshot).to.be.eql('Tutorial')
     expect(serverInfo.snapshotUploads).to.be.eql(true)
     expect(serverInfo.freeRooms).to.be.eql(127)
     expect(serverInfo.root).to.be.eql('/api')
@@ -103,16 +103,16 @@ describe('Frontend - state.mjs - basics', function () {
     expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
   })
 
-  it('getRoom() getTemplate() getLibrary()', function () {
+  it('getRoom() getSetup() getLibrary()', function () {
     _setRoom(undefined)
     expect(getRoom()).to.be.eql(undefined)
-    expect(getTemplate()).to.be.eql(undefined)
+    expect(getSetup()).to.be.eql(undefined)
 
     _setRoom(JSON.parse(roomJSON))
     expect(getRoom()).to.be.an('object')
     expect(getRoom().id).to.be.eql('f9d05a1e')
-    expect(getTemplate()).to.be.an('object')
-    expect(getTemplate().type).to.be.eql('grid-square')
+    expect(getSetup()).to.be.an('object')
+    expect(getSetup().type).to.be.eql('grid-square')
     expect(getLibrary()).to.be.an('object')
     expect(getLibrary().overlay).to.be.an('array')
     expect(getLibrary().tile).to.be.an('array')
@@ -178,13 +178,13 @@ describe('Frontend - state.mjs - basics', function () {
 describe('Frontend - state.mjs - API request JSON', function () {
   let r
 
-  it('patchTemplate()', async function () {
+  it('patchSetup()', async function () {
     _setRoom(JSON.parse(roomJSON))
     setTableNo(2, false)
 
-    const r = splitRequest(await patchTemplate({ test: 1 }, false))
+    const r = splitRequest(await patchSetup({ test: 1 }, false))
     expect(r.method).to.be.eql('PATCH')
-    expect(r.path).to.match(/^api\/rooms\/testroom\/template\/$/)
+    expect(r.path).to.match(/^api\/rooms\/testroom\/setup\/$/)
     expect(Object.keys(r.body)).to.have.members(['test'])
   })
 
@@ -429,7 +429,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   // it('fetchTable()', async function () {}) // can't test
 })
 
-const serverJSON = '{"version":"0.13.0","engine":"2.0.0","ttl":48,"snapshotUploads":true,"defaultTemplate":"Tutorial","freeRooms":127,"root":"/api","backgrounds":[{"name":"Casino","image":"img/desktop-casino.jpg","color":"#2e5d3c","scroller":"#1b3c25"},{"name":"Concrete","image":"img/desktop-concrete.jpg","color":"#646260","scroller":"#494540"},{"name":"Marble","image":"img/desktop-marble.jpg","color":"#b4a999","scroller":"#80725e"},{"name":"Metal","image":"img/desktop-metal.jpg","color":"#515354","scroller":"#3e3e3e"},{"name":"Rock","image":"img/desktop-rock.jpg","color":"#5c5d5a","scroller":"#393930"},{"name":"Wood","image":"img/desktop-wood.jpg","color":"#57514d","scroller":"#3e3935"}]}'
+const serverJSON = '{"version":"0.13.0","engine":"2.0.0","ttl":48,"snapshotUploads":true,"defaultSnapshot":"Tutorial","freeRooms":127,"root":"/api","backgrounds":[{"name":"Casino","image":"img/desktop-casino.jpg","color":"#2e5d3c","scroller":"#1b3c25"},{"name":"Concrete","image":"img/desktop-concrete.jpg","color":"#646260","scroller":"#494540"},{"name":"Marble","image":"img/desktop-marble.jpg","color":"#b4a999","scroller":"#80725e"},{"name":"Metal","image":"img/desktop-metal.jpg","color":"#515354","scroller":"#3e3e3e"},{"name":"Rock","image":"img/desktop-rock.jpg","color":"#5c5d5a","scroller":"#393930"},{"name":"Wood","image":"img/desktop-wood.jpg","color":"#57514d","scroller":"#3e3935"}]}'
 
 const pieceJSON = '{"id":"fe008a4d","l":1,"a":"f45f27b5","x":256,"y":192,"z":13,"s":4}'
 
@@ -485,7 +485,7 @@ const roomJSON = `
     }],
     "note": []
   },
-  "template": {
+  "setup": {
     "type": "grid-square",
     "version": "0.9.0-dev",
     "engine": "^0.3.0",
@@ -513,7 +513,7 @@ const roomJSON = `
       "value": "#ffffff"
     }]
   },
-  "credits": "test template",
+  "credits": "test snapshot",
   "width": 3072,
   "height": 2048
 }`

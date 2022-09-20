@@ -15,9 +15,11 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added plain token
 * added a bcrypt tool at URL `/tools`
+* unified wording 'template'/'snapshot' to 'snapshot' only
 * fixed LOS selected
 * fixed wrong cursor on notes in measure mode
 * fixed asset filenames
+* fixed wrong color names in autoconverted snapshots
 * improved library previews
 * improved grids
 * improved background image quality

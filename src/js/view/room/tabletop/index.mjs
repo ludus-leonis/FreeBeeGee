@@ -35,7 +35,7 @@ import {
   FLAG_NO_MOVE,
   PREFS,
   getRoom,
-  getTemplate,
+  getSetup,
   getTable,
   updatePieces,
   createPieces,
@@ -254,7 +254,7 @@ export function numberSelected (delta) {
  * is a visual difference even if the same side randomly comes up.
  */
 export function randomSelected () {
-  const template = getTemplate()
+  const setup = getSetup()
 
   if (!selectionGetFeatures().random) return
 
@@ -275,9 +275,9 @@ export function randomSelected () {
             slideX = 1
             slideY = 1
           }
-          const offset = Math.floor(template.gridSize / 2)
-          const x = Math.abs(clamp(0, piece.x + slideX * offset, (template.gridWidth - 1) * template.gridSize))
-          const y = Math.abs(clamp(0, piece.y + slideY * offset, (template.gridHeight - 1) * template.gridSize))
+          const offset = Math.floor(setup.gridSize / 2)
+          const x = Math.abs(clamp(0, piece.x + slideX * offset, (setup.gridWidth - 1) * setup.gridSize))
+          const y = Math.abs(clamp(0, piece.y + slideY * offset, (setup.gridHeight - 1) * setup.gridSize))
           // send to server
           updatePieces([{
             id: piece.id,
@@ -342,7 +342,7 @@ function createOrUpdatePieceDOM (piece) {
   }
 
   // update dom infos + classes (position, rotation ...)
-  const template = getTemplate()
+  const setup = getSetup()
   div = _('#' + piece.id) // fresh query
 
   if (_piece.x !== piece.x || _piece.y !== piece.y || _piece.z !== piece.z) {
@@ -386,8 +386,8 @@ function createOrUpdatePieceDOM (piece) {
         div.remove('--fbg-color', '--fbg-color-invert')
       } else { // color
         div.css({
-          '--fbg-color': template.colors[piece.c[0] - 1].value,
-          '--fbg-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+          '--fbg-color': setup.colors[piece.c[0] - 1].value,
+          '--fbg-color-invert': brightness(setup.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
     } else if (piece.l === LAYER_OVERLAY || piece.l === LAYER_OTHER) {
@@ -410,8 +410,8 @@ function createOrUpdatePieceDOM (piece) {
       } else { // color
         div.add('.has-border')
         _(`#${piece.id}`).css({
-          '--fbg-border-color': template.borders[piece.c[1] - 1].value,
-          '--fbg-border-color-invert': brightness(template.borders[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+          '--fbg-border-color': setup.borders[piece.c[1] - 1].value,
+          '--fbg-border-color-invert': brightness(setup.borders[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
     }
@@ -511,12 +511,12 @@ export function setNote (note) {
  * @param {Boolean} cw Optional direction. True = CW (default), False = CCW.
  */
 export function rotateSelected (cw = true) {
-  const template = getTemplate()
+  const setup = getSetup()
 
   if (!selectionGetFeatures().rotate) return
 
   for (const piece of selectionGetPieces()) {
-    const increment = template.type === TYPE_HEX ? 60 : 90
+    const increment = setup.type === TYPE_HEX ? 60 : 90
     const r = cw ? (piece.r + increment) : (piece.r - increment)
     rotatePiece(piece.id, r)
   }
@@ -713,8 +713,8 @@ export function createNote (xy) {
  * @param Number offsetY Delta of new y position.
  */
 export function moveContent (offsetX, offsetY) {
-  const template = getTemplate()
-  switch (template.type) {
+  const setup = getSetup()
+  switch (setup.type) {
     case 'grid-hex':
       if (offsetX < 0) offsetX += 109
       if (offsetY < 0) offsetY += 63
@@ -725,8 +725,8 @@ export function moveContent (offsetX, offsetY) {
     default:
       if (offsetX < 0) offsetX += 63
       if (offsetY < 0) offsetY += 63
-      offsetX = Math.floor(offsetX / template.gridSize) * template.gridSize
-      offsetY = Math.floor(offsetY / template.gridSize) * template.gridSize
+      offsetX = Math.floor(offsetX / setup.gridSize) * setup.gridSize
+      offsetY = Math.floor(offsetY / setup.gridSize) * setup.gridSize
   }
   const pieces = []
   _('#tabletop .piece').each(node => {
@@ -777,11 +777,11 @@ export function updateTabletop (tableNo) {
  * @param {Object} coords {x, y} object, in table px.
  */
 export function pointTo (coords) {
-  const template = getTemplate()
+  const setup = getSetup()
   const room = getRoom()
 
-  coords.x = clamp(0, coords.x, room.width - template.gridSize - 1)
-  coords.y = clamp(0, coords.y, room.height - template.gridSize - 1)
+  coords.x = clamp(0, coords.x, room.width - setup.gridSize - 1)
+  coords.y = clamp(0, coords.y, room.height - setup.gridSize - 1)
 
   const snapped = snap(coords.x, coords.y)
 
@@ -1011,14 +1011,14 @@ function createPointerPiece () {
  * @param {Object} dicemat Dicemat object.
  */
 function randomDicemat (dicemat) {
-  const template = getTemplate()
+  const setup = getSetup()
   const coords = []
   const pieces = []
   for (let x = 0; x < Math.min(dicemat.w, 4); x++) {
     for (let y = 0; y < Math.min(dicemat.h, 4); y++) {
       coords.push({ // a max. 4x4 area in the center of the dicemat
-        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x + 0.5) * template.gridSize,
-        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y + 0.5) * template.gridSize
+        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x + 0.5) * setup.gridSize,
+        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y + 0.5) * setup.gridSize
       })
     }
   }

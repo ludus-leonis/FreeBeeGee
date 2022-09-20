@@ -22,8 +22,8 @@ import {
 } from './view/error/index.mjs'
 
 import {
-  createRoomView
-} from './view/create/index.mjs'
+  setupView
+} from './view/setup/index.mjs'
 
 import {
   passwordView
@@ -92,7 +92,7 @@ export function auth (roomName, password) {
       } else if (auth.status === 403) {
         passwordView(roomName, password === undefined)
       } else if (auth.status === 404) {
-        createRoomView(roomName)
+        setupView(roomName)
       } else {
         runError()
       }

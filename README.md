@@ -22,7 +22,7 @@ Your game. Your data.
 * Asset browser for your token/tiles. Individual libraries per room.
 * Sticky notes and dice trays.
 * Templates to setup tables and populate your library from.
-* Easily transfer rooms between servers. Or keep an `*.zip` as offline backup.
+* Download snapshots of your rooms, transfer them between servers or keep an offline backup.
 * Privacy friendly. No user tracking. No 3rd-party scripts. Rooms are deleted after some (configurable) time, usually 48h.
 * File & folder-based. No database required. Easy to install and maintain.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.

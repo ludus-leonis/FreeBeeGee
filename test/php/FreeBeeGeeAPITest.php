@@ -108,14 +108,14 @@ final class FreeBeeGeeAPITest extends TestCase
 
         $validEntries = $this->fbg->validateSnapshot($this->pathToCache('snapshots/extra.zip'));
         $this->assertEqualsCanonicalizing([
-            'template.json',
+            'setup.json',
             'LICENSE.md',
             'tables/1.json'
         ], $validEntries);
 
         $validEntries = $this->fbg->validateSnapshot($this->pathToCache('snapshots/full.zip'));
         $this->assertEqualsCanonicalizing([
-            'template.json',
+            'setup.json',
             'LICENSE.md',
             'assets/badge/extra.svg',
             'assets/overlay/aab.1x1.1x1x1.svg',
@@ -184,11 +184,11 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('somename', $room->name);
 
         $room = $this->fbg->validateRoomJSON('{
-            "template": "some"
+            "snapshot": "some"
         }', false);
-        $this->assertEqualsCanonicalizing(['convert', 'template'], array_keys((array)$room));
+        $this->assertEqualsCanonicalizing(['convert', 'snapshot'], array_keys((array)$room));
         $this->assertEquals(false, $room->convert);
-        $this->assertEquals('some', $room->template);
+        $this->assertEquals('some', $room->snapshot);
 
         $room = $this->fbg->validateRoomJSON('{
             "extra": "some"
@@ -197,36 +197,36 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(false, $room->convert);
     }
 
-    public function testValidateTemplateJSON()
+    public function testValidateSetupJSON()
     {
-        $template = $this->fbg->validateTemplateJSON('{}', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$template));
+        $setup = $this->fbg->validateSetupJSON('{}', false);
+        $this->assertEqualsCanonicalizing([], array_keys((array)$setup));
 
-        $template = $this->fbg->validateTemplateJSON('I am not JSON.', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$template));
+        $setup = $this->fbg->validateSetupJSON('I am not JSON.', false);
+        $this->assertEqualsCanonicalizing([], array_keys((array)$setup));
 
-        $template = $this->fbg->validateTemplateJSON('["invalid", "array"]', false);
-        $this->assertEqualsCanonicalizing([], array_keys((array)$template));
+        $setup = $this->fbg->validateSetupJSON('["invalid", "array"]', false);
+        $this->assertEqualsCanonicalizing([], array_keys((array)$setup));
 
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{}');
+            $setup = $this->fbg->validateSetupJSON('{}');
         }, 400, '/ engine missing/');
 
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "engine": "x"
             }');
         }, 400, '/ type missing/');
 
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "engine": "x",
                 "type": "grid-square"
             }');
         }, 400, '/ gridSize missing/');
 
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "engine": "x",
                 "type": "grid-square",
                 "gridSize": 8
@@ -234,7 +234,7 @@ final class FreeBeeGeeAPITest extends TestCase
         }, 400, '/ gridWidth missing/');
 
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "engine": "x",
                 "type": "grid-square",
                 "gridSize": 8,
@@ -243,13 +243,13 @@ final class FreeBeeGeeAPITest extends TestCase
         }, 400, '/ gridHeight missing/');
 
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "engine": "x",
                 "type": "grid-hex"
             }');
         }, 400, '/ gridSize missing/');
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "type": "grid-hex",
             "extra": "some",
             "version": "1.1.1",
@@ -271,137 +271,137 @@ final class FreeBeeGeeAPITest extends TestCase
           }
         ');
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "type": "grid-square"
         }', false);
-        $this->assertEqualsCanonicalizing(['type'], array_keys((array)$template));
-        $this->assertEquals('grid-square', $template->type);
+        $this->assertEqualsCanonicalizing(['type'], array_keys((array)$setup));
+        $this->assertEquals('grid-square', $setup->type);
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "type": []
             }', false);
         }, 400, '/ type invalid/');
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "type": "some"
             }', false);
         }, 400, '/ type invalid/');
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "engine": "1.2.3"
         }', false);
-        $this->assertEqualsCanonicalizing(['engine'], array_keys((array)$template));
-        $this->assertEquals('1.2.3', $template->engine);
+        $this->assertEqualsCanonicalizing(['engine'], array_keys((array)$setup));
+        $this->assertEquals('1.2.3', $setup->engine);
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "engine": []
             }', false);
         }, 400, '/ engine is not a Semver/');
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "engine": "some"
             }', false);
         }, 400, '/ engine is not a Semver/');
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "version": "1.2.3"
         }', false);
-        $this->assertEqualsCanonicalizing(['version'], array_keys((array)$template));
-        $this->assertEquals('1.2.3', $template->version);
+        $this->assertEqualsCanonicalizing(['version'], array_keys((array)$setup));
+        $this->assertEquals('1.2.3', $setup->version);
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "version": []
             }', false);
         }, 400, '/ version is not a Semver/');
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "version": "some"
             }', false);
         }, 400, '/ version is not a Semver/');
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "gridSize": 64
         }', false);
-        $this->assertEquals(64, $template->gridSize);
-        $this->assertEqualsCanonicalizing(['gridSize'], array_keys((array)$template));
+        $this->assertEquals(64, $setup->gridSize);
+        $this->assertEqualsCanonicalizing(['gridSize'], array_keys((array)$setup));
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "gridSize": []
             }', false);
         }, 400, '/ gridSize not between /');
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "gridSize": 17
             }', false);
         }, 400, '/ gridSize not between /');
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "gridWidth": 64
         }', false);
-        $this->assertEqualsCanonicalizing(['gridWidth'], array_keys((array)$template));
-        $this->assertEquals(64, $template->gridWidth);
+        $this->assertEqualsCanonicalizing(['gridWidth'], array_keys((array)$setup));
+        $this->assertEquals(64, $setup->gridWidth);
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "gridWidth": 15
             }', false);
         }, 400, '/ gridWidth not between /');
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "gridWidth": []
             }', false);
         }, 400, '/ gridWidth not between /');
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "snap": true
         }', false);
-        $this->assertEqualsCanonicalizing(['snap'], array_keys((array)$template));
-        $this->assertEquals(true, $template->snap);
+        $this->assertEqualsCanonicalizing(['snap'], array_keys((array)$setup));
+        $this->assertEquals(true, $setup->snap);
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "snap": "blue"
             }', false);
         }, 400, '/ snap not a boolean/');
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "snap": []
             }', false);
         }, 400, '/ snap not a boolean/');
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "colors": [
               { "name": "Black", "value": "#202020" }
             ]
         }', false);
-        $this->assertEquals('Black', $template->colors[0]->name);
-        $this->assertEqualsCanonicalizing(['colors'], array_keys((array)$template));
-        $this->assertEquals('#202020', $template->colors[0]->value);
+        $this->assertEquals('Black', $setup->colors[0]->name);
+        $this->assertEqualsCanonicalizing(['colors'], array_keys((array)$setup));
+        $this->assertEquals('#202020', $setup->colors[0]->value);
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "colors": "blue"
             }', false);
         }, 400, '/ colors is not an array/');
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "colors": []
             }', false);
         }, 400, '/ colors is not an array/');
 
 
-        $template = $this->fbg->validateTemplateJSON('{
+        $setup = $this->fbg->validateSetupJSON('{
             "borders": [
               { "name": "Black", "value": "#202020" }
             ]
         }', false);
-        $this->assertEquals('Black', $template->borders[0]->name);
-        $this->assertEqualsCanonicalizing(['borders'], array_keys((array)$template));
-        $this->assertEquals('#202020', $template->borders[0]->value);
+        $this->assertEquals('Black', $setup->borders[0]->name);
+        $this->assertEqualsCanonicalizing(['borders'], array_keys((array)$setup));
+        $this->assertEquals('#202020', $setup->borders[0]->value);
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "borders": "blue"
             }', false);
         }, 400, '/ borders is not an array/');
         $this->assertHTTPStatus(function () {
-            $template = $this->fbg->validateTemplateJSON('{
+            $setup = $this->fbg->validateSetupJSON('{
                 "borders": []
             }', false);
         }, 400, '/ borders is not an array/');
@@ -431,9 +431,9 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('#808080', $color->value);
     }
 
-    public function testCleanupTemplateJSON()
+    public function testCleanupSetupJSON()
     {
-        $template = $this->fbg->cleanupTemplateJSON('{}');
+        $setup = $this->fbg->cleanupSetupJSON('{}');
         $this->assertEqualsCanonicalizing([
             'engine',
             'version',
@@ -443,19 +443,19 @@ final class FreeBeeGeeAPITest extends TestCase
             'gridHeight',
             'colors',
             'borders'
-        ], array_keys((array)$template));
-        $this->assertMatchesRegularExpression($this->REGEXP_SEMVER, $template->engine);
-        $this->assertMatchesRegularExpression($this->REGEXP_SEMVER, $template->version);
-        $this->assertEquals('grid-square', $template->type);
-        $this->assertEquals(64, $template->gridSize);
-        $this->assertEquals(48, $template->gridWidth);
-        $this->assertEquals(32, $template->gridHeight);
-        $this->assertIsArray($template->colors);
-        $this->assertGreaterThan(4, count($template->colors));
-        $this->assertIsArray($template->borders);
-        $this->assertGreaterThan(4, count($template->borders));
+        ], array_keys((array)$setup));
+        $this->assertMatchesRegularExpression($this->REGEXP_SEMVER, $setup->engine);
+        $this->assertMatchesRegularExpression($this->REGEXP_SEMVER, $setup->version);
+        $this->assertEquals('grid-square', $setup->type);
+        $this->assertEquals(64, $setup->gridSize);
+        $this->assertEquals(48, $setup->gridWidth);
+        $this->assertEquals(32, $setup->gridHeight);
+        $this->assertIsArray($setup->colors);
+        $this->assertGreaterThan(4, count($setup->colors));
+        $this->assertIsArray($setup->borders);
+        $this->assertGreaterThan(4, count($setup->borders));
 
-        $template = $this->fbg->cleanupTemplateJSON('I am not JSON.');
+        $setup = $this->fbg->cleanupSetupJSON('I am not JSON.');
         $this->assertEqualsCanonicalizing([
             'engine',
             'version',
@@ -465,9 +465,9 @@ final class FreeBeeGeeAPITest extends TestCase
             'gridHeight',
             'colors',
             'borders'
-        ], array_keys((array)$template));
+        ], array_keys((array)$setup));
 
-        $template = $this->fbg->cleanupTemplateJSON('[]');
+        $setup = $this->fbg->cleanupSetupJSON('[]');
         $this->assertEqualsCanonicalizing([
             'engine',
             'version',
@@ -477,9 +477,9 @@ final class FreeBeeGeeAPITest extends TestCase
             'gridHeight',
             'colors',
             'borders'
-        ], array_keys((array)$template));
+        ], array_keys((array)$setup));
 
-        $template = $this->fbg->cleanupTemplateJSON('{
+        $setup = $this->fbg->cleanupSetupJSON('{
             "type": "grid-hex",
             "extra": "some",
             "version": "1.1.1",
@@ -500,28 +500,28 @@ final class FreeBeeGeeAPITest extends TestCase
             ]
           }
         ');
-        $this->assertEquals('1.1.1', $template->version);
-        $this->assertEquals($this->fbg->unpatchSemver($this->fbg->getEngine()), $template->engine);
-        $this->assertEquals('grid-hex', $template->type);
-        $this->assertEquals(64, $template->gridSize);
-        $this->assertEquals(128, $template->gridWidth);
-        $this->assertEquals(129, $template->gridHeight);
-        $this->assertIsArray($template->colors);
-        $this->assertEquals(2, count($template->colors));
-        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$template->colors[0]));
-        $this->assertEquals("Black", $template->colors[0]->name);
-        $this->assertEquals("#202020", $template->colors[0]->value);
-        $this->assertEquals("NoName", $template->colors[1]->name);
-        $this->assertEquals("#808080", $template->colors[1]->value);
-        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$template->colors[1]));
-        $this->assertIsArray($template->borders);
-        $this->assertEquals(2, count($template->borders));
-        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$template->borders[0]));
-        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$template->borders[1]));
-        $this->assertEquals("NoName", $template->borders[0]->name);
-        $this->assertEquals("#202020", $template->borders[0]->value);
-        $this->assertEquals("Orange", $template->borders[1]->name);
-        $this->assertEquals("#808080", $template->borders[1]->value);
+        $this->assertEquals('1.1.1', $setup->version);
+        $this->assertEquals($this->fbg->unpatchSemver($this->fbg->getEngine()), $setup->engine);
+        $this->assertEquals('grid-hex', $setup->type);
+        $this->assertEquals(64, $setup->gridSize);
+        $this->assertEquals(128, $setup->gridWidth);
+        $this->assertEquals(129, $setup->gridHeight);
+        $this->assertIsArray($setup->colors);
+        $this->assertEquals(2, count($setup->colors));
+        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$setup->colors[0]));
+        $this->assertEquals("Black", $setup->colors[0]->name);
+        $this->assertEquals("#202020", $setup->colors[0]->value);
+        $this->assertEquals("NoName", $setup->colors[1]->name);
+        $this->assertEquals("#808080", $setup->colors[1]->value);
+        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$setup->colors[1]));
+        $this->assertIsArray($setup->borders);
+        $this->assertEquals(2, count($setup->borders));
+        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$setup->borders[0]));
+        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$setup->borders[1]));
+        $this->assertEquals("NoName", $setup->borders[0]->name);
+        $this->assertEquals("#202020", $setup->borders[0]->value);
+        $this->assertEquals("Orange", $setup->borders[1]->name);
+        $this->assertEquals("#808080", $setup->borders[1]->value);
     }
 
     public function testCleanupTableJSON()
@@ -732,131 +732,131 @@ final class FreeBeeGeeAPITest extends TestCase
             $room = $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 200);
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
+        $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($this->p->versionEngine, $room->engine);
-        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $template->engine); // got patched
+        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $setup->engine); // got patched
 
         // major room engine too new for us (major + 1) will reject
         $version = $this->semver($this->p->versionEngine, 1, 0, 0);
         $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = $version;
-        $template->engine = $version;
+        $room->setup->engine = $version;
+        $setup->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
-        file_put_contents($meta->folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'setup.json', json_encode($setup));
         $this->assertHTTPStatus(function () {
             $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 400, '/INVALID_ENGINE.*' . $version . '/');
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
+        $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($version, $room->engine); // room/engine unchanged
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals($version, $template->engine);
+        $this->assertEquals($version, $setup->engine);
 
         // major room engine too old for us (major - 1) will reject
         $version = $this->semver($this->p->versionEngine, -1, 0, 0);
         $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = $version;;
-        $template->engine = $version;;
+        $room->setup->engine = $version;;
+        $setup->engine = $version;;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
-        file_put_contents($meta->folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'setup.json', json_encode($setup));
         $this->assertHTTPStatus(function () {
             $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 400, '/INVALID_ENGINE.*' . $version . '/');
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
+        $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($version, $room->engine); // room/engine unchanged
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals($version, $template->engine);
+        $this->assertEquals($version, $setup->engine);
 
         // minor room engine too new for us (minor + 1) will reject
         $version = $this->semver($this->p->versionEngine, 0, 1, 0);
         $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = $version;
-        $template->engine = $version;
+        $room->setup->engine = $version;
+        $setup->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
-        file_put_contents($meta->folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'setup.json', json_encode($setup));
         $this->assertHTTPStatus(function () {
             $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 400, '/INVALID_ENGINE.*' . $version . '/');
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
+        $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($version, $room->engine); // room/engine unchanged
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals($version, $template->engine);
+        $this->assertEquals($version, $setup->engine);
 
         // minor room engine older (minor - 1) will auto-update room
         $version = $this->semver($this->p->versionEngine, 0, -1, 0);
         $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = $version;
-        $template->engine = $version;
+        $room->setup->engine = $version;
+        $setup->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
-        file_put_contents($meta->folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'setup.json', json_encode($setup));
         $room = json_decode($this->assertHTTPStatus(function () {
             $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
+        $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($this->p->versionEngine, $room->engine); // uses current engine now
         $this->assertObjectNotHasAttribute('dirty', $room);
-        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $template->engine); // got patched
+        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $setup->engine); // got patched
 
         // room with older patch level (-1) will auto-update room
         $version = $this->semver($this->p->versionEngine, 0, 0, -1);
         $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = $version;
-        $template->engine = $version;
+        $room->setup->engine = $version;
+        $setup->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
-        file_put_contents($meta->folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'setup.json', json_encode($setup));
         $room = json_decode($this->assertHTTPStatus(function () {
             $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
+        $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($this->p->versionEngine, $room->engine); // uses current engine now
         $this->assertObjectNotHasAttribute('dirty', $room);
-        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $template->engine); // got patched
+        $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $setup->engine); // got patched
 
         // room with equal patch level won't touch room
         $version = $this->p->versionEngine;
         $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = $version;
-        $template->engine = $version;
+        $room->setup->engine = $version;
+        $setup->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
-        file_put_contents($meta->folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'setup.json', json_encode($setup));
         $room = json_decode($this->assertHTTPStatus(function () {
             $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 200)->getMessage());
         $this->assertEquals($this->fbg->getEngine(), $room->engine);
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
+        $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($this->p->versionEngine, $room->engine); // uses current engine
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals($version, $template->engine);
+        $this->assertEquals($version, $setup->engine);
 
         // room with newer patch level (+1) will reject
         $version = $this->semver($this->p->versionEngine, 0, 0, 1);
         $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->template->engine = $version;
-        $template->engine = $version;
+        $room->setup->engine = $version;
+        $setup->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
-        file_put_contents($meta->folder . 'template.json', json_encode($template));
+        file_put_contents($meta->folder . 'setup.json', json_encode($setup));
         $this->assertHTTPStatus(function () {
             $this->fbg->getRoom($this->fbg->getRoomMeta('versionMismatchRoom'));
         }, 400, '/INVALID_ENGINE.*' . $version . '/');
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $template = json_decode(file_get_contents($meta->folder . 'template.json'));
+        $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($version, $room->engine); // room/engine unchanged
         $this->assertEquals('dirty', $room->dirty);
-        $this->assertEquals($version, $template->engine);
+        $this->assertEquals($version, $setup->engine);
     }
 
     public function testSetIfMissing()
@@ -997,8 +997,8 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('paper', $asset->tx);
         $this->assertEquals('soSo', $asset->name);
 
-        $asset = FreeBeeGeeAPI::fileToAsset('soSo.2x3xX.wood.jpg');
-        $this->assertEquals(['soSo.2x3xX.wood.jpg'], $asset->media);
+        $asset = FreeBeeGeeAPI::fileToAsset('soSo.2x3xX.1.wood.jpg');
+        $this->assertEquals(['soSo.2x3xX.1.wood.jpg'], $asset->media);
         $this->assertEquals(2, $asset->w);
         $this->assertEquals(3, $asset->h);
         $this->assertEquals('X', $asset->s);

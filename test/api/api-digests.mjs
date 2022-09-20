@@ -75,8 +75,8 @@ function testApiRoomDigest (api, version, room) {
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.width).to.be.eql(4096)
     expect(body.height).to.be.eql(4096)
-    expect(body.template.gridWidth).to.be.eql(64)
-    expect(body.template.gridHeight).to.be.eql(64)
+    expect(body.setup.gridWidth).to.be.eql(64)
+    expect(body.setup.gridHeight).to.be.eql(64)
     data = body
   }, 200)
 
@@ -97,8 +97,8 @@ function testApiRoomDigest (api, version, room) {
     expect(body['room.json']).to.be.eql(digest)
   })
 
-  // change of template should change room digest
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {
+  // change of setup should change room digest
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 128,
       gridHeight: 256
@@ -112,7 +112,7 @@ function testApiRoomDigest (api, version, room) {
   })
 
   // change it back and digest should revert
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 64,
       gridHeight: 64
@@ -176,8 +176,8 @@ function testApiTableDigest (api, version, room) {
     expect(body['tables/9.json']).to.be.eql(digest)
   })
 
-  // change of template should not change table digest
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {
+  // change of setup should not change table digest
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 128,
       gridHeight: 256
@@ -220,22 +220,22 @@ function testApiTableDigest (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiTemplateDigest (api, version, room) {
+function testApiSetupDigest (api, version, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.width).to.be.eql(4096)
     expect(body.height).to.be.eql(4096)
-    expect(body.template.gridWidth).to.be.eql(64)
-    expect(body.template.gridHeight).to.be.eql(64)
+    expect(body.setup.gridWidth).to.be.eql(64)
+    expect(body.setup.gridHeight).to.be.eql(64)
     data = body
   }, 200)
 
   // fetch digest
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body).to.be.an('object')
-    expect(body['template.json']).to.match(REGEXP_DIGEST)
-    digest = body['template.json']
+    expect(body['setup.json']).to.match(REGEXP_DIGEST)
+    digest = body['setup.json']
   })
 
   testJsonGet(api, () => `/rooms/${room}/`, body => {
@@ -245,11 +245,11 @@ function testApiTemplateDigest (api, version, room) {
 
   // get didn't change digest
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['template.json']).to.be.eql(digest)
+    expect(body['setup.json']).to.be.eql(digest)
   })
 
-  // change of template should change template digest
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {
+  // change of setup should change setup digest
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 128,
       gridHeight: 256
@@ -259,11 +259,11 @@ function testApiTemplateDigest (api, version, room) {
     expect(body.gridHeight).to.be.eql(256)
   })
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['template.json']).not.to.be.eql(digest)
+    expect(body['setup.json']).not.to.be.eql(digest)
   })
 
   // change it back and digest should revert
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 64,
       gridHeight: 64
@@ -273,10 +273,10 @@ function testApiTemplateDigest (api, version, room) {
     expect(body.gridHeight).to.be.eql(64)
   })
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['template.json']).to.be.eql(digest)
+    expect(body['setup.json']).to.be.eql(digest)
   })
 
-  // change of table should not change template digest
+  // change of table should not change setup digest
   testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return [pieceMinimal, pieceMinimal]
   }, body => {
@@ -284,7 +284,7 @@ function testApiTemplateDigest (api, version, room) {
     data = body[0].id
   }, 200)
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['template.json']).to.be.eql(digest)
+    expect(body['setup.json']).to.be.eql(digest)
   })
 
   // change of piece should not change room digest
@@ -294,7 +294,7 @@ function testApiTemplateDigest (api, version, room) {
     expect(body.w).to.be.eql(8)
   }, 200)
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['template.json']).to.be.eql(digest)
+    expect(body['setup.json']).to.be.eql(digest)
   })
 
   closeTestroom(api, room)
@@ -327,8 +327,8 @@ function testApiDigestHeader (api, version, room) {
     expect(body['tables/1.json']).to.be.eql(digest)
   })
 
-  // change room/template
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {
+  // change room/setup
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 128,
       gridHeight: 256
@@ -398,7 +398,7 @@ describe('API - digests', function () {
   runTests((api, version, room) => {
     describe('room digest', () => testApiRoomDigest(api, version, room))
     describe('table digest', () => testApiTableDigest(api, version, room))
-    describe('template digest', () => testApiTemplateDigest(api, version, room))
+    describe('setup digest', () => testApiSetupDigest(api, version, room))
     describe('digest header', () => testApiDigestHeader(api, version, room))
   })
 })

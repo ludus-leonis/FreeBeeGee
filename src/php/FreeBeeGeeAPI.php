@@ -85,8 +85,8 @@ class FreeBeeGeeAPI
             $fbg->getServerInfo();
         });
 
-        $this->api->register('GET', '/templates/?', function ($fbg, $data) {
-            $fbg->getTemplates();
+        $this->api->register('GET', '/snapshots/?', function ($fbg, $data) {
+            $fbg->getSnapshots();
         });
 
         $this->api->register('GET', '/rooms/:rid/snapshot/?', function ($fbg, $data) {
@@ -159,10 +159,10 @@ class FreeBeeGeeAPI
             $fbg->updatePieces($meta, $data['tid'], $patches);
         });
 
-        $this->api->register('PATCH', '/rooms/:rid/template/', function ($fbg, $data, $payload) {
+        $this->api->register('PATCH', '/rooms/:rid/setup/', function ($fbg, $data, $payload) {
             $meta = $this->getRoomMeta($data['rid']);
-            $patch = $this->api->assertJSONObject('template', $payload);
-            $fbg->updateRoomTemplateLocked($meta, $patch);
+            $patch = $this->api->assertJSONObject('setup', $payload);
+            $fbg->updateRoomSetupLocked($meta, $patch);
         });
 
         $this->api->register('PATCH', '/rooms/:rid/auth/', function ($fbg, $data, $payload) {
@@ -265,7 +265,7 @@ class FreeBeeGeeAPI
                     "maxRooms": 32,
                     "maxRoomSizeMB": 16,
                     "snapshotUploads": false,
-                    "defaultTemplate": "Tutorial",
+                    "defaultSnapshot": "Tutorial",
                     "passwordCreate": "$2y$12$ZLUoJ7k6JODIgKk6et8ire6XxGDlCS4nupZo9NyJvSnomZ6lgFKGa",
                     "version": "$VERSION$",
                     "engine": "$ENGINE$"
@@ -377,13 +377,13 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Install a template/snapshot into a room.
+     * Install a snapshot into a room.
      *
-     * Will unpack the template .zip into the room folder. Terminates execution
+     * Will unpack the setup .zip into the room folder. Terminates execution
      * on errors. Expects the caller to handle FS locking.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @param string $zipPath Path to snapshot/template zip to install.
+     * @param string $zipPath Path to snapshot zip to install.
      * @param array $validEntries Array of path names (strings) to extract from zip.
      */
     public function installSnapshot(
@@ -411,32 +411,32 @@ class FreeBeeGeeAPI
             $zip->extractTo($folder, $validEntries);
             $zip->close();
         } else {
-            $this->api->sendError(500, 'can\'t setup template ' . $zipPath);
+            $this->api->sendError(500, 'can\'t setup setup ' . $zipPath);
         }
 
-        // unzip system template next if it exists, possibly overwriting assets
-        if (is_file($this->api->getDataDir('templates/_.zip'))) {
+        // unzip system setup next if it exists, possibly overwriting assets
+        if (is_file($this->api->getDataDir('snapshots/_.zip'))) {
             $zip = new \ZipArchive();
-            if ($zip->open($this->api->getDataDir('templates/_.zip')) === true) {
+            if ($zip->open($this->api->getDataDir('snapshots/_.zip')) === true) {
                 $zip->extractTo($folder);
                 $zip->close();
             } else {
-                $this->api->sendError(500, 'can\'t setup template ' . $zipPath);
+                $this->api->sendError(500, 'can\'t setup setup ' . $zipPath);
             }
         }
 
         // recreate potential nonexisting files as fallback
-        if (!is_file($folder . 'template.json')) {
-            file_put_contents($folder . 'template.json', json_encode($this->getTemplateDefault()));
+        if (!is_file($folder . 'setup.json')) {
+            file_put_contents($folder . 'setup.json', json_encode($this->getSetupDefault()));
         }
     }
 
     /**
-     * Assemble a default template file.
+     * Assemble a default setup file.
      *
-     * @return object Template PHP object.
+     * @return object Setup PHP object.
      */
-    private function getTemplateDefault(): object
+    private function getSetupDefault(): object
     {
         return (object) [
             'type' => 'grid-square',
@@ -455,24 +455,24 @@ class FreeBeeGeeAPI
     /**
      * Assemble our default color array.
      *
-     * @return array Default colors for use in templates.
+     * @return array Default colors for use in snapshots.
      */
     private function getColors(): array
     {
         return [
-            (object) [ 'name ' => 'Black', 'value' => '#202020' ],
-            (object) [ 'name ' => 'White', 'value' => '#e8e8e8' ],
-            (object) [ 'name ' => 'Red', 'value' => '#b32d35' ],
-            (object) [ 'name ' => 'Orange', 'value' => '#b05a11' ],
-            (object) [ 'name ' => 'Yellow', 'value' => '#af9700' ],
-            (object) [ 'name ' => 'Green', 'value' => '#317501' ],
-            (object) [ 'name ' => 'Cyan', 'value' => '#40bfbf' ],
-            (object) [ 'name ' => 'Blue', 'value' => '#3387b0' ],
-            (object) [ 'name ' => 'Indigo', 'value' => '#2e4d7b' ],
-            (object) [ 'name ' => 'Violet', 'value' => '#730fb1' ],
-            (object) [ 'name ' => 'Magenta', 'value' => '#bf40bf' ],
-            (object) [ 'name ' => 'Gray A', 'value' => '#606060' ],
-            (object) [ 'name ' => 'Gray B', 'value' => '#a0a0a0' ],
+            (object) [ 'name' => 'Black', 'value' => '#202020' ],
+            (object) [ 'name' => 'White', 'value' => '#e8e8e8' ],
+            (object) [ 'name' => 'Red', 'value' => '#b32d35' ],
+            (object) [ 'name' => 'Orange', 'value' => '#b05a11' ],
+            (object) [ 'name' => 'Yellow', 'value' => '#af9700' ],
+            (object) [ 'name' => 'Green', 'value' => '#317501' ],
+            (object) [ 'name' => 'Cyan', 'value' => '#40bfbf' ],
+            (object) [ 'name' => 'Blue', 'value' => '#3387b0' ],
+            (object) [ 'name' => 'Indigo', 'value' => '#2e4d7b' ],
+            (object) [ 'name' => 'Violet', 'value' => '#730fb1' ],
+            (object) [ 'name' => 'Magenta', 'value' => '#bf40bf' ],
+            (object) [ 'name' => 'Gray A', 'value' => '#606060' ],
+            (object) [ 'name' => 'Gray B', 'value' => '#a0a0a0' ],
         ];
     }
 
@@ -675,7 +675,7 @@ class FreeBeeGeeAPI
     // --- validators ----------------------------------------------------------
 
     /**
-     * Validate a template / snapshot.
+     * Validate a snapshot.
      *
      * Does a few sanity checks to see if everything is there we need. Will
      * termiante execution and send a 400 in case of invalid zips.
@@ -691,8 +691,8 @@ class FreeBeeGeeAPI
         $valid = [];
 
         // available room size = config size minus system zip size
-        $systemTemplateSize = $this->getZipSize($this->api->getDataDir('templates/_.zip'));
-        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024 - $systemTemplateSize;
+        $systemSnapshotSize = $this->getZipSize($this->api->getDataDir('snapshots/_.zip'));
+        $sizeLeft = $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024 - $systemSnapshotSize;
 
         // basic sanity tests
         if (filesize($zipPath) > $sizeLeft) {
@@ -724,10 +724,16 @@ class FreeBeeGeeAPI
                 case 'tables/8.json':
                 case 'tables/9.json':
                     break; // known files that will be cleaned up later anyway
-                case 'template.json':
+                case 'setup.json':
                     // only check version, everything else can be cleaned up later
                     if (!$ignoreEngine) {
-                        $this->validateTemplateEngineJSON(file_get_contents('zip://' . $zipPath . '#template.json'));
+                        $this->validateSetupEngineJSON(file_get_contents('zip://' . $zipPath . '#setup.json'));
+                    }
+                    break;
+                case 'template.json': // TODO deprecated since v0.18
+                    // only check version, everything else can be cleaned up later
+                    if (!$ignoreEngine) {
+                        $this->validateSetupEngineJSON(file_get_contents('zip://' . $zipPath . '#template.json'));
                     }
                     break;
                 default: // scan for asset filenames
@@ -759,57 +765,57 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Validate the engine version of a template.json.
+     * Validate the engine version of a setup.json.
      *
-     * Will try to parse the template JSON first.
+     * Will try to parse the setup JSON first.
      *
      * @param string $json JSON string.
      */
-    public function validateTemplateEngineJSON(
+    public function validateSetupEngineJSON(
         string $json
     ) {
-        $template = json_decode($json);
-        $template = is_object($template) ? $template : (object) [] ;
-        $this->setIfMissing($template, 'engine', '0.0.0');
+        $setup = json_decode($json);
+        $setup = is_object($setup) ? $setup : (object) [] ;
+        $this->setIfMissing($setup, 'engine', '0.0.0');
 
-        if (!is_string($template->engine) || !$this->api->semverSatisfies($this->engine, '^' . $template->engine, true)) {
-            $this->api->sendError(400, 'template.json: engine mismatch', 'INVALID_ENGINE', [
-                $template->engine, $this->engine
+        if (!is_string($setup->engine) || !$this->api->semverSatisfies($this->engine, '^' . $setup->engine, true)) {
+            $this->api->sendError(400, 'setup.json: engine mismatch', 'INVALID_ENGINE', [
+                $setup->engine, $this->engine
             ]);
         }
     }
 
     /**
-     * Validate a template object sent by the client.
+     * Validate a setup object sent by the client.
      *
-     * @param object $template Template to check.
+     * @param object $setup Setup to check.
      * @param boolean $checkMandatory If true, this function will also ensure all
      *                mandatory fields are present.
      * @param Object The validated object.
      */
-    public function validateTemplate(
-        object $template,
+    public function validateSetup(
+        object $setup,
         bool $checkMandatory = true
     ): object {
         // check the basics and abort on error
-        if ($template === null) {
-            $this->api->sendError(400, $json . ' - syntax error', 'TEMPLATE_JSON_INVALID');
+        if ($setup === null) {
+            $this->api->sendError(400, $json . ' - syntax error', 'SETUP_JSON_INVALID');
         }
 
         if ($checkMandatory) {
-            $this->api->assertHasProperties('template', $template, [
+            $this->api->assertHasProperties('setup', $setup, [
                 'engine',
                 'type'
             ]);
-            if ($template->type === 'grid-square') {
-                $this->api->assertHasProperties('template', $template, [
+            if ($setup->type === 'grid-square') {
+                $this->api->assertHasProperties('setup', $setup, [
                     'gridSize',
                     'gridWidth',
                     'gridHeight',
                     'colors'
                 ]);
-            } elseif ($template->type === 'grid-hex') {
-                $this->api->assertHasProperties('template', $template, [
+            } elseif ($setup->type === 'grid-hex') {
+                $this->api->assertHasProperties('setup', $setup, [
                     'gridSize',
                     'gridWidth',
                     'gridHeight',
@@ -820,7 +826,7 @@ class FreeBeeGeeAPI
 
         // check for more stuff
         $validated = new \stdClass();
-        foreach ($template as $property => $value) {
+        foreach ($setup as $property => $value) {
             switch ($property) {
                 case 'engine':
                     $validated->$property = $this->api->assertSemver('engine', $value);
@@ -915,33 +921,33 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Cleanup templates by adding mandatory default properties, removing optional
+     * Cleanup setups by adding mandatory default properties, removing optional
      * properties that contain default values and dropping unknown properties.
      *
-     * Can not assume a validated template.
+     * Can not assume a validated setup.
      *
      * @param string $json JSON string from the filesystem.
      * @return object Cleaned JSON, converted to an object.
      */
-    public function cleanupTemplateJSON(
+    public function cleanupSetupJSON(
         string $json
     ): object {
-        $template = json_decode($json);
-        $template = is_object($template) ? $template : new \stdClass();
-        return $this->cleanupTemplate($template);
+        $setup = json_decode($json);
+        $setup = is_object($setup) ? $setup : new \stdClass();
+        return $this->cleanupSetup($setup);
     }
 
     /**
-     * Cleanup templates by adding mandatory default properties, removing optional
+     * Cleanup setups by adding mandatory default properties, removing optional
      * properties that contain default values and dropping unknown properties.
      *
-     * Can not assume a validated template.
+     * Can not assume a validated setup.
      *
-     * @param object $template Template to check.
-     * @param Object The cleaned template object.
+     * @param object $setup Setup to check.
+     * @param Object The cleaned setup object.
      */
-    private function cleanupTemplate(
-        object $template
+    private function cleanupSetup(
+        object $setup
     ): object {
         $out = new \stdClass();
 
@@ -956,7 +962,7 @@ class FreeBeeGeeAPI
         $out->borders = $this->getColors();
 
         // check for more stuff
-        foreach ($template as $property => $value) {
+        foreach ($setup as $property => $value) {
             switch ($property) {
                 case 'engine':
                     // ignore - will be set to current engine
@@ -1028,7 +1034,7 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Validate a template.json.
+     * Validate a setup.json.
      *
      * Will populate missing and remove unknown properties. Will termiante
      * execution and send a 400 in case of too basic JSON errors.
@@ -1036,15 +1042,15 @@ class FreeBeeGeeAPI
      * @param string $json JSON string.
      * @param boolean $checkMandatory If true, this function will also ensure all
      *                mandatory fields are present.
-     * @param Object The parsed & cleaned template object.
+     * @param Object The parsed & cleaned setup object.
      */
-    public function validateTemplateJSON(
+    public function validateSetupJSON(
         string $json,
         bool $checkMandatory = true
     ): object {
         $object = json_decode($json);
         $object = is_object($object) ? $object : new \stdClass();
-        return $this->validateTemplate($object, $checkMandatory);
+        return $this->validateSetup($object, $checkMandatory);
     }
 
     /**
@@ -1409,8 +1415,8 @@ class FreeBeeGeeAPI
                 case 'convert':
                     $validated->$property = $this->api->assertBoolean('convert', $value);
                     break;
-                case 'template':
-                    $validated->$property = $this->api->assertString('template', $value, '[A-Za-z0-9]{1,99}');
+                case 'snapshot':
+                    $validated->$property = $this->api->assertString('snapshot', $value, '[A-Za-z0-9]{1,99}');
                     break;
                 case 'password':
                     $validated->$property = $this->api->assertString('password', $value, '..*');
@@ -1503,7 +1509,7 @@ class FreeBeeGeeAPI
         $info->engine = $server->engine;
         $info->ttl = $server->ttl;
         $info->snapshotUploads = $server->snapshotUploads;
-        $info->defaultTemplate = $server->defaultTemplate ?? 'Tutorial';
+        $info->defaultSnapshot = $server->defaultSnapshot ?? 'Tutorial';
         $info->freeRooms = $this->getFreeRooms($server);
         $info->root = $this->api->getAPIPath();
 
@@ -1538,21 +1544,21 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Sent list of available templates to client.
+     * Send list of available snapshots to client.
      *
-     * Done by counting the .zip files in the templates folder. Will send JSON
+     * Done by counting the .zip files in the snapshots folder. Will send JSON
      * reply and terminate execution.
      */
-    private function getTemplates()
+    private function getSnapshots()
     {
-        $templates = [];
-        foreach (glob($this->api->getDataDir('templates/*zip')) as $filename) {
+        $snapshots = [];
+        foreach (glob($this->api->getDataDir('snapshots/*zip')) as $filename) {
             $zip = pathinfo($filename);
-            if ($zip['filename'] != '_') { // don't add system template
-                $templates[] = $zip['filename'];
+            if ($zip['filename'] != '_') { // don't add system snapshot
+                $snapshots[] = $zip['filename'];
             }
         }
-        $this->api->sendReply(200, json_encode($templates));
+        $this->api->sendReply(200, json_encode($snapshots));
     }
 
     /**
@@ -1706,12 +1712,12 @@ class FreeBeeGeeAPI
         if (is_dir($folder)) {
             $this->api->sendError(409, 'room already exists');
         } else {
-            // we need either a template name or an uploaded snapshot
+            // we need either a snapshot name or an uploaded snapshot
             if (
-                isset($validated->template) && isset($validated->_files)
-                || (!isset($validated->template) && !isset($validated->_files))
+                isset($validated->snapshot) && isset($validated->_files)
+                || (!isset($validated->snapshot) && !isset($validated->_files))
             ) {
-                $this->api->sendError(400, 'you need to either specify a template or upload a snapshot');
+                $this->api->sendError(400, 'you need to either specify or upload a snapshot');
             }
 
             // check if upload (if any) was ok
@@ -1731,12 +1737,12 @@ class FreeBeeGeeAPI
                 }
                 $zipPath = $_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid';
             } else {
-                $zipPath = $this->api->getDataDir("templates/$validated->template.zip");
+                $zipPath = $this->api->getDataDir("snapshots/$validated->snapshot.zip");
             }
 
-            // doublecheck template / snapshot
+            // doublecheck snapshot
             if (!is_file($zipPath)) {
-                $this->api->sendError(400, 'template not available');
+                $this->api->sendError(400, 'snapshot not available');
             }
             $validEntries = $this->validateSnapshot($zipPath, $validated->convert);
 
@@ -1782,19 +1788,22 @@ class FreeBeeGeeAPI
             }
         }
 
-        // cleanup or create template.json
-        $template = is_file($folder . 'template.json')
-            ? file_get_contents($folder . 'template.json')
+        // cleanup or create setup.json
+        $setup = is_file($folder . 'setup.json')
+            ? file_get_contents($folder . 'setup.json')
             : '{}';
-        $template = $this->cleanupTemplateJSON($template);
-        file_put_contents($folder . 'template.json', json_encode($template));
+        $setup = is_file($folder . 'template.json')
+            ? file_get_contents($folder . 'template.json')
+            : $setup; // TODO deprecated since v0.18
+        $setup = $this->cleanupSetupJSON($setup);
+        file_put_contents($folder . 'setup.json', json_encode($setup));
 
         // enforce mandatory files
         if (!is_file($folder . 'tables/1.json')) {
             file_put_contents($folder . 'tables/1.json', '[]');
         }
         if (!is_file($folder . 'LICENSE.md')) {
-            file_put_contents($folder . 'LICENSE.md', 'This template does not provide license information.');
+            file_put_contents($folder . 'LICENSE.md', 'This snapshot does not provide license information.');
         }
         if (!is_file($folder . 'meta.json')) {
             file_put_contents($folder . 'meta.json', json_encode((object) [
@@ -1807,11 +1816,11 @@ class FreeBeeGeeAPI
             'id' => $this->generateId(),
             'name' => $name,
             'engine' => $this->engine,
-            'template' => $template,
+            'setup' => $setup,
             'library' => $this->generateLibraryJSON($name),
             'credits' => file_get_contents($folder . 'LICENSE.md'),
-            'width' => $template->gridWidth * $template->gridSize,
-            'height' => $template->gridHeight * $template->gridSize,
+            'width' => $setup->gridWidth * $setup->gridSize,
+            'height' => $setup->gridHeight * $setup->gridSize,
         ];
         file_put_contents($folder . 'room.json', json_encode($room));
 
@@ -1833,7 +1842,7 @@ class FreeBeeGeeAPI
         $digests = new \stdClass();
         foreach (
             [
-                'template.json',
+                'setup.json',
                 'room.json',
             ] as $filename
         ) {
@@ -1868,26 +1877,26 @@ class FreeBeeGeeAPI
     }
 
     /**
-     * Change room template values.
+     * Change room setup values.
      *
      * Will terminate with 200 or an error.
      *
      * @param object $meta Room's parsed `meta.json`.
-     * @param object $patch Parcial parsed template from client.
+     * @param object $patch Parcial parsed setup from client.
      */
-    public function updateRoomTemplateLocked(
+    public function updateRoomSetupLocked(
         object $meta,
         object $patch
     ) {
-        $validated = $this->validateTemplate($patch, false);
+        $validated = $this->validateSetup($patch, false);
 
         // only a few fields may be updated
-        $template = new \stdClass();
+        $setup = new \stdClass();
         foreach ($validated as $property => $value) {
             switch ($property) {
                 case 'gridWidth':
                 case 'gridHeight':
-                    $template->$property = $value;
+                    $setup->$property = $value;
                     break;
                 default:
                     // other attributes are silently ignored
@@ -1896,25 +1905,25 @@ class FreeBeeGeeAPI
 
         $lock = $this->api->waitForWriteLock($meta->lock);
 
-        // update template.json
-        $templateFS = json_decode(file_get_contents($meta->folder . 'template.json'));
-        if (isset($template->gridWidth)) {
-            $templateFS->gridWidth = $template->gridWidth;
+        // update setup.json
+        $setupFS = json_decode(file_get_contents($meta->folder . 'setup.json'));
+        if (isset($setup->gridWidth)) {
+            $setupFS->gridWidth = $setup->gridWidth;
         }
-        if (isset($template->gridHeight)) {
-            $templateFS->gridHeight = $template->gridHeight;
+        if (isset($setup->gridHeight)) {
+            $setupFS->gridHeight = $setup->gridHeight;
         }
-        $this->writeAsJSONAndDigest($meta->folder, 'template.json', $templateFS);
+        $this->writeAsJSONAndDigest($meta->folder, 'setup.json', $setupFS);
 
         // update room.json
         $roomFS = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $roomFS->template = $templateFS;
-        $roomFS->width = $templateFS->gridWidth * $templateFS->gridSize;
-        $roomFS->height = $templateFS->gridHeight * $templateFS->gridSize;
+        $roomFS->setup = $setupFS;
+        $roomFS->width = $setupFS->gridWidth * $setupFS->gridSize;
+        $roomFS->height = $setupFS->gridHeight * $setupFS->gridSize;
         $this->writeAsJSONAndDigest($meta->folder, 'room.json', $roomFS);
 
         $this->api->unlockLock($lock);
-        $this->api->sendReply(200, json_encode($templateFS));
+        $this->api->sendReply(200, json_encode($setupFS));
     }
 
     /**
@@ -1932,14 +1941,14 @@ class FreeBeeGeeAPI
         $room = json_decode($roomJson);
         if (!isset($room->engine) || $room->engine !== $this->engine) {
             // room is from an older FBG version
-            if ($this->api->semverSatisfies($this->engine, '^' . $room->template->engine, true)) {
+            if ($this->api->semverSatisfies($this->engine, '^' . $room->setup->engine, true)) {
                 // room can be converted
                 $this->cleanupRoom($meta->name);
                 $roomJson = $this->api->fileGetLocked($meta->folder . 'room.json', $meta->lock);
             } else {
                 // room can't be converted
-                $this->api->sendError(400, 'template.json: engine mismatch', 'INVALID_ENGINE', [
-                    $room->template->engine, $this->engine
+                $this->api->sendError(400, 'setup.json: engine mismatch', 'INVALID_ENGINE', [
+                    $room->setup->engine, $this->engine
                 ]);
             }
         }
@@ -2301,6 +2310,7 @@ class FreeBeeGeeAPI
                     case '.flock':
                     case 'snapshot.zip':
                     case 'room.json':
+                    case 'template.json': // deprecated since v0.18
                     case 'meta.json':
                     case 'digest.json':
                         break; // they don't go into the zip

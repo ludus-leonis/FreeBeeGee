@@ -1,5 +1,5 @@
 /**
- * @file The create-a-room screen.
+ * @file The setup-a-room screen.
  * @module
  * @copyright 2021-2022 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -43,7 +43,7 @@ import {
 
 import {
   DEMO_MODE,
-  apiGetTemplates,
+  apiGetSnapshots,
   UnexpectedStatus
 } from '../../api/index.mjs'
 
@@ -52,30 +52,30 @@ import {
 } from '../../app.mjs'
 
 /**
- * Show a create-room dialog.
+ * Show a setup-room dialog.
  *
  * @param {String} name The room name the user entered in the join dialog.
  */
-export function createRoomView (name) {
+export function setupView (name) {
   if (getServerInfo().freeRooms <= 0) {
     runError('NO_SLOT')
     return
   }
 
-  const templateHelp = getServerInfo().snapshotUploads
+  const snapshotHelp = getServerInfo().snapshotUploads
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
     : 'Let us know what game we may prepare for you.'
 
   const ttl = getServerInfo().ttl
 
   createScreen(
-    'Create room',
+    'Set up room',
     `
-      <div class="page-create">
+      <div class="page-setup">
         <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
         <input id="mode" class="mode is-hidden" type="checkbox">
         <p class="is-wrapping">
-          Room <strong>${name}</strong> does not exist yet. Feel free to create it!
+          Room <strong>${name}</strong> does not exist yet. Feel free to set it up!
         </p>
 
         <p class="server-feedback"></p>
@@ -85,7 +85,7 @@ export function createRoomView (name) {
           <label for="password">Admin password</label>
           <input id="password" type="password" placeholder="* * * * * *">
           <p class="p-small spacing-tiny">
-            Only admins can create rooms on this server.
+            Only admins can set up rooms on this server.
           </p>
         `
       : '') + `
@@ -96,15 +96,15 @@ export function createRoomView (name) {
           <input id="uploadFile" type="file" accept=".zip", class="is-hidden" />
         </label>
         <p class="upload-text p-small spacing-tiny">
-          Got no snapshots? Pick an <label for="mode" class="is-link">existing template</label> instead.
+          Got no snapshots? <label for="mode" class="is-link">Pick an existing</label> instead.
         </p>
         <div id="server-feedback-form"></div>
 
-        <label id="template-label" class="template-label" for="template">Template</label>
-        <select id="template" class="template" name="template">
+        <label id="snapshot-label" class="snapshot-label" for="snapshot">Snapshot</label>
+        <select id="snapshot" class="snapshot" name="snapshot">
           <option value="RPG" selected>RPG</option>
         </select>
-        <p class="template-text p-small spacing-tiny">${templateHelp}</p>
+        <p class="snapshot-text p-small spacing-tiny">${snapshotHelp}</p>
 
         ` + (!DEMO_MODE
       ? `
@@ -118,7 +118,7 @@ export function createRoomView (name) {
         `
       : '') + `
 
-        <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Create</a>
+        <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">OK</a>
         <p class="p-small is-faded is-center">
           Wrong room? <a href="./">Pick another</a>.
         </p>
@@ -130,20 +130,20 @@ export function createRoomView (name) {
       : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 
-  apiGetTemplates()
-    .then(templates => {
-      const t = _('#template')
+  apiGetSnapshots()
+    .then(snapshots => {
+      const t = _('#snapshot')
 
-      // determine preselected template (with fallbacks)
-      let preselected = templates.length > 0 ? templates[0] : 'none'
-      if (templates.includes('Tutorial')) preselected = 'Tutorial'
-      if (templates.includes(getServerInfo().defaultTemplate)) preselected = getServerInfo().defaultTemplate
+      // determine preselected snapshot (with fallbacks)
+      let preselected = snapshots.length > 0 ? snapshots[0] : 'none'
+      if (snapshots.includes('Tutorial')) preselected = 'Tutorial'
+      if (snapshots.includes(getServerInfo().defaultSnapshot)) preselected = getServerInfo().defaultSnapshot
 
       t.innerHTML = ''
-      for (const template of templates) {
-        const option = _('option').create(template)
-        option.value = template
-        if (template === preselected) option.selected = true
+      for (const snapshot of snapshots) {
+        const option = _('option').create(snapshot)
+        option.value = snapshot
+        if (snapshot === preselected) option.selected = true
         t.add(option)
       }
     })
@@ -153,8 +153,8 @@ export function createRoomView (name) {
       reset()
     })
 
-  _('#template')
-    .on('change', change => { _('#template').remove('.invalid') })
+  _('#snapshot')
+    .on('change', change => { _('#snapshot').remove('.invalid') })
 
   _('#uploadFile')
     .on('change', change => {
@@ -171,14 +171,14 @@ export function createRoomView (name) {
 
   _('#ok').on('click', click => { click.preventDefault(); validate() && ok(name) })
 
-  _('#template').focus()
+  _('#snapshot').focus()
 }
 
 /**
- * Reset all error indicators on template<->upload switch.
+ * Reset all error indicators on snapshot<->upload switch.
  */
 function reset () {
-  _('#template').remove('.invalid')
+  _('#snapshot').remove('.invalid')
   _('#uploadInput').remove('.invalid')
   _('.server-feedback').remove('.show')
   _('#server-feedback-form').innerHTML = ''
@@ -194,13 +194,13 @@ function validate () {
       return false
     }
     return true
-  } else { // exisiting template mode
+  } else { // exisiting snapshot mode
     return true // checks handled by html input
   }
 }
 
 /**
- * Initiates actual room-create after user clicks OK.
+ * Initiates actual room-setup after user clicks OK.
  */
 function ok (name) {
   _('#ok').add('.is-spinner')
@@ -225,8 +225,8 @@ function ok (name) {
     if (file.value.length > 0) {
       snapshot = file.files[0]
     }
-  } else { // exisiting template mode
-    room.template = _('#template').value
+  } else { // exisiting snapshot mode
+    room.snapshot = _('#snapshot').value
   }
 
   room.convert = false
@@ -247,11 +247,11 @@ function ok (name) {
             switch (error.body._error) {
               case 'FILE_PERMISSIONS':
                 serverFeedback(`
-                  FreeBeeGee is missing file-permissions on the server and can't create rooms right now.
+                  FreeBeeGee is missing file-permissions on the server and can't set up new rooms right now.
                   <span class="is-icon" title="Admins should check '${error.body._messages[0]}' to be writable.">${iconHelp}</span>
                 `)
                 _('#uploadInput').add('.invalid')
-                _('#template').add('.invalid').focus()
+                _('#snapshot').add('.invalid').focus()
                 break
               case 'INVALID_ENGINE':
                 serverFeedback(
@@ -262,7 +262,7 @@ function ok (name) {
                     You may try to convert it below.
                   `, '<input id="convert" type="checkbox"><label for="convert" class="p-medium">Try to convert - may loose content.</label>')
                 _('#uploadInput').add('.invalid')
-                _('#template').add('.invalid').focus()
+                _('#snapshot').add('.invalid').focus()
                 break
               case 'ROOM_SIZE':
                 serverFeedback(`
@@ -270,7 +270,7 @@ function ok (name) {
                   <span class="is-icon" title="Admins can change the limit in FBG's server.json.">${iconHelp}</span>
                 `)
                 _('#uploadInput').add('.invalid')
-                _('#template').add('.invalid').focus()
+                _('#snapshot').add('.invalid').focus()
                 break
               case 'PHP_SIZE':
                 serverFeedback(`
@@ -278,16 +278,16 @@ function ok (name) {
                   <span class="is-icon" title="Admins should check the php.ini upload settings.">${iconHelp}</span>
                 `)
                 _('#uploadInput').add('.invalid')
-                _('#template').add('.invalid').focus()
+                _('#snapshot').add('.invalid').focus()
                 break
               case 'ZIP_INVALID':
-              case 'TEMPLATE_JSON_INVALID':
+              case 'SETUP_JSON_INVALID':
               case 'STATE_JSON_INVALID':
               default:
                 serverFeedback('The selected snapshot contains errors and can\'t be loaded.')
                 console.error(error.body._messages)
                 _('#uploadInput').add('.invalid')
-                _('#template').add('.invalid').focus()
+                _('#snapshot').add('.invalid').focus()
                 break
             }
             break
@@ -300,7 +300,7 @@ function ok (name) {
               <span class="is-icon" title="This is not an FBG issue. Admins should check the server's httpd.conf file.">${iconHelp}</span>
             `)
             _('#uploadInput').add('.invalid')
-            _('#template').add('.invalid').focus()
+            _('#snapshot').add('.invalid').focus()
             break
           case 503:
             runError('FULL')

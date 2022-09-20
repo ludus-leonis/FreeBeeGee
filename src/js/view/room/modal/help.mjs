@@ -33,7 +33,7 @@ import {
   PREFS,
   getRoomPreference,
   setRoomPreference,
-  getTemplate
+  getSetup
 } from '../../../state/index.mjs'
 
 import {
@@ -51,7 +51,7 @@ export function modalHelp () {
   if (!isModalActive()) {
     createModal(true)
 
-    const template = getTemplate()
+    const setup = getSetup()
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">FreeBeeGee v$VERSION$ “$CODENAME$”</h3>
@@ -168,7 +168,7 @@ export function modalHelp () {
 
             <p>Engine version: $ENGINE$</p>
 
-            <p>Template version: ${template.version} (requires engine ${template.engine})</p>
+            <p>Snapshot version: ${setup.version} (requires engine ${setup.engine})</p>
           </div>
         </div>
       </div>

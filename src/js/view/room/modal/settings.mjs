@@ -24,8 +24,8 @@ import {
 } from '../../../app.mjs'
 
 import {
-  getTemplate,
-  patchTemplate,
+  getSetup,
+  patchSetup,
   updateTable,
   getRoom,
   getServerInfo,
@@ -293,10 +293,10 @@ export function modalSettings () {
     table.add(option)
   }
 
-  const template = getTemplate()
+  const setup = getSetup()
   const rect = getContentRect()
-  populateSizes('#table-w', getTemplate().gridWidth, Math.floor(rect.right / template.gridSize))
-  populateSizes('#table-h', getTemplate().gridHeight, Math.floor(rect.bottom / template.gridSize))
+  populateSizes('#table-w', getSetup().gridWidth, Math.floor(rect.right / setup.gridSize))
+  populateSizes('#table-h', getSetup().gridHeight, Math.floor(rect.bottom / setup.gridSize))
 
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())
@@ -402,11 +402,11 @@ function populateSizes (id, roomSize, contentSize, increments = 16) {
  * Resize the room (if size actually changed)
  */
 function resizeRoom () {
-  const template = getTemplate()
+  const setup = getSetup()
   const w = Number(_('#table-w').value)
   const h = Number(_('#table-h').value)
-  if (w !== template.gridWidth || h !== template.gridHeight) {
-    patchTemplate({
+  if (w !== setup.gridWidth || h !== setup.gridHeight) {
+    patchSetup({
       gridWidth: w,
       gridHeight: h
     })
@@ -422,8 +422,8 @@ function resizeRoom () {
  */
 function handleAlign (click, x, y) {
   click.preventDefault()
-  const template = getTemplate()
-  const padding = template.gridSize // leave room on side
+  const setup = getSetup()
+  const padding = setup.gridSize // leave room on side
   const rect = getContentRect()
 
   let x2
@@ -434,10 +434,10 @@ function handleAlign (click, x, y) {
       x2 = (padding + rect.width / 2) - (rect.left + rect.width / 2)
       break
     case 0:
-      x2 = template._meta.widthPx / 2 - (rect.left + rect.width / 2)
+      x2 = setup._meta.widthPx / 2 - (rect.left + rect.width / 2)
       break
     case 1:
-      x2 = (template._meta.widthPx - padding - rect.width / 2) - (rect.left + rect.width / 2)
+      x2 = (setup._meta.widthPx - padding - rect.width / 2) - (rect.left + rect.width / 2)
   }
 
   switch (y) {
@@ -445,10 +445,10 @@ function handleAlign (click, x, y) {
       y2 = (padding + rect.height / 2) - (rect.top + rect.height / 2)
       break
     case 0:
-      y2 = template._meta.heightPx / 2 - (rect.top + rect.height / 2)
+      y2 = setup._meta.heightPx / 2 - (rect.top + rect.height / 2)
       break
     case 1:
-      y2 = (template._meta.heightPx - padding - rect.height / 2) - (rect.top + rect.height / 2)
+      y2 = (setup._meta.heightPx - padding - rect.height / 2) - (rect.top + rect.height / 2)
   }
 
   moveContent(Math.floor(x2), Math.floor(y2))

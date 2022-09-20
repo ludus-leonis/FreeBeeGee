@@ -302,15 +302,15 @@ export function testJsonDelete (api, path, status = 204, token = undefined) {
  *
  * @param {string} api Server URL to API root.
  * @param {string} room Room name to create.
- * @param {string} template Template to use for room.
+ * @param {string} snapshot Snapshot to use for room.
  * @param {string} password Optional password for the room.
  * @return {string} API token for that room.
  */
-export function openTestroom (api, room, template, password = undefined) {
+export function openTestroom (api, room, snapshot, password = undefined) {
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
-      template,
+      snapshot,
       auth: 'apitests',
       password
     }

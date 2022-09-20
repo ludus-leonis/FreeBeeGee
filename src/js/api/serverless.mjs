@@ -66,14 +66,14 @@ export function demoFetchOrThrow (_, path, data = {}, headers = false) {
     return apiRoomTablePieces(matches[1], Number.parseInt(matches[2]), undefined, data, headers)
   } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/$/)) {
     return apiRoom(path.substr(10).replace(/\/.*$/, ''), data, headers)
-  } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/template\/$/)) {
-    return apiRoomTemplate(path.substr(10).replace(/\/.*$/, ''), data, headers)
+  } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/setup\/$/)) {
+    return apiRoomSetup(path.substr(10).replace(/\/.*$/, ''), data, headers)
   } else if (path.match(/^api\/rooms\/$/)) {
     return apiRoom(undefined, data, headers)
   } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/auth\/$/)) {
     return apiRoomAuth(path.substr(10).replace(/\/.*$/, ''), data, headers)
-  } else if (path === 'api/templates/') {
-    return apiTemplates(data, headers)
+  } else if (path === 'api/snapshots/') {
+    return apiSnapshots(data, headers)
   } else if (path === 'api/') {
     return api(data, headers)
   }
@@ -277,7 +277,7 @@ function cache (roomName, pref, payload, status, headers, digest = null) {
 }
 
 /**
- * Fetch an URL (Json) from the template directory and cache it in the browser store.
+ * Fetch an URL (Json) from the snapshot directory and cache it in the browser store.
  *
  * @param {String} roomName Room name to cache the URL for.
  * @param {String} url The URL to fetch, e.g. './demo/RPG/room.json'.
@@ -333,13 +333,13 @@ function api (data, headers) {
 }
 
 /**
- * Fake-fetch /api/templates.
+ * Fake-fetch /api/snapshots.
  *
  * @param {Object} data Original fetch()'s data object.
  * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @return {Promise} Delayed promise of the API content.
  */
-function apiTemplates (data, headers) {
+function apiSnapshots (data, headers) {
   switch (data.method) {
     case 'GET':
       return delayPromise(200, ['Classic', 'Hex', 'RPG', 'Tutorial'], headers)
@@ -390,12 +390,12 @@ function apiRoom (roomName, data, headers) {
     case 'POST':
       return fetchAndCache(
         data.body.get('name'),
-        `demo/${data.body.get('template')}/room.json`,
+        `demo/${data.body.get('snapshot')}/room.json`,
         PREFS.ROOM,
         (json) => {
           json.name = data.body.get('name')
           json.id = '' + new Date().getTime()
-          json.template.name = data.body.get('template')
+          json.setup.name = data.body.get('snapshot')
         },
         201,
         headers,
@@ -446,7 +446,7 @@ function apiRoomTable (roomName, no, data, headers) {
       } else {
         return fetchAndCache(
           roomName,
-          `demo/${getRoom(roomName).template.name}/tables/${no}.json`,
+          `demo/${getRoom(roomName).setup.name}/tables/${no}.json`,
           pref,
           undefined,
           200,
@@ -512,21 +512,21 @@ function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
 }
 
 /**
- * Fake-fetch /api/rooms/[roomName]/template/
+ * Fake-fetch /api/rooms/[roomName]/setup/
  *
  * @param {String} roomName Room name to fetch.
  * @param {Object} data Original fetch()'s data object.
  * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @return {Promise} Delayed promise of the API content.
  */
-function apiRoomTemplate (roomName, data, headers) {
-  let template
+function apiRoomSetup (roomName, data, headers) {
+  let setup
   switch (data.method) {
     case 'PATCH':
       temp = getRoom(roomName)
-      template = patch([temp.template], 'name', temp.template.name, JSON.parse(data.body))
-      temp.width = template.gridWidth * template.gridSize
-      temp.height = template.gridHeight * template.gridSize
+      setup = patch([temp.setup], 'name', temp.setup.name, JSON.parse(data.body))
+      temp.width = setup.gridWidth * setup.gridSize
+      temp.height = setup.gridHeight * setup.gridSize
       setPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM, temp)
       updateDigest(roomName, 'room.json', temp)
       return delayPromise(200, temp, headers)

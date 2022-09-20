@@ -82,7 +82,7 @@
         flex-shrink: 0;
       }
 
-      .is-template-grid-square & {
+      .is-grid-square & {
         @include modal-library-flate(64px, 64px, 1);
 
         &.is-inflate-2x { @include modal-library-flate(128px, 128px, 2) }
@@ -91,7 +91,7 @@
         &.is-deflate-4x { @include modal-library-flate(16px, 16px, .25) }
       }
 
-      .is-template-grid-hex & {
+      .is-grid-hex & {
         @include modal-library-flate(110px, 64px, 1);
 
         &.is-inflate-2x { @include modal-library-flate(220px, 128px, 2) }

@@ -34,12 +34,12 @@ import {
 
 // -----------------------------------------------------------------------------
 
-function testApiTemplateRPG (api, version, room) {
+function testApiSetupRPG (api, version, room) {
   // create room
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
-      template: 'RPG',
+      snapshot: 'RPG',
       auth: 'apitests'
     }
   }, body => {
@@ -51,8 +51,8 @@ function testApiTemplateRPG (api, version, room) {
     expect(body.library.tile.length).to.be.gte(10)
     expect(body.library.token.length).to.be.gte(200)
     expect(body.library.other.length).to.be.gte(5)
-    expect(body.template).to.be.an('object')
-    expect(body.template.type).to.be.eql('grid-square')
+    expect(body.setup).to.be.an('object')
+    expect(body.setup.type).to.be.eql('grid-square')
   }, 201)
 
   // check table
@@ -64,12 +64,12 @@ function testApiTemplateRPG (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiTemplateHex (api, version, room) {
+function testApiSetupHex (api, version, room) {
   // create room
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
-      template: 'Hex',
+      snapshot: 'Hex',
       auth: 'apitests'
     }
   }, body => {
@@ -81,8 +81,8 @@ function testApiTemplateHex (api, version, room) {
     expect(body.library.tile.length).to.be.gte(10)
     expect(body.library.token.length).to.be.gte(200)
     expect(body.library.other.length).to.be.gte(5)
-    expect(body.template).to.be.an('object')
-    expect(body.template.type).to.be.eql('grid-hex')
+    expect(body.setup).to.be.an('object')
+    expect(body.setup.type).to.be.eql('grid-hex')
   }, 201)
 
   // check table
@@ -94,12 +94,12 @@ function testApiTemplateHex (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiTemplateClassic (api, version, room) {
+function testApiSetupClassic (api, version, room) {
   // create room
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
-      template: 'Classic',
+      snapshot: 'Classic',
       auth: 'apitests'
     }
   }, body => {
@@ -111,8 +111,8 @@ function testApiTemplateClassic (api, version, room) {
     expect(body.library.tile.length).to.be.gte(3)
     expect(body.library.token.length).to.be.gte(8)
     expect(body.library.other.length).to.be.gte(5)
-    expect(body.template).to.be.an('object')
-    expect(body.template.type).to.be.eql('grid-square')
+    expect(body.setup).to.be.an('object')
+    expect(body.setup.type).to.be.eql('grid-square')
   }, 201)
 
   // check table
@@ -124,12 +124,12 @@ function testApiTemplateClassic (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiTemplateTutorial (api, version, room) {
+function testApiSetupTutorial (api, version, room) {
   // create room
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
-      template: 'Tutorial',
+      snapshot: 'Tutorial',
       auth: 'apitests'
     }
   }, body => {
@@ -141,8 +141,8 @@ function testApiTemplateTutorial (api, version, room) {
     expect(body.library.tile.length).to.be.gte(1)
     expect(body.library.token.length).to.be.gte(1)
     expect(body.library.other.length).to.be.gte(1)
-    expect(body.template).to.be.an('object')
-    expect(body.template.type).to.be.eql('grid-square')
+    expect(body.setup).to.be.an('object')
+    expect(body.setup.type).to.be.eql('grid-square')
   }, 201)
 
   // check table
@@ -156,11 +156,11 @@ function testApiTemplateTutorial (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - templates', function () {
+describe('API - snapshots', function () {
   runTests((api, version, room) => {
-    describe('RPG', () => testApiTemplateRPG(api, version, room))
-    describe('Hex', () => testApiTemplateHex(api, version, room))
-    describe('Classic', () => testApiTemplateClassic(api, version, room))
-    describe('Tutorial', () => testApiTemplateTutorial(api, version, room))
+    describe('RPG', () => testApiSetupRPG(api, version, room))
+    describe('Hex', () => testApiSetupHex(api, version, room))
+    describe('Classic', () => testApiSetupClassic(api, version, room))
+    describe('Tutorial', () => testApiSetupTutorial(api, version, room))
   })
 })

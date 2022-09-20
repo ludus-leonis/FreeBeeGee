@@ -23,7 +23,7 @@ import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   getRoom,
-  getTemplate,
+  getSetup,
   getLibrary,
   getTable,
   getTableNo,
@@ -164,11 +164,11 @@ export function getAssetURL (asset, side = 0) {
   if (DEMO_MODE) {
     switch (side) {
       case -2:
-        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.mask}`
+        return `demo/${getSetup().name}/assets/${asset.type}/${asset.mask}`
       case -1:
-        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`
+        return `demo/${getSetup().name}/assets/${asset.type}/${asset.base}`
       default:
-        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.media[side]}`
+        return `demo/${getSetup().name}/assets/${asset.type}/${asset.media[side]}`
     }
   } else {
     switch (side) {
@@ -289,7 +289,7 @@ export function findExpiredPieces (no = getTableNo()) {
  */
 export function sanitizePiecePatch (patch, pieceId = null) {
   const r = getRoom()
-  const t = getTemplate()
+  const t = getSetup()
   const p = pieceId === null ? null : findPiece(pieceId)
   const result = {}
   let colors
@@ -344,20 +344,20 @@ export function sanitizePiecePatch (patch, pieceId = null) {
 }
 
 /**
- * Add default template values to all properties that the API might omit.
+ * Add default setup values to all properties that the API might omit.
  *
- * @param {Object} template Data object to populate.
- * @return {Array} Template for chaining.
+ * @param {Object} setup Data object to populate.
+ * @return {Array} Setup for chaining.
  */
-export function populateTemplateDefaults (template, headers = null) {
-  template.borders = template.borders ?? []
+export function populateSetupDefaults (setup, headers = null) {
+  setup.borders = setup.borders ?? []
 
-  template._meta = {
-    widthPx: template.gridWidth * template.gridSize,
-    heightPx: template.gridHeight * template.gridSize
+  setup._meta = {
+    widthPx: setup.gridWidth * setup.gridSize,
+    heightPx: setup.gridHeight * setup.gridSize
   }
 
-  return template
+  return setup
 }
 
 export const FEATURE_DICEMAT = 'DICEMAT'
@@ -371,7 +371,7 @@ export const FEATURE_DISCARD = 'DISCARD'
  * @return {Object} Piece for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
-  const colors = getTemplate().colors
+  const colors = getSetup().colors
 
   piece.l = layerToName(piece.l ?? 0)
   piece.w = piece.w ?? 1
@@ -390,7 +390,7 @@ export function populatePieceDefaults (piece, headers = null) {
 
   // add client-side meta information for piece
   piece._meta = {}
-  const template = getTemplate()
+  const setup = getSetup()
   if (piece.id === ID.LOS) {
     piece._meta.originWidthPx = piece.w
     piece._meta.originHeightPx = piece.h
@@ -399,8 +399,8 @@ export function populatePieceDefaults (piece, headers = null) {
     piece._meta.originOffsetXPx = 0
     piece._meta.originOffsetYPx = 0
   } else {
-    piece._meta.originWidthPx = piece.w * template.gridSize
-    piece._meta.originHeightPx = piece.h * template.gridSize
+    piece._meta.originWidthPx = piece.w * setup.gridSize
+    piece._meta.originHeightPx = piece.h * setup.gridSize
     const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
     piece._meta.widthPx = Math.round(rect.w)
     piece._meta.heightPx = Math.round(rect.h)
@@ -634,14 +634,14 @@ export function clampToTableSize (piece) {
 export function snap (x, y, lod = 3) {
   if (lod >= 4) return { x: Math.round(x), y: Math.round(y) } // disabled snap
 
-  const template = getTemplate()
-  if (template.snap === false) {
+  const setup = getSetup()
+  if (setup.snap === false) {
     return snapGrid(x, y, 8, 3) // snap to 4px
   }
-  if (template.type === TYPE_HEX) {
-    return snapHex(x, y, template.gridSize, lod)
+  if (setup.type === TYPE_HEX) {
+    return snapHex(x, y, setup.gridSize, lod)
   }
-  return snapGrid(x, y, template.gridSize, lod)
+  return snapGrid(x, y, setup.gridSize, lod)
 }
 
 /**
@@ -653,14 +653,14 @@ export function snap (x, y, lod = 3) {
  * @return {Object} Object with x and y.
  */
 export function getSetupCenter (no = getTableNo()) {
-  const template = getTemplate()
+  const setup = getSetup()
   const rect = getContentRect(no)
 
   // use table center for empty tables
   if (rect.bottom <= 0 && rect.right <= 0) {
     return {
-      x: (template.gridSize * template.gridWidth) / 2,
-      y: (template.gridSize * template.gridHeight) / 2
+      x: (setup.gridSize * setup.gridWidth) / 2,
+      y: (setup.gridSize * setup.gridHeight) / 2
     }
   }
 
@@ -745,10 +745,10 @@ export function isSolid (piece, x, y) {
     img.addEventListener('error', (err) => reject(err))
     img.src = piece._meta.mask
   }).then(img => {
-    const template = getTemplate()
+    const setup = getSetup()
 
-    const width = piece.w * template.gridSize
-    const height = piece.h * template.gridSize
+    const width = piece.w * setup.gridSize
+    const height = piece.h * setup.gridSize
 
     // calculate img->canvas scale,
     // compensate for 'background-size: cover'

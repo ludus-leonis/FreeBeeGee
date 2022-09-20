@@ -5,9 +5,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It explains ho
 
 ## About snapshots
 
-Snapshots are Save-Game `*.zip`s you can obtain by downloading them from any room you have joined. When creating a new room - even on another FBG server - you can provide such a snapshot to recreate and continue a game.
+Snapshots are savegame `*.zip`s you can obtain by downloading them from any room you have joined. When creating a new room - even on another FBG server - you can provide such a snapshot to recreate and continue a game.
 
-Snapshots do not only serve as Save-Games and backups, but can also be used as pre-setup game templates and shared with other players/servers. While you can do most of the setup in the FreeBeeGee UI, there are some things that require you editing the `zip` file.
+Snapshots do not only serve as savegames and backups, but can also be used as pre-setup for a game and shared with other players/servers. While you can do most of the setup in the FreeBeeGee UI, there are some things that require you editing the `zip` file.
 
 
 ## Basic snapshot layout
@@ -16,7 +16,7 @@ Snapshots are ordinary `*.zip` files with a strict following folder structure. A
 
 ```
 /
-├─ template.json
+├─ setup.json
 └─ LICENSE.md
 ```
 
@@ -24,7 +24,7 @@ Note that all files have to be in the root folder of the `ZIP`! Usually you want
 
 ```
 /
-├─ template.json
+├─ setup.json
 ├─ LICENSE.md
 ├─ assets/
 │  ├─ token/
@@ -51,14 +51,14 @@ Note that all files have to be in the root folder of the `ZIP`! Usually you want
 To protect the server and the players, FreeBeeGee is picky when validating snapshots. Unknown or invalid files/folders will be ignored and silently dropped.
 
 
-## `template.json`
+## `setup.json`
 
-The `template.json` contains meta-information for the game engine in [JSON](https://en.wikipedia.org/wiki/JSON) format. The content of this file is described in the [datamodel](datamodel.md#templates) documentation.
+The `setup.json` contains meta-information for the game engine in [JSON](https://en.wikipedia.org/wiki/JSON) format. The content of this file is described in the [datamodel](datamodel.md#setups) documentation.
 
 
 ## `LICENSE.md`
 
-The copyright and license / usage conditions if this template in [Markdown](https://en.wikipedia.org/wiki/Markdown) format. Will be shown in the help dialog. Also a good place to give credit for the used artwork. May only contain markdown markup, but no HTML tags (they will be disabled during rendering).
+The copyright and license / usage conditions of this snapshot in [Markdown](https://en.wikipedia.org/wiki/Markdown) format. Will be shown in the help dialog. Also a good place to give credit for the used artwork. May only contain markdown markup, but no HTML tags (they will be disabled during rendering).
 
 
 ## Assets

@@ -1,10 +1,10 @@
 {
- "id": "FQz7h4JO",
- "name": "demoroomtutorial",
+ "id": "d8pTqwob",
+ "name": "demoroomclassic",
  "engine": "2.3.1",
- "template": {
+ "setup": {
   "engine": "2.3.0",
-  "version": "0.17.0",
+  "version": "0.18.0-dev",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 64,
@@ -293,20 +293,6 @@
     "bg": "1",
     "media": [],
     "mask": "_.zone.5x5xX.1.svg"
-   },
-   {
-    "id": "NWd-O100",
-    "name": "door",
-    "type": "overlay",
-    "w": 2,
-    "h": 1,
-    "bg": "#808080",
-    "media": [
-     "door.2x1x1.png",
-     "door.2x1x2.png",
-     "door.2x1x3.png",
-     "door.2x1x4.png"
-    ]
    }
   ],
   "tile": [
@@ -333,52 +319,123 @@
     ]
    },
    {
-    "id": "krH1S200",
-    "name": "chest",
+    "id": "gQ6Pe200",
+    "name": "backgammon",
     "type": "tile",
-    "w": 1,
-    "h": 1,
-    "bg": "transparent",
+    "w": 14,
+    "h": 12,
+    "bg": "#DDBC95",
     "media": [
-     "chest.1x1x1.transparent.png"
+     "backgammon.14x12x1.DDBC95.svg"
+    ],
+    "base": "backgammon.14x12x0.DDBC95.jpg"
+   },
+   {
+    "id": "Y6aoL100",
+    "name": "chess",
+    "type": "tile",
+    "w": 8,
+    "h": 8,
+    "bg": "#b7b9ca",
+    "media": [
+     "chess.8x8x1.b7b9ca.jpg"
     ]
    },
    {
-    "id": "DOx9P300",
-    "name": "corridor.4x1",
+    "id": "lWh16200",
+    "name": "go.09x09",
     "type": "tile",
-    "w": 4,
-    "h": 1,
-    "bg": "#7C7F76",
+    "w": 9,
+    "h": 9,
+    "bg": "#DDBC95",
     "media": [
-     "corridor.4x1.4x1x1.7C7F76-paper.jpg"
+     "go.09x09.9x9x1.DDBC95.svg"
     ],
-    "tx": "paper"
+    "base": "go.09x09.9x9x0.DDBC95.jpg"
    },
    {
-    "id": "i89Ot200",
-    "name": "room.4x4",
+    "id": "sHieO100",
+    "name": "go.13x13",
     "type": "tile",
-    "w": 4,
-    "h": 4,
-    "bg": "#808674",
+    "w": 13,
+    "h": 13,
+    "bg": "#DDBC95",
     "media": [
-     "room.4x4.4x4x1.808674-paper.jpg",
-     "room.4x4.4x4x2.8E947E-paper.jpg"
+     "go.13x13.13x13x1.DDBC95.svg"
     ],
-    "tx": "paper"
+    "base": "go.13x13.13x13x0.DDBC95.jpg"
    },
    {
-    "id": "F-Tl9100",
-    "name": "stairs.2x2",
+    "id": "rYebw200",
+    "name": "go.19x19",
     "type": "tile",
-    "w": 2,
-    "h": 2,
-    "bg": "#686E60",
+    "w": 19,
+    "h": 19,
+    "bg": "#DDBC95",
     "media": [
-     "stairs.2x2.2x2x1.686E60-paper.jpg"
+     "go.19x19.19x19x1.DDBC95.svg"
     ],
-    "tx": "paper"
+    "base": "go.19x19.19x19x0.DDBC95.jpg"
+   },
+   {
+    "id": "MUwjA300",
+    "name": "mills",
+    "type": "tile",
+    "w": 10,
+    "h": 10,
+    "bg": "#DDBC95",
+    "media": [
+     "mills.10x10x1.DDBC95.svg"
+    ],
+    "base": "mills.10x10x0.DDBC95.jpg"
+   },
+   {
+    "id": "z6iPq300",
+    "name": "oware",
+    "type": "tile",
+    "w": 18,
+    "h": 6,
+    "bg": "#DDBC95",
+    "media": [
+     "oware.18x6x1.DDBC95.svg"
+    ],
+    "base": "oware.18x6x0.DDBC95.jpg"
+   },
+   {
+    "id": "aR3Vu100",
+    "name": "pachisi",
+    "type": "tile",
+    "w": 12,
+    "h": 12,
+    "bg": "#DDBC95",
+    "media": [
+     "pachisi.12x12x1.DDBC95.svg"
+    ],
+    "base": "pachisi.12x12x0.DDBC95.jpg"
+   },
+   {
+    "id": "N3mCH100",
+    "name": "solitaire",
+    "type": "tile",
+    "w": 8,
+    "h": 8,
+    "bg": "#DDBC95",
+    "media": [
+     "solitaire.8x8x1.DDBC95.svg"
+    ],
+    "base": "solitaire.8x8x0.DDBC95.jpg"
+   },
+   {
+    "id": "GTJ-P300",
+    "name": "ticTacToe",
+    "type": "tile",
+    "w": 6,
+    "h": 6,
+    "bg": "#DDBC95",
+    "media": [
+     "ticTacToe.6x6x1.DDBC95.svg"
+    ],
+    "base": "ticTacToe.6x6x0.DDBC95.jpg"
    }
   ],
   "token": [
@@ -401,32 +458,32 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "_.letter.1x1x01.1-wood.svg",
-     "_.letter.1x1x02.1-wood.svg",
-     "_.letter.1x1x03.1-wood.svg",
-     "_.letter.1x1x04.1-wood.svg",
-     "_.letter.1x1x05.1-wood.svg",
-     "_.letter.1x1x06.1-wood.svg",
-     "_.letter.1x1x07.1-wood.svg",
-     "_.letter.1x1x08.1-wood.svg",
-     "_.letter.1x1x09.1-wood.svg",
-     "_.letter.1x1x10.1-wood.svg",
-     "_.letter.1x1x11.1-wood.svg",
-     "_.letter.1x1x12.1-wood.svg",
-     "_.letter.1x1x13.1-wood.svg",
-     "_.letter.1x1x14.1-wood.svg",
-     "_.letter.1x1x15.1-wood.svg",
-     "_.letter.1x1x16.1-wood.svg",
-     "_.letter.1x1x17.1-wood.svg",
-     "_.letter.1x1x18.1-wood.svg",
-     "_.letter.1x1x19.1-wood.svg",
-     "_.letter.1x1x20.1-wood.svg",
-     "_.letter.1x1x21.1-wood.svg",
-     "_.letter.1x1x22.1-wood.svg",
-     "_.letter.1x1x23.1-wood.svg",
-     "_.letter.1x1x24.1-wood.svg",
-     "_.letter.1x1x25.1-wood.svg",
-     "_.letter.1x1x26.1-wood.svg"
+     "_.letter.1x1x01.1.wood.svg",
+     "_.letter.1x1x02.1.wood.svg",
+     "_.letter.1x1x03.1.wood.svg",
+     "_.letter.1x1x04.1.wood.svg",
+     "_.letter.1x1x05.1.wood.svg",
+     "_.letter.1x1x06.1.wood.svg",
+     "_.letter.1x1x07.1.wood.svg",
+     "_.letter.1x1x08.1.wood.svg",
+     "_.letter.1x1x09.1.wood.svg",
+     "_.letter.1x1x10.1.wood.svg",
+     "_.letter.1x1x11.1.wood.svg",
+     "_.letter.1x1x12.1.wood.svg",
+     "_.letter.1x1x13.1.wood.svg",
+     "_.letter.1x1x14.1.wood.svg",
+     "_.letter.1x1x15.1.wood.svg",
+     "_.letter.1x1x16.1.wood.svg",
+     "_.letter.1x1x17.1.wood.svg",
+     "_.letter.1x1x18.1.wood.svg",
+     "_.letter.1x1x19.1.wood.svg",
+     "_.letter.1x1x20.1.wood.svg",
+     "_.letter.1x1x21.1.wood.svg",
+     "_.letter.1x1x22.1.wood.svg",
+     "_.letter.1x1x23.1.wood.svg",
+     "_.letter.1x1x24.1.wood.svg",
+     "_.letter.1x1x25.1.wood.svg",
+     "_.letter.1x1x26.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -438,16 +495,28 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "_.number.1x1x01.1-wood.svg",
-     "_.number.1x1x02.1-wood.svg",
-     "_.number.1x1x03.1-wood.svg",
-     "_.number.1x1x04.1-wood.svg",
-     "_.number.1x1x05.1-wood.svg",
-     "_.number.1x1x06.1-wood.svg",
-     "_.number.1x1x07.1-wood.svg",
-     "_.number.1x1x08.1-wood.svg",
-     "_.number.1x1x09.1-wood.svg",
-     "_.number.1x1x10.1-wood.svg"
+     "_.number.1x1x01.1.wood.svg",
+     "_.number.1x1x02.1.wood.svg",
+     "_.number.1x1x03.1.wood.svg",
+     "_.number.1x1x04.1.wood.svg",
+     "_.number.1x1x05.1.wood.svg",
+     "_.number.1x1x06.1.wood.svg",
+     "_.number.1x1x07.1.wood.svg",
+     "_.number.1x1x08.1.wood.svg",
+     "_.number.1x1x09.1.wood.svg",
+     "_.number.1x1x10.1.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "oZX62300",
+    "name": "_.plain",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "_.plain.1x1x1.0.wood.png"
     ],
     "tx": "wood"
    },
@@ -459,45 +528,87 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "_.symbol.1x1x1.1-wood.svg",
-     "_.symbol.1x1x2.1-wood.svg",
-     "_.symbol.1x1x3.1-wood.svg"
+     "_.symbol.1x1x1.1.wood.svg",
+     "_.symbol.1x1x2.1.wood.svg",
+     "_.symbol.1x1x3.1.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "hNjjH100",
-    "name": "barbarian",
+    "id": "HsCXs000",
+    "name": "chess.bishop",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "3",
+    "bg": "0",
     "media": [
-     "barbarian.1x1x1.3-wood.svg"
+     "chess.bishop.1x1x1.0.wood.svg",
+     "chess.bishop.1x1x2.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "JP3EE200",
-    "name": "goblin",
+    "id": "tqNbQ200",
+    "name": "chess.king",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "6",
+    "bg": "0",
     "media": [
-     "goblin.1x1x1.6-wood.svg"
+     "chess.king.1x1x1.0.wood.svg",
+     "chess.king.1x1x2.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "HfpyK000",
-    "name": "orc",
+    "id": "zKVSU200",
+    "name": "chess.knight",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "6",
+    "bg": "0",
     "media": [
-     "orc.1x1x1.6-wood.svg"
+     "chess.knight.1x1x1.0.wood.svg",
+     "chess.knight.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "Z5pQC000",
+    "name": "chess.pawn",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.pawn.1x1x1.0.wood.svg",
+     "chess.pawn.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "mwxyq000",
+    "name": "chess.queen",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.queen.1x1x1.0.wood.svg",
+     "chess.queen.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "f_9xm000",
+    "name": "chess.rook",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.rook.1x1x1.0.wood.svg",
+     "chess.rook.1x1x2.0.wood.svg"
     ],
     "tx": "wood"
    }
@@ -848,10 +959,43 @@
     "media": [
      "_.target.svg"
     ]
+   },
+   {
+    "id": "wRe_l200",
+    "name": "drop",
+    "type": "badge",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "drop.svg"
+    ]
+   },
+   {
+    "id": "wgQLZ100",
+    "name": "mark",
+    "type": "badge",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "mark.svg"
+    ]
+   },
+   {
+    "id": "Wvh__000",
+    "name": "shield",
+    "type": "badge",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "shield.svg"
+    ]
    }
   ]
  },
- "credits": "The **Tutorial** template is part of FreeBeeGee and released under the terms of the AGPL-3.0. It contains assets by:\n\n* Map tiles by [2minutetabletop.com](https://2minutetabletop.com/) / CC NC 3.0 / used with permission\n* Tokens & Pieces by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified\n",
+ "credits": "The **Classic** snapshot is part of FreeBeeGee and released under the terms of the AGPL-3.0. It contains assets by:\n\n* Marble Texture CC BY-SA 3.0 by SimoonMurray\n* Go boards AGPL-3.0 by [svenja](https://github.com/svenja/)\n* Pieces by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified:\n  * Chess pieces by Skoll\n  * Griffin shield icon by Delapouite\n* Status icons by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified:\n  * broken-heart, bubbling-bowl, explosion-rays, magnet, manacles, power-lightning, psychic-waves, resonance, spider-web, stone-block, water-splash by Lorc\n  * griffin-shield, target-poster by Delapouite\n  * water-drop by sbed\n",
  "width": 4096,
  "height": 4096
 }

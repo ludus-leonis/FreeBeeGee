@@ -190,7 +190,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
 
     'src/js/view/modal.mjs',
     'src/js/view/screen.mjs',
-    'src/js/view/create/index.mjs',
+    'src/js/view/setup/index.mjs',
     'src/js/view/error/index.mjs',
     'src/js/view/join/index.mjs',
 
@@ -297,10 +297,10 @@ gulp.task('img', gulp.series(() => {
     .pipe(gulp.dest(dirs.site + '/img'))
 }))
 
-function template (name) {
+function snapshot (name) {
   return gulp.series(() => { // step 1: optimize & cache content
-    return replace(gulp.src('src/templates/' + name + '/**/*'))
-      .pipe(changed(dirs.cache + '/templates/' + name))
+    return replace(gulp.src('src/snapshots/' + name + '/**/*'))
+      .pipe(changed(dirs.cache + '/snapshots/' + name))
       .pipe(image({
         optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
         pngquant: ['--speed=1', '--force', 256],
@@ -310,19 +310,19 @@ function template (name) {
         gifsicle: ['--optimize'],
         svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
       }))
-      .pipe(gulp.dest(dirs.cache + '/templates/' + name))
+      .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
   }, () => { // step 2: zip cache
-    return gulp.src(dirs.cache + '/templates/' + name + '/**/*')
+    return gulp.src(dirs.cache + '/snapshots/' + name + '/**/*')
       .pipe(zip(name + '.zip'))
-      .pipe(gulp.dest(dirs.site + '/api/data/templates'))
+      .pipe(gulp.dest(dirs.site + '/api/data/snapshots'))
   })
 }
 
-gulp.task('template-Classic', template('Classic'))
-gulp.task('template-RPG', template('RPG'))
-gulp.task('template-Hex', template('Hex'))
-gulp.task('template-Tutorial', template('Tutorial'))
-gulp.task('template-System', template('_'))
+gulp.task('snapshot-Classic', snapshot('Classic'))
+gulp.task('snapshot-RPG', snapshot('RPG'))
+gulp.task('snapshot-Hex', snapshot('Hex'))
+gulp.task('snapshot-Tutorial', snapshot('Tutorial'))
+gulp.task('snapshot-System', snapshot('_'))
 
 gulp.task('build', gulp.parallel(
   'js-main',
@@ -330,11 +330,11 @@ gulp.task('build', gulp.parallel(
   'html',
   'js-vendor',
   'php',
-  'template-RPG',
-  'template-Hex',
-  'template-Classic',
-  'template-Tutorial',
-  'template-System',
+  'snapshot-RPG',
+  'snapshot-Hex',
+  'snapshot-Classic',
+  'snapshot-Tutorial',
+  'snapshot-System',
   'fonts',
   'img',
   'favicon'
@@ -424,8 +424,8 @@ gulp.task('release-docker', gulp.series('release', (done) => {
 
 function demo (name) {
   return gulp.series(() => { // step 1: optimize & cache content
-    return replace(gulp.src('src/templates/' + name + '/**/*'))
-      .pipe(changed(dirs.cache + '/templates/' + name))
+    return replace(gulp.src('src/snapshots/' + name + '/**/*'))
+      .pipe(changed(dirs.cache + '/snapshots/' + name))
       .pipe(image({
         optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
         pngquant: ['--speed=1', '--force', 256],
@@ -435,20 +435,20 @@ function demo (name) {
         gifsicle: ['--optimize'],
         svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
       }))
-      .pipe(gulp.dest(dirs.cache + '/templates/' + name))
+      .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
   })
 }
 
 function demoDeploy (name) {
   return gulp.series(() => {
     return gulp.src([
-      dirs.cache + '/templates/' + name + '/**/*',
-      'src/misc/demo/templates/' + name + '/**/*'
+      dirs.cache + '/snapshots/' + name + '/**/*',
+      'src/misc/demo/snapshots/' + name + '/**/*'
     ])
       .pipe(gulp.dest(dirs.demo + '/' + name))
   }, () => {
     return gulp.src([
-      dirs.cache + '/templates/_/**/*'
+      dirs.cache + '/snapshots/_/**/*'
     ])
       .pipe(gulp.dest(dirs.demo + '/' + name))
   })

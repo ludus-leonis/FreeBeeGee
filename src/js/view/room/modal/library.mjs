@@ -49,7 +49,7 @@ import {
   setRoomPreference,
   addAsset,
   reloadRoom,
-  getTemplate,
+  getSetup,
   getBackground
 } from '../../../state/index.mjs'
 
@@ -623,7 +623,7 @@ function assetToPreview (asset) {
   node.dataset.a = asset.id
 
   if (piece._meta.hasColor) {
-    const colors = getTemplate().colors
+    const colors = getSetup().colors
     piece.c[0] = Number.parseInt(asset.bg) % colors.length
     if (piece.c[0] !== 0) {
       node.css({ '--fbg-color': colors[piece.c[0] - 1].value })

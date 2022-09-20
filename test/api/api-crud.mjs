@@ -64,12 +64,12 @@ function testApiCrudRoom (api, version, room) {
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
-      template: 'RPG',
+      snapshot: 'RPG',
       auth: 'apitests'
     }
   }, body => {
     expect(body).to.be.an('object')
-    expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
+    expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
     expect(body.id).to.match(REGEXP_ID)
     expect(body.name).to.be.eql(room)
     expect(body.engine).to.be.eql(p.versionEngine)
@@ -80,22 +80,22 @@ function testApiCrudRoom (api, version, room) {
     expect(body.library.overlay).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
-    expect(body.template).to.be.an('object')
-    expect(Object.keys(body.template)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
-    expect(body.template.type).to.be.eql('grid-square')
-    expect(body.template.gridSize).to.be.eql(64)
-    expect(body.template.gridWidth).to.be.eql(48)
-    expect(body.template.gridHeight).to.be.eql(32)
-    expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
-    expect(body.template.colors).to.be.an('array')
-    expect(body.template.borders).to.be.an('array')
+    expect(body.setup).to.be.an('object')
+    expect(Object.keys(body.setup)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
+    expect(body.setup.type).to.be.eql('grid-square')
+    expect(body.setup.gridSize).to.be.eql(64)
+    expect(body.setup.gridWidth).to.be.eql(48)
+    expect(body.setup.gridHeight).to.be.eql(32)
+    expect(body.setup.version).to.be.eql(p.version)
+    expect(body.setup.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
+    expect(body.setup.colors).to.be.an('array')
+    expect(body.setup.borders).to.be.an('array')
   }, 201)
 
   // read room
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
-    expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
+    expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
     expect(body.id).to.match(REGEXP_ID)
     expect(body.name).to.be.eql(room)
     expect(body.engine).to.be.eql(p.versionEngine)
@@ -106,16 +106,16 @@ function testApiCrudRoom (api, version, room) {
     expect(body.library.overlay).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
-    expect(body.template).to.be.an('object')
-    expect(Object.keys(body.template)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
-    expect(body.template.type).to.be.eql('grid-square')
-    expect(body.template.gridSize).to.be.eql(64)
-    expect(body.template.gridWidth).to.be.eql(48)
-    expect(body.template.gridHeight).to.be.eql(32)
-    expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
-    expect(body.template.colors).to.be.an('array')
-    expect(body.template.borders).to.be.an('array')
+    expect(body.setup).to.be.an('object')
+    expect(Object.keys(body.setup)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
+    expect(body.setup.type).to.be.eql('grid-square')
+    expect(body.setup.gridSize).to.be.eql(64)
+    expect(body.setup.gridWidth).to.be.eql(48)
+    expect(body.setup.gridHeight).to.be.eql(32)
+    expect(body.setup.version).to.be.eql(p.version)
+    expect(body.setup.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
+    expect(body.setup.colors).to.be.an('array')
+    expect(body.setup.borders).to.be.an('array')
   }, 200)
 
   // update room
@@ -126,28 +126,28 @@ function testApiCrudRoom (api, version, room) {
   testJsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
 }
 
-function testApiCrudTemplate (api, version, room) {
+function testApiCrudSetup (api, version, room) {
   openTestroom(api, room, 'RPG')
 
-  // templates have limited CRUD capabilites, as they are created and read via rooms.
+  // snapshots have limited CRUD capabilites, as they are created and read via rooms.
   // we can test changes though.
 
   // read room
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.template).to.be.an('object')
-    expect(Object.keys(body.template)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
-    expect(body.template.type).to.be.eql('grid-square')
-    expect(body.template.gridSize).to.be.eql(64)
-    expect(body.template.gridWidth).to.be.eql(48)
-    expect(body.template.gridHeight).to.be.eql(32)
-    expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
-    expect(body.template.colors).to.be.an('array')
-    expect(body.template.colors.length).to.be.gte(2)
-    expect(body.template.borders.length).to.be.gte(2)
+    expect(body.setup).to.be.an('object')
+    expect(Object.keys(body.setup)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
+    expect(body.setup.type).to.be.eql('grid-square')
+    expect(body.setup.gridSize).to.be.eql(64)
+    expect(body.setup.gridWidth).to.be.eql(48)
+    expect(body.setup.gridHeight).to.be.eql(32)
+    expect(body.setup.version).to.be.eql(p.version)
+    expect(body.setup.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
+    expect(body.setup.colors).to.be.an('array')
+    expect(body.setup.colors.length).to.be.gte(2)
+    expect(body.setup.borders.length).to.be.gte(2)
   }, 200)
 
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       type: 'grid-hex',
       gridSize: 64,
@@ -177,17 +177,17 @@ function testApiCrudTemplate (api, version, room) {
 
   // read room again
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.template).to.be.an('object')
-    expect(Object.keys(body.template)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
-    expect(body.template.type).to.be.eql('grid-square')
-    expect(body.template.gridSize).to.be.eql(64)
-    expect(body.template.gridWidth).to.be.eql(44)
-    expect(body.template.gridHeight).to.be.eql(55)
-    expect(body.template.version).to.be.eql(p.version)
-    expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
-    expect(body.template.colors).to.be.an('array')
-    expect(body.template.colors.length).to.be.gte(2)
-    expect(body.template.borders.length).to.be.gte(2)
+    expect(body.setup).to.be.an('object')
+    expect(Object.keys(body.setup)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
+    expect(body.setup.type).to.be.eql('grid-square')
+    expect(body.setup.gridSize).to.be.eql(64)
+    expect(body.setup.gridWidth).to.be.eql(44)
+    expect(body.setup.gridHeight).to.be.eql(55)
+    expect(body.setup.version).to.be.eql(p.version)
+    expect(body.setup.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
+    expect(body.setup.colors).to.be.an('array')
+    expect(body.setup.colors.length).to.be.gte(2)
+    expect(body.setup.borders.length).to.be.gte(2)
   }, 200)
 
   closeTestroom(api, room)
@@ -666,7 +666,7 @@ function testApiCrudLos (api, version, room) {
 describe('API - CRUD roundtrips', function () {
   runTests((api, version, room) => {
     describe('CRUD room', () => testApiCrudRoom(api, version, room))
-    describe('CRUD template', () => testApiCrudTemplate(api, version, room))
+    describe('CRUD setup', () => testApiCrudSetup(api, version, room))
     describe('CRUD table', () => testApiCrudTable(api, version, room))
     describe('CRUD piece', () => testApiCrudPiece(api, version, room))
     describe('CRUD pointer', () => testApiCrudPointer(api, version, room))

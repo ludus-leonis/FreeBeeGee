@@ -118,7 +118,7 @@ export function touch (remote = false) {
 
 const lastDigests = {
   'room.json': 'crc32:none',
-  'template.json': 'crc32:none',
+  'setup.json': 'crc32:none',
   'tables/1.json': 'crc32:none',
   'tables/2.json': 'crc32:none',
   'tables/3.json': 'crc32:none',

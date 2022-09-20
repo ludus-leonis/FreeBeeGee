@@ -67,7 +67,7 @@ import {
   setTablePreference,
   getTableNo,
   setTableNo,
-  getTemplate,
+  getSetup,
   getToken,
   getBackground
 } from '../../state/index.mjs'
@@ -188,11 +188,11 @@ export function getViewCenter () {
  * @return {Object} Contains x and y in pixel.
  */
 export function getViewCenterTile () {
-  const template = getTemplate()
+  const setup = getSetup()
   const pos = getViewCenter()
   return {
-    x: Math.floor(pos.x / template.gridSize),
-    y: Math.floor(pos.y / template.gridSize)
+    x: Math.floor(pos.x / setup.gridSize),
+    y: Math.floor(pos.y / setup.gridSize)
   }
 }
 
@@ -435,7 +435,7 @@ export function setupBackground () {
     _('#tabletop').add('.has-grid')
     _('#tabletop').css({
       '--fbg-tabletop-grid': url(background.gridFile),
-      '--fbg-grid-x': room.template?.type === TYPE_HEX ? '110px' : '64px'
+      '--fbg-grid-x': room.setup?.type === TYPE_HEX ? '110px' : '64px'
     })
   }
 
@@ -486,7 +486,7 @@ function setupRoom () {
 
   const room = getRoom()
 
-  const mode = (room.template?.type === TYPE_HEX) ? '.is-template-grid-hex' : '.is-template-grid-square'
+  const mode = (room.setup?.type === TYPE_HEX) ? '.is-grid-hex' : '.is-grid-square'
 
   _('body').remove('.page-boxed').add(mode).innerHTML = `
     <div id="room" class="room is-fullscreen is-noselect">
@@ -557,11 +557,11 @@ function setupRoom () {
   }
   if (undefinedCount >= 4) {
     // default if store was empty
-    if (getTemplate().layersEnabled) {
-      if (getTemplate().layersEnabled.includes(LAYER_OTHER)) toggleLayer(LAYER_OTHER)
-      if (getTemplate().layersEnabled.includes(LAYER_TOKEN)) toggleLayer(LAYER_TOKEN)
-      if (getTemplate().layersEnabled.includes(LAYER_OVERLAY)) toggleLayer(LAYER_OVERLAY)
-      if (getTemplate().layersEnabled.includes(LAYER_TILE)) toggleLayer(LAYER_TILE)
+    if (getSetup().layersEnabled) {
+      if (getSetup().layersEnabled.includes(LAYER_OTHER)) toggleLayer(LAYER_OTHER)
+      if (getSetup().layersEnabled.includes(LAYER_TOKEN)) toggleLayer(LAYER_TOKEN)
+      if (getSetup().layersEnabled.includes(LAYER_OVERLAY)) toggleLayer(LAYER_OVERLAY)
+      if (getSetup().layersEnabled.includes(LAYER_TILE)) toggleLayer(LAYER_TILE)
     } else {
       toggleLayer(LAYER_OTHER)
       toggleLayer(LAYER_TOKEN)
@@ -603,7 +603,7 @@ function setupRoom () {
   enableDragAndDrop('#tabletop')
 
   // load + setup content
-  setTableNo(getRoomPreference(PREFS.TABLE) ?? getTemplate()?.table ?? 1, false)
+  setTableNo(getRoomPreference(PREFS.TABLE) ?? getSetup()?.table ?? 1, false)
   runStatuslineLoop()
 
   // start autosyncing after a short delay to reduce server load a bit
