@@ -29,3 +29,13 @@
     margin-top: $spacing-tiny;
   }
 }
+
+.modal-edit-note {
+  textarea {
+    height: calc(100% - $spacing-large);
+  }
+
+  .p-small {
+    color: $color-gray-45;
+  }
+}

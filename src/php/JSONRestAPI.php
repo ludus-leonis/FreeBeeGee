@@ -327,7 +327,7 @@ class JSONRestAPI
      *
      * @param string $field Field name for error message.
      * @param mixed $values The value(s) to check.
-     * @param string $pattern RegExp to check against. Excluding '/^' and '$/'.
+     * @param string $pattern RegExp to check against. Excluding '/'.
      * @param int $minLength Minimum length of array. Defaults to 1.
      * @param int $maxLength Maximum length of array. Defaults to unlimited.
      * @param bool $send Optonal. If true (default), validation erros are
@@ -348,7 +348,7 @@ class JSONRestAPI
         $array = [];
         foreach ($values as $value) {
             $trimmed = trim($value);
-            if (preg_match('/^' . $pattern . '$/', $trimmed)) {
+            if (preg_match('/' . $pattern . '/', $trimmed)) {
                 array_push($array, $trimmed);
             }
         }
@@ -357,6 +357,51 @@ class JSONRestAPI
         }
         if ($send) {
             $this->sendError(400, "invalid JSON: $field entries do not match $pattern");
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Check/convert array-of-blobs JSON field against a RegExp.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $values The value(s) to check.
+     * @param int $minSize Minimum length of each entry. Defaults to 1.
+     * @param int $maxSize Maximum length of each entry. Defaults to unlimited.
+     * @param int $minLength Minimum length of array. Defaults to 1.
+     * @param int $maxLength Maximum length of array. Defaults to unlimited.
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
+     * @return array The parsed strings as array.
+     */
+    public function assertBlobArray(
+        string $field,
+        $values,
+        int $minSize = 1,
+        int $maxSize = PHP_INT_MAX,
+        int $minLength = 1,
+        int $maxLength = PHP_INT_MAX,
+        bool $send = true
+    ) {
+        if (!$this->assertArray($field, $values, $minLength, $maxLength, $send)) {
+            return null;
+        }
+        $array = [];
+        foreach ($values as $value) {
+            $length = strlen($value);
+            if ($length >= $minSize && $length <= $maxSize) {
+                array_push($array, $value);
+            }
+        }
+        if (sizeof($array) === sizeof($values)) {
+            return $array;
+        }
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field entries are not a proper blob array");
         } else {
             return null;
         }

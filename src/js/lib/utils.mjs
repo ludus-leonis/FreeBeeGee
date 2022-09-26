@@ -169,6 +169,56 @@ export function resizeImage (image, dimension) {
   return canvas
 }
 
+/**
+ * Enforce content length on input change.
+ *
+ * Mainly useful for <textarea> and UTF8/Emoji input, that does not work well with
+ * max-length. Reports new content length to an optional callback.
+ *
+ * @param {HTMLElement} input Input to watch
+ * @param {number} maxLength Maximum content length in bytes.
+ * @param {function} callback Will be called after each content change with the current content length.
+ * @return {number} Current/trimmed content length in bytes.
+ */
+export function inputMaxLength (input, maxLength, callback) {
+  input.previousValue = input.value
+
+  input.addEventListener('input', event => {
+    const input = event.target
+    if (encodeURIComponent(input.value).replace(/%[A-F\d]{2}/g, 'U').length > maxLength) {
+      const cursorPosition = input.selectionStart
+      const changeLength = getChangeLength(input.previousValue, input.value)
+      input.value = input.previousValue
+      input.selectionEnd = cursorPosition - changeLength
+    } else {
+      input.previousValue = input.value
+    }
+    if (callback) callback(encodeURIComponent(input.value).replace(/%[A-F\d]{2}/g, 'U').length)
+  })
+
+  if (callback) callback(encodeURIComponent(input.value).replace(/%[A-F\d]{2}/g, 'U').length)
+}
+
+function getChangeLength (a, b) {
+  let shorter = a.length < b.length ? a.split('') : b.split('')
+  let longer = a.length < b.length ? b.split('') : a.split('')
+
+  while (shorter.length > 0 && shorter[0] === longer[0]) { // chop front
+    shorter.shift()
+    longer.shift()
+  }
+
+  shorter = shorter.reverse()
+  longer = longer.reverse()
+
+  while (shorter.length > 0 && shorter[0] === longer[0]) { // chop 'end'
+    shorter.shift()
+    longer.shift()
+  }
+
+  return longer.length
+}
+
 // --- Arrays ------------------------------------------------------------------
 
 /**

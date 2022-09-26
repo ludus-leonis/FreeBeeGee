@@ -43,4 +43,20 @@ export class MouseButtonHandler {
   cancel () { // abort drag & revert to pre-drag
     console.error('Drag', 'cancel() not implemented!')
   }
+
+  findParentPiece (node) { // if we clicked deeper inside a piece, bubble up to the piece itself
+    if (node.classList.contains('piece') || node.classList.contains('tabletop')) {
+      return node
+    }
+
+    if (['A'].includes(node.tagName)) return null // let browser handle those
+
+    // check if we maybe clicked deeper within a piece (e.g. note markup)
+    let parentPiece = node.parentNode
+    while (parentPiece) {
+      if (parentPiece.classList.contains('piece') || parentPiece.classList.contains('tabletop')) break
+      parentPiece = parentPiece.parentNode
+    }
+    return parentPiece
+  }
 }

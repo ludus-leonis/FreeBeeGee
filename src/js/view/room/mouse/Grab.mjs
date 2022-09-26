@@ -58,7 +58,6 @@ export class Grab extends MouseButtonHandler {
       tabletop = tabletop.parentNode
     }
     if (!tabletop) return // no tabletop no grab
-    setCursor('.cursor-grab')
 
     // record start position
     this.grabbing = {
@@ -74,6 +73,11 @@ export class Grab extends MouseButtonHandler {
 
   drag (mousemove) {
     if (this.isDragging()) {
+      if (!this.grabbing.cursor) { // set cursor (only once)
+        setCursor('.cursor-grab')
+        this.grabbing.cursor = true
+      }
+
       const scrollToX = clamp(
         0,
         this.grabbing.origin.x + (this.grabbing.startX - mousemove.clientX),

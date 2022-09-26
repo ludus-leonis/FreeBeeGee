@@ -788,15 +788,16 @@ export function isSolid (piece, x, y) {
  * If clicked on an 100% alpha area, try to find a better target
  * for the event by traversing all layers + object on the same coordnate.
  *
- * @param {Object} event JavaScript evend that was triggered on a click.
+ * @param {Element} node DOM node that triggered the click event.
  * @param {Object} coords {x, y} of the current mouse coordinates.
+ * @param {Object} target If not null, the caller thinks this is the target.
  * @param return Promise of the real click target.
  */
-export function findRealClickTarget (event, coords) {
+export function findRealClickTarget (node, coords, target = null) {
   // find all potential pieces in all layers.
   const pieces = []
-  if (event.target.piece) pieces.push(event.target.piece)
-  const index = event.target.piece ? nameToLayer(event.target.piece.l) : LAYERS.length - 1
+  if (node.piece) pieces.push(node.piece)
+  const index = node.piece ? nameToLayer(node.piece.l) : LAYERS.length - 1
   for (const layer of LAYERS.slice().reverse()) {
     if (nameToLayer(layer) <= index && isLayerActive(layer)) { // we don't need to check higher layers
       pieces.push(...sortZ(findPiecesWithin({

@@ -25,6 +25,7 @@
 
 @import '../../fonts/Poppins/Poppins';
 @import '../../fonts/PatrickHand/PatrickHand';
+@import '../../fonts/SourceCodePro/SourceCodePro';
 
 $typography-font-list-fallback:
 -apple-system,
@@ -104,7 +105,7 @@ monospace;
 
 $typography-font-list-sans: 'Poppins', $typography-font-list-fallback;
 $typography-font-list-sans-lineheight: 1; // scale bad font heights here
-$typography-font-list-monospace: $typography-font-list-monospace-fallback;
+$typography-font-list-monospace: 'Source Code Pro', $typography-font-list-monospace-fallback;
 $typography-font-list-monospace-lineheight: 1; // scale bad font heights here
 $typography-font-list-hand: 'Patrick Hand', $typography-font-list-sans;
 
@@ -240,12 +241,15 @@ pre,
 %p-pre {
   @include typography-font(
     $typography-font-list-monospace,
-    $typography-font-weight-regular,
+    500,
     px(15),
     $typography-paragraph-lineheight
   );
-  color: $color-secondary;
   font-variant-ligatures: none;
+}
+
+code {
+  line-height: 1;
 }
 
 .p-label,

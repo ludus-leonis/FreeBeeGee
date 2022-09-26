@@ -38,10 +38,11 @@ $piece-note-rotate: 4deg;
   border-bottom-right-radius: 50% zoom(4px);
   color: var(--fbg-color-invert);
   cursor: default;
+  flex-direction: column;
   font-size: zoom(2em); // 32px
   font-variant-ligatures: none;
   overflow: hidden;
-  padding: $spacing-small;
+  padding: $spacing-medium;
   position: relative;
   text-align: center;
   word-break: break-word;
@@ -54,21 +55,31 @@ $piece-note-rotate: 4deg;
     cursor: crosshair;
   }
 
+  // --- content ---
+
+  @include markdown;
+
+  &.is-topleft {
+    align-items: start;
+    justify-content: start;
+    text-align: start;
+  }
+
   // --- reduce text size on small notes ---
 
   &.is-w-1 {
     font-size: zoom(.5em); // 8px
-    padding: $spacing-micro;
+    padding: $spacing-tiny;
   }
 
   &.is-w-2 {
     font-size: zoom(.75em); // 12px
-    padding: $spacing-tiny;
+    padding: $spacing-small;
   }
 
   &.is-w-3 {
     font-size: zoom(1.125em); // 18px
-    padding: $spacing-tiny;
+    padding: $spacing-small;
   }
 
   &.is-w-4 {

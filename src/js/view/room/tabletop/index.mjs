@@ -18,6 +18,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { marked } from 'marked'
+
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
@@ -33,6 +35,7 @@ import {
 import {
   FLAG_NO_CLONE,
   FLAG_NO_MOVE,
+  FLAG_NOTE_TOPLEFT,
   PREFS,
   getRoom,
   getSetup,
@@ -464,20 +467,12 @@ export function setPiece (piece) {
       }
 
       // update icon part
-      // let i = 1
-      // let iconExtra
       for (const id of piece.b ?? []) {
         const asset = findAsset(id, 'badge')
         if (asset) {
           const img = _('img.icon').create()
-          // if (i === 3) iconExtra = img
-          // if (i === 4) {
-          //   content.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
-          //   iconExtra.add('.icon-extra')
-          // }
           img.src = getAssetURL(asset, 0)
           content.add(img)
-          // i++
         }
       }
     }
@@ -496,8 +491,14 @@ export function setPiece (piece) {
 export function setNote (note) {
   const node = createOrUpdatePieceDOM(note)
 
+  if (note.f & FLAG_NOTE_TOPLEFT) {
+    node.add('.is-topleft')
+  } else {
+    node.remove('.is-topleft')
+  }
+
   if (node.piece.t?.[0] !== note.t?.[0]) { // update note on change
-    node.node().innerHTML = note.t?.[0] ?? ''
+    node.node().innerHTML = markdown(note.t?.[0])
   }
 
   node.piece = note // store piece for future delta-checking
@@ -661,8 +662,14 @@ export function pieceToNode (piece) {
 export function noteToNode (note) {
   const node = _('.piece.piece-note').create()
 
+  if (note.f & FLAG_NOTE_TOPLEFT) {
+    node.add('.is-topleft')
+  } else {
+    node.remove('.is-topleft')
+  }
+
   node.id = note.id
-  node.node().innerHTML = note.t?.[0] ?? ''
+  node.node().innerHTML = markdown(note.t?.[0])
 
   return node
 }
@@ -1134,4 +1141,17 @@ function setItem (piece) {
     default:
       // ignore unkown piece type
   }
+}
+
+/**
+ * Convert markdown to HTML.
+ *
+ * Will escape HTML already embedded.
+ *
+ * @param {String} content Markup to convert.
+ * @returns {String} Converted markup, ready for xy.innerHTML=...
+ */
+function markdown (content) {
+  return marked((content ?? '').replaceAll('<', '&lt;'))
+    .replaceAll('<a ', '<a target="_blank" rel="noopener noreferrer" ')
 }

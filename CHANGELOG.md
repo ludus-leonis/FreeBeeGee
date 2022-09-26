@@ -7,24 +7,28 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
-* added table zoom: use '+'/'-' or set the zoom in the [S]ettings
+* added zoom - via '+'/'-' or the [S]ettings
 * added 'Dark', 'Leather', 'Sand' and 'Space' backgrounds
+* added markdown support to notes, increased max. length to 256
 * added default token backsides (again)
 
 ### Other changes
 
 * added plain token
-* added a bcrypt tool at URL `/tools`
+* added a bcrypt tool for easier setup at URL `/tools`
 * unified wording 'template'/'snapshot' to 'snapshot' only
 * fixed LOS selected
 * fixed wrong cursor on notes in measure mode
 * fixed asset filenames
 * fixed wrong color names in autoconverted snapshots
 * fixed spinner button text
+* fixed drag cursor sometimes sticks
 * improved library previews
 * improved grids
 * improved background image quality
 * improved duplicate asset handling
+* improved monospace typography
+* removed raw HTML support in notes
 
 
 ## v0.17.0 - Rotating Rook

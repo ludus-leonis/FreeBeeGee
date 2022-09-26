@@ -23,7 +23,7 @@
 /// @access public
 ////
 
-$form-field-border: px(2) solid $color-gray-40; // $color-gray-75;
+$form-field-border: px(2) solid $color-gray-40;
 
 $form-color-disabled: $color-gray-50;
 $form-color-placeholder: $color-gray-25;
@@ -88,7 +88,6 @@ textarea,
   &.placeholder,
   &::placeholder {
     color: $form-color-placeholder;
-    // opacity: .25;
   }
 
   &.form-control-plaintext {
@@ -115,6 +114,15 @@ textarea,
 
 [type='password'] {
   letter-spacing: .25em;
+}
+
+textarea {
+  border: $form-field-border;
+
+  &::selection {
+    background: $color-primary !important; // sass-lint:disable-line no-important
+    color: $color-white-100 !important; // sass-lint:disable-line no-important
+  }
 }
 
 select {

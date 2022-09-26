@@ -49,6 +49,8 @@ class FreeBeeGeeAPI
     private $FLAG_NO_CLONE  = 0b00000010;
     private $FLAG_NO_MOVE   = 0b00000100;
 
+    private $NOTE_MAX_LENGTH = 256;
+
     /**
      * Constructor - setup our routes.
      */
@@ -1207,10 +1209,19 @@ class FreeBeeGeeAPI
                     }
                     break;
                 case 't':
-                    if ($this->api->assertStringArray('t', $value, '^.*$', 0, 1, false)) {
-                        $texts = $this->rtrimArray($value, '');
-                        if (sizeof($texts) > 0) {
-                            $out->$property = $texts;
+                    if ($piece->l ?? null === 3) { // 3 = note
+                        if ($this->api->assertBlobArray('t', $value, 0, $this->NOTE_MAX_LENGTH, 0, 1, false)) {
+                            $blobs = $this->rtrimArray($value, '');
+                            if (sizeof($blobs) > 0) {
+                                $out->$property = $blobs;
+                            }
+                        }
+                    } else {
+                        if ($this->api->assertStringArray('t', $value, '^.*$', 0, 1, false)) {
+                            $texts = $this->rtrimArray($value, '');
+                            if (sizeof($texts) > 0) {
+                                $out->$property = $texts;
+                            }
                         }
                     }
                     break;
@@ -1327,8 +1338,8 @@ class FreeBeeGeeAPI
                     $validated->r = $this->api->assertEnum('r', $value, [0, 60, 90, 120, 180, 240, 270, 300]);
                     break;
                 case 't':
-                    if (property_exists($piece, 'l') && $piece->l === 3) { // 3 = note
-                        $validated->t = $this->api->assertStringArray('t', $value, '^[^\n\r]{0,128}$', 0, 1);
+                    if ($piece->l ?? null === 3) { // 3 = note
+                        $validated->t = $this->api->assertStringArray('t', $value, '^[^\t]{0,' . $this->NOTE_MAX_LENGTH . '}$', 0, 1);
                     } else {
                         $validated->t = $this->api->assertStringArray('t', $value, '^[^\n\r]{0,32}$', 0, 1);
                     }

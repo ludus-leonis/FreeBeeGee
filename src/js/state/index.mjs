@@ -468,6 +468,7 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
 export const FLAG_NO_DELETE = 0b00000001
 export const FLAG_NO_CLONE = 0b00000010
 export const FLAG_NO_MOVE = 0b00000100
+export const FLAG_NOTE_TOPLEFT = 0b10000000
 
 /**
  * Update the falgs of a piece/token.

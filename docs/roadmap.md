@@ -9,9 +9,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] add plain token
 * [X] bcrypt tools page
 * [X] use table background in token preview
-* [ ] markdown notes
+* [X] markdown notes
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] filter + 180° bug in firefox
     * [X] store wallpaper via name not index
@@ -21,8 +21,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] rename assets n-wood to n.wood
     * [X] handle assets with duplicate sides
     * [X] spinner button label
-    * [ ] MMB drag sometimes sticks / cursor fix
-    * [ ] simplify/automate more deployment steps (ongoing)
+    * [ ] outside-token click
+    * [ ] sync stops when help is open
+    * [X] drag cursor sometimes sticks
   * [ ] review docs
   * [ ] review + run tests
   * [ ] review tutorial
@@ -33,6 +34,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] refactor: relative includes via @
+* [ ] refactor: split edit modals
+* [ ] refactor: smaller modal paddings
 * [ ] library: delete assets UI
 * [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] simplify/automate more deployment steps (ongoing)

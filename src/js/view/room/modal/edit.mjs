@@ -23,6 +23,7 @@ import {
   FLAG_NO_MOVE,
   FLAG_NO_DELETE,
   FLAG_NO_CLONE,
+  FLAG_NOTE_TOPLEFT,
   getLibrary,
   getSetup,
   editPiece
@@ -48,7 +49,8 @@ import {
 
 import {
   prettyName,
-  equalsJSON
+  equalsJSON,
+  inputMaxLength
 } from '../../../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------
@@ -190,6 +192,19 @@ export function modalEdit (piece) {
       }
     }
 
+    // note types
+    const noteType = _('#piece-note-type')
+    if (noteType.exists()) {
+      const option1 = _('option').create('Center')
+      option1.value = 'c'
+      if (piece.f & !FLAG_NOTE_TOPLEFT) option1.selected = true
+      noteType.add(option1)
+      const option2 = _('option').create('Top-Left')
+      option2.value = 'tl'
+      if (piece.f & FLAG_NOTE_TOPLEFT) option2.selected = true
+      noteType.add(option2)
+    }
+
     // flags
     _('#piece-no-move').checked = piece.f & FLAG_NO_MOVE
     _('#piece-no-delete').checked = piece.f & FLAG_NO_DELETE
@@ -204,14 +219,20 @@ export function modalEdit (piece) {
     _('#btn-ok').on('click', () => modalOk())
     _('#modal').on('hidden.bs.modal', () => modalClose())
 
-    _('#piece-label')
-      .on('keydown', keydown => {
-        switch (keydown.keyCode) {
-          case 13: // simulate submitbutton push
-            keydown.preventDefault()
-            modalOk()
-        }
+    if (piece.l === LAYER_NOTE) { // activate note counter
+      inputMaxLength(_('#piece-label').node(), NOTE_LENGTH, size => {
+        _('#note-hint').innerText = `Markdown available, no HTML though. Bytes left: ${NOTE_LENGTH - size}`
       })
+    } else { // activate submit-on-enter
+      _('#piece-label')
+        .on('keydown', keydown => {
+          switch (keydown.keyCode) {
+            case 13: // simulate submitbutton push
+              keydown.preventDefault()
+              modalOk()
+          }
+        })
+    }
 
     getModal().show()
 
@@ -222,6 +243,8 @@ export function modalEdit (piece) {
 }
 
 // --- internal ----------------------------------------------------------------
+
+const NOTE_LENGTH = 256
 
 function getModalBody (piece) {
   switch (piece.l) {
@@ -241,9 +264,9 @@ function getModalBody (piece) {
 const protect = `
   <div class="col-12">
     <label>Protect</label>
-    <input id="piece-no-move" type="checkbox"><label for="piece-no-move" class="p-medium">no move</label>
-    <input id="piece-no-clone" type="checkbox"><label for="piece-no-clone" class="p-medium">no clone</label>
-    <input id="piece-no-delete" type="checkbox"><label for="piece-no-delete" class="p-medium">no delete</label>
+    <input id="piece-no-move" type="checkbox"><label for="piece-no-move" class="p-medium">move</label>
+    <input id="piece-no-clone" type="checkbox"><label for="piece-no-clone" class="p-medium">clone</label>
+    <input id="piece-no-delete" type="checkbox"><label for="piece-no-delete" class="p-medium">delete</label>
   </div>
 `
 
@@ -425,38 +448,48 @@ function getModalNote () {
     <form class="container modal-edit modal-edit-note">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
-        <div class="col-12">
-          <label for="piece-label">Label</label>
-          <input id="piece-label" name="piece-label" type="text" maxlength="128">
+        <div class="col-12 col-lg-8">
+          <label for="piece-label">Note</label>
+          <textarea id="piece-label" name="piece-label" maxlength="${NOTE_LENGTH}" rows="5"></textarea>
+          <p id="note-hint" class="p-small spacing-micro"></p>
         </div>
-        <div class="col-6 col-lg-3">
-          <label for="piece-w">Width</label>
-          <select id="piece-w" name="piece-w"></select>
+        <div class="col-12 col-lg-4">
+          <div class="row">
+            <div class="col-6">
+              <label for="piece-color">Color</label>
+              <select id="piece-color" name="piece-color"></select>
+            </div>
+            <div class="col-6">
+              <label for="piece-note-type">Align</label>
+              <select id="piece-note-type" name="piece-note-type"></select>
+            </div>
+            <div class="col-6">
+              <label for="piece-w">Width</label>
+              <select id="piece-w" name="piece-w"></select>
+            </div>
+            <div class="col-6">
+              <label for="piece-h">Height</label>
+              <select id="piece-h" name="piece-h"></select>
+            </div>
+            <div class="col-6 is-hidden">
+              <label for="piece-r">Rotate</label>
+              <select id="piece-r" name="piece-r"></select>
+            </div -->
+            <div class="col-6 is-hidden">
+              <label for="piece-side">Side</label>
+              <select id="piece-side" name="piece-side"></select>
+            </div>
+            <div class="col-6 is-hidden">
+              <label for="piece-border">Border</label>
+              <select id="piece-border" name="piece-border"></select>
+            </div>
+            <div class="col-6 is-hidden">
+              <label for="piece-number">Number</label>
+              <select id="piece-number" name="piece-number"></select>
+            </div>
+          </div>
         </div>
-        <div class="col-6 col-lg-3">
-          <label for="piece-h">Height</label>
-          <select id="piece-h" name="piece-h"></select>
-        </div>
-        <div class="col-6 col-lg-3 is-hidden">
-          <label for="piece-r">Rotate</label>
-          <select id="piece-r" name="piece-r"></select>
-        </div -->
-        <div class="col-6 col-lg-3 is-hidden">
-          <label for="piece-side">Side</label>
-          <select id="piece-side" name="piece-side"></select>
-        </div>
-        <div class="col-12 col-lg-6">
-          <label for="piece-color">Color</label>
-          <select id="piece-color" name="piece-color"></select>
-        </div>
-        <div class="col-6 is-hidden">
-          <label for="piece-border">Border</label>
-          <select id="piece-border" name="piece-border"></select>
-        </div>
-        <div class="col-6 is-hidden">
-          <label for="piece-number">Number</label>
-          <select id="piece-number" name="piece-number"></select>
-        </div>
+
         ${protect}
       </div>
     </form>
@@ -518,6 +551,11 @@ function modalOk () {
   if (_('#piece-no-move').checked) f |= FLAG_NO_MOVE
   if (_('#piece-no-delete').checked) f |= FLAG_NO_DELETE
   if (_('#piece-no-clone').checked) f |= FLAG_NO_CLONE
+  const noteType = _('#piece-note-type')
+  if (noteType.exists()) {
+    if (noteType.value === 'tl') f |= FLAG_NOTE_TOPLEFT
+  }
+
   if (f !== piece.f) updates.f = f
 
   editPiece(piece.id, updates)
