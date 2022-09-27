@@ -207,6 +207,7 @@ function handleRoomKeys (keydown) {
         randomSelected()
         break
       case '+': // zoom in
+      case '=':
         zoom(1)
         break
       case '-': // zoom out
