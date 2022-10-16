@@ -8,7 +8,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Notable changes
 
 * added zoom - via '+'/'-' or the [S]ettings
-* added 'Dark', 'Leather', 'Sand' and 'Space' backgrounds
+* added 'Cardboard', 'Dark', 'Leather', 'Paper', 'Sand' and 'Space' backgrounds
 * added markdown support to notes, increased max. length to 256
 * added default token backsides (again)
 
@@ -23,6 +23,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed wrong color names in autoconverted snapshots
 * fixed spinner button text
 * fixed drag cursor sometimes sticks
+* fixed sync stops when modal is open too long
 * improved library previews
 * improved grids
 * improved background image quality
