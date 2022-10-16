@@ -64,6 +64,7 @@ import {
  * @param {Function} callback Optional function to call after first sync.
  */
 export function startAutoSync (callback = null) {
+  touch()
   scheduleSync(0, callback)
 }
 

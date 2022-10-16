@@ -188,13 +188,13 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/lib/icons.mjs',
     'src/js/state/index.mjs',
 
-    'src/js/view/modal.mjs',
     'src/js/view/screen.mjs',
     'src/js/view/setup/index.mjs',
     'src/js/view/error/index.mjs',
     'src/js/view/join/index.mjs',
 
     'src/js/view/room/index.mjs',
+    'src/js/view/room/modal.mjs',
     'src/js/view/room/hotkeys.mjs',
     'src/js/view/room/sync.mjs',
     'src/js/view/room/modal/demo.mjs',

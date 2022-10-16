@@ -17,7 +17,11 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../lib/FreeDOM.mjs'
+import _ from '../../lib/FreeDOM.mjs'
+
+import {
+  startAutoSync
+} from '../../view/room/sync.mjs'
 
 let modal = null /** Currently open Bootstrap modal instance */
 
@@ -99,7 +103,7 @@ export function createModal (large = false) {
 /**
  * Close and reset the current modal.
  *
- * Will also empty the `#modal` DOM node for reuse.
+ * Will also empty the `#modal` DOM node for reuse and trigger a new API poll.
  */
 export function modalClose () {
   if (isModalActive()) {
@@ -108,4 +112,5 @@ export function modalClose () {
     _('#modal').delete()
     _('.modal-backdrop').delete()
   }
+  startAutoSync() // might have gotten shut down in long-opened modals
 }

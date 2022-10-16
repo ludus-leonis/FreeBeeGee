@@ -34,7 +34,7 @@ import {
   getModal,
   isModalActive,
   modalClose
-} from '../../../view/modal.mjs'
+} from '../../../view/room/modal.mjs'
 
 import {
   TYPE_HEX,

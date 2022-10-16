@@ -22,7 +22,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] handle assets with duplicate sides
     * [X] spinner button label
     * [ ] outside-token click
-    * [ ] sync stops when help is open
+    * [X] sync stops when modal is open too long
     * [X] drag cursor sometimes sticks
   * [ ] review docs
   * [ ] review + run tests

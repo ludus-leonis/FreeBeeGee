@@ -26,7 +26,7 @@ import {
 import {
   isModalActive,
   modalClose
-} from '../../view/modal.mjs'
+} from '../../view/room/modal.mjs'
 
 import {
   toggleLayer,

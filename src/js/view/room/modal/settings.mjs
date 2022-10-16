@@ -44,7 +44,7 @@ import {
   createModal,
   getModal,
   modalClose
-} from '../../../view/modal.mjs'
+} from '../../../view/room/modal.mjs'
 
 import {
   ZOOM_LEVELS,
