@@ -24,7 +24,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] sync stops when modal is open too long
     * [X] drag cursor sometimes sticks
   * [X] review docs
-  * [ ] review tutorial
+  * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
   * [ ] review + run tests
   * [X] update screenshots
