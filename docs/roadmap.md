@@ -5,10 +5,14 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.19 - ??? ???
 
 * [ ] engine: support G-Z as token number
+* [ ] library: show/indicate backside/all sides in tile browser
+* [ ] library: delete assets UI
+* [ ] ui: half-rotations (45° for square, 30° for hex)
+* [ ] ui: tweak minor grid visibility
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [ ] bugfixes + refactoring
-  * [   ] refactor: relative includes via @
+    * [ ] refactor: relative includes via @
     * [ ] bug: outside-token click selects token sometimes
     * [ ] split api tests in all/one
   * [ ] review docs
@@ -23,11 +27,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] hex variant with hexes rotated 30°
 * [ ] PHP 8.2 support
-* [ ] ui: half-rotations (45° for square, 30° for hex)
-* [ ] ui: tweak minor grid visibility
 * [ ] refactor: split edit modals
 * [ ] refactor: smaller modal paddings
-* [ ] library: delete assets UI
 * [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] automated deployment tests for new zip/tgz packages after build
@@ -39,7 +40,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: open edit window on note create
 * [ ] library: edit asset UI
-* [ ] library: show/indicate backside/all sides in tile browser
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
@@ -67,6 +67,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather later (unsorted, after v1)
 
+* ui skins (modals, fonts, ...)
+* library: folder / modules / packages to enable/disable groups of assets (e.g. dungeon, woods, space, ...)
 * pieces: inline-edit notes
 * better sticky notes (auto-size text)
 * bulk manipulation of assets (delete, edit, change type)

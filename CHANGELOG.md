@@ -31,7 +31,6 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * improved monospace typography
 * removed raw HTML support in notes
 
-
 ## v0.17.0 - Rotating Rook
 
 ### Notable changes
