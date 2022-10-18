@@ -317,14 +317,20 @@ function api (data, headers) {
         freeRooms: 128,
         root: root + 'api',
         backgrounds: [
-          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#747e86', scroller: '#636f78' },
-          { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2e5d3c', scroller: '#1b3c25' },
-          { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#646260', scroller: '#494540' },
-          { name: 'Marble', image: 'img/desktop-marble.jpg', color: '#b4a999', scroller: '#80725e' },
-          { name: 'Metal', image: 'img/desktop-metal.jpg', color: '#515354', scroller: '#3e3e3e' },
-          { name: 'Pinboard', image: 'img/desktop-pinboard.jpg', color: '#bc8c6c', scroller: '#a2775b' },
-          { name: 'Rock', image: 'img/desktop-rock.jpg', color: '#5c5d5a', scroller: '#393930' },
-          { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#57514d', scroller: '#3e3935' }
+          { name: 'Cardboard', image: 'img/desktop-cardboard.jpg', color: '#b2997d', scroller: '#7f6d59' },
+          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#31555E', scroller: '#4a818e' },
+          { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2D5B3D', scroller: '#3a7750' },
+          { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#6C6964', scroller: '#494540' },
+          { name: 'Dark', image: 'img/desktop-dark.jpg', color: '#212121', scroller: '#444444' },
+          { name: 'Leather', image: 'img/desktop-leather.jpg', color: '#3C2D26', scroller: '#6a4b40' },
+          { name: 'Marble', image: 'img/desktop-marble.jpg', color: '#B6AB99', scroller: '#80725e' },
+          { name: 'Metal', image: 'img/desktop-metal.jpg', color: '#565859', scroller: '#3e3e3e' },
+          { name: 'Paper', image: 'img/desktop-paper.jpg', color: '#cbcbcb', scroller: '#989898' },
+          { name: 'Pinboard', image: 'img/desktop-pinboard.jpg', color: '#C0A183', scroller: '#a2775b' },
+          { name: 'Rock', image: 'img/desktop-rock.jpg', color: '#545450', scroller: '#393930' },
+          { name: 'Sand', image: 'img/desktop-sand.jpg', color: '#D7D2BF', scroller: '#a19e8f' },
+          { name: 'Space', image: 'img/desktop-space.jpg', color: '#101010', scroller: '#404040' },
+          { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3e3935' }
         ]
       }, headers)
     default:
