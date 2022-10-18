@@ -2,50 +2,38 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.18 - Zooming Zokor
+## v0.19 - ??? ???
 
-* [X] native zoom function
-* [X] token back sides
-* [X] add plain token
-* [X] bcrypt tools page
-* [X] use table background in token preview
-* [X] markdown notes
+* [ ] engine: support G-Z as token number
 * [ ] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] filter + 180° bug in firefox
-    * [X] store wallpaper via name not index
-    * [X] unify wording snapshot + template
-    * [X] don't select LOS after placement
-    * [X] wrong mouse curson on notes in (measure mode)
-    * [X] rename assets n-wood to n.wood
-    * [X] handle assets with duplicate sides
-    * [X] spinner button label
-    * [X] sync stops when modal is open too long
-    * [X] drag cursor sometimes sticks
-  * [X] review docs
-  * [X] review tutorial
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+  * [   ] refactor: relative includes via @
+    * [ ] bug: outside-token click selects token sometimes
+    * [ ] split api tests in all/one
+  * [ ] review docs
+  * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
   * [ ] review + run tests
-  * [X] update screenshots
+  * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
+* [ ] hex variant with hexes rotated 30°
 * [ ] PHP 8.2 support
-* [ ] bug: outside-token click selects token sometimes
-* [ ] refactor: relative includes via @
+* [ ] ui: half-rotations (45° for square, 30° for hex)
+* [ ] ui: tweak minor grid visibility
 * [ ] refactor: split edit modals
 * [ ] refactor: smaller modal paddings
-* [ ] engine: support G-Z as token number
 * [ ] library: delete assets UI
 * [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] simplify/automate more deployment steps (ongoing)
+  * [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] snapshot download for demo mode
 * [ ] ui: move dice more
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window

@@ -37,6 +37,9 @@ import {
   pieceMinimal
 } from './utils/data.mjs'
 
+const NOTE_MAX_LENGTH = 256
+const LABEL_MAX_LENGTH = 32
+
 // -----------------------------------------------------------------------------
 
 function testApiInvalidTable (api, version, room) {
@@ -888,20 +891,20 @@ function testApiPieceT (api, version, room) {
     expect(body._messages[0]).to.match(/ t is not an array/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: ['x'.repeat(33)] }
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => { // <-
+    return { ...pieceMinimal, t: ['f'.repeat(LABEL_MAX_LENGTH + 1)] }
   }, body => {
     expect(body._messages[0]).to.match(/ t entries do not match/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 3, t: ['x'.repeat(33)] }
+    return { ...pieceMinimal, l: 3, t: ['y'.repeat(LABEL_MAX_LENGTH + 1)] }
   }, body => {
-    expect(body.t).to.be.eql(['x'.repeat(33)])
+    expect(body.t).to.be.eql(['y'.repeat(LABEL_MAX_LENGTH + 1)])
   }, 201)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 3, t: ['x'.repeat(129)] }
+    return { ...pieceMinimal, l: 3, t: ['z'.repeat(NOTE_MAX_LENGTH + 1)] }
   }, body => {
     expect(body._messages[0]).to.match(/ t entries do not match/)
   }, 400)
