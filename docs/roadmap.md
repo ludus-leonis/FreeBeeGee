@@ -24,10 +24,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] sync stops when modal is open too long
     * [X] drag cursor sometimes sticks
   * [X] review docs
-  * [ ] review + run tests
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] update screenshots
+  * [ ] review + run tests
+  * [X] update screenshots
 
 ## Backlog
 
