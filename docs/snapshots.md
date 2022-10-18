@@ -58,7 +58,7 @@ The `setup.json` contains meta-information for the game engine in [JSON](https:/
 
 ## `LICENSE.md`
 
-The copyright and license / usage conditions of this snapshot in [Markdown](https://en.wikipedia.org/wiki/Markdown) format. Will be shown in the help dialog. Also a good place to give credit for the used artwork. May only contain markdown markup, but no HTML tags (they will be disabled during rendering).
+The copyright and license / usage conditions of this snapshot in [Markdown](https://en.wikipedia.org/wiki/Markdown) format. Will be shown in the help dialog. Also a good place to give credit for the artwork. May only contain markdown markup, but no HTML tags (they will be disabled during rendering).
 
 
 ## Assets

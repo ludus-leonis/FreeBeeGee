@@ -20,7 +20,7 @@ If the requirements are not met, FreeBeeGee will try to find out what is missing
 
 ### Client
 
-Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.
+Any recent HTML5-capable browser should do. Mobile/touch device support is also a bit limited for now.
 
 
 ## Basic installation
@@ -84,10 +84,10 @@ FreeBeeGee ships with an unknown admin password. No rooms can be created until y
 
 ### Uploads
 
-Snapshot uploads are disabled by default. To enable them, set `snapshotUploads` to `true`.
+Snapshot (savegame) uploads are disabled by default. To enable them, set `snapshotUploads` to `true`.
 
 You can change the maximum upload file size via the `server.json` (see above). You also have to make sure that your PHP config file (`php.ini`) and/or your Apache/Proxy server settings allow that amount, too.
 
 ## Upgrading
 
-While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even rooms will break between versions. Download rooms you want to keep as snapshots, do a fresh install and recreate the rooms from the snapshots till we reach v1.0.
+While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even rooms will break between versions. Download rooms you want to keep as snapshots, do a fresh install and recreate the rooms from the snapshots till we reach v1.0. FreeBeeGee tries to auto-upgrade snapshots if possible.

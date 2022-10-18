@@ -19,12 +19,12 @@ Your game. Your data.
 * Tile-/grid-based. Supports square and hex layouts, with snapping.
 * Classic game boards, dungeon tiles and 200+ monster token included. Upload your own, too.
 * Separate layers for tiles, overlays and tokens.
-* Asset browser for your token/tiles. Individual libraries per room.
+* Asset browser for your token/tiles. Individual libraries per room/game.
 * Sticky notes and dice trays.
 * Templates to setup tables and populate your library from.
-* Download snapshots of your rooms, transfer them between servers or keep an offline backup.
+* Download snapshots/savegames of your rooms, transfer them between servers or keep an offline backup.
 * Privacy friendly. No user tracking. No 3rd-party scripts. Rooms are deleted after some (configurable) time, usually 48h.
-* File & folder-based. No database required. Easy to install and maintain.
+* File & folder-based. No database required. Easy to install.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
 
 **Note:** This is an development version. A few rather major features are still missing:

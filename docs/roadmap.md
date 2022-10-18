@@ -12,7 +12,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] markdown notes
 * [ ] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] filter + 180° bug in firefox
     * [X] store wallpaper via name not index
     * [X] unify wording snapshot + template
@@ -21,10 +21,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] rename assets n-wood to n.wood
     * [X] handle assets with duplicate sides
     * [X] spinner button label
-    * [ ] outside-token click
     * [X] sync stops when modal is open too long
     * [X] drag cursor sometimes sticks
-  * [ ] review docs
+  * [X] review docs
   * [ ] review + run tests
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -34,9 +33,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] PHP 8.2 support
+* [ ] bug: outside-token click selects token sometimes
 * [ ] refactor: relative includes via @
 * [ ] refactor: split edit modals
 * [ ] refactor: smaller modal paddings
+* [ ] engine: support G-Z as token number
 * [ ] library: delete assets UI
 * [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] simplify/automate more deployment steps (ongoing)

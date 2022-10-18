@@ -2,11 +2,11 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It describes the FreeBeeGee (FBG) API endpoints.
 
-It is not necessary to read/understand this to use FBG. This information is here for developers who would like to contribute code or extend FBG.
+It is not necessary to read this to use FBG. This information is here for developers who would like to contribute code or extend FBG.
 
 ## Basics
 
-The FreeBeeGee API is a JSON/REST API and can be called at `./api/` relative to the installation directory. It understands HTTP `GET`, `POST`, `PUT`, `PATCH` and `DELETE` requests. Most endpoints return FBG data objects as described in the [datamodel documentation](datamodel.md).
+The FreeBeeGee API is a JSON/REST API and can be called at `./api/` relative to the installation directory. It handles HTTP `GET`, `POST`, `PUT`, `PATCH` and `DELETE` requests. Most endpoints return FBG data objects as described in the [datamodel documentation](datamodel.md).
 
 Too keeps things short, the documentation below will mention endpoints relative to said `./api/`. So if e.g. the docs say to `GET` endpoint `/rooms/`, assume the actual URL is:
 

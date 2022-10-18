@@ -2,12 +2,12 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It hopes to give insights into FreeBeeGee's design goals and technical decisions. tldr:
 
-* **Easy is king.** FreeBeeGee should be very, very easy to install.
+* **Easy is king.** FreeBeeGee should be very, very easy to install for the average user.
 * **Distributed is king.** We prefer a lot of people running small installations over a few mega-servers.
 
-## Wouldn't &lt;your-favorite-language&gt; be better for implementing the API?
+## Wouldn't &lt;your-favorite-language&gt; be better for implementing the server/API?
 
-Probably. I won't defend PHP as a language here. But it has one big advantage over other technology stacks: For the average gamer/blogger without technical background, PHP software is very easy and cheap to get hosted. Due the popularity of WordPress, Typo3 and co., there are zillions PHP-hosters out there that provide managed, zero-config webspace for a few bucks. Those webspaces often do not provide shell/root access, only a docroot to drop files into.
+Probably. I won't defend PHP here. But it has one big advantage over other technology stacks: For the average gamer/blogger without technical background, PHP software is very easy and cheap to get hosted. Due the popularity of WordPress, Typo3 and co., there are zillions PHP-hosters out there that provide managed, zero-config webspace for a few bucks. Those webspaces often do not provide shell/root access, only a docroot to drop files into.
 
 FreeBeeGee uses PHP only for the faceless JSON/Rest API and won't let it go anywhere near the frontend stuff. In the future, it might be possible for this project to provide alternative implementations. Maybe even in &lt;your-favorite-language&gt;.
 

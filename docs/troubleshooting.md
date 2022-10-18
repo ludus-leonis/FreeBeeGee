@@ -2,13 +2,13 @@
 
 Here are a few common issues and possible solutions:
 
-## Internal Server Error
+## I get 'Internal Server Error'!
 
-If you get an *Internal Server Error* page after installation and you use the basic (default) `.htaccess` file: Apache's module `mod_rewrite` is not enabled on your httpd server - either not in general or not for your domain. How to enable it depends a bit on your server/hoster, so please check your Apache configuration file or the web admin tool of your provider.
+If you get an *Internal Server Error* page after installation and you use the basic (default) `.htaccess` file: Apache's module `mod_rewrite` is not enabled on your httpd server - either not in general or not for your domain/folder. How to enable it depends a bit on your server/hoster, so please check your Apache configuration file or the web admin tool of your provider.
 
 If you get this after editing the `.htaccess` file yourself: There is probably a syntax error or you tried enabling an Apache feature not supported by your web server. Please check and revert your changes.
 
-## Our server is currently experiencing technical difficulties
+## I get 'Our server is currently experiencing technical difficulties'!
 
 This is a bit tricky to diagnose as it can different reasons. Doublecheck if you have all required Apache and PHP modules/extensions installed that are listed in the [install instructions](INSTALL.md).
 
@@ -18,11 +18,11 @@ Here are a few things you can try:
 * Take a look into Apache's `error.log`. It might complain about missing extensions/modules. If so, you need to install those.
 * Open the browser console (press F12) and switch to the Network tab. There sould be a line that says `/api`. Select it and view the server response/reply (raw/source). There might be errors about missing extensions/modules hidden there.
 
-## I don't know my admin password
+## I don't know my admin password!
 
 You have to set a password first (or disable it). See the [install instructions](INSTALL.md).
 
-## How to use snapshots
+## How do I use snapshots?
 
 A snapshot is a `*.zip` files (a.k.a. savegame or backup) of your room. You can obtain it by using the download icon on the bottom left. You can use it to continue your game on the same or a different server - if the other server admin enabled snapshot uploads. See the [install instructions](INSTALL.md) how to do this.
 
@@ -36,7 +36,7 @@ If you click on *upload*, the input field will change into a file upload:
 
 Assuming your snapshot is not too big, it will be used for this room. It will be also auto-converted to the current FreeBeeGee version.
 
-## FreeBeeGee rejects larger snapshots
+## Why does FreeBeeGee reject larger snapshots?
 
 This can have multiple reasons. Hover on the (?) icon of the error message to find out why.
 
@@ -44,9 +44,9 @@ This can have multiple reasons. Hover on the (?) icon of the error message to fi
 * PHP might limit uploads. Check your php.ini. Managed web hosters might also have an option for that in their web console.
 * FreeBeeGee might limit uploads. Check your `api/data/server.json` to increase the limit.
 
-## How to permanently install snapshots
+## How do I permanently install snapshots?
 
-You can install any snapshot on your server. They are just `*.zip` files with pre-configured assets and table layouts. You can obtain a snapshot by downloading it from any room you have joined via the icon on the bottom left.
+You can install any snapshot on your server, avoiding the need to upload it during room create. Snapshots are just `*.zip` files with pre-configured assets and table layouts. You can obtain a snapshot by downloading it from any room you have joined via the icon on the bottom left.
 
 * Rename the `*.zip` file to something meaningfull, e.g. `Dungeon.zip` or `Chess.zip`. Snapshot names must not have spaces.
 * Copy the renamed file into `.../api/data/snapshots/`.
@@ -55,15 +55,15 @@ Now *Dungeon* or *Chess* should appear in the snapshot dropdown when you set up 
 
 In case the snapshot was from a different FreeBeeGee version, it will be converted each time you set up a room with it. To avoid having to do this every time, save a new snapshot after opening the room, and repeat the steps above with the new `*.zip`.
 
-## Creating custom snapshots
+## How can I create my own custom game snapshot?
 
 You can create custom game snapshots from scratch, too. Just create a `*.zip` file that follows the [FreeBeeGee snapshot format](snapshots.md). You can then upload your zip like any other snapshot, or install it permanently on the server (see above).
 
-## Pieces are missing after converting a snapshot
+## Why are pieces missing after converting a snapshot?
 
-This happens when uploading older snapshots that use features that changed or were removed. Most of the time your library should be fine, but pieces on the table might be replaced with placeholder boxes. These boxes are a hint what is missing now. Delete them and add the pieces again, or empty the table and start from scratch.
+This happens when uploading older snapshots that use features that changed or were removed. Most of the time your library should be fine, but pieces on the table might be replaced with placeholder boxes. These boxes are a hint what is missing now. Delete them from the table and add the pieces again, or empty the table and start from scratch.
 
-## Reporting bugs
+## How can I report bugs?
 
 Please help making FreeBeeGee better by reporting bugs you encounter!
 

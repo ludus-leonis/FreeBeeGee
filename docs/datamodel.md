@@ -159,7 +159,7 @@ A minimal *piece* contains the following information:
 : The ID of the *piece*. The following IDs have a special meaning: 'ZZZZZZZZ' represents the pointer, 'ZZZZZZZY' represents the LOS line.
 
 `l`
-: The layer (number) to show the *piece* in. `1` = tile, `2` = overlay, `3` = note, `4` = token, '5' = other. In theory the *asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *asset* is used in the tile layer.
+: The layer (number) to show the *piece* in. `1` = tile, `2` = overlay, `3` = note, `4` = token, `5` = other. In theory the *asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *asset* is used in the tile layer.
 
 `a`
 : The ID of the *asset*.
