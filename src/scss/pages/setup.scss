@@ -1,0 +1,40 @@
+.page-setup {
+  .mode {
+    opacity: 0;
+    position: absolute;
+  }
+
+  .mode:not(:checked) ~ .upload-label,
+  .mode:not(:checked) ~ .upload-group,
+  .mode:not(:checked) ~ .upload-text {
+    display: none;
+  }
+
+  .mode:checked ~ .snapshot-label,
+  .mode:checked ~ .snapshot,
+  .mode:checked ~ .snapshot-text {
+    display: none;
+  }
+
+  .enablepassword {
+    + label + label,
+    + label + label + input,
+    + label + label + input + p {
+      display: none;
+    }
+
+    &:checked {
+      display: none;
+
+      + label {
+        display: none;
+      }
+
+      + label + label,
+      + label + label + input,
+      + label + label + input + p {
+        display: inherit;
+      }
+    }
+  }
+}

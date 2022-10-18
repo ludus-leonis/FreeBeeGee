@@ -1,0 +1,181 @@
+// Copyright 2021-2022 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group abstracts
+///
+/// Basic markdown HTML styling.
+///
+/// @access public
+////
+
+/// Add rules for markdown content.
+///
+/// @example scss
+///   markdown
+///
+/// @output Markdown scss.
+@mixin markdown {
+  $markdown-spacing-paragraph: .5em;
+  $markdown-line-width: .125em;
+
+  a {
+    @include typography-links(inherit, inherit, 2px, $color-black-15a, $color-black-25a);
+  }
+
+  b,
+  strong {
+    color: $color-black-100;
+    font-weight: 800;
+  }
+
+  // --- spacings --------------------------------------------------------------
+
+  p,
+  pre {
+    margin-top: $markdown-spacing-paragraph;
+  }
+
+  > *:first-child {
+    margin-top: 0;
+  }
+
+  // --- headlines -------------------------------------------------------------
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @include typography-font($typography-font-list-hand, 800, 1em, 1.15em, .025em);
+    color: $color-black-100;
+    margin-top: $markdown-spacing-paragraph * 2;
+  }
+
+  // --- lists -----------------------------------------------------------------
+
+  ul,
+  ol {
+    margin-top: 0;
+
+    li {
+      margin-top: $markdown-spacing-paragraph * .5;
+    }
+  }
+
+  p + ul,
+  p + ol {
+    margin-top: $markdown-spacing-paragraph;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: $markdown-spacing-paragraph;
+
+    li {
+      text-indent: -$markdown-spacing-paragraph;
+    }
+
+    li::before {
+      content: '›';
+      display: inline-block;
+      text-indent: 0;
+      width: $markdown-spacing-paragraph;
+    }
+  }
+
+  ol {
+    padding-left: $markdown-spacing-paragraph * 2;
+  }
+
+  // --- tables ----------------------------------------------------------------
+
+  table {
+    font-size: .9em;
+    margin-top: $markdown-spacing-paragraph * .5;
+    text-align: left;
+    width: 100%;
+
+    td,
+    th {
+      padding: 0 $spacing-micro;
+    }
+
+    thead {
+      font-size: .5em;
+      text-transform: uppercase;
+    }
+
+    tbody {
+      tr:nth-child(odd) {
+        background-color: $color-line;
+      }
+    }
+  }
+
+  // --- media -----------------------------------------------------------------
+
+  img {
+    display: block;
+    max-width: 100%;
+  }
+
+  // --- blockquote ------------------------------------------------------------
+
+  blockquote {
+    border-left: $markdown-line-width * 2 solid $color-line;
+    margin-top: $markdown-spacing-paragraph;
+    padding-left: calc($markdown-spacing-paragraph - px(4));
+
+    > *:first-child {
+      margin-top: 0;
+    }
+  }
+
+  // --- definition lists ------------------------------------------------------
+
+  // (not suppored by marked)
+  //
+  // dl {
+  //   dt {
+  //     color: $color-black-100;
+  //     font-weight: 800;
+  //   }
+  //
+  //   dd {
+  //     margin-left: $markdown-spacing-paragraph;
+  //     margin-top: $markdown-spacing-paragraph;
+  //   }
+  // }
+
+  // --- ruler -----------------------------------------------------------------
+
+  hr {
+    background-color: transparent;
+    border: 0;
+    border-bottom: $markdown-line-width solid $color-line;
+    display: block;
+    margin-bottom: 0;
+    margin-top: $markdown-spacing-paragraph;
+    width: 100%;
+
+    + * {
+      margin-top: $markdown-spacing-paragraph;
+    }
+  }
+}

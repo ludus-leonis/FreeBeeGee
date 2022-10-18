@@ -47,7 +47,7 @@
 }
 
 .btn.is-spinner {
-  color: transparent;
+  color: transparent !important; // sass-lint:disable-line no-important
   cursor: not-allowed;
   pointer-events: none;
   position: relative;

@@ -20,7 +20,7 @@
 ## Developer Documentation
 
 * The [Building instructions](build.md) explain how to rebuild FreeBeeGee from source.
-* The [Snapshot](snapshots.md) documentation can help you create your own game templates. Work in progress.
+* The [Snapshot](snapshots.md) documentation can help you create your own games. Work in progress.
 * The [Datamodel](datamodel.md) doc explains the JSON data format used by FreeBeeGee. Work in progress.
 * The [API](api.md) doc explains the available Rest endpoints of the FreeBeeGee API. Work in progress.
 * The [Contributing Guidelines](../CONTRIBUTING.md) explain what coding standards and source code layout FreeBeeGee adheres to.

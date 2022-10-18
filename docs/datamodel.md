@@ -159,7 +159,7 @@ A minimal *piece* contains the following information:
 : The ID of the *piece*. The following IDs have a special meaning: 'ZZZZZZZZ' represents the pointer, 'ZZZZZZZY' represents the LOS line.
 
 `l`
-: The layer (number) to show the *piece* in. `1` = tile, `2` = overlay, `3` = note, `4` = token, '5' = other. In theory the *asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *asset* is used in the tile layer.
+: The layer (number) to show the *piece* in. `1` = tile, `2` = overlay, `3` = note, `4` = token, `5` = other. In theory the *asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *asset* is used in the tile layer.
 
 `a`
 : The ID of the *asset*.
@@ -191,7 +191,7 @@ In addition, a *piece* can have the following optional properties. If omitted, t
 : The number of the *piece*. This is a small digit displayed on the *piece* to distinguish multiple token with the same artwork (e.g. different Goblins). Can be `0`..`15`. Defaults to `0` = none.
 
 `c`
-: An array of colors, mostly one. Each number in this array is an index of the of the colors defined in the *room*'s *template*. Can be 0..?. Defaults to `[0]`. It depends on the type of *piece* what these colors are used for (e.g. border, background, ...).
+: An array of colors, mostly one. Each number in this array is an index of the of the colors defined in the *room*'s *setup*. Can be 0..?. Defaults to `[0]`. It depends on the type of *piece* what these colors are used for (e.g. border, background, ...).
 
 `t`
 : An array of optional texts of a *piece*. Currently only the first entry in the array is used. Is used as note's text or as small label next to the *piece* for other types. Defaults to `[]`.
@@ -214,9 +214,9 @@ Special pieces feature the following additional fields:
 : Timestamp in seconds-since-epoch when this *piece* expires. It should no longer displayed if that time is reached. Clients should compare it with the `Servertime` HTTP header and not with a local clock value. No `expires` field means no expiration.
 
 
-## Templates
+## Setups
 
-A *template*, a.k.a. snapshot, describes a table setup for a particular game.
+A *setup* preconfigures the tables of a *room* for a particular game.
 
 ```json
 {
@@ -242,13 +242,13 @@ A *template*, a.k.a. snapshot, describes a table setup for a particular game.
 ```
 
 `type`
-: The type of table this *template* uses. Can be either `grid-square` or `grid-hex`.
+: The type of tables this *setup* uses. Can be either `grid-square` or `grid-hex`.
 
 `version`
-: The version of the *template* / snapshot itself. Uses [Semantic Versioning](https://semver.org/). A downloaded snapshot will always contain the same version as the FBG version.
+: The version of the *setup* itself. Uses [Semantic Versioning](https://semver.org/). (If you download a *snapshot* from a server, its *setup* will always contain the same version as the FBG version.)
 
 `engine`
-: The FBG engine this *template* should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
+: The FBG engine this *setup* should work with. Uses [Semantic Versioning](https://semver.org/), and npm-style caret ranges to define version-x-or-higher.
 
 `table`
 : An (optional) table number 1-9 to start on if the user does not have a preference stored for it yet. Useful if each table has a setup corresponding to player count, and starting at e.g. default 4 seems better than 1.
@@ -262,39 +262,39 @@ A *template*, a.k.a. snapshot, describes a table setup for a particular game.
 `borders`
 : An (optional) series of border colors available to pieces. Key-Value pairs with `name` and a `value` / RGB hex code. If empty/missing, pieces can't have dynamic colors.
 
-The remaining *template* properties depend on the game type.
+The remaining *setup* properties depend on the game type.
 
 ### `grid-square` entries
 
-A *template* using the `grid-square` type also have the following properties:
+A *setup* using the `grid-square` type also has the following properties:
 
 `gridSize`
 : The grid / minimum tile size in px.
 
 `gridHeight`
-: The height of this *template*/table in grid spaces.
+: The height of the table in grid spaces.
 
 `gridWidth`
-: The width of this *template*/table in grid spaces.
+: The width of the table in grid spaces.
 
 `snap`
-: Optional boolean property. If set to `false`, grid-snapping will be disabled for this *template*. It is on per default.
+: Optional boolean property. If set to `false`, grid-snapping will be disabled for this *setup*. It is on per default.
 
 ### `grid-hex` entries
 
-A *template* using the `grid-hex` use hexes oriented with their flat sides up/down. They have the following additional properties:
+A *setup* using the `grid-hex` use hexes oriented with their flat sides up/down. They have the following additional properties:
 
 `gridSize`
 : The grid / minimum tile size in px. This equals the height of one hex (side-to-side).
 
 `gridHeight`
-: The height of this *template*/table in grid spaces.
+: The height of the table in grid spaces.
 
 `gridWidth`
-: The width of this *template*/table in grid spaces.
+: The width of the table in grid spaces.
 
 `snap`
-: Optional boolean property. If set to `false`, grid-snapping will be disabled for this *template*. It is on per default.
+: Optional boolean property. If set to `false`, grid-snapping will be disabled for this *setup*. It is on per default.
 
 Hex-tiles are a bit complicated, as hex-forms usually do not fill squares. Tile images should therefore transparent PNGs with the hex shape placed in its center. The images sould have the smallest possible multiple of 'gridSize' that can hold that hex shape. For example, a 1x1 hex needs a 2x1 canvas.
 
@@ -320,8 +320,8 @@ This JSON describes a whole *room*.
   "library": {
     ... library JSON ...
   },
-  "template": {
-    ... template JSON ...
+  "setup": {
+    ... setup JSON ...
   },
 
   "credits": "(c) ACME Inc.",
@@ -345,8 +345,8 @@ This JSON describes a whole *room*.
 `library`
 : The *room*'s *library*. Format is specified above.
 
-`templage`
-: The *room*'s *template*. Format is specified above.
+`setup`
+: The *room*'s *setup*. Format is specified above.
 
 `credits`
 : A Markdown string to be shown in the about modal.

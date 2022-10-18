@@ -1,0 +1,1001 @@
+{
+ "id": "kL64YSnG",
+ "name": "demoroomclassic",
+ "engine": "2.3.1",
+ "setup": {
+  "engine": "2.3.0",
+  "version": "0.18.0",
+  "type": "grid-square",
+  "gridSize": 64,
+  "gridWidth": 64,
+  "gridHeight": 64,
+  "colors": [
+   {
+    "name": "Black",
+    "value": "#202020"
+   },
+   {
+    "name": "White",
+    "value": "#e8e8e8"
+   },
+   {
+    "name": "Red",
+    "value": "#b32d35"
+   },
+   {
+    "name": "Orange",
+    "value": "#b05a11"
+   },
+   {
+    "name": "Yellow",
+    "value": "#af9700"
+   },
+   {
+    "name": "Green",
+    "value": "#317501"
+   },
+   {
+    "name": "Cyan",
+    "value": "#40bfbf"
+   },
+   {
+    "name": "Blue",
+    "value": "#3387b0"
+   },
+   {
+    "name": "Indigo",
+    "value": "#2e4d7b"
+   },
+   {
+    "name": "Violet",
+    "value": "#730fb1"
+   },
+   {
+    "name": "Magenta",
+    "value": "#bf40bf"
+   },
+   {
+    "name": "Gray A",
+    "value": "#606060"
+   },
+   {
+    "name": "Gray B",
+    "value": "#a0a0a0"
+   }
+  ],
+  "borders": [
+   {
+    "name": "Black",
+    "value": "#202020"
+   },
+   {
+    "name": "White",
+    "value": "#e8e8e8"
+   },
+   {
+    "name": "Red",
+    "value": "#b32d35"
+   },
+   {
+    "name": "Orange",
+    "value": "#b05a11"
+   },
+   {
+    "name": "Yellow",
+    "value": "#af9700"
+   },
+   {
+    "name": "Green",
+    "value": "#317501"
+   },
+   {
+    "name": "Cyan",
+    "value": "#40bfbf"
+   },
+   {
+    "name": "Blue",
+    "value": "#3387b0"
+   },
+   {
+    "name": "Indigo",
+    "value": "#2e4d7b"
+   },
+   {
+    "name": "Violet",
+    "value": "#730fb1"
+   },
+   {
+    "name": "Magenta",
+    "value": "#bf40bf"
+   },
+   {
+    "name": "Gray A",
+    "value": "#606060"
+   },
+   {
+    "name": "Gray B",
+    "value": "#a0a0a0"
+   }
+  ]
+ },
+ "library": {
+  "overlay": [
+   {
+    "id": "T28mo300",
+    "name": "_.area",
+    "type": "overlay",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [],
+    "mask": "_.area.1x1xX.1.svg"
+   },
+   {
+    "id": "ig-Kt200",
+    "name": "_.area",
+    "type": "overlay",
+    "w": 2,
+    "h": 2,
+    "bg": "1",
+    "media": [],
+    "mask": "_.area.2x2xX.1.svg"
+   },
+   {
+    "id": "Bu07x200",
+    "name": "_.area",
+    "type": "overlay",
+    "w": 3,
+    "h": 3,
+    "bg": "1",
+    "media": [],
+    "mask": "_.area.3x3xX.1.svg"
+   },
+   {
+    "id": "wPXsm000",
+    "name": "_.area",
+    "type": "overlay",
+    "w": 4,
+    "h": 4,
+    "bg": "1",
+    "media": [],
+    "mask": "_.area.4x4xX.1.svg"
+   },
+   {
+    "id": "XVoPF000",
+    "name": "_.area",
+    "type": "overlay",
+    "w": 5,
+    "h": 5,
+    "bg": "1",
+    "media": [],
+    "mask": "_.area.5x5xX.1.svg"
+   },
+   {
+    "id": "yk-7s000",
+    "name": "_.circle",
+    "type": "overlay",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [],
+    "mask": "_.circle.1x1xX.1.svg"
+   },
+   {
+    "id": "z68Zp100",
+    "name": "_.circle",
+    "type": "overlay",
+    "w": 2,
+    "h": 2,
+    "bg": "1",
+    "media": [],
+    "mask": "_.circle.2x2xX.1.svg"
+   },
+   {
+    "id": "E8HmA100",
+    "name": "_.circle",
+    "type": "overlay",
+    "w": 3,
+    "h": 3,
+    "bg": "1",
+    "media": [],
+    "mask": "_.circle.3x3xX.1.svg"
+   },
+   {
+    "id": "Fygdi300",
+    "name": "_.circle",
+    "type": "overlay",
+    "w": 4,
+    "h": 4,
+    "bg": "1",
+    "media": [],
+    "mask": "_.circle.4x4xX.1.svg"
+   },
+   {
+    "id": "CHPAJ300",
+    "name": "_.circle",
+    "type": "overlay",
+    "w": 5,
+    "h": 5,
+    "bg": "1",
+    "media": [],
+    "mask": "_.circle.5x5xX.1.svg"
+   },
+   {
+    "id": "y2e6H000",
+    "name": "_.pin",
+    "type": "overlay",
+    "w": 2,
+    "h": 2,
+    "bg": "1",
+    "media": [
+     "_.pin.2x2x1.1.png"
+    ],
+    "mask": "_.pin.2x2xX.1.svg"
+   },
+   {
+    "id": "zNVkI000",
+    "name": "_.wall",
+    "type": "overlay",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.wall.1x1x1.1.png"
+    ],
+    "mask": "_.wall.1x1xX.1.png"
+   },
+   {
+    "id": "Lv6KO300",
+    "name": "_.zone",
+    "type": "overlay",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [],
+    "mask": "_.zone.1x1xX.1.svg"
+   },
+   {
+    "id": "udFmR200",
+    "name": "_.zone",
+    "type": "overlay",
+    "w": 2,
+    "h": 2,
+    "bg": "1",
+    "media": [],
+    "mask": "_.zone.2x2xX.1.svg"
+   },
+   {
+    "id": "d3eZa200",
+    "name": "_.zone",
+    "type": "overlay",
+    "w": 3,
+    "h": 3,
+    "bg": "1",
+    "media": [],
+    "mask": "_.zone.3x3xX.1.svg"
+   },
+   {
+    "id": "MENAY000",
+    "name": "_.zone",
+    "type": "overlay",
+    "w": 4,
+    "h": 4,
+    "bg": "1",
+    "media": [],
+    "mask": "_.zone.4x4xX.1.svg"
+   },
+   {
+    "id": "fCmd1000",
+    "name": "_.zone",
+    "type": "overlay",
+    "w": 5,
+    "h": 5,
+    "bg": "1",
+    "media": [],
+    "mask": "_.zone.5x5xX.1.svg"
+   }
+  ],
+  "tile": [
+   {
+    "id": "SoKu5200",
+    "name": "_.glassDark",
+    "type": "tile",
+    "w": 2,
+    "h": 2,
+    "bg": "transparent",
+    "media": [
+     "_.glassDark.2x2x1.transparent.png"
+    ]
+   },
+   {
+    "id": "xhnDI000",
+    "name": "_.glassLight",
+    "type": "tile",
+    "w": 2,
+    "h": 2,
+    "bg": "transparent",
+    "media": [
+     "_.glassLight.2x2x1.transparent.png"
+    ]
+   },
+   {
+    "id": "gQ6Pe200",
+    "name": "backgammon",
+    "type": "tile",
+    "w": 14,
+    "h": 12,
+    "bg": "#DDBC95",
+    "media": [
+     "backgammon.14x12x1.DDBC95.svg"
+    ],
+    "base": "backgammon.14x12x0.DDBC95.jpg"
+   },
+   {
+    "id": "Y6aoL100",
+    "name": "chess",
+    "type": "tile",
+    "w": 8,
+    "h": 8,
+    "bg": "#b7b9ca",
+    "media": [
+     "chess.8x8x1.b7b9ca.jpg"
+    ]
+   },
+   {
+    "id": "lWh16200",
+    "name": "go.09x09",
+    "type": "tile",
+    "w": 9,
+    "h": 9,
+    "bg": "#DDBC95",
+    "media": [
+     "go.09x09.9x9x1.DDBC95.svg"
+    ],
+    "base": "go.09x09.9x9x0.DDBC95.jpg"
+   },
+   {
+    "id": "sHieO100",
+    "name": "go.13x13",
+    "type": "tile",
+    "w": 13,
+    "h": 13,
+    "bg": "#DDBC95",
+    "media": [
+     "go.13x13.13x13x1.DDBC95.svg"
+    ],
+    "base": "go.13x13.13x13x0.DDBC95.jpg"
+   },
+   {
+    "id": "rYebw200",
+    "name": "go.19x19",
+    "type": "tile",
+    "w": 19,
+    "h": 19,
+    "bg": "#DDBC95",
+    "media": [
+     "go.19x19.19x19x1.DDBC95.svg"
+    ],
+    "base": "go.19x19.19x19x0.DDBC95.jpg"
+   },
+   {
+    "id": "MUwjA300",
+    "name": "mills",
+    "type": "tile",
+    "w": 10,
+    "h": 10,
+    "bg": "#DDBC95",
+    "media": [
+     "mills.10x10x1.DDBC95.svg"
+    ],
+    "base": "mills.10x10x0.DDBC95.jpg"
+   },
+   {
+    "id": "z6iPq300",
+    "name": "oware",
+    "type": "tile",
+    "w": 18,
+    "h": 6,
+    "bg": "#DDBC95",
+    "media": [
+     "oware.18x6x1.DDBC95.svg"
+    ],
+    "base": "oware.18x6x0.DDBC95.jpg"
+   },
+   {
+    "id": "aR3Vu100",
+    "name": "pachisi",
+    "type": "tile",
+    "w": 12,
+    "h": 12,
+    "bg": "#DDBC95",
+    "media": [
+     "pachisi.12x12x1.DDBC95.svg"
+    ],
+    "base": "pachisi.12x12x0.DDBC95.jpg"
+   },
+   {
+    "id": "N3mCH100",
+    "name": "solitaire",
+    "type": "tile",
+    "w": 8,
+    "h": 8,
+    "bg": "#DDBC95",
+    "media": [
+     "solitaire.8x8x1.DDBC95.svg"
+    ],
+    "base": "solitaire.8x8x0.DDBC95.jpg"
+   },
+   {
+    "id": "GTJ-P300",
+    "name": "ticTacToe",
+    "type": "tile",
+    "w": 6,
+    "h": 6,
+    "bg": "#DDBC95",
+    "media": [
+     "ticTacToe.6x6x1.DDBC95.svg"
+    ],
+    "base": "ticTacToe.6x6x0.DDBC95.jpg"
+   }
+  ],
+  "token": [
+   {
+    "id": "wAksS100",
+    "name": "_.bead",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.bead.1x1x1.1.png"
+    ]
+   },
+   {
+    "id": "mAa-Q300",
+    "name": "_.letter",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.letter.1x1x01.1.wood.svg",
+     "_.letter.1x1x02.1.wood.svg",
+     "_.letter.1x1x03.1.wood.svg",
+     "_.letter.1x1x04.1.wood.svg",
+     "_.letter.1x1x05.1.wood.svg",
+     "_.letter.1x1x06.1.wood.svg",
+     "_.letter.1x1x07.1.wood.svg",
+     "_.letter.1x1x08.1.wood.svg",
+     "_.letter.1x1x09.1.wood.svg",
+     "_.letter.1x1x10.1.wood.svg",
+     "_.letter.1x1x11.1.wood.svg",
+     "_.letter.1x1x12.1.wood.svg",
+     "_.letter.1x1x13.1.wood.svg",
+     "_.letter.1x1x14.1.wood.svg",
+     "_.letter.1x1x15.1.wood.svg",
+     "_.letter.1x1x16.1.wood.svg",
+     "_.letter.1x1x17.1.wood.svg",
+     "_.letter.1x1x18.1.wood.svg",
+     "_.letter.1x1x19.1.wood.svg",
+     "_.letter.1x1x20.1.wood.svg",
+     "_.letter.1x1x21.1.wood.svg",
+     "_.letter.1x1x22.1.wood.svg",
+     "_.letter.1x1x23.1.wood.svg",
+     "_.letter.1x1x24.1.wood.svg",
+     "_.letter.1x1x25.1.wood.svg",
+     "_.letter.1x1x26.1.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "sD_SB100",
+    "name": "_.number",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.number.1x1x01.1.wood.svg",
+     "_.number.1x1x02.1.wood.svg",
+     "_.number.1x1x03.1.wood.svg",
+     "_.number.1x1x04.1.wood.svg",
+     "_.number.1x1x05.1.wood.svg",
+     "_.number.1x1x06.1.wood.svg",
+     "_.number.1x1x07.1.wood.svg",
+     "_.number.1x1x08.1.wood.svg",
+     "_.number.1x1x09.1.wood.svg",
+     "_.number.1x1x10.1.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "oZX62300",
+    "name": "_.plain",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "_.plain.1x1x1.0.wood.png"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "Hn18v200",
+    "name": "_.symbol",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.symbol.1x1x1.1.wood.svg",
+     "_.symbol.1x1x2.1.wood.svg",
+     "_.symbol.1x1x3.1.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "HsCXs000",
+    "name": "chess.bishop",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.bishop.1x1x1.0.wood.svg",
+     "chess.bishop.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "tqNbQ200",
+    "name": "chess.king",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.king.1x1x1.0.wood.svg",
+     "chess.king.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "zKVSU200",
+    "name": "chess.knight",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.knight.1x1x1.0.wood.svg",
+     "chess.knight.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "Z5pQC000",
+    "name": "chess.pawn",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.pawn.1x1x1.0.wood.svg",
+     "chess.pawn.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "mwxyq000",
+    "name": "chess.queen",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.queen.1x1x1.0.wood.svg",
+     "chess.queen.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   },
+   {
+    "id": "f_9xm000",
+    "name": "chess.rook",
+    "type": "token",
+    "w": 1,
+    "h": 1,
+    "bg": "0",
+    "media": [
+     "chess.rook.1x1x1.0.wood.svg",
+     "chess.rook.1x1x2.0.wood.svg"
+    ],
+    "tx": "wood"
+   }
+  ],
+  "other": [
+   {
+    "id": "lPebe300",
+    "name": "_.d10Dark",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.d10Dark.1x1x01.1.svg",
+     "_.d10Dark.1x1x02.1.svg",
+     "_.d10Dark.1x1x03.1.svg",
+     "_.d10Dark.1x1x04.1.svg",
+     "_.d10Dark.1x1x05.1.svg",
+     "_.d10Dark.1x1x06.1.svg",
+     "_.d10Dark.1x1x07.1.svg",
+     "_.d10Dark.1x1x08.1.svg",
+     "_.d10Dark.1x1x09.1.svg",
+     "_.d10Dark.1x1x10.1.svg"
+    ],
+    "base": "_.d10Dark.1x1x00.1.png",
+    "mask": "_.d10Dark.1x1xXX.1.svg"
+   },
+   {
+    "id": "tVzk3200",
+    "name": "_.d10Light",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "2",
+    "media": [
+     "_.d10Light.1x1x01.2.svg",
+     "_.d10Light.1x1x02.2.svg",
+     "_.d10Light.1x1x03.2.svg",
+     "_.d10Light.1x1x04.2.svg",
+     "_.d10Light.1x1x05.2.svg",
+     "_.d10Light.1x1x06.2.svg",
+     "_.d10Light.1x1x07.2.svg",
+     "_.d10Light.1x1x08.2.svg",
+     "_.d10Light.1x1x09.2.svg",
+     "_.d10Light.1x1x10.2.svg"
+    ],
+    "base": "_.d10Light.1x1x00.2.png",
+    "mask": "_.d10Light.1x1xXX.2.svg"
+   },
+   {
+    "id": "aeS5y000",
+    "name": "_.d12Dark",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.d12Dark.1x1x01.1.svg",
+     "_.d12Dark.1x1x02.1.svg",
+     "_.d12Dark.1x1x03.1.svg",
+     "_.d12Dark.1x1x04.1.svg",
+     "_.d12Dark.1x1x05.1.svg",
+     "_.d12Dark.1x1x06.1.svg",
+     "_.d12Dark.1x1x07.1.svg",
+     "_.d12Dark.1x1x08.1.svg",
+     "_.d12Dark.1x1x09.1.svg",
+     "_.d12Dark.1x1x10.1.svg",
+     "_.d12Dark.1x1x11.1.svg",
+     "_.d12Dark.1x1x12.1.svg"
+    ],
+    "base": "_.d12Dark.1x1x00.1.png",
+    "mask": "_.d12Dark.1x1xXX.1.svg"
+   },
+   {
+    "id": "KKD3z300",
+    "name": "_.d12Light",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "2",
+    "media": [
+     "_.d12Light.1x1x01.2.svg",
+     "_.d12Light.1x1x02.2.svg",
+     "_.d12Light.1x1x03.2.svg",
+     "_.d12Light.1x1x04.2.svg",
+     "_.d12Light.1x1x05.2.svg",
+     "_.d12Light.1x1x06.2.svg",
+     "_.d12Light.1x1x07.2.svg",
+     "_.d12Light.1x1x08.2.svg",
+     "_.d12Light.1x1x09.2.svg",
+     "_.d12Light.1x1x10.2.svg",
+     "_.d12Light.1x1x11.2.svg",
+     "_.d12Light.1x1x12.2.svg"
+    ],
+    "base": "_.d12Light.1x1x00.2.png",
+    "mask": "_.d12Light.1x1xXX.2.svg"
+   },
+   {
+    "id": "z7DUO100",
+    "name": "_.d20Dark",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.d20Dark.1x1x01.1.svg",
+     "_.d20Dark.1x1x02.1.svg",
+     "_.d20Dark.1x1x03.1.svg",
+     "_.d20Dark.1x1x04.1.svg",
+     "_.d20Dark.1x1x05.1.svg",
+     "_.d20Dark.1x1x06.1.svg",
+     "_.d20Dark.1x1x07.1.svg",
+     "_.d20Dark.1x1x08.1.svg",
+     "_.d20Dark.1x1x09.1.svg",
+     "_.d20Dark.1x1x10.1.svg",
+     "_.d20Dark.1x1x11.1.svg",
+     "_.d20Dark.1x1x12.1.svg",
+     "_.d20Dark.1x1x13.1.svg",
+     "_.d20Dark.1x1x14.1.svg",
+     "_.d20Dark.1x1x15.1.svg",
+     "_.d20Dark.1x1x16.1.svg",
+     "_.d20Dark.1x1x17.1.svg",
+     "_.d20Dark.1x1x18.1.svg",
+     "_.d20Dark.1x1x19.1.svg",
+     "_.d20Dark.1x1x20.1.svg"
+    ],
+    "base": "_.d20Dark.1x1x00.1.png",
+    "mask": "_.d20Dark.1x1xXX.1.svg"
+   },
+   {
+    "id": "eIMc_300",
+    "name": "_.d20Light",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "2",
+    "media": [
+     "_.d20Light.1x1x01.2.svg",
+     "_.d20Light.1x1x02.2.svg",
+     "_.d20Light.1x1x03.2.svg",
+     "_.d20Light.1x1x04.2.svg",
+     "_.d20Light.1x1x05.2.svg",
+     "_.d20Light.1x1x06.2.svg",
+     "_.d20Light.1x1x07.2.svg",
+     "_.d20Light.1x1x08.2.svg",
+     "_.d20Light.1x1x09.2.svg",
+     "_.d20Light.1x1x10.2.svg",
+     "_.d20Light.1x1x11.2.svg",
+     "_.d20Light.1x1x12.2.svg",
+     "_.d20Light.1x1x13.2.svg",
+     "_.d20Light.1x1x14.2.svg",
+     "_.d20Light.1x1x15.2.svg",
+     "_.d20Light.1x1x16.2.svg",
+     "_.d20Light.1x1x17.2.svg",
+     "_.d20Light.1x1x18.2.svg",
+     "_.d20Light.1x1x19.2.svg",
+     "_.d20Light.1x1x20.2.svg"
+    ],
+    "base": "_.d20Light.1x1x00.2.png",
+    "mask": "_.d20Light.1x1xXX.2.svg"
+   },
+   {
+    "id": "SHt9A300",
+    "name": "_.d4Dark",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.d4Dark.1x1x1.1.svg",
+     "_.d4Dark.1x1x2.1.svg",
+     "_.d4Dark.1x1x3.1.svg",
+     "_.d4Dark.1x1x4.1.svg"
+    ],
+    "base": "_.d4Dark.1x1x0.1.png",
+    "mask": "_.d4Dark.1x1xX.1.svg"
+   },
+   {
+    "id": "xY7Gr200",
+    "name": "_.d4Light",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "2",
+    "media": [
+     "_.d4Light.1x1x1.2.svg",
+     "_.d4Light.1x1x2.2.svg",
+     "_.d4Light.1x1x3.2.svg",
+     "_.d4Light.1x1x4.2.svg"
+    ],
+    "base": "_.d4Light.1x1x0.2.png",
+    "mask": "_.d4Light.1x1xX.2.svg"
+   },
+   {
+    "id": "jbmiY200",
+    "name": "_.d6Dark",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.d6Dark.1x1x1.1.svg",
+     "_.d6Dark.1x1x2.1.svg",
+     "_.d6Dark.1x1x3.1.svg",
+     "_.d6Dark.1x1x4.1.svg",
+     "_.d6Dark.1x1x5.1.svg",
+     "_.d6Dark.1x1x6.1.svg"
+    ],
+    "base": "_.d6Dark.1x1x0.1.png",
+    "mask": "_.d6Dark.1x1xX.1.svg"
+   },
+   {
+    "id": "u7ZAS100",
+    "name": "_.d6Light",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "2",
+    "media": [
+     "_.d6Light.1x1x1.2.svg",
+     "_.d6Light.1x1x2.2.svg",
+     "_.d6Light.1x1x3.2.svg",
+     "_.d6Light.1x1x4.2.svg",
+     "_.d6Light.1x1x5.2.svg",
+     "_.d6Light.1x1x6.2.svg"
+    ],
+    "base": "_.d6Light.1x1x0.2.png",
+    "mask": "_.d6Light.1x1xX.2.svg"
+   },
+   {
+    "id": "xCPfK300",
+    "name": "_.d8Dark",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.d8Dark.1x1x1.1.svg",
+     "_.d8Dark.1x1x2.1.svg",
+     "_.d8Dark.1x1x3.1.svg",
+     "_.d8Dark.1x1x4.1.svg",
+     "_.d8Dark.1x1x5.1.svg",
+     "_.d8Dark.1x1x6.1.svg",
+     "_.d8Dark.1x1x7.1.svg",
+     "_.d8Dark.1x1x8.1.svg"
+    ],
+    "base": "_.d8Dark.1x1x0.1.png",
+    "mask": "_.d8Dark.1x1xX.1.svg"
+   },
+   {
+    "id": "obzEu200",
+    "name": "_.d8Light",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "2",
+    "media": [
+     "_.d8Light.1x1x1.2.svg",
+     "_.d8Light.1x1x2.2.svg",
+     "_.d8Light.1x1x3.2.svg",
+     "_.d8Light.1x1x4.2.svg",
+     "_.d8Light.1x1x5.2.svg",
+     "_.d8Light.1x1x6.2.svg",
+     "_.d8Light.1x1x7.2.svg",
+     "_.d8Light.1x1x8.2.svg"
+    ],
+    "base": "_.d8Light.1x1x0.2.png",
+    "mask": "_.d8Light.1x1xX.2.svg"
+   },
+   {
+    "id": "selr5000",
+    "name": "_.dicemat",
+    "type": "other",
+    "w": 4,
+    "h": 4,
+    "bg": "#808080",
+    "media": [
+     "_.dicemat.4x4x1.jpg"
+    ]
+   },
+   {
+    "id": "FvPx9300",
+    "name": "_.dicemat",
+    "type": "other",
+    "w": 8,
+    "h": 8,
+    "bg": "#808080",
+    "media": [
+     "_.dicemat.8x8x1.png"
+    ]
+   },
+   {
+    "id": "MDuQt000",
+    "name": "_.fateDark",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "1",
+    "media": [
+     "_.fateDark.1x1x1.1.svg",
+     "_.fateDark.1x1x2.1.svg",
+     "_.fateDark.1x1x3.1.svg",
+     "_.fateDark.1x1x4.1.svg",
+     "_.fateDark.1x1x5.1.svg",
+     "_.fateDark.1x1x6.1.svg"
+    ],
+    "base": "_.fateDark.1x1x0.1.png",
+    "mask": "_.fateDark.1x1xX.1.svg"
+   },
+   {
+    "id": "MTvWD100",
+    "name": "_.fateLight",
+    "type": "other",
+    "w": 1,
+    "h": 1,
+    "bg": "2",
+    "media": [
+     "_.fateLight.1x1x1.2.svg",
+     "_.fateLight.1x1x2.2.svg",
+     "_.fateLight.1x1x3.2.svg",
+     "_.fateLight.1x1x4.2.svg",
+     "_.fateLight.1x1x5.2.svg",
+     "_.fateLight.1x1x6.2.svg"
+    ],
+    "base": "_.fateLight.1x1x0.2.png",
+    "mask": "_.fateLight.1x1xX.2.svg"
+   }
+  ],
+  "badge": [
+   {
+    "id": "Jxa0k200",
+    "name": "_.badge",
+    "type": "badge",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "_.badge.svg"
+    ]
+   },
+   {
+    "id": "RvGjJ000",
+    "name": "_.target",
+    "type": "badge",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "_.target.svg"
+    ]
+   },
+   {
+    "id": "wRe_l200",
+    "name": "drop",
+    "type": "badge",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "drop.svg"
+    ]
+   },
+   {
+    "id": "wgQLZ100",
+    "name": "mark",
+    "type": "badge",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "mark.svg"
+    ]
+   },
+   {
+    "id": "Wvh__000",
+    "name": "shield",
+    "type": "badge",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "shield.svg"
+    ]
+   }
+  ]
+ },
+ "credits": "The **Classic** snapshot is part of FreeBeeGee and released under the terms of the AGPL-3.0. It contains assets by:\n\n* Marble Texture CC BY-SA 3.0 by SimoonMurray\n* Go boards AGPL-3.0 by [svenja](https://github.com/svenja/)\n* Pieces by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified:\n  * Chess pieces by Skoll\n  * Griffin shield icon by Delapouite\n* Status icons by [game-icons.net](https://game-icons.net/) / CC BY 3.0, renamed and slightly modified:\n  * broken-heart, bubbling-bowl, explosion-rays, magnet, manacles, power-lightning, psychic-waves, resonance, spider-web, stone-block, water-splash by Lorc\n  * griffin-shield, target-poster by Delapouite\n  * water-drop by sbed\n",
+ "width": 4096,
+ "height": 4096
+}

@@ -53,9 +53,11 @@ export class SelectAndProperties extends MouseButtonHandler {
   }
 
   push (mousedown) {
+    const piece = this.findParentPiece(mousedown.target)
+    if (!piece) return
     mousedown.preventDefault()
 
-    findRealClickTarget(mousedown, getMouseCoords()).then(target => {
+    findRealClickTarget(piece, getMouseCoords()).then(target => {
       updateSelection(target, mousedown.ctrlKey)
       if (target) {
         if (target.classList.contains('piece')) {

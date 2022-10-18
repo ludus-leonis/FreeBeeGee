@@ -817,7 +817,7 @@ const roomJSON = `
     }],
     "badge": []
   },
-  "template": {
+  "setup": {
     "type": "grid-square",
     "version": "0.9.0-dev",
     "engine": "^0.3.0",
@@ -845,7 +845,7 @@ const roomJSON = `
       "value": "#ffffff"
     }]
   },
-  "credits": "test template",
+  "credits": "test snapshot",
   "width": 3072,
   "height": 2048
 }

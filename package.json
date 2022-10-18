@@ -1,9 +1,9 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.17.0",
+  "version": "0.18.0",
   "versionEngine": "2.3.1",
   "type": "module",
-  "codename": "Rotating Rook",
+  "codename": "Zooming Zokor",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",
@@ -75,8 +75,9 @@
   },
   "dependencies": {
     "@popperjs/core": "^2.11.5",
+    "bcryptjs": "^2.4.3",
     "bootstrap": "^5.1.3",
-    "marked": "^4.0.16",
+    "marked": "^4.1.0",
     "sha.js": "^2.4.11"
   }
 }

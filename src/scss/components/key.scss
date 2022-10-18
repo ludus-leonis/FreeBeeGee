@@ -30,6 +30,8 @@
   display: inline-block;
   font-family: $typography-font-list-monospace;
   font-size: .85em;
+  font-weight: 500;
+  letter-spacing: -.0625em; // ~1px
   line-height: 1em;
   margin-right: $spacing-micro;
   min-width: 1.5em;

@@ -24,8 +24,8 @@ import {
 } from '../../../app.mjs'
 
 import {
-  getTemplate,
-  patchTemplate,
+  getSetup,
+  patchSetup,
   updateTable,
   getRoom,
   getServerInfo,
@@ -44,9 +44,10 @@ import {
   createModal,
   getModal,
   modalClose
-} from '../../../view/modal.mjs'
+} from '../../../view/room/modal.mjs'
 
 import {
+  ZOOM_LEVELS,
   moveContent
 } from '../../../view/room/tabletop/index.mjs'
 
@@ -56,6 +57,7 @@ import {
 
 import {
   setupBackground,
+  setupZoom,
   toggleGrid
 } from '../../../view/room/index.mjs'
 
@@ -88,12 +90,17 @@ export function modalSettings () {
             <div class="col-12">
               <p>This tab only affects what you can see, not the other players.</p>
             </div>
-            <div class="col-12 col-lg-6">
+            <div class="col-6 col-lg-3">
+              <label for="table-zoom">Zoom</label>
+              <select id="table-zoom" name="zoom"></select>
+              <p class="p-small spacing-tiny">Magnification</p>
+            </div>
+            <div class="col-6 col-lg-3">
               <label for="table-background">Background</label>
               <select id="table-background" name="background"></select>
               <p class="p-small spacing-tiny">Table texture.</p>
             </div>
-            <div class="col-12 col-lg-3">
+            <div class="col-6 col-lg-3">
               <label for="table-grid">Grid</label>
               <select id="table-grid" name="grid">
                 <option value="0" ${grid === 0 ? 'selected' : ''}>None</option>
@@ -103,7 +110,7 @@ export function modalSettings () {
               <p class="p-small spacing-tiny">Show grid?</p>
             </div>
 
-            <div class="col-12 col-lg-3">
+            <div class="col-6 col-lg-3">
               <label for="table-sub">Table</label>
               <select id="table-sub" name="table"></select>
               <p class="p-small spacing-tiny">Visible table.</p>
@@ -261,12 +268,20 @@ export function modalSettings () {
     }
   })
 
+  const zoom = _('#table-zoom')
+  for (const z of ZOOM_LEVELS) {
+    const option = _('option').create(z * 100 + '%')
+    option.value = z
+    if (z === getRoomPreference(PREFS.ZOOM)) option.selected = true
+    zoom.add(option)
+  }
+
   const server = getServerInfo()
   const backgrounds = _('#table-background')
-  for (let i = 0; i < server.backgrounds.length; i++) {
-    const option = _('option').create(server.backgrounds[i].name)
-    option.value = i
-    if (i === getServerPreference(PREFS.BACKGROUND)) option.selected = true
+  for (const background of server.backgrounds) {
+    const option = _('option').create(background.name)
+    option.value = background.name
+    if (background.name === getServerPreference(PREFS.BACKGROUND)) option.selected = true
     backgrounds.add(option)
   }
 
@@ -278,10 +293,10 @@ export function modalSettings () {
     table.add(option)
   }
 
-  const template = getTemplate()
+  const setup = getSetup()
   const rect = getContentRect()
-  populateSizes('#table-w', getTemplate().gridWidth, Math.floor(rect.right / template.gridSize))
-  populateSizes('#table-h', getTemplate().gridHeight, Math.floor(rect.bottom / template.gridSize))
+  populateSizes('#table-w', getSetup().gridWidth, Math.floor(rect.right / setup.gridSize))
+  populateSizes('#table-h', getSetup().gridHeight, Math.floor(rect.bottom / setup.gridSize))
 
   _('#btn-close').on('click', () => getModal().hide())
   _('#modal').on('hidden.bs.modal', () => modalClose())
@@ -305,7 +320,11 @@ export function modalSettings () {
   // ---------------------------------------------------------------------------
 
   _('#table-grid').on('change', () => toggleGrid(Number.parseInt(_('#table-grid').value)))
-  _('#table-background').on('change', () => setupBackground(Number(_('#table-background').value)))
+  _('#table-zoom').on('change', () => setupZoom(Number(_('#table-zoom').value)))
+  _('#table-background').on('change', () => {
+    setServerPreference(PREFS.BACKGROUND, _('#table-background').value)
+    setupBackground()
+  })
   _('#table-sub').on('change', () => setTableNo(Number(_('#table-sub').value)))
 
   _('#btn-table-tl').on('click', click => handleAlign(click, -1, -1))
@@ -383,11 +402,11 @@ function populateSizes (id, roomSize, contentSize, increments = 16) {
  * Resize the room (if size actually changed)
  */
 function resizeRoom () {
-  const template = getTemplate()
+  const setup = getSetup()
   const w = Number(_('#table-w').value)
   const h = Number(_('#table-h').value)
-  if (w !== template.gridWidth || h !== template.gridHeight) {
-    patchTemplate({
+  if (w !== setup.gridWidth || h !== setup.gridHeight) {
+    patchSetup({
       gridWidth: w,
       gridHeight: h
     })
@@ -403,8 +422,8 @@ function resizeRoom () {
  */
 function handleAlign (click, x, y) {
   click.preventDefault()
-  const template = getTemplate()
-  const padding = template.gridSize // leave room on side
+  const setup = getSetup()
+  const padding = setup.gridSize // leave room on side
   const rect = getContentRect()
 
   let x2
@@ -415,10 +434,10 @@ function handleAlign (click, x, y) {
       x2 = (padding + rect.width / 2) - (rect.left + rect.width / 2)
       break
     case 0:
-      x2 = template._meta.widthPx / 2 - (rect.left + rect.width / 2)
+      x2 = setup._meta.widthPx / 2 - (rect.left + rect.width / 2)
       break
     case 1:
-      x2 = (template._meta.widthPx - padding - rect.width / 2) - (rect.left + rect.width / 2)
+      x2 = (setup._meta.widthPx - padding - rect.width / 2) - (rect.left + rect.width / 2)
   }
 
   switch (y) {
@@ -426,10 +445,10 @@ function handleAlign (click, x, y) {
       y2 = (padding + rect.height / 2) - (rect.top + rect.height / 2)
       break
     case 0:
-      y2 = template._meta.heightPx / 2 - (rect.top + rect.height / 2)
+      y2 = setup._meta.heightPx / 2 - (rect.top + rect.height / 2)
       break
     case 1:
-      y2 = (template._meta.heightPx - padding - rect.height / 2) - (rect.top + rect.height / 2)
+      y2 = (setup._meta.heightPx - padding - rect.height / 2) - (rect.top + rect.height / 2)
   }
 
   moveContent(Math.floor(x2), Math.floor(y2))

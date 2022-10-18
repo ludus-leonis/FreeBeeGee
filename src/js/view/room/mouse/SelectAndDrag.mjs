@@ -69,7 +69,7 @@ export class SelectAndDrag extends MouseButtonHandler {
   constructor () {
     super()
     this.dragging = [] // the currently dragged objects
-    this.selectionBounds = {} // bounding box of whole selection
+    this.dragData = {} // bounding box of whole selection
     this.multiselect = null // the select-square area
   }
 
@@ -90,13 +90,11 @@ export class SelectAndDrag extends MouseButtonHandler {
   }
 
   push (mousedown) {
-    // we only react on pieces or the tabletop
-    if (!mousedown.target.classList.contains('piece') &&
-      !mousedown.target.classList.contains('tabletop')) return
-
+    const piece = this.findParentPiece(mousedown.target)
+    if (!piece) return
     mousedown.preventDefault()
 
-    findRealClickTarget(mousedown, getMouseCoords()).then(target => {
+    findRealClickTarget(piece, getMouseCoords()).then(target => {
       if (target) { // drag mode
         updateSelection(target, mousedown.ctrlKey)
         this.dragStart()
@@ -157,13 +155,18 @@ export class SelectAndDrag extends MouseButtonHandler {
   }
 
   selectContinue () {
-    const coords = getMouseCoords()
-    this.multiselect.width = coords.x - this.multiselect.x
-    this.multiselect.height = coords.y - this.multiselect.y
+    const tableCoords = getMouseCoords()
+    this.multiselect.width = tableCoords.x - this.multiselect.x
+    this.multiselect.height = tableCoords.y - this.multiselect.y
 
     _(`#${ID.SELECT}-drag`).delete()
     if (this.multiselect.width !== 0 && this.multiselect.height !== 0) {
-      const svg = createSelectPiece(this.multiselect.x, this.multiselect.y, this.multiselect.width, this.multiselect.height)
+      const svg = createSelectPiece(
+        this.multiselect.x,
+        this.multiselect.y,
+        this.multiselect.width,
+        this.multiselect.height
+      )
       svg.id = `${ID.SELECT}-drag`
       _('#layer-other').add(svg)
     }
@@ -211,15 +214,15 @@ export class SelectAndDrag extends MouseButtonHandler {
       this.dragging.push(clone)
     }
 
-    this.selectionBounds = selectionGetFeatures().boundingBox
-    this.selectionBounds.startX = coords.x
-    this.selectionBounds.startY = coords.y
-    this.selectionBounds.xa = this.selectionBounds.startX - this.selectionBounds.left
-    this.selectionBounds.xb = this.selectionBounds.right - this.selectionBounds.startX
-    this.selectionBounds.ya = this.selectionBounds.startY - this.selectionBounds.top
-    this.selectionBounds.yb = this.selectionBounds.bottom - this.selectionBounds.startY
-    this.selectionBounds.finalCenterX = this.selectionBounds.x
-    this.selectionBounds.finalCenterY = this.selectionBounds.y
+    this.dragData = selectionGetFeatures().boundingBox
+    this.dragData.startX = coords.x
+    this.dragData.startY = coords.y
+    this.dragData.xa = this.dragData.startX - this.dragData.left
+    this.dragData.xb = this.dragData.right - this.dragData.startX
+    this.dragData.ya = this.dragData.startY - this.dragData.top
+    this.dragData.yb = this.dragData.bottom - this.dragData.startY
+    this.dragData.finalCenterX = this.dragData.x
+    this.dragData.finalCenterY = this.dragData.y
 
     // xa/xb and ya/yb are the distance between the first drag-click and the
     // selection border:
@@ -234,29 +237,32 @@ export class SelectAndDrag extends MouseButtonHandler {
     // |             |      |
     // |             |      |
     // +--------------------+
-
-    setCursor('.cursor-grab')
   }
 
   dragContinue (shiftKey) {
+    if (!this.dragData.cursor) { // set cursor (only once)
+      setCursor('.cursor-grab')
+      this.dragData.cursor = true
+    }
+
     const room = getRoom()
     const coords = getMouseCoords()
     const clampCoords = {
-      x: clamp(this.selectionBounds.xa, coords.x, room.width - 1 - this.selectionBounds.xb),
-      y: clamp(this.selectionBounds.ya, coords.y, room.height - 1 - this.selectionBounds.yb)
+      x: clamp(this.dragData.xa, coords.x, room.width - 1 - this.dragData.xb),
+      y: clamp(this.dragData.ya, coords.y, room.height - 1 - this.dragData.yb)
     }
 
     // how far to shift all selected pieces so they still snap afterwards?
     const offset = snap(
-      this.selectionBounds.x + clampCoords.x - this.selectionBounds.startX,
-      this.selectionBounds.y + clampCoords.y - this.selectionBounds.startY,
+      this.dragData.x + clampCoords.x - this.dragData.startX,
+      this.dragData.y + clampCoords.y - this.dragData.startY,
       shiftKey ? 4 : undefined
     )
-    offset.x -= this.selectionBounds.x
-    offset.y -= this.selectionBounds.y
+    offset.x -= this.dragData.x
+    offset.y -= this.dragData.y
 
-    this.selectionBounds.finalCenterX = this.selectionBounds.x + offset.x // for dragEnd()
-    this.selectionBounds.finalCenterY = this.selectionBounds.y + offset.y // for dragEnd()
+    this.dragData.finalCenterX = this.dragData.x + offset.x // for dragEnd()
+    this.dragData.finalCenterY = this.dragData.y + offset.y // for dragEnd()
 
     for (const node of this.dragging) {
       node.classList.remove('is-dragging-hidden') // we are moving now (1)
@@ -271,8 +277,8 @@ export class SelectAndDrag extends MouseButtonHandler {
   dragEnd () {
     // find the highest Z in the target area not occupied by the selection itself
     const zLower = findMaxZBelowSelection(
-      this.selectionBounds.finalCenterX,
-      this.selectionBounds.finalCenterY
+      this.dragData.finalCenterX,
+      this.dragData.finalCenterY
     )
 
     // move the pieces

@@ -18,6 +18,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { marked } from 'marked'
+
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
@@ -33,8 +35,10 @@ import {
 import {
   FLAG_NO_CLONE,
   FLAG_NO_MOVE,
+  FLAG_NOTE_TOPLEFT,
+  PREFS,
   getRoom,
-  getTemplate,
+  getSetup,
   getTable,
   updatePieces,
   createPieces,
@@ -44,7 +48,8 @@ import {
   movePieces,
   movePiecePatch,
   colorPiece,
-  rotatePiece
+  rotatePiece,
+  getRoomPreference
 } from '../../../state/index.mjs'
 
 import {
@@ -60,7 +65,9 @@ import {
 import {
   updateStatusline,
   restoreScrollPosition,
-  updateMenu
+  updateMenu,
+  zoomCoordinates,
+  setupZoom
 } from '../../../view/room/index.mjs'
 
 import {
@@ -78,7 +85,7 @@ import {
   findPiecesWithin,
   getAssetURL,
   getMaxZ,
-  getTopLeftPx,
+  getTopLeft,
   getPieceBounds,
   snap,
   stickyNoteColors
@@ -97,6 +104,8 @@ import {
 } from '../../../view/room/tabletop/popup.mjs'
 
 // --- public ------------------------------------------------------------------
+
+export const ZOOM_LEVELS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
 
 /**
  * Delete the currently selected piece from the room.
@@ -188,8 +197,9 @@ export function flipSelected (forward = true) {
   if (!selectionGetFeatures().flip) return
 
   for (const piece of selectionGetPieces()) {
-    if (piece._meta.sides > 1) {
-      flipPiece(piece.id, mod(forward ? (piece.s + 1) : (piece.s - 1), piece._meta.sides))
+    const sides = piece._meta.sides + piece._meta.sidesExtra
+    if (sides > 1) {
+      flipPiece(piece.id, mod(piece.s + (forward ? +1 : -1), sides))
     }
   }
 }
@@ -247,7 +257,7 @@ export function numberSelected (delta) {
  * is a visual difference even if the same side randomly comes up.
  */
 export function randomSelected () {
-  const template = getTemplate()
+  const setup = getSetup()
 
   if (!selectionGetFeatures().random) return
 
@@ -268,9 +278,9 @@ export function randomSelected () {
             slideX = 1
             slideY = 1
           }
-          const offset = Math.floor(template.gridSize / 2)
-          const x = Math.abs(clamp(0, piece.x + slideX * offset, (template.gridWidth - 1) * template.gridSize))
-          const y = Math.abs(clamp(0, piece.y + slideY * offset, (template.gridHeight - 1) * template.gridSize))
+          const offset = Math.floor(setup.gridSize / 2)
+          const x = Math.abs(clamp(0, piece.x + slideX * offset, (setup.gridWidth - 1) * setup.gridSize))
+          const y = Math.abs(clamp(0, piece.y + slideY * offset, (setup.gridHeight - 1) * setup.gridSize))
           // send to server
           updatePieces([{
             id: piece.id,
@@ -335,14 +345,14 @@ function createOrUpdatePieceDOM (piece) {
   }
 
   // update dom infos + classes (position, rotation ...)
-  const template = getTemplate()
+  const setup = getSetup()
   div = _('#' + piece.id) // fresh query
 
   if (_piece.x !== piece.x || _piece.y !== piece.y || _piece.z !== piece.z) {
-    const tl = getTopLeftPx(piece)
+    const tl = getTopLeft(piece)
     div.css({
-      '--fbg-x': tl.left,
-      '--fbg-y': tl.top,
+      '--fbg-x': tl.left + 'px',
+      '--fbg-y': tl.top + 'px',
       '--fbg-z': piece.z
     })
   }
@@ -379,8 +389,8 @@ function createOrUpdatePieceDOM (piece) {
         div.remove('--fbg-color', '--fbg-color-invert')
       } else { // color
         div.css({
-          '--fbg-color': template.colors[piece.c[0] - 1].value,
-          '--fbg-color-invert': brightness(template.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+          '--fbg-color': setup.colors[piece.c[0] - 1].value,
+          '--fbg-color-invert': brightness(setup.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
     } else if (piece.l === LAYER_OVERLAY || piece.l === LAYER_OTHER) {
@@ -403,8 +413,8 @@ function createOrUpdatePieceDOM (piece) {
       } else { // color
         div.add('.has-border')
         _(`#${piece.id}`).css({
-          '--fbg-border-color': template.borders[piece.c[1] - 1].value,
-          '--fbg-border-color-invert': brightness(template.borders[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
+          '--fbg-border-color': setup.borders[piece.c[1] - 1].value,
+          '--fbg-border-color-invert': brightness(setup.borders[piece.c[1] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
     }
@@ -457,20 +467,12 @@ export function setPiece (piece) {
       }
 
       // update icon part
-      // let i = 1
-      // let iconExtra
       for (const id of piece.b ?? []) {
         const asset = findAsset(id, 'badge')
         if (asset) {
           const img = _('img.icon').create()
-          // if (i === 3) iconExtra = img
-          // if (i === 4) {
-          //   content.add(_('span.icon-ellipsis').create('+' + (piece.b.length - 2)))
-          //   iconExtra.add('.icon-extra')
-          // }
           img.src = getAssetURL(asset, 0)
           content.add(img)
-          // i++
         }
       }
     }
@@ -489,8 +491,14 @@ export function setPiece (piece) {
 export function setNote (note) {
   const node = createOrUpdatePieceDOM(note)
 
+  if (note.f & FLAG_NOTE_TOPLEFT) {
+    node.add('.is-topleft')
+  } else {
+    node.remove('.is-topleft')
+  }
+
   if (node.piece.t?.[0] !== note.t?.[0]) { // update note on change
-    node.node().innerHTML = note.t?.[0] ?? ''
+    node.node().innerHTML = markdown(note.t?.[0])
   }
 
   node.piece = note // store piece for future delta-checking
@@ -504,12 +512,12 @@ export function setNote (note) {
  * @param {Boolean} cw Optional direction. True = CW (default), False = CCW.
  */
 export function rotateSelected (cw = true) {
-  const template = getTemplate()
+  const setup = getSetup()
 
   if (!selectionGetFeatures().rotate) return
 
   for (const piece of selectionGetPieces()) {
-    const increment = template.type === TYPE_HEX ? 60 : 90
+    const increment = setup.type === TYPE_HEX ? 60 : 90
     const r = cw ? (piece.r + increment) : (piece.r - increment)
     rotatePiece(piece.id, r)
   }
@@ -627,6 +635,13 @@ export function pieceToNode (piece) {
       }
     }
 
+    // backsides
+    if (piece.l === LAYER_TOKEN && piece._meta.sidesExtra > 0) {
+      if (piece.s >= piece._meta.sides) {
+        node.add('.is-backside')
+      }
+    }
+
     if (piece._meta.hasHighlight) {
       node.add('.has-highlight')
     }
@@ -647,8 +662,14 @@ export function pieceToNode (piece) {
 export function noteToNode (note) {
   const node = _('.piece.piece-note').create()
 
+  if (note.f & FLAG_NOTE_TOPLEFT) {
+    node.add('.is-topleft')
+  } else {
+    node.remove('.is-topleft')
+  }
+
   node.id = note.id
-  node.node().innerHTML = note.t?.[0] ?? ''
+  node.node().innerHTML = markdown(note.t?.[0])
 
   return node
 }
@@ -699,8 +720,8 @@ export function createNote (xy) {
  * @param Number offsetY Delta of new y position.
  */
 export function moveContent (offsetX, offsetY) {
-  const template = getTemplate()
-  switch (template.type) {
+  const setup = getSetup()
+  switch (setup.type) {
     case 'grid-hex':
       if (offsetX < 0) offsetX += 109
       if (offsetY < 0) offsetY += 63
@@ -711,8 +732,8 @@ export function moveContent (offsetX, offsetY) {
     default:
       if (offsetX < 0) offsetX += 63
       if (offsetY < 0) offsetY += 63
-      offsetX = Math.floor(offsetX / template.gridSize) * template.gridSize
-      offsetY = Math.floor(offsetY / template.gridSize) * template.gridSize
+      offsetX = Math.floor(offsetX / setup.gridSize) * setup.gridSize
+      offsetY = Math.floor(offsetY / setup.gridSize) * setup.gridSize
   }
   const pieces = []
   _('#tabletop .piece').each(node => {
@@ -763,11 +784,11 @@ export function updateTabletop (tableNo) {
  * @param {Object} coords {x, y} object, in table px.
  */
 export function pointTo (coords) {
-  const template = getTemplate()
+  const setup = getSetup()
   const room = getRoom()
 
-  coords.x = clamp(0, coords.x, room.width - template.gridSize - 1)
-  coords.y = clamp(0, coords.y, room.height - template.gridSize - 1)
+  coords.x = clamp(0, coords.x, room.width - setup.gridSize - 1)
+  coords.y = clamp(0, coords.y, room.height - setup.gridSize - 1)
 
   const snapped = snap(coords.x, coords.y)
 
@@ -811,13 +832,16 @@ export function losTo (x, y, w, h) {
  */
 export function moveNodeTo (element, x, y) {
   if (element.piece.f & FLAG_NO_MOVE) return // we do not move frozen pieces
+  if (element.x === x && element.y === y) return // no need to move to same place
 
   element.x = x
   element.y = y
 
-  const tl = getTopLeftPx(element.piece, element.x, element.y)
-  element.style.left = tl.left
-  element.style.top = tl.top
+  const tl = getTopLeft(element.piece, element.x, element.y)
+  const zoomed = zoomCoordinates({ x: tl.left, y: tl.top })
+
+  element.style.left = zoomed.x + 'px'
+  element.style.top = zoomed.y + 'px'
 }
 
 /**
@@ -830,6 +854,12 @@ export function moveNodeTo (element, x, y) {
  * @return {FreeDOM} dummy node.
  */
 export function createLosPiece (x, y, width, height) {
+  const zoom = getRoomPreference(PREFS.ZOOM)
+  x *= zoom
+  y *= zoom
+  width *= zoom
+  height *= zoom
+
   const stroke = 4
   const padding = stroke / 2
   const x1 = (width >= 0 ? padding : -width + padding)
@@ -895,11 +925,16 @@ export function createLosPiece (x, y, width, height) {
  * @return {FreeDOM} dummy node.
  */
 export function createSelectPiece (x, y, width, height) {
+  const zoom = getRoomPreference(PREFS.ZOOM)
+  x *= zoom
+  y *= zoom
+  width *= zoom
+  height *= zoom
+
   // container svg
   const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   svg.setAttribute('fill', 'none')
   svg.setAttribute('viewBox', `0 0 ${Math.abs(width)} ${Math.abs(height)}`)
-  // svg.classList.add('piece', 'piece-other', 'piece-select')
 
   // rect
   const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
@@ -921,6 +956,29 @@ export function createSelectPiece (x, y, width, height) {
   svg.style.zIndex = 999999999
 
   return _(svg)
+}
+
+/**
+ * Zoom in/out in available increments.
+ *
+ * @param {Number} direction If positive, zoom in. Otherwise zoom out.
+ */
+export function zoom (direction) {
+  const current = getRoomPreference(PREFS.ZOOM)
+
+  if (direction === 0) { // set to 100%
+    setupZoom(1)
+  } else if (direction > 0) { // zoom in
+    const next = ZOOM_LEVELS.filter(zoom => zoom > current)
+    if (next.length > 0) {
+      setupZoom(next[0])
+    }
+  } else { // zoom out
+    const next = ZOOM_LEVELS.filter(zoom => zoom < current)
+    if (next.length > 0) {
+      setupZoom(next.pop())
+    }
+  }
 }
 
 // --- internal ----------------------------------------------------------------
@@ -960,14 +1018,14 @@ function createPointerPiece () {
  * @param {Object} dicemat Dicemat object.
  */
 function randomDicemat (dicemat) {
-  const template = getTemplate()
+  const setup = getSetup()
   const coords = []
   const pieces = []
   for (let x = 0; x < Math.min(dicemat.w, 4); x++) {
     for (let y = 0; y < Math.min(dicemat.h, 4); y++) {
       coords.push({ // a max. 4x4 area in the center of the dicemat
-        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x + 0.5) * template.gridSize,
-        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y + 0.5) * template.gridSize
+        x: (Math.max(0, Math.floor((dicemat.w - 4) / 2)) + x + 0.5) * setup.gridSize,
+        y: (Math.max(0, Math.floor((dicemat.h - 4) / 2)) + y + 0.5) * setup.gridSize
       })
     }
   }
@@ -1083,4 +1141,17 @@ function setItem (piece) {
     default:
       // ignore unkown piece type
   }
+}
+
+/**
+ * Convert markdown to HTML.
+ *
+ * Will escape HTML already embedded.
+ *
+ * @param {String} content Markup to convert.
+ * @returns {String} Converted markup, ready for xy.innerHTML=...
+ */
+function markdown (content) {
+  return marked((content ?? '').replaceAll('<', '&lt;'))
+    .replaceAll('<a ', '<a target="_blank" rel="noopener noreferrer" ')
 }

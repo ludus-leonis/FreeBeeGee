@@ -29,6 +29,7 @@ import {
 
 import {
   pointTo
+  // zoom
 } from '../../../view/room/tabletop/index.mjs'
 
 import {
@@ -147,7 +148,7 @@ let dragCurrent = null // current 'move' handler
 /**
  * Handle mousedown events.
  *
- * Will route the handling depeding on the button.
+ * Will route the handling depending on the button.
  *
  * @param {MouseEvent} mousedown The triggering mouse event.
  */
@@ -172,7 +173,7 @@ function mouseDown (mousedown) {
 /**
  * Handle mousemove events.
  *
- * Will route the handling depeding on the button.
+ * Will route the handling depending on the button.
  *
  * @param {MouseEvent} mousemove The triggering mouse event.
  */
@@ -196,7 +197,7 @@ function mouseMove (mousemove) {
 /**
  * Handle mouseup events.
  *
- * Will route the handling depeding on the button.
+ * Will route the handling depending on the button.
  *
  * @param {MouseEvent} mouseup The triggering mouse event.
  */

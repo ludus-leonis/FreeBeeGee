@@ -35,11 +35,11 @@ import {
 function testApiServerInfo (api) {
   testJsonGet(api, () => '/', body => {
     expect(body).to.be.an('object')
-    expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'defaultTemplate', 'backgrounds', 'engine', 'root', 'snapshotUploads'])
+    expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'defaultSnapshot', 'backgrounds', 'engine', 'root', 'snapshotUploads'])
     expect(body.createPassword).to.be.eql(true)
     expect(body.freeRooms).to.be.eql(16)
     expect(body.ttl).to.be.eql(48)
-    expect(body.defaultTemplate).to.be.eql('Tutorial')
+    expect(body.defaultSnapshot).to.be.eql('Tutorial')
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.root).to.be.eql('/api')
     expect(body.snapshotUploads).to.be.eql(true)
@@ -48,14 +48,14 @@ function testApiServerInfo (api) {
     expect(body.backgrounds.length).to.be.gte(5)
     expect(body.backgrounds[body.backgrounds.length - 1]).to.be.an('object')
     expect(body.backgrounds[body.backgrounds.length - 1].name).to.be.eql('Wood')
-    expect(body.backgrounds[body.backgrounds.length - 1].color).to.be.eql('#57514d')
+    expect(body.backgrounds[body.backgrounds.length - 1].color).to.be.eql('#524A43')
     expect(body.backgrounds[body.backgrounds.length - 1].scroller).to.be.eql('#3e3935')
     expect(body.backgrounds[body.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
   })
 }
 
-function testApiTemplates (api) {
-  testJsonGet(api, () => '/templates/', body => {
+function testApiSnapshots (api) {
+  testJsonGet(api, () => '/snapshots/', body => {
     expect(body).to.be.an('array')
     expect(body).to.include('RPG')
     expect(body).to.include('Classic')
@@ -74,7 +74,7 @@ function testApiIssues (api, versionOK) {
 describe('API - server/system endpoints', function () {
   runTests((api, version) => {
     describe('API Server-Info', () => testApiServerInfo(api))
-    describe('API Templates', () => testApiTemplates(api))
+    describe('API Snapshots', () => testApiSnapshots(api))
     describe('self diagnosis', () => testApiIssues(api, version !== '72'))
   })
 })

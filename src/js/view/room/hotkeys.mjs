@@ -26,7 +26,7 @@ import {
 import {
   isModalActive,
   modalClose
-} from '../../view/modal.mjs'
+} from '../../view/room/modal.mjs'
 
 import {
   toggleLayer,
@@ -47,7 +47,8 @@ import {
   createNote,
   colorSelected,
   toBottomSelected,
-  pointTo
+  pointTo,
+  zoom
 } from '../../view/room/tabletop/index.mjs'
 
 import {
@@ -204,6 +205,13 @@ function handleRoomKeys (keydown) {
         break
       case '#': // random side
         randomSelected()
+        break
+      case '+': // zoom in
+      case '=':
+        zoom(1)
+        break
+      case '-': // zoom out
+        zoom(-1)
         break
       case '>': // increase No.
         numberSelected(1)

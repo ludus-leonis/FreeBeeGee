@@ -2,6 +2,36 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+
+## v0.18.0 - Zooming Zokor
+
+### Notable changes
+
+* added zoom - via '+'/'-' or the [S]ettings
+* added 'Cardboard', 'Dark', 'Leather', 'Paper', 'Sand' and 'Space' backgrounds
+* added markdown support to notes, increased max. length to 256
+* added default token backsides (again)
+
+### Other changes
+
+* added plain token
+* added a bcrypt tool for easier setup at URL `/tools`
+* unified wording 'template'/'snapshot' to 'snapshot' only
+* fixed LOS selected
+* fixed wrong cursor on notes in measure mode
+* fixed asset filenames
+* fixed wrong color names in autoconverted snapshots
+* fixed spinner button text
+* fixed drag cursor sometimes sticks
+* fixed sync stops when modal is open too long
+* improved library previews
+* improved grids
+* improved background image quality
+* improved duplicate asset handling
+* improved monospace typography
+* removed raw HTML support in notes
+
+
 ## v0.17.0 - Rotating Rook
 
 ### Notable changes
@@ -25,6 +55,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed no grid visible in low quality mode
 * fixed empty goblin label in RPG template
 * fixed hardcoded engine versions in integration tests
+
 
 ## v0.16.0 - Selecting Seal
 

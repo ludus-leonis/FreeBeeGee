@@ -68,6 +68,17 @@
   }
 }
 
+/// Scale / zoom a value based on table toom
+///
+/// @example scss
+///   zoom(32px)
+///
+/// @param {value} $value Numeric value to zoom.
+/// @output calc-zoom expression
+@function zoom($value) {
+  @return calc(($value) * var(--fbg-zoom));
+}
+
 %flex-center-center {
   align-items: center;
   display: flex;

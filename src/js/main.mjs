@@ -20,6 +20,8 @@ import {
   route
 } from './app.mjs'
 
+import * as Tools from './tools.mjs'
+
 import {
   setTabActive
 } from './state/index.mjs'
@@ -27,7 +29,12 @@ import {
 // --- startup & page routing --------------------------------------------------
 
 document.onreadystatechange = function (event) {
-  if (document.readyState === 'complete') { // time to setup our routes
+  if (document.readyState === 'complete') {
+    if (document.getElementById('tool-bcrypt')) {
+      return Tools.setupBcrypt()
+    }
+
+    // time to setup our routes
     route()
   }
 }

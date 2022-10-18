@@ -63,6 +63,10 @@ import {
   modalLibrary
 } from '../../../view/room/modal/library.mjs'
 
+import {
+  zoomCoordinates
+} from '../../../view/room/index.mjs'
+
 /**
  * Show the popup menu for a piece.
  *
@@ -121,9 +125,10 @@ export function popupTable (coords) {
   `
 
   _('#tabletop').add(anchor)
+  const zoomedCoords = zoomCoordinates(coords)
   anchor.css({
-    left: `${coords.x}px`,
-    top: `${coords.y}px`
+    left: `${zoomedCoords.x}px`,
+    top: `${zoomedCoords.y}px`
   })
   _('#tabletop').add(popup)
 

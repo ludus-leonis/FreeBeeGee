@@ -42,12 +42,12 @@ function testGenerateRPG (api) {
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: 'demoroomrpg',
-      template: 'RPG',
+      snapshot: 'RPG',
       auth: 'apitests'
     }
   }, body => {
     const json = fs.readFileSync('dist/FreeBeeGee/api/data/rooms/demoroomrpg/room.json').toString()
-    fs.writeFile('src/misc/demo/templates/RPG/room.json', JSON.stringify(JSON.parse(json), null, 1), (err) => {
+    fs.writeFile('src/misc/demo/snapshots/RPG/room.json', JSON.stringify(JSON.parse(json), null, 1), (err) => {
       if (err) throw err
     })
   }, 201)
@@ -57,12 +57,12 @@ function testGenerateHex (api) {
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: 'demoroomhex',
-      template: 'Hex',
+      snapshot: 'Hex',
       auth: 'apitests'
     }
   }, body => {
     const json = fs.readFileSync('dist/FreeBeeGee/api/data/rooms/demoroomhex/room.json').toString()
-    fs.writeFile('src/misc/demo/templates/Hex/room.json', JSON.stringify(JSON.parse(json), null, 1), (err) => {
+    fs.writeFile('src/misc/demo/snapshots/Hex/room.json', JSON.stringify(JSON.parse(json), null, 1), (err) => {
       if (err) throw err
     })
   }, 201)
@@ -72,12 +72,12 @@ function testGenerateClassic (api) {
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: 'demoroomclassic',
-      template: 'Classic',
+      snapshot: 'Classic',
       auth: 'apitests'
     }
   }, body => {
     const json = fs.readFileSync('dist/FreeBeeGee/api/data/rooms/demoroomclassic/room.json').toString()
-    fs.writeFile('src/misc/demo/templates/Classic/room.json', JSON.stringify(JSON.parse(json), null, 1), (err) => {
+    fs.writeFile('src/misc/demo/snapshots/Classic/room.json', JSON.stringify(JSON.parse(json), null, 1), (err) => {
       if (err) throw err
     })
   }, 201)
@@ -87,12 +87,12 @@ function testGenerateTutorial (api) {
   testJsonPost(api, () => '/rooms/', () => {
     return {
       name: 'demoroomtutorial',
-      template: 'Tutorial',
+      snapshot: 'Tutorial',
       auth: 'apitests'
     }
   }, body => {
     const json = fs.readFileSync('dist/FreeBeeGee/api/data/rooms/demoroomtutorial/room.json').toString()
-    fs.writeFile('src/misc/demo/templates/Tutorial/room.json', JSON.stringify(JSON.parse(json), null, 1), (err) => {
+    fs.writeFile('src/misc/demo/snapshots/Tutorial/room.json', JSON.stringify(JSON.parse(json), null, 1), (err) => {
       if (err) throw err
     })
   }, 201)
@@ -100,11 +100,11 @@ function testGenerateTutorial (api) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('generate templates', function () {
+describe('generate snapshots', function () {
   runTests((api, version) => {
-    describe('template RPG', () => testGenerateRPG(api))
-    describe('template Hex', () => testGenerateHex(api))
-    describe('template Classic', () => testGenerateClassic(api))
-    describe('template Tutorial', () => testGenerateTutorial(api))
+    describe('snapshot RPG', () => testGenerateRPG(api))
+    describe('snapshot Hex', () => testGenerateHex(api))
+    describe('snapshot Classic', () => testGenerateClassic(api))
+    describe('snapshot Tutorial', () => testGenerateTutorial(api))
   })
 })

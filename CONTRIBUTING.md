@@ -37,11 +37,12 @@ We use `gulp` as build tool and `npm` as dependency tool.
   /favicon   # frontend favicon
   /fonts     # frontend webfonts
   /html      # frontend html stubs and a few static pages (terms, privacy)
+  /img       # static frontend images (backgrounds, icons, ...)
   /js        # frontend application, written in ES20
   /misc      # supplementary server files like robots.txt
   /php       # backend / API - faceless JSON/Rest server
   /scss      # frontend styles
-  /templates # ready-to-use tables
+  /snapshots # ready-to-use rooms
 /test        # testing code for src
 /tools       # scripts/tools/helpers
 ```

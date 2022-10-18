@@ -23,7 +23,7 @@ import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   getRoom,
-  getTemplate,
+  getSetup,
   getLibrary,
   getTable,
   getTableNo,
@@ -158,14 +158,17 @@ export function findAssetByAlias (name, layer = 'any') {
  * @return {String} URL to be used in url() or img.src.
  */
 export function getAssetURL (asset, side = 0) {
+  if (side >= asset.media.length) {
+    return 'img/material-none.png'
+  }
   if (DEMO_MODE) {
     switch (side) {
       case -2:
-        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.mask}`
+        return `demo/${getSetup().name}/assets/${asset.type}/${asset.mask}`
       case -1:
-        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.base}`
+        return `demo/${getSetup().name}/assets/${asset.type}/${asset.base}`
       default:
-        return `demo/${getTemplate().name}/assets/${asset.type}/${asset.media[side]}`
+        return `demo/${getSetup().name}/assets/${asset.type}/${asset.media[side]}`
     }
   } else {
     switch (side) {
@@ -188,15 +191,15 @@ export function getAssetURL (asset, side = 0) {
  * @param {Object} piece A game piece to operate on.
  * @param {Number} x X coordinate of supposed center (defaults to piece.x)
  * @param {Number} y Y coordinate of supposed center (defaults to piece.y)
- * @return {Object} CSS-ready px String as { top: '', left: ''}.
+ * @return {Object} Numeric coordinates as { top, left }.
  **/
-export function getTopLeftPx (piece, x = piece.x, y = piece.y) {
+export function getTopLeft (piece, x = piece.x, y = piece.y) {
   const jitterX = piece.l === LAYER_TOKEN ? Math.abs(hash('x' + piece.id)) % 5 - 2 : 0
   const jitterY = piece.l === LAYER_TOKEN ? Math.abs(hash('y' + piece.id)) % 5 - 2 : 0
 
   return {
-    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + jitterX + 'px',
-    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + jitterY + 'px'
+    left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + jitterX,
+    top: y - piece._meta.heightPx / 2 - piece._meta.originOffsetYPx + jitterY
   }
 }
 
@@ -286,10 +289,10 @@ export function findExpiredPieces (no = getTableNo()) {
  */
 export function sanitizePiecePatch (patch, pieceId = null) {
   const r = getRoom()
-  const t = getTemplate()
+  const t = getSetup()
   const p = pieceId === null ? null : findPiece(pieceId)
   const result = {}
-  let asset, colors
+  let colors
   for (const field in patch) {
     switch (field) {
       case 'c':
@@ -309,8 +312,10 @@ export function sanitizePiecePatch (patch, pieceId = null) {
         result[field] = clamp(1, patch[field], 32)
         break
       case 's':
-        asset = findAsset(p?.a) ?? { media: ['x'] }
-        result[field] = mod(patch[field], asset.media.length)
+        result[field] = mod(
+          patch[field],
+          (p?._meta?.sides ?? findAsset(p?.a)?.media.length ?? 1) + (p?._meta?.sidesExtra ?? 0)
+        )
         break
       case 'n':
         result[field] = mod(patch[field], 16)
@@ -339,20 +344,20 @@ export function sanitizePiecePatch (patch, pieceId = null) {
 }
 
 /**
- * Add default template values to all properties that the API might omit.
+ * Add default setup values to all properties that the API might omit.
  *
- * @param {Object} template Data object to populate.
- * @return {Array} Template for chaining.
+ * @param {Object} setup Data object to populate.
+ * @return {Array} Setup for chaining.
  */
-export function populateTemplateDefaults (template, headers = null) {
-  template.borders = template.borders ?? []
+export function populateSetupDefaults (setup, headers = null) {
+  setup.borders = setup.borders ?? []
 
-  template._meta = {
-    widthPx: template.gridWidth * template.gridSize,
-    heightPx: template.gridHeight * template.gridSize
+  setup._meta = {
+    widthPx: setup.gridWidth * setup.gridSize,
+    heightPx: setup.gridHeight * setup.gridSize
   }
 
-  return template
+  return setup
 }
 
 export const FEATURE_DICEMAT = 'DICEMAT'
@@ -366,7 +371,7 @@ export const FEATURE_DISCARD = 'DISCARD'
  * @return {Object} Piece for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
-  const colors = getTemplate().colors
+  const colors = getSetup().colors
 
   piece.l = layerToName(piece.l ?? 0)
   piece.w = piece.w ?? 1
@@ -385,7 +390,7 @@ export function populatePieceDefaults (piece, headers = null) {
 
   // add client-side meta information for piece
   piece._meta = {}
-  const template = getTemplate()
+  const setup = getSetup()
   if (piece.id === ID.LOS) {
     piece._meta.originWidthPx = piece.w
     piece._meta.originHeightPx = piece.h
@@ -394,8 +399,8 @@ export function populatePieceDefaults (piece, headers = null) {
     piece._meta.originOffsetXPx = 0
     piece._meta.originOffsetYPx = 0
   } else {
-    piece._meta.originWidthPx = piece.w * template.gridSize
-    piece._meta.originHeightPx = piece.h * template.gridSize
+    piece._meta.originWidthPx = piece.w * setup.gridSize
+    piece._meta.originHeightPx = piece.h * setup.gridSize
     const rect = getDimensionsRotated(piece._meta.originWidthPx, piece._meta.originHeightPx, piece.r)
     piece._meta.widthPx = Math.round(rect.w)
     piece._meta.heightPx = Math.round(rect.h)
@@ -410,6 +415,8 @@ export function populatePieceDefaults (piece, headers = null) {
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     if (asset.mask) piece._meta.mask = getAssetURL(asset, -2)
     piece._meta.sides = asset.media.length ?? 1
+    piece._meta.sidesExtra = (piece.l === LAYER_TOKEN && piece._meta.sides === 1) ? 1 : 0
+
     if (asset.id === ID.POINTER) {
       piece._meta.feature = 'POINTER'
     } else {
@@ -627,14 +634,14 @@ export function clampToTableSize (piece) {
 export function snap (x, y, lod = 3) {
   if (lod >= 4) return { x: Math.round(x), y: Math.round(y) } // disabled snap
 
-  const template = getTemplate()
-  if (template.snap === false) {
+  const setup = getSetup()
+  if (setup.snap === false) {
     return snapGrid(x, y, 8, 3) // snap to 4px
   }
-  if (template.type === TYPE_HEX) {
-    return snapHex(x, y, template.gridSize, lod)
+  if (setup.type === TYPE_HEX) {
+    return snapHex(x, y, setup.gridSize, lod)
   }
-  return snapGrid(x, y, template.gridSize, lod)
+  return snapGrid(x, y, setup.gridSize, lod)
 }
 
 /**
@@ -646,14 +653,14 @@ export function snap (x, y, lod = 3) {
  * @return {Object} Object with x and y.
  */
 export function getSetupCenter (no = getTableNo()) {
-  const template = getTemplate()
+  const setup = getSetup()
   const rect = getContentRect(no)
 
   // use table center for empty tables
   if (rect.bottom <= 0 && rect.right <= 0) {
     return {
-      x: (template.gridSize * template.gridWidth) / 2,
-      y: (template.gridSize * template.gridHeight) / 2
+      x: (setup.gridSize * setup.gridWidth) / 2,
+      y: (setup.gridSize * setup.gridHeight) / 2
     }
   }
 
@@ -738,10 +745,10 @@ export function isSolid (piece, x, y) {
     img.addEventListener('error', (err) => reject(err))
     img.src = piece._meta.mask
   }).then(img => {
-    const template = getTemplate()
+    const setup = getSetup()
 
-    const width = piece.w * template.gridSize
-    const height = piece.h * template.gridSize
+    const width = piece.w * setup.gridSize
+    const height = piece.h * setup.gridSize
 
     // calculate img->canvas scale,
     // compensate for 'background-size: cover'
@@ -781,15 +788,16 @@ export function isSolid (piece, x, y) {
  * If clicked on an 100% alpha area, try to find a better target
  * for the event by traversing all layers + object on the same coordnate.
  *
- * @param {Object} event JavaScript evend that was triggered on a click.
+ * @param {Element} node DOM node that triggered the click event.
  * @param {Object} coords {x, y} of the current mouse coordinates.
+ * @param {Object} target If not null, the caller thinks this is the target.
  * @param return Promise of the real click target.
  */
-export function findRealClickTarget (event, coords) {
+export function findRealClickTarget (node, coords, target = null) {
   // find all potential pieces in all layers.
   const pieces = []
-  if (event.target.piece) pieces.push(event.target.piece)
-  const index = event.target.piece ? nameToLayer(event.target.piece.l) : LAYERS.length - 1
+  if (node.piece) pieces.push(node.piece)
+  const index = node.piece ? nameToLayer(node.piece.l) : LAYERS.length - 1
   for (const layer of LAYERS.slice().reverse()) {
     if (nameToLayer(layer) <= index && isLayerActive(layer)) { // we don't need to check higher layers
       pieces.push(...sortZ(findPiecesWithin({

@@ -47,11 +47,11 @@ import * as fs from 'fs'
 
 let data = null
 
-const _ = { // asset count in system template
+const _ = { // asset count in system snapshot
   other: 16,
   overlay: 17,
   tile: 2,
-  token: 4,
+  token: 5,
   badge: 2
 }
 
@@ -65,7 +65,7 @@ function testApiZipMinimal (api, version, room) {
     }),
     body => {
       expect(body).to.be.an('object')
-      expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
+      expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
       expect(body.id).to.match(REGEXP_ID)
       expect(body.name).to.be.eql(room)
       expect(body.engine).to.be.eql(p.versionEngine)
@@ -82,18 +82,18 @@ function testApiZipMinimal (api, version, room) {
       expect(body.library.tile.length).to.be.eql(0 + _.tile)
       expect(body.library.token).to.be.an('array')
       expect(body.library.token.length).to.be.eql(0 + _.token)
-      expect(body.template).to.be.an('object')
-      expect(body.template.type).to.be.eql('grid-square')
-      expect(body.template.gridSize).to.be.eql(64)
-      expect(body.template.gridWidth).to.be.eql(48)
-      expect(body.template.gridHeight).to.be.eql(32)
-      expect(body.template.version).to.be.eql(p.version)
-      expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
-      expect(body.template.colors).to.be.an('array')
-      expect(body.template.colors.length).to.be.eql(13)
-      expect(body.template.borders).to.be.an('array')
-      expect(body.template.borders.length).to.be.eql(13)
-      expect(body.credits).to.be.eql('This template does not provide license information.')
+      expect(body.setup).to.be.an('object')
+      expect(body.setup.type).to.be.eql('grid-square')
+      expect(body.setup.gridSize).to.be.eql(64)
+      expect(body.setup.gridWidth).to.be.eql(48)
+      expect(body.setup.gridHeight).to.be.eql(32)
+      expect(body.setup.version).to.be.eql(p.version)
+      expect(body.setup.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
+      expect(body.setup.colors).to.be.an('array')
+      expect(body.setup.colors.length).to.be.eql(13)
+      expect(body.setup.borders).to.be.an('array')
+      expect(body.setup.borders.length).to.be.eql(13)
+      expect(body.credits).to.be.eql('This snapshot does not provide license information.')
     }, 201)
 
   // get table 0
@@ -125,7 +125,7 @@ function testApiZipFull (api, version, room) {
     () => { return fs.readFileSync('.cache/snapshots/full.zip') },
     body => {
       expect(body).to.be.an('object')
-      expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'template', 'credits'])
+      expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
       expect(body.id).to.match(REGEXP_ID)
       expect(body.name).to.be.eql(room)
       expect(body.engine).to.be.eql(p.versionEngine)
@@ -152,15 +152,15 @@ function testApiZipFull (api, version, room) {
       expect(body.library.token.length).to.be.eql(1 + _.token)
       expect(body.library.token[body.library.token.length - 1].name).to.be.eql('aad.plain')
       expect(body.library.token[body.library.token.length - 1].w).to.be.eql(1)
-      expect(body.template).to.be.an('object')
-      expect(body.template.type).to.be.eql('grid-square')
-      expect(body.template.gridSize).to.be.eql(64)
-      expect(body.template.gridWidth).to.be.eql(48)
-      expect(body.template.gridHeight).to.be.eql(32)
-      expect(body.template.version).to.be.eql(p.version)
-      expect(body.template.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
-      expect(body.template.colors).to.be.an('array')
-      expect(body.template.colors.length).to.be.eql(1)
+      expect(body.setup).to.be.an('object')
+      expect(body.setup.type).to.be.eql('grid-square')
+      expect(body.setup.gridSize).to.be.eql(64)
+      expect(body.setup.gridWidth).to.be.eql(48)
+      expect(body.setup.gridHeight).to.be.eql(32)
+      expect(body.setup.version).to.be.eql(p.version)
+      expect(body.setup.engine).to.be.eql(p.versionEngine.replace(/\.[0-9]*$/, '.0')) // patchlevel 0
+      expect(body.setup.colors).to.be.an('array')
+      expect(body.setup.colors.length).to.be.eql(1)
       expect(body.credits).to.contain('I am a license.')
     }, 201)
 

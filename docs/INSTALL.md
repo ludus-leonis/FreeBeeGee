@@ -20,7 +20,7 @@ If the requirements are not met, FreeBeeGee will try to find out what is missing
 
 ### Client
 
-Any recent HTML5-capable browser should do. No IE, sorry. Mobile/touch device support is also a bit limited for now.
+Any recent HTML5-capable browser should do. Mobile/touch device support is also a bit limited for now.
 
 
 ## Basic installation
@@ -63,8 +63,8 @@ The server config file is found in `api/data/server.json`:
 {
   "ttl": 48,                     // hours of inactivity after a room gets deleted
   "maxRooms": 32,                // maximum concurrent rooms allowed
-  "maxRoomSizeMB": 16,           // maximum size per room folder / snapshot / template
-  "defaultTemplate": "Tutorial", // will be pre-selected in the create-room dialog
+  "maxRoomSizeMB": 16,           // maximum size per room folder / snapshot
+  "defaultSnapshot": "Tutorial", // will be pre-selected in the create-room dialog
   "snapshotUploads": false,      // set to true to enable snapshot upload on room create
   "passwordCreate": "................."
 }
@@ -72,7 +72,9 @@ The server config file is found in `api/data/server.json`:
 
 ### Admin passwords
 
-`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join rooms. Set it to an empty string (`""`) for no password. You can generate a password hash using any bcrypt tool you like, for example the `htpasswd` command that comes with Apache:
+`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join rooms. Set it to an empty string (`""`) for no password.
+
+You can generate a password hash using any bcrypt tool you like. You can use the tool found on the `/tools` page after you installed FreeBeeGee. Another option is the `htpasswd` command that comes with Apache:
 
 ```
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
@@ -82,10 +84,10 @@ FreeBeeGee ships with an unknown admin password. No rooms can be created until y
 
 ### Uploads
 
-Snapshot uploads are disabled by default. To enable them, set `snapshotUploads` to `true`.
+Snapshot (savegame) uploads are disabled by default. To enable them, set `snapshotUploads` to `true`.
 
 You can change the maximum upload file size via the `server.json` (see above). You also have to make sure that your PHP config file (`php.ini`) and/or your Apache/Proxy server settings allow that amount, too.
 
 ## Upgrading
 
-While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even rooms will break between versions. Download rooms you want to keep as snapshots, do a fresh install and recreate the rooms from the snapshots till we reach v1.0.
+While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even rooms will break between versions. Download rooms you want to keep as snapshots, do a fresh install and recreate the rooms from the snapshots till we reach v1.0. FreeBeeGee tries to auto-upgrade snapshots if possible.

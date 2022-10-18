@@ -32,26 +32,26 @@
 .is-quality-high .piece-tile,
 .is-quality-ultra .piece-tile {
   background-image: var(--fbg-material), var(--fbg-image);
-  background-size: 256px, cover;
-  border-radius: $piece-corner-radius;
+  background-size: zoom(256px), cover;
+  border-radius: zoom($piece-corner-radius);
   filter: drop-shadow($shadow);
 
   @each $id in $random-ids {
     $i: index($random-ids, $id);
 
     &[id^='#{$id}'] {
-      background-position: calc(256px / 64 * $i) calc(192px * $i), 0;
+      background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), 0;
     }
   }
 
   &.has-decal {
     background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
-    background-size: 256px, cover, cover;
+    background-size: zoom(256px), cover, cover;
     @each $id in $random-ids {
       $i: index($random-ids, $id);
 
       &[id^='#{$id}'] {
-        background-position: calc(256px / 64 * $i) calc(192px * $i), 0, 0;
+        background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), 0, 0;
       }
     }
   }

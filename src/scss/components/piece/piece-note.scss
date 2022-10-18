@@ -34,13 +34,15 @@ $piece-note-rotate: 4deg;
 
   #{'--fbg-color'}: $color-gray-10;
   #{'--fbg-color-invert'}: $color-bw-fg;
-  border-bottom-left-radius: 1px 90%;
-  border-bottom-right-radius: 50% 4px;
+  border-bottom-left-radius: zoom(1px) 90%;
+  border-bottom-right-radius: 50% zoom(4px);
   color: var(--fbg-color-invert);
   cursor: default;
+  flex-direction: column;
+  font-size: zoom(2em); // 32px
   font-variant-ligatures: none;
   overflow: hidden;
-  padding: $spacing-small;
+  padding: $spacing-medium;
   position: relative;
   text-align: center;
   word-break: break-word;
@@ -49,21 +51,35 @@ $piece-note-rotate: 4deg;
     cursor: grabbing;
   }
 
+  .cursor-cross & {
+    cursor: crosshair;
+  }
+
+  // --- content ---
+
+  @include markdown;
+
+  &.is-topleft {
+    align-items: start;
+    justify-content: start;
+    text-align: start;
+  }
+
   // --- reduce text size on small notes ---
 
   &.is-w-1 {
-    font-size: px(6);
-    padding: $spacing-micro;
+    font-size: zoom(.5em); // 8px
+    padding: $spacing-tiny;
   }
 
   &.is-w-2 {
-    font-size: px(12);
-    padding: $spacing-tiny;
+    font-size: zoom(.75em); // 12px
+    padding: $spacing-small;
   }
 
   &.is-w-3 {
-    font-size: px(18);
-    padding: $spacing-tiny;
+    font-size: zoom(1.125em); // 18px
+    padding: $spacing-small;
   }
 
   &.is-w-4 {
@@ -74,20 +90,22 @@ $piece-note-rotate: 4deg;
 // --- quality settings --------------------------------------------------------
 
 .is-quality-medium .piece-note {
-  box-shadow: 0 3px 0 -2px $color-black-35a; // flat corner shadow
+  box-shadow: 0 zoom(3px) 0 zoom(-2px) $color-black-35a; // flat corner shadow
 }
 
 .is-quality-high .piece-note,
 .is-quality-ultra .piece-note {
-  box-shadow: 0 4px 4px -4px $color-black-85a, 0 46px 2px -2px inset $piece-note-glue; // corner shadow + glue band
+  box-shadow:
+  0 zoom(4px) zoom(4px) zoom(-4px) $color-black-85a, // corner shadow
+  0 zoom(46px) zoom(2px) zoom(-2px) inset $piece-note-glue; // glue band
 }
 
 .is-quality-ultra .piece-note {
   &::after { // light white effect on corner
     bottom: 0;
-    box-shadow: 0 0 32px 3px $color-white-100;
+    box-shadow: 0 0 zoom(32px) zoom(3px) $color-white-100;
     content: '';
-    height: 1px;
+    height: zoom(1px);
     position: absolute;
     right: 0;
     width: 15%;

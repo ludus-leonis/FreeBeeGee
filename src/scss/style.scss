@@ -24,6 +24,7 @@
 // --- our stuff ---------------------------------------------------------------
 
 @import 'abstracts/colors';
+@import 'abstracts/markdown';
 @import 'abstracts/tools';
 @import 'abstracts/variables';
 
@@ -50,7 +51,7 @@
 @import 'components/toggle';
 @import 'components/popup';
 
-@import 'pages/create';
+@import 'pages/setup';
 @import 'pages/page';
 @import 'pages/room';
 @import 'pages/modal-edit';

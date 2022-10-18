@@ -2,41 +2,45 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.18 - ??? ???
+## v0.19 - ??? ???
 
-* [ ] TBD
+* [ ] engine: support G-Z as token number
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
+  * [   ] refactor: relative includes via @
+    * [ ] bug: outside-token click selects token sometimes
+    * [ ] split api tests in all/one
   * [ ] review docs
-  * [ ] review + run tests
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
+  * [ ] review + run tests
   * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
-* [ ] bug: MMB drag sometimes sticks / cursor fix
-* [ ] bug: don't select LOS after placement
-* [ ] bug: wrong mouse curson on notes in (measure mode)
-* [ ] table: native zoom function
-* [ ] add bcrypt tools page
+* [ ] hex variant with hexes rotated 30°
+* [ ] PHP 8.2 support
+* [ ] ui: half-rotations (45° for square, 30° for hex)
+* [ ] ui: tweak minor grid visibility
+* [ ] refactor: split edit modals
+* [ ] refactor: smaller modal paddings
+* [ ] library: delete assets UI
+* [ ] make side digit in 1x1x1 optional (= 1x1)
+* [ ] simplify/automate more deployment steps (ongoing)
+  * [ ] automated deployment tests for new zip/tgz packages after build
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] simplify/automate more deployment steps (ongoing)
-* [ ] automated deployment tests for new zip/tgz packages after build
+* [ ] snapshot download for demo mode
 * [ ] ui: move dice more
-* [ ] unify wording snapshot + template
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: open edit window on note create
-* [ ] library: delete assets UI
 * [ ] library: edit asset UI
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] bug: png maps make pieces flicker when cursor changes
-* [ ] pieces: inline-edit notes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] engine: overlay-grid-on-tile flag
@@ -51,17 +55,19 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui: doubleclick handling?
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
-* [ ] docs how to make table/template `.zip`s
+* [ ] docs: template-template
+* [ ] docs: how-to make snapshot `.zip`s
 * [ ] API: check sides correspond to asset
 * [ ] API: hide .../data/... from URLs (via .htaccess)
 * [ ] API: obfuscate/hash room name
 * [ ] repo: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
-* [ ] bug: filter + 180° bug in firefox
+* [ ] more backgrounds: snow/ice
 
 ### rather later (unsorted, after v1)
 
+* pieces: inline-edit notes
 * better sticky notes (auto-size text)
 * bulk manipulation of assets (delete, edit, change type)
 * show even more infos in media browser
@@ -71,7 +77,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * object selection
   * moving
 * I18N
-* rotate desk 180°
+* cones + attack zones
+* rotate desk 90° 180° 270°
 * pinboard for handouts
 * undo (limited)
 * better tablet / touch support

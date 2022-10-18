@@ -105,6 +105,7 @@ $color-s5: #f4a0c6; // sticky pink
 $color-primary: $color-04;
 $color-secondary: $color-06;
 $color-none: rgba(128, 128, 128, .5);
+$color-backside: #333;
 
 $color-bw-fg: $color-gray-85;
 $color-bw-bg: $color-white-100;
@@ -114,6 +115,7 @@ $color-wb-bg: $color-gray-95;
 
 $color-bad: $color-05;
 $color-good: $color-primary;
+$color-line: $color-black-15a;
 
 .color-primary {
   color: $color-primary;

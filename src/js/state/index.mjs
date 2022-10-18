@@ -21,7 +21,8 @@
 
 import {
   getStoreValue,
-  setStoreValue
+  setStoreValue,
+  brightness
 } from '../lib/utils.mjs'
 
 import {
@@ -31,7 +32,7 @@ import {
   apiGetRoom,
   apiPostRoom,
   apiDeleteRoom,
-  apiPatchTemplate,
+  apiPatchSetup,
   apiPatchPiece,
   apiPatchPieces,
   apiDeletePiece,
@@ -50,14 +51,15 @@ import {
 } from '../view/error/index.mjs'
 
 import {
+  ID,
   FEATURE_DICEMAT,
+  TYPE_HEX,
   findPiece,
   populatePiecesDefaults,
-  populateTemplateDefaults,
+  populateSetupDefaults,
   clampToTableSize,
   nameToLayer,
-  sanitizePiecePatch,
-  ID
+  sanitizePiecePatch
 } from '../view/room/tabletop/tabledata.mjs'
 
 import {
@@ -103,12 +105,12 @@ export function getRoom () {
 }
 
 /**
- * Get the current table's template (cached).
+ * Get the current table's setup (cached).
  *
- * @return {Object} Current room's template metadata.
+ * @return {Object} Current room's setup metadata.
  */
-export function getTemplate () {
-  return getRoom()?.template
+export function getSetup () {
+  return getRoom()?.setup
 }
 
 /**
@@ -145,9 +147,27 @@ export function getTable (no = getTableNo()) {
 }
 
 /**
- * Get the current table's template (cached).
+ * Get current background image data.
+ */
+export function getBackground () {
+  const bgName = getServerPreference(PREFS.BACKGROUND)
+  const background = serverInfo.backgrounds.find(b => b.name === bgName) ?? serverInfo.backgrounds.find(b => b.name === 'Wood') ?? serverInfo.backgrounds[0]
+
+  if (!background.grid) { // determine matching grid file on the fly
+    const gridType = getRoomPreference(PREFS.GRID)
+    const color = brightness(background.color) < 92 ? 'white' : 'black'
+    const style = gridType > 1 ? 'major' : 'minor'
+    const shape = room.setup?.type === TYPE_HEX ? 'hex' : 'square'
+    background.gridFile = `img/grid-${shape}-${style}-${color}.svg`
+  }
+
+  return background
+}
+
+/**
+ * Get the current table's library (cached).
  *
- * @return {Object} Current room's template metadata.
+ * @return {Object} Current room's library metadata.
  */
 export function getLibrary () {
   return getRoom()?.library
@@ -174,7 +194,8 @@ export const PREFS = {
   GRID: { name: 'grid', default: 0 },
   LOS: { name: 'los', default: false },
   SCROLL: { name: 'scroll', default: {} },
-  BACKGROUND: { name: 'background', default: 7 }, // wood
+  ZOOM: { name: 'zoom', default: 1.0 },
+  BACKGROUND: { name: 'background', default: 'Wood' },
   QUALITY: { name: 'quality', default: 3 },
   DISCLAIMER: { name: 'disclaimer', default: false },
   TAB_HELP: { name: 'tabHelp', default: 'tab-1' },
@@ -324,15 +345,15 @@ export function loadRoom (name, t) {
 }
 
 /**
- * Update the current template.
+ * Update the current setup.
  *
  * Supports partial updates.
  *
- * @param {Object} template (Partial) new template data.
+ * @param {Object} setup (Partial) new setup data.
  * @param {Object} sync Optional. If true (default), trigger table sync.
  */
-export function patchTemplate (template, sync = true) {
-  return apiPatchTemplate(room.name, template, getToken())
+export function patchSetup (setup, sync = true) {
+  return apiPatchSetup(room.name, setup, getToken())
     .catch(error => apiError(error, room.name, [404]))
     .finally(() => {
       if (sync) syncNow()
@@ -447,6 +468,7 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
 export const FLAG_NO_DELETE = 0b00000001
 export const FLAG_NO_CLONE = 0b00000010
 export const FLAG_NO_MOVE = 0b00000100
+export const FLAG_NOTE_TOPLEFT = 0b10000000
 
 /**
  * Update the falgs of a piece/token.
@@ -632,7 +654,7 @@ export function _setTable (no, data) {
  */
 export function _setRoom (data) {
   if (data) {
-    data.template = populateTemplateDefaults(data.template)
+    data.setup = populateSetupDefaults(data.setup)
   }
 
   room = data
@@ -717,7 +739,7 @@ function createPiece (piece, select = false, sync = true) {
   if (piece.l) piece.l = nameToLayer(piece.l)
   return apiPostPiece(room.name, getTableNo(), stripPiece(piece), getToken())
     .then(piece => {
-      selectionAdd(piece.id, true)
+      if (select) selectionAdd(piece.id, true)
       return piece.id
     })
     .catch(error => apiError(error, room.name))

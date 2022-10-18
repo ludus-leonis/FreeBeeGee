@@ -363,7 +363,7 @@ final class JSONRestAPITest extends TestCase
         $this->assertTrue(JSONRestAPI::semverSatisfies('1.2.3-beta', '~1.2.3-alpha'));
         $this->assertFalse(JSONRestAPI::semverSatisfies('1.2.3-alpha', '~1.2.3-beta'));
 
-        // template-engine 1.0.0 should work on 1.x but fail on 2.x server
+        // snapshot-engine 1.0.0 should work on 1.x but fail on 2.x server
         $this->assertFalse(JSONRestAPI::semverSatisfies('2.0.0', '^1.0.0'));
         $this->assertTrue(JSONRestAPI::semverSatisfies('1.0.0', '^1.0.0'));
         $this->assertTrue(JSONRestAPI::semverSatisfies('1.0.1', '^1.0.0'));

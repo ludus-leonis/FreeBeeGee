@@ -68,7 +68,7 @@ function test401 (api, version, room) {
 
   testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 401)
   testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 401)
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {}, body => {}, 401)
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 401)
 
   testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, 401)
   testJsonDelete(api, () => `/rooms/${room}/`, 401)
@@ -103,7 +103,7 @@ function test403 (api, version, room) {
 
   testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
   testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
 
   testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, 403, () => 'INVALID-TOKEN')
   testJsonDelete(api, () => `/rooms/${room}/`, 403, () => 'INVALID-TOKEN')
@@ -141,7 +141,7 @@ function test20x (api, version, room) {
 
   testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, () => {}, body => {}, 400, () => token)
   testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 400, () => token)
-  testJsonPatch(api, () => `/rooms/${room}/template/`, () => {}, body => {}, 400, () => token)
+  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 400, () => token)
 
   testJsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404, () => token)
 

@@ -51,11 +51,11 @@ $rotate-steps: 0 60 90 120 180 240 270 300;
 $rotate-jitter: (-1) (-.97) (-.94) (-.91) (-.88) (-.84) (-.81) (-.78) (-.75) (-.72) (-.69) (-.66) (-.63) (-.59) (-.56) (-.53) (-.5) (-.47) (-.44) (-.41) (-.38) (-.34) (-.31) (-.28) (-.25) (-.22) (-.19) (-.16) (-.13) (-.09) (-.06) (-.03) .03 .06 .09 .13 .16 .19 .22 .25 .28 .31 .34 .38 .41 .44 .47 .5 .53 .56 .59 .63 .66 .69 .72 .75 .78 .81 .84 .88 .91 .94 1 0;
 
 @mixin rotate-random($amount) { // random rotation of pieces
+  transform: rotate(var(--fbg-r)) rotate(var(--fbg-r2));
+
   @each $id in $random-ids {
     $i: index($random-ids, $id);
     $jitter: nth($rotate-jitter, $i);
-
-    transform: rotate(var(--fbg-r)) rotate(var(--fbg-r2));
 
     &[id^='#{$id}'] {
       #{'--fbg-r2'}: $amount * $jitter;

@@ -24,20 +24,21 @@
 ////
 
 .piece-token {
-  border-radius: $piece-tile-size;
+  border-radius: zoom($piece-tile-size);
   margin: $piece-margin;
 
-  $is-n-size: 1rem;
+  $is-n-size: zoom(px(16));
 
   // different labels for square tokens
   @for $v from 1 through 32 {
     &.is-w-#{$v}.is-h-#{$v} {
-      align-items: flex-start; // mainly for labels
-
       .label {
-        $label-offset-x: -10px;
-        top: $piece-tile-size * $v - $piece-margin * 2 + $label-offset-x;
-        transform-origin: center math.round(math.div($piece-tile-size * $v - $piece-margin * 2 - 1, -2)) - $label-offset-x;
+        margin-top: 100%;
+        transform-origin: center zoom(calc(($piece-tile-size * $v / 2 - $piece-margin * 4 + 1px) * -1));
+      }
+
+      &:hover .label {
+        transform-origin: center zoom(calc(($piece-tile-size * $v / 2 - $piece-margin * 4 - 2.5px) * -1));
       }
     }
   }
@@ -49,11 +50,11 @@
     color: var(--fbg-color-invert);
     display: flex;
     flex-direction: row;
-    font-size: .85em;
+    font-size: zoom(.85em);
     font-weight: 600;
     height: $is-n-size;
     justify-content: center;
-    margin-top: math.div($is-n-size, -2);
+    margin-top: calc($is-n-size / -2);
     position: absolute;
     right: 0;
     top: 50%;
@@ -82,12 +83,14 @@
   &.is-n-15::after { content: 'F'; }
 
   @for $x from 1 through 32 {
-    &.is-w-#{$x} { width: $x * $piece-tile-size - $piece-border-size * 2; }
+    &.is-w-#{$x} {
+      width: zoom(calc($x * $piece-tile-size - $piece-border-size * 2));
+    }
   }
 
   @for $y from 1 through 32 {
     &.is-h-#{$y} {
-      height: $y * $piece-tile-size - $piece-border-size * 2;
+      height: zoom(calc($y * $piece-tile-size - $piece-border-size * 2));
     }
   }
 
@@ -96,6 +99,12 @@
       background-color: var(--fbg-color);
       color: var(--fbg-color-invert);
     }
+  }
+
+  // --- backsides -------------------------------------------------------------
+
+  &.is-backside::after {
+    display: none;
   }
 }
 
@@ -108,13 +117,13 @@
 .is-quality-high .piece-token,
 .is-quality-ultra .piece-token {
   background-image: var(--fbg-material), var(--fbg-image);
-  background-size: 256px, cover;
+  background-size: zoom(256px), cover;
   filter: drop-shadow($shadow);
   @each $id in $random-ids {
     $i: index($random-ids, $id);
 
     &[id^='#{$id}'] {
-      background-position: calc(256px / 64 * $i) calc(192px * $i), 0;
+      background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), 0;
     }
   }
 
@@ -126,12 +135,12 @@
 
   &.has-decal {
     background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
-    background-size: 256px, cover, cover;
+    background-size: zoom(256px), cover, cover;
     @each $id in $random-ids {
       $i: index($random-ids, $id);
 
       &[id^='#{$id}'] {
-        background-position: calc(256px / 64 * $i) calc(192px * $i), 0, 0;
+        background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), 0, 0;
       }
     }
   }
