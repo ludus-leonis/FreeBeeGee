@@ -26,7 +26,6 @@
 import {
   p,
   expect,
-  runTests,
   zipCreate,
   zipToc,
   testGetBuffer,
@@ -34,7 +33,7 @@ import {
   testJsonGet,
   openTestroom,
   closeTestroom
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 import dateformat from 'dateformat'
 
@@ -395,14 +394,16 @@ function testApiSnapshotSize (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - snapshots', function () {
-  runTests((api, version, room) => {
-    describe('Classic', () => testApiSnapshotClassic(api, version, room))
-    describe('RPG', () => testApiSnapshotRPG(api, version, room))
-    describe('Hex', () => testApiSnapshotHex(api, version, room))
-    describe('Tutorial', () => testApiSnapshotTutorial(api, version, room))
-    describe('upload', () => testApiSnapshotUpload(api, version, room))
-    describe('versions', () => testApiSnapshotVersions(api, version, room))
-    describe('size', () => testApiSnapshotSize(api, version, room))
+export function run (runner) {
+  describe('API - snapshots', function () {
+    runner((api, version, room) => {
+      describe('Classic', () => testApiSnapshotClassic(api, version, room))
+      describe('RPG', () => testApiSnapshotRPG(api, version, room))
+      describe('Hex', () => testApiSnapshotHex(api, version, room))
+      describe('Tutorial', () => testApiSnapshotTutorial(api, version, room))
+      describe('upload', () => testApiSnapshotUpload(api, version, room))
+      describe('versions', () => testApiSnapshotVersions(api, version, room))
+      describe('size', () => testApiSnapshotSize(api, version, room))
+    })
   })
-})
+}

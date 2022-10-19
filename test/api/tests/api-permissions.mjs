@@ -26,7 +26,6 @@
 import shajs from 'sha.js'
 
 import {
-  runTests,
   openTestroom,
   testJsonGet,
   testJsonPost,
@@ -37,7 +36,7 @@ import {
   testGetBufferQuery,
   expect,
   closeTestroom
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 // -----------------------------------------------------------------------------
 
@@ -270,11 +269,13 @@ function testPasswordChange (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - auth', function () {
-  runTests((api, version, room) => {
-    describe('401 - no token', () => test401(api, version, room))
-    describe('403 - invalid token', () => test403(api, version, room))
-    describe('20x - valid token', () => test20x(api, version, room))
-    describe('password change', () => testPasswordChange(api, version, room))
+export function run (runner) {
+  describe('API - auth', function () {
+    runner((api, version, room) => {
+      describe('401 - no token', () => test401(api, version, room))
+      describe('403 - invalid token', () => test403(api, version, room))
+      describe('20x - valid token', () => test20x(api, version, room))
+      describe('password change', () => testPasswordChange(api, version, room))
+    })
   })
-})
+}

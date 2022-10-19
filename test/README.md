@@ -50,10 +50,10 @@ cd /path/to/gitroot
 npm install
 npm run gulp release-docker
 docker run -d -p 8765:80 --name freebeegee ghcr.io/ludus-leonis/freebeegee:latest
-npm run test:api
+npm run test:api:docker
 docker rm -f freebeegee
 ```
 
-This will try to start a local PHP 8.1 server on port 8765. If you change the port, don't forget to change it at the bottom of `test/utils/chai.js`, too.
+This will try to start a local PHP 8.1 server on port 8765. If you change the port, don't forget to change it at the bottom of `test/api/runner-docker.mjs`, too.
 
 Hint: You have to rerun container (rm + run) if you run the tests multiple times, as failed tests might leave the server in an invalid state.

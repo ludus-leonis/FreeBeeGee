@@ -25,16 +25,15 @@
 
 import {
   expect,
-  runTests,
   openTestroom,
   closeTestroom,
   testJsonGet,
   testJsonPut
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 import {
   pieceMinimal
-} from './utils/data.mjs'
+} from '../utils/data.mjs'
 
 // -----------------------------------------------------------------------------
 
@@ -157,10 +156,12 @@ function testApiInvalidPieces (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - tables', function () {
-  runTests((api, version, room) => {
-    describe('minimal tables', () => testApiMinimalTable(api, version, room))
-    describe('invalid tables', () => testApiInvalidTable(api, version, room))
-    describe('invalid pieces', () => testApiInvalidPieces(api, version, room))
+export function run (runner) {
+  describe('API - tables', function () {
+    runner((api, version, room) => {
+      describe('minimal tables', () => testApiMinimalTable(api, version, room))
+      describe('invalid tables', () => testApiInvalidTable(api, version, room))
+      describe('invalid pieces', () => testApiInvalidPieces(api, version, room))
+    })
   })
-})
+}

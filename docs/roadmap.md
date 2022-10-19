@@ -9,12 +9,15 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] library: delete assets UI
 * [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
+* [ ] engine: grid-on-tile flag
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] refactor: relative includes via @
+    * [X] refactor: split api tests in all/latest
+    * [ ] refactor: automated tests for zip/tgz packages after build
+    * [ ] pull latest docker php image before build
+    * [ ] refactor: split (edit) modals
     * [ ] bug: outside-token click selects token sometimes
-    * [ ] split api tests in all/one
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -27,11 +30,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] hex variant with hexes rotated 30°
 * [ ] PHP 8.2 support
-* [ ] refactor: split edit modals
 * [ ] refactor: smaller modal paddings
 * [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] simplify/automate more deployment steps (ongoing)
-  * [ ] automated deployment tests for new zip/tgz packages after build
+  * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
@@ -43,7 +45,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
-* [ ] engine: overlay-grid-on-tile flag
+* [ ] ui: set fixed table size (e.g. 73x65)
 * [ ] piece: supply heap
 * [ ] piece: cards / card-decks
   * [ ] shuffle deck/stack

@@ -27,7 +27,6 @@ import {
   REGEXP_ID,
   p,
   expect,
-  runTests,
   openTestroom,
   closeTestroom,
   testJsonGet,
@@ -35,19 +34,19 @@ import {
   testJsonPut,
   testJsonPatch,
   testJsonDelete
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 import {
   pieceMinimal,
   pieceFull
-} from './utils/data.mjs'
+} from '../utils/data.mjs'
 
 import {
   LAYER_TILE,
   LAYER_TOKEN,
   LAYER_OVERLAY,
   LAYER_OTHER
-} from '../../src/js/view/room/tabletop/tabledata.mjs'
+} from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 // -----------------------------------------------------------------------------
 
@@ -663,13 +662,15 @@ function testApiCrudLos (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - CRUD roundtrips', function () {
-  runTests((api, version, room) => {
-    describe('CRUD room', () => testApiCrudRoom(api, version, room))
-    describe('CRUD setup', () => testApiCrudSetup(api, version, room))
-    describe('CRUD table', () => testApiCrudTable(api, version, room))
-    describe('CRUD piece', () => testApiCrudPiece(api, version, room))
-    describe('CRUD pointer', () => testApiCrudPointer(api, version, room))
-    describe('CRUD los', () => testApiCrudLos(api, version, room))
+export function run (runner) {
+  describe('API - CRUD roundtrips', function () {
+    runner((api, version, room) => {
+      describe('CRUD room', () => testApiCrudRoom(api, version, room))
+      describe('CRUD setup', () => testApiCrudSetup(api, version, room))
+      describe('CRUD table', () => testApiCrudTable(api, version, room))
+      describe('CRUD piece', () => testApiCrudPiece(api, version, room))
+      describe('CRUD pointer', () => testApiCrudPointer(api, version, room))
+      describe('CRUD los', () => testApiCrudLos(api, version, room))
+    })
   })
-})
+}

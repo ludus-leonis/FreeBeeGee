@@ -28,18 +28,17 @@ import {
   p,
   expect,
   zipCreate,
-  runTests,
   openTestroom,
   closeTestroom,
   testGetBuffer,
   testJsonGet,
   testJsonPost,
   testZIPUpload
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 import {
   LAYER_TILE
-} from '../../src/js/view/room/tabletop/tabledata.mjs'
+} from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 import * as fs from 'fs'
 
@@ -250,10 +249,12 @@ function testApiImageUpload (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - uploads', function () {
-  runTests((api, version, room) => {
-    describe('ZIP upload - minimal', () => testApiZipMinimal(api, version, room))
-    describe('ZIP upload - full', () => testApiZipFull(api, version, room))
-    describe('JPG upload', () => testApiImageUpload(api, version, room))
+export function run (runner) {
+  describe('API - uploads', function () {
+    runner((api, version, room) => {
+      describe('ZIP upload - minimal', () => testApiZipMinimal(api, version, room))
+      describe('ZIP upload - full', () => testApiZipFull(api, version, room))
+      describe('JPG upload', () => testApiImageUpload(api, version, room))
+    })
   })
-})
+}

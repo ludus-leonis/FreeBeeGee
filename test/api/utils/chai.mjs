@@ -16,7 +16,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global describe, it */
+/* global it */
 /* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
@@ -359,25 +359,4 @@ export function zipToc (buffer) {
   })
 
   return entries
-}
-
-// -----------------------------------------------------------------------------
-
-/**
- * Run the tests against one or more servers, running differet PHP version.
- *
- * @param {function} what Function to call to run the tests. Will recieve the API
- *                        URL, the PHP version and a suggested room name.
- */
-export function runTests (what) {
-  const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
-  const api = 'http://localhost:8765/api'
-
-  // describe('PHP 7.2', function () { what(api.replace(/localhost:8765/, 'play72.local'), '72', `${room}72`) })
-  // describe('PHP 7.3', function () { what(api.replace(/localhost:8765/, 'play73.local'), '73', `${room}73`) })
-  // describe('PHP 7.4', function () { what(api.replace(/localhost:8765/, 'play74.local'), '74', `${room}74`) })
-  // describe('PHP 8.0', function () { what(api.replace(/localhost:8765/, 'play80.local'), '80', `${room}80`) })
-  // describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.local'), '81', `${room}81`) })
-
-  describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
 }

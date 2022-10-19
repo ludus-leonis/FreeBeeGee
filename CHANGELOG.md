@@ -2,6 +2,16 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.19.0 - ??? ???
+
+### Notable changes
+
+* TBD
+
+### Other changes
+
+* refactored api tests in all/latest
+
 
 ## v0.18.0 - Zooming Zokor
 
@@ -16,7 +26,12 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added plain token
 * added a bcrypt tool for easier setup at URL `/tools`
-* unified wording 'template'/'snapshot' to 'snapshot' only
+* removed raw HTML support in notes
+* improved library previews
+* improved grids
+* improved background image quality
+* improved duplicate asset handling
+* improved monospace typography
 * fixed LOS selected
 * fixed wrong cursor on notes in measure mode
 * fixed asset filenames
@@ -24,12 +39,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed spinner button text
 * fixed drag cursor sometimes sticks
 * fixed sync stops when modal is open too long
-* improved library previews
-* improved grids
-* improved background image quality
-* improved duplicate asset handling
-* improved monospace typography
-* removed raw HTML support in notes
+* refactored wording 'template'/'snapshot' to 'snapshot' only
 
 ## v0.17.0 - Rotating Rook
 

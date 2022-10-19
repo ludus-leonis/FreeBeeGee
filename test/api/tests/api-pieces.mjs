@@ -26,16 +26,15 @@
 import {
   REGEXP_ID,
   expect,
-  runTests,
   openTestroom,
   closeTestroom,
   testJsonGet,
   testJsonPost
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 import {
   pieceMinimal
-} from './utils/data.mjs'
+} from '../utils/data.mjs'
 
 const NOTE_MAX_LENGTH = 256
 const LABEL_MAX_LENGTH = 32
@@ -1136,25 +1135,27 @@ function testApiPieceExpires (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - pieces', function () {
-  runTests((api, version, room) => {
-    describe('invalid pieces', () => testApiInvalidTable(api, version, room))
-    describe('minimal pieces', () => testApiMinimalPiece(api, version, room))
-    describe('valid id', () => testApiPieceID(api, version, room))
-    describe('valid l', () => testApiPieceL(api, version, room))
-    describe('valid a', () => testApiPieceA(api, version, room))
-    describe('valid x', () => testApiPieceX(api, version, room))
-    describe('valid y', () => testApiPieceY(api, version, room))
-    describe('valid z', () => testApiPieceZ(api, version, room))
-    describe('valid r', () => testApiPieceR(api, version, room))
-    describe('valid w', () => testApiPieceW(api, version, room))
-    describe('valid h', () => testApiPieceH(api, version, room))
-    describe('valid s', () => testApiPieceS(api, version, room))
-    describe('valid n', () => testApiPieceN(api, version, room))
-    describe('valid c', () => testApiPieceC(api, version, room))
-    describe('valid t', () => testApiPieceT(api, version, room))
-    describe('valid b', () => testApiPieceB(api, version, room))
-    describe('valid f', () => testApiPieceF(api, version, room))
-    describe('valid expires', () => testApiPieceExpires(api, version, room))
+export function run (runner) {
+  describe('API - pieces', function () {
+    runner((api, version, room) => {
+      describe('invalid pieces', () => testApiInvalidTable(api, version, room))
+      describe('minimal pieces', () => testApiMinimalPiece(api, version, room))
+      describe('valid id', () => testApiPieceID(api, version, room))
+      describe('valid l', () => testApiPieceL(api, version, room))
+      describe('valid a', () => testApiPieceA(api, version, room))
+      describe('valid x', () => testApiPieceX(api, version, room))
+      describe('valid y', () => testApiPieceY(api, version, room))
+      describe('valid z', () => testApiPieceZ(api, version, room))
+      describe('valid r', () => testApiPieceR(api, version, room))
+      describe('valid w', () => testApiPieceW(api, version, room))
+      describe('valid h', () => testApiPieceH(api, version, room))
+      describe('valid s', () => testApiPieceS(api, version, room))
+      describe('valid n', () => testApiPieceN(api, version, room))
+      describe('valid c', () => testApiPieceC(api, version, room))
+      describe('valid t', () => testApiPieceT(api, version, room))
+      describe('valid b', () => testApiPieceB(api, version, room))
+      describe('valid f', () => testApiPieceF(api, version, room))
+      describe('valid expires', () => testApiPieceExpires(api, version, room))
+    })
   })
-})
+}

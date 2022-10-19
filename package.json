@@ -21,7 +21,9 @@
   "scripts": {
     "gulp": "gulp",
     "mocha": "mocha",
-    "test:api": "mocha test/api",
+    "test:api:docker": "mocha test/api/runner-docker.mjs",
+    "test:api:latest": "mocha test/api/runner-latest.mjs",
+    "test:api:all": "mocha test/api/runner-all.mjs",
     "test:unit": "mocha test/js",
     "generate:demo": "mocha test/demo"
   },

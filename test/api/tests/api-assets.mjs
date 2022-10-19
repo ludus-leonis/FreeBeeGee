@@ -17,21 +17,19 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
 import {
-  runTests,
   openTestroom,
   closeTestroom
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 // -----------------------------------------------------------------------------
 
-function testApiInvalidAsset (api, version, room) {
+export function testApiInvalidAsset (api, version, room) {
   openTestroom(api, room, 'Classic')
 
   closeTestroom(api, room)
@@ -39,7 +37,7 @@ function testApiInvalidAsset (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiMinimalAsset (api, version, room) {
+export function testApiMinimalAsset (api, version, room) {
   openTestroom(api, room, 'Classic')
 
   closeTestroom(api, room)
@@ -47,9 +45,11 @@ function testApiMinimalAsset (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - assets', function () {
-  runTests((api, version, room) => {
-    describe('invalid assets', () => testApiInvalidAsset(api, version, room))
-    describe('minimal assets', () => testApiMinimalAsset(api, version, room))
+export function run (runner) {
+  describe('API - assets', function () {
+    runner((api, version, room) => {
+      describe('invalid assets', () => testApiInvalidAsset(api, version, room))
+      describe('minimal assets', () => testApiMinimalAsset(api, version, room))
+    })
   })
-})
+}

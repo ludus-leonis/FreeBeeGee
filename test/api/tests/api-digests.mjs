@@ -26,18 +26,17 @@
 import {
   REGEXP_DIGEST,
   expect,
-  runTests,
   openTestroom,
   closeTestroom,
   testGetBuffer,
   testJsonGet,
   testJsonPatch,
   testJsonPut
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 import {
   pieceMinimal
-} from './utils/data.mjs'
+} from '../utils/data.mjs'
 
 let digest = null
 let data = null
@@ -394,11 +393,13 @@ function testApiDigestHeader (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - digests', function () {
-  runTests((api, version, room) => {
-    describe('room digest', () => testApiRoomDigest(api, version, room))
-    describe('table digest', () => testApiTableDigest(api, version, room))
-    describe('setup digest', () => testApiSetupDigest(api, version, room))
-    describe('digest header', () => testApiDigestHeader(api, version, room))
+export function run (runner) {
+  describe('API - digests', function () {
+    runner((api, version, room) => {
+      describe('room digest', () => testApiRoomDigest(api, version, room))
+      describe('table digest', () => testApiTableDigest(api, version, room))
+      describe('setup digest', () => testApiSetupDigest(api, version, room))
+      describe('digest header', () => testApiDigestHeader(api, version, room))
+    })
   })
-})
+}

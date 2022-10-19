@@ -26,11 +26,10 @@
 import {
   p,
   expect,
-  runTests,
   closeTestroom,
   testJsonGet,
   testJsonPost
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 // -----------------------------------------------------------------------------
 
@@ -156,11 +155,13 @@ function testApiSetupTutorial (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - snapshots', function () {
-  runTests((api, version, room) => {
-    describe('RPG', () => testApiSetupRPG(api, version, room))
-    describe('Hex', () => testApiSetupHex(api, version, room))
-    describe('Classic', () => testApiSetupClassic(api, version, room))
-    describe('Tutorial', () => testApiSetupTutorial(api, version, room))
+export function run (runner) {
+  describe('API - snapshots', function () {
+    runner((api, version, room) => {
+      describe('RPG', () => testApiSetupRPG(api, version, room))
+      describe('Hex', () => testApiSetupHex(api, version, room))
+      describe('Classic', () => testApiSetupClassic(api, version, room))
+      describe('Tutorial', () => testApiSetupTutorial(api, version, room))
+    })
   })
-})
+}

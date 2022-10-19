@@ -26,9 +26,8 @@
 import {
   p,
   expect,
-  runTests,
   testJsonGet
-} from './utils/chai.mjs'
+} from '../utils/chai.mjs'
 
 // -----------------------------------------------------------------------------
 
@@ -71,10 +70,12 @@ function testApiIssues (api, versionOK) {
 
 // --- the test runners --------------------------------------------------------
 
-describe('API - server/system endpoints', function () {
-  runTests((api, version) => {
-    describe('API Server-Info', () => testApiServerInfo(api))
-    describe('API Snapshots', () => testApiSnapshots(api))
-    describe('self diagnosis', () => testApiIssues(api, version !== '72'))
+export function run (runner) {
+  describe('API - server/system endpoints', function () {
+    runner((api, version) => {
+      describe('API Server-Info', () => testApiServerInfo(api))
+      describe('API Snapshots', () => testApiSnapshots(api))
+      describe('self diagnosis', () => testApiIssues(api, version !== '72'))
+    })
   })
-})
+}
