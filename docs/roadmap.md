@@ -15,7 +15,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bugfixes + refactoring
     * [X] refactor: split api tests in all/latest
     * [ ] refactor: automated tests for zip/tgz packages after build
-    * [ ] pull latest docker php image before build
+    * [X] bug: docker build not pulling latest php baseimage
     * [ ] refactor: split (edit) modals
     * [ ] bug: outside-token click selects token sometimes
   * [ ] review docs

@@ -409,7 +409,7 @@ gulp.task('release', gulp.series(
 // 'release-docker' requires locally installed docker!
 gulp.task('release-docker', gulp.series('release', (done) => {
   const docker = new cli.Docker({ echo: true })
-  docker.command('build --no-cache -t ghcr.io/ludus-leonis/freebeegee:latest .')
+  docker.command('build --pull --no-cache -t ghcr.io/ludus-leonis/freebeegee:latest .')
     .then(() => { done() })
 }, (done) => {
   const docker = new cli.Docker({ echo: true })
