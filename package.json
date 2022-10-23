@@ -21,10 +21,11 @@
   "scripts": {
     "gulp": "gulp",
     "mocha": "mocha",
-    "test:api:docker": "mocha test/api/runner-docker.mjs",
-    "test:api:latest": "mocha test/api/runner-latest.mjs",
-    "test:api:all": "mocha test/api/runner-all.mjs",
-    "test:unit": "mocha test/js",
+    "test:api:docker": "mocha test/integration/runner-docker.mjs",
+    "test:api:latest": "mocha test/integration/runner-latest.mjs",
+    "test:api:all": "mocha test/integration/runner-all.mjs",
+    "test:ui": "mocha -r global-jsdom/register test/integration/runner-docker-ui.mjs",
+    "test:unit": "mocha test/unit/js",
     "generate:demo": "mocha test/demo"
   },
   "license": "AGPL-3.0-or-later",
@@ -52,6 +53,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-n": "^15.2.4",
     "eslint-plugin-promise": "^6.0.0",
+    "global-jsdom": "8.6.0",
     "gulp": "*",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-changed": "^4.0.3",
@@ -71,9 +73,12 @@
     "gulp-sourcemaps": "*",
     "gulp-tar": "^3.1.0",
     "gulp-zip": "^5.0.2",
+    "jsdom": "20.0.1",
     "mocha": "^10.0.0",
+    "node-fetch": "^3.2.10",
     "sass": "^1.52.3",
-    "vinyl-source-stream": "^2.0.0"
+    "vinyl-source-stream": "^2.0.0",
+    "whatwg-fetch": "^3.6.2"
   },
   "dependencies": {
     "@popperjs/core": "^2.11.5",

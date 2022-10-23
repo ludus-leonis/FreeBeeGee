@@ -4,17 +4,19 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.19 - ??? ???
 
+* [ ] hex variant with hexes rotated 30°
 * [ ] engine: support G-Z as token number
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] library: delete assets UI
 * [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
 * [ ] engine: grid-on-tile flag
+* [ ] engine: make side digit in 1x1x1 optional (= 1x1)
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] refactor: split api tests in all/latest
-    * [ ] refactor: automated tests for zip/tgz packages after build
+    * [X] refactor: automated tests for zip/tgz packages after build
     * [X] bug: docker build not pulling latest php baseimage
     * [ ] refactor: split (edit) modals
     * [ ] bug: outside-token click selects token sometimes
@@ -28,10 +30,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
-* [ ] hex variant with hexes rotated 30°
 * [ ] PHP 8.2 support
 * [ ] refactor: smaller modal paddings
-* [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] ui: clipboard ctrl+c/v/x between tables

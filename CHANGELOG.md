@@ -10,6 +10,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* added automated tests for zip/tgz packages after build
 * fixed docker build not pulling latest php baseimage
 * refactored api tests in all/latest
 

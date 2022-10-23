@@ -24,11 +24,11 @@ import {
   _setTable,
   _setRoom,
   setTableNo
-} from '../../src/js/state/index.mjs'
+} from '../../../src/js/state/index.mjs'
 
 import {
   populatePiecesDefaults
-} from '../../src/js/view/room/tabletop/tabledata.mjs'
+} from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 import {
   selectionGetIds,
@@ -41,7 +41,7 @@ import {
   selectionGetPieces,
   findPiecesWithinSelection,
   _selectionReset
-} from '../../src/js/view/room/tabletop/selection.mjs'
+} from '../../../src/js/view/room/tabletop/selection.mjs'
 
 const TEST_STATE = 5
 

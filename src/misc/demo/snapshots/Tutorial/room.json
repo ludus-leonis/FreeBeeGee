@@ -1,10 +1,10 @@
 {
- "id": "eYf5wwft",
+ "id": "dOL3wbjE",
  "name": "demoroomtutorial",
  "engine": "2.3.1",
  "setup": {
   "engine": "2.3.0",
-  "version": "0.18.0",
+  "version": "0.19.0-dev",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 64,

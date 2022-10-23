@@ -1,6 +1,6 @@
 {
   "ttl": 48,
-  "maxRooms": 16,
+  "maxRooms": 32,
   "maxRoomSizeMB": 16,
   "snapshotUploads": true,
   "defaultSnapshot": "Tutorial",

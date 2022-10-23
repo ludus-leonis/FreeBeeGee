@@ -16,7 +16,7 @@ Execute the tests via:
 cd /path/to/gitroot
 npm install
 npm run gulp test-zips
-phpunit test/
+phpunit test/unit/php
 ```
 
 ## JavaScript unit tests
@@ -49,7 +49,8 @@ Execute the tests via:
 cd /path/to/gitroot
 npm install
 npm run gulp release-docker
-docker run -d -p 8765:80 --name freebeegee ghcr.io/ludus-leonis/freebeegee:latest
+npm run gulp test-zips
+FBGPASS=apitests docker run -d -p 8765:80 --name freebeegee -e FBGPASS ghcr.io/ludus-leonis/freebeegee:latest
 npm run test:api:docker
 docker rm -f freebeegee
 ```

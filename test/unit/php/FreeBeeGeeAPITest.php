@@ -43,7 +43,7 @@ final class FreeBeeGeeAPITest extends TestCase
 
     protected function setUp(): void
     {
-        $this->p = json_decode(file_get_contents(dirname(__FILE__, 3) . '/package.json'));
+        $this->p = json_decode(file_get_contents(dirname(__FILE__, 4) . '/package.json'));
         $this->fbg = $this->createApi(true);
     }
 
@@ -52,7 +52,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $docroot = '/src/php'
     ): object {
         global $_SERVER;
-        $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__, 3) . $docroot;
+        $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__, 4) . $docroot;
         $fbg = new FreeBeeGeeAPI();
         $fbg->setDebug(sys_get_temp_dir() . '/php-fbg/', $this->p->version, $this->p->versionEngine);
         if ($fs) {
@@ -72,7 +72,7 @@ final class FreeBeeGeeAPITest extends TestCase
 
     private function pathToCache($relative)
     {
-        return dirname(__FILE__, 3) . '/.cache/' . $relative;
+        return dirname(__FILE__, 4) . '/.cache/' . $relative;
     }
 
     private function assertHTTPStatus(callable $testcode, int $status, string $match = '')

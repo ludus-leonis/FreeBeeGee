@@ -24,18 +24,18 @@ import {
   _setTable,
   _setRoom,
   setTableNo
-} from '../../src/js/state/index.mjs'
+} from '../../../src/js/state/index.mjs'
 
 import {
   populatePieceDefaults,
   populatePiecesDefaults,
   snap
-} from '../../src/js/view/room/tabletop/tabledata.mjs'
+} from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 import {
   selectionAdd,
   selectionGetFeatures
-} from '../../src/js/view/room/tabletop/selection.mjs'
+} from '../../../src/js/view/room/tabletop/selection.mjs'
 
 const TEST_STATE = 5
 

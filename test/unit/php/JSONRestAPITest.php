@@ -36,13 +36,13 @@ final class JSONRestAPITest extends TestCase
         $docroot = '/src/php'
     ): object {
         global $_SERVER;
-        $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__, 3) . $docroot;
+        $_SERVER['DOCUMENT_ROOT'] = dirname(__FILE__, 4) . $docroot;
         return new JSONRestAPI();
     }
 
     public function testDirs(): void
     {
-        $repodir = rtrim(dirname(__FILE__, 3), '/'); // tests are run from repo root
+        $repodir = rtrim(dirname(__FILE__, 4), '/'); // tests are run from repo root
 
         // test docroot installation
         $api = $this->createApi('/src/php');

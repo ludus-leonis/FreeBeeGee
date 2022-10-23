@@ -36,7 +36,7 @@ function testApiServerInfo (api) {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'defaultSnapshot', 'backgrounds', 'engine', 'root', 'snapshotUploads'])
     expect(body.createPassword).to.be.eql(true)
-    expect(body.freeRooms).to.be.eql(16)
+    expect(body.freeRooms).to.be.eql(32)
     expect(body.ttl).to.be.eql(48)
     expect(body.defaultSnapshot).to.be.eql('Tutorial')
     expect(body.engine).to.be.eql(p.versionEngine)

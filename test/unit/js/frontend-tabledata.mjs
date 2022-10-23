@@ -24,7 +24,7 @@ import {
   _setTable,
   _setRoom,
   setTableNo
-} from '../../src/js/state/index.mjs'
+} from '../../../src/js/state/index.mjs'
 
 import {
   LAYER_TILE,
@@ -52,7 +52,7 @@ import {
   sanitizePiecePatch,
   snap,
   getSetupCenter
-} from '../../src/js/view/room/tabletop/tabledata.mjs'
+} from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 const TEST_STATE = 5
 

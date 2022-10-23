@@ -28,6 +28,7 @@ import http from 'chai-http'
 import match from 'chai-match'
 import * as fs from 'fs'
 import AdmZip from 'adm-zip'
+import fetch from 'node-fetch'
 
 export const REGEXP_ID = /^[a-zA-Z0-9_-]{8}$/
 export const REGEXP_DIGEST = /^crc32:-?[0-9]+$/
@@ -40,6 +41,29 @@ export const expect = chai.expect
 chai
   .use(http)
   .use(match)
+
+/**
+ * GET a regular web page, do common HTTP tests on it, and then run payload-
+ * specific tests.
+ *
+ * @param {string} server Server URL/root without trailing slash.
+ * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ *                                further checking.
+ * @param {number} status Expected HTTP status.
+ */
+export function testHttpGet (server, path, payloadTests, status = 200) {
+  it(`GET ${server}${path}`, function () {
+    return fetch(`${server}${path}`)
+      .then(res => {
+        expect(res.status).to.be.eql(status)
+        return res.text()
+      })
+      .then(body => {
+        payloadTests(body)
+      })
+  })
+}
 
 /**
  * GET an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-

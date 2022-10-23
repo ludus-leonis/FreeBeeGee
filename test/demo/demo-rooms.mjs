@@ -25,7 +25,7 @@
 
 import {
   testJsonPost
-} from '../api/utils/chai.mjs'
+} from '../integration/utils/chai.mjs'
 
 import * as fs from 'fs'
 

@@ -55,7 +55,7 @@ import {
   recordTime,
 
   brightness
-} from '../../src/js/lib/utils.mjs'
+} from '../../../src/js/lib/utils.mjs'
 
 describe('Frontend - utils.mjs - HTML', function () {
   it('getGetParameter()', function () {

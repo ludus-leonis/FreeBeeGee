@@ -20,12 +20,12 @@
 
 import { expect } from 'chai'
 
-import { _setMock } from '../../src/js/api/index.mjs'
+import { _setMock } from '../../../src/js/api/index.mjs'
 
 import {
   LAYER_TOKEN,
   populatePieceDefaults
-} from '../../src/js/view/room/tabletop/tabledata.mjs'
+} from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 import {
   setServerInfo,
@@ -57,7 +57,7 @@ import {
   updatePieces,
   addAsset,
   deleteRoom
-} from '../../src/js/state/index.mjs'
+} from '../../../src/js/state/index.mjs'
 
 _setMock(1) // disable server calls, enable request-mirroring
 
