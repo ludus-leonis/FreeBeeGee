@@ -34,7 +34,7 @@ import {
 function testApiServerInfo (api) {
   testJsonGet(api, () => '/', body => {
     expect(body).to.be.an('object')
-    expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'defaultSnapshot', 'backgrounds', 'engine', 'root', 'snapshotUploads'])
+    expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'defaultSnapshot', 'backgrounds', 'materials', 'engine', 'root', 'snapshotUploads'])
     expect(body.createPassword).to.be.eql(true)
     expect(body.freeRooms).to.be.eql(32)
     expect(body.ttl).to.be.eql(48)
@@ -50,6 +50,12 @@ function testApiServerInfo (api) {
     expect(body.backgrounds[body.backgrounds.length - 1].color).to.be.eql('#524A43')
     expect(body.backgrounds[body.backgrounds.length - 1].scroller).to.be.eql('#3e3935')
     expect(body.backgrounds[body.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
+    expect(body.materials).to.be.an('array')
+    expect(body.materials.length).to.be.gte(3)
+    expect(body.materials[0]).to.be.an('object')
+    expect(body.materials[0].name).to.be.eql('None')
+    expect(body.materials[0].tag).to.be.eql('none')
+    expect(body.materials[0].image).to.be.eql('img/material-none.png')
   })
 }
 
