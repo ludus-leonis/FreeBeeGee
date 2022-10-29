@@ -29,7 +29,6 @@ const FLAG_NO_DELETE = 0b00000001;
 const FLAG_NO_CLONE  = 0b00000010;
 const FLAG_NO_MOVE   = 0b00000100;
 
-// const ASSET_MATERIALS = ['board', 'paper', 'wood'];
 const ASSET_SIZE_MAX = 1024 * 1024;
 const ASSET_TYPES = ['overlay', 'tile', 'token', 'other', 'badge', 'material'];
 const LAYERS = ['overlay', 'tile', 'token', 'other', 'note'];
@@ -40,9 +39,9 @@ const SETUP_TYPES = ['grid-square', 'grid-hex', 'grid-hex2'];
 const SETUP_GRIDSIZE_MIN = 16;
 const SETUP_GRIDSIZE_MAX = 256;
 
-const REGEXP_ID    = '^[0-9a-zA-Z_-]{8}$';
-const REGEXP_COLOR = '^#[0-9a-fA-F]{6}$';
-const REGEXP_MATERIAL = '^[0-9a-zA-Z]{1,32}$';
+const REGEXP_ID    = '/^[0-9a-zA-Z_-]{8}$/';
+const REGEXP_COLOR = '/^#[0-9a-fA-F]{6}$/';
+const REGEXP_MATERIAL = '/^[0-9a-zA-Z]{1,32}$/';
 
 /**
  * FreeBeeGeeAPI - The tabletop backend.
@@ -919,7 +918,7 @@ class FreeBeeGeeAPI
             switch ($property) {
                 case 'name':
                     $out->$property =
-                        $this->api->assertString('name', $value, '^[A-Za-z0-9 ]+$', false) ?: 'NoName';
+                        $this->api->assertString('name', $value, '/^[A-Za-z0-9 ]+$/', false) ?: 'NoName';
                     break;
                 case 'value':
                     $out->$property =
@@ -1336,9 +1335,9 @@ class FreeBeeGeeAPI
                     break;
                 case 't':
                     if (($piece->l ?? null) === 3) { // 3 = note
-                        $validated->t = $this->api->assertStringArray('t', $value, '^[^\t]{0,' . NOTE_LENGTH . '}$', 0, 1);
+                        $validated->t = $this->api->assertStringArray('t', $value, '/^[^\t]{0,' . NOTE_LENGTH . '}$/', 0, 1);
                     } else {
-                        $validated->t = $this->api->assertStringArray('t', $value, '^[^\n\r]{0,' . LABEL_LENGTH . '}$', 0, 1);
+                        $validated->t = $this->api->assertStringArray('t', $value, '/^[^\n\r]{0,' . LABEL_LENGTH . '}$/', 0, 1);
                     }
                     break;
                 case 'b':
@@ -1418,16 +1417,16 @@ class FreeBeeGeeAPI
                     $validated->$property = $value;
                     break;
                 case 'name':
-                    $validated->$property = $this->api->assertString('name', $value, '[A-Za-z0-9]{8,48}');
+                    $validated->$property = $this->api->assertString('name', $value, '/^[A-Za-z0-9]{8,48}$/');
                     break;
                 case 'convert':
                     $validated->$property = $this->api->assertBoolean('convert', $value);
                     break;
                 case 'snapshot':
-                    $validated->$property = $this->api->assertString('snapshot', $value, '[A-Za-z0-9]{1,99}');
+                    $validated->$property = $this->api->assertString('snapshot', $value, '/^[A-Za-z0-9]{1,99}$/');
                     break;
                 case 'password':
-                    $validated->$property = $this->api->assertString('password', $value, '..*');
+                    $validated->$property = $this->api->assertString('password', $value, '/^..*$/');
                     break;
                 default:
                     // ignore extra fields
@@ -1460,7 +1459,7 @@ class FreeBeeGeeAPI
                     $validated->name = $this->api->assertString(
                         'name',
                         $value,
-                        '[A-Za-z0-9-]{1,64}(.[A-Za-z0-9-]{1,64})?'
+                        '/^[A-Za-z0-9-]{1,64}(.[A-Za-z0-9-]{1,64})?$/'
                     );
                     break;
                 case 'format':
@@ -1482,12 +1481,11 @@ class FreeBeeGeeAPI
                     $validated->bg = $this->api->assertString(
                         'bg',
                         $value,
-                        '#[a-fA-F0-9]{6}|transparent|piece'
+                        '/^#[a-fA-F0-9]{6}|transparent|piece$/'
                     );
                     break;
                 case 'tx':
                     $validated->tx = $this->api->assertString('tx', $value, REGEXP_MATERIAL);
-                    // $validated->tx = $this->api->assertEnum('tx', $value, ASSET_MATERIALS);
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -2465,8 +2463,7 @@ class FreeBeeGeeAPI
             }
 
             if (sizeof($matches) >= 7) {
-                // if (in_array(substr($matches[6], 1), ASSET_MATERIALS)) {
-                if (preg_match('/' . REGEXP_MATERIAL . '/', substr($matches[6], 1))) {
+                if (preg_match(REGEXP_MATERIAL, substr($matches[6], 1))) {
                     $asset->tx = substr($matches[6], 1);
                 }
             }
