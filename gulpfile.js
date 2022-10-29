@@ -261,13 +261,8 @@ gulp.task('img', gulp.series(() => {
   ])
     .pipe(changed(dirs.cache + '/img'))
     .pipe(image({
-      optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
-      pngquant: ['--speed=1', '--force', 256],
-      zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
       jpegRecompress: ['--strip', '--quality', 'veryhigh', '--min', 70, '--max', 90],
-      mozjpeg: false, // ['-optimize', '-progressive']
-      gifsicle: ['--optimize'],
-      svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+      mozjpeg: false // ['-optimize', '-progressive']
     }))
     .pipe(gulp.dest(dirs.cache + '/img'))
 }, () => {
@@ -281,8 +276,6 @@ gulp.task('img', gulp.series(() => {
       optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
       pngquant: ['--speed=1', '--force', 256],
       zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-      jpegRecompress: ['--strip', '--quality', 'medium', '--min', 80, '--max', 90],
-      mozjpeg: ['-optimize', '-progressive'],
       gifsicle: ['--optimize'],
       svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
     }))
@@ -297,20 +290,26 @@ gulp.task('img', gulp.series(() => {
     .pipe(gulp.dest(dirs.site + '/img'))
 }))
 
-function snapshot (name) {
+function snapshot (name, minimize = true) {
   return gulp.series(() => { // step 1: optimize & cache content
-    return replace(gulp.src('src/snapshots/' + name + '/**/*'))
-      .pipe(changed(dirs.cache + '/snapshots/' + name))
-      .pipe(image({
-        optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
-        pngquant: ['--speed=1', '--force', 256],
-        zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-        jpegRecompress: ['--strip', '--quality', 'high', '--min', 60, '--max', 85],
-        mozjpeg: ['-optimize', '-progressive'],
-        gifsicle: ['--optimize'],
-        svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
-      }))
-      .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
+    if (minimize) {
+      return replace(gulp.src('src/snapshots/' + name + '/**/*'))
+        .pipe(changed(dirs.cache + '/snapshots/' + name))
+        .pipe(image({
+          optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
+          pngquant: ['--speed=1', '--force', 256],
+          zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
+          jpegRecompress: ['--strip', '--quality', 'high', '--min', 60, '--max', 85],
+          mozjpeg: ['-optimize', '-progressive'],
+          gifsicle: ['--optimize'],
+          svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+        }))
+        .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
+    } else {
+      return replace(gulp.src('src/snapshots/' + name + '/**/*'))
+        .pipe(changed(dirs.cache + '/snapshots/' + name))
+        .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
+    }
   }, () => { // step 2: zip cache
     return gulp.src(dirs.cache + '/snapshots/' + name + '/**/*')
       .pipe(zip(name + '.zip'))
@@ -318,11 +317,11 @@ function snapshot (name) {
   })
 }
 
-gulp.task('snapshot-Classic', snapshot('Classic'))
-gulp.task('snapshot-RPG', snapshot('RPG'))
-gulp.task('snapshot-Hex', snapshot('Hex'))
-gulp.task('snapshot-Tutorial', snapshot('Tutorial'))
-gulp.task('snapshot-System', snapshot('_'))
+gulp.task('snapshot-Classic', snapshot('Classic', false))
+gulp.task('snapshot-RPG', snapshot('RPG', false))
+gulp.task('snapshot-Hex', snapshot('Hex', false))
+gulp.task('snapshot-Tutorial', snapshot('Tutorial', false))
+gulp.task('snapshot-System', snapshot('_', false))
 
 gulp.task('build', gulp.parallel(
   'js-main',

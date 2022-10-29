@@ -18,7 +18,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor: split api tests in all/latest
     * [X] refactor: automated tests for zip/tgz packages after build
     * [X] bug: docker build not pulling latest php baseimage
-    * [ ] build: don't minimize pre-minimized assets
+    * [X] minimizing of pre-minimized snapshot assets
     * [ ] refactor: split (edit) modals
     * [ ] bug: outside-token click selects token sometimes
     * [ ] bug: dragging multiselected hex tokens does not always snap correctly

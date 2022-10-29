@@ -14,6 +14,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added setup variant variant grid-hex2 for hexes rotated 90°
 * fixed docker build not pulling latest php baseimage
 * refactored api tests in all/latest
+* removed minimizing of pre-minimized snapshot assets
 
 
 ## v0.18.0 - Zooming Zokor
