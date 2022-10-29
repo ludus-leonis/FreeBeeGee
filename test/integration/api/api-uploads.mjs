@@ -51,7 +51,8 @@ const _ = { // asset count in system snapshot
   overlay: 17,
   tile: 2,
   token: 5,
-  badge: 2
+  badge: 2,
+  material: 5
 }
 
 function testApiZipMinimal (api, version, room) {
@@ -73,6 +74,8 @@ function testApiZipMinimal (api, version, room) {
       expect(body.library).to.be.an('object')
       expect(body.library.badge).to.be.an('array')
       expect(body.library.badge.length).to.be.eql(0 + _.badge)
+      expect(body.library.material).to.be.an('array')
+      expect(body.library.material.length).to.be.eql(0 + _.material)
       expect(body.library.other).to.be.an('array')
       expect(body.library.other.length).to.be.eql(0 + _.other)
       expect(body.library.overlay).to.be.an('array')
@@ -135,6 +138,9 @@ function testApiZipFull (api, version, room) {
       expect(body.library.badge.length).to.be.eql(1 + _.badge)
       expect(body.library.badge[body.library.badge.length - 1].name).to.be.eql('extra')
       expect(body.library.badge[body.library.badge.length - 1].w).to.be.eql(1)
+      expect(body.library.material).to.be.an('array')
+      expect(body.library.material.length).to.be.eql(1 + _.material)
+      expect(body.library.material[body.library.material.length - 1].name).to.be.eql('wood')
       expect(body.library.other).to.be.an('array')
       expect(body.library.other.length).to.be.eql(1 + _.other)
       expect(body.library.other[body.library.other.length - 1].name).to.be.eql('aaa')

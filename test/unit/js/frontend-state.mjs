@@ -37,6 +37,7 @@ import {
   setTableNo,
   getRoom,
   getSetup,
+  getMaterialMedia,
   getLibrary,
   isTabActive,
   setTabActive,
@@ -101,6 +102,15 @@ describe('Frontend - state.mjs - basics', function () {
     expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].color).to.be.eql('#57514d')
     expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].scroller).to.be.eql('#3e3935')
     expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
+  })
+
+  it('getMaterialMedia()', function () {
+    _setRoom(undefined)
+    expect(getMaterialMedia('wood')).to.match(/^api\/data\/rooms\/undefined\/assets\/material\/none.png$/)
+    _setRoom(JSON.parse(roomJSON))
+    expect(getMaterialMedia('wood')).to.match(/^api\/data\/rooms\/testroom\/assets\/material\/wood.png$/)
+    expect(getMaterialMedia('none')).to.match(/^api\/data\/rooms\/testroom\/assets\/material\/none.png$/)
+    expect(getMaterialMedia('blah')).to.match(/^api\/data\/rooms\/testroom\/assets\/material\/none.png$/)
   })
 
   it('getRoom() getSetup() getLibrary()', function () {
@@ -482,6 +492,37 @@ const roomJSON = `
       "type": "other",
       "id": "f45f27b5",
       "base": "classic.a.1x1x0.png"
+    }],
+    "material": [{
+      "id": "MOevM100",
+      "name": "none",
+      "type": "material",
+      "w": 1,
+      "h": 1,
+      "bg": "#808080",
+      "media": [
+        "none.png"
+      ]
+    }, {
+      "id": "Hb9tz200",
+      "name": "paper",
+      "type": "material",
+      "w": 1,
+      "h": 1,
+      "bg": "#808080",
+      "media": [
+        "paper.png"
+      ]
+    }, {
+      "id": "wS-60300",
+      "name": "wood",
+      "type": "material",
+      "w": 1,
+      "h": 1,
+      "bg": "#808080",
+      "media": [
+        "wood.png"
+      ]
     }],
     "note": []
   },

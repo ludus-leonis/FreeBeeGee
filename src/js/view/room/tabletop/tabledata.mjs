@@ -152,6 +152,14 @@ export function findAssetByAlias (name, layer = 'any') {
   return null
 }
 
+export function getRoomMediaURL (room, type, file, demo = false) {
+  if (demo) {
+    return `demo/${room}/assets/${type}/${file}`
+  } else {
+    return `api/data/rooms/${room}/assets/${type}/${file}`
+  }
+}
+
 /**
  * Get the URL for an asset media.
  *
@@ -161,26 +169,15 @@ export function findAssetByAlias (name, layer = 'any') {
  */
 export function getAssetURL (asset, side = 0) {
   if (side >= asset.media.length) {
-    return 'img/material-none.png'
+    return getRoomMediaURL(getRoom().name, 'material', 'none.png', DEMO_MODE)
   }
-  if (DEMO_MODE) {
-    switch (side) {
-      case -2:
-        return `demo/${getSetup().name}/assets/${asset.type}/${asset.mask}`
-      case -1:
-        return `demo/${getSetup().name}/assets/${asset.type}/${asset.base}`
-      default:
-        return `demo/${getSetup().name}/assets/${asset.type}/${asset.media[side]}`
-    }
-  } else {
-    switch (side) {
-      case -2:
-        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.mask}`
-      case -1:
-        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
-      default:
-        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
-    }
+  switch (side) {
+    case -2:
+      return getRoomMediaURL(getRoom().name, asset.type, asset.mask, DEMO_MODE)
+    case -1:
+      return getRoomMediaURL(getRoom().name, asset.type, asset.base, DEMO_MODE)
+    default:
+      return getRoomMediaURL(getRoom().name, asset.type, asset.media[side], DEMO_MODE)
   }
 }
 

@@ -118,6 +118,7 @@ final class FreeBeeGeeAPITest extends TestCase
             'setup.json',
             'LICENSE.md',
             'assets/badge/extra.svg',
+            'assets/material/extra.svg',
             'assets/overlay/aab.1x1.1x1x1.svg',
             'assets/other/aaa.4x4x1.transparent.wood.jpg',
             'assets/tile/aac.9x9x1.svg',
@@ -1060,13 +1061,13 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('wood', $asset->tx);
         $this->assertEquals('d.e', $asset->name);
 
-        $asset = FreeBeeGeeAPI::fileToAsset('d.e.2x3x4.abcdef.wood.jpg');
-        $this->assertEquals(['d.e.2x3x4.abcdef.wood.jpg'], $asset->media);
+        $asset = FreeBeeGeeAPI::fileToAsset('d.e.2x3x4.abcdef.rough.jpg');
+        $this->assertEquals(['d.e.2x3x4.abcdef.rough.jpg'], $asset->media);
         $this->assertEquals(2, $asset->w);
         $this->assertEquals(3, $asset->h);
         $this->assertEquals(4, $asset->s);
         $this->assertEquals('#abcdef', $asset->bg);
-        $this->assertEquals('wood', $asset->tx);
+        $this->assertEquals('rough', $asset->tx);
         $this->assertEquals('d.e', $asset->name);
 
         $asset = FreeBeeGeeAPI::fileToAsset('soSo.2x3x4.transparent-paper.jpg');

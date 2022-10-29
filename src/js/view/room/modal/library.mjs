@@ -50,7 +50,8 @@ import {
   addAsset,
   reloadRoom,
   getSetup,
-  getBackground
+  getBackground,
+  getMaterialMedia
 } from '../../../state/index.mjs'
 
 import {
@@ -448,19 +449,15 @@ function setupTabUpload () {
   }
   height.on('change', change => updatePreview())
 
-  // height
-  const material = _('#upload-material')
-  const none = _('option').create('none')
-  none.selected = true
-  none.value = 'none'
-  material.add(none)
-  const paper = _('option').create('Paper')
-  paper.value = 'paper'
-  material.add(paper)
-  const wood = _('option').create('Wood')
-  wood.value = 'wood'
-  material.add(wood)
-  material.on('change', change => updatePreview())
+  // material
+  const materials = _('#upload-material')
+  for (const material of getLibrary().material) {
+    const option = _('option').create(prettyName(material.name))
+    option.value = material.name
+    if (material.name === 'none') option.selected = true
+    materials.add(option)
+  }
+  materials.on('change', change => updatePreview())
 
   _('#upload-color').value = '#808080'
 
@@ -562,7 +559,7 @@ function updatePreviewDOM (blob) {
   if (type === LAYER_TOKEN) {
     piece.add('.has-highlight')
   }
-  piece.css({ '--fbg-material': url(`img/material-${material}.png`) })
+  piece.css({ '--fbg-material': url(getMaterialMedia(material)) })
 
   if (w > 16 || h > 16) {
     preview.add('.is-deflate-4x')

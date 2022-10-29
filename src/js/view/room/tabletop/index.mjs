@@ -40,6 +40,7 @@ import {
   getRoom,
   getSetup,
   getTable,
+  getMaterialMedia,
   updatePieces,
   createPieces,
   deletePiece,
@@ -618,7 +619,7 @@ export function pieceToNode (piece) {
     }
     if (asset.tx) {
       node.css({
-        '--fbg-material': url(`img/material-${asset.tx}.png`)
+        '--fbg-material': url(getMaterialMedia(asset.tx))
       })
     } else {
       node.remove('--fbg-material')

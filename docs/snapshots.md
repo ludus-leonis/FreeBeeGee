@@ -40,6 +40,9 @@ Note that all files have to be in the root folder of the `ZIP`! Usually you want
 │  ├─ badge/
 │  │  ├─ stunned.png
 │  │  └─ invisible.png
+│  ├─ material/
+│  │  ├─ paper.png
+│  │  └─ wood.png
 │  └─ other/
 │     ├─ d6.1x1x1.png
 │     ├─ ...

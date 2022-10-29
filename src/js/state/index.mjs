@@ -60,6 +60,7 @@ import {
   populateSetupDefaults,
   clampToTableSize,
   nameToLayer,
+  getRoomMediaURL,
   sanitizePiecePatch
 } from '../view/room/tabletop/tabledata.mjs'
 
@@ -172,6 +173,20 @@ export function getBackground () {
   }
 
   return background
+}
+
+/**
+ * Get the material media path for a material name.
+ *
+ * Reverts to first = no material if not found.
+ *
+ * @param {String} name The material's name, e.g. 'wood'.
+ * @return {String} Media path, e.g. 'api/data/rooms/roomname/assets/material/wood.png'
+ */
+export function getMaterialMedia (name) {
+  const material = getLibrary()?.material?.find(m => m.name === name)
+  const filename = material?.media[0] ?? 'none.png'
+  return getRoomMediaURL(getRoom()?.name, 'material', filename)
 }
 
 /**

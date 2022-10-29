@@ -132,6 +132,9 @@ The *library* object holds information about each *asset*, sorted by *asset* typ
   ],
   "badge": [
     ... assets ...
+  ],
+  "material": [
+    ... assets ...
   ]
 }
 ```

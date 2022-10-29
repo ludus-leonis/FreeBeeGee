@@ -29,9 +29,9 @@ const FLAG_NO_DELETE = 0b00000001;
 const FLAG_NO_CLONE  = 0b00000010;
 const FLAG_NO_MOVE   = 0b00000100;
 
-const ASSET_MATERIALS = ['paper', 'wood'];
+// const ASSET_MATERIALS = ['board', 'paper', 'wood'];
 const ASSET_SIZE_MAX = 1024 * 1024;
-const ASSET_TYPES = ['overlay', 'tile', 'token', 'other', 'badge'];
+const ASSET_TYPES = ['overlay', 'tile', 'token', 'other', 'badge', 'material'];
 const LAYERS = ['overlay', 'tile', 'token', 'other', 'note'];
 const LABEL_LENGTH = 32;
 const NOTE_COLORS = ['yellow', 'orange', 'green', 'blue', 'pink'];
@@ -42,6 +42,7 @@ const SETUP_GRIDSIZE_MAX = 256;
 
 const REGEXP_ID    = '^[0-9a-zA-Z_-]{8}$';
 const REGEXP_COLOR = '^#[0-9a-fA-F]{6}$';
+const REGEXP_MATERIAL = '^[0-9a-zA-Z]{1,32}$';
 
 /**
  * FreeBeeGeeAPI - The tabletop backend.
@@ -399,15 +400,13 @@ class FreeBeeGeeAPI
         $folder = $this->getRoomFolder($roomName);
 
         // create mandatory folder structure
-        if (
-            !mkdir($folder . 'tables', 0777, true)
-            || !mkdir($folder . 'assets/other', 0777, true)
-            || !mkdir($folder . 'assets/overlay', 0777, true)
-            || !mkdir($folder . 'assets/tile', 0777, true)
-            || !mkdir($folder . 'assets/token', 0777, true)
-            || !mkdir($folder . 'assets/badge', 0777, true)
-        ) {
+        if (!mkdir($folder . 'tables', 0777, true)) {
             $this->api->sendError(500, 'can\'t write on server');
+        }
+        foreach (ASSET_TYPES as $type) {
+            if (!mkdir($folder . 'assets/' . $type, 0777, true)) {
+                $this->api->sendError(500, 'can\'t write on server');
+            }
         }
 
         // unzip all validated files
@@ -503,20 +502,6 @@ class FreeBeeGeeAPI
             $this->getBackground('Sand', 'img/desktop-sand.jpg', '#D7D2BF', '#a19e8f'),
             $this->getBackground('Space', 'img/desktop-space.jpg', '#101010', '#404040'),
             $this->getBackground('Wood', 'img/desktop-wood.jpg', '#524A43', '#3e3935'),
-        ];
-    }
-
-    /**
-     * Assemble array with all supported piece textures.
-     *
-     * @return array Textures.
-     */
-    private function getMaterials(): array
-    {
-        return [
-            (object) ['name' => 'None', 'tag' => 'none', 'image' => 'img/material-none.png'],
-            (object) ['name' => 'Paper', 'tag' => 'paper', 'image' => 'img/material-paper.png'],
-            (object) ['name' => 'Wood', 'tag' => 'wood', 'image' => 'img/material-wood.png']
         ];
     }
 
@@ -704,7 +689,7 @@ class FreeBeeGeeAPI
      * Validate a snapshot.
      *
      * Does a few sanity checks to see if everything is there we need. Will
-     * termiante execution and send a 400 in case of invalid zips.
+     * terminate execution and send a 400 in case of invalid zips.
      *
      * @param string $zipPath Full path to the zip to check.
      * @param bool $ignoreEngine Optional. If true, snapshots will not be rejected on eninge.
@@ -765,7 +750,7 @@ class FreeBeeGeeAPI
                 default: // scan for asset filenames
                     if (
                         !preg_match(
-                            '/^assets\/(overlay|tile|token|other|badge)\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
+                            '/^assets\/(' . implode('|', ASSET_TYPES) . ')\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
                             $entry['name']
                         )
                     ) {
@@ -1456,7 +1441,7 @@ class FreeBeeGeeAPI
      * Parse incoming JSON for (new) assets.
      *
      * @param object $incoming Parsed asset from client.
-     * @return object Validated JSON, convertet to an object.
+     * @return object Validated JSON, converted to an object.
      */
     private function validateAsset(
         object $incoming
@@ -1501,7 +1486,8 @@ class FreeBeeGeeAPI
                     );
                     break;
                 case 'tx':
-                    $validated->tx = $this->api->assertEnum('tx', $value, ASSET_MATERIALS);
+                    $validated->tx = $this->api->assertString('tx', $value, REGEXP_MATERIAL);
+                    // $validated->tx = $this->api->assertEnum('tx', $value, ASSET_MATERIALS);
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -1537,7 +1523,6 @@ class FreeBeeGeeAPI
         $info->root = $this->api->getAPIPath();
 
         $info->backgrounds = $this->getBackgrounds();
-        $info->materials = $this->getMaterials();
 
         if ($server->passwordCreate ?? '' !== '') {
             $info->createPassword = true;
@@ -2036,11 +2021,9 @@ class FreeBeeGeeAPI
         if ($roomName) {
             $this->assertWritable('rooms/' . $roomName . '/');
             $this->assertWritable('rooms/' . $roomName . '/tables/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/other/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/overlay/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/tile/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/token/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/badge/');
+            foreach (ASSET_TYPES as $type) {
+                $this->assertWritable('rooms/' . $roomName . '/assets/' . $type . '/');
+            }
         }
     }
 
@@ -2482,7 +2465,8 @@ class FreeBeeGeeAPI
             }
 
             if (sizeof($matches) >= 7) {
-                if (in_array(substr($matches[6], 1), ASSET_MATERIALS)) {
+                // if (in_array(substr($matches[6], 1), ASSET_MATERIALS)) {
+                if (preg_match('/' . REGEXP_MATERIAL . '/', substr($matches[6], 1))) {
                     $asset->tx = substr($matches[6], 1);
                 }
             }

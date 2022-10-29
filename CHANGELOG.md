@@ -6,12 +6,13 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
-* TBD
+* added 'rough' and 'linen' material for pieces
 
 ### Other changes
 
 * added automated tests for zip/tgz packages after build
 * added setup variant variant grid-hex2 for hexes rotated 90°
+* added assets/material folder to snapshots
 * fixed docker build not pulling latest php baseimage
 * refactored api tests in all/latest
 * refactored FreeBeeGeeAPI globals into consts
