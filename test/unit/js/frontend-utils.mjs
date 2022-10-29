@@ -34,6 +34,7 @@ import {
   clamp,
   snapGrid,
   snapHex,
+  snapHex2,
   shuffle,
   intersect,
   contains,
@@ -288,6 +289,51 @@ describe('Frontend - utils.mjs - Math', function () {
     expect(snapHex(82 + jitter, 48 - jitter, 64, 3)).to.be.eql({ x: 82, y: 48 })
     expect(snapHex(110 + jitter, 32 - jitter, 64, 3)).to.be.eql({ x: 110, y: 32 })
     expect(snapHex(55 + jitter, 64 - jitter, 64, 3)).to.be.eql({ x: 55, y: 64 })
+  })
+
+  it('snapHex2()', function () {
+    const jitter = 4
+
+    // lod 1
+    expect(snapHex2(0 + jitter, 0 - jitter, 64, 1)).to.be.eql({ x: 0, y: 0 })
+    expect(snapHex2(64 - jitter, 0 + jitter, 64, 1)).to.be.eql({ x: 64, y: 0 })
+    expect(snapHex2(32 - jitter, 55 + jitter, 64, 1)).to.be.eql({ x: 32, y: 55 })
+    expect(snapHex2(0 - jitter, 110 + jitter, 64, 1)).to.be.eql({ x: 0, y: 110 })
+    expect(snapHex2(64 - jitter, 110 + jitter, 64, 1)).to.be.eql({ x: 64, y: 110 })
+
+    // lod 2
+    expect(snapHex2(0 - jitter, 0 + jitter, 64, 1)).to.be.eql({ x: 0, y: 0 })
+    expect(snapHex2(64 - jitter, 0 + jitter, 64, 1)).to.be.eql({ x: 64, y: 0 })
+    expect(snapHex2(32 - jitter, 55 + jitter, 64, 1)).to.be.eql({ x: 32, y: 55 })
+    expect(snapHex2(0 - jitter, 110 + jitter, 64, 1)).to.be.eql({ x: 0, y: 110 })
+    expect(snapHex2(64 - jitter, 110 + jitter, 64, 1)).to.be.eql({ x: 64, y: 110 })
+    expect(snapHex2(0 - jitter, 37 + jitter, 64, 2)).to.be.eql({ x: 0, y: 37 })
+    expect(snapHex2(0 - jitter, 73 + jitter, 64, 2)).to.be.eql({ x: 0, y: 73 })
+    expect(snapHex2(32 - jitter, 19 + jitter, 64, 2)).to.be.eql({ x: 32, y: 19 })
+    expect(snapHex2(32 - jitter, 92 + jitter, 64, 2)).to.be.eql({ x: 32, y: 92 })
+    expect(snapHex2(64 - jitter, 37 + jitter, 64, 2)).to.be.eql({ x: 64, y: 37 })
+    expect(snapHex2(64 - jitter, 73 + jitter, 64, 2)).to.be.eql({ x: 64, y: 73 })
+
+    // lod 3
+    expect(snapHex2(0 - jitter, 0 + jitter, 64, 3)).to.be.eql({ x: 0, y: 0 })
+    expect(snapHex2(64 - jitter, 0 + jitter, 64, 3)).to.be.eql({ x: 64, y: 0 })
+    expect(snapHex2(32 - jitter, 55 + jitter, 64, 3)).to.be.eql({ x: 32, y: 55 })
+    expect(snapHex2(0 - jitter, 110 + jitter, 64, 3)).to.be.eql({ x: 0, y: 110 })
+    expect(snapHex2(64 - jitter, 110 + jitter, 64, 3)).to.be.eql({ x: 64, y: 110 })
+    expect(snapHex2(0 - jitter, 37 + jitter, 64, 3)).to.be.eql({ x: 0, y: 37 })
+    expect(snapHex2(0 - jitter, 73 + jitter, 64, 3)).to.be.eql({ x: 0, y: 73 })
+    expect(snapHex2(32 - jitter, 19 + jitter, 64, 3)).to.be.eql({ x: 32, y: 19 })
+    expect(snapHex2(32 - jitter, 92 + jitter, 64, 3)).to.be.eql({ x: 32, y: 92 })
+    expect(snapHex2(64 - jitter, 37 + jitter, 64, 3)).to.be.eql({ x: 64, y: 37 })
+    expect(snapHex2(64 - jitter, 73 + jitter, 64, 3)).to.be.eql({ x: 64, y: 73 })
+    expect(snapHex2(0 - jitter, 55 + jitter, 64, 3)).to.be.eql({ x: 0, y: 55 })
+    expect(snapHex2(32 - jitter, 0 + jitter, 64, 3)).to.be.eql({ x: 32, y: 0 })
+    expect(snapHex2(16 - jitter, 28 + jitter, 64, 3)).to.be.eql({ x: 16, y: 28 })
+    expect(snapHex2(16 - jitter, 82 + jitter, 64, 3)).to.be.eql({ x: 16, y: 82 })
+    expect(snapHex2(48 - jitter, 28 + jitter, 64, 3)).to.be.eql({ x: 48, y: 28 })
+    expect(snapHex2(48 - jitter, 82 + jitter, 64, 3)).to.be.eql({ x: 48, y: 82 })
+    expect(snapHex2(32 - jitter, 110 + jitter, 64, 3)).to.be.eql({ x: 32, y: 110 })
+    expect(snapHex2(64 - jitter, 55 + jitter, 64, 3)).to.be.eql({ x: 64, y: 55 })
   })
 
   it('shuffle()', function () {

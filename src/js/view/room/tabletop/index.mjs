@@ -79,6 +79,7 @@ import {
   LAYER_TOKEN,
   LAYER_OTHER,
   TYPE_HEX,
+  TYPE_HEX2,
   ID,
   findAsset,
   findPiece,
@@ -517,7 +518,7 @@ export function rotateSelected (cw = true) {
   if (!selectionGetFeatures().rotate) return
 
   for (const piece of selectionGetPieces()) {
-    const increment = setup.type === TYPE_HEX ? 60 : 90
+    const increment = (setup.type === TYPE_HEX || setup.type === TYPE_HEX2) ? 60 : 90
     const r = cw ? (piece.r + increment) : (piece.r - increment)
     rotatePiece(piece.id, r)
   }
@@ -727,6 +728,12 @@ export function moveContent (offsetX, offsetY) {
       if (offsetY < 0) offsetY += 63
       offsetX = Math.floor(offsetX / 110) * 110
       offsetY = Math.floor(offsetY / 64) * 64
+      break
+    case 'grid-hex2':
+      if (offsetX < 0) offsetX += 63
+      if (offsetY < 0) offsetY += 109
+      offsetX = Math.floor(offsetX / 64) * 64
+      offsetY = Math.floor(offsetY / 110) * 110
       break
     case 'grid-square':
     default:

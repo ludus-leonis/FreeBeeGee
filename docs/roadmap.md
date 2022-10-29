@@ -4,7 +4,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.19 - ??? ???
 
-* [ ] hex variant with hexes rotated 30°
+* [X] hex variant for hexes rotated 90°
 * [ ] engine: support G-Z as token number
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] library: delete assets UI
@@ -18,8 +18,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor: split api tests in all/latest
     * [X] refactor: automated tests for zip/tgz packages after build
     * [X] bug: docker build not pulling latest php baseimage
+    * [ ] build: don't minimize pre-minimized assets
     * [ ] refactor: split (edit) modals
     * [ ] bug: outside-token click selects token sometimes
+    * [ ] bug: dragging multiselected hex tokens does not always snap correctly
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

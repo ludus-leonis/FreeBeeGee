@@ -423,6 +423,26 @@ export function snapHex (x, y, snap, lod = 1) {
 }
 
 /**
+ * Snap a coordinate to the closest hex2 position / grid.
+ *
+ * hex2 grids have pointy hexes up/down.
+ *
+ * @param {Number} x X-coordinate to snap.
+ * @param {Number} y Y-coordiante to snap.
+ * @param {Number} snap Grid size, originates in 0/0.
+ * @param {Number} lod Optional level of detail (1 = hex centers, 2 = also hex
+ *                     corners, 3 = also side centers). Defaults to 1.
+ * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ */
+export function snapHex2 (x, y, snap, lod = 1) {
+  const snapped = snapHex(y, x, snap, lod) // hex2 is actually a 90° rotated hex
+  return {
+    x: snapped.y,
+    y: snapped.x
+  }
+}
+
+/**
  * Shuffle an array using Durstenfeld shuffle.
  *
  * @param {Array} array Array to shuffle. Will be modified!

@@ -39,7 +39,7 @@ class FreeBeeGeeAPI
     private $minRoomGridSize = 16;
     private $maxRoomGridSize = 256;
     private $maxAssetSize = 1024 * 1024;
-    private $types = ['grid-square', 'grid-hex'];
+    private $types = ['grid-square', 'grid-hex', 'grid-hex2'];
     private $assetTypes = ['overlay', 'tile', 'token', 'other', 'badge'];
     private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
     private $assetTextures = ['paper', 'wood'];
@@ -819,7 +819,7 @@ class FreeBeeGeeAPI
                     'gridHeight',
                     'colors'
                 ]);
-            } elseif ($setup->type === 'grid-hex') {
+            } elseif ($setup->type === 'grid-hex' || $setup->type === 'grid-hex2') {
                 $this->api->assertHasProperties('setup', $setup, [
                     'gridSize',
                     'gridWidth',

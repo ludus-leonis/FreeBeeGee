@@ -218,6 +218,8 @@ final class FreeBeeGeeAPITest extends TestCase
             }');
         }, 400, '/ type missing/');
 
+        // --- grid-square ---
+
         $this->assertHTTPStatus(function () {
             $setup = $this->fbg->validateSetupJSON('{
                 "engine": "x",
@@ -241,6 +243,8 @@ final class FreeBeeGeeAPITest extends TestCase
                 "gridWidth": 8
             }');
         }, 400, '/ gridHeight missing/');
+
+        // --- grid-hex ---
 
         $this->assertHTTPStatus(function () {
             $setup = $this->fbg->validateSetupJSON('{
@@ -270,6 +274,39 @@ final class FreeBeeGeeAPITest extends TestCase
             ]
           }
         ');
+
+        // --- grid-hex2 ---
+
+        $this->assertHTTPStatus(function () {
+            $setup = $this->fbg->validateSetupJSON('{
+                "engine": "x",
+                "type": "grid-hex2"
+            }');
+        }, 400, '/ gridSize missing/');
+
+        $setup = $this->fbg->validateSetupJSON('{
+            "type": "grid-hex2",
+            "extra": "some",
+            "version": "1.1.1",
+            "engine": "0.1.2",
+
+            "gridSize": 64,
+            "gridWidth": 128,
+            "gridHeight": 129,
+
+            "colors": [
+              { "name": "Black", "value": "#202020" },
+              { "name": "Räd", "value": "#g01c16", "extra": 1 }
+            ],
+
+            "borders": [
+              { "value": "#202020" },
+              { "name": "Orange" }
+            ]
+          }
+        ');
+
+        // --- other ---
 
         $setup = $this->fbg->validateSetupJSON('{
             "type": "grid-square"
@@ -503,6 +540,50 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals('1.1.1', $setup->version);
         $this->assertEquals($this->fbg->unpatchSemver($this->fbg->getEngine()), $setup->engine);
         $this->assertEquals('grid-hex', $setup->type);
+        $this->assertEquals(64, $setup->gridSize);
+        $this->assertEquals(128, $setup->gridWidth);
+        $this->assertEquals(129, $setup->gridHeight);
+        $this->assertIsArray($setup->colors);
+        $this->assertEquals(2, count($setup->colors));
+        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$setup->colors[0]));
+        $this->assertEquals("Black", $setup->colors[0]->name);
+        $this->assertEquals("#202020", $setup->colors[0]->value);
+        $this->assertEquals("NoName", $setup->colors[1]->name);
+        $this->assertEquals("#808080", $setup->colors[1]->value);
+        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$setup->colors[1]));
+        $this->assertIsArray($setup->borders);
+        $this->assertEquals(2, count($setup->borders));
+        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$setup->borders[0]));
+        $this->assertEqualsCanonicalizing(['name', 'value'], array_keys((array)$setup->borders[1]));
+        $this->assertEquals("NoName", $setup->borders[0]->name);
+        $this->assertEquals("#202020", $setup->borders[0]->value);
+        $this->assertEquals("Orange", $setup->borders[1]->name);
+        $this->assertEquals("#808080", $setup->borders[1]->value);
+
+        $setup = $this->fbg->cleanupSetupJSON('{
+            "type": "grid-hex2",
+            "extra": "some",
+            "version": "1.1.1",
+            "engine": "0.1.2",
+
+            "gridSize": 32,
+            "gridWidth": 128,
+            "gridHeight": 129,
+
+            "colors": [
+              { "name": "Black", "value": "#202020" },
+              { "name": "Räd", "value": "#g01c16", "extra": 1 }
+            ],
+
+            "borders": [
+              { "value": "#202020" },
+              { "name": "Orange" }
+            ]
+          }
+        ');
+        $this->assertEquals('1.1.1', $setup->version);
+        $this->assertEquals($this->fbg->unpatchSemver($this->fbg->getEngine()), $setup->engine);
+        $this->assertEquals('grid-hex2', $setup->type);
         $this->assertEquals(64, $setup->gridSize);
         $this->assertEquals(128, $setup->gridWidth);
         $this->assertEquals(129, $setup->gridHeight);

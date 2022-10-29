@@ -91,6 +91,7 @@ import {
   LAYER_TOKEN,
   LAYER_OTHER,
   TYPE_HEX,
+  TYPE_HEX2,
   getSetupCenter
 } from '../../view/room/tabletop/tabledata.mjs'
 
@@ -435,7 +436,8 @@ export function setupBackground () {
     _('#tabletop').add('.has-grid')
     _('#tabletop').css({
       '--fbg-tabletop-grid': url(background.gridFile),
-      '--fbg-grid-x': room.setup?.type === TYPE_HEX ? '110px' : '64px'
+      '--fbg-grid-x': room.setup?.type === TYPE_HEX ? '110px' : '64px',
+      '--fbg-grid-y': room.setup?.type === TYPE_HEX2 ? '110px' : '64px'
     })
   }
 
@@ -486,7 +488,9 @@ function setupRoom () {
 
   const room = getRoom()
 
-  const mode = (room.setup?.type === TYPE_HEX) ? '.is-grid-hex' : '.is-grid-square'
+  let mode = '.is-grid-square'
+  if (room.setup?.type === TYPE_HEX) mode = '.is-grid-hex'
+  if (room.setup?.type === TYPE_HEX2) mode = '.is-grid-hex2'
 
   _('body').remove('.page-boxed').add(mode).innerHTML = `
     <div id="room" class="room is-fullscreen is-noselect">

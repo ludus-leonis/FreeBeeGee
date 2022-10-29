@@ -280,9 +280,9 @@ A *setup* using the `grid-square` type also has the following properties:
 `snap`
 : Optional boolean property. If set to `false`, grid-snapping will be disabled for this *setup*. It is on per default.
 
-### `grid-hex` entries
+### `grid-hex` / `grid-hex2` entries
 
-A *setup* using the `grid-hex` use hexes oriented with their flat sides up/down. They have the following additional properties:
+A *setup* using the `grid-hex` use hexes oriented with their flat sides up/down, while a `grid-hex2` use hexes with their pointy sides up/down. Both have the following additional properties:
 
 `gridSize`
 : The grid / minimum tile size in px. This equals the height of one hex (side-to-side).

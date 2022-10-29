@@ -54,6 +54,7 @@ import {
   ID,
   FEATURE_DICEMAT,
   TYPE_HEX,
+  TYPE_HEX2,
   findPiece,
   populatePiecesDefaults,
   populateSetupDefaults,
@@ -157,8 +158,17 @@ export function getBackground () {
     const gridType = getRoomPreference(PREFS.GRID)
     const color = brightness(background.color) < 92 ? 'white' : 'black'
     const style = gridType > 1 ? 'major' : 'minor'
-    const shape = room.setup?.type === TYPE_HEX ? 'hex' : 'square'
-    background.gridFile = `img/grid-${shape}-${style}-${color}.svg`
+
+    switch (room.setup?.type) {
+      case TYPE_HEX:
+        background.gridFile = `img/grid-hex-${style}-${color}.svg`
+        break
+      case TYPE_HEX2:
+        background.gridFile = `img/grid-hex2-${style}-${color}.svg`
+        break
+      default:
+        background.gridFile = `img/grid-square-${style}-${color}.svg`
+    }
   }
 
   return background

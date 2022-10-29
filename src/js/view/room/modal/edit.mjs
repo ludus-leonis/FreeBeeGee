@@ -38,6 +38,7 @@ import {
 
 import {
   TYPE_HEX,
+  TYPE_HEX2,
   LAYER_TILE,
   LAYER_OVERLAY,
   LAYER_NOTE,
@@ -121,7 +122,8 @@ export function modalEdit (piece) {
 
     // rotate
     const pieceR = _('#piece-r')
-    for (let r = 0; r < 360; r += getSetup().type === TYPE_HEX ? 60 : 90) {
+    const increment = (getSetup().type === TYPE_HEX || getSetup().type === TYPE_HEX2) ? 60 : 90
+    for (let r = 0; r < 360; r += increment) {
       const option = _('option').create(r === 0 ? '0°' : r + '°')
       option.value = r
       if (r === piece.r) option.selected = true

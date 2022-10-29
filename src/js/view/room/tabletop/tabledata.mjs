@@ -34,6 +34,7 @@ import {
   clamp,
   snapGrid,
   snapHex,
+  snapHex2,
   intersect,
   contains,
   getDimensionsRotated,
@@ -47,6 +48,7 @@ import {
 
 export const TYPE_SQUARE = 'grid-square'
 export const TYPE_HEX = 'grid-hex'
+export const TYPE_HEX2 = 'grid-hex2'
 
 export const stickyNoteColors = [
   { name: 'Yellow', value: '#ffeba6' },
@@ -638,10 +640,14 @@ export function snap (x, y, lod = 3) {
   if (setup.snap === false) {
     return snapGrid(x, y, 8, 3) // snap to 4px
   }
-  if (setup.type === TYPE_HEX) {
-    return snapHex(x, y, setup.gridSize, lod)
+  switch (setup.type) {
+    case TYPE_HEX:
+      return snapHex(x, y, setup.gridSize, lod)
+    case TYPE_HEX2:
+      return snapHex2(x, y, setup.gridSize, lod)
+    default:
+      return snapGrid(x, y, setup.gridSize, lod)
   }
-  return snapGrid(x, y, setup.gridSize, lod)
 }
 
 /**
