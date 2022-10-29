@@ -317,7 +317,7 @@ export function sanitizePiecePatch (patch, pieceId = null) {
         )
         break
       case 'n':
-        result[field] = mod(patch[field], 16)
+        result[field] = mod(patch[field], 36)
         break
       case 'r':
         result[field] = mod(patch[field], 360)

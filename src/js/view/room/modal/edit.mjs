@@ -94,11 +94,11 @@ export function modalEdit (piece) {
     option.value = 0
     if (piece.n === 0) option.selected = true
     pieceNo.add(option)
-    for (let w = 1; w <= 15; w++) {
-      const letter = w <= 9 ? String.fromCharCode(48 + w) : String.fromCharCode(64 + w - 9)
+    for (let n = 1; n <= 35; n++) {
+      const letter = n <= 9 ? String.fromCharCode(48 + n) : String.fromCharCode(64 + n - 9)
       const option = _('option').create(letter)
-      option.value = w
-      if (w === piece.n) option.selected = true
+      option.value = n
+      if (n === piece.n) option.selected = true
       pieceNo.add(option)
     }
 

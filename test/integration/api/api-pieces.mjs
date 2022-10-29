@@ -723,7 +723,7 @@ function testApiPieceN (api, version, room) {
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, n: 16 }
+    return { ...pieceMinimal, n: 36 }
   }, body => {
     expect(body._messages[0]).to.match(/ n not between/)
   }, 400)

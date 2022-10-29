@@ -266,13 +266,13 @@ describe('Frontend - state.mjs - API request JSON', function () {
     expect(Object.keys(r.body)).to.have.members(['n'])
     expect(r.body.n).to.be.eql(5)
 
-    r = splitRequest(await numberPiece('c0de', 20, false))
+    r = splitRequest(await numberPiece('c0de', 40, false))
     expect(Object.keys(r.body)).to.have.members(['n'])
     expect(r.body.n).to.be.eql(4)
 
     r = splitRequest(await numberPiece('c0de', -2, false))
     expect(Object.keys(r.body)).to.have.members(['n'])
-    expect(r.body.n).to.be.eql(14)
+    expect(r.body.n).to.be.eql(34)
 
     r = splitRequest(await numberPiece('c0de', undefined, false))
     expect(Object.keys(r.body)).to.have.members(['n'])

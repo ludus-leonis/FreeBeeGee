@@ -6,7 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [X] hex variant for hexes rotated 90°
 * [X] engine: rough & linen material
-* [ ] engine: support G-Z as token number
+* [X] engine: support G-Z as token number
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] library: delete assets UI
 * [ ] ui: half-rotations (45° for square, 30° for hex)

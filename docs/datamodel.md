@@ -191,7 +191,7 @@ In addition, a *piece* can have the following optional properties. If omitted, t
 : The side of the *piece* currently shown, usually one of its *asset* media files. Defaults to `0`.
 
 `n`
-: The number of the *piece*. This is a small digit displayed on the *piece* to distinguish multiple token with the same artwork (e.g. different Goblins). Can be `0`..`15`. Defaults to `0` = none.
+: The number of the *piece*. This is a small digit displayed on the *piece* to distinguish multiple token with the same artwork (e.g. different Goblins). Can be `0`..`35`. Defaults to `0` = none. `1` to `9` will be shown as number, `10` to `35` as letter A-Z.
 
 `c`
 : An array of colors, mostly one. Each number in this array is an index of the of the colors defined in the *room*'s *setup*. Can be 0..?. Defaults to `[0]`. It depends on the type of *piece* what these colors are used for (e.g. border, background, ...).

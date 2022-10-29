@@ -341,7 +341,7 @@ describe('Frontend - tabledata.mjs', function () {
       h: 1,
       l: -1,
       s: 2,
-      n: 15,
+      n: 35,
       t: ['one', 'more', 'time'],
       expires: -expires
     })
@@ -360,7 +360,7 @@ describe('Frontend - tabledata.mjs', function () {
       h: 37,
       l: 99,
       s: 4, // asset has 3 sides
-      n: 17,
+      n: 37,
       t: ['one', 'more', 'time'],
       f: 0b100000101,
       expires

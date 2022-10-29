@@ -178,7 +178,7 @@ export function cloneSelected (xy) {
     clone.z = (zLower[clone.l] ?? 0) + zUpper[clone.l]
     if (clone.n > 0) { // increase clone letter (if it has one)
       clone.n = clone.n + 1
-      if (clone.n >= 16) clone.n = 1
+      if (clone.n >= 36) clone.n = 1
     }
     clones.push(clone)
   }

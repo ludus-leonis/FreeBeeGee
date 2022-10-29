@@ -7,6 +7,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Notable changes
 
 * added 'rough' and 'linen' material for pieces
+* added support for G-Z as token 'number'
 
 ### Other changes
 
