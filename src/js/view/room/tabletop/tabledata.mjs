@@ -696,6 +696,14 @@ export function splitAssetFilename (assetName) {
     data.s = Number(match[4])
   }
 
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.name = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = 1
+  }
+
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
@@ -703,6 +711,15 @@ export function splitAssetFilename (assetName) {
     data.h = Number(match[3])
     data.s = Number(match[4])
     data.bg = match[5]
+  }
+
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.name = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = 1
+    data.bg = match[4]
   }
 
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)([.-][a-z]+)\.[a-zA-Z0-9]+$/)
@@ -713,6 +730,16 @@ export function splitAssetFilename (assetName) {
     data.s = Number(match[4])
     data.bg = match[5]
     data.tx = match[6].substr(1)
+  }
+
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)([.-][a-z]+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.name = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = 1
+    data.bg = match[4]
+    data.tx = match[5].substr(1)
   }
 
   // guess the asset type

@@ -2434,19 +2434,22 @@ class FreeBeeGeeAPI
     ) {
         $asset = new \stdClass();
         $asset->media = [$filename];
-        if (
-            // group.name.1x2x3.808080.png
-            preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
-                $filename,
-                $matches
-            )
-        ) {
+        $asset->bg = '#808080';
+
+        if (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/', $filename, $matches)) {
+            $found = true;
+        } elseif (preg_match('/^(.*)\.([0-9]+)x([0-9]+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/', $filename, $matches)) {
+            $found = true;
+            array_splice($matches, 4, 0, '1'); // insert side-1 indicator
+        } else {
+            $found = false;
+        }
+
+        if ($found) {
             $asset->name = $matches[1];
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->s = $matches[4];
-            $asset->bg = '#808080';
 
             if (sizeof($matches) >= 6) {
                 switch ($matches[5]) {
@@ -2475,7 +2478,6 @@ class FreeBeeGeeAPI
             $asset->w = 1;
             $asset->h = 1;
             $asset->s = 1;
-            $asset->bg = '#808080';
         }
         return $asset;
     }

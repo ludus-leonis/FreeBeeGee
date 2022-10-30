@@ -12,7 +12,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
 * [ ] engine: grid-on-tile flag
-* [ ] engine: make side digit in 1x1x1 optional (= 1x1)
+* [X] engine: make side digit in 1x1x1 optional (= 1x1)
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring

@@ -68,7 +68,7 @@ Optional fields:
 Media (image) files should be named using the following scheme. This allows FBG to sort them automatically into the *library* and set their meta data.
 
 ```
-mainName[.secondaryName].{x}x{y}x{s}[.bg[.texture]].{ext}
+mainName[.secondaryName][.{x}x{y}[x{s}]][.bg[.texture]].{ext}
 ```
 
 `mainName`
@@ -78,13 +78,13 @@ mainName[.secondaryName].{x}x{y}x{s}[.bg[.texture]].{ext}
 : An optional secondary camelcase name to be shown after a comma in the *library* if present. Will be reformated e.g. as `Main Name, Secondary Name`.
 
 `x`
-: The X-size of the tile/token in grid spaces.
+: The X-size of the tile/token in grid spaces. If omitted, `1` is assumed.
 
 `y`
-: The Y-size of the tile/token in grid spaces.
+: The Y-size of the tile/token in grid spaces. If omitted, `1` is assumed.
 
 `s`
-: The side this file represents, typically `1` or `2`, but an *asset* can have more than that - e.g. dice sides or enemy/color variants. FBG will cycle through those when a *piece* gets flipped.
+: The side this file represents, typically `1` or `2`, but an *asset* can have more than that - e.g. dice sides or enemy/color variants. FBG will cycle through those when a *piece* gets flipped. If omitted, side `1` is assumed.
 
 `bg`
 : An optional background color/style for this *asset*. Will be visible as placeholder during image loading, and shine thrugh in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, a number (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash). If missing, it defaults to `0`.

@@ -14,6 +14,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added automated tests for zip/tgz packages after build
 * added setup variant variant grid-hex2 for hexes rotated 90°
 * added assets/material folder to snapshots
+* added autocomplete of side in asset name (allow 1x1 instead of 1x1x1)
 * fixed docker build not pulling latest php baseimage
 * refactored api tests in all/latest
 * refactored FreeBeeGeeAPI globals into consts
