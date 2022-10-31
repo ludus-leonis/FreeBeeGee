@@ -16,6 +16,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added assets/material folder to snapshots
 * added autocomplete of side in asset name (allow 1x1 instead of 1x1x1)
 * fixed docker build not pulling latest php baseimage
+* fixed token selection not properly working when clicking through transparent dicemap
 * refactored api tests in all/latest
 * refactored FreeBeeGeeAPI globals into consts
 * removed minimizing of pre-minimized snapshot assets

@@ -489,7 +489,7 @@ export function contains (larger, smaller) {
  * @param {Number} w Width of original rectangle.
  * @param {Number} h Height of original rectangle.
  * @param {Number} r Angle to rotate to.
- * @param {Object} '{ w: ..., h: ...}' of transformed rectangle.
+ * @return {Object} '{ w: ..., h: ...}' of transformed rectangle.
  */
 export function getDimensionsRotated (w, h, r) {
   // basic rotations don't need long transformation

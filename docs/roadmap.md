@@ -11,6 +11,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] library: delete assets UI
 * [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
+* [ ] ui: shuffle z-order (+ put on same X/Y)
 * [ ] engine: grid-on-tile flag
 * [X] engine: make side digit in 1x1x1 optional (= 1x1)
 * [ ] pre-release
@@ -22,7 +23,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] bug: docker build not pulling latest php baseimage
     * [X] minimizing of pre-minimized snapshot assets
     * [ ] refactor: split (edit) modals
-    * [ ] bug: outside-token click selects token sometimes
+    * [X] bug: token selection not properly working when clicking through transparent dicemap
     * [ ] bug: dragging multiselected hex tokens does not always snap correctly
   * [ ] review docs
   * [ ] review tutorial
@@ -34,6 +35,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] repo: split API tests in docker/all/latest
+* [ ] piece: wooden cubes
+* [ ] refactor: relative includes via @
+* [ ] refactor: split edit modals
 * [ ] PHP 8.2 support
 * [ ] refactor: smaller modal paddings
 * [ ] simplify/automate more deployment steps (ongoing)

@@ -16,7 +16,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { readFileSync } from 'fs'
+import { createWriteStream, readFileSync } from 'fs'
 import { deleteAsync } from 'del'
 
 import autoprefixer from 'gulp-autoprefixer'
@@ -496,6 +496,33 @@ gulp.task('demo', gulp.series('clean', () => {
   ])
     .pipe(gulp.dest(`${dirs.build}/demo`))
 }))
+
+// ---  helper / generator targets ---------------------------------------------
+
+gulp.task('masks', done => {
+  const p = 3 // padding
+  for (let x = 1; x <= 8; x++) {
+    for (let y = 1; y <= 8; y++) {
+      const mask = createWriteStream(`src/img/mask/token-${x}x${y}.svg`)
+      mask.write(`<svg width="${x * 64}" height="${y * 64}" viewBox="0 0 ${x * 64} ${y * 64}" xmlns="http://www.w3.org/2000/svg">`)
+      if (x === y && (x === 1 || x === 2)) { // 1x1, 2x2 = circle
+        mask.write(`<circle style="fill:#000;stroke:none" cx="${64 * x / 2}" cy="${64 * y / 2}" r="${32 * x - p}"/>`)
+      } else if (x === 1) { // 1xY
+        mask.write(`<path style="fill:#000000;stroke:none" d="M ${64 - p},32 A ${32 - p},${32 - p} 0 0 0 32,${p} ${32 - p},${32 - p} 0 0 0 ${p},32 v ${y * 64 - 64} a ${32 - p},${32 - p} 0 0 0 ${32 - p},${32 - p} ${32 - p},${32 - p} 0 0 0 ${32 - p},-${32 - p} z" />`)
+      } else if (y === 1) { // Xx1
+        mask.write(`<path style="fill:#000000;stroke:none" d="M 32,${p} A ${32 - p},${32 - p} 0 0 0 ${p},32 ${32 - p},${32 - p} 0 0 0 32,${64 - p} H ${x * 64 - 32} A ${32 - p},${32 - p} 0 0 0 ${x * 64 - p},32 ${32 - p},${32 - p} 0 0 0 ${x * 64 - 32},${p} Z" />`)
+      } else {
+        const dx = 64 + 64 * (x - 2)
+        const dy = 64 + 64 * (y - 2)
+        mask.write(`<path style="fill:#000;stroke:none" d="M 64 ${p} A ${64 - p} ${64 - p} 0 0 0 ${p} 64 L ${p} ${dy} A ${64 - p} ${64 - p} 0 0 0 64 ${64 * y - p} L ${dx} ${64 * y - p} A ${64 - p} ${64 - p} 0 0 0 ${64 * x - p} ${dy} L ${64 * x - p} 64 A ${64 - p} ${64 - p} 0 0 0 ${dx} ${p} L 64 ${p} z " />`)
+      }
+      mask.write('</svg>')
+      mask.end()
+    }
+  }
+
+  done()
+})
 
 // --- default target ----------------------------------------------------------
 

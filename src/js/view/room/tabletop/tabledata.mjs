@@ -413,6 +413,7 @@ export function populatePieceDefaults (piece, headers = null) {
     const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     if (asset.mask) piece._meta.mask = getAssetURL(asset, -2)
+    if (piece.l === LAYER_TOKEN && piece.w <= 8 && piece.h <= 8) piece._meta.mask = `img/mask/token-${piece.w}x${piece.h}.svg`
     piece._meta.sides = asset.media.length ?? 1
     piece._meta.sidesExtra = (piece.l === LAYER_TOKEN && piece._meta.sides === 1) ? 1 : 0
 
@@ -762,11 +763,11 @@ export function splitAssetFilename (assetName) {
  * @return {Promise(Boolean)} True if pixel at x/y is transparent, false otherwise.
  */
 export function isSolid (piece, x, y) {
-  if (
-    !piece || // no piece = no checking
-    piece.l === LAYER_TOKEN || // token are always round & solid
-    !piece._meta?.mask // no mask = no checking possible
-  ) return Promise.resolve(true)
+  const setup = getSetup()
+
+  if (!piece) return Promise.resolve(true) // no piece = no checking
+
+  if (!piece._meta?.mask) return Promise.resolve(true) // no mask = full area is hit area
 
   // now do the hit detection
   return new Promise((resolve, reject) => {
@@ -775,8 +776,6 @@ export function isSolid (piece, x, y) {
     img.addEventListener('error', (err) => reject(err))
     img.src = piece._meta.mask
   }).then(img => {
-    const setup = getSetup()
-
     const width = piece.w * setup.gridSize
     const height = piece.h * setup.gridSize
 
