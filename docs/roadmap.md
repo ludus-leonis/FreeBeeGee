@@ -11,7 +11,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] library: delete assets UI
 * [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
-* [ ] ui: shuffle z-order (+ put on same X/Y)
+* [ ] ui: shuffle z-order (+ put on same X/Y) & remove shuffle item
 * [ ] engine: grid-on-tile flag
 * [X] engine: make side digit in 1x1x1 optional (= 1x1)
 * [ ] pre-release

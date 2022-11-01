@@ -764,17 +764,24 @@ export function splitAssetFilename (assetName) {
  */
 export function isSolid (piece, x, y) {
   const setup = getSetup()
+  let mask
 
-  if (!piece) return Promise.resolve(true) // no piece = no checking
-
-  if (!piece._meta?.mask) return Promise.resolve(true) // no mask = full area is hit area
+  if (!piece) {
+    return Promise.resolve(true) // no piece = no checking
+  } else if (piece.l === LAYER_TOKEN) {
+    mask = `data:image/svg+xml;base64,${btoa(getTokenMaskSVG(piece.w, piece.h))}`
+  } else if (!piece._meta?.mask) {
+    return Promise.resolve(true) // no mask = full area is hit area
+  } else {
+    mask = piece._meta.mask
+  }
 
   // now do the hit detection
   return new Promise((resolve, reject) => {
     const img = new Image() // eslint-disable-line no-undef
     img.addEventListener('load', () => resolve(img))
     img.addEventListener('error', (err) => reject(err))
-    img.src = piece._meta.mask
+    img.src = mask
   }).then(img => {
     const width = piece.w * setup.gridSize
     const height = piece.h * setup.gridSize
@@ -820,7 +827,7 @@ export function isSolid (piece, x, y) {
  * @param {Element} node DOM node that triggered the click event.
  * @param {Object} coords {x, y} of the current mouse coordinates.
  * @param {Object} target If not null, the caller thinks this is the target.
- * @param return Promise of the real click target.
+ * @return {Promise} Real click target.
  */
 export function findRealClickTarget (node, coords, target = null) {
   // find all potential pieces in all layers.
@@ -839,6 +846,34 @@ export function findRealClickTarget (node, coords, target = null) {
   }
 
   return _iterateClickTargetsAsync(pieces, coords)
+}
+
+/**
+ * Create a mask in the shape of a token.
+ *
+ * Includes our padding and rounded corners.
+ *
+ * @param {Number} w Width of token.
+ * @param {Number} h Height of token.
+ * @param {Number} p Padding of token.
+ * @return {String} SVG-as-string in shape of the token.
+ */
+function getTokenMaskSVG (w, h, p = 3) {
+  let mask = `<svg width="${w * 64}" height="${h * 64}" viewBow="0 0 ${w * 64} ${h * 64}" xmlns="http://www.w3.org/2000/svg">`
+  if (w === h && (w === 1 || w === 2)) { // 1x1, 2x2 = circle
+    mask += `<circle style="fill:#000;stroke:none" cx="${64 * w / 2}" cy="${64 * h / 2}" r="${32 * w - p}"/>`
+  } else if (w === 1) { // 1xY
+    mask += `<path style="fill:#000000;stroke:none" d="M ${64 - p},32 A ${32 - p},${32 - p} 0 0 0 32,${p} ${32 - p},${32 - p} 0 0 0 ${p},32 v ${h * 64 - 64} a ${32 - p},${32 - p} 0 0 0 ${32 - p},${32 - p} ${32 - p},${32 - p} 0 0 0 ${32 - p},-${32 - p} z" />`
+  } else if (h === 1) { // Xx1
+    mask += `<path style="fill:#000000;stroke:none" d="M 32,${p} A ${32 - p},${32 - p} 0 0 0 ${p},32 ${32 - p},${32 - p} 0 0 0 32,${64 - p} H ${w * 64 - 32} A ${32 - p},${32 - p} 0 0 0 ${w * 64 - p},32 ${32 - p},${32 - p} 0 0 0 ${w * 64 - 32},${p} Z" />`
+  } else {
+    const dw = 64 + 64 * (w - 2)
+    const dh = 64 + 64 * (h - 2)
+    mask += `<path style="fill:#000;stroke:none" d="M 64 ${p} A ${64 - p} ${64 - p} 0 0 0 ${p} 64 L ${p} ${dh} A ${64 - p} ${64 - p} 0 0 0 64 ${64 * h - p} L ${dw} ${64 * h - p} A ${64 - p} ${64 - p} 0 0 0 ${64 * w - p} ${dh} L ${64 * w - p} 64 A ${64 - p} ${64 - p} 0 0 0 ${dw} ${p} L 64 ${p} z " />`
+  }
+  mask += '</svg>'
+
+  return mask
 }
 
 function _iterateClickTargetsAsync (pieces, coords) {
