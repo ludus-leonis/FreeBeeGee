@@ -12,7 +12,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] bug: trailing slash in apache config confuses FBG
+    * [X] bug: trailing slash in apache config confuses FBG
     * [X] refactor: PHP consts
     * [X] refactor: split api tests in all/latest
     * [X] refactor: automated tests for zip/tgz packages after build

@@ -66,8 +66,10 @@ class JSONRestAPI
     {
         // autodetect our FS dir and our (sub)directory in the URL/path
         $scriptDir = dirname(__FILE__);
+        $docroot = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
+
         $this->apiDirFS = $scriptDir . '/';
-        $this->apiRoot = substr($scriptDir, strlen($_SERVER['DOCUMENT_ROOT']));
+        $this->apiRoot = substr($scriptDir, strlen($docroot));
     }
 
     /**
