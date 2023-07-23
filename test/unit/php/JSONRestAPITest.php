@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021-2022 Markus Leupold-Löwenthal
+ * Copyright 2021-2023 Markus Leupold-Löwenthal
  *
  * @license This file is part of FreeBeeGee.
  *
