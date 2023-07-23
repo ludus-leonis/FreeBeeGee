@@ -38,6 +38,7 @@ const runner = function (what) {
   describe('PHP 7.4', function () { what(api.replace(/localhost:8765/, 'play74.local'), '74', `${room}74`) })
   describe('PHP 8.0', function () { what(api.replace(/localhost:8765/, 'play80.local'), '80', `${room}80`) })
   describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.local'), '81', `${room}81`) })
+  describe('PHP 8.2', function () { what(api.replace(/localhost:8765/, 'play82.local'), '82', `${room}82`) })
 }
 
 runAssets(runner)

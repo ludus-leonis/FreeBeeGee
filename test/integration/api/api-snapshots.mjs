@@ -142,7 +142,7 @@ function testApiSnapshotTutorial (api, version, room) {
     expect(entries).to.contain('LICENSE.md')
     expect(entries).to.contain('setup.json')
     expect(entries).to.contain('tables/6.json')
-    expect(entries).to.contain('assets/token/orc.1x1x1.6.wood.svg')
+    expect(entries).to.contain('assets/token/orc.1x1.6.wood.svg')
     expect(entries).not.to.contain('room.json')
     expect(entries).not.to.contain('snapshot.zip')
   }, 200)

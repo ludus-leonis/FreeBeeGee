@@ -8,6 +8,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added 'rough' and 'linen' material for pieces
 * added support for G-Z as token 'number'
+* added PHP 8.2 support
 
 ### Other changes
 

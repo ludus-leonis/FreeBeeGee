@@ -154,7 +154,7 @@ class JSONRestAPI
         $route = preg_replace('/\/:([a-zA-Z]+)/', "/(?'$1'[^\/]+)", $route);
 
         // complete the regexp
-        return "/^${route}$/";
+        return "/^{$route}$/";
     }
 
     /**

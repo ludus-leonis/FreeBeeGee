@@ -4,7 +4,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.19 - ??? ???
 
-* [ ] PHP 8.2 support
+* [X] PHP 8.2 support
 * [X] hex variant for hexes rotated 90°
 * [X] engine: rough & linen material
 * [X] engine: support G-Z as token number
