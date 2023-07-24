@@ -1,10 +1,10 @@
 {
- "id": "CtdHImtQ",
+ "id": "aAcDaerQ",
  "name": "demoroomtutorial",
  "engine": "2.3.1",
  "setup": {
   "engine": "2.3.0",
-  "version": "0.19.0-dev",
+  "version": "0.19.0",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 64,
@@ -340,43 +340,43 @@
     "h": 1,
     "bg": "transparent",
     "media": [
-     "chest.1x1x1.transparent.png"
+     "chest.1x1.transparent.png"
     ]
    },
    {
-    "id": "DOx9P300",
-    "name": "corridor.4x1",
+    "id": "qgC-g200",
+    "name": "corridor",
     "type": "tile",
     "w": 4,
     "h": 1,
     "bg": "#7C7F76",
     "media": [
-     "corridor.4x1.4x1x1.7C7F76.paper.jpg"
+     "corridor.4x1.7C7F76.paper.jpg"
     ],
     "tx": "paper"
    },
    {
-    "id": "i89Ot200",
-    "name": "room.4x4",
+    "id": "mvwK8200",
+    "name": "room",
     "type": "tile",
     "w": 4,
     "h": 4,
     "bg": "#808674",
     "media": [
-     "room.4x4.4x4x1.808674.paper.jpg",
-     "room.4x4.4x4x2.8E947E.paper.jpg"
+     "room.4x4x1.808674.paper.jpg",
+     "room.4x4x2.8E947E.paper.jpg"
     ],
     "tx": "paper"
    },
    {
-    "id": "F-Tl9100",
-    "name": "stairs.2x2",
+    "id": "DJGYo200",
+    "name": "stairs",
     "type": "tile",
     "w": 2,
     "h": 2,
     "bg": "#686E60",
     "media": [
-     "stairs.2x2.2x2x1.686E60.paper.jpg"
+     "stairs.2x2.686E60.paper.jpg"
     ],
     "tx": "paper"
    }
@@ -485,7 +485,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "barbarian.1x1x1.3.wood.svg"
+     "barbarian.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -497,7 +497,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "goblin.1x1x1.6.wood.svg"
+     "goblin.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -509,7 +509,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "orc.1x1x1.6.wood.svg"
+     "orc.1x1.6.wood.svg"
     ],
     "tx": "wood"
    }
@@ -859,6 +859,63 @@
     "bg": "#808080",
     "media": [
      "_.target.svg"
+    ]
+   }
+  ],
+  "material": [
+   {
+    "id": "CIZcg300",
+    "name": "linen",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "linen.png"
+    ]
+   },
+   {
+    "id": "MOevM100",
+    "name": "none",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "none.png"
+    ]
+   },
+   {
+    "id": "Hb9tz200",
+    "name": "paper",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "paper.png"
+    ]
+   },
+   {
+    "id": "LDpOJ000",
+    "name": "rough",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "rough.png"
+    ]
+   },
+   {
+    "id": "wS-60300",
+    "name": "wood",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "wood.png"
     ]
    }
   ]

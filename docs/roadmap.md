@@ -2,16 +2,16 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.19 - ??? ???
+## v0.19 - Frying Frog
 
 * [X] PHP 8.2 support
 * [X] hex variant for hexes rotated 90°
 * [X] engine: rough & linen material
 * [X] engine: support G-Z as token number
 * [X] engine: make side digit in 1x1x1 optional (= 1x1)
-* [ ] pre-release
+* [X] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] bug: trailing slash in apache config confuses FBG
     * [X] refactor: PHP consts
     * [X] refactor: split api tests in all/latest
@@ -19,11 +19,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] bug: docker build not pulling latest php baseimage
     * [X] minimizing of pre-minimized snapshot assets
     * [X] bug: token selection not properly working when clicking through transparent dicemap
-  * [ ] review docs
-  * [ ] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] review + run tests
-  * [ ] update screenshots
+  * [X] review docs
+  * [X] review tutorial
+  * [X] bump engine, version/codename & update CHANGELOG
+  * [X] review + run tests
+  * [X] update screenshots
 
 ## Backlog
 

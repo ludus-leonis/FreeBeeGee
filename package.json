@@ -1,9 +1,9 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.19.0-dev",
+  "version": "0.19.0",
   "versionEngine": "2.3.1",
   "type": "module",
-  "codename": "??? ???",
+  "codename": "Frying Frog",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",

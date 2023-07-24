@@ -2,7 +2,7 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.19.0 - ??? ???
+## v0.19.0 - Frying Frog
 
 ### Notable changes
 

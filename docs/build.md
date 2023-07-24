@@ -6,7 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It covers how 
 
 This is not needed for a regular installation. Most users should be fine using the pre-packaged `*.tar.gz`/`*.zip` mentioned in the [installation instructions](INSTALL.md).
 
-However, if you want to build FreeBeeGee yourself, you'll need `git`, `npm` and `php` (for static linter tests) locally installed. Then do:
+However, if you want to build FreeBeeGee yourself, you'll need `git`, `npm` and `php-cli` (for static linter tests) locally installed. Then do:
 
 ```
 git clone --depth 1 https://github.com/ludus-leonis/FreeBeeGee
@@ -17,7 +17,9 @@ npm run gulp release
 
 The archives can now be found in the `dist/` folder.
 
-### Building demo mode
+Not needed for the build, but to run the unit tests you will also need `php-tokenizer`, `phpunit`, `php-zip` and `libzip-dev`.
+
+### Building Demo Mode
 
 In Demo Mode, FreeBeeGee will not use the PHP backend/API, but store everything in the browser's HTML storage. This disables some features (multiplayer, uploads, downloads). But as most other functions work, this is sufficient for trying out FreeBeeGee. Demo Mode can't be enabled during runtime - the demo version has to be built statically:
 

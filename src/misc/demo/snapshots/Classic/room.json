@@ -1,10 +1,10 @@
 {
- "id": "yVAY3Alu",
+ "id": "T1kXgi6l",
  "name": "demoroomclassic",
  "engine": "2.3.1",
  "setup": {
   "engine": "2.3.0",
-  "version": "0.19.0-dev",
+  "version": "0.19.0",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 64,
@@ -338,7 +338,7 @@
     "h": 8,
     "bg": "#b7b9ca",
     "media": [
-     "chess.8x8x1.b7b9ca.jpg"
+     "chess.8x8.b7b9ca.jpg"
     ]
    },
    {
@@ -991,6 +991,63 @@
     "bg": "#808080",
     "media": [
      "shield.svg"
+    ]
+   }
+  ],
+  "material": [
+   {
+    "id": "CIZcg300",
+    "name": "linen",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "linen.png"
+    ]
+   },
+   {
+    "id": "MOevM100",
+    "name": "none",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "none.png"
+    ]
+   },
+   {
+    "id": "Hb9tz200",
+    "name": "paper",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "paper.png"
+    ]
+   },
+   {
+    "id": "LDpOJ000",
+    "name": "rough",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "rough.png"
+    ]
+   },
+   {
+    "id": "wS-60300",
+    "name": "wood",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "wood.png"
     ]
    }
   ]
