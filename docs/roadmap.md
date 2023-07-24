@@ -2,35 +2,50 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.19 - ??? ???
+## v0.19 - Frying Frog
 
-* [ ] engine: support G-Z as token number
-* [ ] pre-release
-  * [ ] bump dependencies
-  * [ ] bugfixes + refactoring
-  * [   ] refactor: relative includes via @
-    * [ ] bug: outside-token click selects token sometimes
-    * [ ] split api tests in all/one
-  * [ ] review docs
-  * [ ] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] review + run tests
-  * [ ] update screenshots
+* [X] PHP 8.2 support
+* [X] hex variant for hexes rotated 90°
+* [X] engine: rough & linen material
+* [X] engine: support G-Z as token number
+* [X] engine: make side digit in 1x1x1 optional (= 1x1)
+* [X] pre-release
+  * [X] bump dependencies
+  * [X] bugfixes + refactoring
+    * [X] bug: trailing slash in apache config confuses FBG
+    * [X] refactor: PHP consts
+    * [X] refactor: split api tests in all/latest
+    * [X] refactor: automated tests for zip/tgz packages after build
+    * [X] bug: docker build not pulling latest php baseimage
+    * [X] minimizing of pre-minimized snapshot assets
+    * [X] bug: token selection not properly working when clicking through transparent dicemap
+  * [X] review docs
+  * [X] review tutorial
+  * [X] bump engine, version/codename & update CHANGELOG
+  * [X] review + run tests
+  * [X] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
-* [ ] hex variant with hexes rotated 30°
-* [ ] PHP 8.2 support
+* [ ] PHP 8.3 support
+* [ ] bug: dragging multiselected hex tokens does not always snap correctly
+* [ ] refactor: split (edit) modals
+* [ ] library: show/indicate backside/all sides in tile browser
+* [ ] library: delete assets UI
 * [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
+* [ ] ui: shuffle z-order (+ put on same X/Y) & remove shuffle item
+* [ ] engine: grid-on-tile flag
+* [ ] repo: split API tests in docker/all/latest
+* [ ] piece: wooden cubes
+* [ ] refactor: relative includes via @
 * [ ] refactor: split edit modals
+* [ ] PHP 8.2 support
 * [ ] refactor: smaller modal paddings
-* [ ] library: delete assets UI
-* [ ] make side digit in 1x1x1 optional (= 1x1)
 * [ ] simplify/automate more deployment steps (ongoing)
-  * [ ] automated deployment tests for new zip/tgz packages after build
+  * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
@@ -39,11 +54,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] ui: open edit window on note create
 * [ ] library: edit asset UI
-* [ ] library: show/indicate backside/all sides in tile browser
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
-* [ ] engine: overlay-grid-on-tile flag
+* [ ] ui: set fixed table size (e.g. 73x65)
 * [ ] piece: supply heap
 * [ ] piece: cards / card-decks
   * [ ] shuffle deck/stack
@@ -67,6 +81,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather later (unsorted, after v1)
 
+* ui skins (modals, fonts, ...)
+* library: folder / modules / packages to enable/disable groups of assets (e.g. dungeon, woods, space, ...)
 * pieces: inline-edit notes
 * better sticky notes (auto-size text)
 * bulk manipulation of assets (delete, edit, change type)

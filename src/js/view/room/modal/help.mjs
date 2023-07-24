@@ -1,7 +1,7 @@
 /**
  * @file Handles the help/about modal.
  * @module
- * @copyright 2021-2022 Markus Leupold-Löwenthal
+ * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -156,7 +156,7 @@ export function modalHelp () {
 
             <h2>FreeBeeGee</h2>
 
-            <p>Copyright 2021-2022 Markus Leupold-Löwenthal</p>
+            <p>Copyright 2021-2023 Markus Leupold-Löwenthal</p>
 
             <p>FreeBeeGee is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
 

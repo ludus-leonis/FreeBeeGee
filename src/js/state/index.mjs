@@ -3,7 +3,7 @@
  *       changes to the API but is not in charge of syncing the state back.
  *       Might cache some values in the browser store.
  * @module
- * @copyright 2021-2022 Markus Leupold-Löwenthal
+ * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -54,11 +54,13 @@ import {
   ID,
   FEATURE_DICEMAT,
   TYPE_HEX,
+  TYPE_HEX2,
   findPiece,
   populatePiecesDefaults,
   populateSetupDefaults,
   clampToTableSize,
   nameToLayer,
+  getRoomMediaURL,
   sanitizePiecePatch
 } from '../view/room/tabletop/tabledata.mjs'
 
@@ -157,11 +159,34 @@ export function getBackground () {
     const gridType = getRoomPreference(PREFS.GRID)
     const color = brightness(background.color) < 92 ? 'white' : 'black'
     const style = gridType > 1 ? 'major' : 'minor'
-    const shape = room.setup?.type === TYPE_HEX ? 'hex' : 'square'
-    background.gridFile = `img/grid-${shape}-${style}-${color}.svg`
+
+    switch (room.setup?.type) {
+      case TYPE_HEX:
+        background.gridFile = `img/grid-hex-${style}-${color}.svg`
+        break
+      case TYPE_HEX2:
+        background.gridFile = `img/grid-hex2-${style}-${color}.svg`
+        break
+      default:
+        background.gridFile = `img/grid-square-${style}-${color}.svg`
+    }
   }
 
   return background
+}
+
+/**
+ * Get the material media path for a material name.
+ *
+ * Reverts to first = no material if not found.
+ *
+ * @param {String} name The material's name, e.g. 'wood'.
+ * @return {String} Media path, e.g. 'api/data/rooms/roomname/assets/material/wood.png'
+ */
+export function getMaterialMedia (name) {
+  const material = getLibrary()?.material?.find(m => m.name === name)
+  const filename = material?.media[0] ?? 'none.png'
+  return getRoomMediaURL(getRoom()?.name, 'material', filename)
 }
 
 /**

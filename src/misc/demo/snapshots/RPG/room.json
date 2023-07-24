@@ -1,10 +1,10 @@
 {
- "id": "KaQIcS_a",
+ "id": "SePRtm81",
  "name": "demoroomrpg",
  "engine": "2.3.1",
  "setup": {
   "engine": "2.3.0",
-  "version": "0.18.0",
+  "version": "0.19.0",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 48,
@@ -856,7 +856,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "aasimar.1x1x1.5.wood.svg"
+     "aasimar.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -868,7 +868,7 @@
     "h": 3,
     "bg": "9",
     "media": [
-     "aboleth.3x3x1.9.wood.svg"
+     "aboleth.3x3.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -880,7 +880,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "alien.1x1x1.1.wood.svg"
+     "alien.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -892,7 +892,7 @@
     "h": 2,
     "bg": "8",
     "media": [
-     "angel.2x2x1.8.wood.svg"
+     "angel.2x2.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -904,7 +904,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "animatedObject.1x1x1.10.wood.svg"
+     "animatedObject.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -916,7 +916,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "ankheg.2x2x1.4.wood.svg"
+     "ankheg.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -928,7 +928,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "ant.1x1x1.4.wood.svg"
+     "ant.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -940,7 +940,7 @@
     "h": 2,
     "bg": "0",
     "media": [
-     "ape.gorilla.2x2x1.0.wood.svg"
+     "ape.gorilla.2x2.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -952,7 +952,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "archer.1x1x1.0.wood.svg"
+     "archer.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -964,7 +964,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "archon.1x1x1.10.wood.svg"
+     "archon.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -976,7 +976,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "armadillo.1x1x1.4.wood.svg"
+     "armadillo.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -988,7 +988,7 @@
     "h": 2,
     "bg": "6",
     "media": [
-     "assassinVine.2x2x1.6.wood.svg"
+     "assassinVine.2x2.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1000,7 +1000,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "azer.1x1x1.3.wood.svg"
+     "azer.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1012,7 +1012,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "bandit.1x1x1.0.wood.svg"
+     "bandit.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1024,7 +1024,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "barbarian.1x1x1.0.wood.svg"
+     "barbarian.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1036,7 +1036,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "barghest.1x1x1.0.wood.svg"
+     "barghest.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1048,7 +1048,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "basidirond.1x1x1.6.wood.svg"
+     "basidirond.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1060,7 +1060,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "basilisk.1x1x1.10.wood.svg"
+     "basilisk.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1072,7 +1072,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "bat.1x1x1.1.wood.svg"
+     "bat.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1084,7 +1084,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "bear.brown-.2x2x1.4.wood.svg"
+     "bear.brown-.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1096,7 +1096,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "bee.1x1x1.5.wood.svg"
+     "bee.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1108,7 +1108,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "beetle.fire-.1x1x1.3.wood.svg"
+     "beetle.fire-.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1120,7 +1120,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "beetle.scarab.1x1x1.4.wood.svg"
+     "beetle.scarab.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1132,7 +1132,7 @@
     "h": 3,
     "bg": "9",
     "media": [
-     "behir.3x3x1.9.wood.svg"
+     "behir.3x3.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1144,7 +1144,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "bison.2x2x1.4.wood.svg"
+     "bison.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1156,7 +1156,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "boar.1x1x1.4.wood.svg"
+     "boar.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1168,7 +1168,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "brute.1x1x1.0.wood.svg"
+     "brute.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1180,7 +1180,7 @@
     "h": 2,
     "bg": "5",
     "media": [
-     "camel.2x2x1.5.wood.svg"
+     "camel.2x2.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1192,7 +1192,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "cat.1x1x1.0.wood.svg"
+     "cat.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1204,7 +1204,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "cat.saber-toothed.1x1x1.5.wood.svg"
+     "cat.saber-toothed.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1216,7 +1216,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "caveman.1x1x1.0.wood.svg"
+     "caveman.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1228,7 +1228,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "centaur.2x2x1.4.wood.svg"
+     "centaur.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1240,7 +1240,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "centipede.1x1x1.6.wood.svg"
+     "centipede.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1252,7 +1252,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "chuul.2x2x1.4.wood.svg"
+     "chuul.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1264,7 +1264,7 @@
     "h": 2,
     "bg": "10",
     "media": [
-     "cloaker.2x2x1.10.wood.svg"
+     "cloaker.2x2.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1276,7 +1276,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "clockwork.1x1x1.5.wood.svg"
+     "clockwork.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1288,7 +1288,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "cockatrice.1x1x1.4.wood.svg"
+     "cockatrice.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1300,7 +1300,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "couatl.1x1x1.10.wood.svg"
+     "couatl.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1312,7 +1312,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "crab.1x1x1.5.wood.svg"
+     "crab.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1324,7 +1324,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "crawlingHand.1x1x1.1.wood.svg"
+     "crawlingHand.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1336,7 +1336,7 @@
     "h": 2,
     "bg": "6",
     "media": [
-     "crocodile.2x2x1.6.wood.svg"
+     "crocodile.2x2.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1348,7 +1348,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "cultist.1x1x1.10.wood.svg"
+     "cultist.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1360,7 +1360,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "darkmantle.1x1x1.1.wood.svg"
+     "darkmantle.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1372,7 +1372,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "deathKnight.1x1x1.1.wood.svg"
+     "deathKnight.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1384,7 +1384,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "deer.1x1x1.4.wood.svg"
+     "deer.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1396,7 +1396,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "demilich.1x1x1.1.wood.svg"
+     "demilich.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1408,7 +1408,7 @@
     "h": 3,
     "bg": "3",
     "media": [
-     "demon.bebilith.3x3x1.3.wood.svg"
+     "demon.bebilith.3x3.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1420,7 +1420,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "demon.quasit.1x1x1.3.wood.svg"
+     "demon.quasit.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1432,7 +1432,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "devil.imp.1x1x1.3.wood.svg"
+     "devil.imp.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1444,7 +1444,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "dinosaur.parasaurolophus.2x2x1.4.wood.svg"
+     "dinosaur.parasaurolophus.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1456,7 +1456,7 @@
     "h": 2,
     "bg": "8",
     "media": [
-     "dinosaur.pterodactylus.2x2x1.8.wood.svg"
+     "dinosaur.pterodactylus.2x2.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1468,7 +1468,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "dog.1x1x1.4.wood.svg"
+     "dog.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1480,7 +1480,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "dolphin.1x1x1.9.wood.svg"
+     "dolphin.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1492,7 +1492,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "doppelganger.1x1x1.0.wood.svg"
+     "doppelganger.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1504,7 +1504,7 @@
     "h": 3,
     "bg": "3",
     "media": [
-     "dragon.3x3x1.3.wood.svg"
+     "dragon.3x3.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1516,7 +1516,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "dragonfolk.1x1x1.5.wood.svg"
+     "dragonfolk.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1528,7 +1528,7 @@
     "h": 2,
     "bg": "10",
     "media": [
-     "drider.2x2x1.10.wood.svg"
+     "drider.2x2.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1540,7 +1540,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "duergar.1x1x1.0.wood.svg"
+     "duergar.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1552,7 +1552,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "dwarf.1x1x1.0.wood.svg"
+     "dwarf.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1564,7 +1564,7 @@
     "h": 1,
     "bg": "8",
     "media": [
-     "eagle.1x1x1.8.wood.svg"
+     "eagle.1x1.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1576,7 +1576,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "eel.1x1x1.9.wood.svg"
+     "eel.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1588,7 +1588,7 @@
     "h": 1,
     "bg": "8",
     "media": [
-     "elemental.air.1x1x1.8.wood.svg"
+     "elemental.air.1x1.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1600,7 +1600,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "elemental.earth.1x1x1.4.wood.svg"
+     "elemental.earth.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1612,7 +1612,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "elemental.fire.1x1x1.3.wood.svg"
+     "elemental.fire.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1624,7 +1624,7 @@
     "h": 1,
     "bg": "8",
     "media": [
-     "elemental.ice.1x1x1.8.wood.svg"
+     "elemental.ice.1x1.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1636,7 +1636,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "elemental.water.1x1x1.9.wood.svg"
+     "elemental.water.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1648,7 +1648,7 @@
     "h": 2,
     "bg": "0",
     "media": [
-     "elephant.2x2x1.0.wood.svg"
+     "elephant.2x2.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1660,7 +1660,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "elf.1x1x1.0.wood.svg"
+     "elf.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1672,7 +1672,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "elf.dark-.1x1x1.1.wood.svg"
+     "elf.dark-.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1684,7 +1684,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "ettercap.1x1x1.10.wood.svg"
+     "ettercap.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1696,7 +1696,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "ettin.2x2x1.4.wood.svg"
+     "ettin.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1708,7 +1708,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "fairy.1x1x1.10.wood.svg"
+     "fairy.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1720,7 +1720,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "fish.1x1x1.9.wood.svg"
+     "fish.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1732,7 +1732,7 @@
     "h": 2,
     "bg": "10",
     "media": [
-     "floatingEye.2x2x1.10.wood.svg"
+     "floatingEye.2x2.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1744,7 +1744,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "flumph.1x1x1.10.wood.svg"
+     "flumph.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1756,7 +1756,7 @@
     "h": 3,
     "bg": "1",
     "media": [
-     "fomorian.3x3x1.1.wood.svg"
+     "fomorian.3x3.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1768,7 +1768,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "frog.1x1x1.6.wood.svg"
+     "frog.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1780,7 +1780,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "fungus.1x1x1.6.wood.svg"
+     "fungus.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1792,7 +1792,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "gargoyle.1x1x1.0.wood.svg"
+     "gargoyle.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1804,7 +1804,7 @@
     "h": 2,
     "bg": "8",
     "media": [
-     "genie.djinni.2x2x1.8.wood.svg"
+     "genie.djinni.2x2.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1816,7 +1816,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "ghost.1x1x1.1.wood.svg"
+     "ghost.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1828,7 +1828,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "ghoul.1x1x1.1.wood.svg"
+     "ghoul.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1840,7 +1840,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "giant.cyclops.2x2x1.4.wood.svg"
+     "giant.cyclops.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1852,7 +1852,7 @@
     "h": 4,
     "bg": "4",
     "media": [
-     "giant.hill.4x4x1.4.wood.svg"
+     "giant.hill.4x4.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1864,7 +1864,7 @@
     "h": 2,
     "bg": "10",
     "media": [
-     "gibberingMouther.2x2x1.10.wood.svg"
+     "gibberingMouther.2x2.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1876,7 +1876,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "gnoll.1x1x1.5.wood.svg"
+     "gnoll.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1888,7 +1888,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "gnome.1x1x1.10.wood.svg"
+     "gnome.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1900,7 +1900,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "goat.1x1x1.0.wood.svg"
+     "goat.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1912,7 +1912,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "goblin.1x1x1.6.wood.svg"
+     "goblin.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1924,7 +1924,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "golem.clay.1x1x1.4.wood.svg"
+     "golem.clay.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1936,19 +1936,19 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "golem.flesh.1x1x1.4.wood.svg"
+     "golem.flesh.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "DnsRf100",
+    "id": "hh9Pm300",
     "name": "golem.iron",
     "type": "token",
     "w": 1,
     "h": 1,
     "bg": "0",
     "media": [
-     "golem.iron.1x1x2.0.wood.svg"
+     "golem.iron.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1960,7 +1960,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "golem.stone.1x1x1.0.wood.svg"
+     "golem.stone.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1972,7 +1972,7 @@
     "h": 2,
     "bg": "0",
     "media": [
-     "gorgon.2x2x1.0.wood.svg"
+     "gorgon.2x2.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1984,7 +1984,7 @@
     "h": 2,
     "bg": "5",
     "media": [
-     "griffon.2x2x1.5.wood.svg"
+     "griffon.2x2.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -1996,7 +1996,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "grimlock.1x1x1.0.wood.svg"
+     "grimlock.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2008,7 +2008,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "hag.swamp.1x1x1.10.wood.svg"
+     "hag.swamp.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2020,7 +2020,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "halfling.1x1x1.0.wood.svg"
+     "halfling.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2032,7 +2032,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "harpy.1x1x1.10.wood.svg"
+     "harpy.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2044,7 +2044,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "helmedTerror.1x1x1.0.wood.svg"
+     "helmedTerror.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2056,7 +2056,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "hooded.1x1x1.0.wood.svg"
+     "hooded.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2068,7 +2068,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "horse.2x2x1.4.wood.svg"
+     "horse.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2080,7 +2080,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "hound.1x1x1.1.wood.svg"
+     "hound.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2092,7 +2092,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "hound.hell-.1x1x1.3.wood.svg"
+     "hound.hell-.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2104,7 +2104,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "human.1x1x1.0.wood.svg"
+     "human.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2116,7 +2116,7 @@
     "h": 3,
     "bg": "9",
     "media": [
-     "hydra.3x3x1.9.wood.svg"
+     "hydra.3x3.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2128,7 +2128,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "hyena.1x1x1.5.wood.svg"
+     "hyena.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2140,7 +2140,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "insect.1x1x1.5.wood.svg"
+     "insect.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2152,7 +2152,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "intellectDevourer.1x1x1.10.wood.svg"
+     "intellectDevourer.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2164,7 +2164,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "invisibleStalker.1x1x1.0.wood.svg"
+     "invisibleStalker.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2176,7 +2176,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "knight.1x1x1.0.wood.svg"
+     "knight.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2188,7 +2188,7 @@
     "h": 4,
     "bg": "9",
     "media": [
-     "kraken.4x4x1.9.wood.svg"
+     "kraken.4x4.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2200,7 +2200,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "lich.1x1x1.1.wood.svg"
+     "lich.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2212,7 +2212,7 @@
     "h": 4,
     "bg": "10",
     "media": [
-     "lindwurm.4x4x1.10.wood.svg"
+     "lindwurm.4x4.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2224,7 +2224,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "lion.1x1x1.5.wood.svg"
+     "lion.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2236,7 +2236,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "lizard.1x1x1.6.wood.svg"
+     "lizard.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2248,7 +2248,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "lizardfolk.1x1x1.6.wood.svg"
+     "lizardfolk.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2260,7 +2260,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "lycanthrope.werewolf.1x1x1.0.wood.svg"
+     "lycanthrope.werewolf.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2272,7 +2272,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "lynx.1x1x1.4.wood.svg"
+     "lynx.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2284,7 +2284,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "magmin.1x1x1.3.wood.svg"
+     "magmin.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2296,7 +2296,7 @@
     "h": 2,
     "bg": "8",
     "media": [
-     "mammoth.2x2x1.8.wood.svg"
+     "mammoth.2x2.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2308,7 +2308,7 @@
     "h": 2,
     "bg": "6",
     "media": [
-     "mantis.2x2x1.6.wood.svg"
+     "mantis.2x2.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2320,7 +2320,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "mech.1x1x1.0.wood.svg"
+     "mech.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2332,7 +2332,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "medusa.1x1x1.10.wood.svg"
+     "medusa.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2344,7 +2344,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "merefolk.1x1x1.9.wood.svg"
+     "merefolk.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2356,7 +2356,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "mimic.1x1x1.10.wood.svg"
+     "mimic.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2368,7 +2368,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "minotaur.2x2x1.4.wood.svg"
+     "minotaur.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2380,7 +2380,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "monkey.1x1x1.4.wood.svg"
+     "monkey.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2392,7 +2392,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "mummy.1x1x1.1.wood.svg"
+     "mummy.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2404,7 +2404,7 @@
     "h": 2,
     "bg": "9",
     "media": [
-     "naga.guardian.2x2x1.9.wood.svg"
+     "naga.guardian.2x2.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2416,7 +2416,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "nymph.1x1x1.10.wood.svg"
+     "nymph.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2428,7 +2428,7 @@
     "h": 2,
     "bg": "9",
     "media": [
-     "octopus.2x2x1.9.wood.svg"
+     "octopus.2x2.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2440,7 +2440,7 @@
     "h": 2,
     "bg": "6",
     "media": [
-     "ogre.2x2x1.6.wood.svg"
+     "ogre.2x2.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2452,7 +2452,7 @@
     "h": 2,
     "bg": "3",
     "media": [
-     "oni.2x2x1.3.wood.svg"
+     "oni.2x2.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2464,7 +2464,7 @@
     "h": 4,
     "bg": "1",
     "media": [
-     "ooze.blackPudding.4x4x1.1.wood.svg"
+     "ooze.blackPudding.4x4.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2476,7 +2476,7 @@
     "h": 2,
     "bg": "8",
     "media": [
-     "ooze.gelatinousCube.2x2x1.8.wood.svg"
+     "ooze.gelatinousCube.2x2.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2488,7 +2488,7 @@
     "h": 2,
     "bg": "5",
     "media": [
-     "ooze.ochreJelly.2x2x1.5.wood.svg"
+     "ooze.ochreJelly.2x2.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2500,7 +2500,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "orc.1x1x1.6.wood.svg"
+     "orc.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2512,7 +2512,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "overlord.1x1x1.1.wood.svg"
+     "overlord.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2524,7 +2524,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "owl.1x1x1.4.wood.svg"
+     "owl.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2536,7 +2536,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "owlbear.2x2x1.4.wood.svg"
+     "owlbear.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2548,7 +2548,7 @@
     "h": 2,
     "bg": "8",
     "media": [
-     "pegasus.2x2x1.8.wood.svg"
+     "pegasus.2x2.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2560,7 +2560,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "piercer.1x1x1.1.wood.svg"
+     "piercer.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2572,7 +2572,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "piranha.1x1x1.9.wood.svg"
+     "piranha.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2584,7 +2584,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "pirate.1x1x1.9.wood.svg"
+     "pirate.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2596,7 +2596,7 @@
     "h": 2,
     "bg": "6",
     "media": [
-     "plant.carnivorous.2x2x1.6.wood.svg"
+     "plant.carnivorous.2x2.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2608,7 +2608,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "priest.1x1x1.0.wood.svg"
+     "priest.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2620,7 +2620,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "raccoon.1x1x1.1.wood.svg"
+     "raccoon.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2632,7 +2632,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "rakshasa.1x1x1.5.wood.svg"
+     "rakshasa.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2644,7 +2644,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "rat.1x1x1.4.wood.svg"
+     "rat.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2656,7 +2656,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "raven.1x1x1.1.wood.svg"
+     "raven.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2668,7 +2668,7 @@
     "h": 3,
     "bg": "9",
     "media": [
-     "remorhaz.3x3x1.9.wood.svg"
+     "remorhaz.3x3.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2680,7 +2680,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "rhinoceros.2x2x1.4.wood.svg"
+     "rhinoceros.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2692,7 +2692,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "robot.1x1x1.0.wood.svg"
+     "robot.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2704,7 +2704,7 @@
     "h": 4,
     "bg": "3",
     "media": [
-     "roc.4x4x1.3.wood.svg"
+     "roc.4x4.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2716,7 +2716,7 @@
     "h": 4,
     "bg": "3",
     "media": [
-     "roc.phoenix.4x4x1.3.wood.svg"
+     "roc.phoenix.4x4.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2728,7 +2728,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "rustMonster.1x1x1.4.wood.svg"
+     "rustMonster.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2740,7 +2740,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "sahuagin.1x1x1.9.wood.svg"
+     "sahuagin.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2752,7 +2752,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "scarecrow.1x1x1.5.wood.svg"
+     "scarecrow.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2764,7 +2764,7 @@
     "h": 2,
     "bg": "4",
     "media": [
-     "scorpion.2x2x1.4.wood.svg"
+     "scorpion.2x2.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2776,7 +2776,7 @@
     "h": 2,
     "bg": "9",
     "media": [
-     "seahorse.2x2x1.9.wood.svg"
+     "seahorse.2x2.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2788,7 +2788,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "sentinelGuardian.1x1x1.0.wood.svg"
+     "sentinelGuardian.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2800,7 +2800,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "shadow.1x1x1.0.wood.svg"
+     "shadow.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2812,7 +2812,7 @@
     "h": 2,
     "bg": "6",
     "media": [
-     "shamblingMound.2x2x1.6.wood.svg"
+     "shamblingMound.2x2.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2824,7 +2824,7 @@
     "h": 2,
     "bg": "9",
     "media": [
-     "shark.2x2x1.9.wood.svg"
+     "shark.2x2.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2836,7 +2836,7 @@
     "h": 3,
     "bg": "10",
     "media": [
-     "shoggoth.3x3x1.10.wood.svg"
+     "shoggoth.3x3.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2848,7 +2848,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "skeleton.1x1x1.1.wood.svg"
+     "skeleton.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2860,7 +2860,7 @@
     "h": 1,
     "bg": "3",
     "media": [
-     "skull.flame-.1x1x1.3.wood.svg"
+     "skull.flame-.1x1.3.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2872,7 +2872,7 @@
     "h": 3,
     "bg": "1",
     "media": [
-     "slug.3x3x1.1.wood.svg"
+     "slug.3x3.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2884,7 +2884,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "snake.cobra.1x1x1.4.wood.svg"
+     "snake.cobra.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2896,7 +2896,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "snake.viper.1x1x1.6.wood.svg"
+     "snake.viper.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2908,7 +2908,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "spectre.1x1x1.1.wood.svg"
+     "spectre.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2920,7 +2920,7 @@
     "h": 2,
     "bg": "5",
     "media": [
-     "sphinx.2x2x1.5.wood.svg"
+     "sphinx.2x2.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2932,7 +2932,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "spider.1x1x1.1.wood.svg"
+     "spider.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2944,7 +2944,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "sprite.pixie.1x1x1.10.wood.svg"
+     "sprite.pixie.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2956,7 +2956,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "squidMind.1x1x1.10.wood.svg"
+     "squidMind.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2968,7 +2968,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "squirrel.1x1x1.4.wood.svg"
+     "squirrel.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2980,7 +2980,7 @@
     "h": 1,
     "bg": "4",
     "media": [
-     "stirge.1x1x1.4.wood.svg"
+     "stirge.1x1.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -2992,7 +2992,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "tengu.1x1x1.0.wood.svg"
+     "tengu.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3004,7 +3004,7 @@
     "h": 4,
     "bg": "4",
     "media": [
-     "terrasque.4x4x1.4.wood.svg"
+     "terrasque.4x4.4.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3016,7 +3016,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "tiger.1x1x1.1.wood.svg"
+     "tiger.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3028,7 +3028,7 @@
     "h": 2,
     "bg": "6",
     "media": [
-     "treant.2x2x1.6.wood.svg"
+     "treant.2x2.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3040,7 +3040,7 @@
     "h": 1,
     "bg": "9",
     "media": [
-     "triton.merrow.1x1x1.9.wood.svg"
+     "triton.merrow.1x1.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3052,7 +3052,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "troglodyte.1x1x1.0.wood.svg"
+     "troglodyte.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3064,7 +3064,7 @@
     "h": 2,
     "bg": "6",
     "media": [
-     "troll.2x2x1.6.wood.svg"
+     "troll.2x2.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3076,7 +3076,7 @@
     "h": 4,
     "bg": "9",
     "media": [
-     "turtle.dragon.4x4x1.9.wood.svg"
+     "turtle.dragon.4x4.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3088,7 +3088,7 @@
     "h": 1,
     "bg": "6",
     "media": [
-     "turtle.tortoise.1x1x1.6.wood.svg"
+     "turtle.tortoise.1x1.6.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3100,7 +3100,7 @@
     "h": 2,
     "bg": "10",
     "media": [
-     "unicorn.2x2x1.10.wood.svg"
+     "unicorn.2x2.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3125,7 +3125,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "viking.1x1x1.0.wood.svg"
+     "viking.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3137,7 +3137,7 @@
     "h": 2,
     "bg": "9",
     "media": [
-     "vile.water.2x2x1.9.wood.svg"
+     "vile.water.2x2.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3149,7 +3149,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "vulture.1x1x1.1.wood.svg"
+     "vulture.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3161,7 +3161,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "wasp.1x1x1.5.wood.svg"
+     "wasp.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3173,7 +3173,7 @@
     "h": 3,
     "bg": "9",
     "media": [
-     "whale.3x3x1.9.wood.svg"
+     "whale.3x3.9.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3185,7 +3185,7 @@
     "h": 1,
     "bg": "5",
     "media": [
-     "will-o-wisp.1x1x1.5.wood.svg"
+     "will-o-wisp.1x1.5.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3197,7 +3197,7 @@
     "h": 1,
     "bg": "10",
     "media": [
-     "wizard.1x1x1.10.wood.svg"
+     "wizard.1x1.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3209,7 +3209,7 @@
     "h": 1,
     "bg": "0",
     "media": [
-     "wolf.1x1x1.0.wood.svg"
+     "wolf.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3221,7 +3221,7 @@
     "h": 4,
     "bg": "10",
     "media": [
-     "worm.leeching.4x4x1.10.wood.svg"
+     "worm.leeching.4x4.10.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3233,7 +3233,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "wraith.1x1x1.1.wood.svg"
+     "wraith.1x1.1.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3245,7 +3245,7 @@
     "h": 2,
     "bg": "8",
     "media": [
-     "yeti.2x2x1.8.wood.svg"
+     "yeti.2x2.8.wood.svg"
     ],
     "tx": "wood"
    },
@@ -3257,7 +3257,7 @@
     "h": 1,
     "bg": "1",
     "media": [
-     "zombie.1x1x1.1.wood.svg"
+     "zombie.1x1.1.wood.svg"
     ],
     "tx": "wood"
    }
@@ -3905,6 +3905,63 @@
     "bg": "#808080",
     "media": [
      "damage.thunder.svg"
+    ]
+   }
+  ],
+  "material": [
+   {
+    "id": "CIZcg300",
+    "name": "linen",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "linen.png"
+    ]
+   },
+   {
+    "id": "MOevM100",
+    "name": "none",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "none.png"
+    ]
+   },
+   {
+    "id": "Hb9tz200",
+    "name": "paper",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "paper.png"
+    ]
+   },
+   {
+    "id": "LDpOJ000",
+    "name": "rough",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "rough.png"
+    ]
+   },
+   {
+    "id": "wS-60300",
+    "name": "wood",
+    "type": "material",
+    "w": 1,
+    "h": 1,
+    "bg": "#808080",
+    "media": [
+     "wood.png"
     ]
    }
   ]

@@ -10,6 +10,6 @@ Please refer to [INSTALL.md](INSTALL.md) for information about requirements and 
 
 ## License
 
-Copyright 2021-2022 Markus Leupold-Löwenthal / Ludus Leonis.
+Copyright 2021-2023 Markus Leupold-Löwenthal / Ludus Leonis.
 
 FreeBeeGee is released under the [GNU AGPL-3.0](LICENSE.md).

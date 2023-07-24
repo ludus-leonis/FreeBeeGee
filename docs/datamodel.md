@@ -68,7 +68,7 @@ Optional fields:
 Media (image) files should be named using the following scheme. This allows FBG to sort them automatically into the *library* and set their meta data.
 
 ```
-mainName[.secondaryName].{x}x{y}x{s}[.bg[.texture]].{ext}
+mainName[.secondaryName][.{x}x{y}[x{s}]][.bg[.texture]].{ext}
 ```
 
 `mainName`
@@ -78,13 +78,13 @@ mainName[.secondaryName].{x}x{y}x{s}[.bg[.texture]].{ext}
 : An optional secondary camelcase name to be shown after a comma in the *library* if present. Will be reformated e.g. as `Main Name, Secondary Name`.
 
 `x`
-: The X-size of the tile/token in grid spaces.
+: The X-size of the tile/token in grid spaces. If omitted, `1` is assumed.
 
 `y`
-: The Y-size of the tile/token in grid spaces.
+: The Y-size of the tile/token in grid spaces. If omitted, `1` is assumed.
 
 `s`
-: The side this file represents, typically `1` or `2`, but an *asset* can have more than that - e.g. dice sides or enemy/color variants. FBG will cycle through those when a *piece* gets flipped.
+: The side this file represents, typically `1` or `2`, but an *asset* can have more than that - e.g. dice sides or enemy/color variants. FBG will cycle through those when a *piece* gets flipped. If omitted, side `1` is assumed.
 
 `bg`
 : An optional background color/style for this *asset*. Will be visible as placeholder during image loading, and shine thrugh in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, a number (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash). If missing, it defaults to `0`.
@@ -131,6 +131,9 @@ The *library* object holds information about each *asset*, sorted by *asset* typ
     ... assets ...
   ],
   "badge": [
+    ... assets ...
+  ],
+  "material": [
     ... assets ...
   ]
 }
@@ -188,7 +191,7 @@ In addition, a *piece* can have the following optional properties. If omitted, t
 : The side of the *piece* currently shown, usually one of its *asset* media files. Defaults to `0`.
 
 `n`
-: The number of the *piece*. This is a small digit displayed on the *piece* to distinguish multiple token with the same artwork (e.g. different Goblins). Can be `0`..`15`. Defaults to `0` = none.
+: The number of the *piece*. This is a small digit displayed on the *piece* to distinguish multiple token with the same artwork (e.g. different Goblins). Can be `0`..`35`. Defaults to `0` = none. `1` to `9` will be shown as number, `10` to `35` as letter A-Z.
 
 `c`
 : An array of colors, mostly one. Each number in this array is an index of the of the colors defined in the *room*'s *setup*. Can be 0..?. Defaults to `[0]`. It depends on the type of *piece* what these colors are used for (e.g. border, background, ...).
@@ -280,9 +283,9 @@ A *setup* using the `grid-square` type also has the following properties:
 `snap`
 : Optional boolean property. If set to `false`, grid-snapping will be disabled for this *setup*. It is on per default.
 
-### `grid-hex` entries
+### `grid-hex` / `grid-hex2` entries
 
-A *setup* using the `grid-hex` use hexes oriented with their flat sides up/down. They have the following additional properties:
+A *setup* using the `grid-hex` use hexes oriented with their flat sides up/down, while a `grid-hex2` use hexes with their pointy sides up/down. Both have the following additional properties:
 
 `gridSize`
 : The grid / minimum tile size in px. This equals the height of one hex (side-to-side).

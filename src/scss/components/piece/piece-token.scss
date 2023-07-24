@@ -1,4 +1,4 @@
-// Copyright 2021-2022 Markus Leupold-Löwenthal
+// Copyright 2021-2023 Markus Leupold-Löwenthal
 //
 // This file is part of FreeBeeGee.
 //
@@ -81,6 +81,26 @@
   &.is-n-13::after { content: 'D'; }
   &.is-n-14::after { content: 'E'; }
   &.is-n-15::after { content: 'F'; }
+  &.is-n-16::after { content: 'G'; }
+  &.is-n-17::after { content: 'H'; }
+  &.is-n-18::after { content: 'I'; }
+  &.is-n-19::after { content: 'J'; }
+  &.is-n-20::after { content: 'K'; }
+  &.is-n-21::after { content: 'L'; }
+  &.is-n-22::after { content: 'M'; }
+  &.is-n-23::after { content: 'N'; }
+  &.is-n-24::after { content: 'O'; }
+  &.is-n-25::after { content: 'P'; }
+  &.is-n-26::after { content: 'Q'; }
+  &.is-n-27::after { content: 'R'; }
+  &.is-n-28::after { content: 'S'; }
+  &.is-n-29::after { content: 'T'; }
+  &.is-n-30::after { content: 'U'; }
+  &.is-n-31::after { content: 'V'; }
+  &.is-n-32::after { content: 'W'; }
+  &.is-n-33::after { content: 'X'; }
+  &.is-n-34::after { content: 'Y'; }
+  &.is-n-35::after { content: 'Z'; }
 
   @for $x from 1 through 32 {
     &.is-w-#{$x} {

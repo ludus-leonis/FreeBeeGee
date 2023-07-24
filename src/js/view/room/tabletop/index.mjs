@@ -2,7 +2,7 @@
  * @file The actual tabletop stuff. Mainly in charge of state -> DOM
  *       propagation. Does not manipulate data nor does it do API calls.
  * @module
- * @copyright 2021-2022 Markus Leupold-Löwenthal
+ * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -40,6 +40,7 @@ import {
   getRoom,
   getSetup,
   getTable,
+  getMaterialMedia,
   updatePieces,
   createPieces,
   deletePiece,
@@ -79,6 +80,7 @@ import {
   LAYER_TOKEN,
   LAYER_OTHER,
   TYPE_HEX,
+  TYPE_HEX2,
   ID,
   findAsset,
   findPiece,
@@ -176,7 +178,7 @@ export function cloneSelected (xy) {
     clone.z = (zLower[clone.l] ?? 0) + zUpper[clone.l]
     if (clone.n > 0) { // increase clone letter (if it has one)
       clone.n = clone.n + 1
-      if (clone.n >= 16) clone.n = 1
+      if (clone.n >= 36) clone.n = 1
     }
     clones.push(clone)
   }
@@ -517,7 +519,7 @@ export function rotateSelected (cw = true) {
   if (!selectionGetFeatures().rotate) return
 
   for (const piece of selectionGetPieces()) {
-    const increment = setup.type === TYPE_HEX ? 60 : 90
+    const increment = (setup.type === TYPE_HEX || setup.type === TYPE_HEX2) ? 60 : 90
     const r = cw ? (piece.r + increment) : (piece.r - increment)
     rotatePiece(piece.id, r)
   }
@@ -617,7 +619,7 @@ export function pieceToNode (piece) {
     }
     if (asset.tx) {
       node.css({
-        '--fbg-material': url(`img/material-${asset.tx}.png`)
+        '--fbg-material': url(getMaterialMedia(asset.tx))
       })
     } else {
       node.remove('--fbg-material')
@@ -727,6 +729,12 @@ export function moveContent (offsetX, offsetY) {
       if (offsetY < 0) offsetY += 63
       offsetX = Math.floor(offsetX / 110) * 110
       offsetY = Math.floor(offsetY / 64) * 64
+      break
+    case 'grid-hex2':
+      if (offsetX < 0) offsetX += 63
+      if (offsetY < 0) offsetY += 109
+      offsetX = Math.floor(offsetX / 64) * 64
+      offsetY = Math.floor(offsetY / 110) * 110
       break
     case 'grid-square':
     default:

@@ -3,7 +3,7 @@
  *       pieces. Does not do any API calls, only operates on pre-downloaded
  *       data. Does not know about DOM/nodes.
  * @module
- * @copyright 2021-2022 Markus Leupold-Löwenthal
+ * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -34,6 +34,7 @@ import {
   clamp,
   snapGrid,
   snapHex,
+  snapHex2,
   intersect,
   contains,
   getDimensionsRotated,
@@ -47,6 +48,7 @@ import {
 
 export const TYPE_SQUARE = 'grid-square'
 export const TYPE_HEX = 'grid-hex'
+export const TYPE_HEX2 = 'grid-hex2'
 
 export const stickyNoteColors = [
   { name: 'Yellow', value: '#ffeba6' },
@@ -150,6 +152,14 @@ export function findAssetByAlias (name, layer = 'any') {
   return null
 }
 
+export function getRoomMediaURL (room, type, file, demo = false) {
+  if (demo) {
+    return `demo/${room}/assets/${type}/${file}`
+  } else {
+    return `api/data/rooms/${room}/assets/${type}/${file}`
+  }
+}
+
 /**
  * Get the URL for an asset media.
  *
@@ -159,26 +169,15 @@ export function findAssetByAlias (name, layer = 'any') {
  */
 export function getAssetURL (asset, side = 0) {
   if (side >= asset.media.length) {
-    return 'img/material-none.png'
+    return getRoomMediaURL(getRoom().name, 'material', 'none.png', DEMO_MODE)
   }
-  if (DEMO_MODE) {
-    switch (side) {
-      case -2:
-        return `demo/${getSetup().name}/assets/${asset.type}/${asset.mask}`
-      case -1:
-        return `demo/${getSetup().name}/assets/${asset.type}/${asset.base}`
-      default:
-        return `demo/${getSetup().name}/assets/${asset.type}/${asset.media[side]}`
-    }
-  } else {
-    switch (side) {
-      case -2:
-        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.mask}`
-      case -1:
-        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.base}`
-      default:
-        return `api/data/rooms/${getRoom().name}/assets/${asset.type}/${asset.media[side]}`
-    }
+  switch (side) {
+    case -2:
+      return getRoomMediaURL(getRoom().name, asset.type, asset.mask, DEMO_MODE)
+    case -1:
+      return getRoomMediaURL(getRoom().name, asset.type, asset.base, DEMO_MODE)
+    default:
+      return getRoomMediaURL(getRoom().name, asset.type, asset.media[side], DEMO_MODE)
   }
 }
 
@@ -318,7 +317,7 @@ export function sanitizePiecePatch (patch, pieceId = null) {
         )
         break
       case 'n':
-        result[field] = mod(patch[field], 16)
+        result[field] = mod(patch[field], 36)
         break
       case 'r':
         result[field] = mod(patch[field], 360)
@@ -414,6 +413,7 @@ export function populatePieceDefaults (piece, headers = null) {
     const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     if (asset.mask) piece._meta.mask = getAssetURL(asset, -2)
+    if (piece.l === LAYER_TOKEN && piece.w <= 8 && piece.h <= 8) piece._meta.mask = `img/mask/token-${piece.w}x${piece.h}.svg`
     piece._meta.sides = asset.media.length ?? 1
     piece._meta.sidesExtra = (piece.l === LAYER_TOKEN && piece._meta.sides === 1) ? 1 : 0
 
@@ -638,10 +638,14 @@ export function snap (x, y, lod = 3) {
   if (setup.snap === false) {
     return snapGrid(x, y, 8, 3) // snap to 4px
   }
-  if (setup.type === TYPE_HEX) {
-    return snapHex(x, y, setup.gridSize, lod)
+  switch (setup.type) {
+    case TYPE_HEX:
+      return snapHex(x, y, setup.gridSize, lod)
+    case TYPE_HEX2:
+      return snapHex2(x, y, setup.gridSize, lod)
+    default:
+      return snapGrid(x, y, setup.gridSize, lod)
   }
-  return snapGrid(x, y, setup.gridSize, lod)
 }
 
 /**
@@ -693,6 +697,14 @@ export function splitAssetFilename (assetName) {
     data.s = Number(match[4])
   }
 
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.name = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = 1
+  }
+
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)\.[a-zA-Z0-9]+$/)
   if (match) {
     data.name = match[1]
@@ -700,6 +712,15 @@ export function splitAssetFilename (assetName) {
     data.h = Number(match[3])
     data.s = Number(match[4])
     data.bg = match[5]
+  }
+
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.name = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = 1
+    data.bg = match[4]
   }
 
   match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)([.-][a-z]+)\.[a-zA-Z0-9]+$/)
@@ -710,6 +731,16 @@ export function splitAssetFilename (assetName) {
     data.s = Number(match[4])
     data.bg = match[5]
     data.tx = match[6].substr(1)
+  }
+
+  match = assetName.match(/^(.*)\.([0-9]+)x([0-9]+)\.([a-fA-F0-9]{6}|transparent|[0-9]+)([.-][a-z]+)\.[a-zA-Z0-9]+$/)
+  if (match) {
+    data.name = match[1]
+    data.w = Number(match[2])
+    data.h = Number(match[3])
+    data.s = 1
+    data.bg = match[4]
+    data.tx = match[5].substr(1)
   }
 
   // guess the asset type
@@ -732,21 +763,26 @@ export function splitAssetFilename (assetName) {
  * @return {Promise(Boolean)} True if pixel at x/y is transparent, false otherwise.
  */
 export function isSolid (piece, x, y) {
-  if (
-    !piece || // no piece = no checking
-    piece.l === LAYER_TOKEN || // token are always round & solid
-    !piece._meta?.mask // no mask = no checking possible
-  ) return Promise.resolve(true)
+  const setup = getSetup()
+  let mask
+
+  if (!piece) {
+    return Promise.resolve(true) // no piece = no checking
+  } else if (piece.l === LAYER_TOKEN) {
+    mask = `data:image/svg+xml;base64,${btoa(getTokenMaskSVG(piece.w, piece.h))}`
+  } else if (!piece._meta?.mask) {
+    return Promise.resolve(true) // no mask = full area is hit area
+  } else {
+    mask = piece._meta.mask
+  }
 
   // now do the hit detection
   return new Promise((resolve, reject) => {
     const img = new Image() // eslint-disable-line no-undef
     img.addEventListener('load', () => resolve(img))
     img.addEventListener('error', (err) => reject(err))
-    img.src = piece._meta.mask
+    img.src = mask
   }).then(img => {
-    const setup = getSetup()
-
     const width = piece.w * setup.gridSize
     const height = piece.h * setup.gridSize
 
@@ -791,7 +827,7 @@ export function isSolid (piece, x, y) {
  * @param {Element} node DOM node that triggered the click event.
  * @param {Object} coords {x, y} of the current mouse coordinates.
  * @param {Object} target If not null, the caller thinks this is the target.
- * @param return Promise of the real click target.
+ * @return {Promise} Real click target.
  */
 export function findRealClickTarget (node, coords, target = null) {
   // find all potential pieces in all layers.
@@ -810,6 +846,34 @@ export function findRealClickTarget (node, coords, target = null) {
   }
 
   return _iterateClickTargetsAsync(pieces, coords)
+}
+
+/**
+ * Create a mask in the shape of a token.
+ *
+ * Includes our padding and rounded corners.
+ *
+ * @param {Number} w Width of token.
+ * @param {Number} h Height of token.
+ * @param {Number} p Padding of token.
+ * @return {String} SVG-as-string in shape of the token.
+ */
+function getTokenMaskSVG (w, h, p = 3) {
+  let mask = `<svg width="${w * 64}" height="${h * 64}" viewBow="0 0 ${w * 64} ${h * 64}" xmlns="http://www.w3.org/2000/svg">`
+  if (w === h && (w === 1 || w === 2)) { // 1x1, 2x2 = circle
+    mask += `<circle style="fill:#000;stroke:none" cx="${64 * w / 2}" cy="${64 * h / 2}" r="${32 * w - p}"/>`
+  } else if (w === 1) { // 1xY
+    mask += `<path style="fill:#000000;stroke:none" d="M ${64 - p},32 A ${32 - p},${32 - p} 0 0 0 32,${p} ${32 - p},${32 - p} 0 0 0 ${p},32 v ${h * 64 - 64} a ${32 - p},${32 - p} 0 0 0 ${32 - p},${32 - p} ${32 - p},${32 - p} 0 0 0 ${32 - p},-${32 - p} z" />`
+  } else if (h === 1) { // Xx1
+    mask += `<path style="fill:#000000;stroke:none" d="M 32,${p} A ${32 - p},${32 - p} 0 0 0 ${p},32 ${32 - p},${32 - p} 0 0 0 32,${64 - p} H ${w * 64 - 32} A ${32 - p},${32 - p} 0 0 0 ${w * 64 - p},32 ${32 - p},${32 - p} 0 0 0 ${w * 64 - 32},${p} Z" />`
+  } else {
+    const dw = 64 + 64 * (w - 2)
+    const dh = 64 + 64 * (h - 2)
+    mask += `<path style="fill:#000;stroke:none" d="M 64 ${p} A ${64 - p} ${64 - p} 0 0 0 ${p} 64 L ${p} ${dh} A ${64 - p} ${64 - p} 0 0 0 64 ${64 * h - p} L ${dw} ${64 * h - p} A ${64 - p} ${64 - p} 0 0 0 ${64 * w - p} ${dh} L ${64 * w - p} 64 A ${64 - p} ${64 - p} 0 0 0 ${dw} ${p} L 64 ${p} z " />`
+  }
+  mask += '</svg>'
+
+  return mask
 }
 
 function _iterateClickTargetsAsync (pieces, coords) {

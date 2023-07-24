@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021-2022 Markus Leupold-Löwenthal
+ * Copyright 2021-2023 Markus Leupold-Löwenthal
  *
  * @license This file is part of FreeBeeGee.
  *
@@ -20,6 +20,29 @@
 
 namespace com\ludusleonis\freebeegee;
 
+const ID_ASSET_POINTER = 'ZZZZZZZZ';
+const ID_ASSET_LOS     = 'ZZZZZZZY';
+const ID_ASSET_NONE    = 'NO_ASSET';
+const ID_ACCESS_ANY    = '00000000-0000-0000-0000-000000000000';
+
+const FLAG_NO_DELETE = 0b00000001;
+const FLAG_NO_CLONE  = 0b00000010;
+const FLAG_NO_MOVE   = 0b00000100;
+
+const ASSET_SIZE_MAX = 1024 * 1024;
+const ASSET_TYPES = ['overlay', 'tile', 'token', 'other', 'badge', 'material'];
+const LAYERS = ['overlay', 'tile', 'token', 'other', 'note'];
+const LABEL_LENGTH = 32;
+const NOTE_COLORS = ['yellow', 'orange', 'green', 'blue', 'pink'];
+const NOTE_LENGTH = 256;
+const SETUP_TYPES = ['grid-square', 'grid-hex', 'grid-hex2'];
+const SETUP_GRIDSIZE_MIN = 16;
+const SETUP_GRIDSIZE_MAX = 256;
+
+const REGEXP_ID    = '/^[0-9a-zA-Z_-]{8}$/';
+const REGEXP_COLOR = '/^#[0-9a-fA-F]{6}$/';
+const REGEXP_MATERIAL = '/^[0-9a-zA-Z]{1,32}$/';
+
 /**
  * FreeBeeGeeAPI - The tabletop backend.
  *
@@ -27,30 +50,9 @@ namespace com\ludusleonis\freebeegee;
  */
 class FreeBeeGeeAPI
 {
-    private $ID_ASSET_POINTER = 'ZZZZZZZZ';
-    private $ID_ASSET_LOS     = 'ZZZZZZZY';
-    private $ID_ASSET_NONE    = 'NO_ASSET';
-    private $ID_ACCESS_ANY    = '00000000-0000-0000-0000-000000000000';
-    private $REGEXP_ID    = '^[0-9a-zA-Z_-]{8}$';
-    private $REGEXP_COLOR = '^#[0-9a-fA-F]{6}$';
-    private $version = '$VERSION$';
-    private $engine = '$ENGINE$';
+    private $version = '$VERSION$'; // tests can overwrite this
+    private $engine = '$ENGINE$'; // tests can overwrite this
     private $api = null; // JSONRestAPI instance
-    private $minRoomGridSize = 16;
-    private $maxRoomGridSize = 256;
-    private $maxAssetSize = 1024 * 1024;
-    private $types = ['grid-square', 'grid-hex'];
-    private $assetTypes = ['overlay', 'tile', 'token', 'other', 'badge'];
-    private $layers = ['overlay', 'tile', 'token', 'other', 'note'];
-    private $assetTextures = ['paper', 'wood'];
-    private $stickyNotes = ['yellow', 'orange', 'green', 'blue', 'pink'];
-
-    private $FLAG_NO_DELETE = 0b00000001;
-    private $FLAG_NO_CLONE  = 0b00000010;
-    private $FLAG_NO_MOVE   = 0b00000100;
-
-    private $NOTE_MAX_LENGTH = 256;
-    private $LABEL_MAX_LENGTH = 32;
 
     /**
      * Constructor - setup our routes.
@@ -258,7 +260,7 @@ class FreeBeeGeeAPI
             $config = json_decode(file_get_contents($this->api->getDataDir('server.json')));
             $config->version = '$VERSION$';
             $config->engine = '$ENGINE$';
-            $config->maxAssetSize = $this->maxAssetSize;
+            $config->maxAssetSize = ASSET_SIZE_MAX;
             return $config;
         } else {
             // config not found - return system values
@@ -296,7 +298,7 @@ class FreeBeeGeeAPI
                 $folder . '.flock'
             ));
             if (property_exists($meta, 'token')) {
-                if ($meta->token !== $this->ID_ACCESS_ANY) {
+                if ($meta->token !== ID_ACCESS_ANY) {
                     $authorized = false;
                     if (array_key_exists('token', $_GET)) {
                         if ($_GET['token'] === hash('sha256', 'fbg-' . $meta->token)) {
@@ -397,15 +399,13 @@ class FreeBeeGeeAPI
         $folder = $this->getRoomFolder($roomName);
 
         // create mandatory folder structure
-        if (
-            !mkdir($folder . 'tables', 0777, true)
-            || !mkdir($folder . 'assets/other', 0777, true)
-            || !mkdir($folder . 'assets/overlay', 0777, true)
-            || !mkdir($folder . 'assets/tile', 0777, true)
-            || !mkdir($folder . 'assets/token', 0777, true)
-            || !mkdir($folder . 'assets/badge', 0777, true)
-        ) {
+        if (!mkdir($folder . 'tables', 0777, true)) {
             $this->api->sendError(500, 'can\'t write on server');
+        }
+        foreach (ASSET_TYPES as $type) {
+            if (!mkdir($folder . 'assets/' . $type, 0777, true)) {
+                $this->api->sendError(500, 'can\'t write on server');
+            }
         }
 
         // unzip all validated files
@@ -479,6 +479,11 @@ class FreeBeeGeeAPI
         ];
     }
 
+    /**
+     * Assemble array with all supported table backgrounds.
+     *
+     * @return array Backgrounds.
+     */
     private function getBackgrounds(): array
     {
         return [
@@ -540,9 +545,9 @@ class FreeBeeGeeAPI
 
             // re-add all old pieces
             foreach ($oldTable as $tableItem) {
-                if ($piece->id === $this->ID_ASSET_LOS && $tableItem->id === $piece->id) {
+                if ($piece->id === ID_ASSET_LOS && $tableItem->id === $piece->id) {
                     // skip recreated system piece
-                } elseif ($piece->id === $this->ID_ASSET_POINTER && $tableItem->id === $piece->id) {
+                } elseif ($piece->id === ID_ASSET_POINTER && $tableItem->id === $piece->id) {
                     // skip recreated system piece
                 } elseif (!in_array($tableItem->id, $ids)) {
                     // for newly created items we just copy the current table of the others
@@ -603,7 +608,7 @@ class FreeBeeGeeAPI
         // generate JSON data
         $roomFolder = $this->getRoomFolder($roomName);
         $assets = [];
-        foreach ($this->assetTypes as $type) {
+        foreach (ASSET_TYPES as $type) {
             $assets[$type] = [];
             $lastAsset = null;
             foreach (glob($roomFolder . 'assets/' . $type . '/*') as $filename) {
@@ -683,7 +688,7 @@ class FreeBeeGeeAPI
      * Validate a snapshot.
      *
      * Does a few sanity checks to see if everything is there we need. Will
-     * termiante execution and send a 400 in case of invalid zips.
+     * terminate execution and send a 400 in case of invalid zips.
      *
      * @param string $zipPath Full path to the zip to check.
      * @param bool $ignoreEngine Optional. If true, snapshots will not be rejected on eninge.
@@ -744,7 +749,7 @@ class FreeBeeGeeAPI
                 default: // scan for asset filenames
                     if (
                         !preg_match(
-                            '/^assets\/(overlay|tile|token|other|badge)\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
+                            '/^assets\/(' . implode('|', ASSET_TYPES) . ')\/[ a-zA-Z0-9_.-]*.(svg|png|jpg)$/',
                             $entry['name']
                         )
                     ) {
@@ -752,7 +757,7 @@ class FreeBeeGeeAPI
                     }
             }
 
-            if ($entry['size'] > $this->maxAssetSize) { // filesize checks
+            if ($entry['size'] > ASSET_SIZE_MAX) { // filesize checks
                 continue; // for
             }
             $sizeLeft -= $entry['size'];
@@ -819,7 +824,7 @@ class FreeBeeGeeAPI
                     'gridHeight',
                     'colors'
                 ]);
-            } elseif ($setup->type === 'grid-hex') {
+            } elseif ($setup->type === 'grid-hex' || $setup->type === 'grid-hex2') {
                 $this->api->assertHasProperties('setup', $setup, [
                     'gridSize',
                     'gridWidth',
@@ -837,7 +842,7 @@ class FreeBeeGeeAPI
                     $validated->$property = $this->api->assertSemver('engine', $value);
                     break;
                 case 'type':
-                    $validated->$property = $this->api->assertEnum('type', $value, $this->types);
+                    $validated->$property = $this->api->assertEnum('type', $value, SETUP_TYPES);
                     break;
                 case 'version':
                     $validated->$property = $this->api->assertSemver('version', $value);
@@ -847,17 +852,17 @@ class FreeBeeGeeAPI
                     break;
                 case 'gridWidth':
                     $validated->$property =
-                        $this->api->assertInteger('gridWidth', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
+                        $this->api->assertInteger('gridWidth', $value, SETUP_GRIDSIZE_MIN, SETUP_GRIDSIZE_MAX);
                     break;
                 case 'gridHeight':
                     $validated->$property =
-                        $this->api->assertInteger('gridHeight', $value, $this->minRoomGridSize, $this->maxRoomGridSize);
+                        $this->api->assertInteger('gridHeight', $value, SETUP_GRIDSIZE_MIN, SETUP_GRIDSIZE_MAX);
                     break;
                 case 'table':
                     $validated->$property = $this->api->assertInteger('table', $value, 1, 9);
                     break;
                 case 'layersEnabled':
-                    $validated->$property = $this->api->assertEnumArray('layersEnabled', $value, $this->layers, 0, 99);
+                    $validated->$property = $this->api->assertEnumArray('layersEnabled', $value, LAYERS, 0, 99);
                     break;
                 case 'snap':
                     $validated->$property = $this->api->assertBoolean('snap', $value);
@@ -913,11 +918,11 @@ class FreeBeeGeeAPI
             switch ($property) {
                 case 'name':
                     $out->$property =
-                        $this->api->assertString('name', $value, '^[A-Za-z0-9 ]+$', false) ?: 'NoName';
+                        $this->api->assertString('name', $value, '/^[A-Za-z0-9 ]+$/', false) ?: 'NoName';
                     break;
                 case 'value':
                     $out->$property =
-                        $this->api->assertString('value', $value, $this->REGEXP_COLOR, false) ?: '#808080';
+                        $this->api->assertString('value', $value, REGEXP_COLOR, false) ?: '#808080';
                     break;
             }
         }
@@ -974,7 +979,7 @@ class FreeBeeGeeAPI
                     break;
                 case 'type':
                     $out->$property =
-                        $this->api->assertEnum('type', $value, $this->types, false) ?: 'grid-square';
+                        $this->api->assertEnum('type', $value, SETUP_TYPES, false) ?: 'grid-square';
                     break;
                 case 'version':
                     $out->$property =
@@ -986,23 +991,11 @@ class FreeBeeGeeAPI
                     break;
                 case 'gridWidth':
                     $out->$property =
-                        $this->api->assertInteger(
-                            'gridWidth',
-                            $value,
-                            $this->minRoomGridSize,
-                            $this->maxRoomGridSize,
-                            false
-                        ) ?: '48';
+                        $this->api->assertInteger('gridWidth', $value, SETUP_GRIDSIZE_MIN, SETUP_GRIDSIZE_MAX, false) ?: '48';
                     break;
                 case 'gridHeight':
                     $out->$property =
-                        $this->api->assertInteger(
-                            'gridHeight',
-                            $value,
-                            $this->minRoomGridSize,
-                            $this->maxRoomGridSize,
-                            false
-                        ) ?: '32';
+                        $this->api->assertInteger('gridHeight', $value, SETUP_GRIDSIZE_MIN, SETUP_GRIDSIZE_MAX, false) ?: '32';
                     break;
                 case 'table':
                     $out->$property =
@@ -1010,7 +1003,7 @@ class FreeBeeGeeAPI
                     break;
                 case 'layersEnabled':
                     $out->$property =
-                        $this->api->assertEnumArray('layersEnabled', $value, $this->layers, 0, 99, false) ?: [];
+                        $this->api->assertEnumArray('layersEnabled', $value, LAYERS, 0, 99, false) ?: [];
                     break;
                 case 'snap':
                     $out->$property =
@@ -1158,7 +1151,7 @@ class FreeBeeGeeAPI
         $out->y = 0;
         $out->z = 0;
         if ($out->l !== 3) { // not a note
-            $out->a = $this->ID_ASSET_NONE;
+            $out->a = ID_ASSET_NONE;
         }
 
         // remove unnecessary properties
@@ -1166,11 +1159,11 @@ class FreeBeeGeeAPI
             switch ($property) {
                 case 'id':
                     $out->$property =
-                        $this->api->assertString('id', $value, $this->REGEXP_ID, false) ?: $this->generateId();
+                        $this->api->assertString('id', $value, REGEXP_ID, false) ?: $this->generateId();
                     break;
                 case 'a':
                     $out->$property =
-                        $this->api->assertString('a', $value, $this->REGEXP_ID, false) ?: $this->ID_ASSET_NONE;
+                        $this->api->assertString('a', $value, REGEXP_ID, false) ?: ID_ASSET_NONE;
                     break;
                 case 'l':
                     $out->$property =
@@ -1192,7 +1185,7 @@ class FreeBeeGeeAPI
                     }
                     break;
                 case 'n':
-                    if ($this->api->assertInteger('n', $value, 1, 15, false)) {
+                    if ($this->api->assertInteger('n', $value, 1, 35, false)) {
                         $out->$property = $value; // 0 = default = don't add
                     }
                     break;
@@ -1203,7 +1196,7 @@ class FreeBeeGeeAPI
                     break;
                 case 'h':
                 case 'w':
-                    if (isset($piece->a) && $piece->a === $this->ID_ASSET_LOS) {
+                    if (isset($piece->a) && $piece->a === ID_ASSET_LOS) {
                         $out->$property =
                             $this->api->assertInteger('w/h', $value, -100000, 100000, false) ?: 0;
                     } else {
@@ -1213,14 +1206,14 @@ class FreeBeeGeeAPI
                     break;
                 case 't':
                     if (($piece->l ?? null) === 3) { // 3 = note
-                        if ($this->api->assertBlobArray('t', $value, 0, $this->NOTE_MAX_LENGTH, 0, 1, false)) {
+                        if ($this->api->assertBlobArray('t', $value, 0, NOTE_LENGTH, 0, 1, false)) {
                             $blobs = $this->rtrimArray($value, '');
                             if (sizeof($blobs) > 0) {
                                 $out->$property = $blobs;
                             }
                         }
                     } else {
-                        if ($this->api->assertBlobArray('t', $value, 0, $this->LABEL_MAX_LENGTH, 0, 1, false)) {
+                        if ($this->api->assertBlobArray('t', $value, 0, LABEL_LENGTH, 0, 1, false)) {
                             $texts = $this->rtrimArray($value, '');
                             if (sizeof($texts) > 0) {
                                 $out->$property = $texts;
@@ -1237,7 +1230,7 @@ class FreeBeeGeeAPI
                     }
                     break;
                 case 'b':
-                    if ($this->api->assertStringArray('b', $value, $this->REGEXP_ID, 0, 128, false)) {
+                    if ($this->api->assertStringArray('b', $value, REGEXP_ID, 0, 128, false)) {
                         $badges = $this->rtrimArray($value, '');
                         if (sizeof($badges) > 0) {
                             $out->$property = $badges;
@@ -1292,23 +1285,23 @@ class FreeBeeGeeAPI
         foreach ($piece as $property => $value) {
             switch ($property) {
                 case 'id':
-                    $validated->id = $this->api->assertString('id', $value, $this->REGEXP_ID);
+                    $validated->id = $this->api->assertString('id', $value, REGEXP_ID);
                     break;
                 case 'l':
                     $validated->l = $this->api->assertInteger('l', $value, 1, 5);
                     break;
                 case 'a':
-                    $validated->a = $this->api->assertString('a', $value, $this->REGEXP_ID);
+                    $validated->a = $this->api->assertString('a', $value, REGEXP_ID);
                     break;
                 case 'w':
-                    if (property_exists($piece, 'a') && $piece->a === $this->ID_ASSET_LOS) {
+                    if (property_exists($piece, 'a') && $piece->a === ID_ASSET_LOS) {
                         $validated->w = $this->api->assertInteger('w', $value, -100000, 100000);
                     } else {
                         $validated->w = $this->api->assertInteger('w', $value, 1, 32);
                     }
                     break;
                 case 'h':
-                    if (property_exists($piece, 'a') && $piece->a === $this->ID_ASSET_LOS) {
+                    if (property_exists($piece, 'a') && $piece->a === ID_ASSET_LOS) {
                         $validated->h = $this->api->assertInteger('h', $value, -100000, 100000);
                     } else {
                         $validated->h = $this->api->assertInteger('h', $value, 1, 32);
@@ -1329,26 +1322,26 @@ class FreeBeeGeeAPI
                 case 'c':
                     if (property_exists($piece, 'l') && $piece->l === 3) { // 3 = note
                         $validated->c =
-                            $this->api->assertIntegerArray('c', $value, 0, sizeof($this->stickyNotes) - 1, 0, 2);
+                            $this->api->assertIntegerArray('c', $value, 0, sizeof(NOTE_COLORS) - 1, 0, 2);
                     } else {
                         $validated->c = $this->api->assertIntegerArray('c', $value, 0, 15, 0, 2);
                     }
                     break;
                 case 'n':
-                    $validated->n = $this->api->assertInteger('n', $value, 0, 15);
+                    $validated->n = $this->api->assertInteger('n', $value, 0, 35);
                     break;
                 case 'r':
                     $validated->r = $this->api->assertEnum('r', $value, [0, 60, 90, 120, 180, 240, 270, 300]);
                     break;
                 case 't':
                     if (($piece->l ?? null) === 3) { // 3 = note
-                        $validated->t = $this->api->assertStringArray('t', $value, '^[^\t]{0,' . $this->NOTE_MAX_LENGTH . '}$', 0, 1);
+                        $validated->t = $this->api->assertStringArray('t', $value, '/^[^\t]{0,' . NOTE_LENGTH . '}$/', 0, 1);
                     } else {
-                        $validated->t = $this->api->assertStringArray('t', $value, '^[^\n\r]{0,' . $this->LABEL_MAX_LENGTH . '}$', 0, 1);
+                        $validated->t = $this->api->assertStringArray('t', $value, '/^[^\n\r]{0,' . LABEL_LENGTH . '}$/', 0, 1);
                     }
                     break;
                 case 'b':
-                    $validated->b = $this->api->assertStringArray('b', $value, $this->REGEXP_ID, 0, 128);
+                    $validated->b = $this->api->assertStringArray('b', $value, REGEXP_ID, 0, 128);
                     break;
                 case 'f':
                     $validated->f = $this->api->assertInteger('f', $value, 0b00000000, 0b11111111);
@@ -1424,16 +1417,16 @@ class FreeBeeGeeAPI
                     $validated->$property = $value;
                     break;
                 case 'name':
-                    $validated->$property = $this->api->assertString('name', $value, '[A-Za-z0-9]{8,48}');
+                    $validated->$property = $this->api->assertString('name', $value, '/^[A-Za-z0-9]{8,48}$/');
                     break;
                 case 'convert':
                     $validated->$property = $this->api->assertBoolean('convert', $value);
                     break;
                 case 'snapshot':
-                    $validated->$property = $this->api->assertString('snapshot', $value, '[A-Za-z0-9]{1,99}');
+                    $validated->$property = $this->api->assertString('snapshot', $value, '/^[A-Za-z0-9]{1,99}$/');
                     break;
                 case 'password':
-                    $validated->$property = $this->api->assertString('password', $value, '..*');
+                    $validated->$property = $this->api->assertString('password', $value, '/^..*$/');
                     break;
                 default:
                     // ignore extra fields
@@ -1447,7 +1440,7 @@ class FreeBeeGeeAPI
      * Parse incoming JSON for (new) assets.
      *
      * @param object $incoming Parsed asset from client.
-     * @return object Validated JSON, convertet to an object.
+     * @return object Validated JSON, converted to an object.
      */
     private function validateAsset(
         object $incoming
@@ -1466,14 +1459,14 @@ class FreeBeeGeeAPI
                     $validated->name = $this->api->assertString(
                         'name',
                         $value,
-                        '[A-Za-z0-9-]{1,64}(.[A-Za-z0-9-]{1,64})?'
+                        '/^[A-Za-z0-9-]{1,64}(.[A-Za-z0-9-]{1,64})?$/'
                     );
                     break;
                 case 'format':
                     $validated->format = $this->api->assertEnum('format', $value, ['jpg', 'png']);
                     break;
                 case 'type':
-                    $validated->type = $this->api->assertEnum('type', $value, $this->assetTypes);
+                    $validated->type = $this->api->assertEnum('type', $value, ASSET_TYPES);
                     break;
                 case 'w':
                     $validated->w = $this->api->assertInteger('w', $value, 1, 32);
@@ -1482,17 +1475,17 @@ class FreeBeeGeeAPI
                     $validated->h = $this->api->assertInteger('h', $value, 1, 32);
                     break;
                 case 'base64':
-                    $validated->base64 = $this->api->assertBase64('base64', $value, $this->maxAssetSize);
+                    $validated->base64 = $this->api->assertBase64('base64', $value, ASSET_SIZE_MAX);
                     break;
                 case 'bg':
                     $validated->bg = $this->api->assertString(
                         'bg',
                         $value,
-                        '#[a-fA-F0-9]{6}|transparent|piece'
+                        '/^#[a-fA-F0-9]{6}|transparent|piece$/'
                     );
                     break;
                 case 'tx':
-                    $validated->tx = $this->api->assertEnum('tx', $value, $this->assetTextures);
+                    $validated->tx = $this->api->assertString('tx', $value, REGEXP_MATERIAL);
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -1619,7 +1612,7 @@ class FreeBeeGeeAPI
             $meta = $this->api->jsonGetLocked($folder . 'meta.json', "$folder.flock");
             $token = $this->get($meta, 'token');
             if (
-                $token === $this->ID_ACCESS_ANY ||
+                $token === ID_ACCESS_ANY ||
                 $token === $this->get($payload, 'token') ||
                 password_verify($this->get($payload, 'password') ?? '', $this->get($meta, 'password') ?? '')
             ) {
@@ -1671,15 +1664,15 @@ class FreeBeeGeeAPI
             ? file_get_contents($folder . 'meta.json')
             : '{}'
         );
-        $meta->token = $this->get($meta, 'token') ?? $this->ID_ACCESS_ANY;
+        $meta->token = $this->get($meta, 'token') ?? ID_ACCESS_ANY;
 
         if (!$password || $password === '') { // remove password
             $meta = (object)[
-                'token' => $this->ID_ACCESS_ANY,
+                'token' => ID_ACCESS_ANY,
             ];
         } else { // add/re-set password, keep token if it not the generic one
             $meta->password = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
-            if ($meta->token === $this->ID_ACCESS_ANY) {
+            if ($meta->token === ID_ACCESS_ANY) {
                 $meta->token = $this->api->uuid();
             }
         }
@@ -1821,7 +1814,7 @@ class FreeBeeGeeAPI
         }
         if (!is_file($folder . 'meta.json')) {
             file_put_contents($folder . 'meta.json', json_encode((object) [
-                'token' => $this->ID_ACCESS_ANY,
+                'token' => ID_ACCESS_ANY,
             ]));
         }
 
@@ -2026,11 +2019,9 @@ class FreeBeeGeeAPI
         if ($roomName) {
             $this->assertWritable('rooms/' . $roomName . '/');
             $this->assertWritable('rooms/' . $roomName . '/tables/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/other/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/overlay/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/tile/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/token/');
-            $this->assertWritable('rooms/' . $roomName . '/assets/badge/');
+            foreach (ASSET_TYPES as $type) {
+                $this->assertWritable('rooms/' . $roomName . '/assets/' . $type . '/');
+            }
         }
     }
 
@@ -2107,8 +2098,8 @@ class FreeBeeGeeAPI
         $piece = $this->validatePiece($data, true);
         if (isset($piece->a)) {
             switch ($piece->a) {
-                case $this->ID_ASSET_POINTER:
-                case $this->ID_ASSET_LOS:
+                case ID_ASSET_POINTER:
+                case ID_ASSET_LOS:
                     $piece->id = $piece->a;
                     $piece->expires = time() + 8;
                     break;
@@ -2372,8 +2363,8 @@ class FreeBeeGeeAPI
     ): object {
         if (isset($piece->a)) {
             switch ($piece->a) {
-                case $this->ID_ASSET_POINTER:
-                case $this->ID_ASSET_LOS:
+                case ID_ASSET_POINTER:
+                case ID_ASSET_LOS:
                     $piece->expires = time() + 8;
                     break;
                 default:
@@ -2443,19 +2434,22 @@ class FreeBeeGeeAPI
     ) {
         $asset = new \stdClass();
         $asset->media = [$filename];
-        if (
-            // group.name.1x2x3.808080.png
-            preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
-                $filename,
-                $matches
-            )
-        ) {
+        $asset->bg = '#808080';
+
+        if (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/', $filename, $matches)) {
+            $found = true;
+        } elseif (preg_match('/^(.*)\.([0-9]+)x([0-9]+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/', $filename, $matches)) {
+            $found = true;
+            array_splice($matches, 4, 0, '1'); // insert side-1 indicator
+        } else {
+            $found = false;
+        }
+
+        if ($found) {
             $asset->name = $matches[1];
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->s = $matches[4];
-            $asset->bg = '#808080';
 
             if (sizeof($matches) >= 6) {
                 switch ($matches[5]) {
@@ -2472,15 +2466,8 @@ class FreeBeeGeeAPI
             }
 
             if (sizeof($matches) >= 7) {
-                switch ($matches[6]) {
-                    case '.paper':
-                    case '-paper':
-                    case '.wood':
-                    case '-wood':
-                        $asset->tx = substr($matches[6], 1);
-                        break;
-                    default:
-                        // none
+                if (preg_match(REGEXP_MATERIAL, substr($matches[6], 1))) {
+                    $asset->tx = substr($matches[6], 1);
                 }
             }
         } elseif (
@@ -2491,7 +2478,6 @@ class FreeBeeGeeAPI
             $asset->w = 1;
             $asset->h = 1;
             $asset->s = 1;
-            $asset->bg = '#808080';
         }
         return $asset;
     }

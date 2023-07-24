@@ -1,7 +1,7 @@
 /**
  * @file Handles the piece editor modal.
  * @module
- * @copyright 2021-2022 Markus Leupold-Löwenthal
+ * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
@@ -38,6 +38,7 @@ import {
 
 import {
   TYPE_HEX,
+  TYPE_HEX2,
   LAYER_TILE,
   LAYER_OVERLAY,
   LAYER_NOTE,
@@ -93,11 +94,11 @@ export function modalEdit (piece) {
     option.value = 0
     if (piece.n === 0) option.selected = true
     pieceNo.add(option)
-    for (let w = 1; w <= 15; w++) {
-      const letter = w <= 9 ? String.fromCharCode(48 + w) : String.fromCharCode(64 + w - 9)
+    for (let n = 1; n <= 35; n++) {
+      const letter = n <= 9 ? String.fromCharCode(48 + n) : String.fromCharCode(64 + n - 9)
       const option = _('option').create(letter)
-      option.value = w
-      if (w === piece.n) option.selected = true
+      option.value = n
+      if (n === piece.n) option.selected = true
       pieceNo.add(option)
     }
 
@@ -121,7 +122,8 @@ export function modalEdit (piece) {
 
     // rotate
     const pieceR = _('#piece-r')
-    for (let r = 0; r < 360; r += getSetup().type === TYPE_HEX ? 60 : 90) {
+    const increment = (getSetup().type === TYPE_HEX || getSetup().type === TYPE_HEX2) ? 60 : 90
+    for (let r = 0; r < 360; r += increment) {
       const option = _('option').create(r === 0 ? '0°' : r + '°')
       option.value = r
       if (r === piece.r) option.selected = true

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Copyright 2021-2022 Markus Leupold-Löwenthal
+ * Copyright 2021-2023 Markus Leupold-Löwenthal
  *
  * @license This file is part of FreeBeeGee.
  *
@@ -20,6 +20,11 @@
 
 namespace com\ludusleonis\freebeegee;
 
+const REGEXP_SEMVER =
+    '/^(?P<operator>[=<>^~]*)?(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)' .
+    '(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?'
+     . '(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/';
+
 /**
  * JSONRestAPI - generic parts of a JSON/Rest API.
  *
@@ -27,11 +32,6 @@ namespace com\ludusleonis\freebeegee;
  */
 class JSONRestAPI
 {
-    public const REGEXP_SEMVER =
-        '/^(?P<operator>[=<>^~]*)?(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)' .
-        '(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?'
-         . '(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$/';
-
     private $http = true; // PHP may set/change http stuff. disable for unit tests.
     private $apiDirFS = null; // e.g. /var/www/www.mysite.com/api/
     private $apiRoot = null;  // URL-parent-folder of the API, e.g. /api
@@ -66,8 +66,10 @@ class JSONRestAPI
     {
         // autodetect our FS dir and our (sub)directory in the URL/path
         $scriptDir = dirname(__FILE__);
+        $docroot = rtrim($_SERVER['DOCUMENT_ROOT'], '/');
+
         $this->apiDirFS = $scriptDir . '/';
-        $this->apiRoot = substr($scriptDir, strlen($_SERVER['DOCUMENT_ROOT']));
+        $this->apiRoot = substr($scriptDir, strlen($docroot));
     }
 
     /**
@@ -152,7 +154,7 @@ class JSONRestAPI
         $route = preg_replace('/\/:([a-zA-Z]+)/', "/(?'$1'[^\/]+)", $route);
 
         // complete the regexp
-        return '/^' . $route . '$/';
+        return "/^{$route}$/";
     }
 
     /**
@@ -267,7 +269,7 @@ class JSONRestAPI
      *
      * @param string $field Field name for error message.
      * @param mixed $value The value to check.
-     * @param string $pattern RegExp to check against. Excluding '/^' and '$/'.
+     * @param string $regexp RegExp to check against, including '/'.
      * @param bool $send Optonal. If true (default), validation erros are
      *                   as JSON. If false, null is returned instead.
      * @return string The parsed value.
@@ -275,16 +277,16 @@ class JSONRestAPI
     public function assertString(
         string $field,
         $value,
-        string $pattern,
+        string $regexp,
         bool $send = true
     ) {
         if ($value !== null) {
-            if (preg_match('/^' . $pattern . '$/', $value)) {
+            if (preg_match($regexp, $value)) {
                 return $value;
             }
         }
         if ($send) {
-            $this->sendError(400, "invalid JSON: $field does not match $pattern");
+            $this->sendError(400, "invalid JSON: $field does not match $regexp");
         } else {
             return null;
         }
@@ -308,7 +310,7 @@ class JSONRestAPI
         bool $send = true
     ) {
         if ($value !== null && is_string($value)) {
-            if (preg_match(JSONRestAPI::REGEXP_SEMVER, $value)) {
+            if (preg_match(REGEXP_SEMVER, $value)) {
                 return $value;
             }
         }
@@ -327,7 +329,7 @@ class JSONRestAPI
      *
      * @param string $field Field name for error message.
      * @param mixed $values The value(s) to check.
-     * @param string $pattern RegExp to check against. Excluding '/'.
+     * @param string $regexp RegExp to check against, including '/'.
      * @param int $minLength Minimum length of array. Defaults to 1.
      * @param int $maxLength Maximum length of array. Defaults to unlimited.
      * @param bool $send Optonal. If true (default), validation erros are
@@ -337,7 +339,7 @@ class JSONRestAPI
     public function assertStringArray(
         string $field,
         $values,
-        string $pattern,
+        string $regexp,
         int $minLength = 1,
         int $maxLength = PHP_INT_MAX,
         bool $send = true
@@ -348,7 +350,7 @@ class JSONRestAPI
         $array = [];
         foreach ($values as $value) {
             $trimmed = trim($value);
-            if (preg_match('/' . $pattern . '/', $trimmed)) {
+            if (preg_match($regexp, $trimmed)) {
                 array_push($array, $trimmed);
             }
         }
@@ -356,7 +358,7 @@ class JSONRestAPI
             return $array;
         }
         if ($send) {
-            $this->sendError(400, "invalid JSON: $field entries do not match $pattern");
+            $this->sendError(400, "invalid JSON: $field entries do not match $regexp");
         } else {
             return null;
         }
@@ -1125,8 +1127,8 @@ class JSONRestAPI
     ): bool {
         // split both items
         if (
-            !preg_match(JSONRestAPI::REGEXP_SEMVER, $version, $vParts)
-            || !preg_match(JSONRestAPI::REGEXP_SEMVER, $target, $rParts)
+            !preg_match(REGEXP_SEMVER, $version, $vParts)
+            || !preg_match(REGEXP_SEMVER, $target, $rParts)
         ) {
             // invalid stuff never satisfies
             return false;
