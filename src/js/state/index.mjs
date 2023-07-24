@@ -26,6 +26,7 @@ import {
 } from '../lib/utils.mjs'
 
 import {
+  DEMO_MODE,
   UnexpectedStatus,
   apiGetTable,
   apiPutTable,
@@ -186,7 +187,7 @@ export function getBackground () {
 export function getMaterialMedia (name) {
   const material = getLibrary()?.material?.find(m => m.name === name)
   const filename = material?.media[0] ?? 'none.png'
-  return getRoomMediaURL(getRoom()?.name, 'material', filename)
+  return getRoomMediaURL(getRoom()?.name, 'material', filename, DEMO_MODE)
 }
 
 /**

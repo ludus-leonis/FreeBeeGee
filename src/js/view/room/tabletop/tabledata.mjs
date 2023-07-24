@@ -154,7 +154,7 @@ export function findAssetByAlias (name, layer = 'any') {
 
 export function getRoomMediaURL (room, type, file, demo = false) {
   if (demo) {
-    return `demo/${room}/assets/${type}/${file}`
+    return `demo/${getRoom().setup.name}/assets/${type}/${file}`
   } else {
     return `api/data/rooms/${room}/assets/${type}/${file}`
   }
