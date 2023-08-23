@@ -56,7 +56,7 @@ function testApiCrudRoom (api, version, room) {
   // get room - should not be there yet
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
-    expect(body._messages).to.include(`not found: ${room}`)
+    expect(body._messages).to.include(`room meta not found: ${room}`)
   }, 404)
 
   // create room
