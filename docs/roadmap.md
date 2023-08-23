@@ -5,8 +5,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.20 - ??? ???
 
 * [X] pile pieces
-* [ ] PHP 8.3 support
-* [ ] measure inches
+* [X] PHP 8.3 suppor
+* [X] improve ruler
+  * [X] add inch color stripes
+  * [X] add shift should disable snap
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring

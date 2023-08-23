@@ -8,6 +8,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added pile feature
 * added PHP 8.3 support
+* improved measure mode: the LOS-line now has inch-stripes and holding shift disables snapping
 
 ### Other changes
 

@@ -934,6 +934,27 @@ export function createLosPiece (x, y, width, height) {
   shape.setAttribute('stroke-width', stroke)
   svg.appendChild(shape)
 
+  // inch/cm line
+  const ruler = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  ruler.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  ruler.setAttribute('stroke-linecap', 'round')
+  ruler.setAttribute('stroke-linejoin', 'round')
+  ruler.setAttribute('stroke', '#ffffff30') // red thread
+  ruler.setAttribute('stroke-dasharray', '64, 64')
+  ruler.setAttribute('stroke-dashoffset', 64)
+  ruler.setAttribute('stroke-width', stroke - 1)
+  svg.appendChild(ruler)
+
+  // inch/cm line
+  const ruler2 = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  ruler2.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  ruler2.setAttribute('stroke-linecap', 'round')
+  ruler2.setAttribute('stroke-linejoin', 'round')
+  ruler2.setAttribute('stroke', '#00000040') // red thread
+  ruler2.setAttribute('stroke-dasharray', '64, 64')
+  ruler2.setAttribute('stroke-width', stroke - 1)
+  svg.appendChild(ruler2)
+
   // shade line
   const shade = document.createElementNS('http://www.w3.org/2000/svg', 'path')
   shade.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
