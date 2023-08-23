@@ -46,6 +46,7 @@ import {
   numberSelected,
   createNote,
   colorSelected,
+  pileSelected,
   toBottomSelected,
   pointTo,
   zoom
@@ -185,6 +186,12 @@ function handleRoomKeys (keydown) {
       case 'O': // outline color
         colorSelected(true)
         break
+      case 'p': // pile/stack selection
+        pileSelected(false)
+        break
+      // case 'P': // pile/stack selection + randomize
+      //   pileSelected(true)
+      //   break
       case 'h': // help
       case 'H':
       case '?':

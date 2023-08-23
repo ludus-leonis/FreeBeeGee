@@ -191,7 +191,7 @@ class JSONRestAPI
         // no route? too bad!
         switch ($method) {
             case 'GET':
-                $this->sendError(404, 'not found: ' . $path);
+                $this->sendError(404, 'route not found: ' . $path);
                 break;
             default:
                 $this->sendError(405, 'method not allowed: ' . $path);

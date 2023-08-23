@@ -29,6 +29,7 @@ import {
   iconRotate,
   iconFlip,
   iconShuffle,
+  iconPile,
   iconTop,
   iconBottom,
   iconClone,
@@ -45,6 +46,7 @@ import {
   rotateSelected,
   flipSelected,
   randomSelected,
+  pileSelected,
   toTopSelected,
   toBottomSelected,
   deleteSelected,
@@ -83,18 +85,22 @@ export function popupPiece (piece) {
     <a class="popup-menu rotate ${f.rotate ? '' : 'disabled'}" href="#">${iconRotate}Rotate</a>
     <a class="popup-menu flip ${f.flip ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
     <a class="popup-menu random ${f.random ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
+    <a class="popup-menu pile ${f.pile ? '' : 'disabled'}" href="#">${iconPile}Pile</a>
     <a class="popup-menu top ${f.top ? '' : 'disabled'}" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom ${f.bottom ? '' : 'disabled'}" href="#">${iconBottom}To bottom</a>
     ${(f.clone || f.delete) ? '<hr>' : ''}
     <a class="popup-menu clone ${f.clone ? '' : 'disabled'}" href="#">${iconClone}Clone</a>
     <a class="popup-menu delete ${f.delete ? '' : 'disabled'}" href="#">${iconDelete}Delete</a>
   `
+  // <a class="popup-menu shuffle ${f.pile ? '' : 'disabled'}" href="#">${iconPileShuffle}Pile &amp; shuffle</a>
 
   _('#tabletop').add(popup)
 
   popupClick('#popper .edit', () => { editSelected() })
   popupClick('#popper .rotate', () => { rotateSelected() })
   popupClick('#popper .flip', () => { flipSelected() })
+  popupClick('#popper .pile', () => { pileSelected() })
+  // popupClick('#popper .shuffle', () => { pileSelected(true) })
   popupClick('#popper .random', () => { randomSelected() })
   popupClick('#popper .top', () => { toTopSelected() })
   popupClick('#popper .bottom', () => { toBottomSelected() })

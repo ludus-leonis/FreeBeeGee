@@ -263,6 +263,20 @@ export function isNone (items, check) {
   return true
 }
 
+/**
+ * Shuffle an array using Durstenfeld shuffle.
+ *
+ * @param {Array} array Array to shuffle. Will be modified!
+ * @return {Array} Will also return the shuffled array for convenience.
+ */
+export function shuffle (array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
+
 // --- math --------------------------------------------------------------------
 
 /**
@@ -440,19 +454,6 @@ export function snapHex2 (x, y, snap, lod = 1) {
     x: snapped.y,
     y: snapped.x
   }
-}
-
-/**
- * Shuffle an array using Durstenfeld shuffle.
- *
- * @param {Array} array Array to shuffle. Will be modified!
- */
-export function shuffle (array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]]
-  }
-  return array
 }
 
 /**

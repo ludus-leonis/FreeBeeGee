@@ -2,6 +2,17 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.20.0 - ??? ???
+
+### Notable changes
+
+* added pile feature
+
+### Other changes
+
+* TBD
+
+
 ## v0.19.0 - Frying Frog
 
 ### Notable changes

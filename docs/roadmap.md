@@ -2,47 +2,36 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.19 - Frying Frog
+## v0.20 - ??? ???
 
-* [X] PHP 8.2 support
-* [X] hex variant for hexes rotated 90°
-* [X] engine: rough & linen material
-* [X] engine: support G-Z as token number
-* [X] engine: make side digit in 1x1x1 optional (= 1x1)
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] bug: trailing slash in apache config confuses FBG
-    * [X] refactor: PHP consts
-    * [X] refactor: split api tests in all/latest
-    * [X] refactor: automated tests for zip/tgz packages after build
-    * [X] bug: docker build not pulling latest php baseimage
-    * [X] minimizing of pre-minimized snapshot assets
-    * [X] bug: token selection not properly working when clicking through transparent dicemap
-  * [X] review docs
-  * [X] review tutorial
-  * [X] bump engine, version/codename & update CHANGELOG
-  * [X] review + run tests
-  * [X] update screenshots
+* [X] pile pieces
+* [ ] PHP 8.3 support
+* [ ] measure inches
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] ui: token border don't scale with zoom
+    * [ ] refactor: split edit modals
+    * [ ] bug: dragging multiselected hex tokens does not always snap correctly
+    * [ ] refactor: remove obsolete test.php
+  * [ ] review docs
+  * [ ] review tutorial
+  * [ ] bump engine, version/codename & update CHANGELOG
+  * [ ] review + run tests
+  * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
-* [ ] PHP 8.3 support
-* [ ] bug: dragging multiselected hex tokens does not always snap correctly
-* [ ] refactor: split (edit) modals
+* [ ] ui: decks/stacks
 * [ ] library: show/indicate backside/all sides in tile browser
 * [ ] library: delete assets UI
 * [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
-* [ ] ui: shuffle z-order (+ put on same X/Y) & remove shuffle item
 * [ ] engine: grid-on-tile flag
 * [ ] repo: split API tests in docker/all/latest
 * [ ] piece: wooden cubes
-* [ ] refactor: relative includes via @
-* [ ] refactor: split edit modals
-* [ ] PHP 8.2 support
 * [ ] refactor: smaller modal paddings
 * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] automated screenshots using screenshot.zip snapshot
@@ -112,7 +101,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals
 * multi-panes / splitscreen / split.js
-* measure range (in fields)
 * auto-z based on tile position
 * better fix dragndrop when 'drop' outside
 * dark mode css

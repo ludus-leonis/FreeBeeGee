@@ -419,7 +419,7 @@ export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {Object} moves Array of objects {id, x, y, z} like movePiece().
+ * @param {Array} moves Array of objects {id, x, y, z} like movePiece().
  * @param {Object} sync Optional. If true (default), trigger table sync.
  */
 export function movePieces (moves, sync = true) {

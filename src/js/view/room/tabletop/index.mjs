@@ -237,6 +237,39 @@ export function colorSelected (border = false) {
 }
 
 /**
+ * Pile up all selected pieces.
+ *
+ * Will silently fail if nothing is selected or items are locked.
+ *
+ * @param {boolean} randomize If the z order of all items will be randomized.
+ */
+export function pileSelected (randomize = false) {
+  const features = selectionGetFeatures()
+  const snapped = snap(features.boundingBox.x, features.boundingBox.y)
+  const toMove = []
+  const z = []
+
+  for (const piece of selectionGetPieces()) {
+    if (piece.f & FLAG_NO_MOVE) return // abort if one no-mover is here
+    toMove.push({
+      id: piece.id,
+      x: snapped.x,
+      y: snapped.y,
+      z: piece.z
+    })
+    z.push(piece.z) // keep for shuffling
+  }
+  if (randomize) {
+    shuffle(z)
+    for (const piece of toMove) {
+      piece.z = z.pop()
+    }
+  }
+
+  movePieces(toMove)
+}
+
+/**
  * Increase/decrease the token number (if it is a token).
  *
  * Will cycle through all states

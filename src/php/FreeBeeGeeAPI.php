@@ -327,7 +327,7 @@ class FreeBeeGeeAPI
             $meta->lock = $folder . '.flock';
             return $meta;
         }
-        $this->api->sendError(404, 'not found: ' . $roomName);
+        $this->api->sendError(404, 'room meta not found: ' . $roomName);
     }
 
     /**
@@ -585,7 +585,7 @@ class FreeBeeGeeAPI
             }
             if (!in_array($piece->id, $ids) && (!isset($piece->l) || $piece->l !== PHP_INT_MIN)) {
                 $this->api->unlockLock($lock);
-                $this->api->sendError(404, 'not found: ' . $piece->id);
+                $this->api->sendError(404, 'piece not found: ' . $piece->id);
             }
         }
         $this->writeAsJSONAndDigest($meta->folder, 'tables/' . $tid . '.json', $newTable);
