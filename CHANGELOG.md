@@ -7,6 +7,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Notable changes
 
 * added pile feature
+* added PHP 8.3 support
 
 ### Other changes
 
