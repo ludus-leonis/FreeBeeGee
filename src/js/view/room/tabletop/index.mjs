@@ -95,7 +95,7 @@ import {
 
 import {
   modalEdit
-} from '../../../view/room/modal/edit.mjs'
+} from '../../../view/room/modal/piece/index.mjs'
 
 import {
   modalSettings

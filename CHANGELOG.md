@@ -8,11 +8,12 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added pile feature
 * added PHP 8.3 support
-* improved measure mode: the LOS-line now has inch-stripes and holding shift disables snapping
+* added inch-indicators to LOS-line
+* added shift-disables-snapping for LOS-line
 
 ### Other changes
 
-* TBD
+* refactored piece editor modals into separate files
 
 
 ## v0.19.0 - Frying Frog
