@@ -13,6 +13,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* fixed token border won't scale with zoom
 * refactored piece editor modals into separate files
 * removed obsolete test.php
 

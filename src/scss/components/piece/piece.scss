@@ -113,7 +113,7 @@ $piece-rotate: 1deg;
   // --- borders + 3d highlight ------------------------------------------------
 
   &.has-border {
-    box-shadow: 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+    box-shadow: 0 0 0 zoom($piece-border-size) var(--fbg-border-color) inset;
   }
 
   .is-quality-high &,
@@ -122,7 +122,7 @@ $piece-rotate: 1deg;
       box-shadow: highlight();
 
       &.has-border {
-        box-shadow: highlight(), 0 0 0 $piece-border-size var(--fbg-border-color) inset;
+        box-shadow: highlight(), 0 0 0 zoom($piece-border-size) var(--fbg-border-color) inset;
       }
     }
   }

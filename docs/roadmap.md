@@ -14,7 +14,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] ui: token border won't scale with zoom
+    * [X] ui: token border won't scale with zoom
     * [ ] ui: 3x2 token image alignment off
     * [X] refactor piece editor modals into separate files
     * [ ] bug: dragging multiselected hex tokens does not always snap correctly
