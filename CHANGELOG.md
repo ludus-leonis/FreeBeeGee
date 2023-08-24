@@ -14,6 +14,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Other changes
 
 * fixed token border won't scale with zoom
+* fixed non-square token/tile images alignment off
 * refactored piece editor modals into separate files
 * removed obsolete test.php
 
