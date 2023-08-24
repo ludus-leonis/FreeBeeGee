@@ -9,15 +9,16 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] improve ruler
   * [X] add inch color stripes
   * [X] add shift should disable snap
-  * [ ] smaller indicators
+* [ ] library: filetree assets UI
+* [ ] library: delete assets UI
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] ui: token border don't scale with zoom
+    * [ ] ui: token border won't scale with zoom
     * [ ] ui: 3x2 token image alignment off
     * [X] refactor piece editor modals into separate files
     * [ ] bug: dragging multiselected hex tokens does not always snap correctly
-    * [ ] refactor: remove obsolete test.php
+    * [X] refactor: remove obsolete test.php
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

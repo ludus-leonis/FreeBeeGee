@@ -14,7 +14,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Other changes
 
 * refactored piece editor modals into separate files
-
+* removed obsolete test.php
 
 ## v0.19.0 - Frying Frog
 
