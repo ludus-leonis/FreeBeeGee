@@ -1,9 +1,9 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.20.0-dev",
-  "versionEngine": "2.3.1",
+  "version": "0.20.0",
+  "versionEngine": "2.4.1",
   "type": "module",
-  "codename": "??? ???",
+  "codename": "Advising Antelope",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",

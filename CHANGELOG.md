@@ -2,7 +2,7 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.20.0 - ??? ???
+## v0.20.0 - Advising Antelope
 
 ### Notable changes
 

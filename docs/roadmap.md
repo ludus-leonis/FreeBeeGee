@@ -2,7 +2,7 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.20 - ??? ???
+## v0.20 - Advising Antelope
 
 * [X] pile pieces
 * [X] PHP 8.3 support
@@ -11,26 +11,26 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] add shift should disable snap
 * [X] library manager
   * [X] delete assets UI
-* [ ] pre-release
+* [X] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] ui: token border won't scale with zoom
     * [X] ui: non-square token/tile images alignment off
     * [X] refactor piece editor modals into separate files
     * [X] ui: button spinner not always hiding label
-    * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
     * [X] refactor: remove obsolete test.php
-    * [ ] refactor: add event mechanism
-  * [ ] review docs
-  * [ ] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] review + run tests
-  * [ ] update screenshots
+    * [X] refactor: add event mechanism
+  * [X] review docs
+  * [X] review tutorial
+  * [X] bump engine, version/codename & update CHANGELOG
+  * [X] review + run tests
+  * [X] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
+* [ ] bug: dragging multi-selected hex tokens does not always snap correctly
 * [ ] library manager: replace media/side
 * [ ] library manager: rename asset
 * [ ] refactor: use events more

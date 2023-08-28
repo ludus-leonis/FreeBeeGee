@@ -1,10 +1,10 @@
 {
- "id": "DBWD1i7t",
+ "id": "Zl0Et4-N",
  "name": "demoroomrpg",
- "engine": "2.3.1",
+ "engine": "2.4.1",
  "setup": {
-  "engine": "2.3.0",
-  "version": "0.19.0",
+  "engine": "2.4.0",
+  "version": "0.20.0",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 48,

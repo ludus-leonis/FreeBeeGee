@@ -142,7 +142,7 @@ export function modalHelp () {
             <p><span class="key">&lt;</span>/<span class="key">&gt;</span> Decrease/increase token letter. Hint: Only works for tokens!</p>
 
             <p><span class="key">Ctrl</span> Hold while selecting to multi-select.</p>
-            <p><span class="key">Shift</span> Hold while moving pieces to disable snapping.</p>
+            <p><span class="key">Shift</span> Hold while dragging pieces or LOS-lines to disable snapping.</p>
           </div>
           <div class="copyright">
             <h2>Room assets</h2>
