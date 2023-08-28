@@ -17,7 +17,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] ui: token border won't scale with zoom
     * [X] ui: non-square token/tile images alignment off
     * [X] refactor piece editor modals into separate files
-    * [ ] ui: button spinner not always working
+    * [X] ui: button spinner not always hiding label
     * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
     * [X] refactor: remove obsolete test.php
     * [ ] refactor: add event mechanism

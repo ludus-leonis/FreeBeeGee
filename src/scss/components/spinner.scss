@@ -49,10 +49,18 @@
 }
 
 .is-spinner {
-  color: transparent !important; // sass-lint:disable-line no-important
   cursor: not-allowed;
   pointer-events: none;
   position: relative;
+
+  &,
+  &:hover,
+  &:visited,
+  &:active,
+  &:focus,
+  &:active:focus {
+    color: transparent !important; // sass-lint:disable-line no-important
+  }
 
   &::after {
     @include spinner(1em);
