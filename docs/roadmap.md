@@ -5,7 +5,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.21 - ??? ???
 
 * [ ] library
-  * [ ] pre-select asset based on selected token
+  * [X] pre-selection of asset based on selected token
   * [ ] rename asset
   * [ ] change material
   * [ ] change size

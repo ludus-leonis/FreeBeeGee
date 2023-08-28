@@ -2,6 +2,17 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.21.0 - ??? ???
+
+### Notable changes
+
+* TBD
+
+### Other changes
+
+* added pre-selection of asset based on selected token when library is opened
+
+
 ## v0.20.0 - Advising Antelope
 
 ### Notable changes

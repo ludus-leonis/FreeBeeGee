@@ -43,8 +43,13 @@ import {
 
 import {
   getRoomMediaURL,
+  findAsset,
   countAssets
 } from '../../../../view/room/tabletop/tabledata.mjs'
+
+import {
+  selectionGetPieces
+} from '../../../../view/room/tabletop/selection.mjs'
 
 import {
   assetToNode,
@@ -77,6 +82,8 @@ import {
  * @param {Object} tile {x, y} coordinates (tile) where to add.
  */
 export function modalLibraryManager (xy) {
+  preselect()
+
   if (!isModalActive()) {
     const background = getBackground()
     const window = createWindow()
@@ -108,12 +115,29 @@ export function modalLibraryManager (xy) {
 let lastHash = null
 let selection = null
 
+/**
+ * Use table (piece) selection to pre-select an asset (if any).
+ */
+function preselect () {
+  const selected = selectionGetPieces()
+  if (selected.length > 0) {
+    const asset = findAsset(selected[0].a)
+    if (asset) selection = asset
+  }
+}
+
+/**
+ * Replace window content with loading spinner.
+ */
 function showSpinner () {
   _('#window .window-body')
     .empty()
     .add(_('.is-loading').create())
 }
 
+/**
+ * Update the window to hold a filetree plus browser panel.
+ */
 function updateManager () {
   if (isWindowActive()) {
     getModal()?.hide()
@@ -140,6 +164,14 @@ function updateManager () {
   }
 }
 
+/**
+ * Render a <details> element containing one asset type as folder.
+ *
+ * @param {string} title Asset type label for folder.
+ * @param {string} type Asset type for folder.
+ * @param {object[]} assets Assets to put into this tree.
+ * @return {FreeDOM} DOM node of generated (sub)tree.
+ */
 function createSubtree (title, type, assets) {
   const details = _('details').create()
   const summary = _('summary').create()
@@ -169,6 +201,11 @@ function createSubtree (title, type, assets) {
   return details
 }
 
+/**
+ * Update browser area to show a given asset.
+ *
+ * @param {string} asset Asset to display.
+ */
 function show (asset) {
   selection = asset
   const browser = _('.browser')
@@ -207,6 +244,12 @@ function show (asset) {
   _('#manager-delete').on('click', () => modalDelete(asset))
 }
 
+/**
+ * Update the preview box to show a given asset as preview-piece.
+ *
+ * @param {string} asset Asset to display.
+ * @param {number} side Side to show.
+ */
 function updatePreview (asset, side) {
   _('.browser .is-preview')
     .empty()
@@ -215,6 +258,13 @@ function updatePreview (asset, side) {
     .add('.is-max-' + Math.max(asset.w, asset.h))
 }
 
+/**
+ * Generate a table of all sides of an asset, including base and mask.
+ *
+ * @param {string} asset Asset to display.
+ * @param {number} side Side to show.
+ * @return {FreeDOM} DOM node of generated table.
+ */
 function assetToTable (asset) {
   const table = _('table.table').create()
     .add(
@@ -266,6 +316,11 @@ function assetToTable (asset) {
   return table
 }
 
+/**
+ * Show the confirmation modal to delete an asset.
+ *
+ * @param {string} asset Asset to be deleted.
+ */
 function modalDelete (asset) {
   const amount = countAssets(asset.id)
   createModalConfirm(
@@ -289,16 +344,3 @@ function modalDelete (asset) {
     }
   )
 }
-
-// {
-//   "id": "Vqb4A300",
-//   "name": "wraith",
-//   "type": "token",
-//   "w": 1,
-//   "h": 1,
-//   "bg": "#211F25",
-//   "media": [
-//     "wraith.1x1x1.211F25-wood.jpg"
-//   ],
-//   "tx": "wood"
-// }
