@@ -62,6 +62,26 @@
     }
   }
 
+  &-fullscreen {
+    padding: 0;
+
+    .modal-dialog {
+      border-radius: 0;
+      height: 100vh;
+      max-height: none;
+      max-width: none;
+      width: 100vw;
+    }
+
+    .modal-content {
+      background-color: $color-white-100;
+    }
+
+    .modal-body {
+      max-height: none;
+    }
+  }
+
   .fbg-error {
     color: $color-bad;
   }
@@ -95,6 +115,7 @@
   flex-grow: 0;
   flex-shrink: 0;
   padding: $spacing-tiny $spacing-medium;
+  position: relative;
   text-align: center;
 
   h1,
@@ -104,6 +125,32 @@
   h3,
   .h3 {
     color: inherit;
+  }
+}
+
+.modal-header-start {
+  cursor: pointer;
+  left: $spacing-small;
+  opacity: .5;
+  position: absolute;
+  top: px(6);
+
+  svg {
+    height: px(16);
+    width: px(16);
+  }
+}
+
+.modal-header-end {
+  cursor: pointer;
+  opacity: .5;
+  position: absolute;
+  right: $spacing-small;
+  top: px(6);
+
+  svg {
+    height: px(16);
+    width: px(16);
   }
 }
 

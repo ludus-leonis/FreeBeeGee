@@ -57,7 +57,7 @@ FreeBeeGee follows the [KISS principle](https://en.wikipedia.org/wiki/KISS_princ
 
 ### Server
 
-* PHP 7.4 / 8.0 / 8.1 / 8.2 with `zip` extension
+* PHP 7.4 / 8.0 / 8.1 / 8.2 / 8.3 with `zip` extension
 * Apache with `.htaccess` / `mod_rewrite` support
 
 -- or --

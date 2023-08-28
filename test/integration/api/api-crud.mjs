@@ -56,7 +56,7 @@ function testApiCrudRoom (api, version, room) {
   // get room - should not be there yet
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
-    expect(body._messages).to.include(`not found: ${room}`)
+    expect(body._messages).to.include(`room meta not found: ${room}`)
   }, 404)
 
   // create room
@@ -79,6 +79,8 @@ function testApiCrudRoom (api, version, room) {
     expect(body.library.overlay).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
+    expect(body.library.material).to.be.an('array')
+    expect(body.library.badge).to.be.an('array')
     expect(body.library.material).to.be.an('array')
     expect(body.setup).to.be.an('object')
     expect(Object.keys(body.setup)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])
@@ -106,6 +108,8 @@ function testApiCrudRoom (api, version, room) {
     expect(body.library.overlay).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
+    expect(body.library.material).to.be.an('array')
+    expect(body.library.badge).to.be.an('array')
     expect(body.library.material).to.be.an('array')
     expect(body.setup).to.be.an('object')
     expect(Object.keys(body.setup)).to.have.members(['type', 'version', 'engine', 'gridSize', 'gridWidth', 'gridHeight', 'colors', 'borders'])

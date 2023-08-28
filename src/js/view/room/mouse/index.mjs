@@ -160,7 +160,7 @@ function mouseDown (mousedown) {
     dragHandlers[dragCurrent].cancel()
     dragCurrent = null
   }
-  if (mousedown.button === 0 && mousedown.shiftKey) {
+  if (mousedown.button === 0 && mousedown.shiftKey && !isLMBLos()) {
     pointTo(getMouseCoords())
     return
   }

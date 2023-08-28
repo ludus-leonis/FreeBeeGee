@@ -131,6 +131,16 @@
   }
 }
 
+// --- library manager ---------------------------------------------------------
+
+.library-manager {
+  .is-preview {
+    height: px(128);
+    overflow: hidden;
+    width: px(128);
+  }
+}
+
 // --- preview tokens ----------------------------------------------------------
 
 .is-preview { // fixed maximum size for preview in modals

@@ -37,6 +37,11 @@ import {
 } from '../../lib/utils.mjs'
 
 import {
+  HOOK_LIBRARY_UPDATE,
+  triggerEvent
+} from '../../lib/events.mjs'
+
+import {
   apiError
 } from '../../view/error/index.mjs'
 
@@ -191,7 +196,11 @@ function checkRoomDigests () {
 
       // verify room metadata
       if (digest['room.json'] !== lastDigests['room.json']) {
-        return syncRoom().then(() => { touch(true); return table })
+        return syncRoom().then(() => {
+          touch(true)
+          triggerEvent(HOOK_LIBRARY_UPDATE)
+          return table
+        })
       }
 
       // verify currently active table hasn't changed

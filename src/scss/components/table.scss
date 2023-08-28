@@ -1,0 +1,51 @@
+// Copyright 2021-2023 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// HTML tables.
+///
+/// @access public
+////
+
+.table {
+  border-bottom: px(2) solid $color-gray-05;
+  border-top: px(2) solid $color-gray-05;
+  width: 100%;
+
+  th {
+    @extend %p-label;
+    color: $color-gray-50;
+  }
+
+  tbody {
+    border-top: px(2) solid $color-gray-05;
+
+    tr:hover {
+      background-color: $color-gray-05;
+    }
+  }
+}
+
+.table-key-value {
+  th {
+    color: $color-gray-50;
+    font-weight: normal;
+    padding: 0 $spacing-small;
+  }
+}

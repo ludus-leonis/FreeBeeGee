@@ -62,8 +62,8 @@ export class Los extends MouseButtonHandler {
     const snapped = snap(coords.x, coords.y, 2)
 
     this.los = {
-      originX: snapped.x,
-      originY: snapped.y
+      originX: mousedown.shiftKey ? coords.x : snapped.x,
+      originY: mousedown.shiftKey ? coords.y : snapped.y
     }
 
     mousedown.preventDefault()
@@ -73,8 +73,8 @@ export class Los extends MouseButtonHandler {
     if (this.isDragging()) {
       const coords = getMouseCoords()
       const snapped = snap(coords.x, coords.y, 2)
-      const width = snapped.x - this.los.originX
-      const height = snapped.y - this.los.originY
+      const width = (mousemove.shiftKey ? coords.x : snapped.x) - this.los.originX
+      const height = (mousemove.shiftKey ? coords.y : snapped.y) - this.los.originY
 
       if (width !== this.los.width || height !== this.los.height) {
         // we need to re-create the SVG

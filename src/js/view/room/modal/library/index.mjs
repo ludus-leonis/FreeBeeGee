@@ -17,12 +17,12 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
+import _ from '../../../../lib/FreeDOM.mjs'
 
 import {
   DEMO_MODE,
   UnexpectedStatus
-} from '../../../api/index.mjs'
+} from '../../../../api/index.mjs'
 
 import {
   toTitleCase,
@@ -32,14 +32,14 @@ import {
   resizeImage,
   bytesToIso,
   generateAnimal
-} from '../../../lib/utils.mjs'
+} from '../../../../lib/utils.mjs'
 
 import {
   createModal,
   getModal,
   isModalActive,
   modalClose
-} from '../../../view/room/modal.mjs'
+} from '../../../../view/room/modal.mjs'
 
 import {
   getLibrary,
@@ -49,33 +49,40 @@ import {
   setRoomPreference,
   addAsset,
   reloadRoom,
-  getSetup,
   getBackground,
   getMaterialMedia
-} from '../../../state/index.mjs'
+} from '../../../../state/index.mjs'
 
 import {
   LAYER_TILE,
   LAYER_OVERLAY,
   LAYER_TOKEN,
   createPieceFromAsset,
-  populatePieceDefaults,
   splitAssetFilename,
   snap
-} from '../../../view/room/tabletop/tabledata.mjs'
+} from '../../../../view/room/tabletop/tabledata.mjs'
 
 import {
-  pieceToNode,
+  assetToNode,
   url
-} from '../../../view/room/tabletop/index.mjs'
+} from '../../../../view/room/tabletop/index.mjs'
 
 import {
   selectionClear
-} from '../../../view/room/tabletop/selection.mjs'
+} from '../../../../view/room/tabletop/selection.mjs'
 
 import {
   modalDisabled
-} from '../../../view/room/modal/disabled.mjs'
+} from '../../../../view/room/modal/disabled.mjs'
+
+import {
+  iconEdit,
+  iconSearch
+} from '../../../../lib/icons.mjs'
+
+import {
+  modalLibraryManager
+} from './manager.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -91,6 +98,7 @@ export function modalLibrary (xy) {
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Library</h3>
+      <div class="modal-header-end" title="Library editor">${iconEdit}</div>
     `
     _('#modal-body').add('.is-maximizied').innerHTML = `
       <div class="has-spinner">Loading</div>
@@ -185,6 +193,11 @@ export function modalLibrary (xy) {
     // adapt footer on change
     _('[name="tabs"]').on('change', click => {
       setupFooter()
+    })
+
+    _('.modal-header-end').on('click', click => {
+      getModal().hide()
+      modalLibraryManager(xy)
     })
   }
 }
@@ -604,27 +617,7 @@ function updatePreviewDOM (blob) {
  * @return {HTMLElement} Node for the modal.
  */
 function assetToPreview (asset) {
-  const piece = populatePieceDefaults({
-    id: 'x' + asset.id,
-    a: asset.id,
-    s: 0
-  })
-
-  const node = pieceToNode(piece).add(
-    '.is-w-' + asset.w,
-    '.is-h-' + asset.h
-  )
-  node.dataset.a = asset.id
-
-  if (piece._meta.hasColor) {
-    const colors = getSetup().colors
-    piece.c[0] = Number.parseInt(asset.bg) % colors.length
-    if (piece.c[0] !== 0) {
-      node.css({ '--fbg-color': colors[piece.c[0] - 1].value })
-    }
-  }
-
-  const max = _('.is-preview').create(node)
+  const max = _('.is-preview').create(assetToNode(asset))
   if (asset.w % 2 === 0) max.add('.is-even-x')
   if (asset.h % 2 === 0) max.add('.is-even-y')
 
@@ -651,7 +644,7 @@ function modalOk () {
   const snapped = snap(modal.xy.x, modal.xy.y)
   let offsetZ = 0
   _('#tabs-library .is-selected .piece').each(item => {
-    const piece = createPieceFromAsset(item.dataset.a, snapped.x, snapped.y)
+    const piece = createPieceFromAsset(item.asset.id, snapped.x, snapped.y)
 
     piece.z = piece.z + offsetZ
     pieces.push(piece)
@@ -678,5 +671,3 @@ function filter () {
     }
   })
 }
-
-const iconSearch = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>'

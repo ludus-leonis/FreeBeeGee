@@ -290,7 +290,8 @@ body {
   letter-spacing: $typography-letter-spacing-base;
 
   p > a,
-  li > a {
+  li > a,
+  td > a {
     @include typography-links(inherit, inherit, 2px, $color-primary, var(--fbg-color-text));
   }
 }

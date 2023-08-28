@@ -89,13 +89,14 @@ import {
   getMaxZ,
   getTopLeft,
   getPieceBounds,
+  populatePieceDefaults,
   snap,
   stickyNoteColors
 } from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
   modalEdit
-} from '../../../view/room/modal/edit.mjs'
+} from '../../../view/room/modal/piece/index.mjs'
 
 import {
   modalSettings
@@ -234,6 +235,39 @@ export function colorSelected (border = false) {
         }
     }
   }
+}
+
+/**
+ * Pile up all selected pieces.
+ *
+ * Will silently fail if nothing is selected or items are locked.
+ *
+ * @param {boolean} randomize If the z order of all items will be randomized.
+ */
+export function pileSelected (randomize = false) {
+  const features = selectionGetFeatures()
+  const snapped = snap(features.boundingBox.x, features.boundingBox.y)
+  const toMove = []
+  const z = []
+
+  for (const piece of selectionGetPieces()) {
+    if (piece.f & FLAG_NO_MOVE) return // abort if one no-mover is here
+    toMove.push({
+      id: piece.id,
+      x: snapped.x,
+      y: snapped.y,
+      z: piece.z
+    })
+    z.push(piece.z) // keep for shuffling
+  }
+  if (randomize) {
+    shuffle(z)
+    for (const piece of toMove) {
+      piece.z = z.pop()
+    }
+  }
+
+  movePieces(toMove)
 }
 
 /**
@@ -656,6 +690,37 @@ export function pieceToNode (piece) {
 }
 
 /**
+* Convert an asset data object to a DOM node. Usually for library previews.
+ *
+ * @param {Object} asset Asset object.
+ * @param {Number} side Side to use, defaults to 0 = first side.
+ * @return {FreeDOM} Converted node (not added to DOM yet).
+ */
+export function assetToNode (asset, side = 0) {
+  const piece = populatePieceDefaults({
+    id: 'x' + asset.id,
+    a: asset.id,
+    s: side
+  })
+
+  const node = pieceToNode(piece).add(
+    '.is-w-' + asset.w,
+    '.is-h-' + asset.h
+  )
+  node.asset = asset
+
+  if (piece._meta.hasColor) {
+    const colors = getSetup().colors
+    piece.c[0] = Number.parseInt(asset.bg) % colors.length
+    if (piece.c[0] !== 0) {
+      node.css({ '--fbg-color': colors[piece.c[0] - 1].value })
+    }
+  }
+
+  return node
+}
+
+/**
  * Convert a sticky note to a DOM node.
  *
  * @param {Object} note Full note data object.
@@ -900,6 +965,27 @@ export function createLosPiece (x, y, width, height) {
   shape.setAttribute('stroke', '#ad371a') // red thread
   shape.setAttribute('stroke-width', stroke)
   svg.appendChild(shape)
+
+  // inch/cm line
+  const ruler = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  ruler.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  ruler.setAttribute('stroke-linecap', 'round')
+  ruler.setAttribute('stroke-linejoin', 'round')
+  ruler.setAttribute('stroke', '#ffffff30') // red thread
+  ruler.setAttribute('stroke-dasharray', '64, 64')
+  ruler.setAttribute('stroke-dashoffset', 64)
+  ruler.setAttribute('stroke-width', stroke - 1)
+  svg.appendChild(ruler)
+
+  // inch/cm line
+  const ruler2 = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  ruler2.setAttribute('d', `M ${x1},${y1} ${x2},${y2}`)
+  ruler2.setAttribute('stroke-linecap', 'round')
+  ruler2.setAttribute('stroke-linejoin', 'round')
+  ruler2.setAttribute('stroke', '#00000040') // red thread
+  ruler2.setAttribute('stroke-dasharray', '64, 64')
+  ruler2.setAttribute('stroke-width', stroke - 1)
+  svg.appendChild(ruler2)
 
   // shade line
   const shade = document.createElementNS('http://www.w3.org/2000/svg', 'path')

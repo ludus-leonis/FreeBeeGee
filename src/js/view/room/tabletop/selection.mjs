@@ -32,6 +32,7 @@ import {
 import {
   FLAG_NO_CLONE,
   FLAG_NO_DELETE,
+  FLAG_NO_MOVE,
   getTable,
   getTableNo
 } from '../../../state/index.mjs'
@@ -158,6 +159,7 @@ export function selectionGetFeatures () {
     rotate: false,
     flip: false,
     random: false,
+    pile: false,
     top: false,
     bottom: false,
     clone: false,
@@ -173,6 +175,7 @@ export function selectionGetFeatures () {
       rotate: true,
       flip: true,
       random: true,
+      pile: pieces.length > 1,
       top: true,
       bottom: true,
       clone: true,
@@ -187,6 +190,7 @@ export function selectionGetFeatures () {
       if (piece.l === LAYER_OTHER) features.rotate = false
       if (piece.f & FLAG_NO_CLONE) features.clone = false
       if (piece.f & FLAG_NO_DELETE) features.delete = false
+      if (piece.f & FLAG_NO_MOVE) features.pile = false
       if (!piece._meta?.hasColor) features.color = false
       if (!piece._meta?.hasBorder) features.border = false
       if (piece.l !== LAYER_TOKEN) features.number = false

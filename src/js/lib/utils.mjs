@@ -263,6 +263,20 @@ export function isNone (items, check) {
   return true
 }
 
+/**
+ * Shuffle an array using Durstenfeld shuffle.
+ *
+ * @param {Array} array Array to shuffle. Will be modified!
+ * @return {Array} Will also return the shuffled array for convenience.
+ */
+export function shuffle (array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
+
 // --- math --------------------------------------------------------------------
 
 /**
@@ -440,19 +454,6 @@ export function snapHex2 (x, y, snap, lod = 1) {
     x: snapped.y,
     y: snapped.x
   }
-}
-
-/**
- * Shuffle an array using Durstenfeld shuffle.
- *
- * @param {Array} array Array to shuffle. Will be modified!
- */
-export function shuffle (array) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]]
-  }
-  return array
 }
 
 /**
@@ -748,6 +749,21 @@ export function brightness (color) {
   const g = parseInt(color.substring(3, 5), 16)
   const b = parseInt(color.substring(5, 7), 16)
   return (r + g + b) / 3
+}
+
+/**
+ * Calculate a contrast label text color for a given background color.
+ *
+ * @param {String} backgroundColor E.g. '#ff0000'
+ * @param {String} white Color to use for dark backgrounds.
+ * @param {String} black Color to use for light backgrounds.
+ * @return {String} HTML color to use for label text.
+ */
+export function labelColor (backgroundColor, white = '#e6e6e6', black = '#262626') {
+  if (backgroundColor.match(/^#/)) {
+    return brightness(backgroundColor) < 92 ? white : black
+  }
+  return black
 }
 
 // --- misc --------------------------------------------------------------------

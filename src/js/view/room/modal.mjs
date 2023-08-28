@@ -87,7 +87,7 @@ export function createModalRaw (html) {
 export function createModal (large = false) {
   const node = createModalRaw(`
       <div class="modal-dialog">
-        <div id="modal-content class="modal-content">
+        <div id="modal-content" class="modal-content">
           <div id="modal-header" class="modal-header is-content"></div>
           <div id="modal-body" class="modal-body is-content"></div>
           <div id="modal-footer" class="modal-footer fb"></div>
@@ -96,6 +96,30 @@ export function createModal (large = false) {
     `)
 
   if (large) node.classList.add('modal-large')
+
+  return node
+}
+
+/**
+ * Initialize a new fullscreen modal.
+ *
+ * Assumes an hidden, empty modal frame to be present in the DOM as '#modal' and
+ * will return it as Bootstrap Modal instance.
+ *
+ * @return {FreeDOM} The modal's DOM node ('#modal').
+ */
+export function createModalFullscreen () {
+  const node = createModalRaw(`
+      <div class="modal-dialog">
+        <div id="modal-content" class="modal-content">
+          <div id="modal-header" class="modal-header is-content"></div>
+          <div id="modal-body" class="modal-body is-content"></div>
+          <div id="modal-footer" class="modal-footer fb"></div>
+        </div>
+      </div>
+    `)
+
+  node.classList.add('modal-fullscreen')
 
   return node
 }
@@ -113,4 +137,26 @@ export function modalClose () {
     _('.modal-backdrop').delete()
   }
   startAutoSync() // might have gotten shut down in long-opened modals
+}
+
+export function createModalConfirm (title, body, button, data = {}, onOk = () => true) {
+  if (!isModalActive()) {
+    createModal()
+
+    _('#modal-header').innerHTML = title
+    _('#modal-body').innerHTML = body
+
+    _('#modal-footer').innerHTML = `
+      <button id='btn-close' type="button" class="btn">Cancel</button>
+      <button id='btn-ok' type="button" class="btn btn-primary">${button}</button>
+    `
+
+    _('#btn-close').on('click', () => getModal().hide())
+    _('#btn-ok').on('click', () => onOk(data))
+    _('#modal')
+      .add('.modal-small')
+      .on('hidden.bs.modal', () => { modalClose() })
+
+    getModal().show()
+  }
 }

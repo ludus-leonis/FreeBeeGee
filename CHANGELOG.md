@@ -2,6 +2,25 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.20.0 - Advising Antelope
+
+### Notable changes
+
+* added library manager - press shift+L to open
+* added pile feature
+* added PHP 8.3 support
+* added inch-indicators to LOS-line
+* added shift-disables-snapping for LOS-line
+
+### Other changes
+
+* fixed token border won't scale with zoom
+* fixed non-square token/tile images alignment off
+* fixed button spinner not always hiding label
+* refactored piece editor modals into separate files
+* removed obsolete test.php
+
+
 ## v0.19.0 - Frying Frog
 
 ### Notable changes

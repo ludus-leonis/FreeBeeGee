@@ -115,3 +115,11 @@
 .btn-secondary {
   @include button-color($color-white-100, $color-secondary, $color-secondary);
 }
+
+.btn-xs {
+  #{'--bs-btn-padding-y'}: 0;
+  #{'--bs-btn-padding-x'}: 0;
+  #{'--bs-btn-font-size'}: .75em;
+  #{'--bs-btn-border-radius'}: var(--bs-border-radius-sm);
+  min-width: 4rem;
+}

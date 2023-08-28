@@ -143,7 +143,7 @@
     $i: index($random-ids, $id);
 
     &[id^='#{$id}'] {
-      background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), 0;
+      background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), center;
     }
   }
 
@@ -160,7 +160,7 @@
       $i: index($random-ids, $id);
 
       &[id^='#{$id}'] {
-        background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), 0, 0;
+        background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), center, center;
       }
     }
   }
