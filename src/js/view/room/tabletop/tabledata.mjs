@@ -152,6 +152,26 @@ export function findAssetByAlias (name, layer = 'any') {
   return null
 }
 
+/**
+ * Find an asset by ID.
+ *
+ * @param {String} id Asset ID to lookup.
+ * @return {Number} Count of pieces using that asset across all tables.
+ */
+export function countAssets (id) {
+  let count = 0
+
+  for (let no = 1; no <= 9; no++) {
+    for (const piece of getTable(no)) {
+      if (piece.a === id) {
+        count++
+      }
+    }
+  }
+
+  return count
+}
+
 export function getRoomMediaURL (room, type, file, demo = false) {
   if (demo) {
     return `demo/${getRoom().setup.name}/assets/${type}/${file}`

@@ -89,6 +89,7 @@ import {
   getMaxZ,
   getTopLeft,
   getPieceBounds,
+  populatePieceDefaults,
   snap,
   stickyNoteColors
 } from '../../../view/room/tabletop/tabledata.mjs'
@@ -684,6 +685,37 @@ export function pieceToNode (piece) {
 
   // set meta-classes on node
   node.id = piece.id
+
+  return node
+}
+
+/**
+* Convert an asset data object to a DOM node. Usually for library previews.
+ *
+ * @param {Object} asset Asset object.
+ * @param {Number} side Side to use, defaults to 0 = first side.
+ * @return {FreeDOM} Converted node (not added to DOM yet).
+ */
+export function assetToNode (asset, side = 0) {
+  const piece = populatePieceDefaults({
+    id: 'x' + asset.id,
+    a: asset.id,
+    s: side
+  })
+
+  const node = pieceToNode(piece).add(
+    '.is-w-' + asset.w,
+    '.is-h-' + asset.h
+  )
+  node.asset = asset
+
+  if (piece._meta.hasColor) {
+    const colors = getSetup().colors
+    piece.c[0] = Number.parseInt(asset.bg) % colors.length
+    if (piece.c[0] !== 0) {
+      node.css({ '--fbg-color': colors[piece.c[0] - 1].value })
+    }
+  }
 
   return node
 }

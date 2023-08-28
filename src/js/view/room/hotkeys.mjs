@@ -29,6 +29,11 @@ import {
 } from '../../view/room/modal.mjs'
 
 import {
+  isWindowActive,
+  closeWindow
+} from '../../view/room/window.mjs'
+
+import {
   toggleLayer,
   toggleGrid,
   toggleLos
@@ -72,7 +77,11 @@ import {
 
 import {
   modalLibrary
-} from '../../view/room/modal/library.mjs'
+} from '../../view/room/modal/library/index.mjs'
+
+import {
+  modalLibraryManager
+} from '../../view/room/modal/library/manager.mjs'
 
 import {
   modalHelp
@@ -101,10 +110,14 @@ function handleRoomKeys (keydown) {
       modalClose()
       keydown.stopPropagation()
       return
+    } else if (isWindowActive()) {
+      closeWindow()
+      keydown.stopPropagation()
+      return
     }
   }
 
-  if (isDragging() && !isModalActive()) { // keys that work while dragging
+  if (isDragging() && !isModalActive() && !isWindowActive()) { // keys that work while dragging
     switch (keydown.key) {
       case ' ':
         if (isLMBLos(true)) release(0)
@@ -114,7 +127,7 @@ function handleRoomKeys (keydown) {
     }
   }
 
-  if (!isDragging() && !isModalActive()) { // keys that don't work while dragging
+  if (!isDragging() && !isModalActive() && !isWindowActive()) { // keys that don't work while dragging
     switch (keydown.key) {
       case 'Delete': // delete selected
         deleteSelected()
@@ -151,6 +164,9 @@ function handleRoomKeys (keydown) {
         break
       case 'l': // library / add piece
         modalLibrary(getMouseCoords())
+        break
+      case 'L': // library / editor
+        modalLibraryManager(getMouseCoords())
         break
       case 'n': // library / add piece
         createNote(getMouseCoords())

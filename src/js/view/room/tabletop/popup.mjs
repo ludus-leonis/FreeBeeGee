@@ -63,7 +63,7 @@ import {
 
 import {
   modalLibrary
-} from '../../../view/room/modal/library.mjs'
+} from '../../../view/room/modal/library/index.mjs'
 
 import {
   zoomCoordinates

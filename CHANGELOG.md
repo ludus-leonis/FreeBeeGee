@@ -6,6 +6,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
+* added library manager - press shift+L to open
 * added pile feature
 * added PHP 8.3 support
 * added inch-indicators to LOS-line
@@ -17,6 +18,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed non-square token/tile images alignment off
 * refactored piece editor modals into separate files
 * removed obsolete test.php
+
 
 ## v0.19.0 - Frying Frog
 

@@ -42,7 +42,7 @@ import {
 
 let token = null
 
-function test401 (api, version, room) {
+function test401 (api, version, room) { // no token
   openTestroom(api, room, 'Classic', 'myPassword')
   testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
@@ -61,6 +61,8 @@ function test401 (api, version, room) {
 
   testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 401)
   testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 401)
+  testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 401)
+  testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 401)
 
   testJsonPut(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 401)
   testJsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 401)
@@ -77,7 +79,7 @@ function test401 (api, version, room) {
   testJsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
 }
 
-function test403 (api, version, room) {
+function test403 (api, version, room) { // wrong token
   openTestroom(api, room, 'Classic', 'myPassword')
   testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
@@ -96,6 +98,8 @@ function test403 (api, version, room) {
 
   testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
   testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 403, () => 'INVALID-TOKEN') // non-existing ID
+  testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 403, () => 'INVALID-TOKEN') // existing ID
 
   testJsonPut(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
   testJsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
@@ -134,6 +138,8 @@ function test20x (api, version, room) {
 
   testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 400, () => token)
   testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 400, () => token)
+  testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 204, () => token) // non-existing ID
+  testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 204, () => token) // existing ID
 
   testJsonPut(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, () => {}, body => {}, 400, () => token)
   testJsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 400, () => token)

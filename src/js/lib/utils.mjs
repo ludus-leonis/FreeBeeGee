@@ -751,6 +751,21 @@ export function brightness (color) {
   return (r + g + b) / 3
 }
 
+/**
+ * Calculate a contrast label text color for a given background color.
+ *
+ * @param {String} backgroundColor E.g. '#ff0000'
+ * @param {String} white Color to use for dark backgrounds.
+ * @param {String} black Color to use for light backgrounds.
+ * @return {String} HTML color to use for label text.
+ */
+export function labelColor (backgroundColor, white = '#e6e6e6', black = '#262626') {
+  if (backgroundColor.match(/^#/)) {
+    return brightness(backgroundColor) < 92 ? white : black
+  }
+  return black
+}
+
 // --- misc --------------------------------------------------------------------
 
 /**

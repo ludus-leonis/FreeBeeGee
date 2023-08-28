@@ -5,20 +5,22 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.20 - ??? ???
 
 * [X] pile pieces
-* [X] PHP 8.3 suppor
+* [X] PHP 8.3 support
 * [X] improve ruler
   * [X] add inch color stripes
   * [X] add shift should disable snap
-* [ ] library: filetree assets UI
-* [ ] library: delete assets UI
+* [X] library manager
+  * [X] delete assets UI
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] ui: token border won't scale with zoom
     * [X] ui: non-square token/tile images alignment off
     * [X] refactor piece editor modals into separate files
-    * [ ] bug: dragging multiselected hex tokens does not always snap correctly
+    * [ ] ui: button spinner not always working
+    * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
     * [X] refactor: remove obsolete test.php
+    * [ ] refactor: add event mechanism
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -29,9 +31,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] library manager: replace media/side
+* [ ] library manager: rename asset
+* [ ] refactor: use events more
 * [ ] ui: decks/stacks
 * [ ] library: show/indicate backside/all sides in tile browser
-* [ ] library: delete assets UI
 * [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
 * [ ] engine: grid-on-tile flag

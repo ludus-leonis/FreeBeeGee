@@ -183,6 +183,11 @@ class FreeBeeGeeAPI
             $fbg->deletePiece($meta, $data['tid'], $data['pid'], true);
         });
 
+        $this->api->register('DELETE', '/rooms/:rid/assets/:aid/?', function ($fbg, $data) {
+            $meta = $this->getRoomMeta($data['rid']);
+            $fbg->deleteAssetLocked($meta, $data['aid']);
+        });
+
         $this->api->register('DELETE', '/rooms/:rid/?', function ($fbg, $data) {
             $meta = $this->getRoomMeta($data['rid']);
             $fbg->deleteRoom($meta);
@@ -1984,7 +1989,7 @@ class FreeBeeGeeAPI
         object $meta
     ) {
         $this->api->deleteDir($meta->folder);
-        $this->api->sendReply(204, '');
+        $this->api->sendReply(204);
     }
 
     /**
@@ -2241,7 +2246,7 @@ class FreeBeeGeeAPI
 
         $this->updatePieceTableLocked($meta, $tid, $piece, false, false);
         if ($sendReply) {
-            $this->api->sendReply(204, '');
+            $this->api->sendReply(204);
         }
     }
 
@@ -2286,6 +2291,65 @@ class FreeBeeGeeAPI
         $this->api->unlockLock($lock);
         unset($asset->base64);
         $this->api->sendReply(201, json_encode($asset));
+    }
+
+    /**
+     * Delete an asset from the library.
+     *
+     * Will not remove pieces that reference that asset.
+     *
+     * @param object $meta Room's parsed `meta.json`.
+     */
+    public function deleteAssetLocked(
+        object $meta,
+        string $aid
+    ) {
+        $lock = $this->api->waitForWriteLock($meta->lock);
+
+        // find asset filename(s)
+        $roomFS = json_decode(file_get_contents($meta->folder . 'room.json'));
+        $toDelete = null;
+        foreach (
+            array_merge(
+                $roomFS->library->overlay,
+                $roomFS->library->tile,
+                $roomFS->library->token,
+                $roomFS->library->other,
+                $roomFS->library->badge
+            ) as $asset
+        ) {
+            if ($asset->id === $aid) {
+                $toDelete = $asset;
+                break;
+            }
+        }
+
+        if ($toDelete !== null) {
+            // remove all media files = delete asset
+            foreach ($toDelete->media as $media) {
+                @unlink("$meta->folder/assets/$toDelete->type/$media");
+            }
+            if (property_exists($toDelete, 'mask')) {
+                @unlink("$meta->folder/assets/$toDelete->type/$toDelete->mask");
+            }
+            if (property_exists($toDelete, 'base')) {
+                @unlink("$meta->folder/assets/$toDelete->type/$toDelete->base");
+            }
+
+            // regenerate library JSON
+            $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+            $room->library = $this->generateLibraryJSON($meta->name);
+            $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);
+        } else {
+            foreach ($roomFS->library->material as $asset) {
+                if ($asset->id === $aid) {
+                    $this->api->unlockLock($lock);
+                    $this->api->sendError(403, 'forbidden material');
+                }
+            }
+        }
+        $this->api->unlockLock($lock);
+        $this->api->sendReply(204); // send 204 even if asset did not exist
     }
 
     /**

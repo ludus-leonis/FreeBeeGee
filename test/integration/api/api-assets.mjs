@@ -23,8 +23,11 @@
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
 import {
+  expect,
   openTestroom,
-  closeTestroom
+  closeTestroom,
+  testJsonGet,
+  testJsonDelete
 } from '../utils/chai.mjs'
 
 // -----------------------------------------------------------------------------
@@ -43,6 +46,104 @@ export function testApiMinimalAsset (api, version, room) {
   closeTestroom(api, room)
 }
 
+// -----------------------------------------------------------------------------
+
+export function testApiDeleteAsset (api, version, room) {
+  openTestroom(api, room, 'Classic')
+
+  // check library
+  testJsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.overlay.length).to.be.eql(17)
+    expect(body.library.tile.length).to.be.eql(12)
+    expect(body.library.token.length).to.be.eql(11)
+    expect(body.library.other.length).to.be.eql(16)
+    expect(body.library.badge.length).to.be.eql(5)
+    expect(body.library.material.length).to.be.eql(5)
+  }, 200)
+
+  // delete invalid id
+  testJsonDelete(api, () => `/rooms/${room}/assets/blah/`, 204)
+
+  // check library
+  testJsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.overlay.length).to.be.eql(17)
+    expect(body.library.tile.length).to.be.eql(12)
+    expect(body.library.token.length).to.be.eql(11)
+    expect(body.library.other.length).to.be.eql(16)
+    expect(body.library.badge.length).to.be.eql(5)
+    expect(body.library.material.length).to.be.eql(5)
+  }, 200)
+
+  // delete overlay
+  testJsonDelete(api, () => `/rooms/${room}/assets/wPXsm000/`, 204)
+  testJsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.overlay.length).to.be.eql(16)
+    expect(body.library.tile.length).to.be.eql(12)
+    expect(body.library.token.length).to.be.eql(11)
+    expect(body.library.other.length).to.be.eql(16)
+    expect(body.library.badge.length).to.be.eql(5)
+    expect(body.library.material.length).to.be.eql(5)
+  }, 200)
+
+  // delete tile
+  testJsonDelete(api, () => `/rooms/${room}/assets/lWh16200/`, 204)
+  testJsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.overlay.length).to.be.eql(16)
+    expect(body.library.tile.length).to.be.eql(11)
+    expect(body.library.token.length).to.be.eql(11)
+    expect(body.library.other.length).to.be.eql(16)
+    expect(body.library.badge.length).to.be.eql(5)
+    expect(body.library.material.length).to.be.eql(5)
+  }, 200)
+
+  // delete token
+  testJsonDelete(api, () => `/rooms/${room}/assets/f_9xm000/`, 204)
+  testJsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.overlay.length).to.be.eql(16)
+    expect(body.library.tile.length).to.be.eql(11)
+    expect(body.library.token.length).to.be.eql(10)
+    expect(body.library.other.length).to.be.eql(16)
+    expect(body.library.badge.length).to.be.eql(5)
+    expect(body.library.material.length).to.be.eql(5)
+  }, 200)
+
+  // delete other
+  testJsonDelete(api, () => `/rooms/${room}/assets/lPebe300/`, 204)
+  testJsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.overlay.length).to.be.eql(16)
+    expect(body.library.tile.length).to.be.eql(11)
+    expect(body.library.token.length).to.be.eql(10)
+    expect(body.library.other.length).to.be.eql(15)
+    expect(body.library.badge.length).to.be.eql(5)
+    expect(body.library.material.length).to.be.eql(5)
+  }, 200)
+
+  // delete badge
+  testJsonDelete(api, () => `/rooms/${room}/assets/wRe_l200/`, 204)
+  testJsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.overlay.length).to.be.eql(16)
+    expect(body.library.tile.length).to.be.eql(11)
+    expect(body.library.token.length).to.be.eql(10)
+    expect(body.library.other.length).to.be.eql(15)
+    expect(body.library.badge.length).to.be.eql(4)
+    expect(body.library.material.length).to.be.eql(5)
+  }, 200)
+
+  // delete material not possible
+  testJsonDelete(api, () => `/rooms/${room}/assets/Hb9tz200/`, 403)
+
+  testJsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.overlay.length).to.be.eql(16)
+    expect(body.library.tile.length).to.be.eql(11)
+    expect(body.library.token.length).to.be.eql(10)
+    expect(body.library.other.length).to.be.eql(15)
+    expect(body.library.badge.length).to.be.eql(4)
+    expect(body.library.material.length).to.be.eql(5)
+  }, 200)
+
+  closeTestroom(api, room)
+}
+
 // --- the test runners --------------------------------------------------------
 
 export function run (runner) {
@@ -50,6 +151,7 @@ export function run (runner) {
     runner((api, version, room) => {
       describe('invalid assets', () => testApiInvalidAsset(api, version, room))
       describe('minimal assets', () => testApiMinimalAsset(api, version, room))
+      describe('delete assets', () => testApiDeleteAsset(api, version, room))
     })
   })
 }

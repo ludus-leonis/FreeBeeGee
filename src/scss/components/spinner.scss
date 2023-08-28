@@ -30,7 +30,7 @@
 
 @mixin spinner ($spinner-size) {
   animation: infinite-rotate 1s linear infinite;
-  border-color: transparent transparent $color-white-100 $color-white-100;
+  border-color: transparent transparent currentColor currentColor;
   border-radius: $spinner-size;
   border-style: solid;
   border-width: 2px;
@@ -42,11 +42,13 @@
 .has-spinner {
   &::after {
     @include spinner(1em);
+
+    color: $color-white-100;
     margin-left: .25em;
   }
 }
 
-.btn.is-spinner {
+.is-spinner {
   color: transparent !important; // sass-lint:disable-line no-important
   cursor: not-allowed;
   pointer-events: none;
@@ -55,6 +57,23 @@
   &::after {
     @include spinner(1em);
 
+    color: $color-white-100;
+    left: calc(50% - .5em);
+    position: absolute;
+    top: calc(50% - .5em);
+  }
+}
+
+.is-loading {
+  color: transparent;
+  height: 100%;
+  position: relative;
+  width: 100%;
+
+  &::after {
+    @include spinner(px(16));
+
+    color: $color-bw-fg;
     left: calc(50% - .5em);
     position: absolute;
     top: calc(50% - .5em);

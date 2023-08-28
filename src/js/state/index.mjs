@@ -39,6 +39,7 @@ import {
   apiDeletePiece,
   apiPostPiece,
   apiPostAsset,
+  apiDeleteAsset,
   apiPatchRoomAuth
 } from '../api/index.mjs'
 
@@ -188,6 +189,32 @@ export function getMaterialMedia (name) {
   const material = getLibrary()?.material?.find(m => m.name === name)
   const filename = material?.media[0] ?? 'none.png'
   return getRoomMediaURL(getRoom()?.name, 'material', filename, DEMO_MODE)
+}
+
+/**
+ * Get a human readable name for an asset's bg value.
+ *
+ * @param {any} backgroundColor A bg value.
+ * @return {String} Label for the UI.
+ */
+export function getColorLabel (backgroundColor) {
+  if (backgroundColor.match(/^#/)) {
+    return `${backgroundColor}`
+  }
+
+  const colors = getSetup().colors
+  const parsed = Number.parseInt(backgroundColor)
+  if (`${parsed}` === backgroundColor) {
+    return colors[(parsed - 1 + colors.length) % colors.length]?.name ?? 'unknown'
+  }
+
+  if (backgroundColor === 'transparent') {
+    return 'transparent'
+  }
+
+  // TODO: piece?
+
+  return '#808080' // default color
 }
 
 /**
@@ -546,6 +573,23 @@ export function deletePiece (pieceId, sync = true) {
     })
 }
 
+/**
+ * Remove an asset from the library. Will keep referencing pices on the table (which
+ * will get a placeholder image).
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {String} assetId ID of asset to remove.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
+ */
+export function deleteAsset (assetId, sync = true) {
+  return apiDeleteAsset(room.name, assetId, getToken())
+    .catch(error => apiError(error, room.name))
+    .finally(() => {
+      if (sync) syncNow()
+    })
+}
 /**
  * Update the table state to the a new one.
  *

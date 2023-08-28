@@ -258,7 +258,7 @@ export function apiPostPiece (roomName, tableId, piece, token) {
 }
 
 /**
- * API POST /rooms/:roomName/tables/:tableId/pieces/
+ * API POST /rooms/:roomName/assets/
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
  * @param {Object} asset Asset JSON/Object to send.
@@ -267,6 +267,18 @@ export function apiPostPiece (roomName, tableId, piece, token) {
  */
 export function apiPostAsset (roomName, asset, token) {
   return postJson([201], `api/rooms/${roomName}/assets/`, asset, token)
+}
+
+/**
+ * API DELETE /rooms/:roomName/assets/:assetId/
+ *
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {Object} assetId Asset ID to delete.
+ * @param {String} token API access token.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiDeleteAsset (roomName, assetId, token) {
+  return deleteJson([204], `api/rooms/${roomName}/assets/${assetId}/`, token)
 }
 
 /**

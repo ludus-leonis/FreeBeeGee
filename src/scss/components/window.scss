@@ -1,0 +1,94 @@
+// Copyright 2021-2023 Markus Leupold-Löwenthal
+//
+// This file is part of FreeBeeGee.
+//
+// FreeBeeGee is free software: you can redistribute it and/or modify it under
+// the terms of the GNU Affero General Public License as published by the Free
+// Software Foundation, either version 3 of the License, or (at your option) any
+// later version.
+//
+// FreeBeeGee is distributed in the hope that it will be useful, but WITHOUT ANY
+// WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
+// A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
+// details.
+//
+// You should have received a copy of the GNU Affero General Public License
+// along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
+
+////
+/// @group components
+///
+/// Fullscreen windows/panels.
+///
+/// @access public
+////
+
+$window-header-height: px(24);
+
+.window {
+  #{'--fbg-zoom'}: 1;
+
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  left: 0;
+  padding: 0;
+  position: absolute;
+  top: 0;
+  width: 100vw;
+  z-index: 200;
+}
+
+.window-header {
+  @include spacing-first-none;
+
+  background-color: $color-secondary;
+  color: $color-white-100;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding: $spacing-tiny $spacing-medium;
+  position: relative;
+  text-align: center;
+
+  h1,
+  .h1,
+  h2,
+  .h2,
+  h3,
+  .h3 {
+    color: inherit;
+  }
+}
+
+.window-header-start {
+  cursor: pointer;
+  left: $spacing-small;
+  position: absolute;
+  top: px(6);
+
+  svg {
+    height: px(16);
+    width: px(16);
+  }
+}
+
+.window-header-end {
+  cursor: pointer;
+  position: absolute;
+  right: $spacing-small;
+  top: px(6);
+
+  svg {
+    height: px(16);
+    width: px(16);
+  }
+}
+
+.window-body {
+  background-color: $color-bw-bg;
+  color: $color-bw-fg;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  padding: $spacing-small;
+}

@@ -116,7 +116,7 @@ export function modalHelp () {
             <p>The following general hotkeys are available. Hotkeys are <strong>case-sensitve</strong>.</p>
 
             <p><span class="key">1</span>/<span class="key">2</span>/<span class="key">3</span>/<span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
-            <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library window opened.</p>
+            <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library opened.</p>
             <p><span class="key">n</span> Add a new sticky note at the current mouse cursor position.</p>
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>
             <p><span class="key">Alt</span>/<span class="key">Ctrl</span> plus <span class="key">1</span>-<span class="key">9</span> Switch to another table (1 to 9).</p>
@@ -125,6 +125,7 @@ export function modalHelp () {
             <p><span class="key">F11</span> Toggle fullscreen.</p>
             <p><span class="key">+</span>/<span class="key">-</span> Zoom in/out.</p>
             <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
+            <p><span class="key">L</span> Show (advanced) library manager. Allows editing of assets.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>

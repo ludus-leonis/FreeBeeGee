@@ -72,6 +72,9 @@ export function demoFetchOrThrow (_, path, data = {}, headers = false) {
     return apiRoom(undefined, data, headers)
   } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/auth\/$/)) {
     return apiRoomAuth(path.substr(10).replace(/\/.*$/, ''), data, headers)
+  } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/assets\/[a-zA-Z0-9_-]+\/$/)) {
+    const matches = path.match(/^api\/rooms\/([a-zA-Z0-9]+)\/assets\/([a-zA-Z0-9_-]+)\/$/)
+    return apiRoomAssets(matches[1], matches[2], data, headers)
   } else if (path === 'api/snapshots/') {
     return apiSnapshots(data, headers)
   } else if (path === 'api/') {
@@ -331,11 +334,6 @@ function api (data, headers) {
           { name: 'Sand', image: 'img/desktop-sand.jpg', color: '#D7D2BF', scroller: '#a19e8f' },
           { name: 'Space', image: 'img/desktop-space.jpg', color: '#101010', scroller: '#404040' },
           { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3e3935' }
-        ],
-        materials: [
-          { name: 'None', tag: 'none', image: 'img/material-none.png' },
-          { name: 'Paper', tag: 'paper', image: 'img/material-paper.png' },
-          { name: 'Wood', tag: 'wood', image: 'img/material-wood.png' }
         ]
       }, headers)
     default:
@@ -516,6 +514,32 @@ function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
       del(temp, 'id', pieceId)
       setPreference(`freebeegee-demo-${roomName}`, pref, temp)
       updateDigest(roomName, `tables/${no}.json`, temp)
+      return delayPromise(204, {}, headers)
+    default:
+      throw new UnexpectedStatus(501, 'not implemented for demo')
+  }
+}
+
+/**
+ * Fake-fetch /api/rooms/[roomName]/assets/[assetId]/
+ *
+ * @param {String} roomName Room name to fetch.
+ * @param {String} assetId Asset to fetch.
+ * @param {Object} data Original fetch()'s data object.
+ * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @return {Promise} Delayed promise of the API content.
+ */
+function apiRoomAssets (roomName, assetId, data, headers) {
+  switch (data.method) {
+    case 'DELETE':
+      temp = getRoom(roomName)
+      del(temp.library.overlay, 'id', assetId)
+      del(temp.library.tile, 'id', assetId)
+      del(temp.library.token, 'id', assetId)
+      del(temp.library.other, 'id', assetId)
+      del(temp.library.badge, 'id', assetId)
+      setPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM, temp)
+      updateDigest(roomName, 'room.json', temp)
       return delayPromise(204, {}, headers)
     default:
       throw new UnexpectedStatus(501, 'not implemented for demo')
