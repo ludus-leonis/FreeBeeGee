@@ -2,29 +2,30 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.20 - Advising Antelope
+## v0.21 - ??? ???
 
-* [X] pile pieces
-* [X] PHP 8.3 support
-* [X] improve ruler
-  * [X] add inch color stripes
-  * [X] add shift should disable snap
-* [X] library manager
-  * [X] delete assets UI
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] ui: token border won't scale with zoom
-    * [X] ui: non-square token/tile images alignment off
-    * [X] refactor piece editor modals into separate files
-    * [X] ui: button spinner not always hiding label
-    * [X] refactor: remove obsolete test.php
-    * [X] refactor: add event mechanism
-  * [X] review docs
-  * [X] review tutorial
-  * [X] bump engine, version/codename & update CHANGELOG
-  * [X] review + run tests
-  * [X] update screenshots
+* [ ] library
+  * [ ] pre-select asset based on selected token
+  * [ ] rename asset
+  * [ ] change material
+  * [ ] change size
+  * [ ] change default color
+* [ ] piece: wooden cubes
+* [ ] ui
+  * [ ] smaller modal paddings
+  * [ ] modal background image
+  * [ ] open edit window on note create
+  * [ ] allow half-rotations via settings (45° for square, 30° for hex)
+* [ ] clipboard ctrl+c/v/x on/between tables
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] refactor: use events more
+  * [ ] review docs
+  * [ ] review tutorial
+  * [ ] bump engine, version/codename & update CHANGELOG
+  * [ ] review + run tests
+  * [ ] update screenshots
 
 ## Backlog
 
@@ -32,30 +33,23 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
 * [ ] library manager: replace media/side
-* [ ] library manager: rename asset
-* [ ] refactor: use events more
 * [ ] ui: decks/stacks
 * [ ] library: show/indicate backside/all sides in tile browser
-* [ ] ui: half-rotations (45° for square, 30° for hex)
 * [ ] ui: tweak minor grid visibility
 * [ ] engine: grid-on-tile flag
 * [ ] repo: split API tests in docker/all/latest
-* [ ] piece: wooden cubes
-* [ ] refactor: smaller modal paddings
 * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] automated screenshots using screenshot.zip snapshot
-* [ ] ui: clipboard ctrl+c/v/x between tables
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
 * [ ] snapshot download for demo mode
 * [ ] ui: move dice more
 * [ ] ui: library: tooltip explanation for '3x3:3' in library window
-* [ ] ui: open edit window on note create
-* [ ] library: edit asset UI
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] ui: set fixed table size (e.g. 73x65)
+* [ ] undo / time travel
 * [ ] piece: supply heap
 * [ ] piece: cards / card-decks
   * [ ] shuffle deck/stack
@@ -94,7 +88,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * cones + attack zones
 * rotate desk 90° 180° 270°
 * pinboard for handouts
-* undo (limited)
 * better tablet / touch support
   * zooming
   * moving pieces

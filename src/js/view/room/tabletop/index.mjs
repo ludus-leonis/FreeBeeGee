@@ -1246,6 +1246,6 @@ function setItem (piece) {
  * @returns {String} Converted markup, ready for xy.innerHTML=...
  */
 function markdown (content) {
-  return marked((content ?? '').replaceAll('<', '&lt;'))
+  return marked.parse((content ?? '').replaceAll('<', '&lt;'))
     .replaceAll('<a ', '<a target="_blank" rel="noopener noreferrer" ')
 }

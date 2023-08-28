@@ -147,7 +147,7 @@ export function modalHelp () {
           <div class="copyright">
             <h2>Room assets</h2>
 
-            ${marked(getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+            ${marked.parse(getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
 
             <h2>UI assets</h2>
 
