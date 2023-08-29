@@ -23,6 +23,8 @@
 /// @access public
 ////
 
+$modal-padding: calc(var(--fbg-spacing) * 1.5);
+
 .modal {
   #{'--fbg-zoom'}: 1;
 
@@ -73,10 +75,6 @@
       width: 100vw;
     }
 
-    .modal-content {
-      background-color: $color-white-100;
-    }
-
     .modal-body {
       max-height: none;
     }
@@ -114,7 +112,7 @@
   color: $color-white-100;
   flex-grow: 0;
   flex-shrink: 0;
-  padding: $spacing-tiny $spacing-medium;
+  padding: $spacing-tiny $modal-padding;
   position: relative;
   text-align: center;
 
@@ -157,14 +155,16 @@
 .modal-body {
   @include spacing-first-none;
 
-  background-color: $color-bw-bg;
+  background-color: $color-white-100;
+  background-image: url('img/ui-paper.jpg');
+  background-position-y: bottom;
   flex-grow: 1;
   flex-shrink: 1;
   margin: 0;
   max-height: 70vh;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: $spacing-medium $spacing-medium $spacing-small;
+  padding: $modal-padding $modal-padding $spacing-small;
 
   &.is-maximizied {
     min-height: 70vh;
@@ -178,13 +178,14 @@
 .modal-footer {
   @include spacing-first-none;
 
-  background-color: $color-bw-bg;
+  background-color: $color-white-100;
+  background-image: url('img/ui-paper.jpg');
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;
   justify-content: space-between;
   margin: 0;
-  padding: $spacing-medium;
+  padding: $modal-padding;
 
   > *:first-child:last-child { // center single buttons/items
     margin-left: auto;

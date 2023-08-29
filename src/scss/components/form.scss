@@ -25,6 +25,7 @@
 
 $form-field-border: px(2) solid $color-gray-40;
 
+$form-color-background: transparent;
 $form-color-disabled: $color-gray-50;
 $form-color-placeholder: $color-gray-25;
 
@@ -32,7 +33,7 @@ $form-color-placeholder: $color-gray-25;
   @extend %p-medium;
 
   appearance: none;
-  background-color: $color-white-100;
+  background-color: $form-color-background;
   border: 0;
   border-bottom: $form-field-border;
   color: inherit;

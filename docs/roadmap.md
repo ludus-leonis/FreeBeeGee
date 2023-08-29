@@ -6,11 +6,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [ ] library
   * [X] pre-selection of asset based on selected token
-  * [ ] rename asset
+  * [ ] change asset name
   * [ ] change material
   * [ ] change size
   * [ ] change default color
 * [ ] piece: wooden cubes
+* [ ] paper background for windows and cards
 * [ ] ui
   * [ ] smaller modal paddings
   * [ ] modal background image

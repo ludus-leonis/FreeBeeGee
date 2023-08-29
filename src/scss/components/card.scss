@@ -50,7 +50,9 @@
   &-body {
     @include spacing-first-none;
 
-    background-color: $color-bw-bg;
+    background-color: $color-white-100;
+    background-image: url('img/ui-paper.jpg');
+    background-position-y: bottom;
     margin: 0;
     padding: $spacing-medium;
   }
