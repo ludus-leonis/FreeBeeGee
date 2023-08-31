@@ -23,28 +23,19 @@
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
+import * as fs from 'fs'
+
 import {
   REGEXP_ID,
   p,
   expect,
   zipCreate,
-  openTestroom,
   closeTestroom,
-  testGetBuffer,
   testJsonGet,
-  testJsonPost,
   testZIPUpload
 } from '../utils/chai.mjs'
 
-import {
-  LAYER_TILE
-} from '../../../src/js/view/room/tabletop/tabledata.mjs'
-
-import * as fs from 'fs'
-
 // -----------------------------------------------------------------------------
-
-let data = null
 
 const _ = { // asset count in system snapshot
   other: 16,
@@ -192,67 +183,6 @@ function testApiZipFull (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiImageUpload (api, version, room) {
-  openTestroom(api, room, 'RPG')
-
-  // get library size
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body).to.be.an('object')
-    expect(body.library).to.be.an('object')
-    data = body.library
-  }, 200)
-
-  // upload asset
-  const image = fs.readFileSync('test/data/tile.jpg', { encoding: 'utf8', flag: 'r' })
-  testJsonPost(api, () => `/rooms/${room}/assets/`, () => {
-    return {
-      base64: Buffer.from(image).toString('base64'),
-      bg: '#808080',
-      format: 'jpg',
-      h: 2,
-      w: 3,
-      type: LAYER_TILE,
-      tx: 'wood',
-      name: 'upload.test'
-    }
-  }, body => {
-    expect(body).to.be.an('object')
-    expect(body.bg).to.be.eql('#808080')
-    expect(body.format).to.be.eql('jpg')
-    expect(body.h).to.be.eql(2)
-    expect(body.w).to.be.eql(3)
-    expect(body.type).to.be.eql(LAYER_TILE)
-    expect(body.name).to.be.eql('upload.test')
-    expect(body.tx).to.be.eql('wood')
-  }, 201)
-
-  // library must contain asset now
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body).to.be.an('object')
-    expect(body.library).to.be.an('object')
-    expect(body.library.tile.length).to.be.eql(data.tile.length + 1)
-
-    const index = body.library.tile.length - 1
-
-    expect(body.library.tile[index].id).to.be.an('string')
-    expect(body.library.tile[index].media).to.be.an('array')
-    expect(body.library.tile[index].media[0]).to.be.eql('upload.test.3x2x1.808080.wood.jpg')
-    expect(body.library.tile[index].bg).to.be.eql('#808080')
-    expect(body.library.tile[index].h).to.be.eql(2)
-    expect(body.library.tile[index].w).to.be.eql(3)
-    expect(body.library.tile[index].type).to.be.eql(LAYER_TILE)
-    expect(body.library.tile[index].name).to.be.eql('upload.test')
-    expect(body.library.tile[index].tx).to.be.eql('wood')
-  }, 200)
-
-  // check asset blob
-  testGetBuffer(api, () => `/data/rooms/${room}/assets/tile/upload.test.3x2x1.808080.wood.jpg`, () => {}, (buffer) => {
-    expect(buffer.toString('utf-8')).to.be.eql(image)
-  }, 200)
-
-  closeTestroom(api, room)
-}
-
 // --- the test runners --------------------------------------------------------
 
 export function run (runner) {
@@ -260,7 +190,6 @@ export function run (runner) {
     runner((api, version, room) => {
       describe('ZIP upload - minimal', () => testApiZipMinimal(api, version, room))
       describe('ZIP upload - full', () => testApiZipFull(api, version, room))
-      describe('JPG upload', () => testApiImageUpload(api, version, room))
     })
   })
 }

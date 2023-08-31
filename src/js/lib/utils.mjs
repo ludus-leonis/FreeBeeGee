@@ -19,6 +19,13 @@
 
 // --- HTML5 + browser ---------------------------------------------------------
 
+export const PATTERN_ROOM_NAME =
+  '^[a-zA-Z0-9]{8,48}$'
+export const PATTERN_ASSET_NAME =
+  '^(_|[a-zA-Z0-9\\-]+( [a-zA-Z0-9\\-]+)*)(, [a-zA-Z0-9\\-]+)?( [a-zA-Z0-9\\-]+)*$'
+export const PATTERN_COLOR =
+  '^#[a-zA-Z0-9]{6}$'
+
 /**
  * Access the ?x=y query-string of the current page.
  *
@@ -684,16 +691,15 @@ export function sortByNumber (objects, property, fallback = 0) {
 /**
  * Make an asset's name readable.
  *
- * Drops the group part (before the dot) and title-cases the rest.
- *
  * @param {String} assetName Name to convert, e.g. 'dungeon.ironDoor'.
+ * @param {String} hideUnderscore If true (default), underscore groups are removed.
  * @return {String} Improved name, e.g. 'Dungeon, Iron Door'.
  */
-export function prettyName (assetName = '') {
+export function prettyName (assetName = '', hideUnderscore = true) {
   const split = assetName.split('.')
   if (split.length <= 1) {
     return unCamelCase(split[0])
-  } else if (split[0] === '_') { // sort-first character
+  } else if (hideUnderscore && split[0] === '_') { // sort-first character
     return unCamelCase(split[1])
   } else { // only 2 splits/groups are supported
     return unCamelCase(split[0]) +
@@ -709,10 +715,12 @@ export function prettyName (assetName = '') {
  */
 export function unprettyName (assetName = '') {
   const split = assetName.split(',')
+  const group = split[0].trim()
   if (split.length <= 1) {
-    return toCamelCase(split[0].trim())
+    return group === '_' ? '_' : toCamelCase(group)
   } else {
-    return toCamelCase(split[0].trim()) + '.' + toCamelCase(split[1].trim())
+    const name = toCamelCase(split[1].trim())
+    return (group === '_' ? '_' : toCamelCase(group)) + (name === '' ? '' : '.' + name)
   }
 }
 

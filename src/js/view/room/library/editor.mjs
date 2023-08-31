@@ -1,5 +1,5 @@
 /**
- * @file Handles the library modal.
+ * @file Handles the advanced library editor window.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license This file is part of FreeBeeGee.
@@ -19,60 +19,68 @@
 
 import shajs from 'sha.js'
 
-import _ from '../../../../lib/FreeDOM.mjs'
+import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   createWindow,
   isWindowActive,
   closeWindow
-} from '../../../../view/room/window.mjs'
+} from '../../../view/room/window.mjs'
 
 import {
   isModalActive,
-  createModalConfirm,
   getModal
-} from '../../../../view/room/modal.mjs'
+} from '../../../view/room/modal.mjs'
 
 import {
   getBackground,
   getLibrary,
   getRoom,
-  getColorLabel,
-  deleteAsset
-} from '../../../../state/index.mjs'
+  getColorLabel
+} from '../../../state/index.mjs'
 
 import {
   getRoomMediaURL,
-  findAsset,
-  countAssets
-} from '../../../../view/room/tabletop/tabledata.mjs'
+  findAsset
+} from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
   selectionGetPieces
-} from '../../../../view/room/tabletop/selection.mjs'
+} from '../../../view/room/tabletop/selection.mjs'
 
 import {
   assetToNode,
   url
-} from '../../../../view/room/tabletop/index.mjs'
+} from '../../../view/room/tabletop/index.mjs'
 
 import {
   sortByString,
   prettyName
-} from '../../../../lib/utils.mjs'
+} from '../../../lib/utils.mjs'
 
 import {
   iconClose
-} from '../../../../lib/icons.mjs'
+} from '../../../lib/icons.mjs'
 
 import {
   HOOK_LIBRARY_UPDATE,
-  registerObserver
-} from '../../../../lib/events.mjs'
+  HOOK_LIBRARY_EDIT,
+  HOOK_LIBRARY_RELOAD,
+  registerObserver,
+  triggerEvent
+} from '../../../lib/events.mjs'
 
 import {
   DEMO_MODE
-} from '../../../../api/index.mjs'
+} from '../../../api/index.mjs'
+
+import {
+  modalEdit
+} from './modal/edit.mjs'
+
+import {
+  modalDelete
+} from './modal/delete.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -87,7 +95,7 @@ export function modalLibraryManager (xy) {
   if (!isModalActive()) {
     const background = getBackground()
     const window = createWindow()
-      .add('.library-manager')
+      .add('.library-editor')
       .css({
         '--fbg-tabletop-color': background.color,
         '--fbg-tabletop-image': url(background.image),
@@ -97,7 +105,7 @@ export function modalLibraryManager (xy) {
     window.xy = xy
 
     _('#window .window-header').innerHTML = `
-      <h3 class="modal-title">Library manager</h3>
+      <h3 class="modal-title">Library editor</h3>
       <div class="window-header-end">${iconClose}</div>
     `
 
@@ -115,6 +123,9 @@ export function modalLibraryManager (xy) {
 let lastHash = null
 let selection = null
 
+registerObserver('LibraryManager', HOOK_LIBRARY_EDIT, () => selection && modalEdit(selection))
+registerObserver('LibraryManager', HOOK_LIBRARY_RELOAD, () => showSpinner())
+
 /**
  * Use table (piece) selection to pre-select an asset (if any).
  */
@@ -130,6 +141,7 @@ function preselect () {
  * Replace window content with loading spinner.
  */
 function showSpinner () {
+  lastHash = null
   _('#window .window-body')
     .empty()
     .add(_('.is-loading').create())
@@ -184,7 +196,11 @@ function createSubtree (title, type, assets) {
 
   for (const asset of sortByString(assets ?? [], 'name')) {
     const entry = _(`.${type}`).create()
-    entry.innerHTML = `${prettyName(asset.name)} ${asset.w}x${asset.h}`
+    if (asset.media.length > 2) {
+      entry.innerHTML = `${prettyName(asset.name)} (${asset.media.length}) <span class="is-faded-more">${asset.w}x${asset.h}</span>`
+    } else {
+      entry.innerHTML = `${prettyName(asset.name)} <span class="is-faded-more">${asset.w}x${asset.h}</span>`
+    }
     entry.asset = asset
     if (asset.id === selection?.id) {
       entry.add('.active')
@@ -231,7 +247,8 @@ function show (asset) {
         <tr>
           <th>Actions</th>
           <td>
-            <button id="manager-delete" class="btn btn-xs btn-primary" href="#">Delete</button>
+          <button id="asset-edit" class="btn btn-xs btn-primary">Edit</button>
+          <button id="asset-delete" class="btn btn-xs btn-primary">Delete</button>
           </td>
         </tr>
       </tbody>
@@ -241,7 +258,8 @@ function show (asset) {
   browser.add(assetToTable(asset))
 
   _('.browser .side').on('mouseenter', mouseenter => updatePreview(asset, parseInt(mouseenter.target.id.substr(9))))
-  _('#manager-delete').on('click', () => modalDelete(asset))
+  _('#asset-edit').on('click', () => triggerEvent(HOOK_LIBRARY_EDIT))
+  _('#asset-delete').on('click', () => modalDelete(asset))
 }
 
 /**
@@ -314,33 +332,4 @@ function assetToTable (asset) {
   tbody.innerHTML = content
 
   return table
-}
-
-/**
- * Show the confirmation modal to delete an asset.
- *
- * @param {string} asset Asset to be deleted.
- */
-function modalDelete (asset) {
-  const amount = countAssets(asset.id)
-  createModalConfirm(
-    '<h3 class="modal-title">Delete asset?</h3>',
-    `
-      <p>
-        Asset <strong>${prettyName(asset.name)} ${asset.w}x${asset.h}</strong> is currently ${amount}x in use in your game.
-        Are you sure you want to delete it?
-      </p>
-      <p>This action can't be undone!</p>
-    `,
-    'Delete',
-    asset,
-    asset => {
-      deleteAsset(asset.id)
-        .then(() => {
-          getModal().hide()
-          lastHash = null
-          showSpinner()
-        })
-    }
-  )
 }

@@ -37,6 +37,7 @@ import {
   apiPatchPiece,
   apiPatchPieces,
   apiDeletePiece,
+  apiPatchAsset,
   apiPostPiece,
   apiPostAsset,
   apiDeleteAsset,
@@ -408,9 +409,7 @@ export function loadRoom (name, t) {
 export function patchSetup (setup, sync = true) {
   return apiPatchSetup(room.name, setup, getToken())
     .catch(error => apiError(error, room.name, [404]))
-    .finally(() => {
-      if (sync) syncNow()
-    })
+    .finally(() => { if (sync) syncNow() })
 }
 
 /**
@@ -568,9 +567,22 @@ export function deletePiece (pieceId, sync = true) {
   if (findPiece(pieceId)?.f & FLAG_NO_DELETE) return Promise.resolve() // can't delete those
   return apiDeletePiece(room.name, getTableNo(), pieceId, getToken())
     .catch(error => apiError(error, room.name))
-    .finally(() => {
-      if (sync) syncNow()
-    })
+    .finally(() => { if (sync) syncNow() })
+}
+
+/**
+ * Update (patch) an asset in the library.
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {Asset} Partial asset patch to update. id field is mandatory.
+ * @param {Object} sync Optional. If true (default), trigger table sync.
+ */
+export function updateAsset (asset, sync = true) {
+  return apiPatchAsset(room.name, asset, getToken())
+    .catch(error => apiError(error, room.name))
+    .finally(() => { if (sync) syncNow() })
 }
 
 /**
@@ -586,10 +598,9 @@ export function deletePiece (pieceId, sync = true) {
 export function deleteAsset (assetId, sync = true) {
   return apiDeleteAsset(room.name, assetId, getToken())
     .catch(error => apiError(error, room.name))
-    .finally(() => {
-      if (sync) syncNow()
-    })
+    .finally(() => { if (sync) syncNow() })
 }
+
 /**
  * Update the table state to the a new one.
  *
@@ -601,9 +612,7 @@ export function deleteAsset (assetId, sync = true) {
 export function updateTable (table, sync = true) {
   return apiPutTable(room.name, getTableNo(), table, getToken())
     .catch(error => apiError(error, room.name))
-    .finally(() => {
-      if (sync) syncNow()
-    })
+    .finally(() => { if (sync) syncNow() })
 }
 
 /**
@@ -771,9 +780,7 @@ function patchPiece (pieceId, patch, sync = true) {
   if (patch.l) patch.l = nameToLayer(patch.l)
   return apiPatchPiece(room.name, getTableNo(), pieceId, patch, getToken())
     .catch(error => apiError(error, room.name, [404]))
-    .finally(() => {
-      if (sync) syncNow()
-    })
+    .finally(() => { if (sync) syncNow() })
 }
 
 /**
@@ -792,9 +799,7 @@ function patchPieces (patches, sync = true) {
   }
   return apiPatchPieces(room.name, getTableNo(), sane, getToken())
     .catch(error => apiError(error, room.name, [404]))
-    .finally(() => {
-      if (sync) syncNow()
-    })
+    .finally(() => { if (sync) syncNow() })
 }
 
 /**
@@ -813,9 +818,7 @@ function createPiece (piece, select = false, sync = true) {
       return piece.id
     })
     .catch(error => apiError(error, room.name))
-    .finally(() => {
-      if (sync) syncNow()
-    })
+    .finally(() => { if (sync) syncNow() })
 }
 
 /**

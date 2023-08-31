@@ -77,15 +77,20 @@ import {
 
 import {
   modalLibrary
-} from '../../view/room/modal/library/index.mjs'
+} from '../../view/room/library/index.mjs'
 
 import {
   modalLibraryManager
-} from '../../view/room/modal/library/manager.mjs'
+} from '../../view/room/library/editor.mjs'
 
 import {
   modalHelp
 } from '../../view/room/modal/help.mjs'
+
+import {
+  HOOK_LIBRARY_EDIT,
+  triggerEvent
+} from '../../lib/events.mjs'
 
 import {
   toggleFullscreen
@@ -125,6 +130,16 @@ function handleRoomKeys (keydown) {
         keydown.preventDefault()
         return
     }
+  }
+
+  if (!isDragging() && !isModalActive() && isWindowActive()) { // keys fo the library window
+    switch (keydown.key) {
+      case 'e': // edit
+      case 'F2':
+        triggerEvent(HOOK_LIBRARY_EDIT)
+        break
+    }
+    return
   }
 
   if (!isDragging() && !isModalActive() && !isWindowActive()) { // keys that don't work while dragging

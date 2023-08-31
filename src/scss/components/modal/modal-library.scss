@@ -131,9 +131,9 @@
   }
 }
 
-// --- library manager ---------------------------------------------------------
+// --- library editor ----------------------------------------------------------
 
-.library-manager {
+.library-editor {
   .is-preview {
     height: px(128);
     overflow: hidden;
@@ -148,6 +148,7 @@
   background-image: var(--fbg-tabletop-image);
   background-position: center;
   background-repeat: repeat;
+  border-radius: px(2);
   height: $piece-tile-size * 2;
   margin: 0 auto;
   position: relative;

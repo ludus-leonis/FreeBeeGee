@@ -689,13 +689,23 @@ describe('Frontend - utils.mjs - Text', function () {
     expect(prettyName('dungeon.door')).to.be.eql('Dungeon, Door')
     expect(prettyName('dungeon.ironDoor')).to.be.eql('Dungeon, Iron Door')
     expect(prettyName(' dunGeon.ironDoor ')).to.be.eql('Dun Geon, Iron Door')
+
+    expect(prettyName('_.door')).to.be.eql('Door')
+    expect(prettyName('_.door', true)).to.be.eql('Door')
+    expect(prettyName('_.door', false)).to.be.eql('_, Door')
   })
 
   it('unprettyName()', function () {
     expect(unprettyName('Dungeon')).to.be.eql('dungeon')
+    expect(unprettyName('Dungeon, ')).to.be.eql('dungeon')
     expect(unprettyName('Dungeon, Door')).to.be.eql('dungeon.door')
     expect(unprettyName('Dungeon, Iron Door')).to.be.eql('dungeon.ironDoor')
     expect(unprettyName('  Dun  Geon ,  Iron  Door  ')).to.be.eql('dunGeon.ironDoor')
+
+    expect(unprettyName('_')).to.be.eql('_')
+    expect(unprettyName('_, ')).to.be.eql('_')
+    expect(unprettyName('_, Iron Door')).to.be.eql('_.ironDoor')
+    expect(unprettyName('  _  , Iron Door  ')).to.be.eql('_.ironDoor')
   })
 })
 

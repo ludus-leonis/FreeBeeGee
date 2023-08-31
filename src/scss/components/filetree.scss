@@ -53,6 +53,10 @@
     > div {
       cursor: pointer;
 
+      &:not(.active):hover {
+        background-color: $color-bw-hover;
+      }
+
       &::before {
         display: inline-block;
         font-weight: 600;
@@ -101,7 +105,7 @@
 .browser {
   @include spacing-first-none;
 
-  border-left: 2px solid $color-bw-fg;
+  border-left: 2px solid $color-bw-line;
   display: inline-block;
   height: 100%;
   overflow-y: scroll;

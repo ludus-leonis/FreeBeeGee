@@ -270,6 +270,18 @@ export function apiPostAsset (roomName, asset, token) {
 }
 
 /**
+ * API PATCH /rooms/:roomName/assets/:assetID
+ *
+ * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {Object} patch of partial asset to send. ID field mandatory.
+ * @param {String} token API access token.
+ * @return {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPatchAsset (roomName, patch, token) {
+  return patchJson([200, 404, 409], `api/rooms/${roomName}/assets/${patch.id}/`, patch, token)
+}
+
+/**
  * API DELETE /rooms/:roomName/assets/:assetId/
  *
  * @param {String} roomName Name of room, e.g. 'funnyLovingWhale'.

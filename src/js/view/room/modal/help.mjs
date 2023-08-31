@@ -125,7 +125,7 @@ export function modalHelp () {
             <p><span class="key">F11</span> Toggle fullscreen.</p>
             <p><span class="key">+</span>/<span class="key">-</span> Zoom in/out.</p>
             <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
-            <p><span class="key">L</span> Show (advanced) library manager. Allows editing of assets.</p>
+            <p><span class="key">L</span> Show library editor.</p>
             <p><span class="key">h</span> Show this help.</p>
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>

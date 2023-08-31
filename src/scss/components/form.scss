@@ -107,6 +107,12 @@ textarea,
     color: $color-bad;
   }
 
+  &:disabled,
+  &.disabled {
+    box-shadow: none;
+    color: $form-color-disabled;
+  }
+
   &::selection {
     background: $color-primary;
     color: $color-white-100;
@@ -195,5 +201,16 @@ select {
     overflow: hidden;
     text-transform: none;
     white-space: nowrap;
+  }
+}
+
+.client-feedback,
+.server-feedback,
+.server-feedback-form {
+  color: $color-bad;
+  display: none;
+
+  &.show {
+    display: block;
   }
 }

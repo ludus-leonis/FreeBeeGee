@@ -108,7 +108,7 @@ import {
 
 import {
   modalLibrary
-} from '../../view/room/modal/library/index.mjs'
+} from '../../view/room/library/index.mjs'
 
 import {
   modalHelp

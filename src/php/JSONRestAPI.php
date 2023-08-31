@@ -277,7 +277,7 @@ class JSONRestAPI
     public function assertString(
         string $field,
         $value,
-        string $regexp,
+        string $regexp = '/.*/',
         bool $send = true
     ) {
         if ($value !== null) {
@@ -339,7 +339,7 @@ class JSONRestAPI
     public function assertStringArray(
         string $field,
         $values,
-        string $regexp,
+        string $regexp = '/.*/',
         int $minLength = 1,
         int $maxLength = PHP_INT_MAX,
         bool $send = true
@@ -831,7 +831,8 @@ class JSONRestAPI
         foreach ($otherMessages as $message) {
             $errors[] = $message;
         }
-        $error = '{"_error": "' . $appErrorCode . '","_messages":' . json_encode($errors) . '}';
+        $error = '{"_error": "' . ($code === 404 ? 'NOT_FOUND' : $appErrorCode) .
+            '","_messages":' . json_encode($errors) . '}';
         $this->sendReply($code, $error);
     }
 

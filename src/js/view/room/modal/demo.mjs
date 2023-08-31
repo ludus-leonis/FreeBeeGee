@@ -42,7 +42,7 @@ export function modalDemo (what) {
       <p>Hi there 👋 ... this is FreeBeeGee running in demo mode. This means we won't use a server - we store your rooms &amp; tables in your browser. But without a real server, a few things can't work:</p>
       <ul>
         <li>You can't invite other players to your room.</li>
-        <li>You can't upload anything into the library.</li>
+        <li>You can't edit the library.</li>
         <li>You can't save your room as <code>.zip</code>.</li>
       </ul>
       <p>Other than that, all features should be working. Go ahead and check out what FreeBeeGee can do for you!</p>

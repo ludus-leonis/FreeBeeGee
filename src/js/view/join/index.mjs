@@ -28,6 +28,7 @@ import {
 } from '../../state/index.mjs'
 
 import {
+  PATTERN_ROOM_NAME,
   getGetParameter,
   generateName,
   generateUsername
@@ -62,7 +63,7 @@ export function runJoin () {
     `
       ${intro}
       <label for="name">Room name</label>
-      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${roomNameMaxLength}" pattern="[a-zA-Z0-9]{8,${roomNameMaxLength}}">
+      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${roomNameMaxLength}" pattern="${PATTERN_ROOM_NAME}">
       <p class="p-small spacing-tiny">Min. 8 characters - no spaces or funky letters, please.</p>
       ${intro2}
 

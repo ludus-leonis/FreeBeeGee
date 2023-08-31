@@ -201,7 +201,7 @@ gulp.task('js-main', gulp.series('test-js', () => {
     'src/js/view/room/modal/disabled.mjs',
     'src/js/view/room/modal/help.mjs',
     'src/js/view/room/modal/inactive.mjs',
-    'src/js/view/room/modal/library/index.mjs',
+    'src/js/view/room/library/index.mjs',
     'src/js/view/room/modal/piece/index.mjs',
     'src/js/view/room/modal/piece/note.mjs',
     'src/js/view/room/modal/piece/other.mjs',
@@ -368,6 +368,20 @@ gulp.task('test-zips', gulp.parallel(() => {
 }))
 
 gulp.task('dist-test', gulp.series('clean', 'test-zips', 'dist', () => {
+  return replace(gulp.src([
+    'test/data/server.json'
+  ]))
+    .pipe(gulp.dest(dirs.site + '/api/data'))
+}))
+
+gulp.task('dist-test-api', gulp.series('clean', 'test-zips', gulp.parallel( // only run php stuff
+  'php',
+  'snapshot-RPG',
+  'snapshot-Hex',
+  'snapshot-Classic',
+  'snapshot-Tutorial',
+  'snapshot-System'
+), () => {
   return replace(gulp.src([
     'test/data/server.json'
   ]))

@@ -17,14 +17,15 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../../lib/FreeDOM.mjs'
+import _ from '../../../lib/FreeDOM.mjs'
 
 import {
   DEMO_MODE,
   UnexpectedStatus
-} from '../../../../api/index.mjs'
+} from '../../../api/index.mjs'
 
 import {
+  PATTERN_ASSET_NAME,
   toTitleCase,
   prettyName,
   unprettyName,
@@ -32,14 +33,14 @@ import {
   resizeImage,
   bytesToIso,
   generateAnimal
-} from '../../../../lib/utils.mjs'
+} from '../../../lib/utils.mjs'
 
 import {
   createModal,
   getModal,
   isModalActive,
   modalClose
-} from '../../../../view/room/modal.mjs'
+} from '../../../view/room/modal.mjs'
 
 import {
   getLibrary,
@@ -51,7 +52,7 @@ import {
   reloadRoom,
   getBackground,
   getMaterialMedia
-} from '../../../../state/index.mjs'
+} from '../../../state/index.mjs'
 
 import {
   LAYER_TILE,
@@ -60,29 +61,29 @@ import {
   createPieceFromAsset,
   splitAssetFilename,
   snap
-} from '../../../../view/room/tabletop/tabledata.mjs'
+} from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
   assetToNode,
   url
-} from '../../../../view/room/tabletop/index.mjs'
+} from '../../../view/room/tabletop/index.mjs'
 
 import {
   selectionClear
-} from '../../../../view/room/tabletop/selection.mjs'
+} from '../../../view/room/tabletop/selection.mjs'
 
 import {
   modalDisabled
-} from '../../../../view/room/modal/disabled.mjs'
+} from '../../../view/room/modal/disabled.mjs'
 
 import {
   iconEdit,
   iconSearch
-} from '../../../../lib/icons.mjs'
+} from '../../../lib/icons.mjs'
 
 import {
   modalLibraryManager
-} from './manager.mjs'
+} from './editor.mjs'
 
 // --- public ------------------------------------------------------------------
 
@@ -136,7 +137,7 @@ export function modalLibrary (xy) {
             <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
             <div class="col-12 col-lg-6">
               <label for="upload-name">Name</label>
-              <input id="upload-name" name="name" type="text" placeholder="e.g. '${generateAnimal()}'" minlength="1" maxlength="64" pattern="^[a-zA-Z0-9-]+( [a-zA-Z0-9-]+)*(, [a-zA-Z0-9-]+)?( [a-zA-Z0-9-]+)*$">
+              <input id="upload-name" name="name" type="text" placeholder="e.g. '${generateAnimal()}'" minlength="1" maxlength="64" pattern="${PATTERN_ASSET_NAME}">
             </div>
             <div class="col-6 col-lg-1">
               <label for="upload-w">Width</label>

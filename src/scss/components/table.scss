@@ -24,8 +24,8 @@
 ////
 
 .table {
-  border-bottom: px(2) solid $color-gray-05;
-  border-top: px(2) solid $color-gray-05;
+  border-bottom: px(2) solid $color-bw-line;
+  border-top: px(2) solid $color-bw-line;
   width: 100%;
 
   th {
@@ -34,10 +34,10 @@
   }
 
   tbody {
-    border-top: px(2) solid $color-gray-05;
+    border-top: px(2) solid $color-bw-line;
 
     tr:hover {
-      background-color: $color-gray-05;
+      background-color: $color-bw-hover;
     }
   }
 }

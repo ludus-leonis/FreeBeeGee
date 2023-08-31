@@ -5,16 +5,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.21 - ??? ???
 
 * [ ] library
-  * [X] pre-selection of asset based on selected token
-  * [ ] change asset name
-  * [ ] change material
-  * [ ] change size
-  * [ ] change default color
+  * [ ] library: show all sides as individual pieces
+* [X] library editor: edit asset name / size / material / color
 * [ ] piece: wooden cubes
-* [ ] paper background for windows and cards
+* [X] paper background for windows and cards
 * [ ] ui
-  * [ ] smaller modal paddings
-  * [ ] modal background image
+  * [X] smaller modal paddings
   * [ ] open edit window on note create
   * [ ] allow half-rotations via settings (45° for square, 30° for hex)
 * [ ] clipboard ctrl+c/v/x on/between tables
@@ -32,13 +28,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] refactor: get 's' out of asset IDs
 * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
-* [ ] library manager: replace media/side
+* [ ] library editor: replace media/side
 * [ ] ui: decks/stacks
-* [ ] library: show/indicate backside/all sides in tile browser
 * [ ] ui: tweak minor grid visibility
 * [ ] engine: grid-on-tile flag
-* [ ] repo: split API tests in docker/all/latest
 * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] engine: option to rotate group vs individual pieces
@@ -112,7 +107,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * nicer cards/selection
   * asset adding: (re)set token size 2x2->3x4
 * FreeDOM: Emmet '~' support
-* shared notepad / scratchpad / piece of paper / postits
 * users + roles
   * admins, players, spectators
   * vote for new admin / gm

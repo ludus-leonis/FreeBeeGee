@@ -2,10 +2,13 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+
 ## v0.21.0 - ??? ???
 
 ### Notable changes
 
+* renamed library manager to library editor
+* added option to edit asset name / size / material / color to library editor
 * added paper background for windows and cards
 
 ### Other changes
