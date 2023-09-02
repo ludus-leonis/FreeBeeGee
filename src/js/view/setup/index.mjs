@@ -2,7 +2,9 @@
  * @file The setup-a-room screen.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -54,7 +56,7 @@ import {
 /**
  * Show a setup-room dialog.
  *
- * @param {String} name The room name the user entered in the join dialog.
+ * @param {string} name The room name the user entered in the join dialog.
  */
 export function setupView (name) {
   if (getServerInfo().freeRooms <= 0) {
@@ -186,6 +188,8 @@ function reset () {
 
 /**
  * Validate file upload.
+ *
+ * @returns {boolean} True if validation passes.
  */
 function validate () {
   if (_('#mode').checked) { // upload mode
@@ -201,6 +205,8 @@ function validate () {
 
 /**
  * Initiates actual room-setup after user clicks OK.
+ *
+ * @param {string} name The room's name.
  */
 function ok (name) {
   _('#ok').add('.is-spinner')

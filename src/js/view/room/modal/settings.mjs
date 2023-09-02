@@ -2,7 +2,9 @@
  * @file Handles the room settings modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -353,7 +355,7 @@ export function modalSettings () {
  *
  * Will add matching .is-quality-* classes to the body.
  *
- * @param {Number} value Quality setting. 0 = low, 1 = medium, 2 = high, 3 = ultra
+ * @param {number} value Quality setting. 0 = low, 1 = medium, 2 = high, 3 = ultra
  */
 export function changeQuality (value) {
   const body = _('body').remove('.is-quality-*')
@@ -379,10 +381,10 @@ export function changeQuality (value) {
 /**
  * Populate a grid-size <select> with appropriate entries.
  *
- * @param {String} id DOM-ID of select.
- * @param {Number} roomSize Current room size in tiles.
- * @param {Number} contentSize Current right-most content size, in tiles.
- * @param {Number} increments (Optional) Increment size, defaults to 16.
+ * @param {string} id DOM-ID of select.
+ * @param {number} roomSize Current room size in tiles.
+ * @param {number} contentSize Current right-most content size, in tiles.
+ * @param {number} increments (Optional) Increment size, defaults to 16.
  */
 function populateSizes (id, roomSize, contentSize, increments = 16) {
   const select = _(id)
@@ -417,8 +419,8 @@ function resizeRoom () {
  * Handle the alignment click event.
  *
  * @param {Event} click Click-event.
- * @param {Number} x X position on table, range [-1 .. 0 .. 1]
- * @param {Number} y Y position on table, range [-1 .. 0 .. 1]
+ * @param {number} x X position on table, range [-1 .. 0 .. 1]
+ * @param {number} y Y position on table, range [-1 .. 0 .. 1]
  */
 function handleAlign (click, x, y) {
   click.preventDefault()

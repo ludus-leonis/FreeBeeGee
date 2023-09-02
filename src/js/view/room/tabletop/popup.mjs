@@ -2,7 +2,9 @@
  * @file Code related to the right-click popup window/menu.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -72,7 +74,7 @@ import {
 /**
  * Show the popup menu for a piece.
  *
- * @param {Object} piece The piece.
+ * @param {object} piece The piece.
  */
 export function popupPiece (piece) {
   popupHide()
@@ -116,7 +118,7 @@ export function popupPiece (piece) {
 /**
  * Show the popup menu for the table.
  *
- * @param coords {x, y} coords to show the popup at.
+ * @param {object} coords {x, y} coords to show the popup at.
  */
 export function popupTable (coords) {
   popupHide()
@@ -167,8 +169,8 @@ export function popupHide (id) {
  *
  * Will hide the popup and then run a callback.
  *
- * @param {String} selector CSS selector for menu item.
- * @param {callback} callback Method to call.
+ * @param {string} selector CSS selector for menu item.
+ * @param {Function} callback Method to call.
  */
 function popupClick (selector, callback) {
   _(selector).on('click', click => {

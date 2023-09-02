@@ -1,7 +1,9 @@
 /**
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -23,20 +25,14 @@ import autoprefixer from 'gulp-autoprefixer'
 import babelify from 'babelify'
 import browserify from 'browserify'
 import changed from 'gulp-changed'
-import cli from 'docker-cli-js'
 import concat from 'gulp-concat'
-import eslint from 'gulp-eslint-new'
 import gulp from 'gulp'
 import gzip from 'gulp-gzip'
 import image from 'gulp-image'
-import jsdoc from 'gulp-jsdoc3'
-import phpcs from 'gulp-phpcs'
-import phplint from 'gulp-phplint'
 import rename from 'gulp-rename'
 import repl from 'gulp-replace'
-import sassLint from 'gulp-sass-lint'
 import sort from 'gulp-sort'
-import source from 'vinyl-source-stream'
+import vinyl from 'vinyl-source-stream'
 import sourcemaps from 'gulp-sourcemaps'
 import tar from 'gulp-tar'
 import zip from 'gulp-zip'
@@ -76,54 +72,14 @@ gulp.task('clean-cache', async () => {
   ])
 })
 
-// --- testing targets ---------------------------------------------------
-
-gulp.task('test-js', () => {
-  return gulp.src(['src/js/**/*js'])
-    .pipe(gulp.dest('/tmp/gulp-pre'))
-    .pipe(gulp.dest('/tmp/gulp-post'))
-    .pipe(eslint({
-      overrideConfigFile: '.eslintrc.cjs'
-    }))
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError())
-})
-
-gulp.task('test-sass', () => {
-  return gulp.src(['src/scss/**/*.s+(a|c)ss'])
-    .pipe(sassLint({ configFile: '.sass-lint.yml' }))
-    .pipe(sassLint.format())
-    .pipe(sassLint.failOnError())
-})
-
-gulp.task('test-php', () => {
-  return gulp.src([
-    'src/php/**/*.php'
-  ])
-    .pipe(phplint('', { skipPassedFiles: true }))
-    .pipe(phpcs({
-      bin: 'tools/phpcs.phar',
-      standard: 'PSR12',
-      colors: 1,
-      warningSeverity: 0
-    }))
-    .pipe(phpcs.reporter('log'))
-    .pipe(phpcs.reporter('fail'))
-})
-
-gulp.task('tests', gulp.series('test-sass', 'test-js', 'test-php'))
-
-// --- docs targets ------------------------------------------------------------
-
-gulp.task('docs-js', () => {
-  return gulp.src([
-    'src/**/*.js'
-  ], { read: false })
-    .pipe(jsdoc())
-})
-
 // --- build targets -----------------------------------------------------------
 
+/**
+ * Replace multiple strings in all files.
+ *
+ * @param {object} pipe A gulp pipe to work on.
+ * @returns {object} Gulp pipe.
+ */
 function replace (pipe) {
   return pipe
     .pipe(repl('$NAME$', p.name, { skipBinary: true }))
@@ -177,7 +133,7 @@ gulp.task('js-vendor', () => {
     .pipe(gulp.dest(dirs.site))
 })
 
-gulp.task('js-main', gulp.series('test-js', () => {
+gulp.task('js-main', () => {
   return replace(browserify([
     'src/js/app.mjs',
     'src/js/main.mjs',
@@ -221,11 +177,11 @@ gulp.task('js-main', gulp.series('test-js', () => {
   }).transform(babelify.configure({
     presets: ['@babel/preset-env']
   })).bundle()
-    .pipe(source('main.js')))
+    .pipe(vinyl('main.js')))
     .pipe(gulp.dest(dirs.site))
-}))
+})
 
-gulp.task('sass', gulp.series('test-sass', () => {
+gulp.task('sass', () => {
   return replace(gulp.src([
     'src/scss/style.scss'
   ]))
@@ -235,16 +191,17 @@ gulp.task('sass', gulp.series('test-sass', () => {
     .pipe(autoprefixer())
     .pipe(sourcemaps.write('./'))
     .pipe(gulp.dest(dirs.site))
-}))
+})
 
-gulp.task('php', gulp.series('test-php', () => {
+gulp.task('php', () => {
+  // todo: run php -l
   return replace(gulp.src([
     'src/php/**/*php',
     'src/php/.htaccess*',
     'src/php/**/*.json'
   ]))
     .pipe(gulp.dest(dirs.site + '/api'))
-}))
+})
 
 gulp.task('html', () => {
   return replace(gulp.src([
@@ -294,6 +251,13 @@ gulp.task('img', gulp.series(() => {
     .pipe(gulp.dest(dirs.site + '/img'))
 }))
 
+/**
+ * Create a snapshot zip/tgz.
+ *
+ * @param {string} name Foldername = filename of snapshot.
+ * @param {boolean} minimize If true, the asses/images will be minimized first.
+ * @returns {object} Gulp pipe.
+ */
 function snapshot (name, minimize = true) {
   return gulp.series(() => { // step 1: optimize & cache content
     if (minimize) {
@@ -327,7 +291,7 @@ gulp.task('snapshot-Hex', snapshot('Hex', false))
 gulp.task('snapshot-Tutorial', snapshot('Tutorial', false))
 gulp.task('snapshot-System', snapshot('_', false))
 
-gulp.task('build', gulp.parallel(
+gulp.task('dist', gulp.parallel(
   'js-main',
   'sass',
   'html',
@@ -342,8 +306,6 @@ gulp.task('build', gulp.parallel(
   'img',
   'favicon'
 ))
-
-gulp.task('dist', gulp.parallel('build'))
 
 // --- testing targets ---------------------------------------------------------
 
@@ -423,22 +385,14 @@ gulp.task('release', gulp.series(
   'package-zip'
 ))
 
-// 'release-docker' requires locally installed docker!
-gulp.task('release-docker', gulp.series('release', (done) => {
-  const docker = new cli.Docker({ echo: true })
-  docker.command('build --pull --no-cache -t ghcr.io/ludus-leonis/freebeegee:latest .')
-    .then(() => { done() })
-}, (done) => {
-  const docker = new cli.Docker({ echo: true })
-  docker.command('tag ghcr.io/ludus-leonis/freebeegee:latest ghcr.io/ludus-leonis/freebeegee:' + p.version)
-    .then(() => { done() })
-}, (done) => {
-  // run :api tests
-  done()
-}))
-
 // --- demo mode (serverless) targets ------------------------------------------
 
+/**
+ * Create a demo mode snapshot zip/tgz.
+ *
+ * @param {string} name Foldername = filename of snapshot.
+ * @returns {object} Gulp pipe.
+ */
 function demo (name) {
   return gulp.series(() => { // step 1: optimize & cache content
     return replace(gulp.src('src/snapshots/' + name + '/**/*'))
@@ -456,6 +410,12 @@ function demo (name) {
   })
 }
 
+/**
+ * Copy a demo snapshort to the demo output dir.
+ *
+ * @param {string} name Foldername = filename of snapshot.
+ * @returns {object} Gulp pipe.
+ */
 function demoDeploy (name) {
   return gulp.series(() => {
     return gulp.src([

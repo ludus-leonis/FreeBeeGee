@@ -3,7 +3,9 @@
  *       propagation. Does not manipulate data nor does it do API calls.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -149,7 +151,7 @@ export function editSelected () {
  *
  * Will silently fail if nothing is selected.
  *
- * @param {Object} tile Grid x/y position (in tiles).
+ * @param {object} xy Grid x/y position (in tiles).
  */
 export function cloneSelected (xy) {
   const clones = []
@@ -194,7 +196,7 @@ export function cloneSelected (xy) {
  *
  * Will cycle the sides and silently fail if nothing is selected.
  *
- * @param {Boolean} forward If true (default), will cycle forward, otherwise backward.
+ * @param {boolean} forward If true (default), will cycle forward, otherwise backward.
  */
 export function flipSelected (forward = true) {
   if (!selectionGetFeatures().flip) return
@@ -274,6 +276,8 @@ export function pileSelected (randomize = false) {
  * Increase/decrease the token number (if it is a token).
  *
  * Will cycle through all states
+ *
+ * @param {number} delta Amount to increase.
  */
 export function numberSelected (delta) {
   if (!selectionGetFeatures().number) return
@@ -334,7 +338,7 @@ export function randomSelected () {
  *
  * Will restore table settings (like scroll pos, table texture, ...) and set css classes.
  *
- * @param {Number} no Table to set (1..9).
+ * @param {number} no Table to set (1..9).
  */
 export function setTableSurface (no) {
   const tabletop = _('#tabletop')
@@ -354,8 +358,8 @@ export function setTableSurface (no) {
  * Assumes that the caller will add a 'piece' property to the node so we can
  * detect necessary changes.
  *
- * @param {Object} piece The piece's full data object.
- * @return {FreeDOM} Created or updated node.
+ * @param {object} piece The piece's full data object.
+ * @returns {_} Created or updated FreeDOM node.
  */
 function createOrUpdatePieceDOM (piece) {
   let selection = []
@@ -461,8 +465,6 @@ function createOrUpdatePieceDOM (piece) {
 
 /**
  * Propagate selection of data/state to DOM.
- *
- * @param {boolean} hidePopup If true (default) it will also hide the popup.
  */
 export function updateSelectionDOM () {
   const selection = selectionGetIds()
@@ -479,7 +481,7 @@ export function updateSelectionDOM () {
 /**
  * Add or re-set a piece.
  *
- * @param {Object} piece The piece's full data object.
+ * @param {object} piece The piece's full data object.
  */
 export function setPiece (piece) {
   const node = createOrUpdatePieceDOM(piece)
@@ -522,7 +524,7 @@ export function setPiece (piece) {
 /**
  * Add or re-set a sticky note.
  *
- * @param {Object} pieceJson The note's full data object.
+ * @param {object} note The note's full data object.
  */
 export function setNote (note) {
   const node = createOrUpdatePieceDOM(note)
@@ -545,7 +547,7 @@ export function setNote (note) {
  *
  * Done in increments based on game type.
  *
- * @param {Boolean} cw Optional direction. True = CW (default), False = CCW.
+ * @param {boolean} cw Optional direction. True = CW (default), False = CCW.
  */
 export function rotateSelected (cw = true) {
   const setup = getSetup()
@@ -606,7 +608,7 @@ export function toBottomSelected () {
 /**
  * Get a list of all pieces' IDs that are in play.
  *
- * @return {String[]} Possibly empty array of IDs.
+ * @returns {string[]} Possibly empty array of IDs.
  */
 export function getAllPiecesIds () {
   const all = _('#tabletop .piece')
@@ -617,10 +619,10 @@ export function getAllPiecesIds () {
 }
 
 /**
-* Convert a piece data object to a DOM node.
+ * Convert a piece data object to a DOM node.
  *
- * @param {Object} pieceJson Full piece data object.
- * @return {FreeDOM} Converted node (not added to DOM yet).
+ * @param {object} piece Full piece data object.
+ * @returns {_} Converted FreeDOM node (not added to DOM yet).
  */
 export function pieceToNode (piece) {
   let node
@@ -690,11 +692,11 @@ export function pieceToNode (piece) {
 }
 
 /**
-* Convert an asset data object to a DOM node. Usually for library previews.
+ * Convert an asset data object to a DOM node. Usually for library previews.
  *
- * @param {Object} asset Asset object.
- * @param {Number} side Side to use, defaults to 0 = first side.
- * @return {FreeDOM} Converted node (not added to DOM yet).
+ * @param {object} asset Asset object.
+ * @param {number} side Side to use, defaults to 0 = first side.
+ * @returns {_} Converted FreeDOM node (not added to DOM yet).
  */
 export function assetToNode (asset, side = 0) {
   const piece = populatePieceDefaults({
@@ -723,8 +725,8 @@ export function assetToNode (asset, side = 0) {
 /**
  * Convert a sticky note to a DOM node.
  *
- * @param {Object} note Full note data object.
- * @return {FreeDOM} Converted node (not added to DOM yet).
+ * @param {object} note Full note data object.
+ * @returns {_} Converted FreeDOM node (not added to DOM yet).
  */
 export function noteToNode (note) {
   const node = _('.piece.piece-note').create()
@@ -744,9 +746,9 @@ export function noteToNode (note) {
 /**
  * Convert a filename into a CSS url() and apply a scoped caching postfix.
  *
- * @param {String} file Filname for url().
- * @param {Boolean} pin If true (optional), will append room id to pin caching.
- * @return {FreeDOM} Converted node (not added to DOM yet).
+ * @param {string} file Filname for url().
+ * @param {boolean} pin If true (optional), will append room id to pin caching.
+ * @returns {_} Converted FreeDOM node (not added to DOM yet).
  */
 export function url (file, pin = true) {
   let cache = ''
@@ -762,7 +764,7 @@ export function url (file, pin = true) {
  *
  * This adds a enirely new note to the table via a call to the state.
  *
- * @param {Object} tile {x, y} coordinates (tile) where to add.
+ * @param {object} xy {x, y} coordinates (tile) where to add.
  */
 export function createNote (xy) {
   selectionClear()
@@ -783,8 +785,8 @@ export function createNote (xy) {
  * The actual amount will depend on the page grid so that the moved content
  * still aligns to grid snapping.
  *
- * @param Number offsetX Delta of new x position.
- * @param Number offsetY Delta of new y position.
+ * @param {number} offsetX Delta of new x position.
+ * @param {number} offsetY Delta of new y position.
  */
 export function moveContent (offsetX, offsetY) {
   const setup = getSetup()
@@ -824,7 +826,7 @@ export function moveContent (offsetX, offsetY) {
  *
  * Will add new, update existing and delete obsolete pieces.
  *
- * @param {Array} tableNo Table number to display.
+ * @param {number} tableNo Table number to display.
  */
 export function updateTabletop (tableNo) {
   const tableData = getTable(tableNo)
@@ -854,7 +856,7 @@ export function updateTabletop (tableNo) {
 /**
  * Move the pointer to the given location.
  *
- * @param {Object} coords {x, y} object, in table px.
+ * @param {object} coords {x, y} object, in table px.
  */
 export function pointTo (coords) {
   const setup = getSetup()
@@ -879,8 +881,10 @@ export function pointTo (coords) {
 /**
  * Persist the LOS line on the server
  *
- * @param {Object} from {x, y} object, in table px.
- * @param {Object} to {x, y} object, in table px.
+ * @param {number} x Start x.
+ * @param {number} y Start y.
+ * @param {number} w Width of bounding box, can be negative.
+ * @param {number} h Height of bounding box, can be negative.
  */
 export function losTo (x, y, w, h) {
   if (w !== 0 || h !== 0) {
@@ -900,8 +904,8 @@ export function losTo (x, y, w, h) {
  * Move a (dragging) piece to a coord.
  *
  * @param {Element} element The HTML node to update.
- * @param {Number} x New x coordinate in px.
- * @param {Number} y New y coordinate in px.
+ * @param {number} x New x coordinate in px.
+ * @param {number} y New y coordinate in px.
  */
 export function moveNodeTo (element, x, y) {
   if (element.piece.f & FLAG_NO_MOVE) return // we do not move frozen pieces
@@ -920,11 +924,11 @@ export function moveNodeTo (element, x, y) {
 /**
  * Create an asset node for LOS pointers.
  *
- * @param {Number} x X-coordinate of starting point in px.
- * @param {Number} y Y-coordinate of starting point in px.
- * @param {Number} w Width in px. Can be negative.
- * @param {Number} h Height in px. Can be negative.
- * @return {FreeDOM} dummy node.
+ * @param {number} x X-coordinate of starting point in px.
+ * @param {number} y Y-coordinate of starting point in px.
+ * @param {number} width Width in px. Can be negative.
+ * @param {number} height Height in px. Can be negative.
+ * @returns {_} FreeDOM node, not added to DOM yet.
  */
 export function createLosPiece (x, y, width, height) {
   const zoom = getRoomPreference(PREFS.ZOOM)
@@ -1012,11 +1016,11 @@ export function createLosPiece (x, y, width, height) {
 /**
  * Create an asset node for selection areas.
  *
- * @param {Number} x X-coordinate of starting point in px.
- * @param {Number} y Y-coordinate of starting point in px.
- * @param {Number} w Width in px. Can be negative.
- * @param {Number} h Height in px. Can be negative.
- * @return {FreeDOM} dummy node.
+ * @param {number} x X-coordinate of starting point in px.
+ * @param {number} y Y-coordinate of starting point in px.
+ * @param {number} width Width in px. Can be negative.
+ * @param {number} height Height in px. Can be negative.
+ * @returns {_} FreeDOM node, not added to DOM yet.
  */
 export function createSelectPiece (x, y, width, height) {
   const zoom = getRoomPreference(PREFS.ZOOM)
@@ -1055,7 +1059,7 @@ export function createSelectPiece (x, y, width, height) {
 /**
  * Zoom in/out in available increments.
  *
- * @param {Number} direction If positive, zoom in. Otherwise zoom out.
+ * @param {number} direction If positive, zoom in. Otherwise zoom out.
  */
 export function zoom (direction) {
   const current = getRoomPreference(PREFS.ZOOM)
@@ -1089,8 +1093,8 @@ function cleanupTable () {
 /**
  * Create an asset node for invalid assets / ids.
  *
- * @param {String} type Asset type (token, tile, ...).
- * @return {FreeDOM} dummy node.
+ * @param {string} type Asset type (token, tile, ...).
+ * @returns {_} FreeDOM node, not added to DOM yet.
  */
 function createInvalidPiece (type) {
   return _(`.piece.piece-${type}.is-invalid`).create()
@@ -1099,8 +1103,7 @@ function createInvalidPiece (type) {
 /**
  * Create an asset node for invalid assets / ids.
  *
- * @param {String} type Asset type (token, tile, ...).
- * @return {FreeDOM} dummy node.
+ * @returns {_} FreeDOM node, not added to DOM yet.
  */
 function createPointerPiece () {
   return _('.piece.piece-other.is-pointer').create()
@@ -1109,7 +1112,7 @@ function createPointerPiece () {
 /**
  * Randomice the items (dice) on a dicemat node.
  *
- * @param {Object} dicemat Dicemat object.
+ * @param {object} dicemat Dicemat object.
  */
 function randomDicemat (dicemat) {
   const setup = getSetup()
@@ -1150,7 +1153,7 @@ function randomDicemat (dicemat) {
 /**
  * Randomice the pieces on a discard pile node.
  *
- * @param {Object} discard Discard pile object.
+ * @param {object} discard Discard pile object.
  */
 function randomDiscard (discard) {
   const pieces = []
@@ -1194,7 +1197,7 @@ function randomDiscard (discard) {
 /**
  * Detect deleted pieces and remove them from the room.
  *
- * @param {String[]} keepIds IDs of pieces to keep.
+ * @param {string[]} keepIds IDs of pieces to keep.
  */
 function removeObsoletePieces (keepIds) {
   // get all piece IDs from dom
@@ -1219,7 +1222,7 @@ function removeObsoletePieces (keepIds) {
 /**
  * Trigger UI update for new/changed server items.
  *
- * @param {Object} piece Piece to add/update.
+ * @param {object} piece Piece to add/update.
  */
 function setItem (piece) {
   switch (piece.l) {
@@ -1242,8 +1245,8 @@ function setItem (piece) {
  *
  * Will escape HTML already embedded.
  *
- * @param {String} content Markup to convert.
- * @returns {String} Converted markup, ready for xy.innerHTML=...
+ * @param {string} content Markup to convert.
+ * @returns {string} Converted markup, ready for xy.innerHTML=...
  */
 function markdown (content) {
   return marked.parse((content ?? '').replaceAll('<', '&lt;'))

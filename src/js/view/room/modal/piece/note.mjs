@@ -2,7 +2,9 @@
  * @file Handles the note editor modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -49,9 +51,9 @@ export const NOTE_LENGTH = 256
 /**
  * Show the edit-piece modal.
  *
- * @param {Object} piece The piece's data object.
- * @return {function} Callback for ok/save button.
-*/
+ * @param {object} piece The piece's data object.
+ * @returns {Function} Callback for ok/save button.
+ */
 export function setup (piece) {
   _('#modal-body').innerHTML = getModalNote()
 
@@ -92,7 +94,7 @@ export function setup (piece) {
 /**
  * Hides modal and pushes changes to the state.
  *
- * @return {boolean} True, if save was successfull (and modal can be closed).
+ * @returns {boolean} True, if save was successfull (and modal can be closed).
  */
 function modalOk () {
   const piece = _('#modal').node().piece
@@ -111,7 +113,7 @@ function modalOk () {
 /**
  * Create the modal's content.
  *
- * @return {string} HTML snippet.
+ * @returns {string} HTML snippet.
  */
 function getModalNote () {
   return `

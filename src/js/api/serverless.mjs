@@ -2,7 +2,9 @@
  * @file All JSON/Rest calls FreeBeeGee needs.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -43,6 +45,17 @@ import {
 
 // --- public ------------------------------------------------------------------
 
+/**
+ * Map API to in-memory calls.
+ *
+ * @param {number} _ (Ignored) HTTP status expected.
+ * @param {string} path The URL to call. Can be relative.
+ * @param {object} data Optional playload for request.
+ * @param {boolean} headers If true, the HTTP headers will be added as '_headers'
+ *                          to the JSON reply.
+ * @returns {Promise} Promise of a JSON object.
+ * @throws {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
+ */
 export function demoFetchOrThrow (_, path, data = {}, headers = false) {
   if (!data.method) data.method = 'GET'
 
@@ -106,8 +119,8 @@ let temp = null
 /**
  * Calculate a 'Java' / CRC32 hash
  *
- * @param {String} string String to hash.
- * @return {String} Calculate hash, including 'crc32:' prefix.
+ * @param {string} string String to hash.
+ * @returns {string} Calculate hash, including 'crc32:' prefix.
  */
 function hash (string) {
   if (typeof string !== 'string') string = JSON.stringify(string)
@@ -126,9 +139,9 @@ function hash (string) {
 /**
  * Update the digest for one digest item.
  *
- * @param {String} roomName Room to set the hash in.
- * @param {String} key Digest entry to set new (e.g. 'tables/1.json').
- * @param {Object} data Data/string to hash.
+ * @param {string} roomName Room to set the hash in.
+ * @param {string} key Digest entry to set new (e.g. 'tables/1.json').
+ * @param {object} data Data/string to hash.
  */
 function updateDigest (roomName, key, data) {
   const digests = getPreference(`freebeegee-demo-${roomName}`, PREFS.DIGEST)
@@ -142,9 +155,9 @@ function updateDigest (roomName, key, data) {
  * Does not do any checking, as the caller (browser) can not gain anything by
  * cheating. It only adds a generated ID.
  *
- * @param {Array} array Array of items to add to.
- * @param {String} item Item to add.
- * @return {Object} The added item with the new ID.
+ * @param {object[]} array Array of items to add to.
+ * @param {string} item Item to add.
+ * @returns {object} The added item with the new ID.
  */
 function add (array, item) {
   if (item.a?.match(/^ZZZZZZZ/)) { // system pieces
@@ -165,9 +178,9 @@ function add (array, item) {
  * Does not do any checking, as the caller (browser) can not gain anything by
  * cheating.
  *
- * @param {Array} array Array of items to patch.
- * @param {String} key Key to look for, usually 'id'.
- * @param {String} value Value to look for, usually a hex string.
+ * @param {object[]} array Array of items to patch.
+ * @param {string} key Key to look for, usually 'id'.
+ * @param {string} value Value to look for, usually a hex string.
  */
 function del (array, key, value) {
   for (let index = 0; index < array.length; index++) {
@@ -184,11 +197,11 @@ function del (array, key, value) {
  * Does not do any checking, as the caller (browser) can not gain anything by
  * cheating.
  *
- * @param {Array} array Array of items to patch.
- * @param {String} key Key to look for, usually 'id'.
- * @param {String} value Value to look for, usually a hex string.
- * @param {String} patch Patch to apply if found
- * @return {Object} The patched item or null if not found.
+ * @param {object[]} array Array of items to patch.
+ * @param {string} key Key to look for, usually 'id'.
+ * @param {string} value Value to look for, usually a hex string.
+ * @param {string} patch Patch to apply if found
+ * @returns {object} The patched item or null if not found.
  */
 function patch (array, key, value, patch) {
   for (const item of array) {
@@ -209,11 +222,11 @@ function patch (array, key, value, patch) {
  * Does not do any checking, as the caller (browser) can not gain anything by
  * cheating.
  *
- * @param {Array} array Array of items to patch.
- * @param {String} key Key to look for, usually 'id'.
- * @param {String} values Array of values to look for, usually hex strings.
- * @param {String} patches Patches to apply if found. Each index of values corresponds to its patch.
- * @return {Array} Possibly empty array of found & patched items.
+ * @param {object[]} array Array of items to patch.
+ * @param {string} key Key to look for, usually 'id'.
+ * @param {string} values Array of values to look for, usually hex strings.
+ * @param {string} patches Patches to apply if found. Each index of values corresponds to its patch.
+ * @returns {object[]} Possibly empty array of found & patched items.
  */
 function patchAll (array, key, values, patches) {
   const items = []
@@ -228,12 +241,12 @@ function patchAll (array, key, values, patches) {
  *
  * Used to 'fake' a realistic, slower API.
  *
- * @param {Number} status HTTP status to send.
- * @param {Object} body HTTP payload as parsed object.
- * @param {Boolean} headers If true, a nested object with default headers is sent.
+ * @param {number} status HTTP status to send.
+ * @param {object} body HTTP payload as parsed object.
+ * @param {boolean} headers If true, a nested object with default headers is sent.
  *                          If false (default) just the body is returned.
- * @param {Number} ms Milliseconds to delay the Promise.
- * @return {Promise} Delayed promise
+ * @param {number} ms Milliseconds to delay the Promise.
+ * @returns {Promise} Delayed promise
  */
 function delayPromise (status, body, headers = false, ms = 50) {
   if (headers) {
@@ -249,8 +262,8 @@ function delayPromise (status, body, headers = false, ms = 50) {
 /**
  * Fetch room data from the browser store.
  *
- * @param {String} roomName Room to fetch.
- * @return {Object} Room data (parsed json).
+ * @param {string} roomName Room to fetch.
+ * @returns {object} Room data (parsed json).
  */
 function getRoom (roomName) {
   return getPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM)
@@ -261,14 +274,14 @@ function getRoom (roomName) {
  *
  * Will also update the store timestamp ("t") entry to avoid early cleanup.
  *
- * @param {String} roomName Room name to cache the URL for.
- * @param {Object} pref PREFS entry.
- * @param {Object} payload The payload to cache.
- * @param {Number} status HTTP status to send.
- * @param {Boolean} headers If true, a nested object with default headers is sent.
+ * @param {string} roomName Room name to cache the URL for.
+ * @param {object} pref PREFS entry.
+ * @param {object} payload The payload to cache.
+ * @param {number} status HTTP status to send.
+ * @param {boolean} headers If true, a nested object with default headers is sent.
  *                          If false, just the body is returned.
- * @param {String} digest A room's digest entry to update with the payload's hash. Null = disable.
- * @return {Promise} Delayed promise of the content.
+ * @param {string} digest A room's digest entry to update with the payload's hash. Null = disable.
+ * @returns {Promise} Delayed promise of the content.
  */
 function cache (roomName, pref, payload, status, headers, digest = null) {
   setPreference(`freebeegee-demo-${roomName}`, pref, payload)
@@ -282,15 +295,15 @@ function cache (roomName, pref, payload, status, headers, digest = null) {
 /**
  * Fetch an URL (Json) from the snapshot directory and cache it in the browser store.
  *
- * @param {String} roomName Room name to cache the URL for.
- * @param {String} url The URL to fetch, e.g. './demo/RPG/room.json'.
- * @param {Object} pref PREFS entry.
+ * @param {string} roomName Room name to cache the URL for.
+ * @param {string} url The URL to fetch, e.g. './demo/RPG/room.json'.
+ * @param {object} pref PREFS entry.
  * @param {Function} fix Method to be called upon the retrieved payload to modify it's content.
- * @param {Number} status HTTP status to send.
- * @param {Boolean} headers If true, a nested object with default headers is sent.
+ * @param {number} status HTTP status to send.
+ * @param {boolean} headers If true, a nested object with default headers is sent.
  *                          If false (default) just the body is returned.
- * @param {String} digest A room's digest entry to update with the payload's hash. Null = disable.
- * @return {Promise} Delayed promise of the content.
+ * @param {string} digest A room's digest entry to update with the payload's hash. Null = disable.
+ * @returns {Promise} Delayed promise of the content.
  */
 function fetchAndCache (roomName, url, pref, fix, status, headers, digest = null) {
   return globalThis.fetch(url)
@@ -304,9 +317,10 @@ function fetchAndCache (roomName, url, pref, fix, status, headers, digest = null
 /**
  * Fake-fetch /api.
  *
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function api (data, headers) {
   const root = window.location.pathname.replace(/\/[^/]+$/, '/')
@@ -344,9 +358,10 @@ function api (data, headers) {
 /**
  * Fake-fetch /api/snapshots.
  *
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function apiSnapshots (data, headers) {
   switch (data.method) {
@@ -360,10 +375,11 @@ function apiSnapshots (data, headers) {
 /**
  * Fake-fetch /api/rooms/[roomName]/auth/.
  *
- * @param {String} roomName Room name to fetch.
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {string} roomName Room name to fetch.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function apiRoomAuth (roomName, data, headers) {
   switch (data.method) {
@@ -382,10 +398,11 @@ function apiRoomAuth (roomName, data, headers) {
 /**
  * Fake-fetch /api/rooms/[roomName]/.
  *
- * @param {String} roomName Room name to fetch.
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {string} roomName Room name to fetch.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function apiRoom (roomName, data, headers) {
   switch (data.method) {
@@ -421,10 +438,11 @@ function apiRoom (roomName, data, headers) {
 /**
  * Fake-fetch /api/rooms/[roomName]/digest/.
  *
- * @param {String} roomName Room name to fetch.
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {string} roomName Room name to fetch.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function apiRoomDigest (roomName, data, headers) {
   switch (data.method) {
@@ -439,11 +457,12 @@ function apiRoomDigest (roomName, data, headers) {
 /**
  * Fake-fetch /api/rooms/[roomName]/table/[#].
  *
- * @param {String} roomName Room name to fetch.
- * @param {Number} no Table number. May be omitted if call doesn't need one.
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {string} roomName Room name to fetch.
+ * @param {number} no Table number. May be omitted if call doesn't need one.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function apiRoomTable (roomName, no, data, headers) {
   const pref = PREFS[`TABLE${no}`]
@@ -478,12 +497,13 @@ function apiRoomTable (roomName, no, data, headers) {
 /**
  * Fake-fetch /api/rooms/[roomName]/table/[#]/pieces/[#].
  *
- * @param {String} roomName Room name to fetch.
- * @param {Number} no Table number.
- * @param {Number} pieceId Piece ID. May be omitted if call affects all pieces.
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {string} roomName Room name to fetch.
+ * @param {number} no Table number.
+ * @param {number} pieceId Piece ID. May be omitted if call affects all pieces.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
   const pref = PREFS[`TABLE${no}`]
@@ -523,11 +543,12 @@ function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
 /**
  * Fake-fetch /api/rooms/[roomName]/assets/[assetId]/
  *
- * @param {String} roomName Room name to fetch.
- * @param {String} assetId Asset to fetch.
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {string} roomName Room name to fetch.
+ * @param {string} assetId Asset to fetch.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function apiRoomAssets (roomName, assetId, data, headers) {
   switch (data.method) {
@@ -549,10 +570,11 @@ function apiRoomAssets (roomName, assetId, data, headers) {
 /**
  * Fake-fetch /api/rooms/[roomName]/setup/
  *
- * @param {String} roomName Room name to fetch.
- * @param {Object} data Original fetch()'s data object.
- * @param {Boolean} headers If true, reply with a full header object. If false, reply only with the payload.
- * @return {Promise} Delayed promise of the API content.
+ * @param {string} roomName Room name to fetch.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
  */
 function apiRoomSetup (roomName, data, headers) {
   let setup

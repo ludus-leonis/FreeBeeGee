@@ -17,7 +17,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] refactor: use events more
+    * [ ] github action to rebuid app on dev
+    * [ ] tabularNums for tree/library view
+    * [X] refactor: add jsdoc linting
+    * [X] refactor: use npm linter instead of gulp linter
+    * [ ] dice 1x3 alignment bug
+    * [ ] d12 rename bug
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -28,6 +33,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] refactor: use events more
 * [ ] refactor: get 's' out of asset IDs
 * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
 * [ ] library editor: replace media/side

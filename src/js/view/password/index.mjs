@@ -2,7 +2,9 @@
  * @file The password screen.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -30,9 +32,10 @@ import {
 /**
  * Show a password dialog.
  *
- * @param {String} name The room name the user entered in the join dialog.
+ * @param {string} roomName The room name the user entered in the join dialog.
+ * @param {boolean} first If true, this is the first password attempt (no error message shown).
  */
-export function passwordView (name, first) {
+export function passwordView (roomName, first) {
   createScreen(
     'Room password required',
     `
@@ -40,7 +43,7 @@ export function passwordView (name, first) {
         <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
         <input id="mode" class="mode is-hidden" type="checkbox">
         <p class="is-wrapping">
-          Room <strong>${name}</strong> requires a password.
+          Room <strong>${roomName}</strong> requires a password.
         </p>
 
         <p class="server-feedback"></p>
@@ -61,8 +64,8 @@ export function passwordView (name, first) {
 
   _('#roompwd')
     .on('blur', blur => { _('#roompwd').remove('.invalid') })
-    .on('keydown', keydown => { if (keydown.keyCode === 13) ok(name) })
-  _('#ok').on('click', click => { click.preventDefault(); ok(name) })
+    .on('keydown', keydown => { if (keydown.keyCode === 13) ok(roomName) })
+  _('#ok').on('click', click => { click.preventDefault(); ok(roomName) })
 
   if (!first) {
     _('.server-feedback').add('.show').innerHTML = 'Please enter a correct password.'
@@ -73,8 +76,10 @@ export function passwordView (name, first) {
 
 /**
  * Validate password on OK.
+ *
+ * @param {string} roomName Room name to check for.
  */
-function ok (name) {
+function ok (roomName) {
   _('#ok').add('.is-spinner')
-  auth(name, _('#roompwd').value)
+  auth(roomName, _('#roompwd').value)
 }

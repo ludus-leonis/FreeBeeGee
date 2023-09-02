@@ -3,7 +3,9 @@
 /**
  * Copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -92,7 +94,8 @@ final class FreeBeeGeeAPITest extends TestCase
         }
     }
 
-    private function semver(string $original, $major, $minor, $patch) {
+    private function semver(string $original, $major, $minor, $patch)
+    {
         $parts = explode('.', $original);
         return (is_string($major) ? $major : (intval($parts[0]) + $major))
             . '.' . (is_string($minor) ? $minor : (intval($parts[1]) + $minor))
@@ -839,8 +842,8 @@ final class FreeBeeGeeAPITest extends TestCase
         $version = $this->semver($this->p->versionEngine, -1, 0, 0);
         $room->engine = $version;
         $room->dirty = 'dirty';
-        $room->setup->engine = $version;;
-        $setup->engine = $version;;
+        $room->setup->engine = $version;
+        $setup->engine = $version;
         file_put_contents($meta->folder . 'room.json', json_encode($room));
         file_put_contents($meta->folder . 'setup.json', json_encode($setup));
         $this->assertHTTPStatus(function () {
@@ -1231,6 +1234,4 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(false, FreeBeeGeeAPI::arrayContainsPrefix($array, 'ntry'));
         $this->assertEquals(false, FreeBeeGeeAPI::arrayContainsPrefix($array, 'Three'));
     }
-
-
 }

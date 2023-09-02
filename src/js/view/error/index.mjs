@@ -2,7 +2,9 @@
  * @file Various error dialogs
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -36,33 +38,39 @@ import {
   stopAutoSync
 } from '../room/sync.mjs'
 
+/**
+ * React on an API error.
+ *
+ * @param {object} error Error object from the API layer.
+ * @param {string} roomName Room we are in.
+ * @param {number[]} ignore Array of status codes to ignore as not-an-error.
+ */
 export function apiError (error, roomName, ignore = []) {
   if (error instanceof UnexpectedStatus) { // API error
     if (ignore.includes(error.status)) {
-      return null // semi-expected error that is silently ignored
+      return // semi-expected error that is silently ignored
     }
     stopAutoSync()
     switch (error.status) {
       case 401:
         runError('BUG', error)
-        return null
+        return
       case 403:
         navigateReload() // force reload to reset data + show password screen
-        return null
+        return
       case 404:
         runErrorRoomGone()
-        return null
+        return
     }
   }
 
   runError('BUG', error)
-  return null
 }
 
 /**
  * Show an error dialog.
  *
- * @param {String} code Code of error message to show.
+ * @param {string} code Code of error message to show.
  * @param {*} options Options / stuff to simply forward to the error.
  */
 export function runError (code, options) {
@@ -95,13 +103,13 @@ export function runError (code, options) {
 /**
  * Try to find out what the problem is.
  *
- * @return {String} Explanatory HTML error message, or generic 'try again'.
- **/
+ * @returns {Promise} Promise of execution.
+ */
 function detectProblem () {
   const error = _('#content')
   const missing = new Error('Server is missing requirements.')
 
-  globalThis.fetch('api/issues/')
+  return globalThis.fetch('api/issues/')
     .then(response => {
       response.text()
         .then(text => {
@@ -160,6 +168,8 @@ function detectProblem () {
 /**
  * Error screen be shown when an existing room disappeared. Probably the admin
  * deleted/closed it.
+ *
+ * @param {object} error Error object from the API layer.
  */
 function runErrorBug (error) {
   console.error('*that* was unexpected!', error, error.body) // only log if error is serious
@@ -195,6 +205,8 @@ function runErrorRoomGone () {
 /**
  * Error screen be shown when a room seems to be from an older, incopatible FBG
  * version.
+ *
+ * @param {string} roomName Room name for the card.
  */
 function runErrorRoomDeprecated (roomName) {
   createScreen(

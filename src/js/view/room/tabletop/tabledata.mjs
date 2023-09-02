@@ -4,7 +4,9 @@
  *       data. Does not know about DOM/nodes.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -79,10 +81,22 @@ export const assetTypes = [
   'badge'
 ]
 
+/**
+ * Find the name for a layer index.
+ *
+ * @param {number} layer Layer index, 1-based.
+ * @returns {string} Layer name, e.g. 'overlay'.
+ */
 function layerToName (layer) {
   return LAYERS[layer - 1]
 }
 
+/**
+ * Find the index of a layer name.
+ *
+ * @param {string} name Name of layer, e.g. 'overlay'.
+ * @returns {number} Layer index.
+ */
 export function nameToLayer (name) {
   return LAYERS.indexOf(name) + 1
 }
@@ -96,9 +110,9 @@ export const ID = {
 /**
  * Find a piece by ID.
  *
- * @param {String} id ID to lookup.
- * @param {Number} no Table number, defaults to current one.
- * @return {Object} Piece, or null if not found.
+ * @param {string} id ID to lookup.
+ * @param {number} no Table number, defaults to current one.
+ * @returns {object} Piece, or null if not found.
  */
 export function findPiece (id, no = getTableNo()) {
   for (const piece of getTable(no)) {
@@ -113,9 +127,9 @@ export function findPiece (id, no = getTableNo()) {
 /**
  * Find an asset by ID.
  *
- * @param {String} id ID to lookup.
- * @param {String} layer Optional layer to limit/speed up search.
- * @return {Object} Asset, or null if not found.
+ * @param {string} id ID to lookup.
+ * @param {string} layer Optional layer to limit/speed up search.
+ * @returns {object} Asset, or null if not found.
  */
 export function findAsset (id, layer = 'any') {
   const library = getLibrary()
@@ -134,9 +148,9 @@ export function findAsset (id, layer = 'any') {
 /**
  * Find an asset by ID.
  *
- * @param {String} name Alias to lookup.
- * @param {String} layer Optional layer to limit/speed up search.
- * @return {Object} First found asset with the given name.
+ * @param {string} name Alias to lookup.
+ * @param {string} layer Optional layer to limit/speed up search.
+ * @returns {object} First found asset with the given name.
  */
 export function findAssetByAlias (name, layer = 'any') {
   const library = getLibrary()
@@ -155,8 +169,8 @@ export function findAssetByAlias (name, layer = 'any') {
 /**
  * Find an asset by ID.
  *
- * @param {String} id Asset ID to lookup.
- * @return {Number} Count of pieces using that asset across all tables.
+ * @param {string} id Asset ID to lookup.
+ * @returns {number} Count of pieces using that asset across all tables.
  */
 export function countAssets (id) {
   let count = 0
@@ -172,6 +186,15 @@ export function countAssets (id) {
   return count
 }
 
+/**
+ * Assemble a CSS URL for an asset in a room.
+ *
+ * @param {string} room Room name.
+ * @param {string} type Asset type.
+ * @param {string} file File name.
+ * @param {boolean} demo If true, a demo-mode url will be created instead.
+ * @returns {string} URL to be used in a CSS url('..') expression.
+ */
 export function getRoomMediaURL (room, type, file, demo = false) {
   if (demo) {
     return `demo/${getRoom().setup.name}/assets/${type}/${file}`
@@ -183,9 +206,9 @@ export function getRoomMediaURL (room, type, file, demo = false) {
 /**
  * Get the URL for an asset media.
  *
- * @param {Object} asset Asset to get URL for.
- * @param {Number} side Side/media to get, -2 = mask, -1 = base. Defaults to 0=first.
- * @return {String} URL to be used in url() or img.src.
+ * @param {object} asset Asset to get URL for.
+ * @param {number} side Side/media to get, -2 = mask, -1 = base. Defaults to 0=first.
+ * @returns {string} URL to be used in url() or img.src.
  */
 export function getAssetURL (asset, side = 0) {
   if (side >= asset.media.length) {
@@ -207,11 +230,11 @@ export function getAssetURL (asset, side = 0) {
  * Takes into account that rotated pieces have a different offset to its center
  * than the original as CSS 'transform: rotate()' rotates round the original center.
  *
- * @param {Object} piece A game piece to operate on.
- * @param {Number} x X coordinate of supposed center (defaults to piece.x)
- * @param {Number} y Y coordinate of supposed center (defaults to piece.y)
- * @return {Object} Numeric coordinates as { top, left }.
- **/
+ * @param {object} piece A game piece to operate on.
+ * @param {number} x X coordinate of supposed center (defaults to piece.x)
+ * @param {number} y Y coordinate of supposed center (defaults to piece.y)
+ * @returns {object} Numeric coordinates as { top, left }.
+ */
 export function getTopLeft (piece, x = piece.x, y = piece.y) {
   const jitterX = piece.l === LAYER_TOKEN ? Math.abs(hash('x' + piece.id)) % 5 - 2 : 0
   const jitterY = piece.l === LAYER_TOKEN ? Math.abs(hash('y' + piece.id)) % 5 - 2 : 0
@@ -225,8 +248,8 @@ export function getTopLeft (piece, x = piece.x, y = piece.y) {
 /**
  * Get the area in px a piece covers.
  *
- * @param {Object} piece A game piece to operate on.
- * @return {Object} Bounds as { top, left, bottom, right}.
+ * @param {object} piece A game piece to operate on.
+ * @returns {object} Bounds as { top, left, bottom, right}.
  */
 export function getPieceBounds (piece) {
   return {
@@ -240,9 +263,9 @@ export function getPieceBounds (piece) {
 /**
  * Find all pieces at least parcially within a grid area.
  *
- * @param {Object} rect Rectangle object, containing top/left/bottom/right.
- * @param {String} layer Optional name of layer to search within. Defaults to 'all'.
- * @param {Number} no Table number, defaults to current one.
+ * @param {object} rect Rectangle object, containing top/left/bottom/right.
+ * @param {string} layer Optional name of layer to search within. Defaults to 'all'.
+ * @param {number} no Table number, defaults to current one.
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
 export function findPiecesWithin (rect, layer = 'all', no = getTableNo()) {
@@ -262,9 +285,9 @@ export function findPiecesWithin (rect, layer = 'all', no = getTableNo()) {
 /**
  * Find all pieces 100% within a grid area.
  *
- * @param {Object} rect Rectangle object, containing top/left/bottom/right.
- * @param {String} layer Optional name of layer to search within. Defaults to 'all'.
- * @param {Number} no Table number, defaults to current one.
+ * @param {object} rect Rectangle object, containing top/left/bottom/right.
+ * @param {string} layer Optional name of layer to search within. Defaults to 'all'.
+ * @param {number} no Table number, defaults to current one.
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
 export function findPiecesContained (rect, layer = 'all', no = getTableNo()) {
@@ -284,7 +307,7 @@ export function findPiecesContained (rect, layer = 'all', no = getTableNo()) {
 /**
  * Find all pieces that are expired.
  *
- * @param {Number} no Table number, defaults to current one.
+ * @param {number} no Table number, defaults to current one.
  * @returns {Array} Array of nodes/pieces that are expired.
  */
 export function findExpiredPieces (no = getTableNo()) {
@@ -303,8 +326,9 @@ export function findExpiredPieces (no = getTableNo()) {
 /**
  * Remove excess fields and force ranges to be within 0..n.
  *
- * @param {Object} piece Piece to sanitize.
- * @return {Object} Sanitized piece.
+ * @param {object} patch Piece patch to sanitize.
+ * @param {string} pieceId Optional corresponding piece ID for additional tests.
+ * @returns {object} Sanitized piece.
  */
 export function sanitizePiecePatch (patch, pieceId = null) {
   const r = getRoom()
@@ -365,10 +389,10 @@ export function sanitizePiecePatch (patch, pieceId = null) {
 /**
  * Add default setup values to all properties that the API might omit.
  *
- * @param {Object} setup Data object to populate.
- * @return {Array} Setup for chaining.
+ * @param {object} setup Data object to populate.
+ * @returns {Array} Setup for chaining.
  */
-export function populateSetupDefaults (setup, headers = null) {
+export function populateSetupDefaults (setup) {
   setup.borders = setup.borders ?? []
 
   setup._meta = {
@@ -385,9 +409,9 @@ export const FEATURE_DISCARD = 'DISCARD'
 /**
  * Add default piece values to all properties that the API might omit.
  *
- * @param {Object} piece Data object to populate.
- * @param {Object} headers Optional headers object (for date checking).
- * @return {Object} Piece for chaining.
+ * @param {object} piece Data object to populate.
+ * @param {object} headers Optional headers object (for date checking).
+ * @returns {object} Piece for chaining.
  */
 export function populatePieceDefaults (piece, headers = null) {
   const colors = getSetup().colors
@@ -477,9 +501,9 @@ export function populatePieceDefaults (piece, headers = null) {
  *
  * Also tosses out expired pieces.
  *
- * @param {Array} pieces Data objects to populate.
- * @param {Object} headers Optional headers object (for date checking).
- * @return {Array} Pieces array for chaining.
+ * @param {object[]} pieces Data objects to populate.
+ * @param {object} headers Optional headers object (for date checking).
+ * @returns {object[]} Pieces array for chaining.
  */
 export function populatePiecesDefaults (pieces, headers = null) {
   const nonExpired = []
@@ -500,9 +524,9 @@ export function populatePiecesDefaults (pieces, headers = null) {
 /**
  * Determine the lowest z-index in use by the pieces in a layer.
  *
- * @param {String} layer Name of a layer, e.g. LAYER_TILE.
- * @param {Object} area Bounding rect in px to check pieces at least partly within.
- * @return {Number} Lowest CSS z-index, or 0 if layer is empty.
+ * @param {string} layer Name of a layer, e.g. LAYER_TILE.
+ * @param {object} area Bounding rect in px to check pieces at least partly within.
+ * @returns {number} Lowest CSS z-index, or 0 if layer is empty.
  */
 export function getMinZ (layer, area = {
   left: 0,
@@ -522,8 +546,8 @@ export function getMinZ (layer, area = {
 /**
  * Sort pieces by their Z value.
  *
- * @param {Array} pieces Array of pieces to sort.
- * @return {Array} Given array, with sorted Z values (highest first).
+ * @param {object[]} pieces Array of pieces to sort.
+ * @returns {object[]} Given array, with sorted Z values (highest first).
  */
 export function sortZ (pieces) {
   return pieces.sort((a, b) => b.z - a.z)
@@ -532,9 +556,9 @@ export function sortZ (pieces) {
 /**
  * Determine the highest z-index in use by the pieces in a layer.
  *
- * @param {String} layer Name of a layer, e.g. LAYER_TILE.
- * @param {Object} area Bounding rect in px to check pieces at least partly within.
- * @return {Number} Highest CSS z-index, or 0 if area in layer is empty.
+ * @param {string} layer Name of a layer, e.g. LAYER_TILE.
+ * @param {object} area Bounding rect in px to check pieces at least partly within.
+ * @returns {number} Highest CSS z-index, or 0 if area in layer is empty.
  */
 export function getMaxZ (layer, area = {
   left: 0,
@@ -555,8 +579,8 @@ export function getMaxZ (layer, area = {
 /**
  * Determine rectancle all items on the room are within in px.
  *
- * @param {Number} no Table number to work on, defaults to current.
- * @return {Object} Object with top/left/bottom/right/width/height in px of main content.
+ * @param {number} no Table number to work on, defaults to current.
+ * @returns {object} Object with top/left/bottom/right/width/height in px of main content.
  */
 export function getContentRect (no = getTableNo()) {
   const rect = {
@@ -600,10 +624,10 @@ export function getContentRect (no = getTableNo()) {
 /**
  * Create a new piece from an asset.
  *
- * @param {Number} assetId ID of asset.
- * @param {Number} x X-position (px).
- * @param {Number} y Y-position (px).
- * @return {Object} Piece data object.
+ * @param {number} assetId ID of asset.
+ * @param {number} x X-position (px).
+ * @param {number} y Y-position (px).
+ * @returns {object} Piece data object.
  */
 export function createPieceFromAsset (assetId, x = 0, y = 0) {
   const asset = findAsset(assetId)
@@ -629,8 +653,8 @@ export function createPieceFromAsset (assetId, x = 0, y = 0) {
 /**
  * Make sure a piece is on the room by clipping x/y based on table size.
  *
- * @param {Object} item Piece to clamp.
- * @return {Object} Clamped piece.
+ * @param {object} piece Piece to clamp.
+ * @returns {object} Clamped piece.
  */
 export function clampToTableSize (piece) {
   const room = getRoom()
@@ -642,14 +666,14 @@ export function clampToTableSize (piece) {
 /**
  * Snap a coordinate to the closest hex position / grid.
  *
- * @param {Number} x X-coordinate to snap.
- * @param {Number} y Y-coordiante to snap.
- * @param {Number} lod Optional level of detail for snapping.
+ * @param {number} x X-coordinate to snap.
+ * @param {number} y Y-coordiante to snap.
+ * @param {number} lod Optional level of detail for snapping.
  *                     1 = centers,
  *                     2 = centers + corners,
  *                     3 = centers + corners + sides (default)
  *                     4 = no snap
- * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ * @returns {object} Closest grid vertex to original x/y as {x, y}.
  */
 export function snap (x, y, lod = 3) {
   if (lod >= 4) return { x: Math.round(x), y: Math.round(y) } // disabled snap
@@ -674,7 +698,8 @@ export function snap (x, y, lod = 3) {
  * Iterates over all pieces and averages their centers. Empty tables are considered
  * to be centered on the whole table.
  *
- * @return {Object} Object with x and y.
+ * @param {number} no Table number. Defaults to current one.
+ * @returns {object} Object with x and y.
  */
 export function getSetupCenter (no = getTableNo()) {
   const setup = getSetup()
@@ -698,8 +723,8 @@ export function getSetupCenter (no = getTableNo()) {
 /**
  * Extract parts (group, name, size, etc.) from an asset filename and guess best type.
  *
- * @param {String} assetName Asset filename.
- * @return {Object} Parsed elements.
+ * @param {string} assetName Asset filename.
+ * @returns {object} Parsed elements.
  */
 export function splitAssetFilename (assetName) {
   const data = {}
@@ -777,10 +802,10 @@ export function splitAssetFilename (assetName) {
  * alpha layer. Rotation is implicitly done by the browser as CSS 'transform:'
  * also rotates/scales click x/y.
  *
- * @param {Object} piece Piece to check.
- * @param {Number} x X-coordiante in px.
- * @param {Number} y Y-coordiante in px.
- * @return {Promise(Boolean)} True if pixel at x/y is transparent, false otherwise.
+ * @param {object} piece Piece to check.
+ * @param {number} x X-coordiante in px.
+ * @param {number} y Y-coordiante in px.
+ * @returns {Promise<boolean>} True if pixel at x/y is transparent, false otherwise.
  */
 export function isSolid (piece, x, y) {
   const setup = getSetup()
@@ -845,9 +870,9 @@ export function isSolid (piece, x, y) {
  * for the event by traversing all layers + object on the same coordnate.
  *
  * @param {Element} node DOM node that triggered the click event.
- * @param {Object} coords {x, y} of the current mouse coordinates.
- * @param {Object} target If not null, the caller thinks this is the target.
- * @return {Promise} Real click target.
+ * @param {object} coords {x, y} of the current mouse coordinates.
+ * @param {object} target If not null, the caller thinks this is the target.
+ * @returns {Promise<Element>} Real click target.
  */
 export function findRealClickTarget (node, coords, target = null) {
   // find all potential pieces in all layers.
@@ -873,10 +898,10 @@ export function findRealClickTarget (node, coords, target = null) {
  *
  * Includes our padding and rounded corners.
  *
- * @param {Number} w Width of token.
- * @param {Number} h Height of token.
- * @param {Number} p Padding of token.
- * @return {String} SVG-as-string in shape of the token.
+ * @param {number} w Width of token.
+ * @param {number} h Height of token.
+ * @param {number} p Padding of token.
+ * @returns {string} SVG-as-string in shape of the token.
  */
 function getTokenMaskSVG (w, h, p = 3) {
   let mask = `<svg width="${w * 64}" height="${h * 64}" viewBow="0 0 ${w * 64} ${h * 64}" xmlns="http://www.w3.org/2000/svg">`
@@ -896,6 +921,15 @@ function getTokenMaskSVG (w, h, p = 3) {
   return mask
 }
 
+/**
+ * Find a click targetpiece in an array of potential pieces.
+ *
+ * Honors transparent areas. Needs to be async to allow HTML image loading if necessary.
+ *
+ * @param {_[]} pieces Array of FreeDOM nodes to check against.
+ * @param {object} coords Point to check as {x, y}.
+ * @returns {Promise<Element>} Real click target.
+ */
 function _iterateClickTargetsAsync (pieces, coords) {
   if (pieces.length <= 0) return Promise.resolve(null) // no better target available
   const piece = pieces.shift()

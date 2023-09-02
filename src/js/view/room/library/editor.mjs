@@ -2,7 +2,9 @@
  * @file Handles the advanced library editor window.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -87,7 +89,7 @@ import {
 /**
  * Show the advanced library editor modal.
  *
- * @param {Object} tile {x, y} coordinates (tile) where to add.
+ * @param {object} xy {x, y} coordinates (tile) where to add.
  */
 export function modalLibraryManager (xy) {
   preselect()
@@ -182,7 +184,7 @@ function updateManager () {
  * @param {string} title Asset type label for folder.
  * @param {string} type Asset type for folder.
  * @param {object[]} assets Assets to put into this tree.
- * @return {FreeDOM} DOM node of generated (sub)tree.
+ * @returns {_} FreeDOM node of generated (sub)tree.
  */
 function createSubtree (title, type, assets) {
   const details = _('details').create()
@@ -280,8 +282,7 @@ function updatePreview (asset, side) {
  * Generate a table of all sides of an asset, including base and mask.
  *
  * @param {string} asset Asset to display.
- * @param {number} side Side to show.
- * @return {FreeDOM} DOM node of generated table.
+ * @returns {_} FreeDOM node of generated table.
  */
 function assetToTable (asset) {
   const table = _('table.table').create()

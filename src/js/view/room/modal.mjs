@@ -2,7 +2,9 @@
  * @file Common modal handling. Keeps one modal instance at a time.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -30,7 +32,7 @@ let modal = null /** Currently open Bootstrap modal instance */
 /**
  * Get the currently open modal.
  *
- * @return {Modal} Bootstrap Modal or null if currently closed.
+ * @returns {?object} Bootstrap modal or null if currently closed.
  */
 export function getModal () {
   return modal
@@ -39,7 +41,7 @@ export function getModal () {
 /**
  * Determine if the/a modal is currently open.
  *
- * @return {Boolean} True, if there is a modal open.
+ * @returns {boolean} True, if there is a modal open.
  */
 export function isModalActive () {
   return modal !== null
@@ -50,7 +52,8 @@ export function isModalActive () {
  *
  * This is a modal with no card / white area in it, to be filled by the caller.
  *
- * @return {FreeDOM} The modal's DOM node ('#modal').
+ * @param {string} html Modal body content.
+ * @returns {_} The modal's FreeDOM node ('#modal').
  */
 export function createModalRaw (html) {
   const node = _('#modal.modal.is-noselect').create()
@@ -80,9 +83,9 @@ export function createModalRaw (html) {
  * Assumes an hidden, empty modal frame to be present in the DOM as '#modal' and
  * will return it as Bootstrap Modal instance.
  *
- * @param {Boolean} large If true, a large modal will be created. If false, a
+ * @param {boolean} large If true, a large modal will be created. If false, a
  *                        regular (smaller) modal will be created.
- * @return {FreeDOM} The modal's DOM node ('#modal').
+ * @returns {_} The modal's FreeDOM node ('#modal').
  */
 export function createModal (large = false) {
   const node = createModalRaw(`
@@ -106,7 +109,7 @@ export function createModal (large = false) {
  * Assumes an hidden, empty modal frame to be present in the DOM as '#modal' and
  * will return it as Bootstrap Modal instance.
  *
- * @return {FreeDOM} The modal's DOM node ('#modal').
+ * @returns {_} The modal's FreeDOM node ('#modal').
  */
 export function createModalFullscreen () {
   const node = createModalRaw(`
@@ -139,6 +142,17 @@ export function modalClose () {
   startAutoSync() // might have gotten shut down in long-opened modals
 }
 
+/**
+ * Create a confirm / ok modal.
+ *
+ * Cancel/Esc will just close the modal.
+ *
+ * @param {string} title Modal title.
+ * @param {string} body Modal body markup.
+ * @param {string} button Label of OK button.
+ * @param {object} data Data to pass on to OK handler.
+ * @param {Function} onOk Handler to call on OK click.
+ */
 export function createModalConfirm (title, body, button, data = {}, onOk = () => true) {
   if (!isModalActive()) {
     createModal()

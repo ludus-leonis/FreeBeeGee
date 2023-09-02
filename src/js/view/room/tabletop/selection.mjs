@@ -2,7 +2,9 @@
  * @file Code related to handling selection and handle multi-select.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -64,11 +66,11 @@ export function selectionRemove (id) {
 }
 
 /**
-* Check if an piece ID is currently selected
-*
-* @param {string} id ID to check.
-* @return {boolean} True, if this element is selected.
-*/
+ * Check if an piece ID is currently selected
+ *
+ * @param {string} id ID to check.
+ * @returns {boolean} True, if this element is selected.
+ */
 export function isSelectedId (id) {
   return selectionGetIds().includes(id)
 }
@@ -110,7 +112,7 @@ export function selectNode (node, toggle = false) {
 /**
  * Clear the selection of pieces.
  *
- * @param {String} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN to clear a specific
+ * @param {string} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN to clear a specific
  *                       layer, or 'all' for all layers.
  */
 export function selectionClear (layer = 'all') {
@@ -122,9 +124,9 @@ export function selectionClear (layer = 'all') {
 /**
  * Get all currently selected pieces.
  *
- * @param {String} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN to clear a specific
+ * @param {string} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN to clear a specific
  *                       layer, or 'all' for all layers.
- * @return {piece[]} Possibly empty array of selected pieces.
+ * @returns {object[]} Possibly empty array of selected pieces.
  */
 export function selectionGetPieces (layer = 'all') {
   const selected = []
@@ -139,7 +141,7 @@ export function selectionGetPieces (layer = 'all') {
 /**
  * Get all currently selected IDs.
  *
- * @return {piece[]} Possibly empty array of selected pieces.
+ * @returns {object[]} Possibly empty array of selected pieces.
  */
 export function selectionGetIds () {
   return selectionIds[getTableNo()]
@@ -148,7 +150,7 @@ export function selectionGetIds () {
 /**
  * Fet the featureset all currently selected pieces support
  *
- * @return {Object} Object with features true/false.
+ * @returns {object} Object with features true/false.
  */
 export function selectionGetFeatures () {
   const semi = [FEATURE_DICEMAT, FEATURE_DISCARD]
@@ -227,8 +229,8 @@ export function selectionGetFeatures () {
  *
  * Mostly used before moving a selection to a new position what pieces might affect z.
  *
- * @param {Number} x Optional alterate center of selection.
- * @param {Number} y Optional alterate center of selection.
+ * @param {number} x Optional alterate center of selection.
+ * @param {number} y Optional alterate center of selection.
  * @param {boolean} padding If true, selection will extend 2px on all sides.
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
@@ -257,9 +259,9 @@ export function findPiecesWithinSelection (x = undefined, y = undefined, padding
 /**
  * Find all highest Z values below the selection target.
  *
- * @param {Number} x Center of selection.
- * @param {Number} y Center of selection.
- * @returns {Object} Contains higest z per layer as {tile, token, ...}.
+ * @param {number} x Center of selection.
+ * @param {number} y Center of selection.
+ * @returns {object} Contains higest z per layer as {tile, token, ...}.
  */
 export function findMaxZBelowSelection (x, y) {
   const zLower = {}
@@ -274,9 +276,9 @@ export function findMaxZBelowSelection (x, y) {
 /**
  * Find all lowest Z values below the selection target.
  *
- * @param {Number} x Center of selection.
- * @param {Number} y Center of selection.
- * @returns {Object} Contains lowest z per layer as {tile, token, ...}.
+ * @param {number} x Center of selection.
+ * @param {number} y Center of selection.
+ * @returns {object} Contains lowest z per layer as {tile, token, ...}.
  */
 export function findMinZBelowSelection (x, y) {
   const zLower = {}
@@ -292,6 +294,9 @@ export function findMinZBelowSelection (x, y) {
 
 let selectionIds = [[], [], [], [], [], [], [], [], [], []] // 1+9 tables
 
+/**
+ *
+ */
 export function _selectionReset () { // exposed only for testing
   selectionIds = [[], [], [], [], [], [], [], [], [], []]
 }

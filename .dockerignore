@@ -1,0 +1,13 @@
+.cache
+dist/*/*
+docs
+.git
+node_modules
+src
+test
+tools
+
+*.md
+*.json
+.*
+gulpfile.js

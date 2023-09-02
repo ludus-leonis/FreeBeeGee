@@ -2,7 +2,9 @@
  * @file Common modal handling. Keeps one modal instance at a time.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -30,7 +32,7 @@ let window = null // currently open instance
 /**
  * Get the currently open modal.
  *
- * @return {Modal} Bootstrap Modal or null if currently closed.
+ * @returns {object} Bootstrap modal or null if currently closed.
  */
 export function getWindow () {
   return window
@@ -39,7 +41,7 @@ export function getWindow () {
 /**
  * Determine if the/a modal is currently open.
  *
- * @return {Boolean} True, if there is a modal open.
+ * @returns {boolean} True, if there is a modal open.
  */
 export function isWindowActive () {
   return window !== null
@@ -48,7 +50,7 @@ export function isWindowActive () {
 /**
  * Initialize an 'empty' full screen window.
  *
- * @return {FreeDOM} The modal's DOM node ('#window').
+ * @returns {_} The modal's FreeDOM node ('#window').
  */
 export function createWindow () {
   closeWindow()

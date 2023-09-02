@@ -3,7 +3,9 @@
 /**
  * Copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -2628,7 +2630,7 @@ class FreeBeeGeeAPI
      *
      * Central function so we can change the type of ID easily later on.
      *
-     * @return {String} A random ID.
+     * @returns {String} A random ID.
      */
     private function generateId(
         int $seed = null

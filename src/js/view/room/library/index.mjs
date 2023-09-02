@@ -2,7 +2,9 @@
  * @file Handles the library modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -90,7 +92,7 @@ import {
 /**
  * Show the pieces library modal.
  *
- * @param {Object} tile {x, y} coordinates (tile) where to add.
+ * @param {object} xy {x, y} coordinates (tile) where to add.
  */
 export function modalLibrary (xy) {
   if (!isModalActive()) {
@@ -289,7 +291,7 @@ function setupFooter () {
  *
  * Will set the determined value in the upload form.
  *
- * @param {String} dataUrl Raw base65 data of uploaded image.
+ * @param {string} dataUrl Raw base65 data of uploaded image.
  */
 function averageColor (dataUrl) {
   _('#upload-color').value = '#808080' // color detection is async, so use interim-default
@@ -424,6 +426,8 @@ function modalUpload () {
 
 /**
  * Show an upload failed error message.
+ *
+ * @param {string} why Info for user why the upload failed.
  */
 function uploadFailed (why) {
   _('#modal-body .fbg-error').innerHTML = `Upload failed: ${why}`
@@ -485,11 +489,13 @@ let blob = null
 
 /**
  * Update the upload WYSIWYG preview based on the selected infos.
+ *
+ * @param {boolean} parseFilename If true, the filename will be split & used to populate the form fields.
  */
-function updatePreview (parseImage = false) {
+function updatePreview (parseFilename = false) {
   const file = _('#upload-file').files[0]
 
-  if (file && parseImage) {
+  if (file && parseFilename) {
     const parts = splitAssetFilename(file.name)
     if (parts.w) _('#upload-w').value = parts.w
     if (parts.h) _('#upload-h').value = parts.h
@@ -550,6 +556,8 @@ function updatePreview (parseImage = false) {
 
 /**
  * Create a new preview piece.
+ *
+ * @param {string} blob The URL() image data loaded by the browser.
  */
 function updatePreviewDOM (blob) {
   const preview = _('.modal-library .is-preview-upload').remove('.is-*').add('.is-preview-upload')
@@ -614,8 +622,8 @@ function updatePreviewDOM (blob) {
 /**
  * Convert a library entry to a preview DOM element.
  *
- * @param {Object} assetJson The asset to convert.
- * @return {HTMLElement} Node for the modal.
+ * @param {object} asset The asset to convert.
+ * @returns {HTMLElement} Node for the modal.
  */
 function assetToPreview (asset) {
   const max = _('.is-preview').create(assetToNode(asset))

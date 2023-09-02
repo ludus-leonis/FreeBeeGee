@@ -31,3 +31,16 @@ npm run gulp demo
 ```
 
 Now `dist/demo` contains the demo version. There will be no PHP files in this directory.
+
+### Building a FreeBeeGee Docker container
+
+To create the FreeBeeGee Docker container(s), do:
+
+```
+git clone --depth 1 https://github.com/ludus-leonis/FreeBeeGee
+cd FreeBeeGee
+npm install
+npm run docker
+```
+
+There will now be a `ghcr.io/ludus-leonis/freebeegee:<version>` and `ghcr.io/ludus-leonis/freebeegee:latest` docker image in your local registry.

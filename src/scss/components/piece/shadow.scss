@@ -63,7 +63,7 @@ $shadow-highlight-width: 1.5px;
 ///
 /// @param {length} $blur The amount of blur.
 /// @param {length} $color The color of the shadow
-/// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
+/// @returns {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function shadow($blur, $color) {
   @return
   zoom(calc(var(--fbg-r-sin) * var(--fbg-shadow-length)))
@@ -77,7 +77,7 @@ $shadow-highlight-width: 1.5px;
 /// @example scss
 ///   highlight()
 ///
-/// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
+/// @returns {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function highlight() {
   @return
   zoom(calc(var(--fbg-r-sin) * $shadow-highlight-width)) zoom(calc(var(--fbg-r-cos) * $shadow-highlight-width)) zoom(.5px) 0 $color-white-15a inset,

@@ -3,7 +3,9 @@
  *       changes.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -105,7 +107,7 @@ export function stopAutoSync () {
 /**
  * Record activity in the room / browser.
  *
- * @param {?Boolean} remote If true, the remote timestamp is touched. Otherwise
+ * @param {?boolean} remote If true, the remote timestamp is touched. Otherwise
  *                          the local is.
  */
 export function touch (remote = false) {
@@ -149,7 +151,7 @@ let lastNetworkActivity = Date.now() /** ms when last time an update was foreced
 /**
  * Check if the auto-sync job is active.
  *
- * @return {Boolean} True if job is active, false if it is disabled.
+ * @returns {boolean} True if job is active, false if it is disabled.
  */
 function isAutoSync () {
   return syncNextMs >= 0
@@ -160,7 +162,7 @@ function isAutoSync () {
  *
  * Will re-schedule the next iteration, too.
  *
- * @param {Number} ms Milliseconds to wait till execution, defaults to 0.
+ * @param {number} ms Milliseconds to wait till execution, defaults to 0.
  * @param {Function} callback Function to call after first sync.
  */
 function scheduleSync (ms = 0, callback = null) {
@@ -183,7 +185,7 @@ function scheduleSync (ms = 0, callback = null) {
 /**
  * Check via digest call if we need to sync. Sync afterwards if necessary.
  *
- * @return {Promise} Promise of an integer. 0 = no sync, 1+ = table to sync.
+ * @returns {Promise} Promise of an integer. 0 = no sync, 1+ = table to sync.
  */
 function checkRoomDigests () {
   const room = getRoom()
@@ -233,15 +235,18 @@ function checkRoomDigests () {
  *
  * Is in charge of updating the table once on changes, but not of (re)scheduling
  * itself.
+ *
+ * @param {number} dirtyTableNo Number of table to fetch.
+ * @returns {Promise} Promise of execution.
  */
-function fetchAndUpdateTable (dirtyTable) {
+function fetchAndUpdateTable (dirtyTableNo) {
   lastNetworkActivity = Date.now()
-  return fetchTable(dirtyTable)
+  return fetchTable(dirtyTableNo)
     .then(table => {
-      lastDigests[`tables/${dirtyTable}.json`] = table.headers.get('digest')
+      lastDigests[`tables/${dirtyTableNo}.json`] = table.headers.get('digest')
 
-      if (dirtyTable === getTableNo()) {
-        updateTabletop(dirtyTable) // use cleanedup data
+      if (dirtyTableNo === getTableNo()) {
+        updateTabletop(dirtyTableNo) // use cleanedup data
       }
     })
 }
@@ -252,6 +257,7 @@ function fetchAndUpdateTable (dirtyTable) {
  * Is in charge of fetching the current room state and trigger data/UI updates,
  * but not of scheduling itself.
  *
+ * @returns {Promise} Promise of execution.
  */
 function syncRoom () {
   lastNetworkActivity = Date.now()
@@ -270,7 +276,7 @@ function syncRoom () {
  * Semi-intelligent: takes remote and local activity plus UI activity (mouse)
  * into account.
  *
- * @return {Number} Time in ms when to poll again.
+ * @returns {number} Time in ms when to poll again.
  */
 function calculateNextSyncTime () {
   const remote = Date.now() - lastRemoteActivity

@@ -2,7 +2,9 @@
  * @file Send keyboard/shortcut events to the proper functions.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -103,7 +105,6 @@ document.addEventListener('keydown', keydown => handleRoomKeys(keydown))
  * Call proper functions after certain keys are pressed.
  *
  * @param {KeyboardEvent} keydown The triggering event.
- * @return {Boolean} True if we could handle the event, false if it should bubble.
  */
 function handleRoomKeys (keydown) {
   if (!_('#tabletop').exists()) return

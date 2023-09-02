@@ -2,7 +2,9 @@
  * @file Handles the library edit-asset modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -187,11 +189,17 @@ function updateColor (asset) {
  */
 function ok (asset) {
   const input = _('#asset-name')
-  if (!input.validity.valid) return input.focus()
+  if (!input.validity.valid) {
+    input.focus()
+    return
+  }
 
   const material = _('#asset-material')
   const color = _('#asset-color').value
-  if (material === 'None' && !material.validity.valid) return material.focus()
+  if (material === 'None' && !material.validity.valid) {
+    material.focus()
+    return
+  }
 
   const patch = {}
   const name = unprettyName(_('#asset-name').value)
