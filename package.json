@@ -44,7 +44,7 @@
     "test:api:latest": "mocha test/integration/runner-latest.mjs",
     "test:unit": "npm-run-all clean:cache dist:test test:unit:php test:unit:js",
     "test:unit:js": "mocha test/unit/js",
-    "test:unit:php": "phpunit test/unit/php",
+    "test:unit:php": "tools/phpunit9 test/unit/php",
     "test:docker:api": "mocha test/integration/runner-docker.mjs",
     "test:docker:ui": "mocha -r global-jsdom/register test/integration/runner-docker-ui.mjs",
 

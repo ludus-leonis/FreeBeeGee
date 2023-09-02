@@ -21,6 +21,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] tabularNums for tree/library view
     * [X] refactor: add jsdoc linting
     * [X] refactor: use npm linter instead of gulp linter
+    * [X] refactor: add GitHub Actions for automated build
+    * [ ] refactor: sass-lint -> stylelint
     * [ ] dice 1x3 alignment bug
     * [ ] d12 rename bug
   * [ ] review docs

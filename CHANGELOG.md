@@ -15,6 +15,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added pre-selection of asset based on selected token when library is opened
 * added JSDoc linting and moved linting from gulp to npm
+* added GitHub Actions for automated build
 
 
 ## v0.20.0 - Advising Antelope

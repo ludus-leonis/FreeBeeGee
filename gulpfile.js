@@ -285,23 +285,17 @@ function snapshot (name, minimize = true) {
   })
 }
 
-gulp.task('snapshot-Classic', snapshot('Classic', false))
-gulp.task('snapshot-RPG', snapshot('RPG', false))
-gulp.task('snapshot-Hex', snapshot('Hex', false))
-gulp.task('snapshot-Tutorial', snapshot('Tutorial', false))
-gulp.task('snapshot-System', snapshot('_', false))
-
 gulp.task('dist', gulp.parallel(
   'js-main',
   'sass',
   'html',
   'js-vendor',
   'php',
-  'snapshot-RPG',
-  'snapshot-Hex',
-  'snapshot-Classic',
-  'snapshot-Tutorial',
-  'snapshot-System',
+  snapshot('RPG', false),
+  snapshot('Hex', false),
+  snapshot('Classic', false),
+  snapshot('Tutorial', false),
+  snapshot('_', false),
   'fonts',
   'img',
   'favicon'
@@ -310,39 +304,31 @@ gulp.task('dist', gulp.parallel(
 // --- testing targets ---------------------------------------------------------
 
 gulp.task('test-zips', gulp.parallel(() => {
-  return replace(gulp.src([
-    'test/data/snapshots/full/**/*'
-  ]))
+  return replace(gulp.src(['test/data/snapshots/full/**/*']))
     .pipe(zip('full.zip'))
     .pipe(gulp.dest(dirs.cache + '/snapshots'))
 }, () => {
-  return replace(gulp.src([
-    'test/data/snapshots/empty/**/*'
-  ]))
+  return replace(gulp.src(['test/data/snapshots/empty/**/*']))
     .pipe(zip('empty.zip'))
     .pipe(gulp.dest(dirs.cache + '/snapshots'))
 }, () => {
-  return replace(gulp.src([
-    'test/data/snapshots/extra/**/*'
-  ]))
+  return replace(gulp.src(['test/data/snapshots/extra/**/*']))
     .pipe(zip('extra.zip'))
     .pipe(gulp.dest(dirs.cache + '/snapshots'))
 }))
 
 gulp.task('dist-test', gulp.series('clean', 'test-zips', 'dist', () => {
-  return replace(gulp.src([
-    'test/data/server.json'
-  ]))
+  return replace(gulp.src(['test/data/server.json']))
     .pipe(gulp.dest(dirs.site + '/api/data'))
 }))
 
 gulp.task('dist-test-api', gulp.series('clean', 'test-zips', gulp.parallel( // only run php stuff
   'php',
-  'snapshot-RPG',
-  'snapshot-Hex',
-  'snapshot-Classic',
-  'snapshot-Tutorial',
-  'snapshot-System'
+  snapshot('RPG', false),
+  snapshot('Hex', false),
+  snapshot('Classic', false),
+  snapshot('Tutorial', false),
+  snapshot('_', false)
 ), () => {
   return replace(gulp.src([
     'test/data/server.json'
@@ -431,16 +417,6 @@ function demoDeploy (name) {
   })
 }
 
-gulp.task('demo-Classic', demo('Classic'))
-gulp.task('demo-RPG', demo('RPG'))
-gulp.task('demo-Hex', demo('Hex'))
-gulp.task('demo-Tutorial', demo('Tutorial'))
-gulp.task('demo-System', demo('_'))
-gulp.task('demo-deploy-Classic', demoDeploy('Classic'))
-gulp.task('demo-deploy-RPG', demoDeploy('RPG'))
-gulp.task('demo-deploy-Hex', demoDeploy('Hex'))
-gulp.task('demo-deploy-Tutorial', demoDeploy('Tutorial'))
-
 gulp.task('demo', gulp.series('clean', () => {
   demomode = true
   site = 'https://freebeegee.org/'
@@ -450,19 +426,19 @@ gulp.task('demo', gulp.series('clean', () => {
   'sass',
   'html',
   'js-vendor',
-  'demo-Classic',
-  'demo-RPG',
-  'demo-Hex',
-  'demo-Tutorial',
-  'demo-System',
+  demo('Classic'),
+  demo('RPG'),
+  demo('Hex'),
+  demo('Classic'),
+  demo('_'),
   'fonts',
   'img',
   'favicon'
 ), gulp.parallel(
-  'demo-deploy-Classic',
-  'demo-deploy-RPG',
-  'demo-deploy-Hex',
-  'demo-deploy-Tutorial'
+  demoDeploy('Classic'),
+  demoDeploy('RPG'),
+  demoDeploy('Hex'),
+  demoDeploy('Tutorial')
 ), async () => {
   return await deleteAsync([
     `${dirs.build}/demo`

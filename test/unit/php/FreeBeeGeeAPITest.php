@@ -887,7 +887,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($this->p->versionEngine, $room->engine); // uses current engine now
-        $this->assertObjectNotHasAttribute('dirty', $room);
+        $this->assertObjectNotHasProperty('dirty', $room);
         $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $setup->engine); // got patched
 
         // room with older patch level (-1) will auto-update room
@@ -905,7 +905,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
         $setup = json_decode(file_get_contents($meta->folder . 'setup.json'));
         $this->assertEquals($this->p->versionEngine, $room->engine); // uses current engine now
-        $this->assertObjectNotHasAttribute('dirty', $room);
+        $this->assertObjectNotHasProperty('dirty', $room);
         $this->assertEquals($this->semver($this->p->versionEngine, 0, 0, '0'), $setup->engine); // got patched
 
         // room with equal patch level won't touch room
@@ -981,7 +981,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('a', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('camelCase.jpeg');
         $this->assertEquals(['camelCase.jpeg'], $asset->media);
@@ -990,7 +990,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('camelCase', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('camelCase.caseCamel.SVG');
         $this->assertEquals(['camelCase.caseCamel.SVG'], $asset->media);
@@ -999,7 +999,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('camelCase.caseCamel', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('b.2x3x4.jpg');
         $this->assertEquals(['b.2x3x4.jpg'], $asset->media);
@@ -1008,7 +1008,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(4, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('b', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('b.2x3.jpg');
         $this->assertEquals(['b.2x3.jpg'], $asset->media);
@@ -1017,7 +1017,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('b', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('c.22x33x04.jpg');
         $this->assertEquals(['c.22x33x04.jpg'], $asset->media);
@@ -1026,7 +1026,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(4, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('c', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('c.22x33.jpg');
         $this->assertEquals(['c.22x33.jpg'], $asset->media);
@@ -1035,7 +1035,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('c', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('d.2x3x4.invalid.jpg');
         $this->assertEquals(['d.2x3x4.invalid.jpg'], $asset->media);
@@ -1044,7 +1044,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(4, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('d', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('d.2x3.invalid.jpg');
         $this->assertEquals(['d.2x3.invalid.jpg'], $asset->media);
@@ -1053,7 +1053,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('#808080', $asset->bg);
         $this->assertEquals('d', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('d.e.2x3x4.abcdef.jpg');
         $this->assertEquals(['d.e.2x3x4.abcdef.jpg'], $asset->media);
@@ -1062,7 +1062,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(4, $asset->s);
         $this->assertEquals('#abcdef', $asset->bg);
         $this->assertEquals('d.e', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('d.e.2x3.abcdef.jpg');
         $this->assertEquals(['d.e.2x3.abcdef.jpg'], $asset->media);
@@ -1071,7 +1071,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('#abcdef', $asset->bg);
         $this->assertEquals('d.e', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('eE.2x3x4.transparent.jpg');
         $this->assertEquals(['eE.2x3x4.transparent.jpg'], $asset->media);
@@ -1080,7 +1080,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(4, $asset->s);
         $this->assertEquals('transparent', $asset->bg);
         $this->assertEquals('eE', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('eE.2x3.transparent.jpg');
         $this->assertEquals(['eE.2x3.transparent.jpg'], $asset->media);
@@ -1089,7 +1089,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('transparent', $asset->bg);
         $this->assertEquals('eE', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('eE.2x3x4.1.jpg');
         $this->assertEquals(['eE.2x3x4.1.jpg'], $asset->media);
@@ -1098,7 +1098,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(4, $asset->s);
         $this->assertEquals('1', $asset->bg);
         $this->assertEquals('eE', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('eE.2x3.1.jpg');
         $this->assertEquals(['eE.2x3.1.jpg'], $asset->media);
@@ -1107,7 +1107,7 @@ final class FreeBeeGeeAPITest extends TestCase
         $this->assertEquals(1, $asset->s);
         $this->assertEquals('1', $asset->bg);
         $this->assertEquals('eE', $asset->name);
-        $this->assertObjectNotHasAttribute('tx', $asset);
+        $this->assertObjectNotHasProperty('tx', $asset);
 
         $asset = FreeBeeGeeAPI::fileToAsset('d.e.2x3x4.1.wood.jpg');
         $this->assertEquals(['d.e.2x3x4.1.wood.jpg'], $asset->media);
