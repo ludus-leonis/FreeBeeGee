@@ -32,10 +32,13 @@ import {
   prettyName,
   unprettyName,
   sortByString,
-  resizeImage,
   bytesToIso,
   generateAnimal
 } from '../../../lib/utils.mjs'
+
+import {
+  resizeImage
+} from '../../../lib/utils-html.mjs'
 
 import {
   createModal,

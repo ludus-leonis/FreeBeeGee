@@ -32,7 +32,7 @@ import {
 
 import {
   inputMaxLength
-} from '../../../../lib/utils.mjs'
+} from '../../../../lib/utils-html.mjs'
 
 import {
   setupFlags,

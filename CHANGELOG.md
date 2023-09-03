@@ -14,6 +14,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Other changes
 
 * added pre-selection of asset based on selected token when library is opened
+* added tabular numbers for library editor tree/preview
 * added JSDoc linting and moved linting from gulp to npm
 * added GitHub Actions for automated build
 * replaced gulp-image with custom image shrinker plugin

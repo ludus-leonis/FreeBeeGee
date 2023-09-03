@@ -61,6 +61,10 @@ import {
 } from '../../../lib/utils.mjs'
 
 import {
+  fakeTabularNums
+} from '../../../lib/utils-html.mjs'
+
+import {
   iconClose
 } from '../../../lib/icons.mjs'
 
@@ -198,12 +202,8 @@ function createSubtree (title, type, assets) {
 
   for (const asset of sortByString(assets ?? [], 'name')) {
     const entry = _(`.${type}`).create()
-    if (asset.media.length > 2) {
-      entry.innerHTML = `${prettyName(asset.name)} (${asset.media.length}) <span class="is-faded-more">${asset.w}x${asset.h}</span>`
-    } else {
-      entry.innerHTML = `${prettyName(asset.name)} <span class="is-faded-more">${asset.w}x${asset.h}</span>`
-    }
     entry.asset = asset
+    entry.innerHTML = assetToLabel(asset)
     if (asset.id === selection?.id) {
       entry.add('.active')
       show(entry.asset)
@@ -228,19 +228,21 @@ function show (asset) {
   selection = asset
   const browser = _('.browser')
 
+  const color = getColorLabel(asset.bg)
+
   browser.innerHTML = `
-    <h1>${prettyName(asset.name)} ${asset.w}x${asset.h}</h1>
+    <h1>${assetToLabel(asset)}</h1>
     <table class="table-key-value">
       <tbody>
         <tr>
           <td rowspan="4" class="is-preview">
           </td>
           <th>ID</th>
-          <td>${asset.id}</td>
+          <td><code>${asset.id}</code></td>
         </tr>
         <tr>
           <th>Color</th>
-          <td>${getColorLabel(asset.bg)}</td>
+          <td>${color.startsWith('#') ? `<code>${color}</code>` : color}</td>
         </tr>
         <tr>
           <th>Material</th>
@@ -313,7 +315,7 @@ function assetToTable (asset) {
   for (const media of asset.media) {
     content += `
       <tr id="${asset.id}-${index}" class="side">
-        <td>Side ${index + 1}</td>
+        <td>Side ${fakeTabularNums(`${index + 1}`)}</td>
         <td><code>${media}</code></td>
         <td><a href="${getRoomMediaURL(getRoom().name, asset.type, media, DEMO_MODE)}" target="_blank">View</a></td>
       </tr>
@@ -333,4 +335,20 @@ function assetToTable (asset) {
   tbody.innerHTML = content
 
   return table
+}
+
+/**
+ * Get an HTML label for an asset, that looks like 'MyName (12) 2x2'.
+ *
+ * @param {object} asset An asset.
+ * @returns {string} Formatted label/HTML snippet.
+ */
+function assetToLabel (asset) {
+  if (asset.media.length > 2) {
+    const html = `${prettyName(asset.name)} (${asset.media.length}) <span class="is-faded-more">${asset.w}x${asset.h}</span>`
+    return fakeTabularNums(html)
+  } else {
+    const html = `${prettyName(asset.name)} <span class="is-faded-more">${asset.w}x${asset.h}</span>`
+    return fakeTabularNums(html)
+  }
 }

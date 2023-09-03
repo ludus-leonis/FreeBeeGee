@@ -96,7 +96,7 @@ import {
 
 import {
   toggleFullscreen
-} from '../../lib/utils.mjs'
+} from '../../lib/utils-html.mjs'
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleRoomKeys(keydown))

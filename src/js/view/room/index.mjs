@@ -130,6 +130,10 @@ import {
 } from '../../view/room/modal/settings.mjs'
 
 import {
+  fakeTabularNums
+} from '../../lib/utils-html.mjs'
+
+import {
   DEMO_MODE
 } from '../../api/index.mjs'
 
@@ -658,14 +662,4 @@ function runStatuslineLoop () {
   statuslineLoop = setTimeout(() => {
     runStatuslineLoop()
   }, 5000)
-}
-
-/**
- * Fake tabular numbers by padding them with fixed-size spans.
- *
- * @param {string} text String to parse for numbers.
- * @returns {string} HTML markup.
- */
-function fakeTabularNums (text) {
-  return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
 }

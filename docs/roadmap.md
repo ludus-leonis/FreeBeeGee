@@ -18,7 +18,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [ ] github action to rebuid app on dev
-    * [ ] tabularNums for tree/library view
+    * [X] add tabular numbers for library editor tree/preview
     * [X] refactor: add jsdoc linting
     * [X] refactor: use npm linter instead of gulp linter
     * [X] refactor: add GitHub Actions for automated build

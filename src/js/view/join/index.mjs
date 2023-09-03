@@ -31,10 +31,13 @@ import {
 
 import {
   PATTERN_ROOM_NAME,
-  getGetParameter,
   generateName,
   generateUsername
 } from '../../lib/utils.mjs'
+
+import {
+  getGetParameter
+} from '../../lib/utils-html.mjs'
 
 import {
   DEMO_MODE

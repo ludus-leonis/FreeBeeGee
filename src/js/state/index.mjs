@@ -22,10 +22,13 @@
  */
 
 import {
-  getStoreValue,
-  setStoreValue,
   brightness
 } from '../lib/utils.mjs'
+
+import {
+  getStoreValue,
+  setStoreValue
+} from '../lib/utils-html.mjs'
 
 import {
   DEMO_MODE,

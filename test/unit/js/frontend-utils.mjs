@@ -26,8 +26,10 @@ import {
   getGetParameter,
   getStoreValue,
   setStoreValue,
-  toggleFullscreen,
+  toggleFullscreen
+} from '../../../src/js/lib/utils-html.mjs'
 
+import {
   isAll,
   isAny,
   isNone,
