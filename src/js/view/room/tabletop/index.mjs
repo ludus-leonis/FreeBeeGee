@@ -91,6 +91,7 @@ import {
   getMaxZ,
   getTopLeft,
   getPieceBounds,
+  nameToLayer,
   populatePieceDefaults,
   snap,
   stickyNoteColors
@@ -762,21 +763,21 @@ export function url (file, pin = true) {
 /**
  * Add a new sticky note to the cursor position.
  *
- * This adds a enirely new note to the table via a call to the state.
+ * This only opens the edit modal and does not add the note to the table yet.
  *
  * @param {object} xy {x, y} coordinates (tile) where to add.
  */
 export function createNote (xy) {
   selectionClear()
   const snapped = snap(xy.x, xy.y)
-  createPieces([{
-    l: LAYER_NOTE,
+  modalEdit(populatePieceDefaults({
+    l: nameToLayer(LAYER_NOTE),
     w: 3,
     h: 3,
     x: snapped.x,
     y: snapped.y,
     z: getMaxZ(LAYER_NOTE) + 1
-  }], true)
+  }))
 }
 
 /**

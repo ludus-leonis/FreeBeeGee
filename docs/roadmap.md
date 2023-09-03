@@ -9,15 +9,15 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] library editor: edit asset name / size / material / color
 * [ ] piece: wooden cubes
 * [X] paper background for windows and cards
+* [X] open edit window on note create
 * [ ] ui
   * [X] smaller modal paddings
-  * [ ] open edit window on note create
   * [ ] allow half-rotations via settings (45° for square, 30° for hex)
 * [ ] clipboard ctrl+c/v/x on/between tables
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] github action to rebuid app on dev
+    * [X] github action to rebuid app on dev
     * [X] add tabular numbers for library editor tree/preview
     * [X] refactor: add jsdoc linting
     * [X] refactor: use npm linter instead of gulp linter

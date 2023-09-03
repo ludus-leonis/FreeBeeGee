@@ -214,7 +214,6 @@ function ok (asset) {
 
   if (Object.keys(patch).length > 0) {
     patch.id = asset.id
-    console.log('patch asset', patch)
   } else {
     getModal().hide()
   }
@@ -229,11 +228,9 @@ function ok (asset) {
     .then(api => {
       switch (api._error) {
         case 'ASSET_ID_CONFLICT':
-          console.log('conflict')
           _('.server-feedback').add('.show').innerHTML = 'This asset already exists.'
           break
         case 'NOT_FOUND':
-          console.log('gone')
           _('.server-feedback').add('.show').innerHTML = 'Someone just removed/renamed this asset. Please reload the library.'
           break
         default: // no error - proceed

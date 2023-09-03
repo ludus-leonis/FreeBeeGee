@@ -23,6 +23,7 @@ import _ from '../../../../lib/FreeDOM.mjs'
 
 import {
   FLAG_NOTE_TOPLEFT,
+  createPieces,
   editPiece
 } from '../../../../state/index.mjs'
 
@@ -105,7 +106,14 @@ function modalOk () {
   updateColor(piece, updates)
   updateFlags(piece, updates)
 
-  editPiece(piece.id, updates)
+  if (piece.id) {
+    editPiece(piece.id, updates)
+  } else {
+    createPieces([{
+      ...piece,
+      ...updates
+    }], true)
+  }
 
   return true
 }
