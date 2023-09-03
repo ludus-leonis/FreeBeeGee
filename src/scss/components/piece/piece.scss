@@ -184,35 +184,45 @@ $piece-rotate: 1deg;
     max-width: unset;
   }
 
+  // --- additional layer (dice) -----------------------------------------------
+
+  &.has-decal {
+    background-image: var(--fbg-decal), var(--fbg-image);
+    background-position: center, center;
+    background-size: cover, cover;
+  }
+
   // --- piece masks -----------------------------------------------------------
 
   &.has-mask {
     #{'--fbg-color'}: $color-none;
     background-color: transparent;
     box-shadow: none !important; // sass-lint:disable-line no-important
-  }
-
-  .masked {
-    background-color: var(--fbg-color);
-    background-image: var(--fbg-image);
-    background-size: cover;
-    height: 100%;
-    mask-image: var(--fbg-mask);
-    mask-size: cover;
-    pointer-events: none;
-    position: absolute;
-    width: 100%;
-  }
-
-  // --- additional layer (dice) -----------------------------------------------
-
-  &.has-decal {
-    background-image: var(--fbg-decal), var(--fbg-image);
-    background-size: cover, cover;
 
     > .masked {
-      background-image: var(--fbg-decal), var(--fbg-image);
-      background-size: cover, cover;
+      background-color: var(--fbg-color);
+      background-image: var(--fbg-image);
+      background-position: center;
+      background-size: cover;
+      height: 100%;
+      mask-image: var(--fbg-mask);
+      mask-position: center;
+      mask-size: cover;
+      pointer-events: none;
+      position: absolute;
+      width: 100%;
+    }
+
+    &.has-decal { // move decal to inner div for masked pieces
+      background-image: var(--fbg-image);
+      background-position: center;
+      background-size: cover;
+
+      > .masked {
+        background-image: var(--fbg-decal), var(--fbg-image);
+        background-position: center, center;
+        background-size: cover, cover;
+      }
     }
   }
 

@@ -24,7 +24,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor: add GitHub Actions for automated build
     * [X] refactor: replace gulp-image with custom plugin
     * [X] refactor: replace sass-lint with stylelint
-    * [ ] dice 1x3 alignment bug
+    * [X] fix texture bug on non-square assets
     * [ ] d12 rename bug
   * [ ] review docs
   * [ ] review tutorial
