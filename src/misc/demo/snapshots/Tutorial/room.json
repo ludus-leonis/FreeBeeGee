@@ -1,10 +1,10 @@
 {
- "id": "LJSguMTW",
+ "id": "keayJMhM",
  "name": "demoroomtutorial",
  "engine": "2.4.1",
  "setup": {
   "engine": "2.4.0",
-  "version": "0.20.0",
+  "version": "0.21.0-dev",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 64,
@@ -457,7 +457,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "_.plain.1x1x1.0.wood.png"
     ],

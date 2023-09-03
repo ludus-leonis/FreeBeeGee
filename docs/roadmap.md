@@ -22,6 +22,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor: add jsdoc linting
     * [X] refactor: use npm linter instead of gulp linter
     * [X] refactor: add GitHub Actions for automated build
+    * [X] refactor: replace gulp-image with custom plugin
     * [ ] refactor: sass-lint -> stylelint
     * [ ] dice 1x3 alignment bug
     * [ ] d12 rename bug

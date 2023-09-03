@@ -28,9 +28,9 @@ import changed from 'gulp-changed'
 import concat from 'gulp-concat'
 import gulp from 'gulp'
 import gzip from 'gulp-gzip'
-import image from 'gulp-image'
 import rename from 'gulp-rename'
 import repl from 'gulp-replace'
+import shrinkr from 'shrinkr'
 import sort from 'gulp-sort'
 import vinyl from 'vinyl-source-stream'
 import sourcemaps from 'gulp-sourcemaps'
@@ -221,9 +221,8 @@ gulp.task('img', gulp.series(() => {
     'src/img/**/*.jpg'
   ])
     .pipe(changed(dirs.cache + '/img'))
-    .pipe(image({
-      jpegRecompress: ['--strip', '--quality', 'veryhigh', '--min', 70, '--max', 90],
-      mozjpeg: false // ['-optimize', '-progressive']
+    .pipe(shrinkr({
+      jpg: { quality: 9 }
     }))
     .pipe(gulp.dest(dirs.cache + '/img'))
 }, () => {
@@ -233,13 +232,7 @@ gulp.task('img', gulp.series(() => {
     'src/img/**/*.png'
   ])
     .pipe(changed(dirs.cache + '/img'))
-    .pipe(image({
-      optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
-      pngquant: ['--speed=1', '--force', 256],
-      zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-      gifsicle: ['--optimize'],
-      svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
-    }))
+    .pipe(shrinkr())
     .pipe(gulp.dest(dirs.cache + '/img'))
 }, () => {
   // step 3 - use cached images
@@ -263,14 +256,8 @@ function snapshot (name, minimize = true) {
     if (minimize) {
       return replace(gulp.src('src/snapshots/' + name + '/**/*'))
         .pipe(changed(dirs.cache + '/snapshots/' + name))
-        .pipe(image({
-          optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
-          pngquant: ['--speed=1', '--force', 256],
-          zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-          jpegRecompress: ['--strip', '--quality', 'high', '--min', 60, '--max', 85],
-          mozjpeg: ['-optimize', '-progressive'],
-          gifsicle: ['--optimize'],
-          svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+        .pipe(shrinkr({
+          jpg: { quality: 7 }
         }))
         .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
     } else {
@@ -383,14 +370,8 @@ function demo (name) {
   return gulp.series(() => { // step 1: optimize & cache content
     return replace(gulp.src('src/snapshots/' + name + '/**/*'))
       .pipe(changed(dirs.cache + '/snapshots/' + name))
-      .pipe(image({
-        optipng: ['-i 1', '-strip all', '-fix', '-o7', '-force'],
-        pngquant: ['--speed=1', '--force', 256],
-        zopflipng: ['-y', '--lossy_8bit', '--lossy_transparent'],
-        jpegRecompress: ['--strip', '--quality', 'high', '--min', 60, '--max', 85],
-        mozjpeg: ['-optimize', '-progressive'],
-        gifsicle: ['--optimize'],
-        svgo: ['--enable', 'cleanupIDs', '--disable', 'convertColors']
+      .pipe(shrinkr({
+        jpg: { quality: 7 }
       }))
       .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
   })

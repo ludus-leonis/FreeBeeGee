@@ -1,10 +1,10 @@
 {
- "id": "mndrlK2q",
+ "id": "S4gIV9rh",
  "name": "demoroomhex",
  "engine": "2.4.1",
  "setup": {
   "engine": "2.4.0",
-  "version": "0.20.0",
+  "version": "0.21.0-dev",
   "type": "grid-hex",
   "gridSize": 64,
   "gridWidth": 48,
@@ -741,7 +741,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "_.plain.1x1x1.0.wood.png"
     ],
@@ -851,7 +851,7 @@
     "type": "token",
     "w": 2,
     "h": 2,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "ape.gorilla.2x2.0.wood.svg"
     ],
@@ -863,7 +863,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "archer.1x1.0.wood.svg"
     ],
@@ -923,7 +923,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "bandit.1x1.0.wood.svg"
     ],
@@ -935,7 +935,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "barbarian.1x1.0.wood.svg"
     ],
@@ -947,7 +947,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "barghest.1x1.0.wood.svg"
     ],
@@ -1079,7 +1079,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "brute.1x1.0.wood.svg"
     ],
@@ -1103,7 +1103,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "cat.1x1.0.wood.svg"
     ],
@@ -1127,7 +1127,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "caveman.1x1.0.wood.svg"
     ],
@@ -1403,7 +1403,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "doppelganger.1x1.0.wood.svg"
     ],
@@ -1451,7 +1451,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "duergar.1x1.0.wood.svg"
     ],
@@ -1463,7 +1463,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "dwarf.1x1.0.wood.svg"
     ],
@@ -1559,7 +1559,7 @@
     "type": "token",
     "w": 2,
     "h": 2,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "elephant.2x2.0.wood.svg"
     ],
@@ -1571,7 +1571,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "elf.1x1.0.wood.svg"
     ],
@@ -1703,7 +1703,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "gargoyle.1x1.0.wood.svg"
     ],
@@ -1811,7 +1811,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "goat.1x1.0.wood.svg"
     ],
@@ -1859,7 +1859,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "golem.iron.1x1.0.wood.svg"
     ],
@@ -1871,7 +1871,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "golem.stone.1x1.0.wood.svg"
     ],
@@ -1883,7 +1883,7 @@
     "type": "token",
     "w": 2,
     "h": 2,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "gorgon.2x2.0.wood.svg"
     ],
@@ -1907,7 +1907,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "grimlock.1x1.0.wood.svg"
     ],
@@ -1931,7 +1931,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "halfling.1x1.0.wood.svg"
     ],
@@ -1955,7 +1955,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "helmedTerror.1x1.0.wood.svg"
     ],
@@ -1967,7 +1967,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "hooded.1x1.0.wood.svg"
     ],
@@ -2015,7 +2015,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "human.1x1.0.wood.svg"
     ],
@@ -2075,7 +2075,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "invisibleStalker.1x1.0.wood.svg"
     ],
@@ -2087,7 +2087,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "knight.1x1.0.wood.svg"
     ],
@@ -2171,7 +2171,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "lycanthrope.werewolf.1x1.0.wood.svg"
     ],
@@ -2231,7 +2231,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "mech.1x1.0.wood.svg"
     ],
@@ -2519,7 +2519,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "priest.1x1.0.wood.svg"
     ],
@@ -2603,7 +2603,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "robot.1x1.0.wood.svg"
     ],
@@ -2699,7 +2699,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "sentinelGuardian.1x1.0.wood.svg"
     ],
@@ -2711,7 +2711,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "shadow.1x1.0.wood.svg"
     ],
@@ -2903,7 +2903,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "tengu.1x1.0.wood.svg"
     ],
@@ -2963,7 +2963,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "troglodyte.1x1.0.wood.svg"
     ],
@@ -3036,7 +3036,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "viking.1x1.0.wood.svg"
     ],
@@ -3120,7 +3120,7 @@
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "0",
+    "bg": "#808080",
     "media": [
      "wolf.1x1.0.wood.svg"
     ],
