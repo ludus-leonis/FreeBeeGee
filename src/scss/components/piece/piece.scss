@@ -76,6 +76,7 @@ $piece-rotate: 1deg;
 
   &.is-selected {
     $selected-color: $color-secondary;
+
     filter:
     drop-shadow(zoom(2px) 0 0 $selected-color)
     drop-shadow(0 zoom(2px) 0 $selected-color)

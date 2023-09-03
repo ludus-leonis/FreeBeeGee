@@ -17,6 +17,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added JSDoc linting and moved linting from gulp to npm
 * added GitHub Actions for automated build
 * replaced gulp-image with custom image shrinker plugin
+* replaced sass-lint with stylelint
 
 
 ## v0.20.0 - Advising Antelope

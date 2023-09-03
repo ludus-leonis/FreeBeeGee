@@ -39,6 +39,7 @@
 
   .popup-menu {
     @include typography-links($color-bw-fg, $color-bw-bg, 0);
+
     display: block;
     line-height: 1em;
     padding: .5em .25em;

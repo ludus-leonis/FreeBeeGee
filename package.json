@@ -37,7 +37,7 @@
     "release:docker:latest": "docker tag ghcr.io/ludus-leonis/freebeegee:$npm_package_version ghcr.io/ludus-leonis/freebeegee:latest",
     "lint": "npm-run-all --parallel lint:*",
     "lint:js": "eslint --ext .js,.mjs src/js/",
-    "lint:sass": "sass-lint -v -q",
+    "lint:sass": "stylelint 'src/scss/**/*.scss'",
     "lint:php": "tools/phpcs.phar --standard=PSR12 src/php/",
     "test:api": "npm-run-all clean:cache dist:test test:api:all",
     "test:api:all": "mocha test/integration/runner-all.mjs",
@@ -47,7 +47,6 @@
     "test:unit:php": "tools/phpunit9 test/unit/php",
     "test:docker:api": "mocha test/integration/runner-docker.mjs",
     "test:docker:ui": "mocha -r global-jsdom/register test/integration/runner-docker-ui.mjs",
-
     "gulp": "gulp",
     "mocha": "mocha"
   },
@@ -77,7 +76,7 @@
     "eslint-plugin-n": "^16.0.2",
     "eslint-plugin-promise": "^6.1.1",
     "global-jsdom": "9.1.0",
-    "gulp": "*",
+    "gulp": "^4.0.2",
     "gulp-autoprefixer": "^8.0.0",
     "gulp-changed": "^4.0.3",
     "gulp-concat": "*",
@@ -90,12 +89,18 @@
     "gulp-sourcemaps": "*",
     "gulp-tar": "^3.1.0",
     "gulp-zip": "^5.1.0",
-    "shrinkr":  "file:tools/gulp/shrinkr",
     "jsdom": "22.1.0",
     "mocha": "^10.2.0",
     "node-fetch": "^3.3.2",
     "npm-run-all": "^4.1.5",
     "sass": "^1.66.1",
+    "shrinkr": "file:tools/gulp/shrinkr",
+    "stylelint": "^15.10.3",
+    "stylelint-config-recommended": "^13.0.0",
+    "stylelint-config-sass-guidelines": "^10.0.0",
+    "stylelint-config-standard": "^34.0.0",
+    "stylelint-order": "^6.0.3",
+    "stylelint-scss": "^5.1.0",
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
@@ -106,9 +111,7 @@
     "sha.js": "^2.4.11"
   },
   "overrides": {
-    "semver-regex": "^4.0.4",
-    "http-cache-semantics": "^4.1.1",
     "chokidar": "^3.5.3",
     "glob-parent": "^6.0.2"
-   }
+  }
 }

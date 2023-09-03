@@ -30,7 +30,7 @@
 
 @mixin spinner ($spinner-size) {
   animation: infinite-rotate 1s linear infinite;
-  border-color: transparent transparent currentColor currentColor;
+  border-color: transparent transparent currentcolor currentcolor;
   border-radius: $spinner-size;
   border-style: solid;
   border-width: 2px;

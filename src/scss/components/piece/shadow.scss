@@ -86,4 +86,4 @@ $shadow-highlight-width: 1.5px;
 
 $shadow: shadow(2px, $color-black-65a);
 
-$shadow-flat: shadow(0px, $color-black-35a); // sass-lint:disable-line zero-unit
+$shadow-flat: shadow(0, $color-black-35a); // sass-lint:disable-line zero-unit

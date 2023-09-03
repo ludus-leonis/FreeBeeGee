@@ -61,6 +61,7 @@ $form-color-placeholder: $color-gray-25;
 
 label {
   @extend %p-label;
+
   display: block;
 
   + input,

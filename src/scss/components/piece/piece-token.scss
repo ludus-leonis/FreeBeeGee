@@ -139,6 +139,7 @@
   background-image: var(--fbg-material), var(--fbg-image);
   background-size: zoom(256px), cover;
   filter: drop-shadow($shadow);
+
   @each $id in $random-ids {
     $i: index($random-ids, $id);
 
@@ -156,6 +157,7 @@
   &.has-decal {
     background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
     background-size: zoom(256px), cover, cover;
+
     @each $id in $random-ids {
       $i: index($random-ids, $id);
 

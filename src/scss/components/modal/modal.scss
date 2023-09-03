@@ -27,7 +27,6 @@ $modal-padding: calc(var(--fbg-spacing) * 1.5);
 
 .modal {
   #{'--fbg-zoom'}: 1;
-
   align-items: center;
   display: none;
   height: 100%;
@@ -87,6 +86,7 @@ $modal-padding: calc(var(--fbg-spacing) * 1.5);
 
 .modal-dialog {
   @extend %is-medium;
+
   box-shadow: 0 0 $spacing-huge $color-black-100;
   color: $color-bw-fg;
   max-height: 95vh;

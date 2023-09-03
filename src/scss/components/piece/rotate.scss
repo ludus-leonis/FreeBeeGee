@@ -36,7 +36,6 @@ $rotate-steps: 0 60 90 120 180 240 270 300;
 @each $r in $rotate-steps {
   .is-r-#{$r} {
     #{'--fbg-r'}: $r * 1deg;
-
     transform: rotate(var(--fbg-r));
 
     > .label {
