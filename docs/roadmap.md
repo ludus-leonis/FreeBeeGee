@@ -13,7 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui
   * [X] smaller modal paddings
   * [ ] allow half-rotations via settings (45° for square, 30° for hex)
-* [ ] clipboard ctrl+c/v/x on/between tables
+* [X] clipboard ctrl+c/v/x on/between tables
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
@@ -36,6 +36,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] refactor: use _private exports for test cases
 * [ ] refactor: use events more
 * [ ] refactor: get 's' out of asset IDs
 * [ ] bug: dragging multi-selected hex tokens does not always snap correctly

@@ -41,14 +41,13 @@ import {
   selectionClear,
   selectionGetFeatures,
   selectionGetPieces,
-  findPiecesWithinSelection,
-  _selectionReset
+  _private as testSelection
 } from '../../../src/js/view/room/tabletop/selection.mjs'
 
 const TEST_STATE = 5
 
 function setupTestData () {
-  _selectionReset()
+  testSelection.selectionReset()
   _setRoom(JSON.parse(roomJSON))
   for (let i = 1; i <= 9; i++) {
     if (i === TEST_STATE) {
@@ -477,8 +476,8 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.boundingBox.left).to.be.eql(704)
         expect(features.boundingBox.bottom).to.be.eql(767)
         expect(features.boundingBox.right).to.be.eql(831)
-        expect(features.boundingBox.x).to.be.eql(768)
-        expect(features.boundingBox.y).to.be.eql(704)
+        expect(features.boundingBox.center.x).to.be.eql(768)
+        expect(features.boundingBox.center.y).to.be.eql(704)
         expect(features.boundingBox.w).to.be.eql(128)
         expect(features.boundingBox.h).to.be.eql(128)
       } else if (i === 9) {
@@ -523,8 +522,8 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.boundingBox.left).to.be.eql(864)
         expect(features.boundingBox.bottom).to.be.eql(191)
         expect(features.boundingBox.right).to.be.eql(1055)
-        expect(features.boundingBox.x).to.be.eql(960)
-        expect(features.boundingBox.y).to.be.eql(128)
+        expect(features.boundingBox.center.x).to.be.eql(960)
+        expect(features.boundingBox.center.y).to.be.eql(128)
         expect(features.boundingBox.w).to.be.eql(192)
         expect(features.boundingBox.h).to.be.eql(128)
       } else if (i === 9) {
@@ -569,8 +568,8 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.boundingBox.left).to.be.eql(704)
         expect(features.boundingBox.bottom).to.be.eql(767)
         expect(features.boundingBox.right).to.be.eql(1055)
-        expect(features.boundingBox.x).to.be.eql(880)
-        expect(features.boundingBox.y).to.be.eql(416)
+        expect(features.boundingBox.center.x).to.be.eql(880)
+        expect(features.boundingBox.center.y).to.be.eql(416)
         expect(features.boundingBox.w).to.be.eql(352)
         expect(features.boundingBox.h).to.be.eql(704)
       } else if (i === 9) {
@@ -593,65 +592,65 @@ describe('Frontend - selectionGetIds.mjs', function () {
     }
   })
 
-  it('findPiecesWithinSelection()', function () {
+  it('findPiecesWithinBounds()', function () {
     // select a single token
     setTableNo(TEST_STATE, false)
     selectionAdd('9754d0c0') // 1x1 token
 
     // we find ourself if selection is in our space
-    expect(findPiecesWithinSelection().length).to.be.eql(1)
-    expect(findPiecesWithinSelection()[0].id).to.be.eql('9754d0c0')
-    expect(findPiecesWithinSelection(1344, 192).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344, 192)[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox)[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344, y: 192 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344, y: 192 })[0].id).to.be.eql('9754d0c0')
 
     // we still find ourself if selection is overlapping 1px
-    expect(findPiecesWithinSelection(1344 - 63, 192 - 63).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344 - 63, 192 - 63)[0].id).to.be.eql('9754d0c0')
-    expect(findPiecesWithinSelection(1344 - 63, 192 + 63).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344 - 63, 192 + 63)[0].id).to.be.eql('9754d0c0')
-    expect(findPiecesWithinSelection(1344 + 63, 192 + 63).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344 + 63, 192 + 63)[0].id).to.be.eql('9754d0c0')
-    expect(findPiecesWithinSelection(1344 + 63, 192 - 63).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344 + 63, 192 - 63)[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 63, y: 192 - 63 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 63, y: 192 - 63 })[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 63, y: 192 + 63 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 63, y: 192 + 63 })[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 63, y: 192 + 63 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 63, y: 192 + 63 })[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 63, y: 192 - 63 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 63, y: 192 - 63 })[0].id).to.be.eql('9754d0c0')
 
     // we don't find ourself if selection is not overlapping ...
-    expect(findPiecesWithinSelection(1344 - 64, 192 - 64).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(1344 - 64, 192 + 64).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(1344 + 64, 192 + 64).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(1344 + 64, 192 - 64).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 64, y: 192 - 64 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 64, y: 192 + 64 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 64, y: 192 + 64 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 64, y: 192 - 64 }).length).to.be.eql(0)
 
     // ... but we find ourself if selection is using padding
-    expect(findPiecesWithinSelection(1344 - 64, 192 - 64, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344 - 64, 192 - 64, true)[0].id).to.be.eql('9754d0c0')
-    expect(findPiecesWithinSelection(1344 - 64, 192 + 64, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344 - 64, 192 + 64, true)[0].id).to.be.eql('9754d0c0')
-    expect(findPiecesWithinSelection(1344 + 64, 192 + 64, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344 + 64, 192 + 64, true)[0].id).to.be.eql('9754d0c0')
-    expect(findPiecesWithinSelection(1344 + 64, 192 - 64, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(1344 + 64, 192 - 64, true)[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 64, y: 192 - 64 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 64, y: 192 - 64 }, true)[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 64, y: 192 + 64 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 - 64, y: 192 + 64 }, true)[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 64, y: 192 + 64 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 64, y: 192 + 64 }, true)[0].id).to.be.eql('9754d0c0')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 64, y: 192 - 64 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 1344 + 64, y: 192 - 64 }, true)[0].id).to.be.eql('9754d0c0')
 
     // we find only a tile, if over there
-    expect(findPiecesWithinSelection(960, 128).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(960, 128)[0].id).to.be.eql('437e26b9')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960, y: 128 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960, y: 128 })[0].id).to.be.eql('437e26b9')
 
     // we still find the tile when overlapping 1px
-    expect(findPiecesWithinSelection(960 - 96 - 32 + 1, 128 - 64 - 32 + 1).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(960 - 96 - 32 + 1, 128 - 64 - 32 + 1)[0].id).to.be.eql('437e26b9')
-    expect(findPiecesWithinSelection(960 - 96 - 32 + 1, 128 + 64 + 32 - 1).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(960 - 96 - 32 + 1, 128 + 64 + 32 - 1)[0].id).to.be.eql('437e26b9')
-    expect(findPiecesWithinSelection(960 + 96 + 32 - 1, 128 + 64 + 32 - 1).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(960 + 96 + 32 - 1, 128 + 64 + 32 - 1)[0].id).to.be.eql('437e26b9')
-    expect(findPiecesWithinSelection(960 + 96 + 32 - 1, 128 - 64 - 32 + 1).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(960 + 96 + 32 - 1, 128 - 64 - 32 + 1)[0].id).to.be.eql('437e26b9')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 - 96 - 32 + 1, y: 128 - 64 - 32 + 1 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 - 96 - 32 + 1, y: 128 - 64 - 32 + 1 })[0].id).to.be.eql('437e26b9')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 - 96 - 32 + 1, y: 128 + 64 + 32 - 1 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 - 96 - 32 + 1, y: 128 + 64 + 32 - 1 })[0].id).to.be.eql('437e26b9')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 + 96 + 32 - 1, y: 128 + 64 + 32 - 1 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 + 96 + 32 - 1, y: 128 + 64 + 32 - 1 })[0].id).to.be.eql('437e26b9')
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 + 96 + 32 - 1, y: 128 - 64 - 32 + 1 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 + 96 + 32 - 1, y: 128 - 64 - 32 + 1 })[0].id).to.be.eql('437e26b9')
 
     // we dont find the tile when barely not overlapping
-    expect(findPiecesWithinSelection(960 - 96 - 32, 128 - 64 - 32).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(960 - 96 - 32, 128 + 64 + 32).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(960 + 96 + 32, 128 + 64 + 32).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(960 + 96 + 32, 128 - 64 - 32).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 - 96 - 32, y: 128 - 64 - 32 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 - 96 - 32, y: 128 + 64 + 32 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 + 96 + 32, y: 128 + 64 + 32 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 960 + 96 + 32, y: 128 - 64 - 32 }).length).to.be.eql(0)
   })
 
-  it('findPiecesWithinSelection(x, y, true)', function () { // use rotated pieces here
+  it('findPiecesWithinBounds(x, y, true)', function () { // use rotated pieces here
     // select a single token
     _setTable(8, populatePiecesDefaults(JSON.parse(`[
       {
@@ -678,28 +677,28 @@ describe('Frontend - selectionGetIds.mjs', function () {
     selectionAdd('00000002')
 
     // corner touching
-    expect(findPiecesWithinSelection(2048 - 2 * 64 / 2 - 2 * 64 / 2, 1024 - 1 * 64 / 2 - 3 * 64 / 2).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(2048 - 2 * 64 / 2 - 2 * 64 / 2, 1024 + 1 * 64 / 2 + 3 * 64 / 2).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(2048 + 2 * 64 / 2 + 2 * 64 / 2, 1024 + 1 * 64 / 2 + 3 * 64 / 2).length).to.be.eql(0)
-    expect(findPiecesWithinSelection(2048 + 2 * 64 / 2 + 2 * 64 / 2, 1024 - 1 * 64 / 2 - 3 * 64 / 2).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 - 2 * 64 / 2 - 2 * 64 / 2, y: 1024 - 1 * 64 / 2 - 3 * 64 / 2 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 - 2 * 64 / 2 - 2 * 64 / 2, y: 1024 + 1 * 64 / 2 + 3 * 64 / 2 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 + 2 * 64 / 2 + 2 * 64 / 2, y: 1024 + 1 * 64 / 2 + 3 * 64 / 2 }).length).to.be.eql(0)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 + 2 * 64 / 2 + 2 * 64 / 2, y: 1024 - 1 * 64 / 2 - 3 * 64 / 2 }).length).to.be.eql(0)
 
     // corner touching but padding
-    expect(findPiecesWithinSelection(2048 - 2 * 64 / 2 - 2 * 64 / 2, 1024 - 1 * 64 / 2 - 3 * 64 / 2, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 - 2 * 64 / 2 - 2 * 64 / 2, 1024 + 1 * 64 / 2 + 3 * 64 / 2, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 + 2 * 64 / 2 + 2 * 64 / 2, 1024 + 1 * 64 / 2 + 3 * 64 / 2, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 + 2 * 64 / 2 + 2 * 64 / 2, 1024 - 1 * 64 / 2 - 3 * 64 / 2, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 - 2 * 64 / 2 - 2 * 64 / 2, y: 1024 - 1 * 64 / 2 - 3 * 64 / 2 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 - 2 * 64 / 2 - 2 * 64 / 2, y: 1024 + 1 * 64 / 2 + 3 * 64 / 2 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 + 2 * 64 / 2 + 2 * 64 / 2, y: 1024 + 1 * 64 / 2 + 3 * 64 / 2 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 + 2 * 64 / 2 + 2 * 64 / 2, y: 1024 - 1 * 64 / 2 - 3 * 64 / 2 }, true).length).to.be.eql(1)
 
     // corner overlapping
-    expect(findPiecesWithinSelection(2048 - 2 * 64 / 2 - 2 * 64 / 2 + 1, 1024 - 1 * 64 / 2 - 3 * 64 / 2 + 1).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 - 2 * 64 / 2 - 2 * 64 / 2 + 1, 1024 + 1 * 64 / 2 + 3 * 64 / 2 - 1).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 + 2 * 64 / 2 + 2 * 64 / 2 - 1, 1024 + 1 * 64 / 2 + 3 * 64 / 2 - 1).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 + 2 * 64 / 2 + 2 * 64 / 2 - 1, 1024 - 1 * 64 / 2 - 3 * 64 / 2 + 1).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 - 2 * 64 / 2 - 2 * 64 / 2 + 1, y: 1024 - 1 * 64 / 2 - 3 * 64 / 2 + 1 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 - 2 * 64 / 2 - 2 * 64 / 2 + 1, y: 1024 + 1 * 64 / 2 + 3 * 64 / 2 - 1 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 + 2 * 64 / 2 + 2 * 64 / 2 - 1, y: 1024 + 1 * 64 / 2 + 3 * 64 / 2 - 1 }).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 + 2 * 64 / 2 + 2 * 64 / 2 - 1, y: 1024 - 1 * 64 / 2 - 3 * 64 / 2 + 1 }).length).to.be.eql(1)
 
     // corner overlapping and padding
-    expect(findPiecesWithinSelection(2048 - 2 * 64 / 2 - 2 * 64 / 2 + 1, 1024 - 1 * 64 / 2 - 3 * 64 / 2 + 1, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 - 2 * 64 / 2 - 2 * 64 / 2 + 1, 1024 + 1 * 64 / 2 + 3 * 64 / 2 - 1, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 + 2 * 64 / 2 + 2 * 64 / 2 - 1, 1024 + 1 * 64 / 2 + 3 * 64 / 2 - 1, true).length).to.be.eql(1)
-    expect(findPiecesWithinSelection(2048 + 2 * 64 / 2 + 2 * 64 / 2 - 1, 1024 - 1 * 64 / 2 - 3 * 64 / 2 + 1, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 - 2 * 64 / 2 - 2 * 64 / 2 + 1, y: 1024 - 1 * 64 / 2 - 3 * 64 / 2 + 1 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 - 2 * 64 / 2 - 2 * 64 / 2 + 1, y: 1024 + 1 * 64 / 2 + 3 * 64 / 2 - 1 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 + 2 * 64 / 2 + 2 * 64 / 2 - 1, y: 1024 + 1 * 64 / 2 + 3 * 64 / 2 - 1 }, true).length).to.be.eql(1)
+    expect(testSelection.findPiecesWithinBounds(selectionGetFeatures().boundingBox, { x: 2048 + 2 * 64 / 2 + 2 * 64 / 2 - 1, y: 1024 - 1 * 64 / 2 - 3 * 64 / 2 + 1 }, true).length).to.be.eql(1)
   })
 })
 

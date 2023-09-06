@@ -53,7 +53,7 @@ import {
   selectionAdd,
   selectionClear,
   selectionGetFeatures,
-  findMaxZBelowSelection
+  findMaxZBelow
 } from '../../../view/room/tabletop/selection.mjs'
 
 import {
@@ -223,8 +223,8 @@ export class SelectAndDrag extends MouseButtonHandler {
     this.dragData.xb = this.dragData.right - this.dragData.startX
     this.dragData.ya = this.dragData.startY - this.dragData.top
     this.dragData.yb = this.dragData.bottom - this.dragData.startY
-    this.dragData.finalCenterX = this.dragData.x
-    this.dragData.finalCenterY = this.dragData.y
+    this.dragData.finalCenterX = this.dragData.center.x
+    this.dragData.finalCenterY = this.dragData.center.y
 
     // xa/xb and ya/yb are the distance between the first drag-click and the
     // selection border:
@@ -256,15 +256,15 @@ export class SelectAndDrag extends MouseButtonHandler {
 
     // how far to shift all selected pieces so they still snap afterwards?
     const offset = snap(
-      this.dragData.x + clampCoords.x - this.dragData.startX,
-      this.dragData.y + clampCoords.y - this.dragData.startY,
+      this.dragData.center.x + clampCoords.x - this.dragData.startX,
+      this.dragData.center.y + clampCoords.y - this.dragData.startY,
       shiftKey ? 4 : undefined
     )
-    offset.x -= this.dragData.x
-    offset.y -= this.dragData.y
+    offset.x -= this.dragData.center.x
+    offset.y -= this.dragData.center.y
 
-    this.dragData.finalCenterX = this.dragData.x + offset.x // for dragEnd()
-    this.dragData.finalCenterY = this.dragData.y + offset.y // for dragEnd()
+    this.dragData.finalCenterX = this.dragData.center.x + offset.x // for dragEnd()
+    this.dragData.finalCenterY = this.dragData.center.y + offset.y // for dragEnd()
 
     for (const node of this.dragging) {
       node.classList.remove('is-dragging-hidden') // we are moving now (1)
@@ -278,10 +278,10 @@ export class SelectAndDrag extends MouseButtonHandler {
 
   dragEnd () {
     // find the highest Z in the target area not occupied by the selection itself
-    const zLower = findMaxZBelowSelection(
-      this.dragData.finalCenterX,
-      this.dragData.finalCenterY
-    )
+    const zLower = findMaxZBelow(selectionGetFeatures().boundingBox, {
+      x: this.dragData.finalCenterX,
+      y: this.dragData.finalCenterY
+    })
 
     // move the pieces
     const toMove = []

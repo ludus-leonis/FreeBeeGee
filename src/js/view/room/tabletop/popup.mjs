@@ -34,11 +34,14 @@ import {
   iconPile,
   iconTop,
   iconBottom,
-  iconClone,
+  iconCopy,
+  iconPaste,
   iconDelete
 } from '../../../lib/icons.mjs'
 
 import {
+  clipboardCopy,
+  clipboardGetPieces,
   selectionGetFeatures
 } from './selection.mjs'
 
@@ -52,12 +55,8 @@ import {
   toTopSelected,
   toBottomSelected,
   deleteSelected,
-  cloneSelected
+  clipboardPaste
 } from '../../../view/room/tabletop/index.mjs'
-
-import {
-  getMouseCoords
-} from '../../../view/room/mouse/index.mjs'
 
 import {
   modalSettings
@@ -91,7 +90,7 @@ export function popupPiece (piece) {
     <a class="popup-menu top ${f.top ? '' : 'disabled'}" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom ${f.bottom ? '' : 'disabled'}" href="#">${iconBottom}To bottom</a>
     ${(f.clone || f.delete) ? '<hr>' : ''}
-    <a class="popup-menu clone ${f.clone ? '' : 'disabled'}" href="#">${iconClone}Clone</a>
+    <a class="popup-menu clone ${f.clone ? '' : 'disabled'}" href="#">${iconCopy}Copy</a>
     <a class="popup-menu delete ${f.delete ? '' : 'disabled'}" href="#">${iconDelete}Delete</a>
   `
   // <a class="popup-menu shuffle ${f.pile ? '' : 'disabled'}" href="#">${iconPileShuffle}Pile &amp; shuffle</a>
@@ -107,7 +106,7 @@ export function popupPiece (piece) {
   popupClick('#popper .top', () => { toTopSelected() })
   popupClick('#popper .bottom', () => { toBottomSelected() })
   popupClick('#popper .delete', () => { deleteSelected() })
-  popupClick('#popper .clone', () => { cloneSelected(getMouseCoords()) })
+  popupClick('#popper .clone', () => { clipboardCopy() })
 
   createPopper(_('#' + piece.id).node(), popup.node(), {
     placement: 'right'
@@ -128,6 +127,7 @@ export function popupTable (coords) {
   popup.innerHTML = `
     <a class="popup-menu add" href="#">${iconAdd}Add piece</a>
     <a class="popup-menu note" href="#">${iconNote}Add note</a>
+    ${clipboardGetPieces().length > 0 ? '<a class="popup-menu paste" href="#">' + iconPaste + 'Paste</a>' : ''}
     <hr>
     <a class="popup-menu settings" href="#">${iconSettings}Settings</a>
   `
@@ -142,6 +142,7 @@ export function popupTable (coords) {
 
   popupClick('#popper .add', () => { modalLibrary(coords) })
   popupClick('#popper .note', () => { createNote(coords) })
+  popupClick('#popper .paste', () => { clipboardPaste(coords) })
   popupClick('#popper .settings', () => { modalSettings() })
 
   createPopper(anchor.node(), popup.node(), {

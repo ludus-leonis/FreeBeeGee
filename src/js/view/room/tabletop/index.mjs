@@ -56,13 +56,14 @@ import {
 } from '../../../state/index.mjs'
 
 import {
+  clipboardGetPieces,
   selectionGetPieces,
   selectionGetIds,
   selectionAdd,
   selectionClear,
   selectionGetFeatures,
-  findMaxZBelowSelection,
-  findMinZBelowSelection
+  findMaxZBelow,
+  findMinZBelow
 } from './selection.mjs'
 
 import {
@@ -88,6 +89,7 @@ import {
   findPiece,
   findPiecesWithin,
   getAssetURL,
+  getFeatures,
   getMaxZ,
   getTopLeft,
   getPieceBounds,
@@ -112,6 +114,18 @@ import {
 // --- public ------------------------------------------------------------------
 
 export const ZOOM_LEVELS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+
+/**
+ * Copy the currently selected piece(s) into our clipboard.
+ *
+ * Will silently fail if clipboard is empty.
+ *
+ * @param {object} xy Grid x/y position (in tiles).
+ */
+export function clipboardPaste (xy) {
+  clonePieces(clipboardGetPieces(), xy)
+  selectionClear()
+}
 
 /**
  * Delete the currently selected piece from the room.
@@ -155,41 +169,8 @@ export function editSelected () {
  * @param {object} xy Grid x/y position (in tiles).
  */
 export function cloneSelected (xy) {
-  const clones = []
-  const features = selectionGetFeatures()
-  const bounds = features.boundingBox
-  if (!features.clone) return
-
-  const room = getRoom()
-
-  // make sure the clone fits on the table
-  xy.x = clamp(bounds.w / 2, xy.x, room.width - 1 - bounds.w / 2)
-  xy.y = clamp(bounds.h / 2, xy.y, room.height - 1 - bounds.h / 2)
-
-  const zLower = findMaxZBelowSelection(xy.x, xy.y)
-  const zUpper = {} // one z per layer
-  for (const piece of sortByNumber(selectionGetPieces(), 'z', 0)) {
-    if (piece.f & FLAG_NO_CLONE) continue
-    const selectionOffset = {
-      x: piece.x - bounds.x,
-      y: piece.y - bounds.y
-    }
-    const snapped = snap(xy.x + selectionOffset.x, xy.y + selectionOffset.y)
-    const clone = JSON.parse(JSON.stringify(piece))
-    clone.x = snapped.x
-    clone.y = snapped.y
-    zUpper[clone.l] = (zUpper[clone.l] ?? 0) + 1 // init or increase
-    clone.z = (zLower[clone.l] ?? 0) + zUpper[clone.l]
-    if (clone.n > 0) { // increase clone letter (if it has one)
-      clone.n = clone.n + 1
-      if (clone.n >= 36) clone.n = 1
-    }
-    clones.push(clone)
-  }
-  if (clones.length > 0) {
-    selectionClear()
-    createPieces(clones, true)
-  }
+  clonePieces(selectionGetPieces(), xy)
+  selectionClear()
 }
 
 /**
@@ -249,7 +230,7 @@ export function colorSelected (border = false) {
  */
 export function pileSelected (randomize = false) {
   const features = selectionGetFeatures()
-  const snapped = snap(features.boundingBox.x, features.boundingBox.y)
+  const snapped = snap(features.boundingBox.center.x, features.boundingBox.center.y)
   const toMove = []
   const z = []
 
@@ -571,7 +552,10 @@ export function toTopSelected () {
   const features = selectionGetFeatures()
   if (!features.top) return
 
-  const zLower = findMaxZBelowSelection(features.boundingBox.x, features.boundingBox.y)
+  const zLower = findMaxZBelow(selectionGetFeatures().boundingBox, {
+    x: features.boundingBox.center.x,
+    y: features.boundingBox.center.y
+  })
   const zUpper = {} // one z per layer
   const toMove = []
   for (const piece of sortByNumber(selectionGetPieces(), 'z', 0)) {
@@ -593,7 +577,10 @@ export function toBottomSelected () {
   const features = selectionGetFeatures()
   if (!features.bottom) return
 
-  const zLower = findMinZBelowSelection(features.boundingBox.x, features.boundingBox.y)
+  const zLower = findMinZBelow(selectionGetFeatures().boundingBox, {
+    x: features.boundingBox.center.x,
+    y: features.boundingBox.center.y
+  })
   const zUpper = {} // one z per layer
   const toMove = []
   for (const piece of sortByNumber(selectionGetPieces(), 'z', 0).reverse()) {
@@ -1081,6 +1068,49 @@ export function zoom (direction) {
 }
 
 // --- internal ----------------------------------------------------------------
+
+/**
+ * Clone piece(s) to a given position.
+ *
+ * @param {object[]} pieces Array of pieces to clone.
+ * @param {object} xy Grid position (in tiles), {x, y}.
+ */
+function clonePieces (pieces, xy) {
+  const clones = []
+  const features = getFeatures(pieces)
+  const bounds = features.boundingBox
+  if (!features.clone) return
+
+  const room = getRoom()
+
+  // make sure the clone fits on the table
+  xy.x = clamp(bounds.w / 2, xy.x, room.width - 1 - bounds.w / 2)
+  xy.y = clamp(bounds.h / 2, xy.y, room.height - 1 - bounds.h / 2)
+
+  const zLower = findMaxZBelow(features.boundingBox, xy)
+  const zUpper = {} // one z per layer
+  for (const piece of sortByNumber(pieces, 'z', 0)) {
+    if (piece.f & FLAG_NO_CLONE) continue
+    const selectionOffset = {
+      x: piece.x - bounds.center.x,
+      y: piece.y - bounds.center.y
+    }
+    const snapped = snap(xy.x + selectionOffset.x, xy.y + selectionOffset.y)
+    const clone = JSON.parse(JSON.stringify(piece))
+    clone.x = snapped.x
+    clone.y = snapped.y
+    zUpper[clone.l] = (zUpper[clone.l] ?? 0) + 1 // init or increase
+    clone.z = (zLower[clone.l] ?? 0) + zUpper[clone.l]
+    if (clone.n > 0) { // increase clone letter (if it has one)
+      clone.n = clone.n + 1
+      if (clone.n >= 36) clone.n = 1
+    }
+    clones.push(clone)
+  }
+  if (clones.length > 0) {
+    createPieces(clones, true)
+  }
+}
 
 /**
  * Remove dirty / obsolete / bad pieces from room.

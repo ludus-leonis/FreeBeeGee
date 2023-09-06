@@ -29,6 +29,7 @@ import {
 } from '../../app.mjs'
 
 import {
+  clipboardCopy,
   selectionGetPieces,
   selectionGetFeatures,
   isSelectedId,
@@ -48,7 +49,7 @@ import {
   iconFlip,
   iconTop,
   iconBottom,
-  iconClone,
+  iconCopy,
   iconDelete,
   iconShuffle,
   iconDownload,
@@ -524,7 +525,7 @@ function setupRoom () {
             <button id="btn-hash" class="btn-icon" title="Random [#]">${iconShuffle}</button>
             <button id="btn-t" class="btn-icon" title="To top [t]">${iconTop}</button>
             <button id="btn-b" class="btn-icon" title="To bottom [b]">${iconBottom}</button>
-            <button id="btn-c" class="btn-icon" title="Clone [c]">${iconClone}</button>
+            <button id="btn-c" class="btn-icon" title="Copy [ctrl][c]">${iconCopy}</button>
             <button id="btn-del" class="btn-icon" title="Delete [Del]">${iconDelete}</button>
           </div>
         </div>
@@ -583,7 +584,7 @@ function setupRoom () {
   _('#btn-a').on('click', () => modalLibrary(getViewCenter()))
   _('#btn-e').on('click', () => editSelected())
   _('#btn-r').on('click', () => rotateSelected())
-  _('#btn-c').on('click', () => cloneSelected(getMouseCoords()))
+  _('#btn-c').on('click', () => clipboardCopy())
   _('#btn-t').on('click', () => toTopSelected())
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())

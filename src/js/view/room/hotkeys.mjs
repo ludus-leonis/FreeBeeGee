@@ -43,6 +43,7 @@ import {
 
 import {
   settings,
+  clipboardPaste,
   rotateSelected,
   deleteSelected,
   cloneSelected,
@@ -93,6 +94,10 @@ import {
   HOOK_LIBRARY_EDIT,
   triggerEvent
 } from '../../lib/events.mjs'
+
+import {
+  clipboardCopy
+} from '../../view/room/tabletop/selection.mjs'
 
 import {
   toggleFullscreen
@@ -194,7 +199,16 @@ function handleRoomKeys (keydown) {
         toTopSelected()
         break
       case 'c': // copy/clone
-        cloneSelected(getMouseCoords())
+        if (keydown.ctrlKey) clipboardCopy(); else cloneSelected(getMouseCoords())
+        break
+      case 'x': // paste
+        if (keydown.ctrlKey) {
+          clipboardCopy()
+          deleteSelected()
+        }
+        break
+      case 'v': // paste
+        if (keydown.ctrlKey) clipboardPaste(getMouseCoords())
         break
       case 'e': // edit
       case 'F2':

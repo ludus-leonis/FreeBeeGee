@@ -23,18 +23,12 @@
 // Selection is different for each table and always applies to current one.
 
 import {
-  FEATURE_DICEMAT,
-  FEATURE_DISCARD,
-  LAYER_OTHER,
-  LAYER_TOKEN,
   findPiece,
-  findPiecesWithin
+  findPiecesWithin,
+  getFeatures
 } from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
-  FLAG_NO_CLONE,
-  FLAG_NO_DELETE,
-  FLAG_NO_MOVE,
   getTable,
   getTableNo
 } from '../../../state/index.mjs'
@@ -148,97 +142,96 @@ export function selectionGetIds () {
 }
 
 /**
- * Fet the featureset all currently selected pieces support
+ * Get the featureset all currently selected pieces support.
  *
  * @returns {object} Object with features true/false.
  */
 export function selectionGetFeatures () {
-  const semi = [FEATURE_DICEMAT, FEATURE_DISCARD]
-  const pieces = selectionGetPieces()
-
-  let features = {
-    edit: false,
-    rotate: false,
-    flip: false,
-    random: false,
-    pile: false,
-    top: false,
-    bottom: false,
-    clone: false,
-    delete: false,
-    color: false,
-    border: false,
-    number: false,
-    boundingBox: {}
-  }
-  if (pieces.length > 0) {
-    features = {
-      edit: pieces.length === 1,
-      rotate: true,
-      flip: true,
-      random: true,
-      pile: pieces.length > 1,
-      top: true,
-      bottom: true,
-      clone: true,
-      delete: true,
-      color: true,
-      border: true,
-      number: true,
-      boundingBox: {}
-    }
-
-    for (const piece of pieces) {
-      if (piece.l === LAYER_OTHER) features.rotate = false
-      if (piece.f & FLAG_NO_CLONE) features.clone = false
-      if (piece.f & FLAG_NO_DELETE) features.delete = false
-      if (piece.f & FLAG_NO_MOVE) features.pile = false
-      if (!piece._meta?.hasColor) features.color = false
-      if (!piece._meta?.hasBorder) features.border = false
-      if (piece.l !== LAYER_TOKEN) features.number = false
-
-      if ((piece._meta?.sides ?? 1) + (piece._meta?.sidesExtra ?? 0) <= 1) features.flip = false
-      if (semi.includes(piece._meta?.feature)) features.flip = false
-
-      if ((piece._meta?.sides ?? 1) <= 1 && !semi.includes(piece._meta?.feature)) features.random = false
-
-      // plus/minus half-size of item?
-      if (piece.x - piece._meta.widthPx / 2 < (features.boundingBox.left ?? Number.MAX_VALUE)) {
-        features.boundingBox.left = Math.round(piece.x - piece._meta.widthPx / 2)
-      }
-      if (piece.x + piece._meta.widthPx / 2 > (features.boundingBox.right ?? Number.MIN_VALUE)) {
-        features.boundingBox.right = Math.round(piece.x + piece._meta.widthPx / 2 - 1)
-      }
-      if (piece.y - piece._meta.heightPx / 2 < (features.boundingBox.top ?? Number.MAX_VALUE)) {
-        features.boundingBox.top = Math.round(piece.y - piece._meta.heightPx / 2)
-      }
-      if (piece.y + piece._meta.heightPx / 2 > (features.boundingBox.bottom ?? Number.MIN_VALUE)) {
-        features.boundingBox.bottom = Math.round(piece.y + piece._meta.heightPx / 2 - 1)
-      }
-      features.boundingBox.w = features.boundingBox.right - features.boundingBox.left + 1
-      features.boundingBox.h = features.boundingBox.bottom - features.boundingBox.top + 1
-      features.boundingBox.x = Math.floor((features.boundingBox.right + features.boundingBox.left + 1) / 2)
-      features.boundingBox.y = Math.floor((features.boundingBox.bottom + features.boundingBox.top + 1) / 2)
-    }
-  }
-  return features
+  return getFeatures(selectionGetPieces())
 }
 
 /**
- * Find all pieces at current (or future) selection area.
+ * Find all highest Z values below bounds.
+ *
+ * @param {object} bounds {top, left, right, bottom} to search within.
+ * @param {object} center Center {x, y} of selection.
+ * @returns {object} Contains higest z per layer as {tile, token, ...}.
+ */
+export function findMaxZBelow (bounds, center) {
+  const zLower = {}
+  for (const piece of findPiecesWithinBounds(bounds, center, true)) {
+    if (!isSelectedId(piece.id)) {
+      if (piece.z > (zLower[piece.l] ?? Number.MIN_VALUE)) zLower[piece.l] = piece.z
+    }
+  }
+  return zLower
+}
+
+/**
+ * Find all lowest Z values below bounds.
+ *
+ * @param {object} bounds {top, left, right, bottom} to search within.
+ * @param {object} center Center {x, y} of selection.
+ * @returns {object} Contains lowest z per layer as {tile, token, ...}.
+ */
+export function findMinZBelow (bounds, center) {
+  const zLower = {}
+  for (const piece of findPiecesWithinBounds(bounds, center, true)) {
+    if (!isSelectedId(piece.id)) {
+      if (piece.z < (zLower[piece.l] ?? Number.MAX_VALUE)) zLower[piece.l] = piece.z
+    }
+  }
+  return zLower
+}
+
+/**
+ * Copy the currently selected piece(s) into our clipboard.
+ *
+ * Will silently fail if nothing is selected.
+ */
+export function clipboardCopy () {
+  clipboard.pieces = selectionGetPieces()
+}
+
+/**
+ * Get the featureset all pieces in the clipboard support.
+ *
+ * @returns {object} Object with features true/false.
+ */
+export function clipboardGetPieces () {
+  return clipboard.pieces
+}
+/**
+ * Get the featureset all pieces in the clipboard support.
+ *
+ * @returns {object} Object with features true/false.
+ */
+export function clipboardGetFeatures () {
+  return getFeatures(clipboardGetPieces())
+}
+
+// -----------------------------------------------------------------------------
+
+let selectionIds = [[], [], [], [], [], [], [], [], [], []] // 1+9 tables
+
+const clipboard = {
+  pieces: []
+}
+
+/**
+ * Find all pieces at current (or future) area.
  *
  * Mostly used before moving a selection to a new position what pieces might affect z.
  *
- * @param {number} x Optional alterate center of selection.
- * @param {number} y Optional alterate center of selection.
+ * @param {object} bounds {top, left, right, bottom} to search within.
+ * @param {object} center Optional alterate center {x, y} of selection.
  * @param {boolean} padding If true, selection will extend 2px on all sides.
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
-export function findPiecesWithinSelection (x = undefined, y = undefined, padding = false) {
-  const bounds = selectionGetFeatures().boundingBox
+function findPiecesWithinBounds (bounds, center = {}, padding = false) {
   const offset = {
-    x: x ? x - bounds.x : 0,
-    y: y ? y - bounds.y : 0
+    x: center.x ? center.x - bounds.center.x : 0,
+    y: center.y ? center.y - bounds.center.y : 0
   }
   const rect = padding
     ? {
@@ -256,47 +249,9 @@ export function findPiecesWithinSelection (x = undefined, y = undefined, padding
   return findPiecesWithin(rect)
 }
 
-/**
- * Find all highest Z values below the selection target.
- *
- * @param {number} x Center of selection.
- * @param {number} y Center of selection.
- * @returns {object} Contains higest z per layer as {tile, token, ...}.
- */
-export function findMaxZBelowSelection (x, y) {
-  const zLower = {}
-  for (const piece of findPiecesWithinSelection(x, y, true)) {
-    if (!isSelectedId(piece.id)) {
-      if (piece.z > (zLower[piece.l] ?? Number.MIN_VALUE)) zLower[piece.l] = piece.z
-    }
+export const _private = {
+  findPiecesWithinBounds,
+  selectionReset: function () { // exposed only for testing
+    selectionIds = [[], [], [], [], [], [], [], [], [], []]
   }
-  return zLower
-}
-
-/**
- * Find all lowest Z values below the selection target.
- *
- * @param {number} x Center of selection.
- * @param {number} y Center of selection.
- * @returns {object} Contains lowest z per layer as {tile, token, ...}.
- */
-export function findMinZBelowSelection (x, y) {
-  const zLower = {}
-  for (const piece of findPiecesWithinSelection(x, y, true)) {
-    if (!isSelectedId(piece.id)) {
-      if (piece.z < (zLower[piece.l] ?? Number.MAX_VALUE)) zLower[piece.l] = piece.z
-    }
-  }
-  return zLower
-}
-
-// -----------------------------------------------------------------------------
-
-let selectionIds = [[], [], [], [], [], [], [], [], [], []] // 1+9 tables
-
-/**
- *
- */
-export function _selectionReset () { // exposed only for testing
-  selectionIds = [[], [], [], [], [], [], [], [], [], []]
 }
