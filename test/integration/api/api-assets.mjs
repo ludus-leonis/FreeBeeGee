@@ -114,7 +114,7 @@ function testApiUpdateAssetOtherBaseMask (api, version, room) {
     expect(body.library.other.length).to.be.eql(16)
   }, 200)
 
-  // patch name
+  // patch name < 10 sides
   testJsonPatch(api, () => `/rooms/${room}/assets/xY7Gr200/`, () => {
     return {
       id: 'xY7Gr200',
@@ -134,6 +134,39 @@ function testApiUpdateAssetOtherBaseMask (api, version, room) {
     for (const media of body.media) {
       expect(media.match(/barFoo.fooBar\.1x1x[0-9]\.2\.paper\.svg/)).to.be.an('array')
     }
+  }, 200)
+
+  // patch name >= 10 sides
+  testJsonPatch(api, () => `/rooms/${room}/assets/aeS5y000/`, () => {
+    return {
+      id: 'aeS5y000',
+      name: 'fooBar.fooBar',
+      tx: 'paper'
+    }
+  }, body => {
+    expect(body.name).to.be.eql('fooBar.fooBar')
+    expect(body.id).to.be.eql('cp0Nn000')
+    expect(body.type).to.be.eql('other')
+    expect(body.w).to.be.eql(1)
+    expect(body.h).to.be.eql(1)
+    expect(body.bg).to.be.eql('1')
+    expect(body.tx).to.be.eql('paper')
+    expect(body.base).to.be.eql('fooBar.fooBar.1x1x00.1.paper.png')
+    expect(body.mask).to.be.eql('fooBar.fooBar.1x1xXX.1.paper.svg')
+    expect(body.media).to.be.eql([
+      'fooBar.fooBar.1x1x01.1.paper.svg',
+      'fooBar.fooBar.1x1x02.1.paper.svg',
+      'fooBar.fooBar.1x1x03.1.paper.svg',
+      'fooBar.fooBar.1x1x04.1.paper.svg',
+      'fooBar.fooBar.1x1x05.1.paper.svg',
+      'fooBar.fooBar.1x1x06.1.paper.svg',
+      'fooBar.fooBar.1x1x07.1.paper.svg',
+      'fooBar.fooBar.1x1x08.1.paper.svg',
+      'fooBar.fooBar.1x1x09.1.paper.svg',
+      'fooBar.fooBar.1x1x10.1.paper.svg',
+      'fooBar.fooBar.1x1x11.1.paper.svg',
+      'fooBar.fooBar.1x1x12.1.paper.svg'
+    ])
   }, 200)
 
   // final full get

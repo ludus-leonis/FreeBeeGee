@@ -26,7 +26,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor: replace sass-lint with stylelint
     * [X] fix texture bug on non-square assets
     * [X] click on icon in popup does not trigger function
-    * [ ] d12 rename bug
+    * [X] 10+ side asset rename bug
+    * [ ] asset in use warning missing
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

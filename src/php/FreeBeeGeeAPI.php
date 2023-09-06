@@ -2402,6 +2402,7 @@ class FreeBeeGeeAPI
             }
 
             // check conflicts / calculate ID$toUpdate->_tx
+            $toUpdate->_idPadding = '0';
             if (property_exists($toUpdate, 'mask')) {
                 $toUpdate->_idPadding = 'X';
             }
@@ -2420,19 +2421,18 @@ class FreeBeeGeeAPI
             }
 
             // rename all media files = rename asset
-            $toUpdate->_idPadding = '0';
             if (property_exists($toUpdate, 'mask')) {
                 $ext = pathinfo($toUpdate->mask, PATHINFO_EXTENSION);
-                @rename("$folder/$toUpdate->mask", $this->getAssetFilename($folder, $toUpdate, 'X', $ext));
+                @rename("$folder/$toUpdate->mask", $this->getAssetFilename($folder, $toUpdate, 'X', 'X', $ext));
             }
             for ($side = 1; $side <= sizeof($toUpdate->media); $side++) {
                 $media = $toUpdate->media[$side - 1];
                 $ext = pathinfo($media, PATHINFO_EXTENSION);
-                @rename("$folder/$media", $this->getAssetFilename($folder, $toUpdate, "$side", $ext));
+                @rename("$folder/$media", $this->getAssetFilename($folder, $toUpdate, "$side", '0', $ext));
             }
             if (property_exists($toUpdate, 'base')) {
                 $ext = pathinfo($toUpdate->base, PATHINFO_EXTENSION);
-                @rename("$folder/$toUpdate->base", $this->getAssetFilename($folder, $toUpdate, '0', $ext));
+                @rename("$folder/$toUpdate->base", $this->getAssetFilename($folder, $toUpdate, '0', '0', $ext));
             }
 
             // regenerate library JSON
@@ -2456,9 +2456,10 @@ class FreeBeeGeeAPI
         string $folder,
         object $patch,
         string $s,
+        string $padding,
         string $ext
     ): string {
-        $sPad = str_pad("{$s}", strlen("{$patch->_sMax}"), '0', STR_PAD_LEFT);
+        $sPad = str_pad("{$s}", strlen("{$patch->_sMax}"), $padding, STR_PAD_LEFT);
         $file = "{$patch->name}.{$patch->w}x{$patch->h}";
         if ($patch->_sMax > 1 || $patch->_hasBase || $patch->_hasMask) {
             $file .= "x{$sPad}";
