@@ -182,6 +182,55 @@ function testApiUpdateAssetOtherBaseMask (api, version, room) {
   closeTestroom(api, room)
 }
 
+function testApiUpdateAssetIDs (api, version, room) {
+  openTestroom(api, room, 'Classic')
+
+  // put 2 pieces on table
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { // add letter-token
+      l: 4,
+      a: '73740cdf',
+      x: 18,
+      y: 8,
+      z: 10
+    }
+  }, body => {}, 201)
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { // add die
+      l: 4,
+      a: 'xY7Gr200',
+      x: 22,
+      y: 21,
+      z: 11
+    }
+  }, body => {}, 201)
+
+  // get & compare pieces before change
+  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+    expect(body[0].a).to.be.eql('xY7Gr200')
+    expect(body[1].a).to.be.eql('73740cdf')
+  })
+
+  // rename die asset
+  testJsonPatch(api, () => `/rooms/${room}/assets/xY7Gr200/`, () => {
+    return {
+      id: 'xY7Gr200',
+      name: 'barFoo.fooBar',
+      tx: 'paper'
+    }
+  }, body => {
+    expect(body.id).to.be.eql('zM-sI100') // new ID
+  }, 200)
+
+  // get & compare pieces after change - one piece changed
+  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+    expect(body[0].a).to.be.eql('zM-sI100') // new
+    expect(body[1].a).to.be.eql('73740cdf') // old
+  })
+
+  closeTestroom(api, room)
+}
+
 function testApiUpdateAssetConflict (api, version, room) {
   openTestroom(api, room, 'Classic')
 
@@ -739,13 +788,14 @@ function testApiDeleteAsset (api, version, room) {
 export function run (runner) {
   describe('API - assets', function () {
     runner((api, version, room) => {
-      describe('create asset', () => testApiCreateAsset(api, version, room))
-      describe('update assets (token)', () => testApiUpdateAssetToken(api, version, room))
-      describe('update assets (tile/color)', () => testApiUpdateAssetTileColor(api, version, room))
-      describe('update assets (overlay/material)', () => testApiUpdateAssetOverlayMaterial(api, version, room))
-      describe('update assets (other/base/mask)', () => testApiUpdateAssetOtherBaseMask(api, version, room))
-      describe('update assets (conflict)', () => testApiUpdateAssetConflict(api, version, room))
-      describe('delete assets', () => testApiDeleteAsset(api, version, room))
+      describe('create', () => testApiCreateAsset(api, version, room))
+      describe('update (token)', () => testApiUpdateAssetToken(api, version, room))
+      describe('update (tile/color)', () => testApiUpdateAssetTileColor(api, version, room))
+      describe('update (overlay/material)', () => testApiUpdateAssetOverlayMaterial(api, version, room))
+      describe('update (other/base/mask)', () => testApiUpdateAssetOtherBaseMask(api, version, room))
+      describe('update (conflict)', () => testApiUpdateAssetConflict(api, version, room))
+      describe('update (table id change)', () => testApiUpdateAssetIDs(api, version, room))
+      describe('delete', () => testApiDeleteAsset(api, version, room))
     })
   })
 }

@@ -2435,6 +2435,21 @@ class FreeBeeGeeAPI
                 @rename("$folder/$toUpdate->base", $this->getAssetFilename($folder, $toUpdate, '0', '0', $ext));
             }
 
+            // replace old asset IDs in all tables
+            for ($i = 1; $i <= 9; $i++) {
+                $tablefile = "$meta->folder/tables/$i.json";
+                if (is_file($tablefile)) {
+                    $table = json_decode(file_get_contents($tablefile));
+                    // re-add all old pieces
+                    foreach ($table as $piece) {
+                        if (property_exists($piece, 'a') && $piece->a === $patch->id) {
+                            $piece->a = $toUpdate->_id;
+                        }
+                    }
+                    file_put_contents($tablefile, json_encode($table));
+                }
+            }
+
             // regenerate library JSON
             $room->library = $this->generateLibraryJSON($meta->name);
             $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);

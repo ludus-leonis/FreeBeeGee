@@ -78,7 +78,6 @@ import {
 import {
   editSelected,
   rotateSelected,
-  cloneSelected,
   toTopSelected,
   toBottomSelected,
   flipSelected,
@@ -100,7 +99,6 @@ import {
 
 import {
   enableDragAndDrop,
-  getMouseCoords,
   toggleLMBLos,
   isLMBLos
 } from '../../view/room/mouse/index.mjs'
