@@ -21,21 +21,20 @@
 import { readFileSync } from 'fs'
 import { deleteAsync } from 'del'
 
+import gulp from 'gulp'
 import autoprefixer from 'gulp-autoprefixer'
-import babelify from 'babelify'
-import browserify from 'browserify'
 import changed from 'gulp-changed'
 import concat from 'gulp-concat'
-import gulp from 'gulp'
+import browserify from 'browserify'
 import gzip from 'gulp-gzip'
 import rename from 'gulp-rename'
 import repl from 'gulp-replace'
 import shrinkr from 'shrinkr'
 import sort from 'gulp-sort'
-import vinyl from 'vinyl-source-stream'
 import sourcemaps from 'gulp-sourcemaps'
 import tar from 'gulp-tar'
 import zip from 'gulp-zip'
+import vinylSource from 'vinyl-source-stream'
 
 import dartSass from 'sass'
 import gulpSass from 'gulp-sass'
@@ -135,49 +134,14 @@ gulp.task('js-vendor', () => {
 
 gulp.task('js-main', () => {
   return replace(browserify([
-    'src/js/app.mjs',
     'src/js/main.mjs',
-    'src/js/api/index.mjs',
-    'src/js/api/serverless.mjs',
-    'src/js/lib/FreeDOM.mjs',
-    'src/js/lib/utils.mjs',
-    'src/js/lib/icons.mjs',
-    'src/js/state/index.mjs',
-
-    'src/js/view/screen.mjs',
-    'src/js/view/setup/index.mjs',
-    'src/js/view/error/index.mjs',
-    'src/js/view/join/index.mjs',
-
-    'src/js/view/room/index.mjs',
-    'src/js/view/room/modal.mjs',
-    'src/js/view/room/hotkeys.mjs',
-    'src/js/view/room/sync.mjs',
-    'src/js/view/room/modal/demo.mjs',
-    'src/js/view/room/modal/disabled.mjs',
-    'src/js/view/room/modal/help.mjs',
-    'src/js/view/room/modal/inactive.mjs',
-    'src/js/view/room/library/index.mjs',
-    'src/js/view/room/modal/piece/index.mjs',
-    'src/js/view/room/modal/piece/note.mjs',
-    'src/js/view/room/modal/piece/other.mjs',
-    'src/js/view/room/modal/piece/tile.mjs',
-    'src/js/view/room/modal/piece/token.mjs',
-    'src/js/view/room/modal/settings.mjs',
-    'src/js/view/room/mouse/_MouseButtonHandler.mjs',
-    'src/js/view/room/mouse/Grab.mjs',
-    'src/js/view/room/mouse/index.mjs',
-    'src/js/view/room/mouse/Los.mjs',
-    'src/js/view/room/mouse/SelectAndDrag.mjs',
-    'src/js/view/room/mouse/SelectAndProperties.mjs',
-    'src/js/view/room/tabletop/index.mjs',
-    'src/js/view/room/tabletop/tabledata.mjs'
+    'src/js/view/room/hotkeys.mjs'
   ], {
     paths: ['src/js']
-  }).transform(babelify.configure({
-    presets: ['@babel/preset-env']
-  })).bundle()
-    .pipe(vinyl('main.js')))
+  })
+    .transform('babelify', { presets: ['@babel/preset-env'] })
+    .bundle()
+    .pipe(vinylSource('main.js')))
     .pipe(gulp.dest(dirs.site))
 })
 

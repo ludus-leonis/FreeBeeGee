@@ -59,8 +59,8 @@
     ]
   },
   "devDependencies": {
-    "@babel/core": "^7.22.11",
-    "@babel/preset-env": "^7.22.14",
+    "@babel/core": "^7.22.17",
+    "@babel/preset-env": "^7.22.15",
     "adm-zip": "^0.5.10",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
@@ -80,7 +80,6 @@
     "gulp-autoprefixer": "^8.0.0",
     "gulp-changed": "^4.0.3",
     "gulp-concat": "*",
-    "gulp-decompress": "^3.0.0",
     "gulp-gzip": "^1.4.2",
     "gulp-rename": "^2.0.0",
     "gulp-replace": "^1.1.4",
@@ -108,7 +107,7 @@
     "@popperjs/core": "^2.11.8",
     "bcryptjs": "^2.4.3",
     "bootstrap": "^5.3.1",
-    "marked": "^4.3.0",
+    "marked": "^8.0.1",
     "sha.js": "^2.4.11"
   },
   "overrides": {

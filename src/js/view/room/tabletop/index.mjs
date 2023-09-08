@@ -20,7 +20,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { marked } from 'marked'
+import { marked } from 'marked/lib/marked.cjs'
 
 import _ from '../../../lib/FreeDOM.mjs'
 
