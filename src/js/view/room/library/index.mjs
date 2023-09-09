@@ -218,19 +218,37 @@ let prevSearch = ''
 function refreshTabs () {
   const library = getLibrary()
 
-  // add items to their tab
+  // add items to their tab, sort system assets (_) last
   const tiles = _('#tab-tiles').empty()
+  const systemTiles = []
+  const regularTiles = []
   for (const asset of sortByString(library.tile ?? [], 'name')) {
-    tiles.add(assetToPreview(asset))
+    for (let i = 0; i < (asset.media?.length ?? 1); i++) {
+      if (asset.name.match(/^_\./)) {
+        systemTiles.push(assetToPreview(asset, i))
+      } else {
+        regularTiles.push(assetToPreview(asset, i))
+      }
+    }
   }
+  tiles.add(regularTiles, systemTiles)
   const overlays = _('#tab-overlays').empty()
   for (const asset of sortByString(library.overlay ?? [], 'name')) {
     overlays.add(assetToPreview(asset))
   }
   const tokens = _('#tab-tokens').empty()
+  const systemTokens = []
+  const regularTokens = []
   for (const asset of sortByString(library.token ?? [], 'name')) {
-    tokens.add(assetToPreview(asset))
+    for (let i = 0; i < (asset.media?.length ?? 1); i++) {
+      if (asset.name.match(/^_\./)) {
+        systemTokens.push(assetToPreview(asset, i))
+      } else {
+        regularTokens.push(assetToPreview(asset, i))
+      }
+    }
   }
+  tokens.add(regularTokens, systemTokens)
   const other = _('#tab-other').empty()
   for (const asset of sortByString(library.other ?? [], 'name')) {
     other.add(assetToPreview(asset))
@@ -626,10 +644,11 @@ function updatePreviewDOM (blob) {
  * Convert a library entry to a preview DOM element.
  *
  * @param {object} asset The asset to convert.
+ * @param {number} side Side to show, 0-based.
  * @returns {HTMLElement} Node for the modal.
  */
-function assetToPreview (asset) {
-  const max = _('.is-preview').create(assetToNode(asset))
+function assetToPreview (asset, side = 0) {
+  const max = _('.is-preview').create(assetToNode(asset, side))
   if (asset.w % 2 === 0) max.add('.is-even-x')
   if (asset.h % 2 === 0) max.add('.is-even-y')
 
@@ -642,8 +661,10 @@ function assetToPreview (asset) {
   if (asset.media.length > 1) {
     tag += `:${asset.media.length}`
   }
+
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
-  card.add(_('p').create().add(prettyName(asset.name)))
+  const name = prettyName(asset.name) + (asset.media.length > 1 ? ` (${side + 1})` : '')
+  card.add(_('p').create().add(prettyName(name)))
   return card
 }
 
@@ -659,6 +680,7 @@ function modalOk () {
     const piece = createPieceFromAsset(item.asset.id, snapped.x, snapped.y)
 
     piece.z = piece.z + offsetZ
+    piece.s = item.side
     pieces.push(piece)
     offsetZ += 1
   })

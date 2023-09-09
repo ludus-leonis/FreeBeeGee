@@ -2,7 +2,7 @@
  * @file DOM manipulation helpers.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @version 1.0.3
+ * @version 1.1.0
  * @license AGPL-3.0-or-later
  *
  * This file is part of FreeBeeGee.
@@ -159,6 +159,10 @@ class FreeDOM {
         return this.each(node => node.appendChild(item.node()))
       } else if (item instanceof globalThis.Text) { // add self
         return this.each(node => node.appendChild(item))
+      } else if (Array.isArray(item)) { // add arrays of supported items
+        for (const itm of item) {
+          this.add(itm)
+        }
       } else {
         this._error('can\'t add() ' + typeof item)
       }

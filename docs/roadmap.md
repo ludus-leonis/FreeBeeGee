@@ -4,14 +4,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.21 - ??? ???
 
-* [ ] library
-  * [ ] show all sides as individual pieces
-  * [ ] hotkey help
+* [X] show tile+token sides as individual pieces in library
 * [X] library editor: edit asset name / size / material / color
 * [ ] piece: wooden cubes
 * [X] paper background for windows and cards
 * [X] open edit window on note create
-* [ ] ui
+* [X] ui
   * [X] smaller modal paddings
   * [X] half-rotations via settings (45° for square, 30° for hex)
 * [X] clipboard ctrl+c/v/x on/between tables

@@ -692,6 +692,7 @@ export function assetToNode (asset, side = 0) {
     '.is-h-' + asset.h
   )
   node.asset = asset
+  node.side = side
 
   if (piece._meta.hasColor) {
     const colors = getSetup().colors
