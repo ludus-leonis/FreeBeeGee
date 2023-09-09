@@ -556,14 +556,14 @@ class JSONRestAPI
         int $max = 256,
         bool $send = true
     ) {
-        if (is_numeric($value)) {
+        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
             $i = (int) $value;
             if ($i >= $min && $i <= $max) {
                 return $i;
             }
         }
         if ($send) {
-            $this->sendError(400, "invalid JSON: $field not between $min and $max");
+            $this->sendError(400, "invalid JSON: $field not integer between $min and $max");
         } else {
             return null;
         }

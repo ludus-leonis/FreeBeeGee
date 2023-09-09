@@ -369,12 +369,12 @@ final class FreeBeeGeeAPITest extends TestCase
             $setup = $this->fbg->validateSetupJSON('{
                 "gridSize": []
             }', false);
-        }, 400, '/ gridSize not between /');
+        }, 400, '/ gridSize not integer between /');
         $this->assertHTTPStatus(function () {
             $setup = $this->fbg->validateSetupJSON('{
                 "gridSize": 17
             }', false);
-        }, 400, '/ gridSize not between /');
+        }, 400, '/ gridSize not integer between /');
 
         $setup = $this->fbg->validateSetupJSON('{
             "gridWidth": 64
@@ -385,12 +385,12 @@ final class FreeBeeGeeAPITest extends TestCase
             $setup = $this->fbg->validateSetupJSON('{
                 "gridWidth": 15
             }', false);
-        }, 400, '/ gridWidth not between /');
+        }, 400, '/ gridWidth not integer between /');
         $this->assertHTTPStatus(function () {
             $setup = $this->fbg->validateSetupJSON('{
                 "gridWidth": []
             }', false);
-        }, 400, '/ gridWidth not between /');
+        }, 400, '/ gridWidth not integer between /');
 
         $setup = $this->fbg->validateSetupJSON('{
             "snap": true

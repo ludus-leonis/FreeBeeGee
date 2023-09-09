@@ -47,19 +47,6 @@ export function selectionAdd (id, forced = false) {
 }
 
 /**
- * Add a piece to the selection.
- *
- * @param {string} id Piece id to select.
- */
-export function selectionRemove (id) {
-  const piece = findPiece(id)
-  if (piece && selectionGetIds().includes(id)) {
-    const selection = selectionGetIds()
-    selection.splice(selection.indexOf(id), 1)
-  }
-}
-
-/**
  * Check if an piece ID is currently selected
  *
  * @param {string} id ID to check.
@@ -201,14 +188,6 @@ export function clipboardCopy () {
 export function clipboardGetPieces () {
   return clipboard.pieces
 }
-/**
- * Get the featureset all pieces in the clipboard support.
- *
- * @returns {object} Object with features true/false.
- */
-export function clipboardGetFeatures () {
-  return getFeatures(clipboardGetPieces())
-}
 
 // -----------------------------------------------------------------------------
 
@@ -249,8 +228,22 @@ function findPiecesWithinBounds (bounds, center = {}, padding = false) {
   return findPiecesWithin(rect)
 }
 
+/**
+ * Remove a piece from the selection.
+ *
+ * @param {string} id Piece id to remove.
+ */
+function selectionRemove (id) {
+  const piece = findPiece(id)
+  if (piece && selectionGetIds().includes(id)) {
+    const selection = selectionGetIds()
+    selection.splice(selection.indexOf(id), 1)
+  }
+}
+
 export const _private = {
   findPiecesWithinBounds,
+  selectionRemove,
   selectionReset: function () { // exposed only for testing
     selectionIds = [[], [], [], [], [], [], [], [], [], []]
   }

@@ -35,7 +35,6 @@ import {
 import {
   selectionGetIds,
   selectionAdd,
-  selectionRemove,
   isSelectedId,
   selectNode,
   selectionClear,
@@ -141,8 +140,8 @@ describe('Frontend - selectionGetIds.mjs', function () {
     selectionAdd('437e26b9')
 
     setTableNo(TEST_STATE - 1, false)
-    selectionRemove('49d045e1')
-    selectionRemove('49d045e1')
+    testSelection.selectionRemove('49d045e1')
+    testSelection.selectionRemove('49d045e1')
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
       if (i === TEST_STATE) {
@@ -155,8 +154,8 @@ describe('Frontend - selectionGetIds.mjs', function () {
     }
 
     setTableNo(TEST_STATE, false)
-    selectionRemove('49d045e1')
-    selectionRemove('49d045e1')
+    testSelection.selectionRemove('49d045e1')
+    testSelection.selectionRemove('49d045e1')
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
       if (i === TEST_STATE) {
@@ -169,8 +168,8 @@ describe('Frontend - selectionGetIds.mjs', function () {
     }
 
     setTableNo(TEST_STATE + 1, false)
-    selectionRemove('49d045e1')
-    selectionRemove('49d045e1')
+    testSelection.selectionRemove('49d045e1')
+    testSelection.selectionRemove('49d045e1')
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
       if (i === TEST_STATE) {
@@ -501,7 +500,7 @@ describe('Frontend - selectionGetIds.mjs', function () {
 
     // select a single tile
     setTableNo(TEST_STATE, false)
-    selectionRemove('49d045e1')
+    testSelection.selectionRemove('49d045e1')
     selectionAdd('437e26b9')
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
