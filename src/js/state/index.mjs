@@ -258,6 +258,7 @@ export const PREFS = {
   LOS: { name: 'los', default: false },
   SCROLL: { name: 'scroll', default: {} },
   ZOOM: { name: 'zoom', default: 1.0 },
+  PIECE_ROTATE: { name: 'pieceRotate', default: undefined },
   BACKGROUND: { name: 'background', default: 'Wood' },
   QUALITY: { name: 'quality', default: 3 },
   DISCLAIMER: { name: 'disclaimer', default: false },
@@ -547,10 +548,12 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
   )
 }
 
-export const FLAG_NO_DELETE = 0b00000001
-export const FLAG_NO_CLONE = 0b00000010
-export const FLAG_NO_MOVE = 0b00000100
-export const FLAG_NOTE_TOPLEFT = 0b10000000
+export const FLAGS = {
+  NO_DELETE: 0b00000001,
+  NO_CLONE: 0b00000010,
+  NO_MOVE: 0b00000100,
+  NOTE_TOPLEFT: 0b10000000
+}
 
 /**
  * Update the falgs of a piece/token.
@@ -597,7 +600,7 @@ export function editPiece (pieceId, updates, sync = true) {
  * @returns {Promise<object>} The deleted piece.
  */
 export function deletePiece (pieceId, sync = true) {
-  if (findPiece(pieceId)?.f & FLAG_NO_DELETE) return Promise.resolve() // can't delete those
+  if (findPiece(pieceId)?.f & FLAGS.NO_DELETE) return Promise.resolve() // can't delete those
   return apiDeletePiece(room.name, getTableNo(), pieceId, getToken())
     .catch(error => apiError(error, room.name))
     .finally(() => { if (sync) syncNow() })

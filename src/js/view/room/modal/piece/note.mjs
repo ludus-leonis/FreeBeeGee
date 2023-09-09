@@ -22,7 +22,7 @@
 import _ from '../../../../lib/FreeDOM.mjs'
 
 import {
-  FLAG_NOTE_TOPLEFT,
+  FLAGS,
   createPieces,
   editPiece
 } from '../../../../state/index.mjs'
@@ -74,11 +74,11 @@ export function setup (piece) {
   const noteType = _('#piece-note-type')
   const option1 = _('option').create('Center')
   option1.value = 'c'
-  if (piece.f & !FLAG_NOTE_TOPLEFT) option1.selected = true
+  if (piece.f & !FLAGS.NOTE_TOPLEFT) option1.selected = true
   noteType.add(option1)
   const option2 = _('option').create('Top-Left')
   option2.value = 'tl'
-  if (piece.f & FLAG_NOTE_TOPLEFT) option2.selected = true
+  if (piece.f & FLAGS.NOTE_TOPLEFT) option2.selected = true
   noteType.add(option2)
 
   setupFlags(piece)

@@ -1207,7 +1207,7 @@ class FreeBeeGeeAPI
                     }
                     break;
                 case 'r':
-                    if ($this->api->assertEnum('r', $value, [60, 90, 120, 180, 240, 270, 300], false)) {
+                    if ($this->api->assertInteger('r', $value, 0, 359, false)) {
                         $out->$property = $value; // 0 = default = don't add
                     }
                     break;
@@ -1348,7 +1348,7 @@ class FreeBeeGeeAPI
                     $validated->n = $this->api->assertInteger('n', $value, 0, 35);
                     break;
                 case 'r':
-                    $validated->r = $this->api->assertEnum('r', $value, [0, 60, 90, 120, 180, 240, 270, 300]);
+                    $validated->r = $this->api->assertInteger('r', $value, 0, 359);
                     break;
                 case 't':
                     if (($piece->l ?? null) === 3) { // 3 = note

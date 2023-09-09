@@ -34,26 +34,16 @@ $shadow-highlight-width: 1.5px;
   #{'--fbg-shadow-length'}: 2px;
 }
 
-@each $r in $rotate-steps {
+@for $r from 0 through 359 { // @each $r in $rotate-steps
   .is-r-#{$r} {
     #{'--fbg-r-sin'}: math.sin($shadow-direction + ($r * 1deg));
     #{'--fbg-r-cos'}: math.cos($shadow-direction + ($r * 1deg));
   }
-}
 
-.is-delay-r-300 {
-  #{'--fbg-r-sin'}: math.sin($shadow-direction - 60deg);
-  #{'--fbg-r-cos'}: math.cos($shadow-direction - 60deg);
-}
-
-.is-delay-r-270 {
-  #{'--fbg-r-sin'}: math.sin($shadow-direction - 90deg);
-  #{'--fbg-r-cos'}: math.cos($shadow-direction - 90deg);
-}
-
-.is-delay-r-0 {
-  #{'--fbg-r-sin'}: math.sin($shadow-direction);
-  #{'--fbg-r-cos'}: math.cos($shadow-direction);
+  .is-delay-r-#{$r} {
+    #{'--fbg-r-sin'}: math.sin($shadow-direction - (360 - $r) * 1deg);
+    #{'--fbg-r-cos'}: math.cos($shadow-direction - (360 - $r) * 1deg);
+  }
 }
 
 /// Return a drop-shadow value for the configured shadow.

@@ -10,6 +10,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added option to edit asset name / size / material / color to library editor
 * added copy/cut/paste between tables in a room
 * added paper background for windows and cards
+* added half-rotations via settings (45° for square, 30° for hex)
 * renamed library manager to library editor
 
 ### Other changes

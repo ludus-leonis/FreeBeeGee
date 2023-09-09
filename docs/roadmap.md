@@ -5,17 +5,18 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.21 - ??? ???
 
 * [ ] library
-  * [ ] library: show all sides as individual pieces
+  * [ ] show all sides as individual pieces
+  * [ ] hotkey help
 * [X] library editor: edit asset name / size / material / color
 * [ ] piece: wooden cubes
 * [X] paper background for windows and cards
 * [X] open edit window on note create
 * [ ] ui
   * [X] smaller modal paddings
-  * [ ] allow half-rotations via settings (45° for square, 30° for hex)
+  * [X] half-rotations via settings (45° for square, 30° for hex)
 * [X] clipboard ctrl+c/v/x on/between tables
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] github action to rebuid app on dev
     * [X] add tabular numbers for library editor tree/preview
@@ -39,6 +40,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] refactor: use _private exports for test cases
 * [ ] refactor: use events more
 * [ ] refactor: get 's' out of asset IDs
+* [ ] plugin-hook
 * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
 * [ ] library editor: replace media/side
 * [ ] ui: decks/stacks
@@ -67,6 +69,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui: doubleclick handling?
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
+* [ ] build: minify js
 * [ ] docs: template-template
 * [ ] docs: how-to make snapshot `.zip`s
 * [ ] API: check sides correspond to asset

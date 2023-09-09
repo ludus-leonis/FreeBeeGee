@@ -35,9 +35,7 @@ import {
 } from '../../../lib/utils.mjs'
 
 import {
-  FLAG_NO_CLONE,
-  FLAG_NO_MOVE,
-  FLAG_NOTE_TOPLEFT,
+  FLAGS,
   PREFS,
   getRoom,
   getSetup,
@@ -82,8 +80,6 @@ import {
   LAYER_NOTE,
   LAYER_TOKEN,
   LAYER_OTHER,
-  TYPE_HEX,
-  TYPE_HEX2,
   ID,
   findAsset,
   findPiece,
@@ -235,7 +231,7 @@ export function pileSelected (randomize = false) {
   const z = []
 
   for (const piece of selectionGetPieces()) {
-    if (piece.f & FLAG_NO_MOVE) return // abort if one no-mover is here
+    if (piece.f & FLAGS.NO_MOVE) return // abort if one no-mover is here
     toMove.push({
       id: piece.id,
       x: snapped.x,
@@ -379,11 +375,11 @@ function createOrUpdatePieceDOM (piece) {
     })
   }
   if (_piece.r !== piece.r) {
-    div.remove('.is-r-*')
+    div.remove('.is-r', '.is-r-*')
     if (piece.l !== LAYER_OTHER) {
-      div.add(`.is-r-${piece.r}`)
+      div.add('.is-r', `.is-r-${piece.r}`)
       if (Math.abs(_piece.r - piece.r) > 180) {
-        div.add(`.is-delay-r-${_piece.r}`)
+        div.add('.is-delay-r', `.is-delay-r-${_piece.r}`)
       }
     }
   }
@@ -511,7 +507,7 @@ export function setPiece (piece) {
 export function setNote (note) {
   const node = createOrUpdatePieceDOM(note)
 
-  if (note.f & FLAG_NOTE_TOPLEFT) {
+  if (note.f & FLAGS.NOTE_TOPLEFT) {
     node.add('.is-topleft')
   } else {
     node.remove('.is-topleft')
@@ -532,12 +528,10 @@ export function setNote (note) {
  * @param {boolean} cw Optional direction. True = CW (default), False = CCW.
  */
 export function rotateSelected (cw = true) {
-  const setup = getSetup()
-
   if (!selectionGetFeatures().rotate) return
 
   for (const piece of selectionGetPieces()) {
-    const increment = (setup.type === TYPE_HEX || setup.type === TYPE_HEX2) ? 60 : 90
+    const increment = getRoomPreference(PREFS.PIECE_ROTATE)
     const r = cw ? (piece.r + increment) : (piece.r - increment)
     rotatePiece(piece.id, r)
   }
@@ -719,7 +713,7 @@ export function assetToNode (asset, side = 0) {
 export function noteToNode (note) {
   const node = _('.piece.piece-note').create()
 
-  if (note.f & FLAG_NOTE_TOPLEFT) {
+  if (note.f & FLAGS.NOTE_TOPLEFT) {
     node.add('.is-topleft')
   } else {
     node.remove('.is-topleft')
@@ -896,7 +890,7 @@ export function losTo (x, y, w, h) {
  * @param {number} y New y coordinate in px.
  */
 export function moveNodeTo (element, x, y) {
-  if (element.piece.f & FLAG_NO_MOVE) return // we do not move frozen pieces
+  if (element.piece.f & FLAGS.NO_MOVE) return // we do not move frozen pieces
   if (element.x === x && element.y === y) return // no need to move to same place
 
   element.x = x
@@ -1090,7 +1084,7 @@ function clonePieces (pieces, xy) {
   const zLower = findMaxZBelow(features.boundingBox, xy)
   const zUpper = {} // one z per layer
   for (const piece of sortByNumber(pieces, 'z', 0)) {
-    if (piece.f & FLAG_NO_CLONE) continue
+    if (piece.f & FLAGS.NO_CLONE) continue
     const selectionOffset = {
       x: piece.x - bounds.center.x,
       y: piece.y - bounds.center.y

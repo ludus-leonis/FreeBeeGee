@@ -24,9 +24,7 @@
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
-  FLAG_NO_CLONE,
-  FLAG_NO_DELETE,
-  FLAG_NO_MOVE,
+  FLAGS,
   getRoom,
   getSetup,
   getLibrary,
@@ -369,9 +367,9 @@ export function getFeatures (pieces) {
 
     for (const piece of pieces) {
       if (piece.l === LAYER_OTHER) features.rotate = false
-      if (piece.f & FLAG_NO_CLONE) features.clone = false
-      if (piece.f & FLAG_NO_DELETE) features.delete = false
-      if (piece.f & FLAG_NO_MOVE) features.pile = false
+      if (piece.f & FLAGS.NO_CLONE) features.clone = false
+      if (piece.f & FLAGS.NO_DELETE) features.delete = false
+      if (piece.f & FLAGS.NO_MOVE) features.pile = false
       if (!piece._meta?.hasColor) features.color = false
       if (!piece._meta?.hasBorder) features.border = false
       if (piece.l !== LAYER_TOKEN) features.number = false

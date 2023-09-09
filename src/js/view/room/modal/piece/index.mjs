@@ -34,18 +34,15 @@ import {
   LAYER_NOTE,
   LAYER_TOKEN,
   LAYER_OTHER,
-  TYPE_HEX,
-  TYPE_HEX2,
   getAssetURL
 } from '../../../../view/room/tabletop/tabledata.mjs'
 
 import {
-  FLAG_NO_MOVE,
-  FLAG_NO_DELETE,
-  FLAG_NO_CLONE,
-  FLAG_NOTE_TOPLEFT,
+  PREFS,
+  FLAGS,
   getSetup,
-  getLibrary
+  getLibrary,
+  getRoomPreference
 } from '../../../../state/index.mjs'
 
 import {
@@ -241,12 +238,12 @@ export function updateColorBorder (piece, updates) {
  */
 export function updateFlags (piece, updates) {
   let f = 0
-  if (_('#piece-no-move').checked) f |= FLAG_NO_MOVE
-  if (_('#piece-no-delete').checked) f |= FLAG_NO_DELETE
-  if (_('#piece-no-clone').checked) f |= FLAG_NO_CLONE
+  if (_('#piece-no-move').checked) f |= FLAGS.NO_MOVE
+  if (_('#piece-no-delete').checked) f |= FLAGS.NO_DELETE
+  if (_('#piece-no-clone').checked) f |= FLAGS.NO_CLONE
   const noteType = _('#piece-note-type')
   if (noteType.exists()) {
-    if (noteType.value === 'tl') f |= FLAG_NOTE_TOPLEFT
+    if (noteType.value === 'tl') f |= FLAGS.NOTE_TOPLEFT
   }
   if (f !== piece.f) updates.f = f
 }
@@ -321,7 +318,7 @@ export function updateNumber (piece, updates) {
  */
 export function setupRotate (piece) {
   const pieceR = _('#piece-r')
-  const increment = (getSetup().type === TYPE_HEX || getSetup().type === TYPE_HEX2) ? 60 : 90
+  const increment = getRoomPreference(PREFS.PIECE_ROTATE)
   for (let r = 0; r < 360; r += increment) {
     const option = _('option').create(r === 0 ? '0°' : r + '°')
     option.value = r
@@ -419,9 +416,9 @@ export function updateSize (piece, updates) {
  * @param {object} piece The piece's data object.
  */
 export function setupFlags (piece) {
-  _('#piece-no-move').checked = piece.f & FLAG_NO_MOVE
-  _('#piece-no-delete').checked = piece.f & FLAG_NO_DELETE
-  _('#piece-no-clone').checked = piece.f & FLAG_NO_CLONE
+  _('#piece-no-move').checked = piece.f & FLAGS.NO_MOVE
+  _('#piece-no-delete').checked = piece.f & FLAGS.NO_DELETE
+  _('#piece-no-clone').checked = piece.f & FLAGS.NO_CLONE
 }
 
 // --- internal ----------------------------------------------------------------

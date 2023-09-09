@@ -493,8 +493,18 @@ function setupRoom () {
   const room = getRoom()
 
   let mode = '.is-grid-square'
-  if (room.setup?.type === TYPE_HEX) mode = '.is-grid-hex'
-  if (room.setup?.type === TYPE_HEX2) mode = '.is-grid-hex2'
+  switch (room.setup?.type) {
+    case TYPE_HEX:
+      mode = '.is-grid-hex'
+      setRoomPreference(PREFS.PIECE_ROTATE, getRoomPreference(PREFS.PIECE_ROTATE) ?? 60)
+      break
+    case TYPE_HEX2:
+      mode = '.is-grid-hex2'
+      setRoomPreference(PREFS.PIECE_ROTATE, getRoomPreference(PREFS.PIECE_ROTATE) ?? 60)
+      break
+    default: // square
+      setRoomPreference(PREFS.PIECE_ROTATE, getRoomPreference(PREFS.PIECE_ROTATE) ?? 90)
+  }
 
   _('body').remove('.page-boxed').add(mode).innerHTML = `
     <div id="room" class="room is-fullscreen is-noselect">
