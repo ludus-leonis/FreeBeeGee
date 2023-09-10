@@ -28,7 +28,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor: replace sass-lint with stylelint
     * [X] fix texture bug on non-square assets
     * [X] click on icon in popup does not trigger function
-    * [ ] document or improve data volume mounting strategy
+    * [X] document or improve data volume mounting strategy
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

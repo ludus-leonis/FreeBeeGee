@@ -50,8 +50,17 @@ FBGPASS=supersecret docker run -d -e FBGPASS -p 8765:80 ghcr.io/ludus-leonis/fre
 
 Please, please pick a better password (!).
 
-FreeBeeGee sould be running now at `http://localhost:8765/`. If you want to persist room data, mount a volume for `/var/www/html/api/data`.
+FreeBeeGee should be running now at `http://localhost:8765/`. If you want to persist room data, mount a volume for `/var/www/html/api/data/rooms`. To edit the config file, mount a local file as `/var/www/html/api/data/server.json` or copy the file out, edit and copy back in:
 
+```
+docker cp <containername>:/var/www/html/api/data/server.json /tmp/server.json
+... edit /tmp/server.json ...
+docker cp /tmp/server.json <containername>:/var/www/html/api/data/server.json
+```
+
+The new config file will be effective with the next page reload, no container restart necessary.
+
+As an alternative method, you can also mount a single volume for the whole `/var/www/html/api/data`. In that case make sure it is pre-populated with the content found in `FreeBeeGee/api/data` of a FreeBeeGee `*.tar.gz`/`*.zip` release.
 
 ## Configuration
 
