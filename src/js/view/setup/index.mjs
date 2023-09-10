@@ -149,6 +149,16 @@ export function setupView (name) {
         if (snapshot === preselected) option.selected = true
         t.add(option)
       }
+      if (snapshots.length <= 0) {
+        const option = _('option').create('(no snapshots available)')
+        option.value = 'NO_SNAPSHOT'
+        option.selected = true
+        t.add(option)
+        _('.server-feedback').add('.show').innerHTML = `
+          There are no snapshots available on this server.
+          <span class="is-icon" title="Admins should check if the data/ directory is empty.">${iconHelp}</span>
+        `
+      }
     })
 
   _('#mode')
@@ -200,6 +210,9 @@ function validate () {
     }
     return true
   } else { // exisiting snapshot mode
+    if (_('#snapshot').value === 'NO_SNAPSHOT') {
+      return false
+    }
     return true // checks handled by html input
   }
 }

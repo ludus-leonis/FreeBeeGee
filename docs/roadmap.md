@@ -14,6 +14,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] half-rotations via settings (45° for square, 30° for hex)
 * [X] clipboard ctrl+c/v/x on/between tables
 * [X] change docker image to PHP 8.2
+* [X] add error message when snapshot list is empty
+* [X] improve server-delete timespan display
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
@@ -27,8 +29,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] fix texture bug on non-square assets
     * [X] click on icon in popup does not trigger function
     * [ ] document or improve data volume mounting strategy
-    * [ ] better error msg when snapshot list is empty
-    * [X] improve server-delete timespan display
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
