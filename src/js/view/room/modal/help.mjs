@@ -2,7 +2,9 @@
  * @file Handles the help/about modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -17,7 +19,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { marked } from 'marked'
+import { marked } from '../../../../../node_modules/marked/lib/marked.cjs'
 
 import _ from '../../../lib/FreeDOM.mjs'
 
@@ -119,14 +121,15 @@ export function modalHelp () {
             <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library opened.</p>
             <p><span class="key">n</span> Add a new sticky note at the current mouse cursor position.</p>
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>
-            <p><span class="key">Alt</span>/<span class="key">Ctrl</span> plus <span class="key">1</span>-<span class="key">9</span> Switch to another table (1 to 9).</p>
+            <p><span class="key">Alt</span>/<span class="key">Ctrl</span> + <span class="key">1</span>-<span class="key">9</span> Switch to another table (1 to 9).</p>
             <p><span class="key">g</span> Toggle table grid.</p>
             <p><span class="key">m</span> Toggle measure mode.</p>
             <p><span class="key">F11</span> Toggle fullscreen.</p>
             <p><span class="key">+</span>/<span class="key">-</span> Zoom in/out.</p>
-            <p><span class="key">S</span> Show the room/table statistics &amp; settings.</p>
-            <p><span class="key">L</span> Show (advanced) library manager. Allows editing of assets.</p>
+            <p><span class="key">S</span> Show the settings.</p>
+            <p><span class="key">L</span> Show library editor.</p>
             <p><span class="key">h</span> Show this help.</p>
+
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
             <p><span class="key">r</span>/<span class="key">R</span> Rotate piece clockwise/counter-clockwise.</p>
@@ -139,6 +142,7 @@ export function modalHelp () {
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>
             <p><span class="key">Del</span> Delete selected piece.</p>
+            <p><span class="key">Ctrl</span> + <span class="key">c</span>/<span class="key">x</span>/<span class="key">v</span> Copy/cut/paste the selection. Also works cross-table.</p>
             <p><span class="key">&lt;</span>/<span class="key">&gt;</span> Decrease/increase token letter. Hint: Only works for tokens!</p>
 
             <p><span class="key">Ctrl</span> Hold while selecting to multi-select.</p>
@@ -147,7 +151,7 @@ export function modalHelp () {
           <div class="copyright">
             <h2>Room assets</h2>
 
-            ${marked(getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+            ${marked.parse(getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
 
             <h2>UI assets</h2>
 

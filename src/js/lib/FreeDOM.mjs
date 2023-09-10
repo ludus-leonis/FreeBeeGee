@@ -2,8 +2,10 @@
  * @file DOM manipulation helpers.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
- * @version 1.0.2
+ * @version 1.1.0
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -23,14 +25,14 @@
  *
  * It can do things like:
  *
- * * _('#username').value = 'Jolie' // set property
- * * _('.selected').value = 'Jolie' // set property of multiple nodes
- * * _('.tabletop .piece.piece-token').add('.is-selected') // add classes
- * * _('.container > .row > .col-12').create() // create nested nodes Emmet-style
- * * _('.piece.is-selected').css({ backgroundColor: 'red' })
- * * _('.piece').on('click', click => { console.log('clicked!') }) // add events
- * * _('input').each(node => { node.value = '' }) // iterate selected nodes
- * * _('.col-12').toggle('.important').css({ display: 'block' }) // chaining
+ * - _('#username').value = 'Jolie' // set property
+ * - _('.selected').value = 'Jolie' // set property of multiple nodes
+ * - _('.tabletop .piece.piece-token').add('.is-selected') // add classes
+ * - _('.container > .row > .col-12').create() // create nested nodes Emmet-style
+ * - _('.piece.is-selected').css({ backgroundColor: 'red' })
+ * - _('.piece').on('click', click => { console.log('clicked!') }) // add events
+ * - _('input').each(node => { node.value = '' }) // iterate selected nodes
+ * - _('.col-12').toggle('.important').css({ display: 'block' }) // chaining
  *
  * ... and more!
  */
@@ -40,7 +42,7 @@ class FreeDOM {
    *
    * Accepts a query string or objects to operate on.
    *
-   * @param {(String|Element|DOM)} stuff Stuff to operate on. Usually a query string (e.g.
+   * @param {string|Element|FreeDOM} stuff Stuff to operate on. Usually a query string (e.g.
    *              '#myform > input.blue'), but can also be a vanilla Element
    *              or other DOM element.
    */
@@ -66,7 +68,8 @@ class FreeDOM {
    *
    * Will stop further execution on fatal errors.
    *
-   * @param {String} message Text for the Error() object.
+   * @param {string} message Text for the Error() object.
+   * @throws Error message with '_:' prefix.
    */
   _error (message) {
     throw new Error('_: ' + message)
@@ -75,8 +78,8 @@ class FreeDOM {
   /**
    * Get the value of a property from all currently selected Elements.
    *
-   * @param {String} property Property to get.
-   * @return {*} A single value if one element is selected, an array of values if
+   * @param {string} property Property to get.
+   * @returns {*} A single value if one element is selected, an array of values if
    *         multiple elements are selected, or undefined if selection is empty.
    */
   _get (property) {
@@ -95,7 +98,7 @@ class FreeDOM {
    * Will do a querySelectorAll() lookup if it was not done yet and cache the
    * result.
    *
-   * @return {Element[]} Array of matching/assigned Elements or empty Array if nothing
+   * @returns {Element[]} Array of matching/assigned Elements or empty Array if nothing
    *         matches our query.
    */
   _getNodes () {
@@ -108,9 +111,9 @@ class FreeDOM {
   /**
    * Set a property on all currently selected Elements.
    *
-   * @param {String} property Property to set.
+   * @param {string} property Property to set.
    * @param {*} value Vale to set to.
-   * @return {FreeDOM} DOM object for chaining.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   _set (property, value) {
     return this.each(node => {
@@ -122,7 +125,7 @@ class FreeDOM {
    * Create a Text node.
    *
    * @param {*} value Vale to use. Will be converted to String.
-   * @return {Text} DOM Text node.
+   * @returns {Text} DOM Text node.
    */
   _text (value) {
     return document.createTextNode('' + value)
@@ -139,8 +142,8 @@ class FreeDOM {
    * - Text nodes
    * - CSS classes (strings starting with '.')
    *
-   * @param {...(Element|DOM|Text|String)} Items to add.
-   * @return {FreeDOM} DOM object for chaining.
+   * @param {...*} items Items to add.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   add (...items) {
     for (const item of items) {
@@ -156,6 +159,10 @@ class FreeDOM {
         return this.each(node => node.appendChild(item.node()))
       } else if (item instanceof globalThis.Text) { // add self
         return this.each(node => node.appendChild(item))
+      } else if (Array.isArray(item)) { // add arrays of supported items
+        for (const itm of item) {
+          this.add(itm)
+        }
       } else {
         this._error('can\'t add() ' + typeof item)
       }
@@ -166,7 +173,7 @@ class FreeDOM {
   /**
    * Count the currently selected nodes.
    *
-   * @return {Number} Number of items matched by selector.
+   * @returns {number} Number of items matched by selector.
    */
   count () {
     return this._getNodes().length
@@ -178,7 +185,7 @@ class FreeDOM {
    * Will set Element.style.* properties provided as flat object.
    *
    * @param {object} css Object with property -> value entries.
-   * @return {FreeDOM} DOM object for chaining.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   css (css) {
     return this.each(node => {
@@ -213,10 +220,10 @@ class FreeDOM {
    * - '>' for child items (' ' works, too)
    * - '.' for classes
    *
-   * @param {Element|DOM} childItem An item to add as child for the deepest
+   * @param {Element|FreeDOM} childItem An item to add as child for the deepest
    *                  child. Can be a Element, a Text node, another DOM
    *                  object or a string. The latter will be converted to a Text.
-   * @return {FreeDOM} Topmost DOM object for chaining.
+   * @returns {FreeDOM} Topmost DOM object for chaining.
    */
   create (childItem = null) {
     const superselector = this._selector.trim().split(/[ >]/)
@@ -276,7 +283,7 @@ class FreeDOM {
    * Will set Element.dataset.* properties provided as flat object.
    *
    * @param {object} dataset Object with property -> value entries.
-   * @return {FreeDOM} DOM object for chaining.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   data (dataset) {
     return this.each(node => {
@@ -301,7 +308,7 @@ class FreeDOM {
    *
    * @param {Function} handler Function to call. Will recieve one node at a time
    *                as single parameter.
-   * @return {FreeDOM} DOM object for chaining.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   each (handler) { // apply hander to all nodes
     for (const node of this._getNodes()) { handler(node) }
@@ -311,7 +318,7 @@ class FreeDOM {
   /**
    * Remove all child items of all selected nodes.
    *
-   * @return {FreeDOM} DOM object for chaining.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   empty () {
     this.each(node => { node.innerHTML = '' })
@@ -322,7 +329,7 @@ class FreeDOM {
   /**
    * Check if the selector matches anything.
    *
-   * @return {Boolean} True, if selector selects at least one node in DOM tree.
+   * @returns {boolean} True, if selector selects at least one node in DOM tree.
    */
   exists () {
     return this.count() > 0
@@ -334,8 +341,8 @@ class FreeDOM {
    * Supports checking the following:
    * - CSS classes (strings starting with '.')
    *
-   * @param {...String} items Items to check for.
-   * @return {Boolean} True, if all items are found.
+   * @param {...string} items Items to check for.
+   * @returns {boolean} True, if all items are found.
    */
   hasAll (...items) {
     for (const item of items) {
@@ -358,8 +365,8 @@ class FreeDOM {
    * Supports checking the following:
    * - CSS classes (strings starting with '.')
    *
-   * @param {...String} items Items to check for.
-   * @return {Boolean} True, if at least one item was found.
+   * @param {...string} items Items to check for.
+   * @returns {boolean} True, if at least one item was found.
    */
   hasAny (...items) {
     for (const item of items) {
@@ -380,19 +387,20 @@ class FreeDOM {
   /**
    * Get the first matching node.
    *
-   * @return {Element} First node.
+   * @returns {Element} First node.
    * @throws Error, if no node is selected.
    */
   node () { // get first node
     const nodes = this._getNodes()
     if (nodes.length > 0) return nodes[0]
     this._error('no node() selected')
+    return null
   }
 
   /**
    * Get all matching nodes.
    *
-   * @return {Element[]} Array of nodes, possibly empty.
+   * @returns {Element[]} Array of nodes, possibly empty.
    */
   nodes () { // get all nodes
     return this._getNodes()
@@ -401,10 +409,10 @@ class FreeDOM {
   /**
    * Add an event handler to each selected node.
    *
-   * @param {String} event HTML event, e.g. 'click' or 'mousedown'.
+   * @param {string} event HTML event, e.g. 'click' or 'mousedown'.
    * @param {Function} handler Function to call when event is triggered. Will recieve the
    *                corresponding event object as first parameter.
-   * @return {FreeDOM} DOM object for chaining.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   on (event, handler) {
     return this.each(node => { node.addEventListener(event, e => handler(e)) })
@@ -416,8 +424,8 @@ class FreeDOM {
    * Supports removing the following:
    * - CSS classes (strings starting with '.')
    *
-   * @param {...String} items Items to remove.
-   * @return {FreeDOM} DOM object for chaining.
+   * @param {...string} items Items to remove.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   remove (...items) {
     for (const item of items) {
@@ -457,8 +465,8 @@ class FreeDOM {
    * Supports adding the following:
    * - CSS classes (strings starting with '.')
    *
-   * @param {...String} items Items to toggle.
-   * @return {FreeDOM} DOM object for chaining.
+   * @param {...string} items Items to toggle.
+   * @returns {FreeDOM} DOM object for chaining.
    */
   toggle (...items) {
     for (let item of items) {
@@ -475,12 +483,13 @@ class FreeDOM {
       }
       this._error('can\'t toggle() ' + typeof item)
     }
+    return this
   }
 
   /**
    * Check if the selector matches exactly one node.
    *
-   * @return {Boolean} True, if exactly one node matches. False otherwise.
+   * @returns {boolean} True, if exactly one node matches. False otherwise.
    */
   unique () {
     return this.count() === 1
@@ -492,7 +501,8 @@ class FreeDOM {
    * Focus the first selected item.
    *
    * Best used for <input>s.
-   * @return {FreeDOM} DOM object for chaining.
+   *
+   * @returns {FreeDOM} DOM object for chaining.
    */
   focus () {
     if (this.exists()) {
@@ -505,7 +515,7 @@ class FreeDOM {
    * Return the value of all selected nodes - usually <inputs>. Fall back to
    * placeholder (if any) if the value is empty.
    *
-   * @return {any[]} Array of node.value's or node.placeholder's.
+   * @returns {any[]} Array of node.value's or node.placeholder's.
    */
   valueOrPlaceholder () {
     const value = this.value.trim()
@@ -519,8 +529,8 @@ class FreeDOM {
  * Allows calling any property (e.g. .value or .id) on all selected DOM objects
  * by mapping properties to DOM._get() and DOM._set() calls.
  *
- * @param {(String|Element|DOM)} item Stuff forwarded to DOM().
- * @return {FreeDOM} DOM object with enabled proxy calls for getters/setters.
+ * @param {string|Element|FreeDOM} item Stuff forwarded to DOM().
+ * @returns {FreeDOM} DOM object with enabled proxy calls for getters/setters.
  */
 export default function _ (item) {
   // a magic little proxy that exposes all Element properties

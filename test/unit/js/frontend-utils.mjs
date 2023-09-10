@@ -1,7 +1,9 @@
 /**
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -24,8 +26,24 @@ import {
   getGetParameter,
   getStoreValue,
   setStoreValue,
-  toggleFullscreen,
+  toggleFullscreen
+} from '../../../src/js/lib/utils-html.mjs'
 
+import {
+  uuid,
+  bytesToIso,
+  hash,
+  hoursToTimespan,
+  toTitleCase,
+  toCamelCase,
+  prettyName,
+  sortByNumber,
+  sortByString,
+  unCamelCase,
+  unprettyName
+} from '../../../src/js/lib/utils-text.mjs'
+
+import {
   isAll,
   isAny,
   isNone,
@@ -41,17 +59,6 @@ import {
   getDimensionsRotated,
 
   equalsJSON,
-
-  uuid,
-  bytesToIso,
-  hash,
-  toTitleCase,
-  toCamelCase,
-  unCamelCase,
-  sortByString,
-  sortByNumber,
-  prettyName,
-  unprettyName,
 
   recordTime,
 
@@ -684,18 +691,47 @@ describe('Frontend - utils.mjs - Text', function () {
     expect(bytesToIso(1024 * 1024 * 1024)).to.be.eql('1 GB')
   })
 
+  it('hoursToTimespan()', function () {
+    expect(hoursToTimespan(0)).to.be.eql('0 hours')
+    expect(hoursToTimespan(1)).to.be.eql('1 hour')
+    expect(hoursToTimespan(2)).to.be.eql('2 hours')
+    expect(hoursToTimespan(95)).to.be.eql('95 hours')
+    expect(hoursToTimespan(96)).to.be.eql('4 days')
+    expect(hoursToTimespan(96, true)).to.be.eql('4 days')
+    expect(hoursToTimespan(96, false)).to.be.eql('4 days')
+    expect(hoursToTimespan(97)).to.be.eql('4 days')
+    expect(hoursToTimespan(97, true)).to.be.eql('4 days')
+    expect(hoursToTimespan(97, false)).to.be.eql('5 days')
+    expect(hoursToTimespan(2400)).to.be.eql('100 days')
+    expect(hoursToTimespan(2400, true)).to.be.eql('100 days')
+    expect(hoursToTimespan(2400, false)).to.be.eql('100 days')
+    expect(hoursToTimespan(2401)).to.be.eql('14 weeks')
+    expect(hoursToTimespan(2401, true)).to.be.eql('14 weeks')
+    expect(hoursToTimespan(2401, false)).to.be.eql('15 weeks')
+  })
+
   it('prettyName()', function () {
     expect(prettyName('dungeon')).to.be.eql('Dungeon')
     expect(prettyName('dungeon.door')).to.be.eql('Dungeon, Door')
     expect(prettyName('dungeon.ironDoor')).to.be.eql('Dungeon, Iron Door')
     expect(prettyName(' dunGeon.ironDoor ')).to.be.eql('Dun Geon, Iron Door')
+
+    expect(prettyName('_.door')).to.be.eql('Door')
+    expect(prettyName('_.door', true)).to.be.eql('Door')
+    expect(prettyName('_.door', false)).to.be.eql('_, Door')
   })
 
   it('unprettyName()', function () {
     expect(unprettyName('Dungeon')).to.be.eql('dungeon')
+    expect(unprettyName('Dungeon, ')).to.be.eql('dungeon')
     expect(unprettyName('Dungeon, Door')).to.be.eql('dungeon.door')
     expect(unprettyName('Dungeon, Iron Door')).to.be.eql('dungeon.ironDoor')
     expect(unprettyName('  Dun  Geon ,  Iron  Door  ')).to.be.eql('dunGeon.ironDoor')
+
+    expect(unprettyName('_')).to.be.eql('_')
+    expect(unprettyName('_, ')).to.be.eql('_')
+    expect(unprettyName('_, Iron Door')).to.be.eql('_.ironDoor')
+    expect(unprettyName('  _  , Iron Door  ')).to.be.eql('_.ironDoor')
   })
 })
 

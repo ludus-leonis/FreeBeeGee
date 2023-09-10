@@ -2,7 +2,9 @@
  * @file Handles moving around stuff on the tabletop, plus selection states.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -57,7 +59,7 @@ import {
 /**
  * Determine if user is currently dropping (move while mouse button down) something.
  *
- * @return {Boolean} True if so, false if not.
+ * @returns {boolean} True if so, false if not.
  */
 export function isDragging () {
   return dragCurrent !== null
@@ -65,7 +67,8 @@ export function isDragging () {
 
 /**
  * Get the current mouse cursor position.
- * @return {Object} Object with x and y in pixels on the tabletop.
+ *
+ * @returns {object} Object with x and y in pixels on the tabletop.
  */
 export function getMouseCoords () {
   return getTableCoordinates(mouseX, mouseY)
@@ -74,7 +77,7 @@ export function getMouseCoords () {
 /**
  * Enable the room area drag'n'drop handling by registering the event handlers.
  *
- * @param {String} tabletop Selector/ID for tabletop div.
+ * @param {string} tabletop Selector/ID for tabletop div.
  */
 export function enableDragAndDrop (tabletop) {
   _(tabletop)
@@ -99,8 +102,8 @@ export function toggleLMBLos () {
 /**
  * Enable LOS drawing mode on the left mouse button.
  *
- * @param {Boolean} active If true, will also check if an actual drag is going on. Default false.
- * @return {Boolean} True if Los mode is on.
+ * @param {boolean} active If true, will also check if an actual drag is going on. Default false.
+ * @returns {boolean} True if Los mode is on.
  */
 export function isLMBLos (active = false) {
   if (active) {
@@ -112,7 +115,7 @@ export function isLMBLos (active = false) {
 /**
  * Force-release a button. Usually because some hotkey triggers that.
  *
- * @param {Number} no Number of the mouse button (0/1/2 = left/middle/right).
+ * @param {number} no Number of the mouse button (0/1/2 = left/middle/right).
  */
 export function release (no) {
   if (dragHandlers[no].isDragging()) {
@@ -129,8 +132,8 @@ let mouseY = 0
 /**
  * Store current mouse position for later.
  *
- * @param {Number} x Mouse X.
- * @param {Number} y Mouse Y.
+ * @param {number} x Mouse X.
+ * @param {number} y Mouse Y.
  */
 function touchMousePosition (x, y) {
   mouseX = x

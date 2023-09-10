@@ -2,7 +2,9 @@
  * @file Code related to the right-click popup window/menu.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,11 +34,14 @@ import {
   iconPile,
   iconTop,
   iconBottom,
-  iconClone,
+  iconCopy,
+  iconPaste,
   iconDelete
 } from '../../../lib/icons.mjs'
 
 import {
+  clipboardCopy,
+  clipboardGetPieces,
   selectionGetFeatures
 } from './selection.mjs'
 
@@ -50,12 +55,8 @@ import {
   toTopSelected,
   toBottomSelected,
   deleteSelected,
-  cloneSelected
+  clipboardPaste
 } from '../../../view/room/tabletop/index.mjs'
-
-import {
-  getMouseCoords
-} from '../../../view/room/mouse/index.mjs'
 
 import {
   modalSettings
@@ -63,7 +64,7 @@ import {
 
 import {
   modalLibrary
-} from '../../../view/room/modal/library/index.mjs'
+} from '../../../view/room/library/index.mjs'
 
 import {
   zoomCoordinates
@@ -72,7 +73,7 @@ import {
 /**
  * Show the popup menu for a piece.
  *
- * @param {Object} piece The piece.
+ * @param {object} piece The piece.
  */
 export function popupPiece (piece) {
   popupHide()
@@ -89,7 +90,7 @@ export function popupPiece (piece) {
     <a class="popup-menu top ${f.top ? '' : 'disabled'}" href="#">${iconTop}To top</a>
     <a class="popup-menu bottom ${f.bottom ? '' : 'disabled'}" href="#">${iconBottom}To bottom</a>
     ${(f.clone || f.delete) ? '<hr>' : ''}
-    <a class="popup-menu clone ${f.clone ? '' : 'disabled'}" href="#">${iconClone}Clone</a>
+    <a class="popup-menu clone ${f.clone ? '' : 'disabled'}" href="#">${iconCopy}Copy</a>
     <a class="popup-menu delete ${f.delete ? '' : 'disabled'}" href="#">${iconDelete}Delete</a>
   `
   // <a class="popup-menu shuffle ${f.pile ? '' : 'disabled'}" href="#">${iconPileShuffle}Pile &amp; shuffle</a>
@@ -105,7 +106,7 @@ export function popupPiece (piece) {
   popupClick('#popper .top', () => { toTopSelected() })
   popupClick('#popper .bottom', () => { toBottomSelected() })
   popupClick('#popper .delete', () => { deleteSelected() })
-  popupClick('#popper .clone', () => { cloneSelected(getMouseCoords()) })
+  popupClick('#popper .clone', () => { clipboardCopy() })
 
   createPopper(_('#' + piece.id).node(), popup.node(), {
     placement: 'right'
@@ -116,7 +117,7 @@ export function popupPiece (piece) {
 /**
  * Show the popup menu for the table.
  *
- * @param coords {x, y} coords to show the popup at.
+ * @param {object} coords {x, y} coords to show the popup at.
  */
 export function popupTable (coords) {
   popupHide()
@@ -126,6 +127,7 @@ export function popupTable (coords) {
   popup.innerHTML = `
     <a class="popup-menu add" href="#">${iconAdd}Add piece</a>
     <a class="popup-menu note" href="#">${iconNote}Add note</a>
+    ${clipboardGetPieces().length > 0 ? '<a class="popup-menu paste" href="#">' + iconPaste + 'Paste</a>' : ''}
     <hr>
     <a class="popup-menu settings" href="#">${iconSettings}Settings</a>
   `
@@ -140,6 +142,7 @@ export function popupTable (coords) {
 
   popupClick('#popper .add', () => { modalLibrary(coords) })
   popupClick('#popper .note', () => { createNote(coords) })
+  popupClick('#popper .paste', () => { clipboardPaste(coords) })
   popupClick('#popper .settings', () => { modalSettings() })
 
   createPopper(anchor.node(), popup.node(), {
@@ -167,8 +170,8 @@ export function popupHide (id) {
  *
  * Will hide the popup and then run a callback.
  *
- * @param {String} selector CSS selector for menu item.
- * @param {callback} callback Method to call.
+ * @param {string} selector CSS selector for menu item.
+ * @param {Function} callback Method to call.
  */
 function popupClick (selector, callback) {
   _(selector).on('click', click => {

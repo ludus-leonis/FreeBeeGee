@@ -1,7 +1,9 @@
 /**
  * @file Handles dynamic stuff on the tools page
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -20,6 +22,9 @@ import * as bcrypt from 'bcryptjs'
 
 import _ from 'lib/FreeDOM.mjs'
 
+/**
+ *
+ */
 export function setupBcrypt () {
   _('#tool-bcrypt').innerHTML = `
     <p class="spacing-none">
@@ -54,6 +59,9 @@ export function setupBcrypt () {
   _('#tool-in2').on('keyup', keyup => hash())
 }
 
+/**
+ *
+ */
 function hash () {
   const in1 = _('#tool-in1').value.trim()
   const in2 = _('#tool-in2').value.trim()

@@ -3,7 +3,9 @@
 /**
  * Copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -277,7 +279,7 @@ class JSONRestAPI
     public function assertString(
         string $field,
         $value,
-        string $regexp,
+        string $regexp = '/.*/',
         bool $send = true
     ) {
         if ($value !== null) {
@@ -339,7 +341,7 @@ class JSONRestAPI
     public function assertStringArray(
         string $field,
         $values,
-        string $regexp,
+        string $regexp = '/.*/',
         int $minLength = 1,
         int $maxLength = PHP_INT_MAX,
         bool $send = true
@@ -554,14 +556,14 @@ class JSONRestAPI
         int $max = 256,
         bool $send = true
     ) {
-        if (is_numeric($value)) {
+        if (filter_var($value, FILTER_VALIDATE_INT) !== false) {
             $i = (int) $value;
             if ($i >= $min && $i <= $max) {
                 return $i;
             }
         }
         if ($send) {
-            $this->sendError(400, "invalid JSON: $field not between $min and $max");
+            $this->sendError(400, "invalid JSON: $field not integer between $min and $max");
         } else {
             return null;
         }
@@ -831,7 +833,8 @@ class JSONRestAPI
         foreach ($otherMessages as $message) {
             $errors[] = $message;
         }
-        $error = '{"_error": "' . $appErrorCode . '","_messages":' . json_encode($errors) . '}';
+        $error = '{"_error": "' . ($code === 404 ? 'NOT_FOUND' : $appErrorCode) .
+            '","_messages":' . json_encode($errors) . '}';
         $this->sendReply($code, $error);
     }
 

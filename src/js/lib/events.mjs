@@ -2,7 +2,9 @@
  * @file An observer pattern / event propagation lib.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -17,14 +19,16 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
+export const HOOK_LIBRARY_EDIT = 'HOOK_LIBRARY_EDIT'
 export const HOOK_LIBRARY_UPDATE = 'HOOK_LIBRARY_UPDATE'
+export const HOOK_LIBRARY_RELOAD = 'HOOK_LIBRARY_RELOAD'
 
 /**
  * Register an observer.
  *
  * @param {string} who Name of the observer. Re-registering an observer removes the old entry first.
  * @param {string} what HOOK_* event to listen for.
- * @param {function} callback Function to call when corresponding event is triggered.
+ * @param {Function} callback Function to call when corresponding event is triggered.
  */
 export function registerObserver (who, what, callback) {
   if (!observers[what]) {
@@ -42,7 +46,6 @@ export function registerObserver (who, what, callback) {
  *
  * @param {string} who Name of the observer. Re-registering an observer removes the old entry first.
  * @param {string} what HOOK_* event to listen for.
- * @param {function} callback Function to call when corresponding event is triggered.
  */
 export function unregisterObserver (who, what) {
   if (!observers[what]) {

@@ -2,7 +2,9 @@
  * @file Handles the room settings modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -52,6 +54,8 @@ import {
 } from '../../../view/room/tabletop/index.mjs'
 
 import {
+  TYPE_HEX,
+  TYPE_HEX2,
   getContentRect
 } from '../../../view/room/tabletop/tabledata.mjs'
 
@@ -90,31 +94,31 @@ export function modalSettings () {
             <div class="col-12">
               <p>This tab only affects what you can see, not the other players.</p>
             </div>
-            <div class="col-6 col-lg-3">
-              <label for="table-zoom">Zoom</label>
-              <select id="table-zoom" name="zoom"></select>
-              <p class="p-small spacing-tiny">Magnification</p>
-            </div>
-            <div class="col-6 col-lg-3">
+            <div class="col-6 col-lg-4">
               <label for="table-background">Background</label>
               <select id="table-background" name="background"></select>
-              <p class="p-small spacing-tiny">Table texture.</p>
             </div>
-            <div class="col-6 col-lg-3">
+            <div class="col-6 col-lg-2">
+              <label for="table-zoom">Zoom</label>
+              <select id="table-zoom" name="zoom"></select>
+            </div>
+            <div class="col-6 col-lg-2">
               <label for="table-grid">Grid</label>
               <select id="table-grid" name="grid">
                 <option value="0" ${grid === 0 ? 'selected' : ''}>None</option>
                 <option value="1" ${grid === 1 ? 'selected' : ''}>Minor</option>
                 <option value="2" ${grid === 2 ? 'selected' : ''}>Major</option>
               </select>
-              <p class="p-small spacing-tiny">Show grid?</p>
             </div>
-
-            <div class="col-6 col-lg-3">
+            <div class="col-6 col-lg-2">
               <label for="table-sub">Table</label>
               <select id="table-sub" name="table"></select>
-              <p class="p-small spacing-tiny">Visible table.</p>
             </div>
+            <div class="col-6 col-lg-2">
+              <label for="table-rstep">Rotate steps</label>
+              <select id="table-rstep" name="steps"></select>
+            </div>
+
             <div class="col-12">
               <label for="table-quality">Render quality</label>
               <input id="table-quality" class="slider" type="range" min="0" max="3" value="${getServerPreference(PREFS.QUALITY)}" >
@@ -293,6 +297,15 @@ export function modalSettings () {
     table.add(option)
   }
 
+  const rotate = _('#table-rstep')
+  const range = [TYPE_HEX, TYPE_HEX2].includes(getSetup().type) ? [10, 30, 60] : [10, 45, 90]
+  for (const r of range) {
+    const option = _('option').create(`${r}°`)
+    option.value = r
+    if (r === getRoomPreference(PREFS.PIECE_ROTATE)) option.selected = true
+    rotate.add(option)
+  }
+
   const setup = getSetup()
   const rect = getContentRect()
   populateSizes('#table-w', getSetup().gridWidth, Math.floor(rect.right / setup.gridSize))
@@ -326,6 +339,7 @@ export function modalSettings () {
     setupBackground()
   })
   _('#table-sub').on('change', () => setTableNo(Number(_('#table-sub').value)))
+  _('#table-rstep').on('change', () => setRoomPreference(PREFS.PIECE_ROTATE, Number(_('#table-rstep').value)))
 
   _('#btn-table-tl').on('click', click => handleAlign(click, -1, -1))
   _('#btn-table-tc').on('click', click => handleAlign(click, 0, -1))
@@ -353,7 +367,7 @@ export function modalSettings () {
  *
  * Will add matching .is-quality-* classes to the body.
  *
- * @param {Number} value Quality setting. 0 = low, 1 = medium, 2 = high, 3 = ultra
+ * @param {number} value Quality setting. 0 = low, 1 = medium, 2 = high, 3 = ultra
  */
 export function changeQuality (value) {
   const body = _('body').remove('.is-quality-*')
@@ -379,10 +393,10 @@ export function changeQuality (value) {
 /**
  * Populate a grid-size <select> with appropriate entries.
  *
- * @param {String} id DOM-ID of select.
- * @param {Number} roomSize Current room size in tiles.
- * @param {Number} contentSize Current right-most content size, in tiles.
- * @param {Number} increments (Optional) Increment size, defaults to 16.
+ * @param {string} id DOM-ID of select.
+ * @param {number} roomSize Current room size in tiles.
+ * @param {number} contentSize Current right-most content size, in tiles.
+ * @param {number} increments (Optional) Increment size, defaults to 16.
  */
 function populateSizes (id, roomSize, contentSize, increments = 16) {
   const select = _(id)
@@ -417,8 +431,8 @@ function resizeRoom () {
  * Handle the alignment click event.
  *
  * @param {Event} click Click-event.
- * @param {Number} x X position on table, range [-1 .. 0 .. 1]
- * @param {Number} y Y position on table, range [-1 .. 0 .. 1]
+ * @param {number} x X position on table, range [-1 .. 0 .. 1]
+ * @param {number} y Y position on table, range [-1 .. 0 .. 1]
  */
 function handleAlign (click, x, y) {
   click.preventDefault()

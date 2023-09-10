@@ -2,7 +2,9 @@
  * @file Handles the screensaver modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,6 +34,8 @@ import {
  * Show the help window.
  *
  * Contains basis help, shortcuts and an About section.
+ *
+ * @param {Function} callback Function to call upon modal close/wakeup.
  */
 export function modalInactive (callback) {
   if (!isModalActive()) {

@@ -1,7 +1,9 @@
 /**
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -37,7 +39,7 @@ const runner = function (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
   const api = 'http://localhost:8765/api'
 
-  describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
+  describe('PHP 8.2', function () { what(api, '82', `${room}82`) })
 }
 
 runAssets(runner)

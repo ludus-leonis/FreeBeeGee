@@ -25,6 +25,7 @@
 
 $form-field-border: px(2) solid $color-gray-40;
 
+$form-color-background: transparent;
 $form-color-disabled: $color-gray-50;
 $form-color-placeholder: $color-gray-25;
 
@@ -32,7 +33,7 @@ $form-color-placeholder: $color-gray-25;
   @extend %p-medium;
 
   appearance: none;
-  background-color: $color-white-100;
+  background-color: $form-color-background;
   border: 0;
   border-bottom: $form-field-border;
   color: inherit;
@@ -60,6 +61,7 @@ $form-color-placeholder: $color-gray-25;
 
 label {
   @extend %p-label;
+
   display: block;
 
   + input,
@@ -104,6 +106,12 @@ textarea,
     border-color: $color-bad;
     box-shadow: none;
     color: $color-bad;
+  }
+
+  &:disabled,
+  &.disabled {
+    box-shadow: none;
+    color: $form-color-disabled;
   }
 
   &::selection {
@@ -194,5 +202,16 @@ select {
     overflow: hidden;
     text-transform: none;
     white-space: nowrap;
+  }
+}
+
+.client-feedback,
+.server-feedback,
+.server-feedback-form {
+  color: $color-bad;
+  display: none;
+
+  &.show {
+    display: block;
   }
 }

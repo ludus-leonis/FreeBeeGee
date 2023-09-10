@@ -27,23 +27,23 @@
 @import '../../fonts/PatrickHand/PatrickHand';
 @import '../../fonts/SourceCodePro/SourceCodePro';
 
-$typography-font-list-fallback:
+$typography-font-list-fallback: // stylelint-disable-line scss/dollar-variable-colon-space-after
 -apple-system,
-BlinkMacSystemFont,
+'BlinkMacSystemFont',
 'Segoe UI',
-Roboto,
+'Roboto',
 'Helvetica Neue',
-Arial,
+'Arial',
 sans-serif,
 'Apple Color Emoji',
 'Segoe UI Emoji',
 'Segoe UI Symbol';
 
-$typography-font-list-monospace-fallback:
-SFMono-Regular,
-Menlo,
-Monaco,
-Consolas,
+$typography-font-list-monospace-fallback: // stylelint-disable-line scss/dollar-variable-colon-space-after
+'SFMono-Regular',
+'Menlo',
+'Monaco',
+'Consolas',
 'Liberation Mono',
 'Courier New',
 monospace;
@@ -118,8 +118,7 @@ $typography-font-weight-bold: $typography-font-weight-regular + 200;
 // --- or general typography style set -----------------------------------------
 
 h1,
-.h1,
-%h1 {
+.h1 {
   @extend %spacing-large;
   @include typography-font(
     $typography-font-list-sans,
@@ -131,8 +130,7 @@ h1,
 }
 
 h2,
-.h2,
-%h2 {
+.h2 {
   @extend %spacing-medium;
   @include typography-font(
     $typography-font-list-sans,
@@ -144,8 +142,7 @@ h2,
 }
 
 h3,
-.h3,
-%h3 {
+.h3 {
   @extend %spacing-small;
   @include typography-font(
     $typography-font-list-sans,
@@ -158,13 +155,10 @@ h3,
 
 h4,
 .h4,
-%h4,
 h5,
 .h5,
-%h5,
-h5,
-.h5,
-%h6 {
+h6,
+.h6 {
   @include typography-font(
     $typography-font-list-sans,
     $typography-font-weight-regular,
@@ -245,6 +239,7 @@ pre,
     px(15),
     $typography-paragraph-lineheight
   );
+
   font-variant-ligatures: none;
 }
 
@@ -255,6 +250,7 @@ code {
 .p-label,
 %p-label {
   @extend %p-small;
+
   color: $color-primary;
   font-size: 13px;
   font-weight: 600;
@@ -356,6 +352,10 @@ hr {
   color: $color-gray-50;
 }
 
+.is-faded-more {
+  color: $color-gray-25;
+}
+
 .is-center {
   text-align: center;
 }
@@ -379,5 +379,5 @@ hr {
 .is-tabular {
   display: inline-block;
   text-align: center;
-  width: .65em;
+  width: .6em;
 }

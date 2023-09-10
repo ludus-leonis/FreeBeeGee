@@ -2,7 +2,9 @@
  * @file Send keyboard/shortcut events to the proper functions.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -41,6 +43,7 @@ import {
 
 import {
   settings,
+  clipboardPaste,
   rotateSelected,
   deleteSelected,
   cloneSelected,
@@ -77,19 +80,28 @@ import {
 
 import {
   modalLibrary
-} from '../../view/room/modal/library/index.mjs'
+} from '../../view/room/library/index.mjs'
 
 import {
   modalLibraryManager
-} from '../../view/room/modal/library/manager.mjs'
+} from '../../view/room/library/editor.mjs'
 
 import {
   modalHelp
 } from '../../view/room/modal/help.mjs'
 
 import {
+  HOOK_LIBRARY_EDIT,
+  triggerEvent
+} from '../../lib/events.mjs'
+
+import {
+  clipboardCopy
+} from '../../view/room/tabletop/selection.mjs'
+
+import {
   toggleFullscreen
-} from '../../lib/utils.mjs'
+} from '../../lib/utils-html.mjs'
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleRoomKeys(keydown))
@@ -98,7 +110,6 @@ document.addEventListener('keydown', keydown => handleRoomKeys(keydown))
  * Call proper functions after certain keys are pressed.
  *
  * @param {KeyboardEvent} keydown The triggering event.
- * @return {Boolean} True if we could handle the event, false if it should bubble.
  */
 function handleRoomKeys (keydown) {
   if (!_('#tabletop').exists()) return
@@ -125,6 +136,16 @@ function handleRoomKeys (keydown) {
         keydown.preventDefault()
         return
     }
+  }
+
+  if (!isDragging() && !isModalActive() && isWindowActive()) { // keys fo the library window
+    switch (keydown.key) {
+      case 'e': // edit
+      case 'F2':
+        triggerEvent(HOOK_LIBRARY_EDIT)
+        break
+    }
+    return
   }
 
   if (!isDragging() && !isModalActive() && !isWindowActive()) { // keys that don't work while dragging
@@ -178,7 +199,16 @@ function handleRoomKeys (keydown) {
         toTopSelected()
         break
       case 'c': // copy/clone
-        cloneSelected(getMouseCoords())
+        if (keydown.ctrlKey) clipboardCopy(); else cloneSelected(getMouseCoords())
+        break
+      case 'x': // paste
+        if (keydown.ctrlKey) {
+          clipboardCopy()
+          deleteSelected()
+        }
+        break
+      case 'v': // paste
+        if (keydown.ctrlKey) clipboardPaste(getMouseCoords())
         break
       case 'e': // edit
       case 'F2':

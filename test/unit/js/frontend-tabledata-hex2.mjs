@@ -1,7 +1,9 @@
 /**
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -160,8 +162,8 @@ describe('Frontend - tabledata.mjs', function () {
     expect(features.boundingBox.left).to.be.eql(393)
     expect(features.boundingBox.bottom).to.be.eql(398)
     expect(features.boundingBox.right).to.be.eql(631)
-    expect(features.boundingBox.x).to.be.eql(512)
-    expect(features.boundingBox.y).to.be.eql(256)
+    expect(features.boundingBox.center.x).to.be.eql(512)
+    expect(features.boundingBox.center.y).to.be.eql(256)
     expect(features.boundingBox.w).to.be.eql(239)
     expect(features.boundingBox.h).to.be.eql(286)
   })

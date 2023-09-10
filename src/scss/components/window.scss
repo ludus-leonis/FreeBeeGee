@@ -27,7 +27,6 @@ $window-header-height: px(24);
 
 .window {
   #{'--fbg-zoom'}: 1;
-
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -85,7 +84,9 @@ $window-header-height: px(24);
 }
 
 .window-body {
-  background-color: $color-bw-bg;
+  background-color: $color-white-100;
+  background-image: url('img/ui-paper.jpg');
+  background-position-y: bottom;
   color: $color-bw-fg;
   display: flex;
   height: 100%;

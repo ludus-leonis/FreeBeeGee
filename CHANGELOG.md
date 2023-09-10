@@ -2,6 +2,36 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+
+## v0.21.0 - Wailing Woodpecker
+
+### Notable changes
+
+* added option to edit asset name / size / material / color to library editor
+* added copy/cut/paste between tables in a room
+* added paper background for windows and cards
+* added half-rotations via settings (45° for square, 30° for hex)
+* added wooden cubes (small, medium, large) to default snapshot library
+* changed tile+token sides to be shown as individual pieces in library
+* changed docker image to PHP 8.2
+* renamed library manager to library editor
+
+### Other changes
+
+* added pre-selection of asset based on selected token when library is opened
+* added tabular numbers for library editor tree/preview
+* added JSDoc linting and moved linting from gulp to npm
+* added GitHub Actions for automated build
+* added error message when snapshot list is empty
+* fixed texture bug on masked non-square assets
+* fixed click on icon in popup does not trigger function
+* changed new-note to show the edit window first instead of creating an empty note
+* improved server-delete timespan display to show days and weeks
+* improved information on docker installation and volume mounting
+* replaced gulp-image with custom image shrinker plugin
+* replaced sass-lint with stylelint
+
+
 ## v0.20.0 - Advising Antelope
 
 ### Notable changes

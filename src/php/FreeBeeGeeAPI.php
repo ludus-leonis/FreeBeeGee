@@ -3,7 +3,9 @@
 /**
  * Copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -42,6 +44,8 @@ const SETUP_GRIDSIZE_MAX = 256;
 const REGEXP_ID    = '/^[0-9a-zA-Z_-]{8}$/';
 const REGEXP_COLOR = '/^#[0-9a-fA-F]{6}$/';
 const REGEXP_MATERIAL = '/^[0-9a-zA-Z]{1,32}$/';
+const REGEXP_ASSET_BG = '/^#[a-fA-F0-9]{6}|transparent|[0-9]+$/';
+const REGEXP_ASSET_NAME = '/^(_|[A-Za-z0-9-]{1,64})(.[A-Za-z0-9-]{1,64})?$/';
 
 /**
  * FreeBeeGeeAPI - The tabletop backend.
@@ -168,6 +172,12 @@ class FreeBeeGeeAPI
             $meta = $this->getRoomMeta($data['rid']);
             $patch = $this->api->assertJSONObject('setup', $payload);
             $fbg->updateRoomSetupLocked($meta, $patch);
+        });
+
+        $this->api->register('PATCH', '/rooms/:rid/assets/:aid/?', function ($fbg, $data, $payload) {
+            $meta = $this->getRoomMeta($data['rid']);
+            $patch = $this->api->assertJSONObject('asset', $payload);
+            $fbg->updateAsset($meta, $data['aid'], $patch);
         });
 
         $this->api->register('PATCH', '/rooms/:rid/auth/', function ($fbg, $data, $payload) {
@@ -996,11 +1006,13 @@ class FreeBeeGeeAPI
                     break;
                 case 'gridWidth':
                     $out->$property =
-                        $this->api->assertInteger('gridWidth', $value, SETUP_GRIDSIZE_MIN, SETUP_GRIDSIZE_MAX, false) ?: '48';
+                        $this->api->assertInteger('gridWidth', $value, SETUP_GRIDSIZE_MIN, SETUP_GRIDSIZE_MAX, false)
+                            ?: '48';
                     break;
                 case 'gridHeight':
                     $out->$property =
-                        $this->api->assertInteger('gridHeight', $value, SETUP_GRIDSIZE_MIN, SETUP_GRIDSIZE_MAX, false) ?: '32';
+                        $this->api->assertInteger('gridHeight', $value, SETUP_GRIDSIZE_MIN, SETUP_GRIDSIZE_MAX, false)
+                            ?: '32';
                     break;
                 case 'table':
                     $out->$property =
@@ -1195,7 +1207,7 @@ class FreeBeeGeeAPI
                     }
                     break;
                 case 'r':
-                    if ($this->api->assertEnum('r', $value, [60, 90, 120, 180, 240, 270, 300], false)) {
+                    if ($this->api->assertInteger('r', $value, 0, 359, false)) {
                         $out->$property = $value; // 0 = default = don't add
                     }
                     break;
@@ -1336,13 +1348,15 @@ class FreeBeeGeeAPI
                     $validated->n = $this->api->assertInteger('n', $value, 0, 35);
                     break;
                 case 'r':
-                    $validated->r = $this->api->assertEnum('r', $value, [0, 60, 90, 120, 180, 240, 270, 300]);
+                    $validated->r = $this->api->assertInteger('r', $value, 0, 359);
                     break;
                 case 't':
                     if (($piece->l ?? null) === 3) { // 3 = note
-                        $validated->t = $this->api->assertStringArray('t', $value, '/^[^\t]{0,' . NOTE_LENGTH . '}$/', 0, 1);
+                        $validated->t =
+                            $this->api->assertStringArray('t', $value, '/^[^\t]{0,' . NOTE_LENGTH . '}$/', 0, 1);
                     } else {
-                        $validated->t = $this->api->assertStringArray('t', $value, '/^[^\n\r]{0,' . LABEL_LENGTH . '}$/', 0, 1);
+                        $validated->t =
+                            $this->api->assertStringArray('t', $value, '/^[^\n\r]{0,' . LABEL_LENGTH . '}$/', 0, 1);
                     }
                     break;
                 case 'b':
@@ -1445,27 +1459,28 @@ class FreeBeeGeeAPI
      * Parse incoming JSON for (new) assets.
      *
      * @param object $incoming Parsed asset from client.
+     * @param array $mandatory List of mandatory fields in the object.
      * @return object Validated JSON, converted to an object.
      */
     private function validateAsset(
-        object $incoming
+        object $incoming,
+        array $mandatory = ['name', 'format', 'type', 'w', 'h', 'base64', 'bg']
     ): object {
         $validated = new \stdClass();
 
         $this->api->assertHasProperties(
             'asset',
             $incoming,
-            ['name', 'format', 'type', 'w', 'h', 'base64', 'bg']
+            $mandatory
         );
 
         foreach ($incoming as $property => $value) {
             switch ($property) {
+                case 'id':
+                    $validated->id = $this->assertID($value);
+                    break;
                 case 'name':
-                    $validated->name = $this->api->assertString(
-                        'name',
-                        $value,
-                        '/^[A-Za-z0-9-]{1,64}(.[A-Za-z0-9-]{1,64})?$/'
-                    );
+                    $validated->name = $this->api->assertString('name', $value, REGEXP_ASSET_NAME);
                     break;
                 case 'format':
                     $validated->format = $this->api->assertEnum('format', $value, ['jpg', 'png']);
@@ -1483,14 +1498,19 @@ class FreeBeeGeeAPI
                     $validated->base64 = $this->api->assertBase64('base64', $value, ASSET_SIZE_MAX);
                     break;
                 case 'bg':
-                    $validated->bg = $this->api->assertString(
-                        'bg',
-                        $value,
-                        '/^#[a-fA-F0-9]{6}|transparent|piece$/'
-                    );
+                    $validated->bg = is_null($value) ? '0' : $this->api->assertString('bg', $value, REGEXP_ASSET_BG);
                     break;
                 case 'tx':
-                    $validated->tx = $this->api->assertString('tx', $value, REGEXP_MATERIAL);
+                    $validated->tx = is_null($value) ? 'none' : $this->api->assertString('tx', $value, REGEXP_MATERIAL);
+                    break;
+                case 'media': // can't be manipulated, but may be in the client JSON
+                    $validated->media = $this->api->assertStringArray('media', $value, '/.*/', 0);
+                    break;
+                case 'base': // can't be manipulated, but may be in the client JSON
+                    $validated->base = $this->api->assertString('base', $value);
+                    break;
+                case 'mask': // can't be manipulated, but may be in the client JSON
+                    $validated->mask = $this->api->assertString('mask', $value);
                     break;
                 default:
                     $this->api->sendError(400, 'invalid JSON: ' . $property . ' unkown');
@@ -1993,6 +2013,23 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Validate a piece/asset ID.
+     *
+     * Will stop execution with a 400 error if the value is not a valid ID.
+     *
+     * @param mixed $value Hopefully a ID, e.g. 'qiRjO0b7'
+     */
+    public function assertID(
+        $value
+    ) {
+        if (!$this->api->assertString('id', $value, REGEXP_ID, false)) {
+            $this->api->sendError(400, 'invalid ID: ' . $value);
+        } else {
+            return $value;
+        }
+    }
+
+    /**
      * Validate a table ID.
      *
      * Will stop execution with a 400 error if the value is not an int 0-9.
@@ -2293,6 +2330,164 @@ class FreeBeeGeeAPI
         $this->api->sendReply(201, json_encode($asset));
     }
 
+
+    /**
+     * Update an asset.
+     *
+     * Can trigger a table update in case the asset names = asset IDs change.
+     *
+     * @param object $meta Room's parsed `meta.json`.
+     * @param string $aid Asset ID to update.
+     * @param array $patches Array of full or parcial parsed pieces from client.
+     */
+    public function updateAsset(
+        object $meta,
+        string $aid,
+        object $asset
+    ) {
+        $this->assertID($aid);
+        $patch = $this->validateAsset($asset, ['id']);
+        $patch->id = $aid; // overwrite with data from URL
+        $updatedAsset = $this->updateAssetLocked($meta, $patch, false, true);
+        $this->api->sendReply(200, json_encode($updatedAsset));
+    }
+
+    /**
+     * Update an asset in the filesystem.
+     *
+     * Will update the library new asset information. Will also edit all table.json's
+     * if the asset edit changed the (derived) asset ID.
+     *
+     * @param object $meta Room's parsed `meta.json`.
+     * @param object $asset The parsed & validated asset to update.
+     * @return object The updated asset.
+     */
+    private function updateAssetLocked(
+        object $meta,
+        object $patch
+    ): object {
+        $lock = $this->api->waitForWriteLock($meta->lock);
+
+        $toUpdate = $this->findAsset($meta, $patch->id);
+        if ($toUpdate !== null) {
+            $room = json_decode(file_get_contents($meta->folder . 'room.json'));
+
+            $folder = "$meta->folder/assets/$toUpdate->type";
+            $toUpdate->name = $patch->name ?? $toUpdate->name;
+            $toUpdate->w = $patch->w ?? $toUpdate->w ?? 1;
+            $toUpdate->h = $patch->h ?? $toUpdate->h ?? 1;
+            $toUpdate->_hasBase = $toUpdate->base ?? false;
+            $toUpdate->_hasMask = $toUpdate->mask ?? false;
+            $toUpdate->_sMax = sizeof($toUpdate->media);
+
+            // hint: null = 0 = 808080 = remove color
+            $toUpdate->_bg = $patch->bg ?? $toUpdate->bg ?? '0';
+            $toUpdate->_bg = $toUpdate->_bg === '#808080' ? '0' : $toUpdate->_bg;
+            if (preg_match('/^#/', $toUpdate->_bg)) {
+                $toUpdate->_bg = substr(strtoupper($toUpdate->_bg), 1);
+            }
+
+            // hint: null = 'none' = remove material
+            $toUpdate->_tx = $patch->tx ?? $toUpdate->tx ?? null;
+            $toUpdate->_tx = $toUpdate->_tx === 'none' ? null : $toUpdate->_tx;
+            $found = false;
+            foreach ($room->library->material as $material) {
+                if ($material->name === ($toUpdate->_tx ?? 'none')) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $this->api->sendError(400, "material {$toUpdate->_tx} not found in room", 'ROOM_MATERIAL');
+            }
+
+            // check conflicts / calculate ID$toUpdate->_tx
+            $toUpdate->_idPadding = '0';
+            if (property_exists($toUpdate, 'mask')) {
+                $toUpdate->_idPadding = 'X';
+            }
+            if (sizeof($toUpdate->media) > 0) {
+                $toUpdate->_idPadding = '1';
+            }
+            if (property_exists($toUpdate, 'base')) {
+                $toUpdate->_idPadding = '0';
+            }
+            $toUpdate->_id = $this->generateId(abs(crc32(
+                $toUpdate->type . '/' . $toUpdate->name . '.' . $toUpdate->w . 'x' . $toUpdate->h . 'x' .
+                    str_pad($toUpdate->_idPadding, strlen("{$toUpdate->_sMax}"), '0', STR_PAD_LEFT)
+            )));
+            if ($toUpdate->_id !== $patch->id && $this->findAsset($meta, $toUpdate->_id)) {
+                $this->api->sendError(409, "asset {$toUpdate->_id} already exists", 'ASSET_ID_CONFLICT');
+            }
+
+            // rename all media files = rename asset
+            if (property_exists($toUpdate, 'mask')) {
+                $ext = pathinfo($toUpdate->mask, PATHINFO_EXTENSION);
+                @rename("$folder/$toUpdate->mask", $this->getAssetFilename($folder, $toUpdate, 'X', 'X', $ext));
+            }
+            for ($side = 1; $side <= sizeof($toUpdate->media); $side++) {
+                $media = $toUpdate->media[$side - 1];
+                $ext = pathinfo($media, PATHINFO_EXTENSION);
+                @rename("$folder/$media", $this->getAssetFilename($folder, $toUpdate, "$side", '0', $ext));
+            }
+            if (property_exists($toUpdate, 'base')) {
+                $ext = pathinfo($toUpdate->base, PATHINFO_EXTENSION);
+                @rename("$folder/$toUpdate->base", $this->getAssetFilename($folder, $toUpdate, '0', '0', $ext));
+            }
+
+            // replace old asset IDs in all tables
+            for ($i = 1; $i <= 9; $i++) {
+                $tablefile = "$meta->folder/tables/$i.json";
+                if (is_file($tablefile)) {
+                    $table = json_decode(file_get_contents($tablefile));
+                    // re-add all old pieces
+                    foreach ($table as $piece) {
+                        if (property_exists($piece, 'a') && $piece->a === $patch->id) {
+                            $piece->a = $toUpdate->_id;
+                        }
+                    }
+                    file_put_contents($tablefile, json_encode($table));
+                }
+            }
+
+            // regenerate library JSON
+            $room->library = $this->generateLibraryJSON($meta->name);
+            $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);
+
+            $this->api->unlockLock($lock);
+            return $this->findAsset($meta, $toUpdate->_id);
+        } else {
+            $this->api->unlockLock($lock);
+            $this->api->sendError(404, 'asset not found: ' . $patch->id);
+        }
+    }
+
+    /**
+     * Assemble an asset filename.
+     *
+     * Honors all the rules for padding digits and/or omittting default values.
+     */
+    private function getAssetFilename(
+        string $folder,
+        object $patch,
+        string $s,
+        string $padding,
+        string $ext
+    ): string {
+        $sPad = str_pad("{$s}", strlen("{$patch->_sMax}"), $padding, STR_PAD_LEFT);
+        $file = "{$patch->name}.{$patch->w}x{$patch->h}";
+        if ($patch->_sMax > 1 || $patch->_hasBase || $patch->_hasMask) {
+            $file .= "x{$sPad}";
+        }
+        if ($patch->_tx || ($patch->_bg !== '0' && $patch->_bg !== '808080')) {
+            $file .= ".{$patch->_bg}";
+        }
+        if ($patch->_tx) {
+            $file .= ".{$patch->_tx}";
+        }
+        return "{$folder}/{$file}.{$ext}";
+    }
+
     /**
      * Delete an asset from the library.
      *
@@ -2300,31 +2495,14 @@ class FreeBeeGeeAPI
      *
      * @param object $meta Room's parsed `meta.json`.
      */
-    public function deleteAssetLocked(
+    private function deleteAssetLocked(
         object $meta,
         string $aid
     ) {
         $lock = $this->api->waitForWriteLock($meta->lock);
 
-        // find asset filename(s)
-        $roomFS = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $toDelete = null;
-        foreach (
-            array_merge(
-                $roomFS->library->overlay,
-                $roomFS->library->tile,
-                $roomFS->library->token,
-                $roomFS->library->other,
-                $roomFS->library->badge
-            ) as $asset
-        ) {
-            if ($asset->id === $aid) {
-                $toDelete = $asset;
-                break;
-            }
-        }
-
-        if ($toDelete !== null) {
+        $toDelete = $this->findAsset($meta, $aid);
+        if ($toDelete !== null && $toDelete->type !== 'material') {
             // remove all media files = delete asset
             foreach ($toDelete->media as $media) {
                 @unlink("$meta->folder/assets/$toDelete->type/$media");
@@ -2340,16 +2518,41 @@ class FreeBeeGeeAPI
             $room = json_decode(file_get_contents($meta->folder . 'room.json'));
             $room->library = $this->generateLibraryJSON($meta->name);
             $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);
-        } else {
-            foreach ($roomFS->library->material as $asset) {
-                if ($asset->id === $aid) {
-                    $this->api->unlockLock($lock);
-                    $this->api->sendError(403, 'forbidden material');
-                }
-            }
+        } elseif ($toDelete !== null && $toDelete->type === 'material') {
+            $this->api->unlockLock($lock);
+            $this->api->sendError(403, 'forbidden material');
         }
         $this->api->unlockLock($lock);
         $this->api->sendReply(204); // send 204 even if asset did not exist
+    }
+
+    /**
+     * Find an asset's object via it's ID.
+     *
+     * @param object $meta Room's parsed `meta.json`.
+     * @param string $aid The ID to look for.
+     * @return object The asset, or null if not found.
+     */
+    private function findAsset(
+        object $meta,
+        string $aid
+    ) {
+        $roomFS = json_decode(file_get_contents($meta->folder . 'room.json'));
+        foreach (
+            array_merge(
+                $roomFS->library->overlay,
+                $roomFS->library->tile,
+                $roomFS->library->token,
+                $roomFS->library->other,
+                $roomFS->library->badge,
+                $roomFS->library->material
+            ) as $asset
+        ) {
+            if ($asset->id === $aid) {
+                return $asset;
+            }
+        }
+        return null;
     }
 
     /**
@@ -2443,7 +2646,7 @@ class FreeBeeGeeAPI
      *
      * Central function so we can change the type of ID easily later on.
      *
-     * @return {String} A random ID.
+     * @returns {String} A random ID.
      */
     private function generateId(
         int $seed = null
@@ -2500,9 +2703,17 @@ class FreeBeeGeeAPI
         $asset->media = [$filename];
         $asset->bg = '#808080';
 
-        if (preg_match('/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/', $filename, $matches)) {
+        if (
+            preg_match(
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
+                $filename,
+                $matches
+            )
+        ) {
             $found = true;
-        } elseif (preg_match('/^(.*)\.([0-9]+)x([0-9]+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/', $filename, $matches)) {
+        } elseif (
+            preg_match('/^(.*)\.([0-9]+)x([0-9]+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/', $filename, $matches)
+        ) {
             $found = true;
             array_splice($matches, 4, 0, '1'); // insert side-1 indicator
         } else {
@@ -2525,6 +2736,7 @@ class FreeBeeGeeAPI
                             $asset->bg = '#' . substr($matches[5], 1);
                         } elseif (preg_match('/^\.[0-9][0-9]?$/', $matches[5])) {
                             $asset->bg = substr($matches[5], 1);
+                            $asset->bg = $asset->bg === '0' ? '#808080' : $asset->bg;
                         }
                 }
             }
@@ -2543,6 +2755,7 @@ class FreeBeeGeeAPI
             $asset->h = 1;
             $asset->s = 1;
         }
+
         return $asset;
     }
 

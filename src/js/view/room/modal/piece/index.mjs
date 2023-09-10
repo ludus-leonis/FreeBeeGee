@@ -2,7 +2,9 @@
  * @file Handles the piece editor modals.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -32,24 +34,24 @@ import {
   LAYER_NOTE,
   LAYER_TOKEN,
   LAYER_OTHER,
-  TYPE_HEX,
-  TYPE_HEX2,
   getAssetURL
 } from '../../../../view/room/tabletop/tabledata.mjs'
 
 import {
-  FLAG_NO_MOVE,
-  FLAG_NO_DELETE,
-  FLAG_NO_CLONE,
-  FLAG_NOTE_TOPLEFT,
+  PREFS,
+  FLAGS,
   getSetup,
-  getLibrary
+  getLibrary,
+  getRoomPreference
 } from '../../../../state/index.mjs'
 
 import {
-  prettyName,
   equalsJSON
 } from '../../../../lib/utils.mjs'
+
+import {
+  prettyName
+} from '../../../../lib/utils-text.mjs'
 
 import {
   setup as setupModalToken
@@ -72,7 +74,7 @@ import {
 /**
  * Show the edit-piece modal.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece A piece to show.
  */
 export function modalEdit (piece) {
   if (piece != null && !isModalActive()) {
@@ -121,7 +123,7 @@ export function modalEdit (piece) {
 /**
  * Populate modal field(s) with badge information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupBadge (piece) {
   // badges
@@ -142,8 +144,8 @@ export function setupBadge (piece) {
 /**
  * Set update object's badge field if it was changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateBadge (piece, updates) {
   const b = []
@@ -158,7 +160,7 @@ export function updateBadge (piece, updates) {
 /**
  * Populate modal field(s) with color information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupColor (piece) {
   const pieceColor = _('#piece-color')
@@ -182,7 +184,7 @@ export function setupColor (piece) {
 /**
  * Populate modal field(s) with border color information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupColorBorder (piece) {
   // border color
@@ -207,8 +209,8 @@ export function setupColorBorder (piece) {
 /**
  * Set update object's color field if it was changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateColor (piece, updates) {
   const c = Number(_('#piece-color').value)
@@ -220,8 +222,8 @@ export function updateColor (piece, updates) {
 /**
  * Set update object's color and border color fields if they were changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateColorBorder (piece, updates) {
   const c = Number(_('#piece-color').value)
@@ -234,17 +236,17 @@ export function updateColorBorder (piece, updates) {
 /**
  * Set update object's flags field if it was changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateFlags (piece, updates) {
   let f = 0
-  if (_('#piece-no-move').checked) f |= FLAG_NO_MOVE
-  if (_('#piece-no-delete').checked) f |= FLAG_NO_DELETE
-  if (_('#piece-no-clone').checked) f |= FLAG_NO_CLONE
+  if (_('#piece-no-move').checked) f |= FLAGS.NO_MOVE
+  if (_('#piece-no-delete').checked) f |= FLAGS.NO_DELETE
+  if (_('#piece-no-clone').checked) f |= FLAGS.NO_CLONE
   const noteType = _('#piece-note-type')
   if (noteType.exists()) {
-    if (noteType.value === 'tl') f |= FLAG_NOTE_TOPLEFT
+    if (noteType.value === 'tl') f |= FLAGS.NOTE_TOPLEFT
   }
   if (f !== piece.f) updates.f = f
 }
@@ -252,7 +254,7 @@ export function updateFlags (piece, updates) {
 /**
  * Populate modal field(s) with label information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupLabel (piece) {
   _('#piece-label').value = piece.t?.[0] ?? ''
@@ -261,8 +263,8 @@ export function setupLabel (piece) {
 /**
  * Set update object's label field if it was changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateLabel (piece, updates) {
   const label = _('#piece-label').value.trim()
@@ -283,7 +285,7 @@ export function updateLabel (piece, updates) {
 /**
  * Populate modal field(s) with number information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupNumber (piece) {
   // piece number
@@ -304,8 +306,8 @@ export function setupNumber (piece) {
 /**
  * Set update object's number field if it was changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateNumber (piece, updates) {
   const n = Number(_('#piece-number').value)
@@ -315,11 +317,11 @@ export function updateNumber (piece, updates) {
 /**
  * Populate modal field(s) with rotate information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupRotate (piece) {
   const pieceR = _('#piece-r')
-  const increment = (getSetup().type === TYPE_HEX || getSetup().type === TYPE_HEX2) ? 60 : 90
+  const increment = getRoomPreference(PREFS.PIECE_ROTATE)
   for (let r = 0; r < 360; r += increment) {
     const option = _('option').create(r === 0 ? '0°' : r + '°')
     option.value = r
@@ -331,8 +333,8 @@ export function setupRotate (piece) {
 /**
  * Set update object's rotate field if it was changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateRotate (piece, updates) {
   const r = Number(_('#piece-r').value)
@@ -342,7 +344,7 @@ export function updateRotate (piece, updates) {
 /**
  * Populate modal field(s) with side information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupSide (piece) {
   const pieceSide = _('#piece-side')
@@ -363,8 +365,8 @@ export function setupSide (piece) {
 /**
  * Set update object's side field if it was changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateSide (piece, updates) {
   const side = Number(_('#piece-side').value)
@@ -374,7 +376,7 @@ export function updateSide (piece, updates) {
 /**
  * Populate modal field(s) with size information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupSize (piece) {
   // width
@@ -399,8 +401,8 @@ export function setupSize (piece) {
 /**
  * Set update object's width & height fields if they were changed.
  *
- * @param {Object} piece The piece's data object.
- * @param {Object} updates The update object for the API call.
+ * @param {object} piece The piece's data object.
+ * @param {object} updates The update object for the API call.
  */
 export function updateSize (piece, updates) {
   const w = Number(_('#piece-w').value)
@@ -414,12 +416,12 @@ export function updateSize (piece, updates) {
 /**
  * Populate modal field(s) with flags information.
  *
- * @param {Object} piece The piece's data object.
+ * @param {object} piece The piece's data object.
  */
 export function setupFlags (piece) {
-  _('#piece-no-move').checked = piece.f & FLAG_NO_MOVE
-  _('#piece-no-delete').checked = piece.f & FLAG_NO_DELETE
-  _('#piece-no-clone').checked = piece.f & FLAG_NO_CLONE
+  _('#piece-no-move').checked = piece.f & FLAGS.NO_MOVE
+  _('#piece-no-delete').checked = piece.f & FLAGS.NO_DELETE
+  _('#piece-no-clone').checked = piece.f & FLAGS.NO_CLONE
 }
 
 // --- internal ----------------------------------------------------------------

@@ -1,7 +1,9 @@
 /**
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -102,7 +104,7 @@ function testApiMinimalPiece (api, version, room) {
       l: 99
     }
   }, body => {
-    expect(body._messages[0]).to.match(/ l not between/)
+    expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -213,25 +215,25 @@ function testApiPieceL (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, l: 0 }
   }, body => {
-    expect(body._messages[0]).to.match(/ l not between/)
+    expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, l: 6 }
   }, body => {
-    expect(body._messages[0]).to.match(/ l not between/)
+    expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, l: 'one' }
   }, body => {
-    expect(body._messages[0]).to.match(/ l not between/)
+    expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, l: [1] }
   }, body => {
-    expect(body._messages[0]).to.match(/ l not between/)
+    expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -244,12 +246,11 @@ function testApiPieceL (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, l: 1.9 }
   }, body => {
-    expect(body.l).not.to.be.eq('1')
-    expect(body.l).to.be.eq(1)
-  }, 201)
+    expect(body._messages[0]).to.match(/ l not integer between/)
+  }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
-    expect(body.length).to.be.eql(2)
+    expect(body.length).to.be.eql(1)
   })
 
   closeTestroom(api, room)
@@ -293,25 +294,25 @@ function testApiPieceX (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, x: -100000000 }
   }, body => {
-    expect(body._messages[0]).to.match(/ x not between/)
+    expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, x: 100000000 }
   }, body => {
-    expect(body._messages[0]).to.match(/ x not between/)
+    expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, x: 'ten' }
   }, body => {
-    expect(body._messages[0]).to.match(/ x not between/)
+    expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, x: '[8]' }
   }, body => {
-    expect(body._messages[0]).to.match(/ x not between/)
+    expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -323,13 +324,12 @@ function testApiPieceX (api, version, room) {
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, x: 10.9 }
-  }, body => {
-    expect(body.x).not.to.be.eq(10.9)
-    expect(body.x).to.be.eq(10)
-  }, 201)
+  }, body => { // xxx
+    expect(body._messages[0]).to.match(/ x not integer between/)
+  }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
-    expect(body.length).to.be.eql(2)
+    expect(body.length).to.be.eql(1)
   })
 
   closeTestroom(api, room)
@@ -343,25 +343,25 @@ function testApiPieceY (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, y: -100000000 }
   }, body => {
-    expect(body._messages[0]).to.match(/ y not between/)
+    expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, y: 100000000 }
   }, body => {
-    expect(body._messages[0]).to.match(/ y not between/)
+    expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, y: 'ten' }
   }, body => {
-    expect(body._messages[0]).to.match(/ y not between/)
+    expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, y: [8] }
   }, body => {
-    expect(body._messages[0]).to.match(/ y not between/)
+    expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -373,13 +373,12 @@ function testApiPieceY (api, version, room) {
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, y: '10.9' }
-  }, body => {
-    expect(body.y).not.to.be.eq(10.9)
-    expect(body.y).to.be.eq(10)
-  }, 201)
+  }, body => { // xxx
+    expect(body._messages[0]).to.match(/ y not integer between/)
+  }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
-    expect(body.length).to.be.eql(2)
+    expect(body.length).to.be.eql(1)
   })
 
   closeTestroom(api, room)
@@ -393,25 +392,25 @@ function testApiPieceZ (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, z: -100000000 }
   }, body => {
-    expect(body._messages[0]).to.match(/ z not between/)
+    expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, z: 100000000 }
   }, body => {
-    expect(body._messages[0]).to.match(/ z not between/)
+    expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, z: 'ten' }
   }, body => {
-    expect(body._messages[0]).to.match(/ z not between/)
+    expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, z: [8] }
   }, body => {
-    expect(body._messages[0]).to.match(/ z not between/)
+    expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -423,13 +422,12 @@ function testApiPieceZ (api, version, room) {
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, z: 10.9 }
-  }, body => {
-    expect(body.z).not.to.be.eq(10.9)
-    expect(body.z).to.be.eq(10)
-  }, 201)
+  }, body => { // xxx
+    expect(body._messages[0]).to.match(/ z not integer between/)
+  }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
-    expect(body.length).to.be.eql(2)
+    expect(body.length).to.be.eql(1)
   })
 
   closeTestroom(api, room)
@@ -455,25 +453,25 @@ function testApiPieceR (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, r: 180.9 }
   }, body => {
-    expect(body._messages[0]).to.match(/ r invalid/)
+    expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, r: -1 }
   }, body => {
-    expect(body._messages[0]).to.match(/ r invalid/)
-  }, 400)
-
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: 66 }
-  }, body => {
-    expect(body._messages[0]).to.match(/ r invalid/)
+    expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, r: 360 }
   }, body => {
-    expect(body._messages[0]).to.match(/ r invalid/)
+    expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
+  }, 400)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, r: 366 }
+  }, body => {
+    expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -485,13 +483,13 @@ function testApiPieceR (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, r: 'zero' }
   }, body => {
-    expect(body._messages[0]).to.match(/ r invalid/)
+    expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, r: [0] }
   }, body => {
-    expect(body._messages[0]).to.match(/ r invalid/)
+    expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
@@ -533,13 +531,13 @@ function testApiPieceW (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, w: -1 }
   }, body => {
-    expect(body._messages[0]).to.match(/ w not between/)
+    expect(body._messages[0]).to.match(/ w not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, w: 33 }
   }, body => {
-    expect(body._messages[0]).to.match(/ w not between/)
+    expect(body._messages[0]).to.match(/ w not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -551,13 +549,13 @@ function testApiPieceW (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, w: 'eight' }
   }, body => {
-    expect(body._messages[0]).to.match(/ w not between/)
+    expect(body._messages[0]).to.match(/ w not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, w: [8] }
   }, body => {
-    expect(body._messages[0]).to.match(/ w not between/)
+    expect(body._messages[0]).to.match(/ w not integer between/)
   }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
@@ -599,13 +597,13 @@ function testApiPieceH (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, h: -1 }
   }, body => {
-    expect(body._messages[0]).to.match(/ h not between/)
+    expect(body._messages[0]).to.match(/ h not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, h: 33 }
   }, body => {
-    expect(body._messages[0]).to.match(/ h not between/)
+    expect(body._messages[0]).to.match(/ h not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -617,13 +615,13 @@ function testApiPieceH (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, h: 'eight' }
   }, body => {
-    expect(body._messages[0]).to.match(/ h not between/)
+    expect(body._messages[0]).to.match(/ h not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, h: [8] }
   }, body => {
-    expect(body._messages[0]).to.match(/ h not between/)
+    expect(body._messages[0]).to.match(/ h not integer between/)
   }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
@@ -659,13 +657,13 @@ function testApiPieceS (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, s: -1 }
   }, body => {
-    expect(body._messages[0]).to.match(/ s not between/)
+    expect(body._messages[0]).to.match(/ s not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, s: 133 }
   }, body => {
-    expect(body._messages[0]).to.match(/ s not between/)
+    expect(body._messages[0]).to.match(/ s not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -677,13 +675,13 @@ function testApiPieceS (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, s: 'eight' }
   }, body => {
-    expect(body._messages[0]).to.match(/ s not between/)
+    expect(body._messages[0]).to.match(/ s not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, s: [8] }
   }, body => {
-    expect(body._messages[0]).to.match(/ s not between/)
+    expect(body._messages[0]).to.match(/ s not integer between/)
   }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
@@ -719,13 +717,13 @@ function testApiPieceN (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, n: -1 }
   }, body => {
-    expect(body._messages[0]).to.match(/ n not between/)
+    expect(body._messages[0]).to.match(/ n not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, n: 36 }
   }, body => {
-    expect(body._messages[0]).to.match(/ n not between/)
+    expect(body._messages[0]).to.match(/ n not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -737,13 +735,13 @@ function testApiPieceN (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, n: 'eight' }
   }, body => {
-    expect(body._messages[0]).to.match(/ n not between/)
+    expect(body._messages[0]).to.match(/ n not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, n: [8] }
   }, body => {
-    expect(body._messages[0]).to.match(/ n not between/)
+    expect(body._messages[0]).to.match(/ n not integer between/)
   }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
@@ -1019,25 +1017,25 @@ function testApiPieceF (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, f: -1 }
   }, body => {
-    expect(body._messages[0]).to.match(/ f not between/)
+    expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, f: 0b100000000 }
   }, body => {
-    expect(body._messages[0]).to.match(/ f not between/)
+    expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, f: 'three' }
   }, body => {
-    expect(body._messages[0]).to.match(/ f not between/)
+    expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, f: [3] }
   }, body => {
-    expect(body._messages[0]).to.match(/ f not between/)
+    expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -1049,13 +1047,12 @@ function testApiPieceF (api, version, room) {
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, f: 3.9 }
-  }, body => {
-    expect(body.f).not.to.be.eq(3.9)
-    expect(body.f).to.be.eq(3)
-  }, 201)
+  }, body => { // xxx
+    expect(body._messages[0]).to.match(/ f not integer between/)
+  }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
-    expect(body.length).to.be.eql(2)
+    expect(body.length).to.be.eql(1)
   })
 
   closeTestroom(api, room)

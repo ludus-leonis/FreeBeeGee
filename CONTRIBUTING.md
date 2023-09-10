@@ -24,7 +24,7 @@ Please submit code changes via pull requests on GitHub:
 
 ## Coding standards
 
-All project files use UTF-8 encoding and Unix-style line endings. There is a `.editorconfig` providing details about our indentation rules.
+All project files use UTF-8 encoding and Unix-style line endings. There is an `.editorconfig` providing details about our indentation rules.
 
 We use `gulp` as build tool and `npm` as dependency tool.
 
@@ -50,14 +50,15 @@ We use `gulp` as build tool and `npm` as dependency tool.
 ### JavaScript
 
 * This project uses ES2020 features.
-* Code is formated using [JavaScript Standard Style](https://standardjs.com/) guidelines. Yes, this means no semicolons. Gulp will check & enforce those rules by using a linter.
+* Code is formatted using [JavaScript Standard Style](https://standardjs.com/) guidelines. Yes, this means no semicolons. The build will check & enforce those rules by using a linter.
+* Code has to be commented using [JSDoc](https://jsdoc.app/) guidelines. The build will check & enforce that by using a linter.
 * JavaScript code is split into ES modules based on functionality/screen.
 
 Code is automatically converted for older browsers using Babel during build.
 
 ### PHP
 
-* All PHP code must adhere the [PSR12 coding standard](https://www.php-fig.org/psr/psr-12/). Gulp will check & enforce that by using a linter.
+* All PHP code must adhere the [PSR12 coding standard](https://www.php-fig.org/psr/psr-12/). The build will check & enforce that by using a linter.
 
 You will need a local PHP-cli installation so that the linter/phar file can run.
 
@@ -65,5 +66,5 @@ You will need a local PHP-cli installation so that the linter/phar file can run.
 
 * All styles are written in [SCSS](https://sass-lang.com/).
 * We follow the [7-1 pattern](https://sass-guidelin.es/#the-7-1-pattern) for naming files.
-* We use the `sass-lint` coding standard, with a few exception defined in `.sass-lint.yml`. Gulp will check & enforce that via a plugin.
+* We use the `sass-lint` coding standard, with a few exception defined in `.sass-lint.yml`. The build will check & enforce that via a plugin.
 * FreeBeeGee is partly based on Bootstrap v5 (Reboot, Grid). However, each `*.scss` file only pulls in the modules it needs, not the full Bootstrap CSS.

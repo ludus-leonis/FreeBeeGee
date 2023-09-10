@@ -34,26 +34,16 @@ $shadow-highlight-width: 1.5px;
   #{'--fbg-shadow-length'}: 2px;
 }
 
-@each $r in $rotate-steps {
+@for $r from 0 through 359 { // @each $r in $rotate-steps
   .is-r-#{$r} {
     #{'--fbg-r-sin'}: math.sin($shadow-direction + ($r * 1deg));
     #{'--fbg-r-cos'}: math.cos($shadow-direction + ($r * 1deg));
   }
-}
 
-.is-delay-r-300 {
-  #{'--fbg-r-sin'}: math.sin($shadow-direction - 60deg);
-  #{'--fbg-r-cos'}: math.cos($shadow-direction - 60deg);
-}
-
-.is-delay-r-270 {
-  #{'--fbg-r-sin'}: math.sin($shadow-direction - 90deg);
-  #{'--fbg-r-cos'}: math.cos($shadow-direction - 90deg);
-}
-
-.is-delay-r-0 {
-  #{'--fbg-r-sin'}: math.sin($shadow-direction);
-  #{'--fbg-r-cos'}: math.cos($shadow-direction);
+  .is-delay-r-#{$r} {
+    #{'--fbg-r-sin'}: math.sin($shadow-direction - (360 - $r) * 1deg);
+    #{'--fbg-r-cos'}: math.cos($shadow-direction - (360 - $r) * 1deg);
+  }
 }
 
 /// Return a drop-shadow value for the configured shadow.
@@ -63,7 +53,7 @@ $shadow-highlight-width: 1.5px;
 ///
 /// @param {length} $blur The amount of blur.
 /// @param {length} $color The color of the shadow
-/// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
+/// @returns {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function shadow($blur, $color) {
   @return
   zoom(calc(var(--fbg-r-sin) * var(--fbg-shadow-length)))
@@ -77,7 +67,7 @@ $shadow-highlight-width: 1.5px;
 /// @example scss
 ///   highlight()
 ///
-/// @return {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
+/// @returns {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function highlight() {
   @return
   zoom(calc(var(--fbg-r-sin) * $shadow-highlight-width)) zoom(calc(var(--fbg-r-cos) * $shadow-highlight-width)) zoom(.5px) 0 $color-white-15a inset,
@@ -86,4 +76,4 @@ $shadow-highlight-width: 1.5px;
 
 $shadow: shadow(2px, $color-black-65a);
 
-$shadow-flat: shadow(0px, $color-black-35a); // sass-lint:disable-line zero-unit
+$shadow-flat: shadow(0, $color-black-35a); // sass-lint:disable-line zero-unit

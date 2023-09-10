@@ -1,7 +1,9 @@
 /**
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  *
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -34,6 +36,24 @@ export const REGEXP_ID = /^[a-zA-Z0-9_-]{8}$/
 export const REGEXP_DIGEST = /^crc32:-?[0-9]+$/
 export const p = JSON.parse(fs.readFileSync('package.json'))
 export const ACCESS_ANY = '00000000-0000-0000-0000-000000000000'
+
+export const _ = { // asset count in system snapshot
+  other: 16,
+  overlay: 20,
+  tile: 2,
+  token: 5,
+  badge: 2,
+  material: 5
+}
+
+export const classic = { // asset count in classic snapshot
+  other: 0,
+  overlay: 0,
+  tile: 10,
+  token: 6,
+  badge: 3,
+  material: 0
+}
 
 // --- request helpers ---------------------------------------------------------
 
@@ -328,7 +348,7 @@ export function testJsonDelete (api, path, status = 204, token = undefined) {
  * @param {string} room Room name to create.
  * @param {string} snapshot Snapshot to use for room.
  * @param {string} password Optional password for the room.
- * @return {string} API token for that room.
+ * @returns {string} API token for that room.
  */
 export function openTestroom (api, room, snapshot, password = undefined) {
   testJsonPost(api, () => '/rooms/', () => {
@@ -359,7 +379,7 @@ export function closeTestroom (api, room) {
  * Prepare a zip.
  *
  * @param {function} add Called with a zip object to add stuff.
- * @return {Buffer} Zipped files as buffer for uploads.
+ * @returns {Buffer} Zipped files as buffer for uploads.
  */
 export function zipCreate (add) {
   const zip = new AdmZip()
@@ -371,7 +391,7 @@ export function zipCreate (add) {
  * Extract table of contents from a zip.
  *
  * @param {Buffer} buffer Buffer of ZIP sent by server.
- * @return {Array} Array of strings of all files in zip.
+ * @returns {Array} Array of strings of all files in zip.
  */
 export function zipToc (buffer) {
   const zip = new AdmZip(buffer)

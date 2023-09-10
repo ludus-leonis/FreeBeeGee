@@ -31,7 +31,7 @@
 ///   px(32)
 ///
 /// @param {length} $px Amout to convert without units, e.g. `32`.
-/// @return {length} Corresponding rem value, e.g. `2rem`.
+/// @returns {length} Corresponding rem value, e.g. `2rem`.
 @function px($px) {
   @if $px <= 2 {
     @return $px * 1px;
@@ -46,7 +46,7 @@
 ///   round-rem(.821rem)
 ///
 /// @param {length} $rem Amout to round in rem, e.g. `.821rem`.
-/// @return {length} Rounded rem value, e.g. `.8125rem`.
+/// @returns {length} Rounded rem value, e.g. `.8125rem`.
 @function round-rem($rem) {
   @return math.div(math.round($rem * 16), 16);
 }

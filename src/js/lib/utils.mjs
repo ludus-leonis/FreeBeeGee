@@ -2,7 +2,9 @@
  * @file Various generic utility helpers.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -17,207 +19,12 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
-// --- HTML5 + browser ---------------------------------------------------------
-
-/**
- * Access the ?x=y query-string of the current page.
- *
- * @param {String} name Name of parameter.
- * @return {String} Value of parameter. Defaults to '' if parameter is missing.
- */
-export function getGetParameter (name) {
-  if (typeof URLSearchParams === 'undefined') {
-    return ''
-  }
-  const urlParams = new URLSearchParams(globalThis.location?.search)
-  return urlParams.get(name) || ''
-}
-
-/**
- * Get all values for a key from an HTML5 browser store.
- *
- * Assumes there is a stringified JSON with sub-entries in the store.
- *
- * Transparent fallback to in-memory map if session store is not available.
- *
- * @param {String} key Name of the store item.
- * @param {Boolean} local If true, the localStorage will be used. Otherwise the
- *                        sessionStorage will be used.
- * @return {(String|undefined)} Retrieved value.
- */
-export function getStoreValues (key, local = true) {
-  if (typeof Storage !== 'undefined') {
-    const store = local ? globalThis.localStorage : globalThis.sessionStorage
-    return JSON.parse(store.getItem(key) ?? '{}')
-  } else {
-    return JSON.parse(fallbackStore.get(key) ?? '{}')
-  }
-}
-
-/**
- * Get a value from an HTML5 browser store.
- *
- * Assumes there is a stringified JSON with sub-entries in the store.
- *
- * Transparent fallback to in-memory map if session store is not available.
- *
- * @param {String} key Name of the store item.
- * @param {String} property Property in the JSON stored in the store item.
- * @param {Boolean} local If true, the localStorage will be used. Otherwise the
- *                        sessionStorage will be used.
- * @return {(String|undefined)} Retrieved value.
- */
-export function getStoreValue (key, property, local = true) {
-  return getStoreValues(key, local)[property]
-}
-
-/**
- * Set a value in an HTML5 browser store.
- *
- * Transparent fallback to in-memory map if session store is not available.
- *
- * @param {String} key Name of the store item.
- * @param {String} property Property in the JSON stored in the store item.
- * @param {String} value Value to store.
- * @param {Boolean} local If true, the localStorage will be used. Otherwise the
- *                        sessionStorage will be used.
- */
-export function setStoreValue (key, property, value, local = true) {
-  if (typeof Storage !== 'undefined') {
-    const store = local ? globalThis.localStorage : globalThis.sessionStorage
-    const prefs = JSON.parse(store.getItem(key) ?? '{}')
-    prefs[property] = value
-    store.setItem(key, JSON.stringify(prefs))
-  } else {
-    const prefs = JSON.parse(fallbackStore.get(key) ?? '{}')
-    prefs[property] = value
-    fallbackStore.set(key, JSON.stringify(prefs))
-  }
-}
-
-/**
- * Remove a key in an HTML5 browser store.
- *
- * Transparent fallback to in-memory map if session store is not available.
- *
- * @param {String} key Name of the store item.
- * @param {Boolean} local If true, the localStorage will be used. Otherwise the
- *                        sessionStorage will be used.
- */
-export function removeStoreValue (key, local = true) {
-  if (typeof Storage !== 'undefined') {
-    const store = local ? globalThis.localStorage : globalThis.sessionStorage
-    store.removeItem(key)
-  } else {
-    fallbackStore.delete(key)
-  }
-}
-
-/**
- * Switch browser to fullscreen or back again.
- */
-export function toggleFullscreen () {
-  if (typeof document === 'undefined') return false
-  if (!document.fullscreenElement &&
-      !document.mozFullScreenElement &&
-      !document.webkitFullscreenElement &&
-      !document.msFullscreenElement) {
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen()
-      return true
-    } else if (document.documentElement.msRequestFullscreen) {
-      document.documentElement.msRequestFullscreen()
-      return true
-    } else if (document.documentElement.mozRequestFullScreen) {
-      document.documentElement.mozRequestFullScreen()
-      return true
-    } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT) // eslint-disable-line no-undef
-      return true
-    }
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen()
-      return true
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen()
-      return true
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen()
-      return true
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen()
-      return true
-    }
-  }
-  return false
-}
-
-/**
- * Resize a drawable (image, canvas).
- *
- * @param {Object} image Element to shrink (image, canvas).
- * @param {Number} dimension Size to shrink to.
- * @return {Canvas} Canvas with resized image. Does not honor aspect ratio and will deform.
- */
-export function resizeImage (image, dimension) {
-  const canvas = document.createElement('canvas')
-  canvas.width = dimension
-  canvas.height = dimension
-  const ctx = canvas.getContext('2d')
-  ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, dimension, dimension)
-  return canvas
-}
-
-/**
- * Enforce content length on input change.
- *
- * Mainly useful for <textarea> and UTF8/Emoji input, that does not work well with
- * max-length. Reports new content length to an optional callback.
- *
- * @param {HTMLElement} input Input to watch
- * @param {number} maxLength Maximum content length in bytes.
- * @param {function} callback Will be called after each content change with the current content length.
- * @return {number} Current/trimmed content length in bytes.
- */
-export function inputMaxLength (input, maxLength, callback) {
-  input.previousValue = input.value
-
-  input.addEventListener('input', event => {
-    const input = event.target
-    if (encodeURIComponent(input.value).replace(/%[A-F\d]{2}/g, 'U').length > maxLength) {
-      const cursorPosition = input.selectionStart
-      const changeLength = getChangeLength(input.previousValue, input.value)
-      input.value = input.previousValue
-      input.selectionEnd = cursorPosition - changeLength
-    } else {
-      input.previousValue = input.value
-    }
-    if (callback) callback(encodeURIComponent(input.value).replace(/%[A-F\d]{2}/g, 'U').length)
-  })
-
-  if (callback) callback(encodeURIComponent(input.value).replace(/%[A-F\d]{2}/g, 'U').length)
-}
-
-function getChangeLength (a, b) {
-  let shorter = a.length < b.length ? a.split('') : b.split('')
-  let longer = a.length < b.length ? b.split('') : a.split('')
-
-  while (shorter.length > 0 && shorter[0] === longer[0]) { // chop front
-    shorter.shift()
-    longer.shift()
-  }
-
-  shorter = shorter.reverse()
-  longer = longer.reverse()
-
-  while (shorter.length > 0 && shorter[0] === longer[0]) { // chop 'end'
-    shorter.shift()
-    longer.shift()
-  }
-
-  return longer.length
-}
+export const PATTERN_ROOM_NAME =
+  '^[a-zA-Z0-9]{8,48}$'
+export const PATTERN_ASSET_NAME =
+  '^(_|[a-zA-Z0-9\\-]+( [a-zA-Z0-9\\-]+)*)(, [a-zA-Z0-9\\-]+)?( [a-zA-Z0-9\\-]+)*$'
+export const PATTERN_COLOR =
+  '^#[a-zA-Z0-9]{6}$'
 
 // --- Arrays ------------------------------------------------------------------
 
@@ -225,8 +32,8 @@ function getChangeLength (a, b) {
  * Check if all items of an array fullfill something.
  *
  * @param {Array} items Array of items to check.
- * @param {function} check Callback (item) => {}. Supposed to return true or false.
- * @return {Boolean} True, if all items check out. False if not.
+ * @param {Function} check Callback (item) => {}. Supposed to return true or false.
+ * @returns {boolean} True, if all items check out. False if not.
  */
 export function isAll (items, check) {
   for (const item of items) {
@@ -239,8 +46,8 @@ export function isAll (items, check) {
  * Check if any item of an array fullfills something.
  *
  * @param {Array} items Array of items to check.
- * @param {function} check Callback (item) => {}. Supposed to return true or false.
- * @return {Boolean} True, if one items check out. False if not.
+ * @param {Function} check Callback (item) => {}. Supposed to return true or false.
+ * @returns {boolean} True, if one items check out. False if not.
  */
 export function isAny (items, check) {
   for (const item of items) {
@@ -253,8 +60,8 @@ export function isAny (items, check) {
  * Check if no item of an array fullfills something.
  *
  * @param {Array} items Array of items to check.
- * @param {function} check Callback (item) => {}. Supposed to return true or false.
- * @return {Boolean} True, if no items check out. False if not.
+ * @param {Function} check Callback (item) => {}. Supposed to return true or false.
+ * @returns {boolean} True, if no items check out. False if not.
  */
 export function isNone (items, check) {
   for (const item of items) {
@@ -267,7 +74,7 @@ export function isNone (items, check) {
  * Shuffle an array using Durstenfeld shuffle.
  *
  * @param {Array} array Array to shuffle. Will be modified!
- * @return {Array} Will also return the shuffled array for convenience.
+ * @returns {Array} Will also return the shuffled array for convenience.
  */
 export function shuffle (array) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -282,9 +89,9 @@ export function shuffle (array) {
 /**
  * A modulo operation that does not produce negative results.
  *
- * @param {Number} n Number to modulo.
- * @param {Number} m Number to modulo by.
- * @return Modulo value.
+ * @param {number} n Number to modulo.
+ * @param {number} m Number to modulo by.
+ * @returns {number} Modulo value.
  */
 export function mod (n, m) {
   return ((n % m) + m) % m
@@ -293,10 +100,10 @@ export function mod (n, m) {
 /**
  * Clamp a value to be between a min and a max value.
  *
- * @param {Number} min Minimum number.
- * @param {Number} value Value to clamp.
- * @param {Number} max Maximum number.
- * @return {Number} Clamped value within [min, max].
+ * @param {number} min Minimum number.
+ * @param {number} value Value to clamp.
+ * @param {number} max Maximum number.
+ * @returns {number} Clamped value within [min, max].
  */
 export function clamp (min, value, max) {
   if (value < min) return min
@@ -307,10 +114,10 @@ export function clamp (min, value, max) {
 /**
  * Find closest point in an array of points.
  *
- * @param {Number} x X-coordinate to match.
- * @param {Number} y Y-coordiante to match.
- * @param {Number} points Array of {x, y} points.
- * @return {Object} Closest point of array to original x/y as {x, y, d}.
+ * @param {number} x X-coordinate to match.
+ * @param {number} y Y-coordiante to match.
+ * @param {number} points Array of {x, y} points.
+ * @returns {object} Closest point of array to original x/y as {x, y, d}.
  */
 function findClosestPoint (x, y, points) {
   const closest = {
@@ -332,12 +139,12 @@ function findClosestPoint (x, y, points) {
 /**
  * Snap a coordinate to the closest snap position / grid.
  *
- * @param {Number} x X-coordinate to snap.
- * @param {Number} y Y-coordiante to snap.
- * @param {Number} snap Grid size, originates in 0/0.
- * @param {Number} lod Optional level of detail (1 = centers, 2 = also
+ * @param {number} x X-coordinate to snap.
+ * @param {number} y Y-coordiante to snap.
+ * @param {number} snap Grid size, originates in 0/0.
+ * @param {number} lod Optional level of detail (1 = centers, 2 = also
  *                     corners, 3 = also side centers). Defaults to 1.
-  * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ * @returns {object} Closest grid vertex to original x/y as {x, y}.
  */
 export function snapGrid (x, y, snap, lod = 1) {
   if (lod <= 1) { // tile centers
@@ -371,12 +178,12 @@ export function snapGrid (x, y, snap, lod = 1) {
 /**
  * Snap a coordinate to the closest hex position / grid.
  *
- * @param {Number} x X-coordinate to snap.
- * @param {Number} y Y-coordiante to snap.
- * @param {Number} snap Grid size, originates in 0/0.
- * @param {Number} lod Optional level of detail (1 = hex centers, 2 = also hex
+ * @param {number} x X-coordinate to snap.
+ * @param {number} y Y-coordiante to snap.
+ * @param {number} snap Grid size, originates in 0/0.
+ * @param {number} lod Optional level of detail (1 = hex centers, 2 = also hex
  *                     corners, 3 = also side centers). Defaults to 1.
- * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ * @returns {object} Closest grid vertex to original x/y as {x, y}.
  */
 export function snapHex (x, y, snap, lod = 1) {
   const hexTileX = snap * 1.71875 // 110x64
@@ -441,12 +248,12 @@ export function snapHex (x, y, snap, lod = 1) {
  *
  * hex2 grids have pointy hexes up/down.
  *
- * @param {Number} x X-coordinate to snap.
- * @param {Number} y Y-coordiante to snap.
- * @param {Number} snap Grid size, originates in 0/0.
- * @param {Number} lod Optional level of detail (1 = hex centers, 2 = also hex
+ * @param {number} x X-coordinate to snap.
+ * @param {number} y Y-coordiante to snap.
+ * @param {number} snap Grid size, originates in 0/0.
+ * @param {number} lod Optional level of detail (1 = hex centers, 2 = also hex
  *                     corners, 3 = also side centers). Defaults to 1.
- * @return {Object} Closest grid vertex to original x/y as {x, y}.
+ * @returns {object} Closest grid vertex to original x/y as {x, y}.
  */
 export function snapHex2 (x, y, snap, lod = 1) {
   const snapped = snapHex(y, x, snap, lod) // hex2 is actually a 90° rotated hex
@@ -459,9 +266,9 @@ export function snapHex2 (x, y, snap, lod = 1) {
 /**
  * Determine if two rectacles intersect / overlap.
  *
- * @param {Object} rect1 First rect, containing of top/left/bottom/right.
- * @param {Object} rect2 Second rect, containing of top/left/bottom/right.
- * @returns {Boolean} True if they intersect.
+ * @param {object} rect1 First rect, containing of top/left/bottom/right.
+ * @param {object} rect2 Second rect, containing of top/left/bottom/right.
+ * @returns {boolean} True if they intersect.
  */
 export function intersect (rect1, rect2) {
   return (rect1.left <= rect2.right &&
@@ -473,9 +280,9 @@ export function intersect (rect1, rect2) {
 /**
  * Determine if one rectacle is 100% within another.
  *
- * @param {Object} larger Rect, containing of top/left/bottom/right.
- * @param {Object} smaller Rect, containing of top/left/bottom/right.
- * @returns {Boolean} True if they intersect.
+ * @param {object} larger Rect, containing of top/left/bottom/right.
+ * @param {object} smaller Rect, containing of top/left/bottom/right.
+ * @returns {boolean} True if they intersect.
  */
 export function contains (larger, smaller) {
   return (smaller.left >= larger.left &&
@@ -487,10 +294,10 @@ export function contains (larger, smaller) {
 /**
  * Calculate the width and height of the bounding box of a rotated rectangle.
  *
- * @param {Number} w Width of original rectangle.
- * @param {Number} h Height of original rectangle.
- * @param {Number} r Angle to rotate to.
- * @return {Object} '{ w: ..., h: ...}' of transformed rectangle.
+ * @param {number} w Width of original rectangle.
+ * @param {number} h Height of original rectangle.
+ * @param {number} r Angle to rotate to.
+ * @returns {object} '{ w: ..., h: ...}' of transformed rectangle.
  */
 export function getDimensionsRotated (w, h, r) {
   // basic rotations don't need long transformation
@@ -528,8 +335,8 @@ export function getDimensionsRotated (w, h, r) {
 /**
  * Get seconds since epoch.
  *
- * @param {Number} delta Optional delta in seconds to apply.
- * @return {Number} Seconds since epoch.
+ * @param {number} delta Optional delta in seconds to apply.
+ * @returns {number} Seconds since epoch.
  */
 export function epoch (delta = 0) {
   return Math.floor(new Date().getTime() / 1000) + delta
@@ -542,178 +349,12 @@ export function epoch (delta = 0) {
  *
  * Useful to compare arrays.
  *
- * @param a Item A.
- * @param b Item B.
- * @return {Boolean} True, of JSON representations of a and b are string-equal.
+ * @param {*} a Item A.
+ * @param {*} b Item B.
+ * @returns {boolean} True, of JSON representations of a and b are string-equal.
  */
 export function equalsJSON (a, b) {
   return JSON.stringify(a ?? []) === JSON.stringify(b ?? [])
-}
-
-// --- string & text -----------------------------------------------------------
-
-/**
- * Generate an alphanumeric ID.
- *
- * @param {Number} digits Length of ID, defaults to 8.
- * @return {String} Random Hex-string.
- */
-export function anId (digits = 8) {
-  // taken from https://stackoverflow.com/questions/58325771/how-to-generate-random-hex-string-in-javascript
-  return 'X' + [...Array(digits - 1)].map(() => Math.floor(Math.random() * 36).toString(36)).join('')
-}
-
-/**
- * Generate a v4 UUID.
- *
- * @param {Number} seed Optional seed for UUID, defaults to Math.random()
- * @return {String} UUID.
- */
-export function uuid (seed = null) {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const s = seed === null ? Math.random() : seed
-    const r = s * 16 | 0
-    const v = c === 'x' ? r : (r & 0x3 | 0x8)
-    return v.toString(16)
-  })
-}
-
-/**
- * Generate a byte string.
- *
- * @param {Number} bytes Bytes to display, e.g. 1024
- * @return {String} Compact version inkluding units, e.g. '1k'.
- */
-export function bytesToIso (bytes) {
-  if (bytes === 1) {
-    return '1 byte'
-  }
-  if (bytes < 1024) {
-    return Math.floor(bytes) + ' bytes'
-  }
-  if (bytes < 1024 * 1024) {
-    return Math.floor(bytes / 1024) + ' kB'
-  }
-  if (bytes < 1024 * 1024 * 1024) {
-    return Math.floor(bytes / 1024 / 1024) + ' MB'
-  }
-  return Math.floor(bytes / 1024 / 1024 / 1024) + ' GB'
-}
-
-/**
- * Calculate a simple hash for a string.
- *
- * Based on Java's implementation.
- *
- * @param {String} string String to hash.
- * @return {Number} A hash value.
- */
-export function hash (string) {
-  let hash = 0
-  for (let i = 0; i < string.length; i++) {
-    hash = ((hash << 5) - hash) + string.charCodeAt(i)
-    hash |= 0
-  }
-  return hash
-}
-
-/**
- * Convert a string to title-case (each word starts with an uppercase letter).
- *
- * @param {String} string String to title-case.
- * @return {String} Title-cased string.
- */
-export function toTitleCase (string) {
-  return string.replace(/\w\S*/g, txt =>
-    txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
-  )
-}
-
-/**
- * Convert a string to camel-case (no spaces, parts starting with uppercase).
- *
- * @param {String} string String to camel-case.
- * @return {String} Camel-cased string.
- */
-export function toCamelCase (string) {
-  return string.replace(/[a-zA-Z0-9-]+/g, function (match, index) {
-    const lower = match.toLowerCase()
-    return index === 0 ? lower : (lower.charAt(0).toUpperCase() + lower.slice(1))
-  }).replace(/[^a-zA-Z0-9-]+/g, '')
-}
-
-/**
- * Convert a CamelCase string to non-camel-case.
- *
- * @param {String} string String to un-camel-case.
- * @return {String} Un-camel-cased string.
- */
-export function unCamelCase (string) {
-  return toTitleCase(string.replace(/([A-Z])/g, ' $1').replace(/\s+/g, ' ').trim())
-}
-
-/**
- * Sort an array of objects by string property.
- *
- * @param {Array} objects Array to sort.
- * @param {String} property Property to sort by.
- * @return {Array} Sorted array.
- */
-export function sortByString (objects, property) {
-  return objects.sort((a, b) => {
-    const valueA = (a[property] ?? '').toLowerCase()
-    const valueB = (b[property] ?? '').toLowerCase()
-    return valueA < valueB ? -1 : +(valueA > valueB)
-  })
-}
-
-/**
- * Sort an array of objects by number property.
- *
- * @param {Array} objects Array to sort.
- * @param {String} property Property to sort by.
- * @param {number} fallback A default value for objects without that property.
- * @return {Array} Sorted array.
- */
-export function sortByNumber (objects, property, fallback = 0) {
-  return objects.sort((a, b) => {
-    return (a[property] ?? fallback) - (b[property] ?? fallback)
-  })
-}
-
-/**
- * Make an asset's name readable.
- *
- * Drops the group part (before the dot) and title-cases the rest.
- *
- * @param {String} assetName Name to convert, e.g. 'dungeon.ironDoor'.
- * @return {String} Improved name, e.g. 'Dungeon, Iron Door'.
- */
-export function prettyName (assetName = '') {
-  const split = assetName.split('.')
-  if (split.length <= 1) {
-    return unCamelCase(split[0])
-  } else if (split[0] === '_') { // sort-first character
-    return unCamelCase(split[1])
-  } else { // only 2 splits/groups are supported
-    return unCamelCase(split[0]) +
-    ', ' + unCamelCase(split[1])
-  }
-}
-
-/**
- * Convert an asset's readable name back into an name.
- *
- * @param {String} assetName Name to convert, e.g. 'Dungeon, Iron Door'.
- * @return {String} Alias for filename, e.g. 'dungeon.ironDoor'.
- */
-export function unprettyName (assetName = '') {
-  const split = assetName.split(',')
-  if (split.length <= 1) {
-    return toCamelCase(split[0].trim())
-  } else {
-    return toCamelCase(split[0].trim()) + '.' + toCamelCase(split[1].trim())
-  }
 }
 
 // --- time & timestamps -------------------------------------------------------
@@ -725,14 +366,15 @@ export const timeRecords = []
  *
  * Will keep up to 10 values.
  *
- * @param {String} record Named record to add this time.
- * @param {Object} value Value to add, if > 0.
+ * @param {string} name Named record to add this time.
+ * @param {object} value Value to add, if > 0.
+ * @returns {number} Recorded timestamp in ms.
  */
-export function recordTime (data, value) {
-  timeRecords[data] = timeRecords[data] ?? [0]
-  while (timeRecords[data].length >= 10) timeRecords[data].shift()
-  if (value > 0) timeRecords[data].push(value)
-  return timeRecords[data]
+export function recordTime (name, value) {
+  timeRecords[name] = timeRecords[name] ?? [0]
+  while (timeRecords[name].length >= 10) timeRecords[name].shift()
+  if (value > 0) timeRecords[name].push(value)
+  return timeRecords[name]
 }
 
 // --- color -------------------------------------------------------------------
@@ -740,8 +382,8 @@ export function recordTime (data, value) {
 /**
  * Calculate brightness of an HTML hex-color value.
  *
- * @param {String} color E.g. '#ff0000'
- * @return {Number} Grayscale brightness of color (0..255), e.g. 85.
+ * @param {string} color E.g. '#ff0000'
+ * @returns {number} Grayscale brightness of color (0..255), e.g. 85.
  */
 export function brightness (color) {
   if (color === 'transparent') return 255 // all and nothing
@@ -754,10 +396,10 @@ export function brightness (color) {
 /**
  * Calculate a contrast label text color for a given background color.
  *
- * @param {String} backgroundColor E.g. '#ff0000'
- * @param {String} white Color to use for dark backgrounds.
- * @param {String} black Color to use for light backgrounds.
- * @return {String} HTML color to use for label text.
+ * @param {string} backgroundColor E.g. '#ff0000'
+ * @param {string} white Color to use for dark backgrounds.
+ * @param {string} black Color to use for light backgrounds.
+ * @returns {string} HTML color to use for label text.
  */
 export function labelColor (backgroundColor, white = '#e6e6e6', black = '#262626') {
   if (backgroundColor.match(/^#/)) {
@@ -771,7 +413,7 @@ export function labelColor (backgroundColor, white = '#e6e6e6', black = '#262626
 /**
  * Generate a username like 'L. Lion'.
  *
- * @return {String} Random user name consisting of initial and name.
+ * @returns {string} Random user name consisting of initial and name.
  */
 export function generateUsername () {
   return letters[Math.floor(Math.random() * letters.length)] + '. ' +
@@ -781,7 +423,7 @@ export function generateUsername () {
 /**
  * Generate a name like 'hilariousGazingPenguin'.
  *
- * @return {String} Random name constisting of 3 parts (adjective, verb, noun).
+ * @returns {string} Random name constisting of 3 parts (adjective, verb, noun).
  */
 export function generateName () {
   return adjectives[Math.floor(Math.random() * adjectives.length)] +
@@ -792,13 +434,11 @@ export function generateName () {
 /**
  * Generate a name like 'hilariousGazingPenguin'.
  *
- * @return {String} Random name constisting of 3 parts (adjective, verb, noun).
+ * @returns {string} Random name constisting of 3 parts (adjective, verb, noun).
  */
 export function generateAnimal () {
   return animals[Math.floor(Math.random() * animals.length)]
 }
-
-const fallbackStore = new Map() // in-memory fallback 'store'
 
 /** An array of all the letters A-Z. */
 const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']

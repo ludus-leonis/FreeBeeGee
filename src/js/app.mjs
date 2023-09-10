@@ -1,7 +1,9 @@
 /**
  * @file Does all the browser/document setup & page routing.
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -56,7 +58,7 @@ export function navigateReload () {
 /**
  * Go back to the start/join screen. Remember room name if possible.
  *
- * @param {?String} roomName Optional name of room to add in redirect.
+ * @param {?string} roomName Optional name of room to add in redirect.
  */
 export function navigateToJoin (roomName) {
   if (roomName) {
@@ -69,7 +71,7 @@ export function navigateToJoin (roomName) {
 /**
  * Go back to a room screen.
  *
- * @param {String} roomName Name of room to go to.
+ * @param {string} roomName Name of room to go to.
  */
 export function navigateToRoom (roomName) {
   goto('./' + roomName)
@@ -80,6 +82,9 @@ export function navigateToRoom (roomName) {
  *
  * If ok, it continues to the room/table. If it fails, it displays the necessary
  * screen.
+ *
+ * @param {string} roomName Room name (user input).
+ * @param {string} password Password (user input).
  */
 export function auth (roomName, password) {
   // try to login
@@ -132,6 +137,8 @@ export function route () {
  * Go to another url via browser's location.
  *
  * Will delay execution slightly to not mess up logging output order.
+ *
+ * @param {string} url Redirect target.
  */
 function goto (url) {
   setTimeout(() => {

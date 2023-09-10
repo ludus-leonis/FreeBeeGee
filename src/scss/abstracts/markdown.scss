@@ -63,6 +63,7 @@
   h5,
   h6 {
     @include typography-font($typography-font-list-hand, 800, 1em, 1.15em, .025em);
+
     color: $color-black-100;
     margin-top: $markdown-spacing-paragraph * 2;
   }

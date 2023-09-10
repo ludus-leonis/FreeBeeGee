@@ -2,7 +2,9 @@
  * @file Handles the note editor modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -20,7 +22,8 @@
 import _ from '../../../../lib/FreeDOM.mjs'
 
 import {
-  FLAG_NOTE_TOPLEFT,
+  FLAGS,
+  createPieces,
   editPiece
 } from '../../../../state/index.mjs'
 
@@ -30,7 +33,7 @@ import {
 
 import {
   inputMaxLength
-} from '../../../../lib/utils.mjs'
+} from '../../../../lib/utils-html.mjs'
 
 import {
   setupFlags,
@@ -49,9 +52,9 @@ export const NOTE_LENGTH = 256
 /**
  * Show the edit-piece modal.
  *
- * @param {Object} piece The piece's data object.
- * @return {function} Callback for ok/save button.
-*/
+ * @param {object} piece The piece's data object.
+ * @returns {Function} Callback for ok/save button.
+ */
 export function setup (piece) {
   _('#modal-body').innerHTML = getModalNote()
 
@@ -71,11 +74,11 @@ export function setup (piece) {
   const noteType = _('#piece-note-type')
   const option1 = _('option').create('Center')
   option1.value = 'c'
-  if (piece.f & !FLAG_NOTE_TOPLEFT) option1.selected = true
+  if (piece.f & !FLAGS.NOTE_TOPLEFT) option1.selected = true
   noteType.add(option1)
   const option2 = _('option').create('Top-Left')
   option2.value = 'tl'
-  if (piece.f & FLAG_NOTE_TOPLEFT) option2.selected = true
+  if (piece.f & FLAGS.NOTE_TOPLEFT) option2.selected = true
   noteType.add(option2)
 
   setupFlags(piece)
@@ -92,7 +95,7 @@ export function setup (piece) {
 /**
  * Hides modal and pushes changes to the state.
  *
- * @return {boolean} True, if save was successfull (and modal can be closed).
+ * @returns {boolean} True, if save was successfull (and modal can be closed).
  */
 function modalOk () {
   const piece = _('#modal').node().piece
@@ -103,7 +106,14 @@ function modalOk () {
   updateColor(piece, updates)
   updateFlags(piece, updates)
 
-  editPiece(piece.id, updates)
+  if (piece.id) {
+    editPiece(piece.id, updates)
+  } else {
+    createPieces([{
+      ...piece,
+      ...updates
+    }], true)
+  }
 
   return true
 }
@@ -111,7 +121,7 @@ function modalOk () {
 /**
  * Create the modal's content.
  *
- * @return {string} HTML snippet.
+ * @returns {string} HTML snippet.
  */
 function getModalNote () {
   return `

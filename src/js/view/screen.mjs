@@ -2,7 +2,9 @@
  * @file Common screen handling.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -22,10 +24,10 @@ import _ from '../lib/FreeDOM.mjs'
 /**
  * Display a card-style page on dark background. Replaces the current body content.
  *
- * @param {String} headline Text for the headline area of the box.
- * @param {String} content HTML for the .card-body part of the box.
- * @param {String} footer Optional HTML to be shown as .p-small footer below the card.
- * @return {FreeDom} FreeDOM object with preselected body for customizatons.
+ * @param {string} headline Text for the headline area of the box.
+ * @param {string} content HTML for the .card-body part of the box.
+ * @param {string} footer Optional HTML to be shown as .p-small footer below the card.
+ * @returns {_} FreeDOM object with preselected body for customizatons.
  */
 export function createScreen (headline, content, footer = '') {
   const body = _('body')
@@ -60,7 +62,8 @@ export function clearServerFeedback () {
 /**
  * Show a server feedback (error message).
  *
- * @param {String} message Message to show.
+ * @param {string} message Message to show.
+ * @param {string} form HTML form to add.
  */
 export function serverFeedback (message, form) {
   clearServerFeedback()

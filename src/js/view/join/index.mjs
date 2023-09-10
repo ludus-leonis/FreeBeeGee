@@ -2,7 +2,9 @@
  * @file The join-room screen.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -28,10 +30,18 @@ import {
 } from '../../state/index.mjs'
 
 import {
-  getGetParameter,
+  PATTERN_ROOM_NAME,
   generateName,
   generateUsername
 } from '../../lib/utils.mjs'
+
+import {
+  getGetParameter
+} from '../../lib/utils-html.mjs'
+
+import {
+  hoursToTimespan
+} from '../../lib/utils-text.mjs'
 
 import {
   DEMO_MODE
@@ -46,8 +56,6 @@ const roomNameMaxLength = 48
 
 /**
  * Show the enter-name dialog.
- *
- * @param {String} roomName Room name.
  */
 export function runJoin () {
   const ttl = getServerInfo().ttl
@@ -62,7 +70,7 @@ export function runJoin () {
     `
       ${intro}
       <label for="name">Room name</label>
-      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${roomNameMaxLength}" pattern="[a-zA-Z0-9]{8,${roomNameMaxLength}}">
+      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${roomNameMaxLength}" pattern="${PATTERN_ROOM_NAME}">
       <p class="p-small spacing-tiny">Min. 8 characters - no spaces or funky letters, please.</p>
       ${intro2}
 
@@ -70,7 +78,7 @@ export function runJoin () {
     `,
 
     ttl > 0
-      ? `This server deletes rooms after ${ttl}h of inactivity.`
+      ? `This server deletes rooms after ${hoursToTimespan(ttl)} of inactivity.`
       : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 

@@ -24,7 +24,7 @@
 /// @access public
 ////
 
-$rotate-steps: 0 60 90 120 180 240 270 300;
+// $rotate-steps: 0 60 90 120 180 240 270 300;
 
 :root {
   #{'--fbg-r'}: 0deg;
@@ -33,16 +33,18 @@ $rotate-steps: 0 60 90 120 180 240 270 300;
 
 // --- rotation --------------------------------------------------------------
 
-@each $r in $rotate-steps {
+.is-r {
+  transform: rotate(var(--fbg-r));
+
+  > .label {
+    transform: rotate(calc(var(--fbg-r) * -1));
+    transition: transform $fbg-transition; // keep up with rotation
+  }
+}
+
+@for $r from 0 through 359 { // @each $r in $rotate-steps
   .is-r-#{$r} {
     #{'--fbg-r'}: $r * 1deg;
-
-    transform: rotate(var(--fbg-r));
-
-    > .label {
-      transform: rotate(calc(var(--fbg-r) * -1));
-      transition: transform $fbg-transition; // keep up with rotation
-    }
   }
 }
 
@@ -65,21 +67,17 @@ $rotate-jitter: (-1) (-.97) (-.94) (-.91) (-.88) (-.84) (-.81) (-.78) (-.75) (-.
 
 // --- animation/transition fixes ----------------------------------------------
 
-.is-delay-r-300 {
-  #{'--fbg-r'}: -60deg;
-}
-
-.is-delay-r-270 {
-  #{'--fbg-r'}: -90deg;
+@for $r from 1 through 359 {
+  .is-delay-r-#{$r} {
+    #{'--fbg-r'}: ($r - 360) * 1deg;
+  }
 }
 
 .is-delay-r-0 {
   #{'--fbg-r'}: 360deg;
 }
 
-.is-delay-r-300,
-.is-delay-r-270,
-.is-delay-r-0 {
+.is-delay-r {
   transition: none !important; // sass-lint:disable-line no-important
 
   .label {

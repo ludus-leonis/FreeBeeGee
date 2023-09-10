@@ -58,17 +58,6 @@
       text-align: center;
       text-shadow: px(1) px(1) px(1) var(--fbg-color-bg), px(-1) px(-1) px(1) var(--fbg-color-bg);
     }
-
-    .client-feedback,
-    .server-feedback,
-    .server-feedback-form {
-      color: $color-bad;
-      display: none;
-
-      &.show {
-        display: block;
-      }
-    }
   }
 
   .p-small {

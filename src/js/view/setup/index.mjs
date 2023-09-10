@@ -2,7 +2,9 @@
  * @file The setup-a-room screen.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -24,8 +26,9 @@ import {
 } from '../../lib/icons.mjs'
 
 import {
-  bytesToIso
-} from '../../lib/utils.mjs'
+  bytesToIso,
+  hoursToTimespan
+} from '../../lib/utils-text.mjs'
 
 import {
   createScreen,
@@ -54,7 +57,7 @@ import {
 /**
  * Show a setup-room dialog.
  *
- * @param {String} name The room name the user entered in the join dialog.
+ * @param {string} name The room name the user entered in the join dialog.
  */
 export function setupView (name) {
   if (getServerInfo().freeRooms <= 0) {
@@ -126,7 +129,7 @@ export function setupView (name) {
     `,
 
     ttl > 0
-      ? `This server deletes rooms after ${ttl}h of inactivity.`
+      ? `This server deletes rooms after ${hoursToTimespan(ttl)} of inactivity.`
       : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 
@@ -145,6 +148,16 @@ export function setupView (name) {
         option.value = snapshot
         if (snapshot === preselected) option.selected = true
         t.add(option)
+      }
+      if (snapshots.length <= 0) {
+        const option = _('option').create('(no snapshots available)')
+        option.value = 'NO_SNAPSHOT'
+        option.selected = true
+        t.add(option)
+        _('.server-feedback').add('.show').innerHTML = `
+          There are no snapshots available on this server.
+          <span class="is-icon" title="Admins should check if the data/ directory is empty.">${iconHelp}</span>
+        `
       }
     })
 
@@ -186,6 +199,8 @@ function reset () {
 
 /**
  * Validate file upload.
+ *
+ * @returns {boolean} True if validation passes.
  */
 function validate () {
   if (_('#mode').checked) { // upload mode
@@ -195,12 +210,17 @@ function validate () {
     }
     return true
   } else { // exisiting snapshot mode
+    if (_('#snapshot').value === 'NO_SNAPSHOT') {
+      return false
+    }
     return true // checks handled by html input
   }
 }
 
 /**
  * Initiates actual room-setup after user clicks OK.
+ *
+ * @param {string} name The room's name.
  */
 function ok (name) {
   _('#ok').add('.is-spinner')

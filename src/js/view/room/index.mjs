@@ -3,7 +3,9 @@
  *       tabletop canvas itself - but not the stuff on the tabletop.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
- * @license This file is part of FreeBeeGee.
+ * @license AGPL-3.0-or-later
+ *
+ * This file is part of FreeBeeGee.
  *
  * FreeBeeGee is free software: you can redistribute it and/or modify it under
  * the terms of the GNU Affero General Public License as published by the Free
@@ -27,6 +29,7 @@ import {
 } from '../../app.mjs'
 
 import {
+  clipboardCopy,
   selectionGetPieces,
   selectionGetFeatures,
   isSelectedId,
@@ -46,7 +49,7 @@ import {
   iconFlip,
   iconTop,
   iconBottom,
-  iconClone,
+  iconCopy,
   iconDelete,
   iconShuffle,
   iconDownload,
@@ -75,7 +78,6 @@ import {
 import {
   editSelected,
   rotateSelected,
-  cloneSelected,
   toTopSelected,
   toBottomSelected,
   flipSelected,
@@ -97,7 +99,6 @@ import {
 
 import {
   enableDragAndDrop,
-  getMouseCoords,
   toggleLMBLos,
   isLMBLos
 } from '../../view/room/mouse/index.mjs'
@@ -108,7 +109,7 @@ import {
 
 import {
   modalLibrary
-} from '../../view/room/modal/library/index.mjs'
+} from '../../view/room/library/index.mjs'
 
 import {
   modalHelp
@@ -128,6 +129,10 @@ import {
 } from '../../view/room/modal/settings.mjs'
 
 import {
+  fakeTabularNums
+} from '../../lib/utils-html.mjs'
+
+import {
   DEMO_MODE
 } from '../../api/index.mjs'
 
@@ -136,7 +141,7 @@ import {
 /**
  * Set the room mouse cursor (pointer, cross, ...)
  *
- * @return {String} Cursor (class), or undefined to revert to default cursor.
+ * @param {?string} cursor Cursor (class), or undefined to revert to default cursor.
  */
 export function setCursor (cursor) {
   scroller.remove('.cursor-*')
@@ -152,7 +157,7 @@ export function setCursor (cursor) {
 /**
  * Get current top-left tabletop scroll position.
  *
- * @return {Object} Contains x and y in pixel.
+ * @returns {object} Contains x and y in pixel.
  */
 export function getScrollPositionNative () {
   return {
@@ -164,8 +169,8 @@ export function getScrollPositionNative () {
 /**
  * Get current tabletop scroll position.
  *
- * @return {Number} x X-coordinate.
- * @return {Number} y Y-coordinate.
+ * @param {number} x X-coordinate.
+ * @param {number} y Y-coordinate.
  */
 export function setScrollPositionNative (x, y) {
   scroller.node().scrollTo(x, y)
@@ -174,7 +179,7 @@ export function setScrollPositionNative (x, y) {
 /**
  * Get current center of the viewport of the scroll position.
  *
- * @return {Object} Contains tablespace x and y in pixel.
+ * @returns {object} Contains tablespace x and y in pixel.
  */
 export function getViewCenter () {
   return zoomCoordinates({
@@ -186,7 +191,7 @@ export function getViewCenter () {
 /**
  * Get current center of the viewport of the scroll position.
  *
- * @return {Object} Contains x and y in pixel.
+ * @returns {object} Contains x and y in pixel.
  */
 export function getViewCenterTile () {
   const setup = getSetup()
@@ -200,8 +205,8 @@ export function getViewCenterTile () {
 /**
  * Initialize and start the room/tabletop screen.
  *
- * @param {String} name Name of room, e.g. hilariousGazingPenguin.
- * @param {String} token API access token for this room.
+ * @param {string} name Name of room, e.g. hilariousGazingPenguin.
+ * @param {string} token API access token for this room.
  */
 export function runRoom (name, token) {
   console.info('$NAME$ v$VERSION$, room ' + name)
@@ -213,7 +218,7 @@ export function runRoom (name, token) {
 /**
  * Toggle one of the layers on/off for selection.
  *
- * @param {String} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN.
+ * @param {string} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN.
  */
 export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
@@ -244,7 +249,7 @@ export function toggleLos () {
 /**
  * Toggle grid display on/off.
  *
- * @param {Number} value Grid value (0..2).
+ * @param {number} value Grid value (0..2).
  */
 export function toggleGrid (value) {
   switch (value) {
@@ -293,7 +298,7 @@ export function updateMenu () {
  *
  * e.g. for resizing the room.
  *
- * @return {FreeDOM} Room DOM element for further customization.
+ * @returns {_} Room FreeDOM element for further customization.
  */
 export function updateRoom () {
   const room = getRoom()
@@ -309,9 +314,9 @@ export function updateRoom () {
  *
  * Takes position of element and scroll position inside the element into account.
  *
- * @param {Number} clientX A window x coordinate e.g. from a click event.
- * @param {Number} clientY A window y coordinate e.g. from a click event.
- * @return {Object} The absolute room coordinate as {x, y}.
+ * @param {number} windowX A window x coordinate e.g. from a click event.
+ * @param {number} windowY A window y coordinate e.g. from a click event.
+ * @returns {object} The absolute room coordinate as {x, y}.
  */
 export function getTableCoordinates (windowX, windowY) {
   const origin = scroller.node().getBoundingClientRect()
@@ -327,8 +332,9 @@ export function getTableCoordinates (windowX, windowY) {
  *
  * Compensates for current table zoom level. Tries to cache/minimize room pref calls.
  *
- * @param {Object} coords {x, y} coordinates.
- * @param {Number} direction 1 = multiply, -1 = divide
+ * @param {object} coords {x, y} coordinates.
+ * @param {number} direction 1 = multiply, -1 = divide
+ * @returns {object} Zoom coordinates as {x, y}.
  */
 export function zoomCoordinates (coords, direction = 1) {
   if (coords.zoom) {
@@ -392,7 +398,7 @@ export function restoreScrollPosition () {
 /**
  * Set table magnification.
  *
- * @param {Number} zoom Zoom factor. 1 is no zoom / 100%.
+ * @param {number} zoom Zoom factor. 1 is no zoom / 100%.
  */
 export function setupZoom (zoom) {
   const center = getViewCenter()
@@ -453,7 +459,7 @@ export function setupBackground () {
  * Check if we need to update the select state after user clicked somewhere.
  *
  * @param {Element} node The HTML node the user clicked on. Unselect all if null.
- * @param {Boolean} toggle If false (default), selection replaces all previous.
+ * @param {boolean} toggle If false (default), selection replaces all previous.
  *                         If true, selection is added/removed (crtl-click).
  */
 export function updateSelection (node, toggle = false) {
@@ -480,8 +486,6 @@ let scroller = null /** keep reference to scroller div - we need it often */
 
 /**
  * Setup the room screen / HTML.
- *
- * @param {Object} room Room data object.
  */
 function setupRoom () {
   cleanupStore()
@@ -489,8 +493,18 @@ function setupRoom () {
   const room = getRoom()
 
   let mode = '.is-grid-square'
-  if (room.setup?.type === TYPE_HEX) mode = '.is-grid-hex'
-  if (room.setup?.type === TYPE_HEX2) mode = '.is-grid-hex2'
+  switch (room.setup?.type) {
+    case TYPE_HEX:
+      mode = '.is-grid-hex'
+      setRoomPreference(PREFS.PIECE_ROTATE, getRoomPreference(PREFS.PIECE_ROTATE) ?? 60)
+      break
+    case TYPE_HEX2:
+      mode = '.is-grid-hex2'
+      setRoomPreference(PREFS.PIECE_ROTATE, getRoomPreference(PREFS.PIECE_ROTATE) ?? 60)
+      break
+    default: // square
+      setRoomPreference(PREFS.PIECE_ROTATE, getRoomPreference(PREFS.PIECE_ROTATE) ?? 90)
+  }
 
   _('body').remove('.page-boxed').add(mode).innerHTML = `
     <div id="room" class="room is-fullscreen is-noselect">
@@ -519,7 +533,7 @@ function setupRoom () {
             <button id="btn-hash" class="btn-icon" title="Random [#]">${iconShuffle}</button>
             <button id="btn-t" class="btn-icon" title="To top [t]">${iconTop}</button>
             <button id="btn-b" class="btn-icon" title="To bottom [b]">${iconBottom}</button>
-            <button id="btn-c" class="btn-icon" title="Clone [c]">${iconClone}</button>
+            <button id="btn-c" class="btn-icon" title="Copy [ctrl][c]">${iconCopy}</button>
             <button id="btn-del" class="btn-icon" title="Delete [Del]">${iconDelete}</button>
           </div>
         </div>
@@ -578,7 +592,7 @@ function setupRoom () {
   _('#btn-a').on('click', () => modalLibrary(getViewCenter()))
   _('#btn-e').on('click', () => editSelected())
   _('#btn-r').on('click', () => rotateSelected())
-  _('#btn-c').on('click', () => cloneSelected(getMouseCoords()))
+  _('#btn-c').on('click', () => clipboardCopy())
   _('#btn-t').on('click', () => toTopSelected())
   _('#btn-b').on('click', () => toBottomSelected())
   _('#btn-f').on('click', () => flipSelected())
@@ -648,14 +662,13 @@ function autoTrackScrollPosition () {
 
 let statuslineLoop = -1
 
+/**
+ *
+ */
 function runStatuslineLoop () {
   clearTimeout(statuslineLoop)
   updateStatusline()
   statuslineLoop = setTimeout(() => {
     runStatuslineLoop()
   }, 5000)
-}
-
-function fakeTabularNums (text) {
-  return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
 }
