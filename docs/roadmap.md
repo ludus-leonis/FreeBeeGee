@@ -6,7 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [X] show tile+token sides as individual pieces in library
 * [X] library editor: edit asset name / size / material / color
-* [ ] piece: wooden cubes
+* [X] wooden cubes
 * [X] paper background for windows and cards
 * [X] open edit window on note create
 * [X] ui
@@ -48,6 +48,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] ui: decks/stacks
 * [ ] ui: tweak minor grid visibility
 * [ ] engine: grid-on-tile flag
+* [ ] autopopulate empty data dir (for docker volumes)
 * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] engine: option to rotate group vs individual pieces

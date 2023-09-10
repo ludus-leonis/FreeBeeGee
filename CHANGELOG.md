@@ -11,6 +11,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added copy/cut/paste between tables in a room
 * added paper background for windows and cards
 * added half-rotations via settings (45° for square, 30° for hex)
+* added wooden cubes (small, medium, large) to default snapshot library
 * changed tile+token sides to be shown as individual pieces in library
 * changed docker image to PHP 8.2
 * renamed library manager to library editor
