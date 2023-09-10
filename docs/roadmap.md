@@ -2,52 +2,32 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.21 - ??? ???
+## v0.22
 
-* [X] show tile+token sides as individual pieces in library
-* [X] library editor: edit asset name / size / material / color
-* [X] wooden cubes
-* [X] paper background for windows and cards
-* [X] open edit window on note create
-* [X] ui
-  * [X] smaller modal paddings
-  * [X] half-rotations via settings (45° for square, 30° for hex)
-* [X] clipboard ctrl+c/v/x on/between tables
-* [X] change docker image to PHP 8.2
-* [X] add error message when snapshot list is empty
-* [X] improve server-delete timespan display
+* [ ] undo / time travel
+* [ ] tooltip explanation for '3x3:3' in library window
+* [ ] tweak minor grid visibility
 * [ ] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] github action to rebuid app on dev
-    * [X] add tabular numbers for library editor tree/preview
-    * [X] refactor: add jsdoc linting
-    * [X] refactor: use npm linter instead of gulp linter
-    * [X] refactor: add GitHub Actions for automated build
-    * [X] refactor: replace gulp-image with custom plugin
-    * [X] refactor: replace sass-lint with stylelint
-    * [X] fix texture bug on non-square assets
-    * [X] click on icon in popup does not trigger function
-    * [X] document or improve data volume mounting strategy
-  * [X] review docs
-  * [X] review tutorial
-  * [X] bump engine, version/codename & update CHANGELOG
-  * [X] review + run tests
-  * [X] update screenshots
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] bug: selection lost after clone
+    * [ ] refactor: get 's' out of asset IDs
+  * [ ] review docs
+  * [ ] review tutorial
+  * [ ] bump engine, version/codename & update CHANGELOG
+  * [ ] review + run tests
+  * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
-* [ ] bug: selection lost after clone
 * [ ] refactor: use _private exports for test cases
 * [ ] refactor: use events more
-* [ ] refactor: get 's' out of asset IDs
 * [ ] plugin-hook
 * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
 * [ ] library editor: replace media/side
 * [ ] ui: decks/stacks
-* [ ] ui: tweak minor grid visibility
 * [ ] engine: grid-on-tile flag
 * [ ] autopopulate empty data dir (for docker volumes)
 * [ ] simplify/automate more deployment steps (ongoing)
@@ -56,12 +36,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: protect api objects in JS code
 * [ ] snapshot download for demo mode
 * [ ] ui: move dice more
-* [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] ui: set fixed table size (e.g. 73x65)
-* [ ] undo / time travel
 * [ ] piece: supply heap
 * [ ] piece: cards / card-decks
   * [ ] shuffle deck/stack
