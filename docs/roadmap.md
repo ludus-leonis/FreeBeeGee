@@ -30,8 +30,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] click on icon in popup does not trigger function
     * [X] document or improve data volume mounting strategy
   * [X] review docs
-  * [ ] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
+  * [X] review tutorial
+  * [X] bump engine, version/codename & update CHANGELOG
   * [ ] review + run tests
   * [ ] update screenshots
 

@@ -1,9 +1,9 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.21.0-dev",
-  "versionEngine": "2.4.1",
+  "version": "0.21.0",
+  "versionEngine": "2.4.2",
   "type": "module",
-  "codename": "??? ???",
+  "codename": "Wailing Woodpecker",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",
