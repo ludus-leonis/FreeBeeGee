@@ -28,7 +28,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] click on icon in popup does not trigger function
     * [ ] document or improve data volume mounting strategy
     * [ ] better error msg when snapshot list is empty
-    * [ ] This server deletes rooms after 2400h of inactivity.
+    * [X] improve server-delete timespan display
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

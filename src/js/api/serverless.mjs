@@ -42,8 +42,11 @@ import {
 } from '../lib/utils-html.mjs'
 
 import {
-  epoch,
   anId
+} from '../lib/utils-text.mjs'
+
+import {
+  epoch
 } from '../lib/utils.mjs'
 
 // --- public ------------------------------------------------------------------

@@ -30,9 +30,12 @@ import {
   shuffle,
   recordTime,
   brightness,
-  equalsJSON,
-  sortByNumber
+  equalsJSON
 } from '../../../lib/utils.mjs'
+
+import {
+  sortByNumber
+} from '../../../lib/utils-text.mjs'
 
 import {
   FLAGS,

@@ -34,7 +34,7 @@ import {
 
 import {
   prettyName
-} from '../../../../lib/utils.mjs'
+} from '../../../../lib/utils-text.mjs'
 
 import {
   HOOK_LIBRARY_RELOAD,

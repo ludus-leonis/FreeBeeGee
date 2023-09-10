@@ -26,8 +26,9 @@ import {
 } from '../../lib/icons.mjs'
 
 import {
-  bytesToIso
-} from '../../lib/utils.mjs'
+  bytesToIso,
+  hoursToTimespan
+} from '../../lib/utils-text.mjs'
 
 import {
   createScreen,
@@ -128,7 +129,7 @@ export function setupView (name) {
     `,
 
     ttl > 0
-      ? `This server deletes rooms after ${ttl}h of inactivity.`
+      ? `This server deletes rooms after ${hoursToTimespan(ttl)} of inactivity.`
       : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 

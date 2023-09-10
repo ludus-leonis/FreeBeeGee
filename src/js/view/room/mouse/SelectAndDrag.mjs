@@ -22,9 +22,12 @@
 import _ from '../../../lib/FreeDOM.mjs'
 
 import {
-  clamp,
-  sortByNumber
+  clamp
 } from '../../../lib/utils.mjs'
+
+import {
+  sortByNumber
+} from '../../../lib/utils-text.mjs'
 
 import {
   MouseButtonHandler

@@ -28,13 +28,16 @@ import {
 
 import {
   PATTERN_ASSET_NAME,
+  generateAnimal
+} from '../../../lib/utils.mjs'
+
+import {
   toTitleCase,
   prettyName,
   unprettyName,
   sortByString,
-  bytesToIso,
-  generateAnimal
-} from '../../../lib/utils.mjs'
+  bytesToIso
+} from '../../../lib/utils-text.mjs'
 
 import {
   resizeImage

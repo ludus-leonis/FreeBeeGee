@@ -41,9 +41,12 @@ import {
   intersect,
   contains,
   getDimensionsRotated,
-  mod,
-  hash
+  mod
 } from '../../../lib/utils.mjs'
+
+import {
+  hash
+} from '../../../lib/utils-text.mjs'
 
 import {
   DEMO_MODE

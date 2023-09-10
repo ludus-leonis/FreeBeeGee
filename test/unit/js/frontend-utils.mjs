@@ -30,6 +30,20 @@ import {
 } from '../../../src/js/lib/utils-html.mjs'
 
 import {
+  uuid,
+  bytesToIso,
+  hash,
+  hoursToTimespan,
+  toTitleCase,
+  toCamelCase,
+  prettyName,
+  sortByNumber,
+  sortByString,
+  unCamelCase,
+  unprettyName
+} from '../../../src/js/lib/utils-text.mjs'
+
+import {
   isAll,
   isAny,
   isNone,
@@ -45,17 +59,6 @@ import {
   getDimensionsRotated,
 
   equalsJSON,
-
-  uuid,
-  bytesToIso,
-  hash,
-  toTitleCase,
-  toCamelCase,
-  unCamelCase,
-  sortByString,
-  sortByNumber,
-  prettyName,
-  unprettyName,
 
   recordTime,
 
@@ -686,6 +689,25 @@ describe('Frontend - utils.mjs - Text', function () {
     expect(bytesToIso(1024 * 1024)).to.be.eql('1 MB')
     expect(bytesToIso(1024 * 1024 * 1024 - 1)).to.be.eql('1023 MB')
     expect(bytesToIso(1024 * 1024 * 1024)).to.be.eql('1 GB')
+  })
+
+  it('hoursToTimespan()', function () {
+    expect(hoursToTimespan(0)).to.be.eql('0 hours')
+    expect(hoursToTimespan(1)).to.be.eql('1 hour')
+    expect(hoursToTimespan(2)).to.be.eql('2 hours')
+    expect(hoursToTimespan(95)).to.be.eql('95 hours')
+    expect(hoursToTimespan(96)).to.be.eql('4 days')
+    expect(hoursToTimespan(96, true)).to.be.eql('4 days')
+    expect(hoursToTimespan(96, false)).to.be.eql('4 days')
+    expect(hoursToTimespan(97)).to.be.eql('4 days')
+    expect(hoursToTimespan(97, true)).to.be.eql('4 days')
+    expect(hoursToTimespan(97, false)).to.be.eql('5 days')
+    expect(hoursToTimespan(2400)).to.be.eql('100 days')
+    expect(hoursToTimespan(2400, true)).to.be.eql('100 days')
+    expect(hoursToTimespan(2400, false)).to.be.eql('100 days')
+    expect(hoursToTimespan(2401)).to.be.eql('14 weeks')
+    expect(hoursToTimespan(2401, true)).to.be.eql('14 weeks')
+    expect(hoursToTimespan(2401, false)).to.be.eql('15 weeks')
   })
 
   it('prettyName()', function () {

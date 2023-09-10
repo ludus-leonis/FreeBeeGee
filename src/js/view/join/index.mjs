@@ -40,6 +40,10 @@ import {
 } from '../../lib/utils-html.mjs'
 
 import {
+  hoursToTimespan
+} from '../../lib/utils-text.mjs'
+
+import {
   DEMO_MODE
 } from '../../api/index.mjs'
 
@@ -74,7 +78,7 @@ export function runJoin () {
     `,
 
     ttl > 0
-      ? `This server deletes rooms after ${ttl}h of inactivity.`
+      ? `This server deletes rooms after ${hoursToTimespan(ttl)} of inactivity.`
       : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 

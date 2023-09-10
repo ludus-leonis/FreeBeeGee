@@ -58,7 +58,7 @@ import {
 import {
   sortByString,
   prettyName
-} from '../../../lib/utils.mjs'
+} from '../../../lib/utils-text.mjs'
 
 import {
   fakeTabularNums

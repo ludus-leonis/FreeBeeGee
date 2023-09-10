@@ -24,6 +24,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed texture bug on masked non-square assets
 * fixed click on icon in popup does not trigger function
 * changed new-note to show the edit window first instead of creating an empty note
+* improved server-delete timespan display to show days and weeks
 * replaced gulp-image with custom image shrinker plugin
 * replaced sass-lint with stylelint
 

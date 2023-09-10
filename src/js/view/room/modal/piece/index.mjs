@@ -46,9 +46,12 @@ import {
 } from '../../../../state/index.mjs'
 
 import {
-  prettyName,
   equalsJSON
 } from '../../../../lib/utils.mjs'
+
+import {
+  prettyName
+} from '../../../../lib/utils-text.mjs'
 
 import {
   setup as setupModalToken

@@ -39,10 +39,13 @@ import {
 import {
   PATTERN_ASSET_NAME,
   PATTERN_COLOR,
-  prettyName,
-  unprettyName,
   generateAnimal
 } from '../../../../lib/utils.mjs'
+
+import {
+  prettyName,
+  unprettyName
+} from '../../../../lib/utils-text.mjs'
 
 import {
   HOOK_LIBRARY_RELOAD,
