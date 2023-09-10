@@ -33,7 +33,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] review tutorial
   * [X] bump engine, version/codename & update CHANGELOG
   * [X] review + run tests
-  * [ ] update screenshots
+  * [X] update screenshots
 
 ## Backlog
 
