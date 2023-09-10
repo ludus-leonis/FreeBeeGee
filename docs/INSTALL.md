@@ -42,7 +42,7 @@ Finally, review the `terms.html` and don't forget to update your GDPR / privacy 
 
 ## Alternate installation - Docker
 
-If you are using [Docker](https://en.wikipedia.org/wiki/Docker_(software)) on your server, you can also install & run FreeBeeGee as a container. It comes with a pre-configured Apache webserver and PHP.
+If you are using [Docker](https://en.wikipedia.org/wiki/Docker_(software)) on your server, you can also install & run FreeBeeGee as a container. It comes with a pre-configured Apache webserver and PHP 8.2.
 
 ```
 FBGPASS=supersecret docker run -d -e FBGPASS -p 8765:80 ghcr.io/ludus-leonis/freebeegee:latest

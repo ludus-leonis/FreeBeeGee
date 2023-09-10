@@ -27,9 +27,9 @@ Your game. Your data.
 * File & folder-based. No database required. Easy to install.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
 
-**Note:** This is an development version. A few rather major features are still missing:
+**Note:** This is an development version. A few eatures are still missing:
 
-* While you can upload images/tiles/pieces via the web-UI, editing them afterwards is quite limited.
+* Editing assets in the library is possible but limited.
 
 The good news is: You can still use FreeBeeGee today to play! Those features will arrive sooner or later. There is a (rough) [roadmap](docs/roadmap.md) for details.
 

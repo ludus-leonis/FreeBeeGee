@@ -18,7 +18,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] improve server-delete timespan display
 * [ ] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] github action to rebuid app on dev
     * [X] add tabular numbers for library editor tree/preview
     * [X] refactor: add jsdoc linting
@@ -29,7 +29,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] fix texture bug on non-square assets
     * [X] click on icon in popup does not trigger function
     * [X] document or improve data volume mounting strategy
-  * [ ] review docs
+  * [X] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
   * [ ] review + run tests

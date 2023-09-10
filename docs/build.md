@@ -12,7 +12,7 @@ However, if you want to build FreeBeeGee yourself, you'll need `git`, `npm` and 
 git clone --depth 1 https://github.com/ludus-leonis/FreeBeeGee
 cd FreeBeeGee
 npm install
-npm run gulp release
+npm run release:build
 ```
 
 The archives can now be found in the `dist/` folder.
@@ -27,7 +27,7 @@ In Demo Mode, FreeBeeGee will not use the PHP backend/API, but store everything 
 git clone --depth 1 https://github.com/ludus-leonis/FreeBeeGee
 cd FreeBeeGee
 npm install
-npm run gulp demo
+npm run release:demo
 ```
 
 Now `dist/demo` contains the demo version. There will be no PHP files in this directory.
@@ -40,7 +40,7 @@ To create the FreeBeeGee Docker container(s), do:
 git clone --depth 1 https://github.com/ludus-leonis/FreeBeeGee
 cd FreeBeeGee
 npm install
-npm run docker
+npm run release
 ```
 
 There will now be a `ghcr.io/ludus-leonis/freebeegee:<version>` and `ghcr.io/ludus-leonis/freebeegee:latest` docker image in your local registry.
