@@ -28,6 +28,7 @@
 import * as fs from 'fs'
 
 import {
+  _,
   REGEXP_ID,
   p,
   expect,
@@ -38,15 +39,6 @@ import {
 } from '../utils/chai.mjs'
 
 // -----------------------------------------------------------------------------
-
-const _ = { // asset count in system snapshot
-  other: 16,
-  overlay: 17,
-  tile: 2,
-  token: 5,
-  badge: 2,
-  material: 5
-}
 
 function testApiZipMinimal (api, version, room) {
   testZIPUpload(api,

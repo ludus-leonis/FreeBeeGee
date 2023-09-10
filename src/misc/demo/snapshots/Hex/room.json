@@ -1,10 +1,10 @@
 {
- "id": "KklsPIjT",
+ "id": "NQKM5VJA",
  "name": "demoroomhex",
- "engine": "2.4.1",
+ "engine": "2.4.2",
  "setup": {
   "engine": "2.4.0",
-  "version": "0.21.0-dev",
+  "version": "0.21.0",
   "type": "grid-hex",
   "gridSize": 64,
   "gridWidth": 48,
@@ -221,16 +221,52 @@
     "mask": "_.circle.5x5xX.1.svg"
    },
    {
+    "id": "LZCOB200",
+    "name": "_.cubeLarge",
+    "type": "overlay",
+    "w": 1,
+    "h": 1,
+    "bg": "3",
+    "media": [
+     "_.cubeLarge.1x1x1.3.png"
+    ],
+    "mask": "_.cubeLarge.1x1xX.3.png"
+   },
+   {
+    "id": "dojMw300",
+    "name": "_.cubeMedium",
+    "type": "overlay",
+    "w": 1,
+    "h": 1,
+    "bg": "3",
+    "media": [
+     "_.cubeMedium.1x1x1.3.png"
+    ],
+    "mask": "_.cubeMedium.1x1xX.3.png"
+   },
+   {
+    "id": "xwTgs300",
+    "name": "_.cubeSmall",
+    "type": "overlay",
+    "w": 1,
+    "h": 1,
+    "bg": "3",
+    "media": [
+     "_.cubeSmall.1x1x1.3.png"
+    ],
+    "mask": "_.cubeSmall.1x1xX.3.png"
+   },
+   {
     "id": "y2e6H000",
     "name": "_.pin",
     "type": "overlay",
     "w": 2,
     "h": 2,
-    "bg": "1",
+    "bg": "3",
     "media": [
-     "_.pin.2x2x1.1.png"
+     "_.pin.2x2x1.3.png"
     ],
-    "mask": "_.pin.2x2xX.1.svg"
+    "mask": "_.pin.2x2xX.3.svg"
    },
    {
     "id": "zNVkI000",

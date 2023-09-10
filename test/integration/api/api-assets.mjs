@@ -27,6 +27,8 @@
 import * as fs from 'fs'
 
 import {
+  _,
+  classic,
   expect,
   openTestroom,
   closeTestroom,
@@ -111,7 +113,7 @@ function testApiUpdateAssetOtherBaseMask (api, version, room) {
 
   // check library
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.other.length).to.be.eql(16)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
   }, 200)
 
   // patch name < 10 sides
@@ -171,12 +173,12 @@ function testApiUpdateAssetOtherBaseMask (api, version, room) {
 
   // final full get
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(17)
-    expect(body.library.tile.length).to.be.eql(12)
-    expect(body.library.token.length).to.be.eql(11)
-    expect(body.library.other.length).to.be.eql(16)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   closeTestroom(api, room)
@@ -367,12 +369,12 @@ function testApiUpdateAssetOverlayMaterial (api, version, room) {
 
   // final full get
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(17)
-    expect(body.library.tile.length).to.be.eql(12)
-    expect(body.library.token.length).to.be.eql(11)
-    expect(body.library.other.length).to.be.eql(16)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   closeTestroom(api, room)
@@ -383,7 +385,7 @@ function testApiUpdateAssetTileColor (api, version, room) {
 
   // check library
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.tile.length).to.be.eql(12)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
   }, 200)
 
   // patch color
@@ -479,12 +481,12 @@ function testApiUpdateAssetTileColor (api, version, room) {
 
   // final full get
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(17)
-    expect(body.library.tile.length).to.be.eql(12)
-    expect(body.library.token.length).to.be.eql(11)
-    expect(body.library.other.length).to.be.eql(16)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   closeTestroom(api, room)
@@ -495,7 +497,7 @@ function testApiUpdateAssetToken (api, version, room) {
 
   // check library
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.token.length).to.be.eql(11)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
   }, 200)
 
   // can't patch ID
@@ -692,12 +694,12 @@ function testApiDeleteAsset (api, version, room) {
 
   // check library
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(17)
-    expect(body.library.tile.length).to.be.eql(12)
-    expect(body.library.token.length).to.be.eql(11)
-    expect(body.library.other.length).to.be.eql(16)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   // delete invalid id
@@ -705,79 +707,79 @@ function testApiDeleteAsset (api, version, room) {
 
   // check library
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(17)
-    expect(body.library.tile.length).to.be.eql(12)
-    expect(body.library.token.length).to.be.eql(11)
-    expect(body.library.other.length).to.be.eql(16)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   // delete overlay
   testJsonDelete(api, () => `/rooms/${room}/assets/wPXsm000/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(16)
-    expect(body.library.tile.length).to.be.eql(12)
-    expect(body.library.token.length).to.be.eql(11)
-    expect(body.library.other.length).to.be.eql(16)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   // delete tile
   testJsonDelete(api, () => `/rooms/${room}/assets/lWh16200/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(16)
-    expect(body.library.tile.length).to.be.eql(11)
-    expect(body.library.token.length).to.be.eql(11)
-    expect(body.library.other.length).to.be.eql(16)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   // delete token
   testJsonDelete(api, () => `/rooms/${room}/assets/f_9xm000/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(16)
-    expect(body.library.tile.length).to.be.eql(11)
-    expect(body.library.token.length).to.be.eql(10)
-    expect(body.library.other.length).to.be.eql(16)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token - 1)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   // delete other
   testJsonDelete(api, () => `/rooms/${room}/assets/lPebe300/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(16)
-    expect(body.library.tile.length).to.be.eql(11)
-    expect(body.library.token.length).to.be.eql(10)
-    expect(body.library.other.length).to.be.eql(15)
-    expect(body.library.badge.length).to.be.eql(5)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token - 1)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other - 1)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   // delete badge
   testJsonDelete(api, () => `/rooms/${room}/assets/wRe_l200/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(16)
-    expect(body.library.tile.length).to.be.eql(11)
-    expect(body.library.token.length).to.be.eql(10)
-    expect(body.library.other.length).to.be.eql(15)
-    expect(body.library.badge.length).to.be.eql(4)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token - 1)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other - 1)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge - 1)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   // delete material not possible
   testJsonDelete(api, () => `/rooms/${room}/assets/Hb9tz200/`, 403)
 
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.overlay.length).to.be.eql(16)
-    expect(body.library.tile.length).to.be.eql(11)
-    expect(body.library.token.length).to.be.eql(10)
-    expect(body.library.other.length).to.be.eql(15)
-    expect(body.library.badge.length).to.be.eql(4)
-    expect(body.library.material.length).to.be.eql(5)
+    expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token - 1)
+    expect(body.library.other.length).to.be.eql(_.other + classic.other - 1)
+    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge - 1)
+    expect(body.library.material.length).to.be.eql(_.material + classic.material)
   }, 200)
 
   closeTestroom(api, room)

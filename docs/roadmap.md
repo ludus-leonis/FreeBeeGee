@@ -32,13 +32,14 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] review docs
   * [X] review tutorial
   * [X] bump engine, version/codename & update CHANGELOG
-  * [ ] review + run tests
+  * [X] review + run tests
   * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
+* [ ] bug: selection lost after clone
 * [ ] refactor: use _private exports for test cases
 * [ ] refactor: use events more
 * [ ] refactor: get 's' out of asset IDs
