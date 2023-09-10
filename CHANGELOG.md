@@ -12,6 +12,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added paper background for windows and cards
 * added half-rotations via settings (45° for square, 30° for hex)
 * changed tile+token sides to be shown as individual pieces in library
+* changed docker image to PHP 8.2
 * renamed library manager to library editor
 
 ### Other changes

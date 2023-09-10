@@ -13,6 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [X] smaller modal paddings
   * [X] half-rotations via settings (45° for square, 30° for hex)
 * [X] clipboard ctrl+c/v/x on/between tables
+* [X] change docker image to PHP 8.2
 * [ ] pre-release
   * [X] bump dependencies
   * [ ] bugfixes + refactoring
@@ -25,7 +26,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor: replace sass-lint with stylelint
     * [X] fix texture bug on non-square assets
     * [X] click on icon in popup does not trigger function
-    * [ ] switch docker image to PHP 8.2
+    * [ ] document or improve data volume mounting strategy
+    * [ ] better error msg when snapshot list is empty
+    * [ ] This server deletes rooms after 2400h of inactivity.
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
