@@ -10,7 +10,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] bug: selection lost after clone
+    * [ ] color 0 of RPG token wrong
+    * [ ] selection lost after clone
     * [ ] refactor: get 's' out of asset IDs
   * [ ] review docs
   * [ ] review tutorial

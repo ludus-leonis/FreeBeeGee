@@ -60,6 +60,7 @@ gulp.task('clean', async () => {
   return await deleteAsync([
     `${dirs.build}/${p.name}/**/*`,
     `${dirs.build}/${p.name}/**/.*`,
+    `${dirs.build}/demo`,
     `${dirs.build}/*zip`,
     `${dirs.build}/*gz`
   ])
