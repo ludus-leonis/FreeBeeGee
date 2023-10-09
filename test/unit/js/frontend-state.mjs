@@ -30,10 +30,9 @@ import {
 } from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 import {
+  _test,
   setServerInfo,
   getServerInfo,
-  _setTable,
-  _setRoom,
   getTable,
   getTableNo,
   setTableNo,
@@ -107,20 +106,20 @@ describe('Frontend - state.mjs - basics', function () {
   })
 
   it('getMaterialMedia()', function () {
-    _setRoom(undefined)
+    _test.setRoom(undefined)
     expect(getMaterialMedia('wood')).to.match(/^api\/data\/rooms\/undefined\/assets\/material\/none.png$/)
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     expect(getMaterialMedia('wood')).to.match(/^api\/data\/rooms\/testroom\/assets\/material\/wood.png$/)
     expect(getMaterialMedia('none')).to.match(/^api\/data\/rooms\/testroom\/assets\/material\/none.png$/)
     expect(getMaterialMedia('blah')).to.match(/^api\/data\/rooms\/testroom\/assets\/material\/none.png$/)
   })
 
   it('getRoom() getSetup() getLibrary()', function () {
-    _setRoom(undefined)
+    _test.setRoom(undefined)
     expect(getRoom()).to.be.eql(undefined)
     expect(getSetup()).to.be.eql(undefined)
 
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     expect(getRoom()).to.be.an('object')
     expect(getRoom().id).to.be.eql('f9d05a1e')
     expect(getSetup()).to.be.an('object')
@@ -133,7 +132,7 @@ describe('Frontend - state.mjs - basics', function () {
   })
 
   it('getTable()', function () {
-    _setTable(1, [JSON.parse(pieceJSON)])
+    _test.setTable(1, [JSON.parse(pieceJSON)])
 
     expect(getTable(1)).to.be.an('array')
     expect(getTable(1).length).to.be.eql(1)
@@ -143,8 +142,8 @@ describe('Frontend - state.mjs - basics', function () {
   })
 
   it('getTableNo() setTableNo()', function () {
-    _setTable(1, [JSON.parse(pieceJSON)])
-    _setRoom(JSON.parse(roomJSON))
+    _test.setTable(1, [JSON.parse(pieceJSON)])
+    _test.setRoom(JSON.parse(roomJSON))
 
     expect(getTableNo()).to.be.eql(1)
 
@@ -179,7 +178,7 @@ describe('Frontend - state.mjs - basics', function () {
   })
 
   it('setTabActive() isTabActive', function () {
-    _setTable(1, [JSON.parse(pieceJSON)])
+    _test.setTable(1, [JSON.parse(pieceJSON)])
 
     expect(isTabActive()).to.be.eql(true)
     setTabActive(false, false)
@@ -191,7 +190,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   let r
 
   it('patchSetup()', async function () {
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     setTableNo(2, false)
 
     const r = splitRequest(await patchSetup({ test: 1 }, false))
@@ -203,7 +202,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   // it('addRoom()', async function () {}) // can't test due missing FormData()
 
   it('movePiece()', async function () {
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     setTableNo(2, false)
 
     r = splitRequest(await movePiece('c0de', 3, 4, 5, false))
@@ -228,7 +227,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   it('rotatePiece()', async function () {
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     setTableNo(2, false)
 
     r = splitRequest(await rotatePiece('c0de', 0, false))
@@ -255,7 +254,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   it('numberPiece()', async function () {
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     setTableNo(2, false)
 
     r = splitRequest(await numberPiece('c0de', 0, false))
@@ -282,8 +281,8 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   it('colorPiece()', async function () {
-    _setRoom(JSON.parse(roomJSON)) // room has 3 colors
-    _setTable(2, [
+    _test.setRoom(JSON.parse(roomJSON)) // room has 3 colors
+    _test.setTable(2, [
       populatePieceDefaults(JSON.parse(pieceJSON)),
       populatePieceDefaults(JSON.parse(noteJSON))
     ])
@@ -334,7 +333,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   it('editPiece()', async function () {
-    _setRoom(JSON.parse(roomJSON)) // room has 3 colors
+    _test.setRoom(JSON.parse(roomJSON)) // room has 3 colors
     setTableNo(2, false)
 
     r = splitRequest(await editPiece('c0de', {
@@ -357,7 +356,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   it('deletePiece()', async function () {
-    _setRoom(JSON.parse(roomJSON)) // room has 3 colors
+    _test.setRoom(JSON.parse(roomJSON)) // room has 3 colors
     setTableNo(2, false)
 
     r = splitRequest(await deletePiece('c0de', false))
@@ -372,7 +371,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   it('updateTable()', async function () {
-    _setRoom(JSON.parse(roomJSON)) // room has 3 colors
+    _test.setRoom(JSON.parse(roomJSON)) // room has 3 colors
     setTableNo(2, false)
 
     r = splitRequest(await updateTable({
@@ -385,7 +384,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   it('updatePieces()', async function () {
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     setTableNo(2, false)
 
     r = splitRequest(await updatePieces([
@@ -403,7 +402,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   // it('createPieces()', async function () {}) // can't test
 
   it('addAsset()', async function () {
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     setTableNo(2, false)
 
     r = splitRequest(await addAsset({
@@ -429,7 +428,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   it('deleteRoom()', async function () {
-    _setRoom(JSON.parse(roomJSON))
+    _test.setRoom(JSON.parse(roomJSON))
     setTableNo(2, false)
 
     r = splitRequest(await deleteRoom())

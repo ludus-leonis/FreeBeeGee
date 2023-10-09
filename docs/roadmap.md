@@ -5,14 +5,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.22
 
 * [ ] undo / time travel
-* [ ] tooltip explanation for '3x3:3' in library window
-* [ ] tweak minor grid visibility
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] color 0 of token wrong
-    * [ ] selection lost after clone
     * [ ] refactor: get 's' out of asset IDs
+    * [X] use _test object instead of exports
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -23,6 +21,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] tooltip explanation for '3x3:3' in library window
+* [ ] tweak minor grid visibility
 * [ ] refactor: use _private exports for test cases
 * [ ] refactor: use events more
 * [ ] plugin-hook

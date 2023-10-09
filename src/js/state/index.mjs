@@ -413,7 +413,7 @@ export function loadRoom (name, t) {
       if (response.status === 400) {
         runError('ROOM_INVALID', name)
       } else if (response.status === 200) {
-        _setRoom(response.body)
+        setRoom(response.body)
         return response
       } else {
         apiError(new UnexpectedStatus(response.status, response.body), name)
@@ -734,7 +734,7 @@ export function setRoomPassword (password) {
 export function fetchTable (no) {
   return apiGetTable(room.name, no, getToken(), true)
     .then(table => {
-      _setTable(no, populatePiecesDefaults(table.body, table.headers))
+      setTable(no, populatePiecesDefaults(table.body, table.headers))
       return table
     })
     .catch(error => apiError(error, room.name))
@@ -763,7 +763,14 @@ export function setTabActive (state) {
   if (state && room) syncNow()
 }
 
-// --- internal, but exposed for unit testing ----------------------------------
+// --- internal ----------------------------------------------------------------
+
+let serverInfo = null /** stores the server meta info JSON */
+let token = null /** stores the API token for this room */
+let room = null /** stores the room meta info JSON */
+let tableNo = 1 /** stores the currently visible table index */
+const tables = [[], [], [], [], [], [], [], [], [], []] /** caches the tables 0..9 */
+let tabActive = true /** is the current tab/window active/maximized? */
 
 /**
  * Internal: Set a table to given data.
@@ -773,7 +780,7 @@ export function setTabActive (state) {
  * @param {number} no Table number.
  * @param {object} data Table data.
  */
-export function _setTable (no, data) {
+export function setTable (no, data) {
   tables[no] = data
 }
 
@@ -784,21 +791,12 @@ export function _setTable (no, data) {
  *
  * @param {object} data Room data.
  */
-export function _setRoom (data) {
+export function setRoom (data) {
   if (data) {
     data.setup = populateSetupDefaults(data.setup)
   }
   room = data
 }
-
-// --- internal ----------------------------------------------------------------
-
-let serverInfo = null /** stores the server meta info JSON */
-let token = null /** stores the API token for this room */
-let room = null /** stores the room meta info JSON */
-let tableNo = 1 /** stores the currently visible table index */
-const tables = [[], [], [], [], [], [], [], [], [], []] /** caches the tables 0..9 */
-let tabActive = true /** is the current tab/window active/maximized? */
 
 /**
  * Strip client-side properties from pieces that would confuse the API.
@@ -882,7 +880,7 @@ function createPiece (piece, select = false, sync = true) {
  * @param {?number} z New z. Will not be changed if null.
  * @returns {object} A JSON piece patch ready to be sent to the API.
  */
-export function movePiecePatch (pieceId, x = null, y = null, z = null) {
+function movePiecePatch (pieceId, x = null, y = null, z = null) {
   const patch = { id: pieceId }
   if (x != null) patch.x = x
   if (y != null) patch.y = y
@@ -899,4 +897,10 @@ export function movePiecePatch (pieceId, x = null, y = null, z = null) {
   }
 
   return sanitizePiecePatch(patch)
+}
+
+export const _test = {
+  setTable,
+  setRoom,
+  movePiecePatch
 }

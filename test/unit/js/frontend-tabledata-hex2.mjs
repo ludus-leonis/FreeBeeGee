@@ -23,8 +23,7 @@
 import { expect } from 'chai'
 
 import {
-  _setTable,
-  _setRoom,
+  _test,
   setTableNo
 } from '../../../src/js/state/index.mjs'
 
@@ -42,12 +41,12 @@ import {
 const TEST_STATE = 5
 
 function setupTestData () {
-  _setRoom(JSON.parse(roomJSON))
+  _test.setRoom(JSON.parse(roomJSON))
   for (let i = 1; i <= 9; i++) {
     if (i === TEST_STATE) {
-      _setTable(i, populatePiecesDefaults([{ ...JSON.parse(pieceJSON), r: 60 }]))
+      _test.setTable(i, populatePiecesDefaults([{ ...JSON.parse(pieceJSON), r: 60 }]))
     } else {
-      _setTable(i, [])
+      _test.setTable(i, [])
     }
   }
   setTableNo(1, false)

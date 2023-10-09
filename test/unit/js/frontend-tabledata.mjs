@@ -23,8 +23,7 @@
 import { expect } from 'chai'
 
 import {
-  _setTable,
-  _setRoom,
+  _test,
   setTableNo
 } from '../../../src/js/state/index.mjs'
 
@@ -59,12 +58,12 @@ import {
 const TEST_STATE = 5
 
 function setupTestData () {
-  _setRoom(JSON.parse(roomJSON))
+  _test.setRoom(JSON.parse(roomJSON))
   for (let i = 1; i <= 9; i++) {
     if (i === TEST_STATE) {
-      _setTable(i, populatePiecesDefaults([JSON.parse(pieceJSON)]))
+      _test.setTable(i, populatePiecesDefaults([JSON.parse(pieceJSON)]))
     } else {
-      _setTable(i, [])
+      _test.setTable(i, [])
     }
   }
   setTableNo(1, false)
@@ -249,7 +248,7 @@ describe('Frontend - tabledata.mjs', function () {
     // no expiration
     let piece = JSON.parse(pieceJSON)
     piece = populatePieceDefaults(piece, headers())
-    _setTable(TEST_STATE, [piece])
+    _test.setTable(TEST_STATE, [piece])
     expect(findExpiredPieces(1).length).to.be.eql(0)
     expect(findExpiredPieces(TEST_STATE).length).to.be.eql(0)
     expect(findExpiredPieces().length).to.be.eql(0)
@@ -258,7 +257,7 @@ describe('Frontend - tabledata.mjs', function () {
     piece = JSON.parse(pieceJSON)
     piece.expires = nowEpoch() - 10
     piece = populatePieceDefaults(piece, headers())
-    _setTable(TEST_STATE, [piece])
+    _test.setTable(TEST_STATE, [piece])
     expect(findExpiredPieces(1).length).to.be.eql(0)
     expect(findExpiredPieces(TEST_STATE).length).to.be.eql(1)
     setTableNo(2, false)
@@ -270,7 +269,7 @@ describe('Frontend - tabledata.mjs', function () {
     piece = JSON.parse(pieceJSON)
     piece.expires = nowEpoch() + 10
     piece = populatePieceDefaults(piece, headers())
-    _setTable(TEST_STATE, [piece])
+    _test.setTable(TEST_STATE, [piece])
     expect(findExpiredPieces(1).length).to.be.eql(0)
     expect(findExpiredPieces(TEST_STATE).length).to.be.eql(0)
     expect(findExpiredPieces().length).to.be.eql(0)
@@ -469,7 +468,7 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getMinZ()', function () {
-    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
+    _test.setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
 
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
@@ -516,7 +515,7 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getMaxZ()', function () {
-    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
+    _test.setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
 
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
@@ -545,7 +544,7 @@ describe('Frontend - tabledata.mjs', function () {
   })
 
   it('getContentRect()', function () {
-    _setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
+    _test.setTable(TEST_STATE, populatePiecesDefaults(JSON.parse(tableJSON)))
 
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
