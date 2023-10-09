@@ -2736,7 +2736,7 @@ class FreeBeeGeeAPI
                             $asset->bg = '#' . substr($matches[5], 1);
                         } elseif (preg_match('/^\.[0-9][0-9]?$/', $matches[5])) {
                             $asset->bg = substr($matches[5], 1);
-                            $asset->bg = $asset->bg === '0' ? '#808080' : $asset->bg;
+                            $asset->bg = $asset->bg;
                         }
                 }
             }
