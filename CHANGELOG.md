@@ -7,6 +7,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 ### Notable changes
 
 * added undo via ctrl-z or settings dialog
+* added select-all via ctrl-a
 
 ### Other changes
 

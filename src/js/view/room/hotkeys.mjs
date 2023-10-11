@@ -97,7 +97,8 @@ import {
 } from '../../lib/events.mjs'
 
 import {
-  clipboardCopy
+  clipboardCopy,
+  selectionAddAll
 } from '../../view/room/tabletop/selection.mjs'
 
 import {
@@ -198,6 +199,9 @@ function handleRoomKeys (keydown) {
         break
       case 't': // to-top
         toTopSelected()
+        break
+      case 'a': // copy/clone
+        if (keydown.ctrlKey) selectionAddAll()
         break
       case 'c': // copy/clone
         if (keydown.ctrlKey) clipboardCopy(); else cloneSelected(getMouseCoords())

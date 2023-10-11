@@ -23,6 +23,15 @@
 // Selection is different for each table and always applies to current one.
 
 import {
+  updateSelectionDOM
+} from '../../../view/room/tabletop/index.mjs'
+
+import {
+  LAYER_NOTE,
+  LAYER_TILE,
+  LAYER_TOKEN,
+  LAYER_OVERLAY,
+  LAYER_OTHER,
   findPiece,
   findPiecesWithin,
   getFeatures
@@ -30,7 +39,8 @@ import {
 
 import {
   getTable,
-  getTableNo
+  getTableNo,
+  isLayerActive
 } from '../../../state/index.mjs'
 
 /**
@@ -44,6 +54,22 @@ export function selectionAdd (id, forced = false) {
   if ((piece || forced) && !selectionGetIds().includes(id)) {
     selectionGetIds().push(id)
   }
+}
+
+/**
+ * Add all pieces on the table to the selection.
+ */
+export function selectionAddAll () {
+  const layers = {}
+  for (const layer of [LAYER_TILE, LAYER_TOKEN, LAYER_OVERLAY, LAYER_OTHER]) {
+    layers[layer] = isLayerActive(layer)
+  }
+  for (const piece of getTable()) {
+    if ((layers[piece.l] || piece.l === LAYER_NOTE) && !selectionGetIds().includes(piece.id)) {
+      selectionGetIds().push(piece.id)
+    }
+  }
+  updateSelectionDOM()
 }
 
 /**

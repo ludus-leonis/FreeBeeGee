@@ -541,7 +541,6 @@ function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
       if (pieceId) {
         reply = patch(temp, 'id', pieceId, JSON.parse(data.body))
       } else {
-        console.log('patchall', data.body)
         reply = patchAll(temp, 'id', JSON.parse(data.body).map(p => p.id), JSON.parse(data.body))
       }
       setPreference(`freebeegee-demo-${roomName}`, pref, temp)
@@ -642,7 +641,6 @@ function apiRoomSetup (roomName, data, headers) {
  * @param {object} pref Current table (number) preference
  */
 function undoPush (roomName, tableData, pref) {
-  console.log('undoPush')
   let temp
   for (let i = UNDO_LEVELS - 2; i >= 0; i--) {
     temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i}`, default: '' })
@@ -663,7 +661,6 @@ function undoPush (roomName, tableData, pref) {
  * @param {object} pref Current table (number) preference
  */
 function undoPop (roomName, pref) {
-  console.log('undoPop')
   let temp
   temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.0`, default: '' })
   if (temp !== '') {

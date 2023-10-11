@@ -5,9 +5,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.22
 
 * [X] undo
-* [ ] select-all
-  * [ ] remove clear table
-  * [ ] undo hint in settings
+* [X] select-all
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
