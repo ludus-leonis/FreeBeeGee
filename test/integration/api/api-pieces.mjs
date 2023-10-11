@@ -31,7 +31,8 @@ import {
   openTestroom,
   closeTestroom,
   testJsonGet,
-  testJsonPost
+  testJsonPost,
+  testJsonDeleteBatch
 } from '../utils/chai.mjs'
 
 import {
@@ -43,13 +44,13 @@ const LABEL_MAX_LENGTH = 32
 
 // -----------------------------------------------------------------------------
 
-function testApiInvalidTable (api, version, room) {
+function testApiInvalidPiece (api, version, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return []
   }, body => {
-    expect(body._messages[0]).to.match(/ piece is not an object/)
+    expect(body._messages[0]).to.match(/ piece is not an array of objects nor an object/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -72,13 +73,13 @@ function testApiInvalidTable (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return 1234
   }, body => {
-    expect(body._messages[0]).to.match(/ piece is not an object/)
+    expect(body._messages[0]).to.match(/ piece is not an array of objects nor an object/)
   }, 400)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return [[], []]
   }, body => {
-    expect(body._messages[0]).to.match(/ piece is not an object/)
+    expect(body._messages[0]).to.match(/ piece is not an array of objects nor an object/)
   }, 400)
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
@@ -1130,12 +1131,79 @@ function testApiPieceExpires (api, version, room) {
   closeTestroom(api, room)
 }
 
+function testApiCreatePieces (api, version, room) {
+  openTestroom(api, room, 'Classic')
+
+  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+    expect(body.length).to.be.eql(0)
+  })
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return [
+      { ...pieceMinimal, l: 3 },
+      { ...pieceMinimal, l: 4 }
+    ]
+  }, body => {
+    expect(body).to.be.an('array')
+    expect(body.length).to.be.eql(2)
+    expect(body[0].l).to.be.eql(3)
+    expect(body[1].l).to.be.eql(4)
+  }, 201)
+
+  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+    expect(body.length).to.be.eql(2)
+  })
+
+  closeTestroom(api, room)
+}
+
+let deleteIDs = []
+
+function testApiDeletePieces (api, version, room) {
+  openTestroom(api, room, 'Classic')
+
+  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+    expect(body.length).to.be.eql(0)
+  })
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, l: 1 }
+  }, body => {
+    deleteIDs.length = 0
+    deleteIDs.push(body.id)
+  }, 201)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, l: 2 }
+  }, body => {
+    deleteIDs.push(body.id)
+  }, 201)
+
+  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...pieceMinimal, l: 3 }
+  }, body => {
+    deleteIDs.push(body.id)
+  }, 201)
+
+  testJsonDeleteBatch(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return [deleteIDs[0], deleteIDs[2]]
+  }, body => {
+  }, 204)
+
+  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+    expect(body.length).to.be.eql(1)
+    expect(body[0].id).to.be.eql(deleteIDs[1])
+  })
+
+  closeTestroom(api, room)
+}
+
 // --- the test runners --------------------------------------------------------
 
 export function run (runner) {
   describe('API - pieces', function () {
     runner((api, version, room) => {
-      describe('invalid pieces', () => testApiInvalidTable(api, version, room))
+      describe('invalid pieces', () => testApiInvalidPiece(api, version, room))
       describe('minimal pieces', () => testApiMinimalPiece(api, version, room))
       describe('valid id', () => testApiPieceID(api, version, room))
       describe('valid l', () => testApiPieceL(api, version, room))
@@ -1153,6 +1221,8 @@ export function run (runner) {
       describe('valid b', () => testApiPieceB(api, version, room))
       describe('valid f', () => testApiPieceF(api, version, room))
       describe('valid expires', () => testApiPieceExpires(api, version, room))
+      describe('multi-create', () => testApiCreatePieces(api, version, room))
+      describe('multi-delete', () => testApiDeletePieces(api, version, room))
     })
   })
 }

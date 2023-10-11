@@ -26,6 +26,7 @@ import {
 } from '../../../app.mjs'
 
 import {
+  PREFS,
   getSetup,
   patchSetup,
   updateTable,
@@ -35,11 +36,11 @@ import {
   setRoomPassword,
   getTableNo,
   setTableNo,
-  PREFS,
   getServerPreference,
   setServerPreference,
   getRoomPreference,
-  setRoomPreference
+  setRoomPreference,
+  undo
 } from '../../../state/index.mjs'
 
 import {
@@ -136,7 +137,6 @@ export function modalSettings () {
 
               <p>This tab affects the current table for all players.</p>
 
-              <h2 class="h3">Table content</h2>
               <p>Move all the content on the table to a corner/side of your choice:</p>
 
               <div class="container spacing-small">
@@ -171,15 +171,21 @@ export function modalSettings () {
                 </div>
               </div>
 
-              <p><input id="dangerTable" type="checkbox"><label for="dangerTable">Enable danger zone - no undo below!</label></p>
-
-              <div class="container spacing-small">
+              <div class="container spacing-medium">
                 <div class="row">
                   <div class="col-12 col-sm-8">
                     <p>Clearing the current table will remove all pieces from it. The library will not be changed.</p>
                   </div>
                   <div class="col-12 col-sm-4">
-                    <button id="btn-table-clear" class="btn btn-wide" disabled>Clear table</button>
+                    <button id="btn-table-clear" class="btn btn-wide">Clear table</button>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-12 col-sm-8">
+                    <p>Undo table changes. Can revert the actions above, but also anything done on the table before opening this dialog.</p>
+                  </div>
+                  <div class="col-12 col-sm-4">
+                    <button id="btn-table-undo" class="btn btn-wide">Undo</button>
                   </div>
                 </div>
               </div>
@@ -254,14 +260,6 @@ export function modalSettings () {
 
   _('#table-quality').on('change', () => changeQuality(Number(_('#table-quality').value)))
 
-  _('#dangerTable').on('click', () => {
-    if (_('#dangerTable').checked) {
-      _('#btn-table-clear').disabled = false
-    } else {
-      _('#btn-table-clear').disabled = true
-    }
-  })
-
   _('#dangerRoom').on('click', () => {
     if (_('#dangerRoom').checked) {
       _('#btn-room-delete').disabled = false
@@ -319,7 +317,10 @@ export function modalSettings () {
   _('#btn-table-clear').on('click', click => {
     click.preventDefault()
     updateTable([])
-    getModal().hide()
+  })
+  _('#btn-table-undo').on('click', click => {
+    click.preventDefault()
+    undo()
   })
   _('#btn-room-password').on('click', click => {
     click.preventDefault()
@@ -466,5 +467,4 @@ function handleAlign (click, x, y) {
   }
 
   moveContent(Math.floor(x2), Math.floor(y2))
-  getModal().hide()
 }

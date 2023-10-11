@@ -4,13 +4,17 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.22
 
-* [ ] undo / time travel
+* [X] undo
+* [ ] select-all
+  * [ ] remove clear table
+  * [ ] undo hint in settings
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] color 0 of token wrong
     * [ ] refactor: get 's' out of asset IDs
     * [X] use _test object instead of exports
+    * [X] cleanup /? endpoints
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -21,6 +25,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] bug: table.json cachign in demo mode
+* [ ] cursorkey move selection
 * [ ] tooltip explanation for '3x3:3' in library window
 * [ ] tweak minor grid visibility
 * [ ] refactor: use _private exports for test cases
@@ -90,7 +96,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
 * detail-pane to the right for selected item
-* move stuff via cursor keys
 * rename room
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals

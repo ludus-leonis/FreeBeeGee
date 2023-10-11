@@ -2,15 +2,17 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.22.0 - ??? ???
+## v0.22.0 - Remorseful Reindeer
 
 ### Notable changes
 
-* TBD
+* added undo via ctrl-z or settings dialog
 
 ### Other changes
 
-* TBD
+* fixed selection lost after clone/copy in demo mode
+* fixed wrong piece color '0'
+* refactored test exports to use _test object
 
 
 ## v0.21.0 - Wailing Woodpecker

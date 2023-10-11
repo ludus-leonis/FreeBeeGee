@@ -126,6 +126,7 @@ export function modalHelp () {
             <p><span class="key">m</span> Toggle measure mode.</p>
             <p><span class="key">F11</span> Toggle fullscreen.</p>
             <p><span class="key">+</span>/<span class="key">-</span> Zoom in/out.</p>
+            <p><span class="key">Ctrl</span> + <span class="key">z</span> Undo. Not all action can be undone.</p>
             <p><span class="key">S</span> Show the settings.</p>
             <p><span class="key">L</span> Show library editor.</p>
             <p><span class="key">h</span> Show this help.</p>
@@ -142,8 +143,8 @@ export function modalHelp () {
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>
             <p><span class="key">Del</span> Delete selected piece.</p>
-            <p><span class="key">Ctrl</span> + <span class="key">c</span>/<span class="key">x</span>/<span class="key">v</span> Copy/cut/paste the selection. Also works cross-table.</p>
             <p><span class="key">&lt;</span>/<span class="key">&gt;</span> Decrease/increase token letter. Hint: Only works for tokens!</p>
+            <p><span class="key">Ctrl</span> + <span class="key">c</span>/<span class="key">x</span>/<span class="key">v</span> Copy/cut/paste the selection. Also works cross-table.</p>
 
             <p><span class="key">Ctrl</span> Hold while selecting to multi-select.</p>
             <p><span class="key">Shift</span> Hold while dragging pieces or LOS-lines to disable snapping.</p>

@@ -55,9 +55,11 @@ import {
   numberPiece,
   editPiece,
   deletePiece,
+  deletePieces,
   updateTable,
   updatePieces,
   addAsset,
+  undo,
   deleteRoom
 } from '../../../src/js/state/index.mjs'
 
@@ -370,6 +372,19 @@ describe('Frontend - state.mjs - API request JSON', function () {
     expect(r.body).to.be.eql(undefined)
   })
 
+  it('deletePieces()', async function () {
+    _test.setRoom(JSON.parse(roomJSON))
+    setTableNo(2, false)
+
+    r = splitRequest(await deletePieces(['c0de', 'c1de'], false))
+    expect(r.method).to.be.eql('DELETE')
+    expect(r.path).to.match(/^api\/rooms\/testroom\/tables\/2\/pieces\/$/)
+    expect(r.body).to.be.an('array')
+    expect(r.body.length).to.be.eql(2)
+    expect(r.body[0]).to.be.eql('c0de')
+    expect(r.body[1]).to.be.eql('c1de')
+  })
+
   it('updateTable()', async function () {
     _test.setRoom(JSON.parse(roomJSON)) // room has 3 colors
     setTableNo(2, false)
@@ -400,6 +415,16 @@ describe('Frontend - state.mjs - API request JSON', function () {
   })
 
   // it('createPieces()', async function () {}) // can't test
+
+  it('undo()', async function () {
+    _test.setRoom(JSON.parse(roomJSON))
+    setTableNo(2, false)
+
+    r = splitRequest(await undo(2, false))
+    expect(r.method).to.be.eql('POST')
+    expect(r.path).to.match(/^api\/rooms\/testroom\/tables\/2\/undo\/$/)
+    expect(r.body).to.be.an('object')
+  })
 
   it('addAsset()', async function () {
     _test.setRoom(JSON.parse(roomJSON))

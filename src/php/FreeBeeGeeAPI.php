@@ -31,6 +31,8 @@ const FLAG_NO_DELETE = 0b00000001;
 const FLAG_NO_CLONE  = 0b00000010;
 const FLAG_NO_MOVE   = 0b00000100;
 
+const UNDO_LEVELS = 15; // 0-14
+
 const ASSET_SIZE_MAX = 1024 * 1024;
 const ASSET_TYPES = ['overlay', 'tile', 'token', 'other', 'badge', 'material'];
 const LAYERS = ['overlay', 'tile', 'token', 'other', 'note'];
@@ -70,59 +72,68 @@ class FreeBeeGeeAPI
 
         // --- GET ---
 
-        $this->api->register('GET', '/rooms/:rid/digest/?', function ($fbg, $data) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('GET', '/rooms/:rid/digest/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
             $fbg->getRoomDigest($meta);
         });
 
-        $this->api->register('GET', '/rooms/:rid/?', function ($fbg, $data) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('GET', '/rooms/:rid/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
             $fbg->getRoom($meta);
         });
 
-        $this->api->register('GET', '/rooms/:rid/tables/:tid/?', function ($fbg, $data) {
-            $meta = $this->getRoomMeta($data['rid']);
-            $fbg->getTable($meta, $data['tid']);
+        $this->api->register('GET', '/rooms/:rid/tables/:tid/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $fbg->getTable($meta, $params['tid']);
         });
 
-        $this->api->register('GET', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
-            $meta = $this->getRoomMeta($data['rid']);
-            $fbg->getPiece($meta, $data['tid'], $data['pid']);
+        $this->api->register('GET', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $fbg->getPiece($meta, $params['tid'], $params['pid']);
         });
 
-        $this->api->register('GET', '/', function ($fbg, $data) {
+        $this->api->register('GET', '/', function ($fbg) {
             $fbg->getServerInfo();
         });
 
-        $this->api->register('GET', '/snapshots/?', function ($fbg, $data) {
+        $this->api->register('GET', '/snapshots/?', function ($fbg) {
             $fbg->getSnapshots();
         });
 
-        $this->api->register('GET', '/rooms/:rid/snapshot/?', function ($fbg, $data) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('GET', '/rooms/:rid/snapshot/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
             $tzo = array_key_exists('tzo', $_GET) ? intval($_GET['tzo']) : 0;
             $fbg->getSnapshot($meta, $tzo);
         });
 
-        $this->api->register('GET', '/issues/', function ($fbg, $data) {
+        $this->api->register('GET', '/issues/?', function ($fbg) {
             $fbg->getIssues();
         });
 
         // --- POST ---
 
-        $this->api->register('POST', '/rooms/:rid/tables/:tid/pieces/?', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
-            $piece = $this->api->assertJSONObject('piece', $payload);
-            $fbg->createPiece($meta, $data['tid'], $piece);
+        $this->api->register('POST', '/rooms/:rid/tables/:tid/pieces/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $data = $this->api->assertJSONObjectOrArray('piece', $payload);
+            if (gettype($data) === 'object') {
+                $fbg->createPiece($meta, $params['tid'], $data);
+            } else {
+                $fbg->createPieces($meta, $params['tid'], $data);
+            }
         });
 
-        $this->api->register('POST', '/rooms/:rid/assets/?', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
-            $asset = $this->api->assertJSONObject('asset', $payload);
+        $this->api->register('POST', '/rooms/:rid/tables/:tid/undo/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $fbg->undoTableLocked($meta, $params['tid']);
+        });
+
+        $this->api->register('POST', '/rooms/:rid/assets/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $asset = $this->api->assertJSONObject('asset', $payload); // ARRAY
             $fbg->createAssetLocked($meta, $asset);
         });
 
-        $this->api->register('POST', '/rooms/', function ($fbg, $data, $payload) {
+        $this->api->register('POST', '/rooms/?', function ($fbg, $params, $payload) {
             $formData = $this->api->multipartToJSON();
             if ($formData) { // client sent us multipart
                 if ($formData === "[]" && $_SERVER['CONTENT_LENGTH'] > 0) {
@@ -136,70 +147,76 @@ class FreeBeeGeeAPI
             $fbg->createRoomLocked($room);
         });
 
-        $this->api->register('POST', '/rooms/:rid/auth/?', function ($fbg, $data, $payload) {
-            $fbg->auth($data['rid'], $this->api->assertJSONObject('auth', $payload));
+        $this->api->register('POST', '/rooms/:rid/auth/?', function ($fbg, $params, $payload) {
+            $fbg->auth($params['rid'], $this->api->assertJSONObject('auth', $payload));
         });
 
         // --- PUT ---
 
-        $this->api->register('PUT', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('PUT', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
             $piece = $this->api->assertJSONObject('piece', $payload);
-            $fbg->replacePiece($meta, $data['tid'], $data['pid'], $piece);
+            $fbg->replacePiece($meta, $params['tid'], $params['pid'], $piece);
         });
 
-        $this->api->register('PUT', '/rooms/:rid/tables/:tid/?', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
-            $table = $this->api->assertJSONArray('table', $payload);
-            $fbg->putTableLocked($meta, $data['tid'], $table);
+        $this->api->register('PUT', '/rooms/:rid/tables/:tid/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $table = $this->api->assertJSONObjectArray('table', $payload);
+            $fbg->putTableLocked($meta, $params['tid'], $table);
         });
 
         // --- PATCH ---
 
-        $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
             $patch = $this->api->assertJSONObject('piece', $payload);
-            $fbg->updatePiece($meta, $data['tid'], $data['pid'], $patch);
+            $fbg->updatePiece($meta, $params['tid'], $params['pid'], $patch);
         });
 
-        $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
-            $patches = $this->api->assertJSONArray('pieces', $payload);
-            $fbg->updatePieces($meta, $data['tid'], $patches);
+        $this->api->register('PATCH', '/rooms/:rid/tables/:tid/pieces/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $patches = $this->api->assertJSONObjectArray('pieces', $payload);
+            $fbg->updatePieces($meta, $params['tid'], $patches);
         });
 
-        $this->api->register('PATCH', '/rooms/:rid/setup/', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('PATCH', '/rooms/:rid/setup/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
             $patch = $this->api->assertJSONObject('setup', $payload);
             $fbg->updateRoomSetupLocked($meta, $patch);
         });
 
-        $this->api->register('PATCH', '/rooms/:rid/assets/:aid/?', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('PATCH', '/rooms/:rid/assets/:aid/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
             $patch = $this->api->assertJSONObject('asset', $payload);
-            $fbg->updateAsset($meta, $data['aid'], $patch);
+            $fbg->updateAsset($meta, $params['aid'], $patch);
         });
 
-        $this->api->register('PATCH', '/rooms/:rid/auth/', function ($fbg, $data, $payload) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('PATCH', '/rooms/:rid/auth/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
             $patch = $this->api->assertJSONObject('auth', $payload);
             $fbg->updateAuthLocked($meta, $patch);
         });
 
         // --- DELETE ---
 
-        $this->api->register('DELETE', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $data) {
-            $meta = $this->getRoomMeta($data['rid']);
-            $fbg->deletePiece($meta, $data['tid'], $data['pid'], true);
+        $this->api->register('DELETE', '/rooms/:rid/tables/:tid/pieces/:pid/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $fbg->deletePieces($meta, $params['tid'], [$params['pid']], true);
         });
 
-        $this->api->register('DELETE', '/rooms/:rid/assets/:aid/?', function ($fbg, $data) {
-            $meta = $this->getRoomMeta($data['rid']);
-            $fbg->deleteAssetLocked($meta, $data['aid']);
+        $this->api->register('DELETE', '/rooms/:rid/tables/:tid/pieces/?', function ($fbg, $params, $payload) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $ids = $this->api->assertJSONStringArray('pieceIDs', $payload);
+            $fbg->deletePieces($meta, $params['tid'], $ids, true);
         });
 
-        $this->api->register('DELETE', '/rooms/:rid/?', function ($fbg, $data) {
-            $meta = $this->getRoomMeta($data['rid']);
+        $this->api->register('DELETE', '/rooms/:rid/assets/:aid/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
+            $fbg->deleteAssetLocked($meta, $params['aid']);
+        });
+
+        $this->api->register('DELETE', '/rooms/:rid/?', function ($fbg, $params) {
+            $meta = $this->getRoomMeta($params['rid']);
             $fbg->deleteRoom($meta);
         });
     }
@@ -417,6 +434,9 @@ class FreeBeeGeeAPI
         if (!mkdir($folder . 'tables', 0777, true)) {
             $this->api->sendError(500, 'can\'t write on server');
         }
+        if (!mkdir($folder . 'history/tables', 0777, true)) {
+            $this->api->sendError(500, 'can\'t write on server');
+        }
         foreach (ASSET_TYPES as $type) {
             if (!mkdir($folder . 'assets/' . $type, 0777, true)) {
                 $this->api->sendError(500, 'can\'t write on server');
@@ -527,18 +547,18 @@ class FreeBeeGeeAPI
      *
      * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
-     * @param object $piece The parsed & validated piece to update.
+     * @param array $pieces The parsed & validated pieces to update.
      * @param bool $create If true, this piece must not exist.
      * @param patch $create If true, old and new piece will be merged.
-     * @return object The updated piece.
+     * @return array The updated pieces.
      */
-    private function updatePieceTableLocked(
+    private function updatePiecesTableLocked(
         object $meta,
         string $tid,
-        object $piece,
+        array $pieces,
         bool $create,
         bool $patch
-    ): object {
+    ): array {
         $lock = $this->api->waitForWriteLock($meta->lock);
         $file = $meta->folder . 'tables/' . $tid . '.json';
 
@@ -546,67 +566,72 @@ class FreeBeeGeeAPI
         if (is_file($file)) {
             $oldTable = json_decode(file_get_contents($file));
         }
-        $result = $piece;
+        $results = [];
 
-        // rewrite table, starting with new item
-        // only latest (first) table item per ID matters
-        $now = time();
-        $newTable = []; // will get the new, updated/rewritten table
-        $ids = []; // the IDs of all pieces that are still in $newTable after all the updates
-        if ($create) { // in create mode we inject the new piece
-            // add the new piece
-            $result = $this->cleanupPiece($piece);
-            $newTable[] = $result;
+        foreach ($pieces as $piece) {
+            // rewrite table, starting with new item
+            // only latest (first) table item per ID matters
+            $result = $piece;
+            $now = time();
+            $ids = []; // the IDs of all pieces that are still in $newTable after all the updates
+            $newTable = [];
+            if ($create) { // in create mode we inject the new piece
+                // add the new piece
+                $result = $this->cleanupPiece($piece);
+                $newTable[] = $result;
+                $results[] = $result;
 
-            // re-add all old pieces
-            foreach ($oldTable as $tableItem) {
-                if ($piece->id === ID_ASSET_LOS && $tableItem->id === $piece->id) {
-                    // skip recreated system piece
-                } elseif ($piece->id === ID_ASSET_POINTER && $tableItem->id === $piece->id) {
-                    // skip recreated system piece
-                } elseif (!in_array($tableItem->id, $ids)) {
-                    // for newly created items we just copy the current table of the others
-                    if ($tableItem->id === $piece->id) {
-                        // the ID is already in the history - abort!
-                        $this->api->unlockLock($lock);
-                        $this->api->sendReply(409, json_encode($piece));
-                    }
-                    $newTable[] = $tableItem;
-                    $ids[] = $tableItem->id;
-                }
-            }
-        } else { // in update mode we lookup the piece by ID and merge the changes
-            foreach ($oldTable as $tableItem) {
-                if (!in_array($tableItem->id, $ids)) {
-                    // this is an update, and we have to patch the item if the ID matches
-                    if ($tableItem->id === $piece->id) {
-                        // just skip deleted piece
-                        if (isset($piece->l) && $piece->l === PHP_INT_MIN) {
-                            continue;
+                // re-add all old pieces
+                foreach ($oldTable as $tableItem) {
+                    if ($piece->id === ID_ASSET_LOS && $tableItem->id === $piece->id) {
+                        // skip recreated system piece
+                    } elseif ($piece->id === ID_ASSET_POINTER && $tableItem->id === $piece->id) {
+                        // skip recreated system piece
+                    } elseif (!in_array($tableItem->id, $ids)) {
+                        // for newly created items we just copy the current table of the others
+                        if ($tableItem->id === $piece->id) {
+                            // the ID is already in the history - abort!
+                            $this->api->unlockLock($lock);
+                            $this->api->sendReply(409, json_encode($piece));
                         }
-                        if ($patch) {
-                            $tableItem = $this->cleanupPiece($this->merge($tableItem, $piece));
-                        } else {
-                            $tableItem = $this->cleanupPiece($piece);
-                        }
-                        $result = $tableItem;
-                    }
-                    if (!isset($tableItem->expires) || $tableItem->expires > time()) {
-                        // only add if not expired
                         $newTable[] = $tableItem;
                         $ids[] = $tableItem->id;
                     }
                 }
+            } else { // in update mode we lookup the piece by ID and merge the changes
+                foreach ($oldTable as $tableItem) {
+                    if (!in_array($tableItem->id, $ids)) {
+                        // this is an update, and we have to patch the item if the ID matches
+                        if ($tableItem->id === $piece->id) {
+                            // just skip deleted piece
+                            if (isset($piece->l) && $piece->l === PHP_INT_MIN) {
+                                continue;
+                            }
+                            if ($patch) {
+                                $tableItem = $this->cleanupPiece($this->merge($tableItem, $piece));
+                            } else {
+                                $tableItem = $this->cleanupPiece($piece);
+                            }
+                            $results[] = $tableItem;
+                        }
+                        if (!isset($tableItem->expires) || $tableItem->expires > time()) {
+                            // only add if not expired
+                            $newTable[] = $tableItem;
+                            $ids[] = $tableItem->id;
+                        }
+                    }
+                }
+                if (!in_array($piece->id, $ids) && (!isset($piece->l) || $piece->l !== PHP_INT_MIN)) {
+                    $this->api->unlockLock($lock);
+                    $this->api->sendError(404, 'piece not found: ' . $piece->id);
+                }
             }
-            if (!in_array($piece->id, $ids) && (!isset($piece->l) || $piece->l !== PHP_INT_MIN)) {
-                $this->api->unlockLock($lock);
-                $this->api->sendError(404, 'piece not found: ' . $piece->id);
-            }
+            $oldTable = $newTable;
         }
-        $this->writeAsJSONAndDigest($meta->folder, 'tables/' . $tid . '.json', $newTable);
+        $this->writeAsJSONAndDigest($meta->folder, 'tables/' . $tid . '.json', $newTable, true);
         $this->api->unlockLock($lock);
 
-        return $result;
+        return $results;
     }
 
     /**
@@ -680,16 +705,30 @@ class FreeBeeGeeAPI
      *
      * @param string $folder Root folder for file operations, ending in '/'.
      * @param string $filename Relative path within root folder.
-     * @param object $object PHP object to write.
+     * @param object|array $object PHP object/array to write.
+     * @param bool $undo Defaults to false. If true, an undo file will be created.
      */
     private function writeAsJSONAndDigest(
-        $folder,
-        $filename,
-        $object
+        string $folder,
+        string $filename,
+        $object,
+        bool $undo = false
     ) {
+        // handle undos
+        if ($undo) {
+            for ($i = UNDO_LEVELS - 2; $i >= 0; $i--) {
+                if (is_file("$folder/history/$filename.$i")) {
+                    rename("$folder/history/$filename.$i", "$folder/history/$filename." . ($i + 1));
+                }
+            }
+            if (is_file("$folder$filename")) {
+                rename("$folder$filename", "$folder/history/$filename.0");
+            }
+        }
+
         // handle data
         $data = json_encode($object);
-        file_put_contents($folder . $filename, $data);
+        file_put_contents("$folder$filename", $data);
 
         // handle hash
         $digests = json_decode(file_get_contents($folder . 'digest.json'));
@@ -2118,10 +2157,51 @@ class FreeBeeGeeAPI
         $newTable = $this->cleanupTable($newTable, true);
 
         $lock = $this->api->waitForWriteLock($meta->lock);
-        $this->writeAsJSONAndDigest($meta->folder, 'tables/' . $tid . '.json', $newTable);
+        $this->writeAsJSONAndDigest($meta->folder, 'tables/' . $tid . '.json', $newTable, true);
         $this->api->unlockLock($lock);
 
         $this->api->sendReply(200, json_encode($newTable));
+    }
+
+    /**
+     * Replace the internal state of a table with the previous one.
+     *
+     * Has no effect if no undo/history information is available yet.
+     *
+     * @param object $meta Room's parsed `meta.json`.
+     * @param int $tid Table id / number, e.g. 2.
+     */
+    public function undoTableLocked(
+        object $meta,
+        string $tid
+    ) {
+        $this->assertTableNo($tid);
+        $folder = $meta->folder;
+        $filename = "tables/$tid.json";
+
+        $lock = $this->api->waitForWriteLock($meta->lock);
+
+        if (is_file("$folder/history/$filename.0")) {
+            // handle table json
+            $data = file_get_contents("$folder/history/$filename.0");
+            file_put_contents("$folder$filename", $data);
+
+            // handle table digest
+            $digests = json_decode(file_get_contents($folder . 'digest.json'));
+            $digests->$filename = 'crc32:' . crc32($data);
+            file_put_contents($folder . 'digest.json', json_encode($digests));
+
+            // handle older undos
+            for ($i = 1; $i <= UNDO_LEVELS - 1; $i++) {
+                if (is_file("$folder/history/$filename.$i")) {
+                    rename("$folder/history/$filename.$i", "$folder/history/$filename." . ($i - 1));
+                }
+            }
+        }
+
+        $this->api->unlockLock($lock);
+
+        $this->api->sendReply(204);
     }
 
     /**
@@ -2151,7 +2231,44 @@ class FreeBeeGeeAPI
         } else {
             $piece->id = $this->generateId();
         }
-        $created = $this->updatePieceTableLocked($meta, $tid, $piece, true, false);
+        $created = $this->updatePiecesTableLocked($meta, $tid, [$piece], true, false)[0];
+        $this->api->sendReply(201, json_encode($created));
+    }
+
+    /**
+     * Add multiple new piece to a table.
+     *
+     * @param object $meta Room's parsed `meta.json`.
+     * @param string $tid Table id / number, e.g. 2.
+     * @param array $data Full parsed pieces from client.
+     */
+    public function createPieces(
+        object $meta,
+        string $tid,
+        array $data
+    ) {
+        $this->assertTableNo($tid);
+
+        $this->assertTableNo($tid);
+        $pieces = [];
+        foreach ($data as $item) {
+            $piece = $this->validatePiece($item, true);
+            if (isset($piece->a)) {
+                switch ($piece->a) {
+                    case ID_ASSET_POINTER:
+                    case ID_ASSET_LOS:
+                        $piece->id = $piece->a;
+                        $piece->expires = time() + 8;
+                        break;
+                    default:
+                        $piece->id = $this->generateId();
+                }
+            } else {
+                $piece->id = $this->generateId();
+            }
+            $pieces[] = $piece;
+        }
+        $created = $this->updatePiecesTableLocked($meta, $tid, $pieces, true, false);
         $this->api->sendReply(201, json_encode($created));
     }
 
@@ -2200,7 +2317,7 @@ class FreeBeeGeeAPI
         $this->assertTableNo($tid);
         $patch = $this->validatePiece($data, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $updatedPiece = $this->updatePieceTableLocked($meta, $tid, $patch, false, false);
+        $updatedPiece = $this->updatePiecesTableLocked($meta, $tid, [$patch], false, false)[0];
         $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
@@ -2223,7 +2340,7 @@ class FreeBeeGeeAPI
         $this->assertTableNo($tid);
         $patch = $this->validatePiece($piece, false);
         $patch->id = $pieceId; // overwrite with data from URL
-        $updatedPiece = $this->updatePieceTableLocked($meta, $tid, $patch, false, true);
+        $updatedPiece = $this->updatePiecesTableLocked($meta, $tid, [$patch], false, true)[0];
         $this->api->sendReply(200, json_encode($updatedPiece));
     }
 
@@ -2250,42 +2367,47 @@ class FreeBeeGeeAPI
         }
 
         // looks good. do the update(s).
-        $updatedPieces = [];
-        foreach ($patches as $patch) {
-            $updatedPieces[] = $this->updatePieceTableLocked($meta, $tid, $patch, false, true);
-        }
+        $updatedPieces = $this->updatePiecesTableLocked($meta, $tid, $patches, false, true);
 
         $this->api->sendReply(200, json_encode($updatedPieces));
     }
 
     /**
-     * Delete a piece from a room.
+     * Remove pieces from a room.
      *
-     * Will not remove it from the library.
+     * Will not remove them from the library.
      *
      * @param object $meta Room's parsed `meta.json`.
      * @param string $tid Table id / number, e.g. 2.
-     * @param string $pieceID ID of the piece to delete.
+     * @param array $pieceIDs Array of IDs of the pieces to remove.
      * @param bool $sendReply If true, send a HTTP reply after deletion.
      */
-    public function deletePiece(
+    public function deletePieces(
         object $meta,
         string $tid,
-        string $pieceId,
+        array $pieceIds,
         bool $sendReply
     ) {
         $this->assertTableNo($tid);
 
-        // create a dummy 'delete' object to represent deletion
-        $piece = new \stdClass(); // sanitize item by recreating it
-        $piece->l = PHP_INT_MIN;
-        $piece->id = $pieceId;
+        $pieces = [];
+        foreach ($pieceIds as $pieceId) {
+            $this->assertID($pieceId);
 
-        $this->updatePieceTableLocked($meta, $tid, $piece, false, false);
+            // create a dummy 'delete' object to represent deletion
+            $piece = new \stdClass(); // sanitize item by recreating it
+            $piece->l = PHP_INT_MIN;
+            $piece->id = $pieceId;
+
+            $pieces[] = $piece;
+        }
+
+        $this->updatePiecesTableLocked($meta, $tid, $pieces, false, false);
         if ($sendReply) {
             $this->api->sendReply(204);
         }
     }
+
 
     /**
      * Add a new asset to the library of a room.
@@ -2585,6 +2707,7 @@ class FreeBeeGeeAPI
                     case 'template.json': // deprecated since v0.18
                     case 'meta.json':
                     case 'digest.json':
+                    case (preg_match('/\.[0-9]+$/', $relativePath) ? true : false): // skip undo files
                         break; // they don't go into the zip
                     default:
                         $toZip[$relativePath] = $absolutePath; // keep all others

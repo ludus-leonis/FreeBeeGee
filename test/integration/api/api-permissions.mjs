@@ -62,6 +62,7 @@ function test401 (api, version, room) { // no token
   testJsonGet(api, () => `/rooms/${room}/snapshot/`, body => {}, 401)
 
   testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 401)
+  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 401)
   testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 401)
   testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 401)
   testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 401)
@@ -74,6 +75,7 @@ function test401 (api, version, room) { // no token
   testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 401)
 
   testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, 401)
+  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 401)
   testJsonDelete(api, () => `/rooms/${room}/`, 401)
 
   testJsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404)
@@ -99,6 +101,7 @@ function test403 (api, version, room) { // wrong token
   testJsonGet(api, () => `/rooms/${room}/snapshot/`, body => {}, 403, () => 'INVALID-TOKEN')
 
   testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
   testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
   testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 403, () => 'INVALID-TOKEN') // non-existing ID
   testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 403, () => 'INVALID-TOKEN') // existing ID
@@ -111,6 +114,7 @@ function test403 (api, version, room) { // wrong token
   testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
 
   testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, 403, () => 'INVALID-TOKEN')
+  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 403, () => 'INVALID-TOKEN')
   testJsonDelete(api, () => `/rooms/${room}/`, 403, () => 'INVALID-TOKEN')
 
   testJsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404, () => 'INVALID-TOKEN')
@@ -139,6 +143,7 @@ function test20x (api, version, room) {
   testGetBufferQuery(api, () => `/rooms/${room}/snapshot/`, header => {}, body => {}, 200, () => shajs('sha256').update(`fbg-${token}`).digest('hex'))
 
   testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 400, () => token)
+  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 204, () => token)
   testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 400, () => token)
   testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 204, () => token) // non-existing ID
   testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 204, () => token) // existing ID
@@ -153,6 +158,7 @@ function test20x (api, version, room) {
   testJsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404, () => token)
 
   testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, 204, () => token)
+  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 400, () => token)
   testJsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
 }
 

@@ -473,7 +473,7 @@ function testApiUpdateAssetTileColor (api, version, room) {
       tx: 'linen'
     }
   }, body => {
-    expect(body.bg).to.be.eql('#808080')
+    expect(body.bg).to.be.eql('0')
     expect(body.base).to.be.eql(undefined)
     expect(body.mask).to.be.eql(undefined)
     expect(body.media).to.be.eql(['chess.8x8.0.linen.jpg'])

@@ -30,7 +30,9 @@ import {
   openTestroom,
   closeTestroom,
   testJsonGet,
-  testJsonPut
+  testJsonPut,
+  testJsonPost,
+  testJsonPatch
 } from '../utils/chai.mjs'
 
 import {
@@ -38,6 +40,9 @@ import {
 } from '../utils/data.mjs'
 
 // -----------------------------------------------------------------------------
+
+let data = null
+let i
 
 function testApiMinimalTable (api, version, room) {
   openTestroom(api, room, 'Classic')
@@ -156,6 +161,71 @@ function testApiInvalidPieces (api, version, room) {
   closeTestroom(api, room)
 }
 
+// -----------------------------------------------------------------------------
+
+const LEVELS = 15
+let level
+
+function testApiUndo (api, version, room) {
+  openTestroom(api, room, 'Classic')
+
+  // create piece
+  testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {
+    return { ...pieceMinimal, a: '73740cdf', x: 0, y: 64 }
+  }, body => {
+    expect(body.a).to.be.eql('73740cdf')
+    expect(body.x).to.be.eql(0)
+    data = body
+  }, 201)
+
+  // get & compare piece
+  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+    expect(body.a).to.be.eql('73740cdf')
+    expect(body.x).to.be.eql(0)
+  })
+
+  // do more changes than 0..9 history
+  level = 1 // note: loop counter is not available during actual test runs.
+  for (i = 0; i <= LEVELS; i++) {
+    testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
+      return { x: level }
+    }, body => {
+      expect(body.a).to.be.eql('73740cdf')
+      expect(body.x).to.be.eql(level++)
+    })
+  }
+
+  // get & compare piece (and revert level for first undo test)
+  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+    expect(body.a).to.be.eql('73740cdf')
+    expect(body.x).to.be.eql(--level)
+  })
+
+  // undo changes
+  for (i = LEVELS; i >= 1; i--) {
+    testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {
+    }, 204)
+    testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+      expect(body.a).to.be.eql('73740cdf')
+      expect(body.x).to.be.eql(--level)
+    })
+  }
+
+  // no more undos to initial '0' available
+  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {}, 204)
+  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+    expect(body.a).to.be.eql('73740cdf')
+    expect(body.x).to.be.eql(1)
+  })
+  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {}, 204)
+  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+    expect(body.a).to.be.eql('73740cdf')
+    expect(body.x).to.be.eql(1)
+  })
+
+  closeTestroom(api, room)
+}
+
 // --- the test runners --------------------------------------------------------
 
 export function run (runner) {
@@ -164,6 +234,7 @@ export function run (runner) {
       describe('minimal tables', () => testApiMinimalTable(api, version, room))
       describe('invalid tables', () => testApiInvalidTable(api, version, room))
       describe('invalid pieces', () => testApiInvalidPieces(api, version, room))
+      describe('undo', () => testApiUndo(api, version, room))
     })
   })
 }

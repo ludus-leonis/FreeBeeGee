@@ -57,6 +57,7 @@ import {
   pileSelected,
   toBottomSelected,
   pointTo,
+  undo,
   zoom
 } from '../../view/room/tabletop/index.mjs'
 
@@ -209,6 +210,10 @@ function handleRoomKeys (keydown) {
         break
       case 'v': // paste
         if (keydown.ctrlKey) clipboardPaste(getMouseCoords())
+        break
+      case 'u': // undo
+      case 'z': // undo
+        if (keydown.ctrlKey) undo()
         break
       case 'e': // edit
       case 'F2':

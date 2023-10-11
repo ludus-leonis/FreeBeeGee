@@ -241,9 +241,11 @@ export function testJsonPost (api, path, payload, payloadTests, status = 200, to
       .end(function (err, res) {
         expect(err, err && err.rawResponse).to.be.null
         expect(res, res.text).to.have.status(status)
-        expect(res, res.text).to.be.json
-        expect(res.body).to.be.not.null
-        payloadTests(res.body)
+        if (![204].includes(status)) {
+          expect(res, res.text).to.be.json
+          expect(res.body).to.be.not.null
+          payloadTests(res.body)
+        }
         done()
       })
   })
@@ -331,9 +333,42 @@ export function testJsonDelete (api, path, status = 204, token = undefined) {
         expect(err, err && err.rawResponse).to.be.null
         expect(res, res.text).to.have.status(status)
         expect(res.body).to.be.not.null
-        if (![401, 403, 404].includes(status)) {
+        if (![400, 401, 403, 404].includes(status)) {
           expect(res.body).to.be.eql({}) // API returns empty json objects as "no content"
         }
+        done()
+      })
+  })
+}
+
+/**
+ * DELETE an JSON/Rest endpoint, do common HTTP tests on it, and then run payload-
+ * specific tests.
+ *
+ * @param {string} api Server URL to API root.
+ * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {function} payload Function to return (possibly dynamic) payload to send.
+ * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ *                                further checking.
+ * @param {number} status Expected HTTP status. Defaults to 204 = gone.
+ * @param {string} token Optional API token method.
+ */
+export function testJsonDeleteBatch (api, path, payload, payloadTests, status = 204, token = undefined) {
+  it(`DELETE ${api}${path()}`, function (done) {
+    const request = chai.request(api)
+      .delete(path())
+      .set('content-type', 'application/json')
+      .send(payload())
+    if (token) request.set('aUtHoRiZaTiOn', token())
+    request
+      .end(function (err, res) {
+        expect(err, err && err.rawResponse).to.be.null
+        expect(res, res.text).to.have.status(status)
+        expect(res.body).to.be.not.null
+        if (![400, 401, 403, 404].includes(status)) {
+          expect(res.body).to.be.eql({}) // API returns empty json objects as "no content"
+        }
+        payloadTests(res.body)
         done()
       })
   })

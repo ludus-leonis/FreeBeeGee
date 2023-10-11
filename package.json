@@ -1,9 +1,9 @@
 {
   "name": "FreeBeeGee",
   "version": "0.22.0-dev",
-  "versionEngine": "2.4.2",
+  "versionEngine": "2.5.1",
   "type": "module",
-  "codename": "??? ???",
+  "codename": "Remorseful Reindeer",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",
