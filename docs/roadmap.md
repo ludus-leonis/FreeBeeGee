@@ -7,23 +7,24 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] undo
 * [X] select-all
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] color 0 of token wrong
     * [ ] refactor: get 's' out of asset IDs
     * [X] use _test object instead of exports
     * [X] cleanup /? endpoints
-  * [ ] review docs
-  * [ ] review tutorial
+  * [X] review docs
+  * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
   * [ ] review + run tests
-  * [ ] update screenshots
+  * [X] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
 * [ ] bug: table.json cachign in demo mode
+* [ ] exclude protected pieces from operation, instead of denying operation
 * [ ] cursorkey move selection
 * [ ] tooltip explanation for '3x3:3' in library window
 * [ ] tweak minor grid visibility
