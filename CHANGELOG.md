@@ -13,6 +13,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * fixed selection lost after clone/copy in demo mode
 * fixed wrong piece color '0'
+* refactored internal asset ID calculation
 * refactored test exports to use _test object
 
 

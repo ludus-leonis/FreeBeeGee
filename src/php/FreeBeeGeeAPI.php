@@ -640,16 +640,16 @@ class FreeBeeGeeAPI
      * Done by iterating over all files in the assets folder.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
-     * @return array The generated library JSON data object.
+     * @return object The generated library JSON data object.
      */
-    private function generateLibraryJSON(
+    private function generateLibrary(
         string $roomName
-    ): array {
+    ): object {
         // generate JSON data
         $roomFolder = $this->getRoomFolder($roomName);
-        $assets = [];
+        $library = new \stdClass();
         foreach (ASSET_TYPES as $type) {
-            $assets[$type] = [];
+            $library->$type = [];
             $lastAsset = null;
             foreach (glob($roomFolder . 'assets/' . $type . '/*') as $filename) {
                 $asset = FreeBeeGeeAPI::fileToAsset(basename($filename));
@@ -661,14 +661,13 @@ class FreeBeeGeeAPI
                     || $lastAsset->w !== $asset->w
                     || $lastAsset->h !== $asset->h
                 ) {
-                    $idBase = $type . '/' . $mediaBase;
-
                     // this is a new asset. write out the old.
                     if ($lastAsset !== null) {
-                        array_push($assets[$type], $lastAsset);
+                        array_push($library->$type, $lastAsset);
                     }
                     $lastAsset = (object) [
-                        'id' => $this->generateId(abs(crc32($idBase))), // avoid neg. values on 32bit systems
+                        'id' => FreeBeeGeeAPI::generateAssetId($type, $asset->name, $asset->w, $asset->h), // 32bit safe
+                        'lid' => FreeBeeGeeAPI::generateId(abs(crc32($type . '/' . $mediaBase))), // legacy ID
                         'name' => $asset->name,
                         'type' => $type,
                         'w' => $asset->w,
@@ -685,17 +684,17 @@ class FreeBeeGeeAPI
                 } elseif ((int)$asset->s === 0) { // this is a background layer
                     $lastAsset->base = $asset->media[0];
                 } else { // another side of the same asset: add it to the existing one
-                    if (!$this->arrayContainsPrefix($lastAsset->media, $mediaBase)) { // no duplicates for same side
+                    if (!$this->arrayContainsPrefix($lastAsset->media, $mediaBase)) { // same side duplicate
                         array_push($lastAsset->media, $asset->media[0]);
                     }
                 }
             }
             if ($lastAsset !== null) { // don't forget the last one!
-                array_push($assets[$type], $lastAsset);
+                array_push($library->$type, $lastAsset);
             }
         }
 
-        return $assets;
+        return $library;
     }
 
     /**
@@ -958,8 +957,7 @@ class FreeBeeGeeAPI
      * @return object New, cleaned object.
      */
     public function cleanupColor(
-        object $color,
-        bool $newId = false
+        object $color
     ): object {
         $out = new \stdClass();
 
@@ -1140,30 +1138,33 @@ class FreeBeeGeeAPI
      * Cleanup tables by cleaning up its pieces.
      *
      * @param string $json JSON string from the filesystem.
+     * @param object $library Room library for additional checks.
      * @return object Validated JSON, converted to an object.
      */
     public function cleanupTableJSON(
-        string $json
+        string $json,
+        object $library
     ): array {
         $table = json_decode($json);
         $table = is_array($table) ? $table : [];
-        return $this->cleanupTable($table);
+        return $this->cleanupTable($table, false, $library);
     }
 
     /**
      * Cleanup tables by cleaning up its pieces.
      *
      * @param string $json JSON string from the filesystem.
-     * @param bool $newId Always assign a new ID.
+     * @param bool $assignIds Always assign a new ID.
      * @return object Validated JSON, converted to an object.
      */
     public function cleanupTable(
         array $table,
-        bool $newId = false
+        bool $assignIds = false,
+        object $library = null
     ): array {
         $clean = [];
         foreach ($table as $piece) {
-            $clean[] = $this->cleanupPiece($piece, $newId);
+            $clean[] = $this->cleanupPiece($piece, $assignIds, $library);
         }
         return $clean;
     }
@@ -1192,12 +1193,13 @@ class FreeBeeGeeAPI
      * Can not assume a validated piece.
      *
      * @param object $piece Full piece.
-     * @param bool $newId Always assign a new ID.
+     * @param bool $assignId Always assign a new ID.
      * @return object New, cleaned object.
      */
     public function cleanupPiece(
         object $piece,
-        bool $newId = false
+        bool $assignId = false,
+        object $library = null
     ): object {
         $out = new \stdClass();
 
@@ -1215,7 +1217,7 @@ class FreeBeeGeeAPI
             switch ($property) {
                 case 'id':
                     $out->$property =
-                        $this->api->assertString('id', $value, REGEXP_ID, false) ?: $this->generateId();
+                        $this->api->assertString('id', $value, REGEXP_ID, false) ?: FreeBeeGeeAPI::generateId();
                     break;
                 case 'a':
                     $out->$property =
@@ -1302,8 +1304,8 @@ class FreeBeeGeeAPI
         }
 
         # enforce ID
-        if (!isset($out->id) || $newId) {
-            $out->id = $this->generateId();
+        if (!isset($out->id) || $assignId) {
+            $out->id = FreeBeeGeeAPI::generateId();
         }
 
         # width/height default behavior
@@ -1317,6 +1319,27 @@ class FreeBeeGeeAPI
         } else {
             if (isset($out->h) && $out->h === 1) {
                 unset($out->h);
+            }
+        }
+
+        # check ID against library (if possible)
+        if ($library) {
+            if (isset($out->a)) { // upgrade legacy IDs
+                foreach (
+                    array_merge(
+                        $library->overlay,
+                        $library->tile,
+                        $library->token,
+                        $library->other,
+                        $library->badge,
+                        $library->material
+                    ) as $asset
+                ) {
+                    if ($out->a === $asset->lid) { // upgrade legacy IDs
+                        $out->a = $asset->id;
+                        break;
+                    }
+                }
             }
         }
 
@@ -1851,14 +1874,6 @@ class FreeBeeGeeAPI
             $this->api->sendError(500, 'cant cleanup room');
         }
 
-        // cleanup or create [1-9].json
-        for ($i = 1; $i <= 9; $i++) {
-            if (is_file("$folder/tables/$i.json")) {
-                $table = $this->cleanupTableJSON(file_get_contents("$folder/tables/$i.json"));
-                file_put_contents("$folder/tables/$i.json", json_encode($table));
-            }
-        }
-
         // cleanup or create setup.json
         $setup = is_file($folder . 'setup.json')
             ? file_get_contents($folder . 'setup.json')
@@ -1883,17 +1898,26 @@ class FreeBeeGeeAPI
         }
 
         // (re)create room.json
+        $library = $this->generateLibrary($name);
         $room = (object) [
-            'id' => $this->generateId(),
+            'id' => FreeBeeGeeAPI::generateId(),
             'name' => $name,
             'engine' => $this->engine,
             'setup' => $setup,
-            'library' => $this->generateLibraryJSON($name),
+            'library' => $library,
             'credits' => file_get_contents($folder . 'LICENSE.md'),
             'width' => $setup->gridWidth * $setup->gridSize,
             'height' => $setup->gridHeight * $setup->gridSize,
         ];
         file_put_contents($folder . 'room.json', json_encode($room));
+
+        // cleanup or create [1-9].json
+        for ($i = 1; $i <= 9; $i++) {
+            if (is_file("$folder/tables/$i.json")) {
+                $table = $this->cleanupTableJSON(file_get_contents("$folder/tables/$i.json"), $library);
+                file_put_contents("$folder/tables/$i.json", json_encode($table));
+            }
+        }
 
         $this->regenerateDigests($folder);
 
@@ -2226,10 +2250,10 @@ class FreeBeeGeeAPI
                     $piece->expires = time() + 8;
                     break;
                 default:
-                    $piece->id = $this->generateId();
+                    $piece->id = FreeBeeGeeAPI::generateId();
             }
         } else {
-            $piece->id = $this->generateId();
+            $piece->id = FreeBeeGeeAPI::generateId();
         }
         $created = $this->updatePiecesTableLocked($meta, $tid, [$piece], true, false)[0];
         $this->api->sendReply(201, json_encode($created));
@@ -2261,10 +2285,10 @@ class FreeBeeGeeAPI
                         $piece->expires = time() + 8;
                         break;
                     default:
-                        $piece->id = $this->generateId();
+                        $piece->id = FreeBeeGeeAPI::generateId();
                 }
             } else {
-                $piece->id = $this->generateId();
+                $piece->id = FreeBeeGeeAPI::generateId();
             }
             $pieces[] = $piece;
         }
@@ -2443,7 +2467,7 @@ class FreeBeeGeeAPI
 
         // regenerate library JSON
         $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-        $room->library = $this->generateLibraryJSON($meta->name);
+        $room->library = $this->generateLibrary($meta->name);
         $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);
 
         // return asset (without large blob)
@@ -2534,10 +2558,12 @@ class FreeBeeGeeAPI
             if (property_exists($toUpdate, 'base')) {
                 $toUpdate->_idPadding = '0';
             }
-            $toUpdate->_id = $this->generateId(abs(crc32(
-                $toUpdate->type . '/' . $toUpdate->name . '.' . $toUpdate->w . 'x' . $toUpdate->h . 'x' .
-                    str_pad($toUpdate->_idPadding, strlen("{$toUpdate->_sMax}"), '0', STR_PAD_LEFT)
-            )));
+            $toUpdate->_id = FreeBeeGeeAPI::generateAssetId(
+                $toUpdate->type,
+                $toUpdate->name,
+                $toUpdate->w,
+                $toUpdate->h
+            );
             if ($toUpdate->_id !== $patch->id && $this->findAsset($meta, $toUpdate->_id)) {
                 $this->api->sendError(409, "asset {$toUpdate->_id} already exists", 'ASSET_ID_CONFLICT');
             }
@@ -2573,7 +2599,7 @@ class FreeBeeGeeAPI
             }
 
             // regenerate library JSON
-            $room->library = $this->generateLibraryJSON($meta->name);
+            $room->library = $this->generateLibrary($meta->name);
             $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);
 
             $this->api->unlockLock($lock);
@@ -2638,7 +2664,7 @@ class FreeBeeGeeAPI
 
             // regenerate library JSON
             $room = json_decode(file_get_contents($meta->folder . 'room.json'));
-            $room->library = $this->generateLibraryJSON($meta->name);
+            $room->library = $this->generateLibrary($meta->name);
             $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);
         } elseif ($toDelete !== null && $toDelete->type === 'material') {
             $this->api->unlockLock($lock);
@@ -2764,6 +2790,8 @@ class FreeBeeGeeAPI
         return $piece;
     }
 
+    // --- statics -------------------------------------------------------------
+
     /**
      * Generate an ID.
      *
@@ -2771,13 +2799,27 @@ class FreeBeeGeeAPI
      *
      * @returns {String} A random ID.
      */
-    private function generateId(
+    public static function generateId(
         int $seed = null
     ) {
         return JSONRestAPI::id64($seed);
     }
 
-    // --- statics -------------------------------------------------------------
+    /**
+     * Generate an asset ID, based on the asset filename parts.
+     *
+     * @returns {String} A random ID.
+     */
+    public static function generateAssetId(
+        string $type,
+        string $name,
+        string $w,
+        string $h
+    ): string {
+        return FreeBeeGeeAPI::generateId(abs(crc32( // 32bit safe
+            $type . '/' . $name . '.' . $w . 'x' . $h
+        )));
+    }
 
     /**
      * Get a possibly undefined property of an object.

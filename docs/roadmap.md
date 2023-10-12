@@ -8,15 +8,15 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] select-all
 * [ ] pre-release
   * [X] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] color 0 of token wrong
-    * [ ] refactor: get 's' out of asset IDs
+    * [X] refactor: get 's' out of asset IDs
     * [X] use _test object instead of exports
     * [X] cleanup /? endpoints
   * [X] review docs
   * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] review + run tests
+  * [X] review + run tests
   * [X] update screenshots
 
 ## Backlog
