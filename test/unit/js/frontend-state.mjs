@@ -103,7 +103,7 @@ describe('Frontend - state.mjs - basics', function () {
     expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1]).to.be.an('object')
     expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].name).to.be.eql('Wood')
     expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].color).to.be.eql('#57514d')
-    expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].scroller).to.be.eql('#3e3935')
+    expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].scroller).to.be.eql('#3E3935')
     expect(serverInfo.backgrounds[serverInfo.backgrounds.length - 1].image).to.be.eql('img/desktop-wood.jpg')
   })
 
@@ -465,7 +465,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
   // it('fetchTable()', async function () {}) // can't test
 })
 
-const serverJSON = '{"version":"0.13.0","engine":"2.0.0","ttl":48,"snapshotUploads":true,"defaultSnapshot":"Tutorial","freeRooms":127,"root":"/api","backgrounds":[{"name":"Casino","image":"img/desktop-casino.jpg","color":"#2e5d3c","scroller":"#1b3c25"},{"name":"Concrete","image":"img/desktop-concrete.jpg","color":"#646260","scroller":"#494540"},{"name":"Marble","image":"img/desktop-marble.jpg","color":"#b4a999","scroller":"#80725e"},{"name":"Metal","image":"img/desktop-metal.jpg","color":"#515354","scroller":"#3e3e3e"},{"name":"Rock","image":"img/desktop-rock.jpg","color":"#5c5d5a","scroller":"#393930"},{"name":"Wood","image":"img/desktop-wood.jpg","color":"#57514d","scroller":"#3e3935"}]}'
+const serverJSON = '{"version":"0.13.0","engine":"2.0.0","ttl":48,"snapshotUploads":true,"defaultSnapshot":"Tutorial","freeRooms":127,"root":"/api","backgrounds":[{"name":"Casino","image":"img/desktop-casino.jpg","color":"#2e5d3c","scroller":"#1b3c25"},{"name":"Concrete","image":"img/desktop-concrete.jpg","color":"#646260","scroller":"#494540"},{"name":"Marble","image":"img/desktop-marble.jpg","color":"#b4a999","scroller":"#80725e"},{"name":"Metal","image":"img/desktop-metal.jpg","color":"#515354","scroller":"#3e3e3e"},{"name":"Rock","image":"img/desktop-rock.jpg","color":"#5c5d5a","scroller":"#393930"},{"name":"Wood","image":"img/desktop-wood.jpg","color":"#57514d","scroller":"#3E3935"}]}'
 
 const pieceJSON = '{"id":"fe008a4d","l":1,"a":"f45f27b5","x":256,"y":192,"z":13,"s":4}'
 

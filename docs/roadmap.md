@@ -15,6 +15,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] use _test object instead of exports
     * [X] cleanup /? endpoints
     * [X] library: asset no longer selected after rename
+    * [X] existing rooms do not create /history folder
   * [X] review docs
   * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -25,6 +26,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] bug: overlay click-thru not working?
 * [ ] bug: table.json cachign in demo mode
 * [ ] exclude protected pieces from operation, instead of denying operation
 * [ ] cursorkey move selection

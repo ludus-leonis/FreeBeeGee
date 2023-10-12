@@ -364,7 +364,7 @@ function api (data, headers) {
           { name: 'Sand', image: 'img/desktop-sand.jpg', color: '#D7D2BF', scroller: '#a19e8f' },
           { name: 'Snow', image: 'img/desktop-snow.jpg', color: '#FAFAFA', scroller: '#C9C9C9' },
           { name: 'Space', image: 'img/desktop-space.jpg', color: '#101010', scroller: '#404040' },
-          { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3e3935' }
+          { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3E3935' }
         ]
       }, headers)
     default:

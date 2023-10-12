@@ -414,6 +414,35 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Ensure all room (subfolders) exist.
+     *
+     * Creates missing dirs on the fly.
+     *
+     * @param string $folder Room's folder.
+     */
+    public function setupRoomFolders(
+        string $folder
+    ) {
+        if (!file_exists($folder . 'tables')) {
+            if (!mkdir($folder . 'tables', 0777, true)) {
+                $this->api->sendError(500, 'can\'t write on server');
+            }
+        }
+        if (!file_exists($folder . 'history/tables')) {
+            if (!mkdir($folder . 'history/tables', 0777, true)) {
+                $this->api->sendError(500, 'can\'t write on server');
+            }
+        }
+        foreach (ASSET_TYPES as $type) {
+            if (!file_exists($folder . 'assets/' . $type)) {
+                if (!mkdir($folder . 'assets/' . $type, 0777, true)) {
+                    $this->api->sendError(500, 'can\'t write on server');
+                }
+            }
+        }
+    }
+
+    /**
      * Install a snapshot into a room.
      *
      * Will unpack the setup .zip into the room folder. Terminates execution
@@ -431,17 +460,7 @@ class FreeBeeGeeAPI
         $folder = $this->getRoomFolder($roomName);
 
         // create mandatory folder structure
-        if (!mkdir($folder . 'tables', 0777, true)) {
-            $this->api->sendError(500, 'can\'t write on server');
-        }
-        if (!mkdir($folder . 'history/tables', 0777, true)) {
-            $this->api->sendError(500, 'can\'t write on server');
-        }
-        foreach (ASSET_TYPES as $type) {
-            if (!mkdir($folder . 'assets/' . $type, 0777, true)) {
-                $this->api->sendError(500, 'can\'t write on server');
-            }
-        }
+        $this->setupRoomFolders($folder);
 
         // unzip all validated files
         $zip = new \ZipArchive();
@@ -1876,6 +1895,9 @@ class FreeBeeGeeAPI
             $this->api->sendError(500, 'cant cleanup room');
         }
 
+        // ensure mandatory folder structure
+        $this->setupRoomFolders($folder);
+
         // cleanup or create setup.json
         $setup = is_file($folder . 'setup.json')
             ? file_get_contents($folder . 'setup.json')
@@ -1885,6 +1907,8 @@ class FreeBeeGeeAPI
             : $setup; // TODO deprecated since v0.18
         $setup = $this->cleanupSetupJSON($setup);
         file_put_contents($folder . 'setup.json', json_encode($setup));
+
+        // enforce mandatory directories
 
         // enforce mandatory files
         if (!is_file($folder . 'tables/1.json')) {
