@@ -8,6 +8,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added undo via ctrl-z or settings dialog
 * added select-all via ctrl-a
+* added Snow and Ice backgrounds
 
 ### Other changes
 

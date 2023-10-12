@@ -6,6 +6,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [X] undo
 * [X] select-all
+* [X] backgrounds: snow/ice
 * [ ] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
@@ -29,7 +30,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] cursorkey move selection
 * [ ] tooltip explanation for '3x3:3' in library window
 * [ ] tweak minor grid visibility
-* [ ] refactor: use _private exports for test cases
 * [ ] refactor: use events more
 * [ ] plugin-hook
 * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
@@ -67,7 +67,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] repo: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
-* [ ] more backgrounds: snow/ice
 
 ### rather later (unsorted, after v1)
 

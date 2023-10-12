@@ -354,6 +354,7 @@ function api (data, headers) {
           { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2D5B3D', scroller: '#3a7750' },
           { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#6C6964', scroller: '#494540' },
           { name: 'Dark', image: 'img/desktop-dark.jpg', color: '#212121', scroller: '#444444' },
+          { name: 'Ice', image: 'img/desktop-ice.jpg', color: '#7B909D', scroller: '#BAC1C7' },
           { name: 'Leather', image: 'img/desktop-leather.jpg', color: '#3C2D26', scroller: '#6a4b40' },
           { name: 'Marble', image: 'img/desktop-marble.jpg', color: '#B6AB99', scroller: '#80725e' },
           { name: 'Metal', image: 'img/desktop-metal.jpg', color: '#565859', scroller: '#3e3e3e' },
@@ -361,6 +362,7 @@ function api (data, headers) {
           { name: 'Pinboard', image: 'img/desktop-pinboard.jpg', color: '#C0A183', scroller: '#a2775b' },
           { name: 'Rock', image: 'img/desktop-rock.jpg', color: '#545450', scroller: '#393930' },
           { name: 'Sand', image: 'img/desktop-sand.jpg', color: '#D7D2BF', scroller: '#a19e8f' },
+          { name: 'Snow', image: 'img/desktop-snow.jpg', color: '#FAFAFA', scroller: '#C9C9C9' },
           { name: 'Space', image: 'img/desktop-space.jpg', color: '#101010', scroller: '#404040' },
           { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3e3935' }
         ]
