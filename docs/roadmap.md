@@ -13,6 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] refactor: get 's' out of asset IDs
     * [X] use _test object instead of exports
     * [X] cleanup /? endpoints
+    * [X] library: asset no longer selected after rename
   * [X] review docs
   * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

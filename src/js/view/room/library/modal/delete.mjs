@@ -54,7 +54,7 @@ export function modalDelete (asset) {
     '<h3 class="modal-title">Delete asset?</h3>',
     `
       <p>
-        Asset <strong>${prettyName(asset.name)} ${asset.w}x${asset.h}</strong> is currently ${amount}x in use in your game.
+        Asset <strong>${prettyName(asset.name)} ${asset.w}x${asset.h}</strong> is currently <strong>${amount}x</strong> in use in your game.
         Are you sure you want to delete it?
       </p>
       <p>This action can't be undone!</p>

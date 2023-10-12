@@ -72,6 +72,7 @@ import {
   HOOK_LIBRARY_UPDATE,
   HOOK_LIBRARY_EDIT,
   HOOK_LIBRARY_RELOAD,
+  HOOK_LIBRARY_SELECT,
   registerObserver,
   triggerEvent
 } from '../../../lib/events.mjs'
@@ -131,6 +132,7 @@ let selection = null
 
 registerObserver('LibraryManager', HOOK_LIBRARY_EDIT, () => selection && modalEdit(selection))
 registerObserver('LibraryManager', HOOK_LIBRARY_RELOAD, () => showSpinner())
+registerObserver('LibraryManager', HOOK_LIBRARY_SELECT, id => { selection = id })
 
 /**
  * Use table (piece) selection to pre-select an asset (if any).

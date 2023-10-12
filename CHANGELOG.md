@@ -11,6 +11,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* fixed asset no longer selected after rename in library editor
 * fixed selection lost after clone/copy in demo mode
 * fixed wrong piece color '0'
 * refactored internal asset ID calculation
