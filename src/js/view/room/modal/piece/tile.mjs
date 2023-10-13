@@ -53,7 +53,7 @@ import {
 export function setup (piece) {
   _('#modal-body').innerHTML = getModalTile(piece)
 
-  setupLabel(piece)
+  setupLabel(piece, modalOk)
   setupBadge(piece)
   setupSize(piece)
   setupRotate(piece)

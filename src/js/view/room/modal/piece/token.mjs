@@ -56,7 +56,7 @@ import {
 export function setup (piece) {
   _('#modal-body').innerHTML = getModalToken(piece)
 
-  setupLabel(piece)
+  setupLabel(piece, modalOk)
   setupBadge(piece)
   setupNumber(piece)
   setupSize(piece)

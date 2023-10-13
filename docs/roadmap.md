@@ -17,7 +17,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] library: asset no longer selected after rename
     * [X] existing rooms do not create /history folder
     * [X] edit: wrong dropdown opens left of edit field
-    * [ ] edit: enter no longer closes
+    * [X] edit: enter no longer closes
     * [ ] holding keys repeats action
     * [ ] overlay click-thru not working? overlay sometimes above token?
     * [ ] sometimes wrong upload limit detection
