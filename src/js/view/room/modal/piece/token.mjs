@@ -101,8 +101,8 @@ function modalOk () {
  * @returns {string} HTML snippet.
  */
 function getModalToken (piece) {
-  let colorClass = 'is-hidden'
-  let borderClass = 'is-hidden'
+  let colorClass = 'd-none'
+  let borderClass = 'd-none'
   let otherClass = 'col-lg-3'
 
   if (piece._meta.hasColor && piece._meta.hasBorder) {

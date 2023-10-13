@@ -16,6 +16,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] cleanup /? endpoints
     * [X] library: asset no longer selected after rename
     * [X] existing rooms do not create /history folder
+    * [X] edit: wrong dropdown opens left of edit field
+    * [ ] edit: enter no longer closes
+    * [ ] holding keys repeats action
+    * [ ] overlay click-thru not working? overlay sometimes above token?
+    * [ ] sometimes wrong upload limit detection
   * [X] review docs
   * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -26,7 +31,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
-* [ ] bug: overlay click-thru not working?
+* [ ] token/tile height for more/less shadow, overlays as 0-height tiles?
+* [ ] doubleclick opens edit modal
 * [ ] bug: table.json cachign in demo mode
 * [ ] exclude protected pieces from operation, instead of denying operation
 * [ ] cursorkey move selection
@@ -57,7 +63,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: randomize button
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
-* [ ] ui: doubleclick handling?
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
 * [ ] build: minify js

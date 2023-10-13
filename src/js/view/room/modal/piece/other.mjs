@@ -95,7 +95,7 @@ function modalOk () {
  * @returns {string} HTML snippet.
  */
 function getModalOther (piece) {
-  let colorClass = 'is-hidden'
+  let colorClass = 'd-none'
   let otherClass = 'col-lg-4'
 
   if (piece._meta.hasColor) {
@@ -123,7 +123,7 @@ function getModalOther (piece) {
           <label for="piece-h">Height</label>
           <select id="piece-h" name="piece-h"></select>
         </div>
-        <div class="col-6 col-lg-3 is-hidden">
+        <div class="col-6 col-lg-3 d-none">
           <label for="piece-r">Rotate</label>
           <select id="piece-r" name="piece-r"></select>
         </div>
