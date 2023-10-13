@@ -18,6 +18,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed room auto upgrade do not recreating mandatory folders
 * fixed wrong dropdown opens left of edit field
 * fixed [enter] no longer closing edit modals
+* fixed holding keys repeats actions
 * refactored internal asset ID calculation
 * refactored test exports to use _test object
 

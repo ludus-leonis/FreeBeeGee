@@ -140,7 +140,7 @@ function handleRoomKeys (keydown) {
     }
   }
 
-  if (!isDragging() && !isModalActive() && isWindowActive()) { // keys fo the library window
+  if (!isDragging() && !isModalActive() && isWindowActive()) { // keys for the library window
     switch (keydown.key) {
       case 'e': // edit
       case 'F2':
@@ -151,6 +151,12 @@ function handleRoomKeys (keydown) {
   }
 
   if (!isDragging() && !isModalActive() && !isWindowActive()) { // keys that don't work while dragging
+    if (keydown.repeat) { // prevent key-repeat on held keys
+      keydown.stopPropagation()
+      keydown.preventDefault()
+      return
+    }
+
     switch (keydown.key) {
       case 'Delete': // delete selected
         deleteSelected()

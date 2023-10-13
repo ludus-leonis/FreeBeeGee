@@ -18,7 +18,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] existing rooms do not create /history folder
     * [X] edit: wrong dropdown opens left of edit field
     * [X] edit: enter no longer closes
-    * [ ] holding keys repeats action
+    * [X] holding keys repeats action
     * [ ] overlay click-thru not working? overlay sometimes above token?
     * [ ] sometimes wrong upload limit detection
   * [X] review docs
