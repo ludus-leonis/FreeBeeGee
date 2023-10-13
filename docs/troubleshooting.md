@@ -42,6 +42,7 @@ This can have multiple reasons. Hover on the (?) icon of the error message to fi
 
 * Your webserver might limit upload sizes. Check your httpd.conf. Managed web hosters might also have an option for that in their web console.
 * PHP might limit uploads. Check your php.ini. Managed web hosters might also have an option for that in their web console.
+* `.htaccess` might limit uploads. Check your `.htaccess` either in the root of your webserver or in the root of FreeBeeGee.
 * FreeBeeGee might limit uploads. Check your `api/data/server.json` to increase the limit.
 
 ## How do I permanently install snapshots?

@@ -19,8 +19,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] edit: wrong dropdown opens left of edit field
     * [X] edit: enter no longer closes
     * [X] holding keys repeats action
-    * [ ] overlay click-thru not working? overlay sometimes above token?
-    * [ ] sometimes wrong upload limit detection
   * [X] review docs
   * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
