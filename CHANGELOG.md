@@ -2,6 +2,17 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.23.0 - ??? ???
+
+### Notable changes
+
+* TBD
+
+### Other changes
+
+* TBD
+
+
 ## v0.22.0 - Remorseful Reindeer
 
 ### Notable changes

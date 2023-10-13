@@ -2,52 +2,41 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.22
+## v0.23.0
 
-* [X] undo
-* [X] select-all
-* [X] backgrounds: snow/ice
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] color 0 of token wrong
-    * [X] refactor: get 's' out of asset IDs
-    * [X] use _test object instead of exports
-    * [X] cleanup /? endpoints
-    * [X] library: asset no longer selected after rename
-    * [X] existing rooms do not create /history folder
-    * [X] edit: wrong dropdown opens left of edit field
-    * [X] edit: enter no longer closes
-    * [X] holding keys repeats action
-  * [X] review docs
-  * [X] review tutorial
-  * [X] bump engine, version/codename & update CHANGELOG
-  * [X] review + run tests
-  * [X] update screenshots
+* [ ] token/tile height for more/less shadow
+* [ ] exclude protected pieces from operation, instead of denying operation
+* [ ] moves selection via cursor keys
+* [ ] tweak minor grid visibility
+* [ ] tooltip explanation for '3x3:3' in library window
+* [ ] autopopulate empty data dir (for docker volumes)
+* [ ] snapshot download for demo mode
+* [ ] engine: grid-on-tile flag major/minor
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+    * [ ] table.json caching in demo mode
+    * [ ] dragging multi-selected hex tokens does not always snap correctly (hex)
+    * [ ] fix sass import warning
+  * [ ] review docs
+  * [ ] review tutorial
+  * [ ] bump engine, version/codename & update CHANGELOG
+  * [ ] review + run tests
+  * [ ] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
-* [ ] token/tile height for more/less shadow, overlays as 0-height tiles?
 * [ ] doubleclick opens edit modal
-* [ ] bug: table.json cachign in demo mode
-* [ ] exclude protected pieces from operation, instead of denying operation
-* [ ] cursorkey move selection
-* [ ] tooltip explanation for '3x3:3' in library window
-* [ ] tweak minor grid visibility
 * [ ] refactor: use events more
 * [ ] plugin-hook
-* [ ] bug: dragging multi-selected hex tokens does not always snap correctly
 * [ ] library editor: replace media/side
 * [ ] ui: decks/stacks
-* [ ] engine: grid-on-tile flag
-* [ ] autopopulate empty data dir (for docker volumes)
 * [ ] simplify/automate more deployment steps (ongoing)
   * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] snapshot download for demo mode
 * [ ] ui: move dice more
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
@@ -64,11 +53,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
 * [ ] build: minify js
-* [ ] docs: template-template
-* [ ] docs: how-to make snapshot `.zip`s
 * [ ] API: check sides correspond to asset
 * [ ] API: hide .../data/... from URLs (via .htaccess)
 * [ ] API: obfuscate/hash room name
+* [ ] docs: template-template
+* [ ] docs: how-to make snapshot `.zip`s
 * [ ] repo: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
