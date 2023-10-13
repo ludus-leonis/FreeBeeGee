@@ -7,7 +7,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] undo
 * [X] select-all
 * [X] backgrounds: snow/ice
-* [ ] pre-release
+* [X] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
     * [X] color 0 of token wrong
@@ -21,7 +21,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] holding keys repeats action
   * [X] review docs
   * [X] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
+  * [X] bump engine, version/codename & update CHANGELOG
   * [X] review + run tests
   * [X] update screenshots
 
