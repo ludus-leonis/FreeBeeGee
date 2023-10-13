@@ -702,9 +702,9 @@ function filter () {
 
   _('#tabs-library .col-card p').each(p => {
     if (!p.innerText.toLowerCase().includes(filter)) {
-      p.parentNode.classList.add('is-gone')
+      p.parentNode.classList.add('d-none')
     } else {
-      p.parentNode.classList.remove('is-gone')
+      p.parentNode.classList.remove('d-none')
     }
   })
 }

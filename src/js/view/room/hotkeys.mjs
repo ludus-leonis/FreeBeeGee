@@ -57,6 +57,7 @@ import {
   pileSelected,
   toBottomSelected,
   pointTo,
+  undo,
   zoom
 } from '../../view/room/tabletop/index.mjs'
 
@@ -96,7 +97,8 @@ import {
 } from '../../lib/events.mjs'
 
 import {
-  clipboardCopy
+  clipboardCopy,
+  selectionAddAll
 } from '../../view/room/tabletop/selection.mjs'
 
 import {
@@ -138,7 +140,7 @@ function handleRoomKeys (keydown) {
     }
   }
 
-  if (!isDragging() && !isModalActive() && isWindowActive()) { // keys fo the library window
+  if (!isDragging() && !isModalActive() && isWindowActive()) { // keys for the library window
     switch (keydown.key) {
       case 'e': // edit
       case 'F2':
@@ -149,6 +151,12 @@ function handleRoomKeys (keydown) {
   }
 
   if (!isDragging() && !isModalActive() && !isWindowActive()) { // keys that don't work while dragging
+    if (keydown.repeat) { // prevent key-repeat on held keys
+      keydown.stopPropagation()
+      keydown.preventDefault()
+      return
+    }
+
     switch (keydown.key) {
       case 'Delete': // delete selected
         deleteSelected()
@@ -198,6 +206,9 @@ function handleRoomKeys (keydown) {
       case 't': // to-top
         toTopSelected()
         break
+      case 'a': // copy/clone
+        if (keydown.ctrlKey) selectionAddAll()
+        break
       case 'c': // copy/clone
         if (keydown.ctrlKey) clipboardCopy(); else cloneSelected(getMouseCoords())
         break
@@ -209,6 +220,10 @@ function handleRoomKeys (keydown) {
         break
       case 'v': // paste
         if (keydown.ctrlKey) clipboardPaste(getMouseCoords())
+        break
+      case 'u': // undo
+      case 'z': // undo
+        if (keydown.ctrlKey) undo()
         break
       case 'e': // edit
       case 'F2':

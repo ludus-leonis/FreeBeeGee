@@ -49,6 +49,7 @@ import {
 
 import {
   HOOK_LIBRARY_RELOAD,
+  HOOK_LIBRARY_SELECT,
   triggerEvent
 } from '../../../../lib/events.mjs'
 
@@ -228,8 +229,8 @@ function ok (asset) {
   }
 
   updateAsset(patch)
-    .then(api => {
-      switch (api._error) {
+    .then(asset => {
+      switch (asset._error) {
         case 'ASSET_ID_CONFLICT':
           _('.server-feedback').add('.show').innerHTML = 'This asset already exists.'
           break
@@ -238,6 +239,7 @@ function ok (asset) {
           break
         default: // no error - proceed
           getModal().hide()
+          triggerEvent(HOOK_LIBRARY_SELECT, asset)
           triggerEvent(HOOK_LIBRARY_RELOAD)
       }
     })

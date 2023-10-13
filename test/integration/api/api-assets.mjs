@@ -117,15 +117,15 @@ function testApiUpdateAssetOtherBaseMask (api, version, room) {
   }, 200)
 
   // patch name < 10 sides
-  testJsonPatch(api, () => `/rooms/${room}/assets/xY7Gr200/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
     return {
-      id: 'xY7Gr200',
+      id: 'j8hqf000',
       name: 'barFoo.fooBar',
       tx: 'paper'
     }
   }, body => {
     expect(body.name).to.be.eql('barFoo.fooBar')
-    expect(body.id).to.be.eql('zM-sI100')
+    expect(body.id).to.be.eql('EJwm7300')
     expect(body.type).to.be.eql('other')
     expect(body.w).to.be.eql(1)
     expect(body.h).to.be.eql(1)
@@ -139,15 +139,15 @@ function testApiUpdateAssetOtherBaseMask (api, version, room) {
   }, 200)
 
   // patch name >= 10 sides
-  testJsonPatch(api, () => `/rooms/${room}/assets/aeS5y000/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/v8Vvg200/`, () => {
     return {
-      id: 'aeS5y000',
+      id: 'v8Vvg200',
       name: 'fooBar.fooBar',
       tx: 'paper'
     }
   }, body => {
     expect(body.name).to.be.eql('fooBar.fooBar')
-    expect(body.id).to.be.eql('cp0Nn000')
+    expect(body.id).to.be.eql('uwlgt100')
     expect(body.type).to.be.eql('other')
     expect(body.w).to.be.eql(1)
     expect(body.h).to.be.eql(1)
@@ -200,7 +200,7 @@ function testApiUpdateAssetIDs (api, version, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { // add die
       l: 4,
-      a: 'xY7Gr200',
+      a: 'j8hqf000',
       x: 22,
       y: 21,
       z: 11
@@ -209,24 +209,24 @@ function testApiUpdateAssetIDs (api, version, room) {
 
   // get & compare pieces before change
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
-    expect(body[0].a).to.be.eql('xY7Gr200')
+    expect(body[0].a).to.be.eql('j8hqf000')
     expect(body[1].a).to.be.eql('73740cdf')
   })
 
   // rename die asset
-  testJsonPatch(api, () => `/rooms/${room}/assets/xY7Gr200/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
     return {
-      id: 'xY7Gr200',
+      id: 'j8hqf000',
       name: 'barFoo.fooBar',
       tx: 'paper'
     }
   }, body => {
-    expect(body.id).to.be.eql('zM-sI100') // new ID
+    expect(body.id).to.be.eql('EJwm7300') // new ID
   }, 200)
 
   // get & compare pieces after change - one piece changed
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
-    expect(body[0].a).to.be.eql('zM-sI100') // new
+    expect(body[0].a).to.be.eql('EJwm7300') // new
     expect(body[1].a).to.be.eql('73740cdf') // old
   })
 
@@ -237,30 +237,30 @@ function testApiUpdateAssetConflict (api, version, room) {
   openTestroom(api, room, 'Classic')
 
   // patching first d4 asset works
-  testJsonPatch(api, () => `/rooms/${room}/assets/SHt9A300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pJtgf000/`, () => {
     return {
-      id: 'SHt9A300',
+      id: 'pJtgf000',
       name: 'patch.conflict',
       w: 8,
       h: 10
     }
   }, body => { //
     expect(body.name).to.be.eql('patch.conflict')
-    expect(body.id).to.be.eql('HNxfT200')
+    expect(body.id).to.be.eql('S8aOf000')
     expect(body.w).to.be.eql(8)
     expect(body.h).to.be.eql(10)
   }, 200)
 
   // patching second d4 asset fails
-  testJsonPatch(api, () => `/rooms/${room}/assets/xY7Gr200/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
     return {
-      id: 'xY7Gr200',
+      id: 'j8hqf000',
       name: 'patch.conflict',
       w: 8,
       h: 10
     }
   }, body => {
-    expect(body._messages[0]).to.match(/asset HNxfT200 already exists/)
+    expect(body._messages[0]).to.match(/asset S8aOf000 already exists/)
   }, 409)
 
   closeTestroom(api, room)
@@ -275,15 +275,15 @@ function testApiUpdateAssetOverlayMaterial (api, version, room) {
   }, 200)
 
   // patch name
-  testJsonPatch(api, () => `/rooms/${room}/assets/d3eZa200/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/kVTKu200/`, () => {
     return {
-      id: 'd3eZa200',
+      id: 'kVTKu200',
       name: '_.fooBar',
       bg: '2'
     }
   }, body => {
     expect(body.name).to.be.eql('_.fooBar')
-    expect(body.id).to.be.eql('ehAVG100')
+    expect(body.id).to.be.eql('Jvqgu300')
     expect(body.type).to.be.eql('overlay')
     expect(body.w).to.be.eql(3)
     expect(body.h).to.be.eql(3)
@@ -295,9 +295,9 @@ function testApiUpdateAssetOverlayMaterial (api, version, room) {
   }, 200)
 
   // patch known material
-  testJsonPatch(api, () => `/rooms/${room}/assets/ehAVG100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
     return {
-      id: 'd3eZa200',
+      id: 'kVTKu200',
       tx: 'wood'
     }
   }, body => {
@@ -308,9 +308,9 @@ function testApiUpdateAssetOverlayMaterial (api, version, room) {
   }, 200)
 
   // patch unknown material
-  testJsonPatch(api, () => `/rooms/${room}/assets/ehAVG100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
     return {
-      id: 'd3eZa200',
+      id: 'kVTKu200',
       tx: 'foobar'
     }
   }, body => {
@@ -318,9 +318,9 @@ function testApiUpdateAssetOverlayMaterial (api, version, room) {
   }, 400)
 
   // patch unknown material
-  testJsonPatch(api, () => `/rooms/${room}/assets/ehAVG100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
     return {
-      id: 'd3eZa200',
+      id: 'kVTKu200',
       tx: 'null'
     }
   }, body => {
@@ -328,9 +328,9 @@ function testApiUpdateAssetOverlayMaterial (api, version, room) {
   }, 400)
 
   // patch no material
-  testJsonPatch(api, () => `/rooms/${room}/assets/ehAVG100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
     return {
-      id: 'd3eZa200',
+      id: 'kVTKu200',
       tx: 'none'
     }
   }, body => {
@@ -341,9 +341,9 @@ function testApiUpdateAssetOverlayMaterial (api, version, room) {
   }, 200)
 
   // patch with bg
-  testJsonPatch(api, () => `/rooms/${room}/assets/ehAVG100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
     return {
-      id: 'd3eZa200',
+      id: 'kVTKu200',
       tx: 'linen',
       bg: null
     }
@@ -355,9 +355,9 @@ function testApiUpdateAssetOverlayMaterial (api, version, room) {
   }, 200)
 
   // patch no material
-  testJsonPatch(api, () => `/rooms/${room}/assets/ehAVG100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
     return {
-      id: 'd3eZa200',
+      id: 'kVTKu200',
       tx: null
     }
   }, body => {
@@ -389,9 +389,9 @@ function testApiUpdateAssetTileColor (api, version, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/Y6aoL100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
-      id: 'Y6aoL100',
+      id: 'r67iL000',
       bg: '3'
     }
   }, body => {
@@ -402,9 +402,9 @@ function testApiUpdateAssetTileColor (api, version, room) {
   }, 200)
 
   // unpatch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/Y6aoL100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
-      id: 'Y6aoL100',
+      id: 'r67iL000',
       bg: null
     }
   }, body => {
@@ -415,9 +415,9 @@ function testApiUpdateAssetTileColor (api, version, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/Y6aoL100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
-      id: 'Y6aoL100',
+      id: 'r67iL000',
       bg: '#aabbcc'
     }
   }, body => {
@@ -428,9 +428,9 @@ function testApiUpdateAssetTileColor (api, version, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/Y6aoL100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
-      id: 'Y6aoL100',
+      id: 'r67iL000',
       bg: '#808080'
     }
   }, body => {
@@ -441,9 +441,9 @@ function testApiUpdateAssetTileColor (api, version, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/Y6aoL100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
-      id: 'Y6aoL100',
+      id: 'r67iL000',
       bg: 'transparent'
     }
   }, body => {
@@ -454,9 +454,9 @@ function testApiUpdateAssetTileColor (api, version, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/Y6aoL100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
-      id: 'Y6aoL100',
+      id: 'r67iL000',
       bg: '0'
     }
   }, body => {
@@ -467,13 +467,13 @@ function testApiUpdateAssetTileColor (api, version, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/Y6aoL100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
-      id: 'Y6aoL100',
+      id: 'r67iL000',
       tx: 'linen'
     }
   }, body => {
-    expect(body.bg).to.be.eql('#808080')
+    expect(body.bg).to.be.eql('0')
     expect(body.base).to.be.eql(undefined)
     expect(body.mask).to.be.eql(undefined)
     expect(body.media).to.be.eql(['chess.8x8.0.linen.jpg'])
@@ -501,7 +501,7 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // can't patch ID
-  testJsonPatch(api, () => `/rooms/${room}/assets/mAa-Q300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
       id: 'foobar'
     }
@@ -510,9 +510,9 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 400)
 
   // can't patch type
-  testJsonPatch(api, () => `/rooms/${room}/assets/mAa-Q300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
-      id: 'mAa-Q300',
+      id: 'G8QAJ200',
       type: 'tile'
     }
   }, body => {
@@ -520,9 +520,9 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // can't patch media directly
-  testJsonPatch(api, () => `/rooms/${room}/assets/mAa-Q300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
-      id: 'mAa-Q300',
+      id: 'G8QAJ200',
       media: []
     }
   }, body => {
@@ -530,9 +530,9 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // can't patch mask
-  testJsonPatch(api, () => `/rooms/${room}/assets/mAa-Q300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
-      id: 'mAa-Q300',
+      id: 'G8QAJ200',
       mask: 'nope.png'
     }
   }, body => {
@@ -540,9 +540,9 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // can't patch base
-  testJsonPatch(api, () => `/rooms/${room}/assets/mAa-Q300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
-      id: 'mAa-Q300',
+      id: 'G8QAJ200',
       base: 'nope.png'
     }
   }, body => {
@@ -550,9 +550,9 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // can't patch unkown field
-  testJsonPatch(api, () => `/rooms/${room}/assets/mAa-Q300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
-      id: 'mAa-Q300',
+      id: 'G8QAJ200',
       foobar: 'nope.png'
     }
   }, body => {
@@ -560,14 +560,14 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 400)
 
   // patch name
-  testJsonPatch(api, () => `/rooms/${room}/assets/mAa-Q300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
-      id: 'mAa-Q300',
+      id: 'G8QAJ200',
       name: 'blah'
     }
   }, body => {
     expect(body.name).to.be.eql('blah')
-    expect(body.id).to.be.eql('MEyoI300')
+    expect(body.id).to.be.eql('rh0-6200')
     expect(body.type).to.be.eql('token')
     expect(body.w).to.be.eql(1)
     expect(body.h).to.be.eql(1)
@@ -581,14 +581,14 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // patch w
-  testJsonPatch(api, () => `/rooms/${room}/assets/MEyoI300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/rh0-6200/`, () => {
     return {
-      id: 'MEyoI300',
+      id: 'rh0-6200',
       w: 5
     }
   }, body => {
     expect(body.name).to.be.eql('blah')
-    expect(body.id).to.be.eql('mxRXR100')
+    expect(body.id).to.be.eql('rNqB1200')
     expect(body.type).to.be.eql('token')
     expect(body.w).to.be.eql(5)
     expect(body.h).to.be.eql(1)
@@ -602,14 +602,14 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // patch h
-  testJsonPatch(api, () => `/rooms/${room}/assets/mxRXR100/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/rNqB1200/`, () => {
     return {
-      id: 'mxRXR100',
+      id: 'rNqB1200',
       h: 3
     }
   }, body => {
     expect(body.name).to.be.eql('blah')
-    expect(body.id).to.be.eql('V3FZs300')
+    expect(body.id).to.be.eql('HRXAK100')
     expect(body.type).to.be.eql('token')
     expect(body.w).to.be.eql(5)
     expect(body.h).to.be.eql(3)
@@ -623,14 +623,14 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // patch tx
-  testJsonPatch(api, () => `/rooms/${room}/assets/V3FZs300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
     return {
-      id: 'V3FZs300',
+      id: 'HRXAK100',
       tx: 'linen'
     }
   }, body => {
     expect(body.name).to.be.eql('blah')
-    expect(body.id).to.be.eql('V3FZs300')
+    expect(body.id).to.be.eql('HRXAK100')
     expect(body.type).to.be.eql('token')
     expect(body.w).to.be.eql(5)
     expect(body.h).to.be.eql(3)
@@ -644,14 +644,14 @@ function testApiUpdateAssetToken (api, version, room) {
   }, 200)
 
   // patch bg
-  testJsonPatch(api, () => `/rooms/${room}/assets/V3FZs300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
     return {
-      id: 'V3FZs300',
+      id: 'HRXAK100',
       bg: '3'
     }
   }, body => {
     expect(body.name).to.be.eql('blah')
-    expect(body.id).to.be.eql('V3FZs300')
+    expect(body.id).to.be.eql('HRXAK100')
     expect(body.type).to.be.eql('token')
     expect(body.w).to.be.eql(5)
     expect(body.h).to.be.eql(3)
@@ -667,11 +667,11 @@ function testApiUpdateAssetToken (api, version, room) {
   // final full get
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.library.token.length).to.be.eql(11)
-    expect(body.library.token.find(i => i.id === 'mAa-Q300')).to.be.eql(undefined) // original ID gone
-    const newAsset = body.library.token.find(i => i.id === 'V3FZs300')
+    expect(body.library.token.find(i => i.id === 'G8QAJ200')).to.be.eql(undefined) // original ID gone
+    const newAsset = body.library.token.find(i => i.id === 'HRXAK100')
 
     expect(newAsset.name).to.be.eql('blah')
-    expect(newAsset.id).to.be.eql('V3FZs300')
+    expect(newAsset.id).to.be.eql('HRXAK100')
     expect(newAsset.type).to.be.eql('token')
     expect(newAsset.w).to.be.eql(5)
     expect(newAsset.h).to.be.eql(3)
@@ -716,7 +716,7 @@ function testApiDeleteAsset (api, version, room) {
   }, 200)
 
   // delete overlay
-  testJsonDelete(api, () => `/rooms/${room}/assets/wPXsm000/`, 204)
+  testJsonDelete(api, () => `/rooms/${room}/assets/SKT2Y200/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
     expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
@@ -727,7 +727,7 @@ function testApiDeleteAsset (api, version, room) {
   }, 200)
 
   // delete tile
-  testJsonDelete(api, () => `/rooms/${room}/assets/lWh16200/`, 204)
+  testJsonDelete(api, () => `/rooms/${room}/assets/ZFRq_100/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
     expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
@@ -738,7 +738,7 @@ function testApiDeleteAsset (api, version, room) {
   }, 200)
 
   // delete token
-  testJsonDelete(api, () => `/rooms/${room}/assets/f_9xm000/`, 204)
+  testJsonDelete(api, () => `/rooms/${room}/assets/GYWId200/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
     expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
@@ -749,7 +749,7 @@ function testApiDeleteAsset (api, version, room) {
   }, 200)
 
   // delete other
-  testJsonDelete(api, () => `/rooms/${room}/assets/lPebe300/`, 204)
+  testJsonDelete(api, () => `/rooms/${room}/assets/hFoyZ200/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
     expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
@@ -760,7 +760,7 @@ function testApiDeleteAsset (api, version, room) {
   }, 200)
 
   // delete badge
-  testJsonDelete(api, () => `/rooms/${room}/assets/wRe_l200/`, 204)
+  testJsonDelete(api, () => `/rooms/${room}/assets/B5K2G200/`, 204)
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)
     expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
@@ -771,7 +771,7 @@ function testApiDeleteAsset (api, version, room) {
   }, 200)
 
   // delete material not possible
-  testJsonDelete(api, () => `/rooms/${room}/assets/Hb9tz200/`, 403)
+  testJsonDelete(api, () => `/rooms/${room}/assets/H4W0w000/`, 403)
 
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.library.overlay.length).to.be.eql(_.overlay + classic.overlay - 1)

@@ -46,13 +46,14 @@ import {
   getMaterialMedia,
   updatePieces,
   createPieces,
-  deletePiece,
+  deletePieces,
   numberPiece,
   flipPiece,
   movePieces,
   movePiecePatch,
   colorPiece,
   rotatePiece,
+  undo as tableUndo,
   getRoomPreference
 } from '../../../state/index.mjs'
 
@@ -127,16 +128,18 @@ export function clipboardPaste (xy) {
 }
 
 /**
- * Delete the currently selected piece from the room.
+ * Delete the currently selected piece(s) from the table.
  *
  * Will silently fail if nothing is selected.
  */
 export function deleteSelected () {
   if (!selectionGetFeatures().delete) return
 
+  const ids = []
   for (const piece of selectionGetPieces()) {
-    deletePiece(piece.id)
+    ids.push(piece.id)
   }
+  deletePieces(ids)
 }
 
 /**
@@ -837,6 +840,15 @@ export function updateTabletop (tableNo) {
   }, 10)
 
   recordTime('sync-ui', Date.now() - start)
+}
+
+/**
+ * Undo one history step on the table.
+ *
+ * @param {number} tableNo Table number to display. Defaults to current.
+ */
+export function undo (tableNo) {
+  tableUndo(tableNo) // undo is server-side -> only forwards to the api/state
 }
 
 /**

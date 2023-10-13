@@ -2,6 +2,26 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.22.0 - Remorseful Reindeer
+
+### Notable changes
+
+* added undo via ctrl-z or settings dialog
+* added select-all via ctrl-a
+* added Snow and Ice backgrounds
+
+### Other changes
+
+* fixed asset no longer selected after rename in library editor
+* fixed selection lost after clone/copy in demo mode
+* fixed wrong piece color '0'
+* fixed room auto upgrade do not recreating mandatory folders
+* fixed wrong dropdown opens left of edit field
+* fixed [enter] no longer closing edit modals
+* fixed holding keys repeats actions
+* refactored internal asset ID calculation
+* refactored test exports to use _test object
+
 
 ## v0.21.0 - Wailing Woodpecker
 

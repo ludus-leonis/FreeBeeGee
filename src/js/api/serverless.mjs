@@ -49,6 +49,8 @@ import {
   epoch
 } from '../lib/utils.mjs'
 
+const UNDO_LEVELS = 5
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -83,6 +85,9 @@ export function demoFetchOrThrow (_, path, data = {}, headers = false) {
   } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/tables\/[0-9]+\/pieces\/$/)) {
     const matches = path.match(/^api\/rooms\/([a-zA-Z0-9]+)\/tables\/([0-9]+)\/pieces\/$/)
     return apiRoomTablePieces(matches[1], Number.parseInt(matches[2]), undefined, data, headers)
+  } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/tables\/[0-9]+\/undo\/$/)) {
+    const matches = path.match(/^api\/rooms\/([a-zA-Z0-9]+)\/tables\/([0-9]+)\/undo\/$/)
+    return apiRoomTableUndo(matches[1], Number.parseInt(matches[2]), data, headers)
   } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/$/)) {
     return apiRoom(path.substr(10).replace(/\/.*$/, ''), data, headers)
   } else if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/setup\/$/)) {
@@ -156,26 +161,30 @@ function updateDigest (roomName, key, data) {
 }
 
 /**
- * Add a (json) object to an object array.
+ * Add (json) objects to an object array.
  *
  * Does not do any checking, as the caller (browser) can not gain anything by
  * cheating. It only adds a generated ID.
  *
  * @param {object[]} array Array of items to add to.
- * @param {string} item Item to add.
- * @returns {object} The added item with the new ID.
+ * @param {object[]} items Items to add.
+ * @returns {object[]} The added item with the new ID.
  */
-function add (array, item) {
-  if (item.a?.match(/^ZZZZZZZ/)) { // system pieces
-    del(array, 'id', item.a) // no duplicates
-    item.id = item.a
-    item.expires = epoch(8)
-  } else {
-    item.id = anId()
-  }
+function addAll (array, items) {
+  const reply = []
+  for (const item of items) {
+    if (item.a?.match(/^ZZZZZZZ/)) { // system pieces
+      del(array, 'id', item.a) // no duplicates
+      item.id = item.a
+      item.expires = epoch(8)
+    } else {
+      item.id = anId()
+    }
 
-  array.push(item)
-  return item
+    array.push(item)
+    reply.push(item)
+  }
+  return reply
 }
 
 /**
@@ -345,6 +354,7 @@ function api (data, headers) {
           { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2D5B3D', scroller: '#3a7750' },
           { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#6C6964', scroller: '#494540' },
           { name: 'Dark', image: 'img/desktop-dark.jpg', color: '#212121', scroller: '#444444' },
+          { name: 'Ice', image: 'img/desktop-ice.jpg', color: '#7B909D', scroller: '#BAC1C7' },
           { name: 'Leather', image: 'img/desktop-leather.jpg', color: '#3C2D26', scroller: '#6a4b40' },
           { name: 'Marble', image: 'img/desktop-marble.jpg', color: '#B6AB99', scroller: '#80725e' },
           { name: 'Metal', image: 'img/desktop-metal.jpg', color: '#565859', scroller: '#3e3e3e' },
@@ -352,8 +362,9 @@ function api (data, headers) {
           { name: 'Pinboard', image: 'img/desktop-pinboard.jpg', color: '#C0A183', scroller: '#a2775b' },
           { name: 'Rock', image: 'img/desktop-rock.jpg', color: '#545450', scroller: '#393930' },
           { name: 'Sand', image: 'img/desktop-sand.jpg', color: '#D7D2BF', scroller: '#a19e8f' },
+          { name: 'Snow', image: 'img/desktop-snow.jpg', color: '#FAFAFA', scroller: '#C9C9C9' },
           { name: 'Space', image: 'img/desktop-space.jpg', color: '#101010', scroller: '#404040' },
-          { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3e3935' }
+          { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3E3935' }
         ]
       }, headers)
     default:
@@ -519,14 +530,16 @@ function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
       throw new UnexpectedStatus(501, 'GET room table pieces not implemented yet')
     case 'POST':
       temp = getPreference(`freebeegee-demo-${roomName}`, pref)
-      reply = add(temp, JSON.parse(data.body))
+      undoPush(roomName, temp, pref)
+      reply = addAll(temp, JSON.parse(data.body))
       setPreference(`freebeegee-demo-${roomName}`, pref, temp)
       updateDigest(roomName, `tables/${no}.json`, temp)
-      return delayPromise(204, {}, headers)
+      return delayPromise(204, reply, headers)
     case 'PUT':
       throw new UnexpectedStatus(501, 'PUT room table piece not implemented yet')
     case 'PATCH':
       temp = getPreference(`freebeegee-demo-${roomName}`, pref)
+      undoPush(roomName, temp, pref)
       if (pieceId) {
         reply = patch(temp, 'id', pieceId, JSON.parse(data.body))
       } else {
@@ -537,8 +550,32 @@ function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
       return delayPromise(200, reply, headers)
     case 'DELETE':
       temp = getPreference(`freebeegee-demo-${roomName}`, pref)
-      del(temp, 'id', pieceId)
+      undoPush(roomName, temp, pref)
+      for (const delId of JSON.parse(data.body)) del(temp, 'id', delId)
       setPreference(`freebeegee-demo-${roomName}`, pref, temp)
+      updateDigest(roomName, `tables/${no}.json`, temp)
+      return delayPromise(204, {}, headers)
+    default:
+      throw new UnexpectedStatus(501, 'not implemented for demo')
+  }
+}
+
+/**
+ * Fake-fetch /api/rooms/[roomName]/table/[#]/undo/.
+ *
+ * @param {string} roomName Room name to fetch.
+ * @param {number} no Table number.
+ * @param {object} data Original fetch()'s data object.
+ * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
+ * @returns {Promise} Delayed promise of the API content.
+ * @throws UnexpectedStatus for not implemented HTTP methods.
+ */
+function apiRoomTableUndo (roomName, no, data, headers) {
+  const pref = PREFS[`TABLE${no}`]
+  switch (data.method) {
+    case 'POST':
+      undoPop(roomName, pref)
+      temp = getPreference(`freebeegee-demo-${roomName}`, pref)
       updateDigest(roomName, `tables/${no}.json`, temp)
       return delayPromise(204, {}, headers)
     default:
@@ -595,5 +632,47 @@ function apiRoomSetup (roomName, data, headers) {
       return delayPromise(200, temp, headers)
     default:
       throw new UnexpectedStatus(501, 'not implemented for demo')
+  }
+}
+
+/**
+ * Add the given table data to the undo stack.
+ *
+ * @param {string} roomName Room name to undo in.
+ * @param {boolean} tableData Table data (pieces) to push.
+ * @param {object} pref Current table (number) preference
+ */
+function undoPush (roomName, tableData, pref) {
+  let temp
+  for (let i = UNDO_LEVELS - 2; i >= 0; i--) {
+    temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i}`, default: '' })
+    if (temp !== '') {
+      setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i + 1}`, default: '' }, temp)
+    }
+  }
+  temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}`, default: '' })
+  if (temp !== '') {
+    setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.0`, default: '' }, temp)
+  }
+}
+
+/**
+ * Un-shift the given table data from the undo stack.
+ *
+ * @param {string} roomName Room name to undo in.
+ * @param {object} pref Current table (number) preference
+ */
+function undoPop (roomName, pref) {
+  let temp
+  temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.0`, default: '' })
+  if (temp !== '') {
+    setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}`, default: '' }, temp)
+
+    for (let i = 1; i <= UNDO_LEVELS - 1; i++) {
+      temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i}`, default: '' })
+      if (temp !== '') {
+        setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i - 1}`, default: '' }, temp)
+      }
+    }
   }
 }

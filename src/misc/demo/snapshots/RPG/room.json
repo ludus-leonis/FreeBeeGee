@@ -1,10 +1,10 @@
 {
- "id": "Cf6cofml",
+ "id": "bFhWhRHp",
  "name": "demoroomrpg",
- "engine": "2.4.2",
+ "engine": "2.5.1",
  "setup": {
-  "engine": "2.4.0",
-  "version": "0.21.0",
+  "engine": "2.5.0",
+  "version": "0.22.0",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 48,
@@ -121,7 +121,8 @@
  "library": {
   "overlay": [
    {
-    "id": "T28mo300",
+    "id": "aRGFb300",
+    "lid": "T28mo300",
     "name": "_.area",
     "type": "overlay",
     "w": 1,
@@ -131,7 +132,8 @@
     "mask": "_.area.1x1xX.1.svg"
    },
    {
-    "id": "ig-Kt200",
+    "id": "Z9lUg100",
+    "lid": "ig-Kt200",
     "name": "_.area",
     "type": "overlay",
     "w": 2,
@@ -141,7 +143,8 @@
     "mask": "_.area.2x2xX.1.svg"
    },
    {
-    "id": "Bu07x200",
+    "id": "Qz08B000",
+    "lid": "Bu07x200",
     "name": "_.area",
     "type": "overlay",
     "w": 3,
@@ -151,7 +154,8 @@
     "mask": "_.area.3x3xX.1.svg"
    },
    {
-    "id": "wPXsm000",
+    "id": "SKT2Y200",
+    "lid": "wPXsm000",
     "name": "_.area",
     "type": "overlay",
     "w": 4,
@@ -161,7 +165,8 @@
     "mask": "_.area.4x4xX.1.svg"
    },
    {
-    "id": "XVoPF000",
+    "id": "v5IOb300",
+    "lid": "XVoPF000",
     "name": "_.area",
     "type": "overlay",
     "w": 5,
@@ -171,7 +176,8 @@
     "mask": "_.area.5x5xX.1.svg"
    },
    {
-    "id": "yk-7s000",
+    "id": "jWJP6100",
+    "lid": "yk-7s000",
     "name": "_.circle",
     "type": "overlay",
     "w": 1,
@@ -181,7 +187,8 @@
     "mask": "_.circle.1x1xX.1.svg"
    },
    {
-    "id": "z68Zp100",
+    "id": "k4gCt300",
+    "lid": "z68Zp100",
     "name": "_.circle",
     "type": "overlay",
     "w": 2,
@@ -191,7 +198,8 @@
     "mask": "_.circle.2x2xX.1.svg"
    },
    {
-    "id": "E8HmA100",
+    "id": "xJ5mG200",
+    "lid": "E8HmA100",
     "name": "_.circle",
     "type": "overlay",
     "w": 3,
@@ -201,7 +209,8 @@
     "mask": "_.circle.3x3xX.1.svg"
    },
    {
-    "id": "Fygdi300",
+    "id": "jyYsL000",
+    "lid": "Fygdi300",
     "name": "_.circle",
     "type": "overlay",
     "w": 4,
@@ -211,7 +220,8 @@
     "mask": "_.circle.4x4xX.1.svg"
    },
    {
-    "id": "CHPAJ300",
+    "id": "m8DI6100",
+    "lid": "CHPAJ300",
     "name": "_.circle",
     "type": "overlay",
     "w": 5,
@@ -221,7 +231,8 @@
     "mask": "_.circle.5x5xX.1.svg"
    },
    {
-    "id": "LZCOB200",
+    "id": "rfCka100",
+    "lid": "LZCOB200",
     "name": "_.cubeLarge",
     "type": "overlay",
     "w": 1,
@@ -233,7 +244,8 @@
     "mask": "_.cubeLarge.1x1xX.3.png"
    },
    {
-    "id": "dojMw300",
+    "id": "je0yw100",
+    "lid": "dojMw300",
     "name": "_.cubeMedium",
     "type": "overlay",
     "w": 1,
@@ -245,7 +257,8 @@
     "mask": "_.cubeMedium.1x1xX.3.png"
    },
    {
-    "id": "xwTgs300",
+    "id": "R_vpv100",
+    "lid": "xwTgs300",
     "name": "_.cubeSmall",
     "type": "overlay",
     "w": 1,
@@ -257,7 +270,8 @@
     "mask": "_.cubeSmall.1x1xX.3.png"
    },
    {
-    "id": "y2e6H000",
+    "id": "HokYV100",
+    "lid": "y2e6H000",
     "name": "_.pin",
     "type": "overlay",
     "w": 2,
@@ -269,7 +283,8 @@
     "mask": "_.pin.2x2xX.3.svg"
    },
    {
-    "id": "zNVkI000",
+    "id": "goUQT300",
+    "lid": "zNVkI000",
     "name": "_.wall",
     "type": "overlay",
     "w": 1,
@@ -281,7 +296,8 @@
     "mask": "_.wall.1x1xX.1.png"
    },
    {
-    "id": "Lv6KO300",
+    "id": "mKjdO100",
+    "lid": "Lv6KO300",
     "name": "_.zone",
     "type": "overlay",
     "w": 1,
@@ -291,7 +307,8 @@
     "mask": "_.zone.1x1xX.1.svg"
    },
    {
-    "id": "udFmR200",
+    "id": "JgIuD300",
+    "lid": "udFmR200",
     "name": "_.zone",
     "type": "overlay",
     "w": 2,
@@ -301,7 +318,8 @@
     "mask": "_.zone.2x2xX.1.svg"
    },
    {
-    "id": "d3eZa200",
+    "id": "kVTKu200",
+    "lid": "d3eZa200",
     "name": "_.zone",
     "type": "overlay",
     "w": 3,
@@ -311,7 +329,8 @@
     "mask": "_.zone.3x3xX.1.svg"
    },
    {
-    "id": "MENAY000",
+    "id": "SR0A5000",
+    "lid": "MENAY000",
     "name": "_.zone",
     "type": "overlay",
     "w": 4,
@@ -321,7 +340,8 @@
     "mask": "_.zone.4x4xX.1.svg"
    },
    {
-    "id": "fCmd1000",
+    "id": "fslkO100",
+    "lid": "fCmd1000",
     "name": "_.zone",
     "type": "overlay",
     "w": 5,
@@ -331,7 +351,8 @@
     "mask": "_.zone.5x5xX.1.svg"
    },
    {
-    "id": "NWd-O100",
+    "id": "sDTD4300",
+    "lid": "NWd-O100",
     "name": "door",
     "type": "overlay",
     "w": 2,
@@ -345,7 +366,8 @@
     ]
    },
    {
-    "id": "qH_mc000",
+    "id": "dybjY000",
+    "lid": "qH_mc000",
     "name": "rune",
     "type": "overlay",
     "w": 2,
@@ -360,7 +382,8 @@
     ]
    },
    {
-    "id": "YaEWw300",
+    "id": "B4UoL100",
+    "lid": "YaEWw300",
     "name": "trapdoor",
     "type": "overlay",
     "w": 1,
@@ -373,7 +396,8 @@
   ],
   "tile": [
    {
-    "id": "SoKu5200",
+    "id": "i_6yU100",
+    "lid": "SoKu5200",
     "name": "_.glassDark",
     "type": "tile",
     "w": 2,
@@ -384,7 +408,8 @@
     ]
    },
    {
-    "id": "xhnDI000",
+    "id": "rxt72100",
+    "lid": "xhnDI000",
     "name": "_.glassLight",
     "type": "tile",
     "w": 2,
@@ -395,7 +420,8 @@
     ]
    },
    {
-    "id": "EsBXT100",
+    "id": "qMPD4300",
+    "lid": "EsBXT100",
     "name": "altar",
     "type": "tile",
     "w": 3,
@@ -406,7 +432,8 @@
     ]
    },
    {
-    "id": "krH1S200",
+    "id": "sVipP300",
+    "lid": "krH1S200",
     "name": "chest",
     "type": "tile",
     "w": 1,
@@ -417,7 +444,8 @@
     ]
    },
    {
-    "id": "CIKso100",
+    "id": "Bcxi8000",
+    "lid": "CIKso100",
     "name": "corridor",
     "type": "tile",
     "w": 1,
@@ -428,7 +456,8 @@
     ]
    },
    {
-    "id": "i6DPv000",
+    "id": "QQa3a000",
+    "lid": "i6DPv000",
     "name": "corridor",
     "type": "tile",
     "w": 2,
@@ -439,7 +468,8 @@
     ]
    },
    {
-    "id": "pgzPW000",
+    "id": "kBREn000",
+    "lid": "pgzPW000",
     "name": "corridor.2x2",
     "type": "tile",
     "w": 2,
@@ -451,7 +481,8 @@
     "tx": "paper"
    },
    {
-    "id": "SLxeW300",
+    "id": "j0NTW000",
+    "lid": "SLxeW300",
     "name": "corridor.2x5",
     "type": "tile",
     "w": 2,
@@ -463,7 +494,8 @@
     "tx": "paper"
    },
    {
-    "id": "DOx9P300",
+    "id": "SILkJ200",
+    "lid": "DOx9P300",
     "name": "corridor.4x1",
     "type": "tile",
     "w": 4,
@@ -475,7 +507,8 @@
     "tx": "paper"
    },
    {
-    "id": "s4ifu300",
+    "id": "tGBU9000",
+    "lid": "s4ifu300",
     "name": "corridor.5x1",
     "type": "tile",
     "w": 5,
@@ -487,7 +520,8 @@
     "tx": "paper"
    },
    {
-    "id": "vPsi9300",
+    "id": "Ak50n100",
+    "lid": "vPsi9300",
     "name": "desk",
     "type": "tile",
     "w": 3,
@@ -498,7 +532,8 @@
     ]
    },
    {
-    "id": "WaL_G300",
+    "id": "gjIF5200",
+    "lid": "WaL_G300",
     "name": "fireplace",
     "type": "tile",
     "w": 3,
@@ -509,7 +544,8 @@
     ]
    },
    {
-    "id": "u_fQ7000",
+    "id": "TUANT000",
+    "lid": "u_fQ7000",
     "name": "pit.1x1",
     "type": "tile",
     "w": 1,
@@ -522,7 +558,8 @@
     "tx": "paper"
    },
    {
-    "id": "ibeV0300",
+    "id": "SF1h3200",
+    "lid": "ibeV0300",
     "name": "rack",
     "type": "tile",
     "w": 3,
@@ -533,7 +570,8 @@
     ]
    },
    {
-    "id": "rl4WH000",
+    "id": "tshHb000",
+    "lid": "rl4WH000",
     "name": "room.10x5",
     "type": "tile",
     "w": 10,
@@ -546,7 +584,8 @@
     "tx": "paper"
    },
    {
-    "id": "Nlbib100",
+    "id": "gwNVI100",
+    "lid": "Nlbib100",
     "name": "room.1x1",
     "type": "tile",
     "w": 1,
@@ -558,7 +597,8 @@
     "tx": "paper"
    },
    {
-    "id": "guQN6000",
+    "id": "iuaW0200",
+    "lid": "guQN6000",
     "name": "room.2x2",
     "type": "tile",
     "w": 2,
@@ -571,7 +611,8 @@
     "tx": "paper"
    },
    {
-    "id": "Lozvx200",
+    "id": "kVWya300",
+    "lid": "Lozvx200",
     "name": "room.2x3",
     "type": "tile",
     "w": 2,
@@ -584,7 +625,8 @@
     "tx": "paper"
    },
    {
-    "id": "ffizb100",
+    "id": "MqEu1100",
+    "lid": "ffizb100",
     "name": "room.3x4",
     "type": "tile",
     "w": 3,
@@ -597,7 +639,8 @@
     "tx": "paper"
    },
    {
-    "id": "Y94eH300",
+    "id": "GZo7b000",
+    "lid": "Y94eH300",
     "name": "room.3x5",
     "type": "tile",
     "w": 3,
@@ -610,7 +653,8 @@
     "tx": "paper"
    },
    {
-    "id": "i89Ot200",
+    "id": "fVG-1200",
+    "lid": "i89Ot200",
     "name": "room.4x4",
     "type": "tile",
     "w": 4,
@@ -623,7 +667,8 @@
     "tx": "paper"
    },
    {
-    "id": "BevuV000",
+    "id": "RuqYb300",
+    "lid": "BevuV000",
     "name": "room.4x5",
     "type": "tile",
     "w": 4,
@@ -636,7 +681,8 @@
     "tx": "paper"
    },
    {
-    "id": "uUHog000",
+    "id": "iocgH100",
+    "lid": "uUHog000",
     "name": "room.5x5",
     "type": "tile",
     "w": 5,
@@ -649,7 +695,8 @@
     "tx": "paper"
    },
    {
-    "id": "TxTjJ100",
+    "id": "ibBWv100",
+    "lid": "TxTjJ100",
     "name": "room.6x5",
     "type": "tile",
     "w": 6,
@@ -662,7 +709,8 @@
     "tx": "paper"
    },
    {
-    "id": "rXxHL100",
+    "id": "BNDr3200",
+    "lid": "rXxHL100",
     "name": "room.8x8",
     "type": "tile",
     "w": 8,
@@ -674,7 +722,8 @@
     "tx": "paper"
    },
    {
-    "id": "LJoxG000",
+    "id": "Pqwjq300",
+    "lid": "LJoxG000",
     "name": "rubble.1x1",
     "type": "tile",
     "w": 1,
@@ -686,7 +735,8 @@
     "tx": "paper"
    },
    {
-    "id": "yRcFl100",
+    "id": "f9aTE300",
+    "lid": "yRcFl100",
     "name": "rubble.2x1",
     "type": "tile",
     "w": 2,
@@ -698,7 +748,8 @@
     "tx": "paper"
    },
    {
-    "id": "JkOPV000",
+    "id": "Tzva7000",
+    "lid": "JkOPV000",
     "name": "sarcophagus",
     "type": "tile",
     "w": 2,
@@ -709,7 +760,8 @@
     ]
    },
    {
-    "id": "YTmPG000",
+    "id": "pYyFx300",
+    "lid": "YTmPG000",
     "name": "secret",
     "type": "tile",
     "w": 1,
@@ -721,7 +773,8 @@
     "tx": "paper"
    },
    {
-    "id": "TXKVR000",
+    "id": "bLswO200",
+    "lid": "TXKVR000",
     "name": "shelf",
     "type": "tile",
     "w": 3,
@@ -732,7 +785,8 @@
     ]
    },
    {
-    "id": "WuoZ8000",
+    "id": "MFpjW200",
+    "lid": "WuoZ8000",
     "name": "shelf.book",
     "type": "tile",
     "w": 3,
@@ -743,7 +797,8 @@
     ]
    },
    {
-    "id": "F-Tl9100",
+    "id": "qWBP5300",
+    "lid": "F-Tl9100",
     "name": "stairs.2x2",
     "type": "tile",
     "w": 2,
@@ -755,7 +810,8 @@
     "tx": "paper"
    },
    {
-    "id": "zxL2P200",
+    "id": "RXqDj300",
+    "lid": "zxL2P200",
     "name": "table",
     "type": "tile",
     "w": 3,
@@ -766,7 +822,8 @@
     ]
    },
    {
-    "id": "kUg_t200",
+    "id": "x4ApO100",
+    "lid": "kUg_t200",
     "name": "throne",
     "type": "tile",
     "w": 1,
@@ -777,7 +834,8 @@
     ]
    },
    {
-    "id": "s8osj300",
+    "id": "hn5cP100",
+    "lid": "s8osj300",
     "name": "torture",
     "type": "tile",
     "w": 3,
@@ -790,7 +848,8 @@
   ],
   "token": [
    {
-    "id": "wAksS100",
+    "id": "p9Hr0300",
+    "lid": "wAksS100",
     "name": "_.bead",
     "type": "token",
     "w": 1,
@@ -801,7 +860,8 @@
     ]
    },
    {
-    "id": "mAa-Q300",
+    "id": "G8QAJ200",
+    "lid": "mAa-Q300",
     "name": "_.letter",
     "type": "token",
     "w": 1,
@@ -838,7 +898,8 @@
     "tx": "wood"
    },
    {
-    "id": "sD_SB100",
+    "id": "ye4mx100",
+    "lid": "sD_SB100",
     "name": "_.number",
     "type": "token",
     "w": 1,
@@ -859,19 +920,21 @@
     "tx": "wood"
    },
    {
-    "id": "oZX62300",
+    "id": "FFnzp100",
+    "lid": "oZX62300",
     "name": "_.plain",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "_.plain.1x1x1.0.wood.png"
     ],
     "tx": "wood"
    },
    {
-    "id": "Hn18v200",
+    "id": "L1WtG000",
+    "lid": "Hn18v200",
     "name": "_.symbol",
     "type": "token",
     "w": 1,
@@ -885,7 +948,8 @@
     "tx": "wood"
    },
    {
-    "id": "knW5n200",
+    "id": "VqJGO200",
+    "lid": "knW5n200",
     "name": "aasimar",
     "type": "token",
     "w": 1,
@@ -897,7 +961,8 @@
     "tx": "wood"
    },
    {
-    "id": "Vei9n200",
+    "id": "VmLDY300",
+    "lid": "Vei9n200",
     "name": "aboleth",
     "type": "token",
     "w": 3,
@@ -909,7 +974,8 @@
     "tx": "wood"
    },
    {
-    "id": "G1BLm000",
+    "id": "FrcHr000",
+    "lid": "G1BLm000",
     "name": "alien",
     "type": "token",
     "w": 1,
@@ -921,7 +987,8 @@
     "tx": "wood"
    },
    {
-    "id": "RUbz8000",
+    "id": "ipg9D300",
+    "lid": "RUbz8000",
     "name": "angel",
     "type": "token",
     "w": 2,
@@ -933,7 +1000,8 @@
     "tx": "wood"
    },
    {
-    "id": "Rby97100",
+    "id": "IB3sH300",
+    "lid": "Rby97100",
     "name": "animatedObject",
     "type": "token",
     "w": 1,
@@ -945,7 +1013,8 @@
     "tx": "wood"
    },
    {
-    "id": "yCVfx200",
+    "id": "zTd8h100",
+    "lid": "yCVfx200",
     "name": "ankheg",
     "type": "token",
     "w": 2,
@@ -957,7 +1026,8 @@
     "tx": "wood"
    },
    {
-    "id": "RUH9J100",
+    "id": "FME8v000",
+    "lid": "RUH9J100",
     "name": "ant",
     "type": "token",
     "w": 1,
@@ -969,31 +1039,34 @@
     "tx": "wood"
    },
    {
-    "id": "iIreL200",
+    "id": "vL1cA000",
+    "lid": "iIreL200",
     "name": "ape.gorilla",
     "type": "token",
     "w": 2,
     "h": 2,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "ape.gorilla.2x2.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "ezc1B100",
+    "id": "SfDvW300",
+    "lid": "ezc1B100",
     "name": "archer",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "archer.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "cayJn100",
+    "id": "LDtY_300",
+    "lid": "cayJn100",
     "name": "archon",
     "type": "token",
     "w": 1,
@@ -1005,7 +1078,8 @@
     "tx": "wood"
    },
    {
-    "id": "zcBYq100",
+    "id": "LkeIw100",
+    "lid": "zcBYq100",
     "name": "armadillo",
     "type": "token",
     "w": 1,
@@ -1017,7 +1091,8 @@
     "tx": "wood"
    },
    {
-    "id": "slq1R300",
+    "id": "UNpu0200",
+    "lid": "slq1R300",
     "name": "assassinVine",
     "type": "token",
     "w": 2,
@@ -1029,7 +1104,8 @@
     "tx": "wood"
    },
    {
-    "id": "NemOh300",
+    "id": "ht6PY200",
+    "lid": "NemOh300",
     "name": "azer",
     "type": "token",
     "w": 1,
@@ -1041,43 +1117,47 @@
     "tx": "wood"
    },
    {
-    "id": "F0Ze1000",
+    "id": "PLL8x000",
+    "lid": "F0Ze1000",
     "name": "bandit",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "bandit.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "hNjjH100",
+    "id": "U0kg8300",
+    "lid": "hNjjH100",
     "name": "barbarian",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "barbarian.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "AppJ3200",
+    "id": "MoGg6300",
+    "lid": "AppJ3200",
     "name": "barghest",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "barghest.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "rpYEz100",
+    "id": "o23Se000",
+    "lid": "rpYEz100",
     "name": "basidirond",
     "type": "token",
     "w": 1,
@@ -1089,7 +1169,8 @@
     "tx": "wood"
    },
    {
-    "id": "MUP8P000",
+    "id": "t9660100",
+    "lid": "MUP8P000",
     "name": "basilisk",
     "type": "token",
     "w": 1,
@@ -1101,7 +1182,8 @@
     "tx": "wood"
    },
    {
-    "id": "I0Zye200",
+    "id": "Ng3Cv300",
+    "lid": "I0Zye200",
     "name": "bat",
     "type": "token",
     "w": 1,
@@ -1113,7 +1195,8 @@
     "tx": "wood"
    },
    {
-    "id": "rahWZ200",
+    "id": "S1y44000",
+    "lid": "rahWZ200",
     "name": "bear.brown-",
     "type": "token",
     "w": 2,
@@ -1125,7 +1208,8 @@
     "tx": "wood"
    },
    {
-    "id": "kB7qb300",
+    "id": "Nwszp000",
+    "lid": "kB7qb300",
     "name": "bee",
     "type": "token",
     "w": 1,
@@ -1137,7 +1221,8 @@
     "tx": "wood"
    },
    {
-    "id": "Sy8jH100",
+    "id": "JpPfC200",
+    "lid": "Sy8jH100",
     "name": "beetle.fire-",
     "type": "token",
     "w": 1,
@@ -1149,7 +1234,8 @@
     "tx": "wood"
    },
    {
-    "id": "Og3V-300",
+    "id": "GUdwY300",
+    "lid": "Og3V-300",
     "name": "beetle.scarab",
     "type": "token",
     "w": 1,
@@ -1161,7 +1247,8 @@
     "tx": "wood"
    },
    {
-    "id": "BPQRF300",
+    "id": "Nkun-200",
+    "lid": "BPQRF300",
     "name": "behir",
     "type": "token",
     "w": 3,
@@ -1173,7 +1260,8 @@
     "tx": "wood"
    },
    {
-    "id": "RRtL4200",
+    "id": "VI_Ej200",
+    "lid": "RRtL4200",
     "name": "bison",
     "type": "token",
     "w": 2,
@@ -1185,7 +1273,8 @@
     "tx": "wood"
    },
    {
-    "id": "a5YUo100",
+    "id": "R79at200",
+    "lid": "a5YUo100",
     "name": "boar",
     "type": "token",
     "w": 1,
@@ -1197,19 +1286,21 @@
     "tx": "wood"
    },
    {
-    "id": "ucmEe100",
+    "id": "AZcak100",
+    "lid": "ucmEe100",
     "name": "brute",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "brute.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "nqtMP000",
+    "id": "GcRwW200",
+    "lid": "nqtMP000",
     "name": "camel",
     "type": "token",
     "w": 2,
@@ -1221,19 +1312,21 @@
     "tx": "wood"
    },
    {
-    "id": "ThfXp200",
+    "id": "lZOVU100",
+    "lid": "ThfXp200",
     "name": "cat",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "cat.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "UVreJ300",
+    "id": "a7Foy100",
+    "lid": "UVreJ300",
     "name": "cat.saber-toothed",
     "type": "token",
     "w": 1,
@@ -1245,19 +1338,21 @@
     "tx": "wood"
    },
    {
-    "id": "BGGnX000",
+    "id": "vnCVj100",
+    "lid": "BGGnX000",
     "name": "caveman",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "caveman.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "E0bno000",
+    "id": "QKbHs200",
+    "lid": "E0bno000",
     "name": "centaur",
     "type": "token",
     "w": 2,
@@ -1269,7 +1364,8 @@
     "tx": "wood"
    },
    {
-    "id": "JuVpj000",
+    "id": "qGmO1200",
+    "lid": "JuVpj000",
     "name": "centipede",
     "type": "token",
     "w": 1,
@@ -1281,7 +1377,8 @@
     "tx": "wood"
    },
    {
-    "id": "jLNsz200",
+    "id": "TwVaO300",
+    "lid": "jLNsz200",
     "name": "chuul",
     "type": "token",
     "w": 2,
@@ -1293,7 +1390,8 @@
     "tx": "wood"
    },
    {
-    "id": "AhqqH100",
+    "id": "jrZ8-300",
+    "lid": "AhqqH100",
     "name": "cloaker",
     "type": "token",
     "w": 2,
@@ -1305,7 +1403,8 @@
     "tx": "wood"
    },
    {
-    "id": "MWJkt300",
+    "id": "Qg3pN300",
+    "lid": "MWJkt300",
     "name": "clockwork",
     "type": "token",
     "w": 1,
@@ -1317,7 +1416,8 @@
     "tx": "wood"
    },
    {
-    "id": "rZPZl200",
+    "id": "pxuN-100",
+    "lid": "rZPZl200",
     "name": "cockatrice",
     "type": "token",
     "w": 1,
@@ -1329,7 +1429,8 @@
     "tx": "wood"
    },
    {
-    "id": "TU-KJ300",
+    "id": "ndC4q200",
+    "lid": "TU-KJ300",
     "name": "couatl",
     "type": "token",
     "w": 1,
@@ -1341,7 +1442,8 @@
     "tx": "wood"
    },
    {
-    "id": "Ue8td200",
+    "id": "fK_qS000",
+    "lid": "Ue8td200",
     "name": "crab",
     "type": "token",
     "w": 1,
@@ -1353,7 +1455,8 @@
     "tx": "wood"
    },
    {
-    "id": "GrhWz200",
+    "id": "QHLhI200",
+    "lid": "GrhWz200",
     "name": "crawlingHand",
     "type": "token",
     "w": 1,
@@ -1365,7 +1468,8 @@
     "tx": "wood"
    },
    {
-    "id": "WHiN3000",
+    "id": "JEBU6300",
+    "lid": "WHiN3000",
     "name": "crocodile",
     "type": "token",
     "w": 2,
@@ -1377,7 +1481,8 @@
     "tx": "wood"
    },
    {
-    "id": "hTrFn000",
+    "id": "Lmqk-100",
+    "lid": "hTrFn000",
     "name": "cultist",
     "type": "token",
     "w": 1,
@@ -1389,7 +1494,8 @@
     "tx": "wood"
    },
    {
-    "id": "x5Dmt000",
+    "id": "ReRvc100",
+    "lid": "x5Dmt000",
     "name": "darkmantle",
     "type": "token",
     "w": 1,
@@ -1401,7 +1507,8 @@
     "tx": "wood"
    },
    {
-    "id": "qhk79100",
+    "id": "uZ2cn300",
+    "lid": "qhk79100",
     "name": "deathKnight",
     "type": "token",
     "w": 1,
@@ -1413,7 +1520,8 @@
     "tx": "wood"
    },
    {
-    "id": "NliC4100",
+    "id": "ikDE-100",
+    "lid": "NliC4100",
     "name": "deer",
     "type": "token",
     "w": 1,
@@ -1425,7 +1533,8 @@
     "tx": "wood"
    },
    {
-    "id": "EDC8-200",
+    "id": "PPnWy100",
+    "lid": "EDC8-200",
     "name": "demilich",
     "type": "token",
     "w": 1,
@@ -1437,7 +1546,8 @@
     "tx": "wood"
    },
    {
-    "id": "rjjeC000",
+    "id": "pDe-Z100",
+    "lid": "rjjeC000",
     "name": "demon.bebilith",
     "type": "token",
     "w": 3,
@@ -1449,7 +1559,8 @@
     "tx": "wood"
    },
    {
-    "id": "z9KaH200",
+    "id": "LpKqC100",
+    "lid": "z9KaH200",
     "name": "demon.quasit",
     "type": "token",
     "w": 1,
@@ -1461,7 +1572,8 @@
     "tx": "wood"
    },
    {
-    "id": "V3CLJ300",
+    "id": "JiXjT100",
+    "lid": "V3CLJ300",
     "name": "devil.imp",
     "type": "token",
     "w": 1,
@@ -1473,7 +1585,8 @@
     "tx": "wood"
    },
    {
-    "id": "S6jnx000",
+    "id": "T8Qu3300",
+    "lid": "S6jnx000",
     "name": "dinosaur.parasaurolophus",
     "type": "token",
     "w": 2,
@@ -1485,7 +1598,8 @@
     "tx": "wood"
    },
    {
-    "id": "kT4qW200",
+    "id": "AXzCF100",
+    "lid": "kT4qW200",
     "name": "dinosaur.pterodactylus",
     "type": "token",
     "w": 2,
@@ -1497,7 +1611,8 @@
     "tx": "wood"
    },
    {
-    "id": "PSgbZ200",
+    "id": "FPD1x200",
+    "lid": "PSgbZ200",
     "name": "dog",
     "type": "token",
     "w": 1,
@@ -1509,7 +1624,8 @@
     "tx": "wood"
    },
    {
-    "id": "aueHX200",
+    "id": "dFwMn300",
+    "lid": "aueHX200",
     "name": "dolphin",
     "type": "token",
     "w": 1,
@@ -1521,19 +1637,21 @@
     "tx": "wood"
    },
    {
-    "id": "SnDeV000",
+    "id": "RSXgk300",
+    "lid": "SnDeV000",
     "name": "doppelganger",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "doppelganger.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "GQs4I100",
+    "id": "peYe0100",
+    "lid": "GQs4I100",
     "name": "dragon",
     "type": "token",
     "w": 3,
@@ -1545,7 +1663,8 @@
     "tx": "wood"
    },
    {
-    "id": "DAA-q300",
+    "id": "apCrB300",
+    "lid": "DAA-q300",
     "name": "dragonfolk",
     "type": "token",
     "w": 1,
@@ -1557,7 +1676,8 @@
     "tx": "wood"
    },
    {
-    "id": "qyMla100",
+    "id": "R7dug300",
+    "lid": "qyMla100",
     "name": "drider",
     "type": "token",
     "w": 2,
@@ -1569,31 +1689,34 @@
     "tx": "wood"
    },
    {
-    "id": "tUi19200",
+    "id": "haNMR200",
+    "lid": "tUi19200",
     "name": "duergar",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "duergar.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "q9B-6100",
+    "id": "KAEJI100",
+    "lid": "q9B-6100",
     "name": "dwarf",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "dwarf.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "DLLr6200",
+    "id": "sBpJt300",
+    "lid": "DLLr6200",
     "name": "eagle",
     "type": "token",
     "w": 1,
@@ -1605,7 +1728,8 @@
     "tx": "wood"
    },
    {
-    "id": "y6l-V000",
+    "id": "GjEeh300",
+    "lid": "y6l-V000",
     "name": "eel",
     "type": "token",
     "w": 1,
@@ -1617,7 +1741,8 @@
     "tx": "wood"
    },
    {
-    "id": "ixH2q100",
+    "id": "MApgN100",
+    "lid": "ixH2q100",
     "name": "elemental.air",
     "type": "token",
     "w": 1,
@@ -1629,7 +1754,8 @@
     "tx": "wood"
    },
    {
-    "id": "mlilp200",
+    "id": "SiQsy200",
+    "lid": "mlilp200",
     "name": "elemental.earth",
     "type": "token",
     "w": 1,
@@ -1641,7 +1767,8 @@
     "tx": "wood"
    },
    {
-    "id": "J7k1e100",
+    "id": "ktr4X100",
+    "lid": "J7k1e100",
     "name": "elemental.fire",
     "type": "token",
     "w": 1,
@@ -1653,7 +1780,8 @@
     "tx": "wood"
    },
    {
-    "id": "ijYqi300",
+    "id": "f_rYN000",
+    "lid": "ijYqi300",
     "name": "elemental.ice",
     "type": "token",
     "w": 1,
@@ -1665,7 +1793,8 @@
     "tx": "wood"
    },
    {
-    "id": "zfIqK100",
+    "id": "alQjx200",
+    "lid": "zfIqK100",
     "name": "elemental.water",
     "type": "token",
     "w": 1,
@@ -1677,31 +1806,34 @@
     "tx": "wood"
    },
    {
-    "id": "KyjDx200",
+    "id": "wPnQ-200",
+    "lid": "KyjDx200",
     "name": "elephant",
     "type": "token",
     "w": 2,
     "h": 2,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "elephant.2x2.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "jnxG1200",
+    "id": "nRtxX200",
+    "lid": "jnxG1200",
     "name": "elf",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "elf.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "EOk6R100",
+    "id": "RRFxi300",
+    "lid": "EOk6R100",
     "name": "elf.dark-",
     "type": "token",
     "w": 1,
@@ -1713,7 +1845,8 @@
     "tx": "wood"
    },
    {
-    "id": "eZ-iM100",
+    "id": "q9CEW100",
+    "lid": "eZ-iM100",
     "name": "ettercap",
     "type": "token",
     "w": 1,
@@ -1725,7 +1858,8 @@
     "tx": "wood"
    },
    {
-    "id": "MoaEt300",
+    "id": "R_Bx3000",
+    "lid": "MoaEt300",
     "name": "ettin",
     "type": "token",
     "w": 2,
@@ -1737,7 +1871,8 @@
     "tx": "wood"
    },
    {
-    "id": "Dg60u000",
+    "id": "stXMD000",
+    "lid": "Dg60u000",
     "name": "fairy",
     "type": "token",
     "w": 1,
@@ -1749,7 +1884,8 @@
     "tx": "wood"
    },
    {
-    "id": "IQK9v300",
+    "id": "Sq8_u000",
+    "lid": "IQK9v300",
     "name": "fish",
     "type": "token",
     "w": 1,
@@ -1761,7 +1897,8 @@
     "tx": "wood"
    },
    {
-    "id": "RaO7j000",
+    "id": "iyc5j000",
+    "lid": "RaO7j000",
     "name": "floatingEye",
     "type": "token",
     "w": 2,
@@ -1773,7 +1910,8 @@
     "tx": "wood"
    },
    {
-    "id": "vqDOU100",
+    "id": "wEL1H300",
+    "lid": "vqDOU100",
     "name": "flumph",
     "type": "token",
     "w": 1,
@@ -1785,7 +1923,8 @@
     "tx": "wood"
    },
    {
-    "id": "Sr1sR300",
+    "id": "a10kp100",
+    "lid": "Sr1sR300",
     "name": "fomorian",
     "type": "token",
     "w": 3,
@@ -1797,7 +1936,8 @@
     "tx": "wood"
    },
    {
-    "id": "JlSWH000",
+    "id": "TJhod200",
+    "lid": "JlSWH000",
     "name": "frog",
     "type": "token",
     "w": 1,
@@ -1809,7 +1949,8 @@
     "tx": "wood"
    },
    {
-    "id": "cD4bb300",
+    "id": "BIbeJ000",
+    "lid": "cD4bb300",
     "name": "fungus",
     "type": "token",
     "w": 1,
@@ -1821,19 +1962,21 @@
     "tx": "wood"
    },
    {
-    "id": "sre0b300",
+    "id": "T3zmr100",
+    "lid": "sre0b300",
     "name": "gargoyle",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "gargoyle.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "FIgoH200",
+    "id": "i5bCq200",
+    "lid": "FIgoH200",
     "name": "genie.djinni",
     "type": "token",
     "w": 2,
@@ -1845,7 +1988,8 @@
     "tx": "wood"
    },
    {
-    "id": "dz8_Y300",
+    "id": "aDZWL100",
+    "lid": "dz8_Y300",
     "name": "ghost",
     "type": "token",
     "w": 1,
@@ -1857,7 +2001,8 @@
     "tx": "wood"
    },
    {
-    "id": "PfADK100",
+    "id": "clI9R300",
+    "lid": "PfADK100",
     "name": "ghoul",
     "type": "token",
     "w": 1,
@@ -1869,7 +2014,8 @@
     "tx": "wood"
    },
    {
-    "id": "zAaQJ200",
+    "id": "ezVIB200",
+    "lid": "zAaQJ200",
     "name": "giant.cyclops",
     "type": "token",
     "w": 2,
@@ -1881,7 +2027,8 @@
     "tx": "wood"
    },
    {
-    "id": "ljbMz000",
+    "id": "V0Xy1000",
+    "lid": "ljbMz000",
     "name": "giant.hill",
     "type": "token",
     "w": 4,
@@ -1893,7 +2040,8 @@
     "tx": "wood"
    },
    {
-    "id": "ImQtC200",
+    "id": "fRJmc300",
+    "lid": "ImQtC200",
     "name": "gibberingMouther",
     "type": "token",
     "w": 2,
@@ -1905,7 +2053,8 @@
     "tx": "wood"
    },
    {
-    "id": "UB0i1000",
+    "id": "IZ8-k000",
+    "lid": "UB0i1000",
     "name": "gnoll",
     "type": "token",
     "w": 1,
@@ -1917,7 +2066,8 @@
     "tx": "wood"
    },
    {
-    "id": "lO-uo100",
+    "id": "YU3Si300",
+    "lid": "lO-uo100",
     "name": "gnome",
     "type": "token",
     "w": 1,
@@ -1929,19 +2079,21 @@
     "tx": "wood"
    },
    {
-    "id": "MXy7t300",
+    "id": "lD6yq100",
+    "lid": "MXy7t300",
     "name": "goat",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "goat.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "JP3EE200",
+    "id": "OzcR1100",
+    "lid": "JP3EE200",
     "name": "goblin",
     "type": "token",
     "w": 1,
@@ -1953,7 +2105,8 @@
     "tx": "wood"
    },
    {
-    "id": "xPN0i000",
+    "id": "lSzdF200",
+    "lid": "xPN0i000",
     "name": "golem.clay",
     "type": "token",
     "w": 1,
@@ -1965,7 +2118,8 @@
     "tx": "wood"
    },
    {
-    "id": "TJCVS200",
+    "id": "Rx0QF000",
+    "lid": "TJCVS200",
     "name": "golem.flesh",
     "type": "token",
     "w": 1,
@@ -1977,43 +2131,47 @@
     "tx": "wood"
    },
    {
-    "id": "hh9Pm300",
+    "id": "QMuS-300",
+    "lid": "hh9Pm300",
     "name": "golem.iron",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "golem.iron.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "iRhtf100",
+    "id": "rYqt0200",
+    "lid": "iRhtf100",
     "name": "golem.stone",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "golem.stone.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "SXJQf200",
+    "id": "Z7FsN100",
+    "lid": "SXJQf200",
     "name": "gorgon",
     "type": "token",
     "w": 2,
     "h": 2,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "gorgon.2x2.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "jLio3200",
+    "id": "kNB7M100",
+    "lid": "jLio3200",
     "name": "griffon",
     "type": "token",
     "w": 2,
@@ -2025,19 +2183,21 @@
     "tx": "wood"
    },
    {
-    "id": "fiI6w300",
+    "id": "D0sNy300",
+    "lid": "fiI6w300",
     "name": "grimlock",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "grimlock.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "Fy-9s100",
+    "id": "xGB4T300",
+    "lid": "Fy-9s100",
     "name": "hag.swamp",
     "type": "token",
     "w": 1,
@@ -2049,19 +2209,21 @@
     "tx": "wood"
    },
    {
-    "id": "SLAvG000",
+    "id": "AfRyp300",
+    "lid": "SLAvG000",
     "name": "halfling",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "halfling.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "IjEMw000",
+    "id": "Rn758300",
+    "lid": "IjEMw000",
     "name": "harpy",
     "type": "token",
     "w": 1,
@@ -2073,31 +2235,34 @@
     "tx": "wood"
    },
    {
-    "id": "DPxWJ000",
+    "id": "Xn3wL100",
+    "lid": "DPxWJ000",
     "name": "helmedTerror",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "helmedTerror.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "l7sNB100",
+    "id": "X0MiA000",
+    "lid": "l7sNB100",
     "name": "hooded",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "hooded.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "n696l100",
+    "id": "h0olA100",
+    "lid": "n696l100",
     "name": "horse",
     "type": "token",
     "w": 2,
@@ -2109,7 +2274,8 @@
     "tx": "wood"
    },
    {
-    "id": "duxlQ000",
+    "id": "hBmAU200",
+    "lid": "duxlQ000",
     "name": "hound",
     "type": "token",
     "w": 1,
@@ -2121,7 +2287,8 @@
     "tx": "wood"
    },
    {
-    "id": "FVjKV000",
+    "id": "cYMAC100",
+    "lid": "FVjKV000",
     "name": "hound.hell-",
     "type": "token",
     "w": 1,
@@ -2133,19 +2300,21 @@
     "tx": "wood"
    },
    {
-    "id": "bHF-K100",
+    "id": "TNjeW200",
+    "lid": "bHF-K100",
     "name": "human",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "human.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "ZOjd-200",
+    "id": "xVzAj200",
+    "lid": "ZOjd-200",
     "name": "hydra",
     "type": "token",
     "w": 3,
@@ -2157,7 +2326,8 @@
     "tx": "wood"
    },
    {
-    "id": "AKD7x300",
+    "id": "baPvH200",
+    "lid": "AKD7x300",
     "name": "hyena",
     "type": "token",
     "w": 1,
@@ -2169,7 +2339,8 @@
     "tx": "wood"
    },
    {
-    "id": "q8GJS200",
+    "id": "Fg3aB300",
+    "lid": "q8GJS200",
     "name": "insect",
     "type": "token",
     "w": 1,
@@ -2181,7 +2352,8 @@
     "tx": "wood"
    },
    {
-    "id": "ZM70y000",
+    "id": "S_JHy100",
+    "lid": "ZM70y000",
     "name": "intellectDevourer",
     "type": "token",
     "w": 1,
@@ -2193,31 +2365,34 @@
     "tx": "wood"
    },
    {
-    "id": "iGNCQ300",
+    "id": "mkpuP000",
+    "lid": "iGNCQ300",
     "name": "invisibleStalker",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "invisibleStalker.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "gAg-o000",
+    "id": "Zwy_N300",
+    "lid": "gAg-o000",
     "name": "knight",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "knight.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "atC7v300",
+    "id": "M848c100",
+    "lid": "atC7v300",
     "name": "kraken",
     "type": "token",
     "w": 4,
@@ -2229,7 +2404,8 @@
     "tx": "wood"
    },
    {
-    "id": "GNQKP200",
+    "id": "BzEVc200",
+    "lid": "GNQKP200",
     "name": "lich",
     "type": "token",
     "w": 1,
@@ -2241,7 +2417,8 @@
     "tx": "wood"
    },
    {
-    "id": "ZGYs8000",
+    "id": "rqSU3200",
+    "lid": "ZGYs8000",
     "name": "lindwurm",
     "type": "token",
     "w": 4,
@@ -2253,7 +2430,8 @@
     "tx": "wood"
    },
    {
-    "id": "LO7L0200",
+    "id": "SPaqP100",
+    "lid": "LO7L0200",
     "name": "lion",
     "type": "token",
     "w": 1,
@@ -2265,7 +2443,8 @@
     "tx": "wood"
    },
    {
-    "id": "os05L100",
+    "id": "AHJ2C000",
+    "lid": "os05L100",
     "name": "lizard",
     "type": "token",
     "w": 1,
@@ -2277,7 +2456,8 @@
     "tx": "wood"
    },
    {
-    "id": "Hd9oa300",
+    "id": "S97Jk100",
+    "lid": "Hd9oa300",
     "name": "lizardfolk",
     "type": "token",
     "w": 1,
@@ -2289,19 +2469,21 @@
     "tx": "wood"
    },
    {
-    "id": "rrOEZ000",
+    "id": "K9j_D000",
+    "lid": "rrOEZ000",
     "name": "lycanthrope.werewolf",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "lycanthrope.werewolf.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "Qv9E-300",
+    "id": "D1DiS000",
+    "lid": "Qv9E-300",
     "name": "lynx",
     "type": "token",
     "w": 1,
@@ -2313,7 +2495,8 @@
     "tx": "wood"
    },
    {
-    "id": "F5NIw300",
+    "id": "hpTGL100",
+    "lid": "F5NIw300",
     "name": "magmin",
     "type": "token",
     "w": 1,
@@ -2325,7 +2508,8 @@
     "tx": "wood"
    },
    {
-    "id": "AdQ8-100",
+    "id": "S6LpH000",
+    "lid": "AdQ8-100",
     "name": "mammoth",
     "type": "token",
     "w": 2,
@@ -2337,7 +2521,8 @@
     "tx": "wood"
    },
    {
-    "id": "KsHbv100",
+    "id": "TyvBu200",
+    "lid": "KsHbv100",
     "name": "mantis",
     "type": "token",
     "w": 2,
@@ -2349,19 +2534,21 @@
     "tx": "wood"
    },
    {
-    "id": "cisiY200",
+    "id": "j8fT7200",
+    "lid": "cisiY200",
     "name": "mech",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "mech.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "LiAsS200",
+    "id": "fgbTn300",
+    "lid": "LiAsS200",
     "name": "medusa",
     "type": "token",
     "w": 1,
@@ -2373,7 +2560,8 @@
     "tx": "wood"
    },
    {
-    "id": "EhD4N300",
+    "id": "YXTcb200",
+    "lid": "EhD4N300",
     "name": "merefolk",
     "type": "token",
     "w": 1,
@@ -2385,7 +2573,8 @@
     "tx": "wood"
    },
    {
-    "id": "SMhph200",
+    "id": "oIhue300",
+    "lid": "SMhph200",
     "name": "mimic",
     "type": "token",
     "w": 1,
@@ -2397,7 +2586,8 @@
     "tx": "wood"
    },
    {
-    "id": "xy7RX200",
+    "id": "j9Kkl200",
+    "lid": "xy7RX200",
     "name": "minotaur",
     "type": "token",
     "w": 2,
@@ -2409,7 +2599,8 @@
     "tx": "wood"
    },
    {
-    "id": "YXe68300",
+    "id": "bwfXx100",
+    "lid": "YXe68300",
     "name": "monkey",
     "type": "token",
     "w": 1,
@@ -2421,7 +2612,8 @@
     "tx": "wood"
    },
    {
-    "id": "W1W4G300",
+    "id": "d8fGk100",
+    "lid": "W1W4G300",
     "name": "mummy",
     "type": "token",
     "w": 1,
@@ -2433,7 +2625,8 @@
     "tx": "wood"
    },
    {
-    "id": "SvIeK300",
+    "id": "CEjbS100",
+    "lid": "SvIeK300",
     "name": "naga.guardian",
     "type": "token",
     "w": 2,
@@ -2445,7 +2638,8 @@
     "tx": "wood"
    },
    {
-    "id": "ZlDRe100",
+    "id": "EjCho300",
+    "lid": "ZlDRe100",
     "name": "nymph",
     "type": "token",
     "w": 1,
@@ -2457,7 +2651,8 @@
     "tx": "wood"
    },
    {
-    "id": "hv10z300",
+    "id": "c8wg_100",
+    "lid": "hv10z300",
     "name": "octopus",
     "type": "token",
     "w": 2,
@@ -2469,7 +2664,8 @@
     "tx": "wood"
    },
    {
-    "id": "DzFq3000",
+    "id": "XTM3U300",
+    "lid": "DzFq3000",
     "name": "ogre",
     "type": "token",
     "w": 2,
@@ -2481,7 +2677,8 @@
     "tx": "wood"
    },
    {
-    "id": "MMN2A300",
+    "id": "MKA8c100",
+    "lid": "MMN2A300",
     "name": "oni",
     "type": "token",
     "w": 2,
@@ -2493,7 +2690,8 @@
     "tx": "wood"
    },
    {
-    "id": "ANGz7200",
+    "id": "drhkE200",
+    "lid": "ANGz7200",
     "name": "ooze.blackPudding",
     "type": "token",
     "w": 4,
@@ -2505,7 +2703,8 @@
     "tx": "wood"
    },
    {
-    "id": "xD5Xy100",
+    "id": "qb8Qw000",
+    "lid": "xD5Xy100",
     "name": "ooze.gelatinousCube",
     "type": "token",
     "w": 2,
@@ -2517,7 +2716,8 @@
     "tx": "wood"
    },
    {
-    "id": "EURmr300",
+    "id": "bsBzn000",
+    "lid": "EURmr300",
     "name": "ooze.ochreJelly",
     "type": "token",
     "w": 2,
@@ -2529,7 +2729,8 @@
     "tx": "wood"
    },
    {
-    "id": "HfpyK000",
+    "id": "qUmNE300",
+    "lid": "HfpyK000",
     "name": "orc",
     "type": "token",
     "w": 1,
@@ -2541,7 +2742,8 @@
     "tx": "wood"
    },
    {
-    "id": "nOUEI100",
+    "id": "CVZwS100",
+    "lid": "nOUEI100",
     "name": "overlord",
     "type": "token",
     "w": 1,
@@ -2553,7 +2755,8 @@
     "tx": "wood"
    },
    {
-    "id": "SQu8h200",
+    "id": "sw6lW000",
+    "lid": "SQu8h200",
     "name": "owl",
     "type": "token",
     "w": 1,
@@ -2565,7 +2768,8 @@
     "tx": "wood"
    },
    {
-    "id": "zL51Q200",
+    "id": "WMLRd100",
+    "lid": "zL51Q200",
     "name": "owlbear",
     "type": "token",
     "w": 2,
@@ -2577,7 +2781,8 @@
     "tx": "wood"
    },
    {
-    "id": "CYB6f200",
+    "id": "FhjvZ300",
+    "lid": "CYB6f200",
     "name": "pegasus",
     "type": "token",
     "w": 2,
@@ -2589,7 +2794,8 @@
     "tx": "wood"
    },
    {
-    "id": "eRM3I000",
+    "id": "Da9EV300",
+    "lid": "eRM3I000",
     "name": "piercer",
     "type": "token",
     "w": 1,
@@ -2601,7 +2807,8 @@
     "tx": "wood"
    },
    {
-    "id": "sbT9q100",
+    "id": "vi1eV000",
+    "lid": "sbT9q100",
     "name": "piranha",
     "type": "token",
     "w": 1,
@@ -2613,7 +2820,8 @@
     "tx": "wood"
    },
    {
-    "id": "amuNa000",
+    "id": "aI5hy000",
+    "lid": "amuNa000",
     "name": "pirate",
     "type": "token",
     "w": 1,
@@ -2625,7 +2833,8 @@
     "tx": "wood"
    },
    {
-    "id": "qjr6w100",
+    "id": "l_9qz300",
+    "lid": "qjr6w100",
     "name": "plant.carnivorous",
     "type": "token",
     "w": 2,
@@ -2637,19 +2846,21 @@
     "tx": "wood"
    },
    {
-    "id": "Rd1Pe300",
+    "id": "K0wNp200",
+    "lid": "Rd1Pe300",
     "name": "priest",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "priest.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "Yve3X200",
+    "id": "w0MfM200",
+    "lid": "Yve3X200",
     "name": "raccoon",
     "type": "token",
     "w": 1,
@@ -2661,7 +2872,8 @@
     "tx": "wood"
    },
    {
-    "id": "xxNC2000",
+    "id": "SUIwX200",
+    "lid": "xxNC2000",
     "name": "rakshasa",
     "type": "token",
     "w": 1,
@@ -2673,7 +2885,8 @@
     "tx": "wood"
    },
    {
-    "id": "F9Viy000",
+    "id": "DzFgT200",
+    "lid": "F9Viy000",
     "name": "rat",
     "type": "token",
     "w": 1,
@@ -2685,7 +2898,8 @@
     "tx": "wood"
    },
    {
-    "id": "AiskC200",
+    "id": "b6-r4200",
+    "lid": "AiskC200",
     "name": "raven",
     "type": "token",
     "w": 1,
@@ -2697,7 +2911,8 @@
     "tx": "wood"
    },
    {
-    "id": "pXRRS000",
+    "id": "DiGY7200",
+    "lid": "pXRRS000",
     "name": "remorhaz",
     "type": "token",
     "w": 3,
@@ -2709,7 +2924,8 @@
     "tx": "wood"
    },
    {
-    "id": "fErXq000",
+    "id": "Pmtx_200",
+    "lid": "fErXq000",
     "name": "rhinoceros",
     "type": "token",
     "w": 2,
@@ -2721,19 +2937,21 @@
     "tx": "wood"
    },
    {
-    "id": "uwzRq000",
+    "id": "Rs-K9200",
+    "lid": "uwzRq000",
     "name": "robot",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "robot.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "wZQ-r100",
+    "id": "phraB000",
+    "lid": "wZQ-r100",
     "name": "roc",
     "type": "token",
     "w": 4,
@@ -2745,7 +2963,8 @@
     "tx": "wood"
    },
    {
-    "id": "v9FVz100",
+    "id": "Ezm-8300",
+    "lid": "v9FVz100",
     "name": "roc.phoenix",
     "type": "token",
     "w": 4,
@@ -2757,7 +2976,8 @@
     "tx": "wood"
    },
    {
-    "id": "gQiNr000",
+    "id": "ToTGV000",
+    "lid": "gQiNr000",
     "name": "rustMonster",
     "type": "token",
     "w": 1,
@@ -2769,7 +2989,8 @@
     "tx": "wood"
    },
    {
-    "id": "KWYxk200",
+    "id": "hycyz300",
+    "lid": "KWYxk200",
     "name": "sahuagin",
     "type": "token",
     "w": 1,
@@ -2781,7 +3002,8 @@
     "tx": "wood"
    },
    {
-    "id": "QmMw4300",
+    "id": "IWWz2200",
+    "lid": "QmMw4300",
     "name": "scarecrow",
     "type": "token",
     "w": 1,
@@ -2793,7 +3015,8 @@
     "tx": "wood"
    },
    {
-    "id": "PKRnF000",
+    "id": "u7kog200",
+    "lid": "PKRnF000",
     "name": "scorpion",
     "type": "token",
     "w": 2,
@@ -2805,7 +3028,8 @@
     "tx": "wood"
    },
    {
-    "id": "IPoXZ300",
+    "id": "XJmts200",
+    "lid": "IPoXZ300",
     "name": "seahorse",
     "type": "token",
     "w": 2,
@@ -2817,31 +3041,34 @@
     "tx": "wood"
    },
    {
-    "id": "U_kxD200",
+    "id": "EGJ2d100",
+    "lid": "U_kxD200",
     "name": "sentinelGuardian",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "sentinelGuardian.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "MuOhG300",
+    "id": "fKtdd000",
+    "lid": "MuOhG300",
     "name": "shadow",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "shadow.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "ezQEI200",
+    "id": "ahpbf000",
+    "lid": "ezQEI200",
     "name": "shamblingMound",
     "type": "token",
     "w": 2,
@@ -2853,7 +3080,8 @@
     "tx": "wood"
    },
    {
-    "id": "iLXNO000",
+    "id": "zTWnz100",
+    "lid": "iLXNO000",
     "name": "shark",
     "type": "token",
     "w": 2,
@@ -2865,7 +3093,8 @@
     "tx": "wood"
    },
    {
-    "id": "ug0_q300",
+    "id": "N7pbg300",
+    "lid": "ug0_q300",
     "name": "shoggoth",
     "type": "token",
     "w": 3,
@@ -2877,7 +3106,8 @@
     "tx": "wood"
    },
    {
-    "id": "Vgp1_200",
+    "id": "vgTCL300",
+    "lid": "Vgp1_200",
     "name": "skeleton",
     "type": "token",
     "w": 1,
@@ -2889,7 +3119,8 @@
     "tx": "wood"
    },
    {
-    "id": "ZQTvK100",
+    "id": "DL1WA000",
+    "lid": "ZQTvK100",
     "name": "skull.flame-",
     "type": "token",
     "w": 1,
@@ -2901,7 +3132,8 @@
     "tx": "wood"
    },
    {
-    "id": "TOglt000",
+    "id": "Iv571300",
+    "lid": "TOglt000",
     "name": "slug",
     "type": "token",
     "w": 3,
@@ -2913,7 +3145,8 @@
     "tx": "wood"
    },
    {
-    "id": "YZEvS200",
+    "id": "UO8VF200",
+    "lid": "YZEvS200",
     "name": "snake.cobra",
     "type": "token",
     "w": 1,
@@ -2925,7 +3158,8 @@
     "tx": "wood"
    },
    {
-    "id": "UfQK7300",
+    "id": "X3I03100",
+    "lid": "UfQK7300",
     "name": "snake.viper",
     "type": "token",
     "w": 1,
@@ -2937,7 +3171,8 @@
     "tx": "wood"
    },
    {
-    "id": "N-KKl300",
+    "id": "IjGxB100",
+    "lid": "N-KKl300",
     "name": "spectre",
     "type": "token",
     "w": 1,
@@ -2949,7 +3184,8 @@
     "tx": "wood"
    },
    {
-    "id": "hE6bd200",
+    "id": "eGJYR200",
+    "lid": "hE6bd200",
     "name": "sphinx",
     "type": "token",
     "w": 2,
@@ -2961,7 +3197,8 @@
     "tx": "wood"
    },
    {
-    "id": "V6mnK000",
+    "id": "BLTHw200",
+    "lid": "V6mnK000",
     "name": "spider",
     "type": "token",
     "w": 1,
@@ -2973,7 +3210,8 @@
     "tx": "wood"
    },
    {
-    "id": "vgrfb100",
+    "id": "CjGf6000",
+    "lid": "vgrfb100",
     "name": "sprite.pixie",
     "type": "token",
     "w": 1,
@@ -2985,7 +3223,8 @@
     "tx": "wood"
    },
    {
-    "id": "RTduJ100",
+    "id": "R8Uzh300",
+    "lid": "RTduJ100",
     "name": "squidMind",
     "type": "token",
     "w": 1,
@@ -2997,7 +3236,8 @@
     "tx": "wood"
    },
    {
-    "id": "NJv9X300",
+    "id": "F7F2v000",
+    "lid": "NJv9X300",
     "name": "squirrel",
     "type": "token",
     "w": 1,
@@ -3009,7 +3249,8 @@
     "tx": "wood"
    },
    {
-    "id": "ROD0w200",
+    "id": "wUpmB100",
+    "lid": "ROD0w200",
     "name": "stirge",
     "type": "token",
     "w": 1,
@@ -3021,19 +3262,21 @@
     "tx": "wood"
    },
    {
-    "id": "R6TVR100",
+    "id": "CfZYY100",
+    "lid": "R6TVR100",
     "name": "tengu",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "tengu.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "owGpj300",
+    "id": "bpxEU300",
+    "lid": "owGpj300",
     "name": "terrasque",
     "type": "token",
     "w": 4,
@@ -3045,7 +3288,8 @@
     "tx": "wood"
    },
    {
-    "id": "XVJY7100",
+    "id": "dUca0100",
+    "lid": "XVJY7100",
     "name": "tiger",
     "type": "token",
     "w": 1,
@@ -3057,7 +3301,8 @@
     "tx": "wood"
    },
    {
-    "id": "vCCnD000",
+    "id": "uZBMn000",
+    "lid": "vCCnD000",
     "name": "treant",
     "type": "token",
     "w": 2,
@@ -3069,7 +3314,8 @@
     "tx": "wood"
    },
    {
-    "id": "XiLOf200",
+    "id": "r1tQQ300",
+    "lid": "XiLOf200",
     "name": "triton.merrow",
     "type": "token",
     "w": 1,
@@ -3081,19 +3327,21 @@
     "tx": "wood"
    },
    {
-    "id": "kl8sA100",
+    "id": "upVf3200",
+    "lid": "kl8sA100",
     "name": "troglodyte",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "troglodyte.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "FV0ae100",
+    "id": "LFzxM000",
+    "lid": "FV0ae100",
     "name": "troll",
     "type": "token",
     "w": 2,
@@ -3105,7 +3353,8 @@
     "tx": "wood"
    },
    {
-    "id": "a29Ju200",
+    "id": "LHpQR200",
+    "lid": "a29Ju200",
     "name": "turtle.dragon",
     "type": "token",
     "w": 4,
@@ -3117,7 +3366,8 @@
     "tx": "wood"
    },
    {
-    "id": "mqDFq100",
+    "id": "Y6ZvR000",
+    "lid": "mqDFq100",
     "name": "turtle.tortoise",
     "type": "token",
     "w": 1,
@@ -3129,7 +3379,8 @@
     "tx": "wood"
    },
    {
-    "id": "uoc7O300",
+    "id": "CDy9o300",
+    "lid": "uoc7O300",
     "name": "unicorn",
     "type": "token",
     "w": 2,
@@ -3141,7 +3392,8 @@
     "tx": "wood"
    },
    {
-    "id": "RkpZP100",
+    "id": "qJ9mg200",
+    "lid": "RkpZP100",
     "name": "vampire",
     "type": "token",
     "w": 1,
@@ -3154,19 +3406,21 @@
     "tx": "wood"
    },
    {
-    "id": "aiSs_300",
+    "id": "LS3OC200",
+    "lid": "aiSs_300",
     "name": "viking",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "viking.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "EVC_H300",
+    "id": "YR32W000",
+    "lid": "EVC_H300",
     "name": "vile.water",
     "type": "token",
     "w": 2,
@@ -3178,7 +3432,8 @@
     "tx": "wood"
    },
    {
-    "id": "xQDtU300",
+    "id": "LoAkd200",
+    "lid": "xQDtU300",
     "name": "vulture",
     "type": "token",
     "w": 1,
@@ -3190,7 +3445,8 @@
     "tx": "wood"
    },
    {
-    "id": "fsRDT300",
+    "id": "Dky-d300",
+    "lid": "fsRDT300",
     "name": "wasp",
     "type": "token",
     "w": 1,
@@ -3202,7 +3458,8 @@
     "tx": "wood"
    },
    {
-    "id": "rhFK6200",
+    "id": "UwBBe300",
+    "lid": "rhFK6200",
     "name": "whale",
     "type": "token",
     "w": 3,
@@ -3214,7 +3471,8 @@
     "tx": "wood"
    },
    {
-    "id": "LIt5j300",
+    "id": "snUN6100",
+    "lid": "LIt5j300",
     "name": "will-o-wisp",
     "type": "token",
     "w": 1,
@@ -3226,7 +3484,8 @@
     "tx": "wood"
    },
    {
-    "id": "eW-Cd000",
+    "id": "H49hT300",
+    "lid": "eW-Cd000",
     "name": "wizard",
     "type": "token",
     "w": 1,
@@ -3238,19 +3497,21 @@
     "tx": "wood"
    },
    {
-    "id": "Sr3Yh200",
+    "id": "CLoz0200",
+    "lid": "Sr3Yh200",
     "name": "wolf",
     "type": "token",
     "w": 1,
     "h": 1,
-    "bg": "#808080",
+    "bg": "0",
     "media": [
      "wolf.1x1.0.wood.svg"
     ],
     "tx": "wood"
    },
    {
-    "id": "toPLQ000",
+    "id": "xIZqn100",
+    "lid": "toPLQ000",
     "name": "worm.leeching",
     "type": "token",
     "w": 4,
@@ -3262,7 +3523,8 @@
     "tx": "wood"
    },
    {
-    "id": "Vqb4A300",
+    "id": "R2yhn300",
+    "lid": "Vqb4A300",
     "name": "wraith",
     "type": "token",
     "w": 1,
@@ -3274,7 +3536,8 @@
     "tx": "wood"
    },
    {
-    "id": "h8MT6000",
+    "id": "KBjW7300",
+    "lid": "h8MT6000",
     "name": "yeti",
     "type": "token",
     "w": 2,
@@ -3286,7 +3549,8 @@
     "tx": "wood"
    },
    {
-    "id": "OngS0000",
+    "id": "iEUhI100",
+    "lid": "OngS0000",
     "name": "zombie",
     "type": "token",
     "w": 1,
@@ -3300,7 +3564,8 @@
   ],
   "other": [
    {
-    "id": "lPebe300",
+    "id": "hFoyZ200",
+    "lid": "lPebe300",
     "name": "_.d10Dark",
     "type": "other",
     "w": 1,
@@ -3322,7 +3587,8 @@
     "mask": "_.d10Dark.1x1xXX.1.svg"
    },
    {
-    "id": "tVzk3200",
+    "id": "PW2rJ000",
+    "lid": "tVzk3200",
     "name": "_.d10Light",
     "type": "other",
     "w": 1,
@@ -3344,7 +3610,8 @@
     "mask": "_.d10Light.1x1xXX.2.svg"
    },
    {
-    "id": "aeS5y000",
+    "id": "v8Vvg200",
+    "lid": "aeS5y000",
     "name": "_.d12Dark",
     "type": "other",
     "w": 1,
@@ -3368,7 +3635,8 @@
     "mask": "_.d12Dark.1x1xXX.1.svg"
    },
    {
-    "id": "KKD3z300",
+    "id": "KWvBF000",
+    "lid": "KKD3z300",
     "name": "_.d12Light",
     "type": "other",
     "w": 1,
@@ -3392,7 +3660,8 @@
     "mask": "_.d12Light.1x1xXX.2.svg"
    },
    {
-    "id": "z7DUO100",
+    "id": "y6zKl100",
+    "lid": "z7DUO100",
     "name": "_.d20Dark",
     "type": "other",
     "w": 1,
@@ -3424,7 +3693,8 @@
     "mask": "_.d20Dark.1x1xXX.1.svg"
    },
    {
-    "id": "eIMc_300",
+    "id": "Gz-zS200",
+    "lid": "eIMc_300",
     "name": "_.d20Light",
     "type": "other",
     "w": 1,
@@ -3456,7 +3726,8 @@
     "mask": "_.d20Light.1x1xXX.2.svg"
    },
    {
-    "id": "SHt9A300",
+    "id": "pJtgf000",
+    "lid": "SHt9A300",
     "name": "_.d4Dark",
     "type": "other",
     "w": 1,
@@ -3472,7 +3743,8 @@
     "mask": "_.d4Dark.1x1xX.1.svg"
    },
    {
-    "id": "xY7Gr200",
+    "id": "j8hqf000",
+    "lid": "xY7Gr200",
     "name": "_.d4Light",
     "type": "other",
     "w": 1,
@@ -3488,7 +3760,8 @@
     "mask": "_.d4Light.1x1xX.2.svg"
    },
    {
-    "id": "jbmiY200",
+    "id": "bc_Ix000",
+    "lid": "jbmiY200",
     "name": "_.d6Dark",
     "type": "other",
     "w": 1,
@@ -3506,7 +3779,8 @@
     "mask": "_.d6Dark.1x1xX.1.svg"
    },
    {
-    "id": "u7ZAS100",
+    "id": "a8cCb000",
+    "lid": "u7ZAS100",
     "name": "_.d6Light",
     "type": "other",
     "w": 1,
@@ -3524,7 +3798,8 @@
     "mask": "_.d6Light.1x1xX.2.svg"
    },
    {
-    "id": "xCPfK300",
+    "id": "ZyitE300",
+    "lid": "xCPfK300",
     "name": "_.d8Dark",
     "type": "other",
     "w": 1,
@@ -3544,7 +3819,8 @@
     "mask": "_.d8Dark.1x1xX.1.svg"
    },
    {
-    "id": "obzEu200",
+    "id": "Zavll000",
+    "lid": "obzEu200",
     "name": "_.d8Light",
     "type": "other",
     "w": 1,
@@ -3564,7 +3840,8 @@
     "mask": "_.d8Light.1x1xX.2.svg"
    },
    {
-    "id": "selr5000",
+    "id": "gXCJX200",
+    "lid": "selr5000",
     "name": "_.dicemat",
     "type": "other",
     "w": 4,
@@ -3575,7 +3852,8 @@
     ]
    },
    {
-    "id": "FvPx9300",
+    "id": "rEH5X200",
+    "lid": "FvPx9300",
     "name": "_.dicemat",
     "type": "other",
     "w": 8,
@@ -3586,7 +3864,8 @@
     ]
    },
    {
-    "id": "MDuQt000",
+    "id": "BQ9I2100",
+    "lid": "MDuQt000",
     "name": "_.fateDark",
     "type": "other",
     "w": 1,
@@ -3604,7 +3883,8 @@
     "mask": "_.fateDark.1x1xX.1.svg"
    },
    {
-    "id": "MTvWD100",
+    "id": "iCBYt200",
+    "lid": "MTvWD100",
     "name": "_.fateLight",
     "type": "other",
     "w": 1,
@@ -3622,7 +3902,8 @@
     "mask": "_.fateLight.1x1xX.2.svg"
    },
    {
-    "id": "FZOAn300",
+    "id": "smg1S000",
+    "lid": "FZOAn300",
     "name": "classic.a",
     "type": "other",
     "w": 1,
@@ -3639,7 +3920,8 @@
     "base": "classic.a.1x1x0.png"
    },
    {
-    "id": "UkNvB300",
+    "id": "AYnEL100",
+    "lid": "UkNvB300",
     "name": "classic.b",
     "type": "other",
     "w": 1,
@@ -3658,7 +3940,8 @@
   ],
   "badge": [
    {
-    "id": "Jxa0k200",
+    "id": "ED1At200",
+    "lid": "Jxa0k200",
     "name": "_.badge",
     "type": "badge",
     "w": 1,
@@ -3669,7 +3952,8 @@
     ]
    },
    {
-    "id": "RvGjJ000",
+    "id": "HP4Ig300",
+    "lid": "RvGjJ000",
     "name": "_.target",
     "type": "badge",
     "w": 1,
@@ -3680,7 +3964,8 @@
     ]
    },
    {
-    "id": "QlYvr000",
+    "id": "UHGC-200",
+    "lid": "QlYvr000",
     "name": "condition.blind",
     "type": "badge",
     "w": 1,
@@ -3691,7 +3976,8 @@
     ]
    },
    {
-    "id": "xp_4e300",
+    "id": "n7asL100",
+    "lid": "xp_4e300",
     "name": "condition.dazed",
     "type": "badge",
     "w": 1,
@@ -3702,7 +3988,8 @@
     ]
    },
    {
-    "id": "ntBcb300",
+    "id": "LftF2000",
+    "lid": "ntBcb300",
     "name": "condition.deaf",
     "type": "badge",
     "w": 1,
@@ -3713,7 +4000,8 @@
     ]
    },
    {
-    "id": "h-gue000",
+    "id": "u-Ny3200",
+    "lid": "h-gue000",
     "name": "condition.dominated",
     "type": "badge",
     "w": 1,
@@ -3724,7 +4012,8 @@
     ]
    },
    {
-    "id": "VvgTX200",
+    "id": "Q2jIE300",
+    "lid": "VvgTX200",
     "name": "condition.immobilized",
     "type": "badge",
     "w": 1,
@@ -3735,7 +4024,8 @@
     ]
    },
    {
-    "id": "S5mTH000",
+    "id": "vByS2100",
+    "lid": "S5mTH000",
     "name": "condition.invisible",
     "type": "badge",
     "w": 1,
@@ -3746,7 +4036,8 @@
     ]
    },
    {
-    "id": "j01-H000",
+    "id": "P3F82200",
+    "lid": "j01-H000",
     "name": "condition.marked",
     "type": "badge",
     "w": 1,
@@ -3757,7 +4048,8 @@
     ]
    },
    {
-    "id": "Ou68a300",
+    "id": "Mixm_100",
+    "lid": "Ou68a300",
     "name": "condition.petrified",
     "type": "badge",
     "w": 1,
@@ -3768,7 +4060,8 @@
     ]
    },
    {
-    "id": "u4b44300",
+    "id": "xdyOK000",
+    "lid": "u4b44300",
     "name": "condition.protected",
     "type": "badge",
     "w": 1,
@@ -3779,7 +4072,8 @@
     ]
    },
    {
-    "id": "LI2C9300",
+    "id": "K4rch300",
+    "lid": "LI2C9300",
     "name": "condition.restrained",
     "type": "badge",
     "w": 1,
@@ -3790,7 +4084,8 @@
     ]
    },
    {
-    "id": "fztyq200",
+    "id": "biyNd000",
+    "lid": "fztyq200",
     "name": "condition.slowed",
     "type": "badge",
     "w": 1,
@@ -3801,7 +4096,8 @@
     ]
    },
    {
-    "id": "rrD0p100",
+    "id": "KH0Xl300",
+    "lid": "rrD0p100",
     "name": "condition.stunned",
     "type": "badge",
     "w": 1,
@@ -3812,7 +4108,8 @@
     ]
    },
    {
-    "id": "bqTVI000",
+    "id": "z-EuK100",
+    "lid": "bqTVI000",
     "name": "condition.unconscious",
     "type": "badge",
     "w": 1,
@@ -3823,7 +4120,8 @@
     ]
    },
    {
-    "id": "wM3vB100",
+    "id": "G6i38000",
+    "lid": "wM3vB100",
     "name": "condition.weak",
     "type": "badge",
     "w": 1,
@@ -3834,7 +4132,8 @@
     ]
    },
    {
-    "id": "A2lBk300",
+    "id": "PBoA7000",
+    "lid": "A2lBk300",
     "name": "damage.acid",
     "type": "badge",
     "w": 1,
@@ -3845,7 +4144,8 @@
     ]
    },
    {
-    "id": "VS7JZ100",
+    "id": "dknSi300",
+    "lid": "VS7JZ100",
     "name": "damage.cold",
     "type": "badge",
     "w": 1,
@@ -3856,7 +4156,8 @@
     ]
    },
    {
-    "id": "quuO-000",
+    "id": "QggkY300",
+    "lid": "quuO-000",
     "name": "damage.fire",
     "type": "badge",
     "w": 1,
@@ -3867,7 +4168,8 @@
     ]
    },
    {
-    "id": "MD-qe300",
+    "id": "CngHg000",
+    "lid": "MD-qe300",
     "name": "damage.force",
     "type": "badge",
     "w": 1,
@@ -3878,7 +4180,8 @@
     ]
    },
    {
-    "id": "vvaIC000",
+    "id": "GXhBA300",
+    "lid": "vvaIC000",
     "name": "damage.lightning",
     "type": "badge",
     "w": 1,
@@ -3889,7 +4192,8 @@
     ]
    },
    {
-    "id": "dAYuS100",
+    "id": "fnuSg100",
+    "lid": "dAYuS100",
     "name": "damage.necrotic",
     "type": "badge",
     "w": 1,
@@ -3900,7 +4204,8 @@
     ]
    },
    {
-    "id": "Sa3hF000",
+    "id": "PFjB8300",
+    "lid": "Sa3hF000",
     "name": "damage.poison",
     "type": "badge",
     "w": 1,
@@ -3911,7 +4216,8 @@
     ]
    },
    {
-    "id": "XrUhr200",
+    "id": "KOiPD300",
+    "lid": "XrUhr200",
     "name": "damage.psychic",
     "type": "badge",
     "w": 1,
@@ -3922,7 +4228,8 @@
     ]
    },
    {
-    "id": "YjQpI100",
+    "id": "hf4Y5000",
+    "lid": "YjQpI100",
     "name": "damage.radiant",
     "type": "badge",
     "w": 1,
@@ -3933,7 +4240,8 @@
     ]
    },
    {
-    "id": "ZSIDE200",
+    "id": "DutAn000",
+    "lid": "ZSIDE200",
     "name": "damage.thunder",
     "type": "badge",
     "w": 1,
@@ -3946,7 +4254,8 @@
   ],
   "material": [
    {
-    "id": "CIZcg300",
+    "id": "brTTG000",
+    "lid": "CIZcg300",
     "name": "linen",
     "type": "material",
     "w": 1,
@@ -3957,7 +4266,8 @@
     ]
    },
    {
-    "id": "MOevM100",
+    "id": "QjDAr300",
+    "lid": "MOevM100",
     "name": "none",
     "type": "material",
     "w": 1,
@@ -3968,7 +4278,8 @@
     ]
    },
    {
-    "id": "Hb9tz200",
+    "id": "H4W0w000",
+    "lid": "Hb9tz200",
     "name": "paper",
     "type": "material",
     "w": 1,
@@ -3979,7 +4290,8 @@
     ]
    },
    {
-    "id": "LDpOJ000",
+    "id": "YDTSJ000",
+    "lid": "LDpOJ000",
     "name": "rough",
     "type": "material",
     "w": 1,
@@ -3990,7 +4302,8 @@
     ]
    },
    {
-    "id": "wS-60300",
+    "id": "ljAne100",
+    "lid": "wS-60300",
     "name": "wood",
     "type": "material",
     "w": 1,

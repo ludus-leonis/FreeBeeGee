@@ -22,6 +22,7 @@
 export const HOOK_LIBRARY_EDIT = 'HOOK_LIBRARY_EDIT'
 export const HOOK_LIBRARY_UPDATE = 'HOOK_LIBRARY_UPDATE'
 export const HOOK_LIBRARY_RELOAD = 'HOOK_LIBRARY_RELOAD'
+export const HOOK_LIBRARY_SELECT = 'HOOK_LIBRARY_SELECT'
 
 /**
  * Register an observer.
@@ -60,10 +61,11 @@ export function unregisterObserver (who, what) {
  * Will call callback() on every observer registered for a given event.
  *
  * @param {string} what HOOK_* event to trigger.
+ * @param {*} data (Optional) data to pass to callback.
  */
-export function triggerEvent (what) {
+export function triggerEvent (what, data) {
   for (const observer of observers[what] ?? []) {
-    observer.callback()
+    observer.callback(data)
   }
 }
 

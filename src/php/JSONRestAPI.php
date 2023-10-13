@@ -181,7 +181,7 @@ class JSONRestAPI
         // find a matching route
         foreach ($this->routes[$method] as $route => $handler) {
             if (preg_match($this->routeToRegExp($route), $path, $matches)) {
-                if ($method === 'PATCH' || $method === 'PUT' || $method === 'POST') {
+                if ($method === 'PATCH' || $method === 'PUT' || $method === 'POST' || $method === 'DELETE') {
                     return $handler($instance, $matches, file_get_contents('php://input'));
                 } else {
                     return $handler($instance, $matches); // don't parse incoming data on GET/DELETE
@@ -466,6 +466,47 @@ class JSONRestAPI
         }
         if ($send) {
             $this->sendError(400, "invalid JSON: $field is not an array of length $minLength - $maxLength");
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Check/convert if data is array of objects or an object.
+     *
+     * To be used on fields send by the client. Will send an 400-error to the
+     * client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param mixed $values The value(s) to check.
+     * @param int $minLength Minimum length of array (if array).
+     * @param bool $send Optonal. If true (default), validation erros are
+     *                   as JSON. If false, null is returned instead.
+     * @return array The parsed array.
+     */
+    public function assertObjectOrArray(
+        string $field,
+        $values,
+        int $minLength = 0,
+        bool $send = true
+    ) {
+        if ($values !== null) {
+            if (gettype($values) === 'object') {
+                return $values;
+            } elseif (gettype($values) === 'array' && sizeof($values) >= $minLength) {
+                $ok = true;
+                foreach ($values as $object) {
+                    if (gettype($object) !== 'object') {
+                        $ok = false;
+                    }
+                }
+                if ($ok) {
+                    return $values;
+                }
+            }
+        }
+        if ($send) {
+            $this->sendError(400, "invalid JSON: $field is not an array of objects nor an object");
         } else {
             return null;
         }
@@ -789,7 +830,7 @@ class JSONRestAPI
     }
 
     /**
-     * Assert that user-data is in JSON format and an array.
+     * Assert that user-data is in JSON format and an array of objects.
      *
      * To be used on JSON provided by the client to check for syntax errors. Will
      * send an 400-error to the client and terminate further execution if invalid.
@@ -798,12 +839,48 @@ class JSONRestAPI
      * @param string $data User-provided data/string.
      * @return object Parsed JSON data if successfull.
      */
-    public function assertJSONArray(
+    public function assertJSONObjectArray(
         string $field,
         ?string $data
     ): array {
         $decoded = $this->assertJSON($field, $data);
         return $this->assertObjectArray($field, $decoded);
+    }
+
+    /**
+     * Assert that user-data is in JSON format and an object or array.
+     *
+     * To be used on JSON provided by the client to check for syntax errors. Will
+     * send an 400-error to the client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param string $data User-provided data/string.
+     * @return object Parsed JSON data if successfull.
+     */
+    public function assertJSONObjectOrArray(
+        string $field,
+        ?string $data
+    ) {
+        $decoded = $this->assertJSON($field, $data);
+        return $this->assertObjectOrArray($field, $decoded, 1);
+    }
+
+    /**
+     * Assert that user-data is in JSON format and an array of strings.
+     *
+     * To be used on JSON provided by the client to check for syntax errors. Will
+     * send an 400-error to the client and terminate further execution if invalid.
+     *
+     * @param string $field Field name for error message.
+     * @param string $data User-provided data/string.
+     * @return object Parsed JSON data if successfull.
+     */
+    public function assertJSONStringArray(
+        string $field,
+        ?string $data
+    ): array {
+        $decoded = $this->assertJSON($field, $data);
+        return $this->assertStringArray($field, $decoded);
     }
 
     /**

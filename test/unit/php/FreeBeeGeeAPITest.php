@@ -104,6 +104,16 @@ final class FreeBeeGeeAPITest extends TestCase
 
     // --- tests ---------------------------------------------------------------
 
+    public function testGenerateAssetId()
+    {
+        $this->assertEquals('v-e4E300', FreeBeeGeeAPI::generateAssetId('tile', 'door', 1, 2));
+        $this->assertEquals('v-e4E300', FreeBeeGeeAPI::generateAssetId('tile', 'door', '1', '2'));
+        $this->assertEquals('bn6Wv100', FreeBeeGeeAPI::generateAssetId('overlay', 'door', 1, 2));
+        $this->assertEquals('v2AC0200', FreeBeeGeeAPI::generateAssetId('tile', 'wall.broken', 1, 2));
+        $this->assertEquals('etAlG300', FreeBeeGeeAPI::generateAssetId('tile', 'door', 2, 2));
+        $this->assertEquals('YrLnN100', FreeBeeGeeAPI::generateAssetId('tile', 'door', 2, 1));
+    }
+
     public function testValidateSnapshot()
     {
         $validEntries = $this->fbg->validateSnapshot($this->pathToCache('snapshots/empty.zip'));
@@ -611,19 +621,27 @@ final class FreeBeeGeeAPITest extends TestCase
 
     public function testCleanupTableJSON()
     {
-        $table = $this->fbg->cleanupTableJSON('[]');
+        $library = (object) [
+            'overlay' => [],
+            'tile' => [],
+            'token' => [],
+            'other' => [],
+            'badge' => [],
+            'material' => []
+        ];
+        $table = $this->fbg->cleanupTableJSON('[]', $library);
         $this->assertEqualsCanonicalizing([], $table);
 
-        $table = $this->fbg->cleanupTableJSON('I am not JSON.');
+        $table = $this->fbg->cleanupTableJSON('I am not JSON.', $library);
         $this->assertEqualsCanonicalizing([], $table);
 
         $table = $this->fbg->cleanupTableJSON('{
             "invalid": 1,
             "invalid2": "value"
-        }');
+        }', $library);
         $this->assertEqualsCanonicalizing([], $table);
 
-        $table = $this->fbg->cleanupTableJSON('[{}]');
+        $table = $this->fbg->cleanupTableJSON('[{}]', $library);
         $this->assertEquals(1, sizeof($table));
         $this->assertEqualsCanonicalizing(['id', 'l', 'a', 'x', 'y', 'z'], array_keys((array)$table[0]));
         $this->assertMatchesRegularExpression($this->REGEXP_ID, $table[0]->id);

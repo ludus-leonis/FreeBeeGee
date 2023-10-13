@@ -2,33 +2,23 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.21 - ??? ???
+## v0.22
 
-* [X] show tile+token sides as individual pieces in library
-* [X] library editor: edit asset name / size / material / color
-* [X] wooden cubes
-* [X] paper background for windows and cards
-* [X] open edit window on note create
-* [X] ui
-  * [X] smaller modal paddings
-  * [X] half-rotations via settings (45° for square, 30° for hex)
-* [X] clipboard ctrl+c/v/x on/between tables
-* [X] change docker image to PHP 8.2
-* [X] add error message when snapshot list is empty
-* [X] improve server-delete timespan display
-* [ ] pre-release
+* [X] undo
+* [X] select-all
+* [X] backgrounds: snow/ice
+* [X] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
-    * [X] github action to rebuid app on dev
-    * [X] add tabular numbers for library editor tree/preview
-    * [X] refactor: add jsdoc linting
-    * [X] refactor: use npm linter instead of gulp linter
-    * [X] refactor: add GitHub Actions for automated build
-    * [X] refactor: replace gulp-image with custom plugin
-    * [X] refactor: replace sass-lint with stylelint
-    * [X] fix texture bug on non-square assets
-    * [X] click on icon in popup does not trigger function
-    * [X] document or improve data volume mounting strategy
+    * [X] color 0 of token wrong
+    * [X] refactor: get 's' out of asset IDs
+    * [X] use _test object instead of exports
+    * [X] cleanup /? endpoints
+    * [X] library: asset no longer selected after rename
+    * [X] existing rooms do not create /history folder
+    * [X] edit: wrong dropdown opens left of edit field
+    * [X] edit: enter no longer closes
+    * [X] holding keys repeats action
   * [X] review docs
   * [X] review tutorial
   * [X] bump engine, version/codename & update CHANGELOG
@@ -39,15 +29,18 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
-* [ ] bug: selection lost after clone
-* [ ] refactor: use _private exports for test cases
+* [ ] token/tile height for more/less shadow, overlays as 0-height tiles?
+* [ ] doubleclick opens edit modal
+* [ ] bug: table.json cachign in demo mode
+* [ ] exclude protected pieces from operation, instead of denying operation
+* [ ] cursorkey move selection
+* [ ] tooltip explanation for '3x3:3' in library window
+* [ ] tweak minor grid visibility
 * [ ] refactor: use events more
-* [ ] refactor: get 's' out of asset IDs
 * [ ] plugin-hook
 * [ ] bug: dragging multi-selected hex tokens does not always snap correctly
 * [ ] library editor: replace media/side
 * [ ] ui: decks/stacks
-* [ ] ui: tweak minor grid visibility
 * [ ] engine: grid-on-tile flag
 * [ ] autopopulate empty data dir (for docker volumes)
 * [ ] simplify/automate more deployment steps (ongoing)
@@ -56,12 +49,10 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] engine: protect api objects in JS code
 * [ ] snapshot download for demo mode
 * [ ] ui: move dice more
-* [ ] ui: library: tooltip explanation for '3x3:3' in library window
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
 * [ ] ui: set fixed table size (e.g. 73x65)
-* [ ] undo / time travel
 * [ ] piece: supply heap
 * [ ] piece: cards / card-decks
   * [ ] shuffle deck/stack
@@ -70,7 +61,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: randomize button
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
-* [ ] ui: doubleclick handling?
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
 * [ ] build: minify js
@@ -82,7 +72,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] repo: generate average piece color
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
-* [ ] more backgrounds: snow/ice
 
 ### rather later (unsorted, after v1)
 
@@ -111,7 +100,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * game rules / metainfos (pdf) links in help
 * send to previous position for pieces
 * detail-pane to the right for selected item
-* move stuff via cursor keys
 * rename room
 * custom, faster tooltips
 * use left-right keys to switch tabs in modals

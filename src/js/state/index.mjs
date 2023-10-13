@@ -42,8 +42,10 @@ import {
   apiPatchPiece,
   apiPatchPieces,
   apiDeletePiece,
+  apiDeletePieces,
   apiPatchAsset,
-  apiPostPiece,
+  apiPostPieces,
+  apiPostUndo,
   apiPostAsset,
   apiDeleteAsset,
   apiPatchRoomAuth
@@ -413,7 +415,7 @@ export function loadRoom (name, t) {
       if (response.status === 400) {
         runError('ROOM_INVALID', name)
       } else if (response.status === 200) {
-        _setRoom(response.body)
+        setRoom(response.body)
         return response
       } else {
         apiError(new UnexpectedStatus(response.status, response.body), name)
@@ -446,6 +448,46 @@ export function patchSetup (setup, sync = true) {
  */
 export function addRoom (room, snapshot) {
   return apiPostRoom(room, snapshot, getToken())
+}
+
+/**
+ * Undo one history step.
+ *
+ * @param {number} no The table number to undo on.
+ * @param {object} sync Optional. If true (default), trigger table sync.
+ * @returns {Promise<void>} Promise of execution.
+ */
+export function undo (no = getTableNo(), sync = true) {
+  return apiPostUndo(room.name, no, getToken())
+    .finally(() => { if (sync) syncNow() })
+}
+
+/**
+ * Create a patch object for a piece move.
+ *
+ * @param {string} pieceId ID of piece to change.
+ * @param {?number} x New x. Will not be changed if null.
+ * @param {?number} y New y. Will not be changed if null.
+ * @param {?number} z New z. Will not be changed if null.
+ * @returns {object} A JSON piece patch ready to be sent to the API.
+ */
+export function movePiecePatch (pieceId, x = null, y = null, z = null) {
+  const patch = { id: pieceId }
+  if (x != null) patch.x = x
+  if (y != null) patch.y = y
+  if (z != null) {
+    if (findPiece(pieceId)?._meta?.feature === FEATURE_DICEMAT) {
+      if (x || y) {
+        // ignore z on move
+      } else {
+        patch.z = z // don't ignore z if only z changes
+      }
+    } else {
+      patch.z = z
+    }
+  }
+
+  return sanitizePiecePatch(patch)
 }
 
 /**
@@ -607,6 +649,25 @@ export function deletePiece (pieceId, sync = true) {
 }
 
 /**
+ * Remove a piece from the current table (from the room, not from the library).
+ *
+ * Will only do an API call and rely on later sync to get the change back to the
+ * data model.
+ *
+ * @param {string[]} pieceIds ID of pieces to remove.
+ * @param {object} sync Optional. If true (default), trigger table sync.
+ * @returns {Promise<object>} The deleted piece.
+ */
+export function deletePieces (pieceIds, sync = true) {
+  for (const pieceId of pieceIds) {
+    if (findPiece(pieceId)?.f & FLAGS.NO_DELETE) return Promise.resolve() // can't delete those
+  }
+  return apiDeletePieces(room.name, getTableNo(), pieceIds, getToken())
+    .catch(error => apiError(error, room.name))
+    .finally(() => { if (sync) syncNow() })
+}
+
+/**
  * Update (patch) an asset in the library.
  *
  * Will only do an API call and rely on later sync to get the change back to the
@@ -679,19 +740,26 @@ export function updatePieces (pieces, sync = true) {
  * @returns {Promise<object>} The created pieces.
  */
 export function createPieces (pieces, select = false, sync = true) {
-  let final = false
+  if (!pieces || pieces.length <= 0) return Promise.resolve([])
 
-  if (!pieces || pieces.length <= 0) return Promise.resolve({})
-  let piece = pieces.shift()
-  if (piece.a !== ID.LOS) piece = clampToTableSize(piece)
-  return createPiece(piece, select, false)
-    .then(id => {
-      if (pieces.length === 0) final = true
-      if (pieces.length > 0) return createPieces(pieces, select, sync)
+  const toSend = []
+  for (let piece of pieces) {
+    if (piece.l) piece.l = nameToLayer(piece.l)
+    if (piece.a !== ID.LOS) piece = clampToTableSize(piece)
+    toSend.push(stripPiece(piece))
+  }
+
+  return apiPostPieces(room.name, getTableNo(), toSend, getToken())
+    .then(pieces => {
+      const ids = []
+      for (const piece of pieces) {
+        if (select) selectionAdd(piece.id, true)
+        ids.push(piece.id)
+      }
+      return ids
     })
-    .finally(() => {
-      if (final && sync) syncNow(true)
-    })
+    .catch(error => apiError(error, room.name))
+    .finally(() => { if (sync) syncNow() })
 }
 
 /**
@@ -734,7 +802,7 @@ export function setRoomPassword (password) {
 export function fetchTable (no) {
   return apiGetTable(room.name, no, getToken(), true)
     .then(table => {
-      _setTable(no, populatePiecesDefaults(table.body, table.headers))
+      setTable(no, populatePiecesDefaults(table.body, table.headers))
       return table
     })
     .catch(error => apiError(error, room.name))
@@ -763,7 +831,14 @@ export function setTabActive (state) {
   if (state && room) syncNow()
 }
 
-// --- internal, but exposed for unit testing ----------------------------------
+// --- internal ----------------------------------------------------------------
+
+let serverInfo = null /** stores the server meta info JSON */
+let token = null /** stores the API token for this room */
+let room = null /** stores the room meta info JSON */
+let tableNo = 1 /** stores the currently visible table index */
+const tables = [[], [], [], [], [], [], [], [], [], []] /** caches the tables 0..9 */
+let tabActive = true /** is the current tab/window active/maximized? */
 
 /**
  * Internal: Set a table to given data.
@@ -773,7 +848,7 @@ export function setTabActive (state) {
  * @param {number} no Table number.
  * @param {object} data Table data.
  */
-export function _setTable (no, data) {
+export function setTable (no, data) {
   tables[no] = data
 }
 
@@ -784,21 +859,12 @@ export function _setTable (no, data) {
  *
  * @param {object} data Room data.
  */
-export function _setRoom (data) {
+export function setRoom (data) {
   if (data) {
     data.setup = populateSetupDefaults(data.setup)
   }
   room = data
 }
-
-// --- internal ----------------------------------------------------------------
-
-let serverInfo = null /** stores the server meta info JSON */
-let token = null /** stores the API token for this room */
-let room = null /** stores the room meta info JSON */
-let tableNo = 1 /** stores the currently visible table index */
-const tables = [[], [], [], [], [], [], [], [], [], []] /** caches the tables 0..9 */
-let tabActive = true /** is the current tab/window active/maximized? */
 
 /**
  * Strip client-side properties from pieces that would confuse the API.
@@ -854,49 +920,26 @@ function patchPieces (patches, sync = true) {
     .finally(() => { if (sync) syncNow() })
 }
 
-/**
- * Create a piece on the server.
- *
- * @param {object} piece The full piece to send to the server.
- * @param {boolean} select Optional. If false (default), piece will not get selected.
- * @param {boolean} sync Optional. If true (default), trigger table sync.
- * @returns {object} Promise of the ID of the new piece.
- */
-function createPiece (piece, select = false, sync = true) {
-  if (piece.l) piece.l = nameToLayer(piece.l)
-  return apiPostPiece(room.name, getTableNo(), stripPiece(piece), getToken())
-    .then(piece => {
-      if (select) selectionAdd(piece.id, true)
-      return piece.id
-    })
-    .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) syncNow() })
-}
+// /**
+//  * Create a piece on the server.
+//  *
+//  * @param {object} piece The full piece to send to the server.
+//  * @param {boolean} select Optional. If false (default), piece will not get selected.
+//  * @param {boolean} sync Optional. If true (default), trigger table sync.
+//  * @returns {object} Promise of the ID of the new piece.
+//  */
+// function createPiece (piece, select = false, sync = true) {
+//   if (piece.l) piece.l = nameToLayer(piece.l)
+//   return apiPostPiece(room.name, getTableNo(), stripPiece(piece), getToken())
+//     .then(piece => {
+//       if (select) selectionAdd(piece.id, true)
+//       return piece.id
+//     })
+//     .catch(error => apiError(error, room.name))
+//     .finally(() => { if (sync) syncNow() })
+// }
 
-/**
- * Create a patch object for a piece move.
- *
- * @param {string} pieceId ID of piece to change.
- * @param {?number} x New x. Will not be changed if null.
- * @param {?number} y New y. Will not be changed if null.
- * @param {?number} z New z. Will not be changed if null.
- * @returns {object} A JSON piece patch ready to be sent to the API.
- */
-export function movePiecePatch (pieceId, x = null, y = null, z = null) {
-  const patch = { id: pieceId }
-  if (x != null) patch.x = x
-  if (y != null) patch.y = y
-  if (z != null) {
-    if (findPiece(pieceId)?._meta?.feature === FEATURE_DICEMAT) {
-      if (x || y) {
-        // ignore z on move
-      } else {
-        patch.z = z // don't ignore z if only z changes
-      }
-    } else {
-      patch.z = z
-    }
-  }
-
-  return sanitizePiecePatch(patch)
+export const _test = {
+  setTable,
+  setRoom
 }

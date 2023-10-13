@@ -23,8 +23,7 @@
 import { expect } from 'chai'
 
 import {
-  _setTable,
-  _setRoom,
+  _test,
   setTableNo
 } from '../../../src/js/state/index.mjs'
 
@@ -47,16 +46,16 @@ const TEST_STATE = 5
 
 function setupTestData () {
   testSelection.selectionReset()
-  _setRoom(JSON.parse(roomJSON))
+  _test.setRoom(JSON.parse(roomJSON))
   for (let i = 1; i <= 9; i++) {
     if (i === TEST_STATE) {
-      _setTable(i, populatePiecesDefaults(JSON.parse(tableJSON)))
+      _test.setTable(i, populatePiecesDefaults(JSON.parse(tableJSON)))
     } else if (i === 9) {
-      _setTable(i, populatePiecesDefaults(JSON.parse(tableJSON)))
+      _test.setTable(i, populatePiecesDefaults(JSON.parse(tableJSON)))
       setTableNo(9, false)
       selectionAdd('0e13b377')
     } else {
-      _setTable(i, [])
+      _test.setTable(i, [])
     }
   }
   setTableNo(1, false)
@@ -651,7 +650,7 @@ describe('Frontend - selectionGetIds.mjs', function () {
 
   it('findPiecesWithinBounds(x, y, true)', function () { // use rotated pieces here
     // select a single token
-    _setTable(8, populatePiecesDefaults(JSON.parse(`[
+    _test.setTable(8, populatePiecesDefaults(JSON.parse(`[
       {
         "l": 4,
         "a": "c0655749",

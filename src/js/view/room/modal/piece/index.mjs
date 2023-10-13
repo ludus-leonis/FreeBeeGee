@@ -255,9 +255,20 @@ export function updateFlags (piece, updates) {
  * Populate modal field(s) with label information.
  *
  * @param {object} piece The piece's data object.
+ * @param {Function} onEnter Optional callback to be run on enter.
  */
-export function setupLabel (piece) {
-  _('#piece-label').value = piece.t?.[0] ?? ''
+export function setupLabel (piece, onEnter) {
+  const label = _('#piece-label')
+  label.value = piece.t?.[0] ?? ''
+  if (onEnter) {
+    label.on('keydown', keydown => {
+      switch (keydown.keyCode) {
+        case 13: // simulate submitbutton push
+          keydown.preventDefault()
+          onEnter() && getModal().hide()
+      }
+    })
+  }
 }
 
 /**

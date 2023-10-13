@@ -53,7 +53,7 @@ import {
 export function setup (piece) {
   _('#modal-body').innerHTML = getModalTile(piece)
 
-  setupLabel(piece)
+  setupLabel(piece, modalOk)
   setupBadge(piece)
   setupSize(piece)
   setupRotate(piece)
@@ -95,8 +95,8 @@ function modalOk () {
  * @returns {string} HTML snippet.
  */
 function getModalTile (piece) {
-  let colorClass = 'is-hidden'
-  let sideClass = 'is-hidden'
+  let colorClass = 'd-none'
+  let sideClass = 'd-none'
   let otherClass = 'col-lg-3'
 
   if (piece._meta.hasColor && piece._meta.sides >= 2) {

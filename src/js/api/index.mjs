@@ -247,6 +247,19 @@ export function apiDeletePiece (roomName, tableId, pieceId, token) {
 }
 
 /**
+ * API DELETE /rooms/:roomName/tables/:tableId/pieces/
+ *
+ * @param {string} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {number} tableId Number of table (0-9), 1 = normal.
+ * @param {string[]} pieceIds Piece-IDs (ID) of pieces to delete.
+ * @param {string} token API access token.
+ * @returns {Promise} Promise containing JSON/Object payload.
+ */
+export function apiDeletePieces (roomName, tableId, pieceIds, token) {
+  return deleteJson([204], `api/rooms/${roomName}/tables/${tableId}/pieces/`, token, false, pieceIds)
+}
+
+/**
  * API POST /rooms/:roomName/tables/:tableId/pieces/
  *
  * @param {string} roomName Name of room, e.g. 'funnyLovingWhale'.
@@ -257,6 +270,31 @@ export function apiDeletePiece (roomName, tableId, pieceId, token) {
  */
 export function apiPostPiece (roomName, tableId, piece, token) {
   return postJson([201], `api/rooms/${roomName}/tables/${tableId}/pieces/`, piece, token)
+}
+
+/**
+ * API POST /rooms/:roomName/tables/:tableId/pieces/
+ *
+ * @param {string} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {number} tableId Number of table (0-9), 1 = normal.
+ * @param {object[]} pieces Pieces JSON/array to send.
+ * @param {string} token API access token.
+ * @returns {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPostPieces (roomName, tableId, pieces, token) {
+  return postJson([201], `api/rooms/${roomName}/tables/${tableId}/pieces/`, pieces, token)
+}
+
+/**
+ * API POST /rooms/:roomName/tables/:tableId/undo/
+ *
+ * @param {string} roomName Name of room, e.g. 'funnyLovingWhale'.
+ * @param {number} tableId Number of table (0-9), 1 = normal.
+ * @param {string} token API access token.
+ * @returns {Promise} Promise containing JSON/Object payload.
+ */
+export function apiPostUndo (roomName, tableId, token) {
+  return postJson([204], `api/rooms/${roomName}/tables/${tableId}/undo/`, {}, token)
 }
 
 /**
@@ -473,14 +511,26 @@ function patchJson (expectedStatus, path, data, token, headers = false) {
  * @param {string} path The URL to call. Can be relative.
  * @param {string} token API access token.
  * @param {boolean} headers If true, reply with a headers/payload object.
+ * @param {object} data Optional playload for request.
  * @returns {Promise} Promise of a JSON object. Usually empty.
  */
-function deleteJson (expectedStatus, path, token, headers = false) {
-  return fetchOrThrow(expectedStatus, path, {
-    method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: token
-    }
-  }, headers)
+function deleteJson (expectedStatus, path, token, headers = false, data = undefined) {
+  if (data) {
+    return fetchOrThrow(expectedStatus, path, {
+      method: 'DELETE',
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token
+      }
+    }, headers)
+  } else {
+    return fetchOrThrow(expectedStatus, path, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token
+      }
+    }, headers)
+  }
 }
