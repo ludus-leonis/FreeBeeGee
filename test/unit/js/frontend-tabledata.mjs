@@ -39,6 +39,8 @@ import {
   getPieceBounds,
   findPiecesWithin,
   findExpiredPieces,
+  populateLibraryDefaults,
+  populateAssetDefaults,
   populateSetupDefaults,
   populatePieceDefaults,
   populatePiecesDefaults,
@@ -391,6 +393,52 @@ describe('Frontend - tabledata.mjs', function () {
     expect(Object.keys(t1)).to.have.members(['borders', '_meta'])
     expect(t1.borders).to.be.an('array')
     expect(t1._meta).to.be.an('object')
+  })
+
+  it('populateAssetDefaults()', function () {
+    const t1 = populateAssetDefaults({ type: 'token' })
+    expect(Object.keys(t1)).to.have.members(['type', 'w', 'h', 'd'])
+    expect(t1.w).to.be.eql(1)
+    expect(t1.h).to.be.eql(1)
+    expect(t1.d).to.be.eql(2)
+
+    const t2 = populateAssetDefaults({ type: 'tile' })
+    expect(Object.keys(t2)).to.have.members(['type', 'w', 'h', 'd'])
+    expect(t2.w).to.be.eql(1)
+    expect(t2.h).to.be.eql(1)
+    expect(t2.d).to.be.eql(2)
+
+    const t3 = populateAssetDefaults({ type: 'overlay' })
+    expect(Object.keys(t3)).to.have.members(['type', 'w', 'h', 'd'])
+    expect(t3.w).to.be.eql(1)
+    expect(t3.h).to.be.eql(1)
+    expect(t3.d).to.be.eql(0)
+
+    const t4 = populateAssetDefaults({ type: 'other' })
+    expect(Object.keys(t4)).to.have.members(['type', 'w', 'h', 'd'])
+    expect(t4.w).to.be.eql(1)
+    expect(t4.h).to.be.eql(1)
+    expect(t4.d).to.be.eql(2)
+
+    const t5 = populateAssetDefaults({ w: 1 })
+    expect(Object.keys(t5)).to.have.members(['w', 'h', 'd'])
+    expect(t5.w).to.be.eql(1)
+    expect(t5.h).to.be.eql(1)
+
+    const t6 = populateAssetDefaults({ h: 5 })
+    expect(Object.keys(t6)).to.have.members(['w', 'h', 'd'])
+    expect(t6.w).to.be.eql(1)
+    expect(t6.h).to.be.eql(5)
+
+    const t7 = populateAssetDefaults({ w: 5 })
+    expect(Object.keys(t7)).to.have.members(['w', 'h', 'd'])
+    expect(t7.w).to.be.eql(5)
+    expect(t7.h).to.be.eql(5)
+
+    const t8 = populateAssetDefaults({ w: 5, h: 2 })
+    expect(Object.keys(t8)).to.have.members(['w', 'h', 'd'])
+    expect(t8.w).to.be.eql(5)
+    expect(t8.h).to.be.eql(2)
   })
 
   it('populatePieceDefaults()', function () {

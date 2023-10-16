@@ -36,7 +36,7 @@ import tar from 'gulp-tar'
 import zip from 'gulp-zip'
 import vinylSource from 'vinyl-source-stream'
 
-import dartSass from 'sass'
+import * as dartSass from 'sass'
 import gulpSass from 'gulp-sass'
 const sass = gulpSass(dartSass)
 
@@ -216,20 +216,36 @@ gulp.task('img', gulp.series(() => {
  * @returns {object} Gulp pipe.
  */
 function snapshot (name, minimize = true) {
-  return gulp.series(() => { // step 1: optimize & cache content
+  return gulp.series(() => { // step 1: optimize & cache images
     if (minimize) {
-      return replace(gulp.src('src/snapshots/' + name + '/**/*'))
+      return gulp.src([
+        'src/snapshots/' + name + '/**/*.jpg',
+        'src/snapshots/' + name + '/**/*.png',
+        'src/snapshots/' + name + '/**/*.svg'
+      ])
         .pipe(changed(dirs.cache + '/snapshots/' + name))
         .pipe(shrinkr({
           jpg: { quality: 7 }
         }))
         .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
     } else {
-      return replace(gulp.src('src/snapshots/' + name + '/**/*'))
+      return gulp.src([
+        'src/snapshots/' + name + '/**/*.jpg',
+        'src/snapshots/' + name + '/**/*.png',
+        'src/snapshots/' + name + '/**/*.svg'
+      ])
         .pipe(changed(dirs.cache + '/snapshots/' + name))
         .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
     }
-  }, () => { // step 2: zip cache
+  }, () => { // step 2: cache non-images
+    return replace(gulp.src([
+      'src/snapshots/' + name + '/**/*',
+      '!src/snapshots/' + name + '/**/*.jpg',
+      '!src/snapshots/' + name + '/**/*.png',
+      '!src/snapshots/' + name + '/**/*.svg'
+    ]))
+      .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
+  }, () => { // step 3: zip cache
     return gulp.src(dirs.cache + '/snapshots/' + name + '/**/*')
       .pipe(zip(name + '.zip'))
       .pipe(gulp.dest(dirs.site + '/api/data/snapshots'))

@@ -1,10 +1,10 @@
 {
- "id": "G-QkjVct",
+ "id": "e2ELquso",
  "name": "demoroomtutorial",
  "engine": "2.5.1",
  "setup": {
   "engine": "2.5.0",
-  "version": "0.22.0",
+  "version": "0.23.0-dev",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 64,
@@ -125,8 +125,6 @@
     "lid": "T28mo300",
     "name": "_.area",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [],
     "mask": "_.area.1x1xX.1.svg"
@@ -137,7 +135,6 @@
     "name": "_.area",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.area.2x2xX.1.svg"
@@ -148,7 +145,6 @@
     "name": "_.area",
     "type": "overlay",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.area.3x3xX.1.svg"
@@ -159,7 +155,6 @@
     "name": "_.area",
     "type": "overlay",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.area.4x4xX.1.svg"
@@ -170,7 +165,6 @@
     "name": "_.area",
     "type": "overlay",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.area.5x5xX.1.svg"
@@ -180,8 +174,6 @@
     "lid": "yk-7s000",
     "name": "_.circle",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [],
     "mask": "_.circle.1x1xX.1.svg"
@@ -192,7 +184,6 @@
     "name": "_.circle",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.circle.2x2xX.1.svg"
@@ -203,7 +194,6 @@
     "name": "_.circle",
     "type": "overlay",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.circle.3x3xX.1.svg"
@@ -214,7 +204,6 @@
     "name": "_.circle",
     "type": "overlay",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.circle.4x4xX.1.svg"
@@ -225,7 +214,6 @@
     "name": "_.circle",
     "type": "overlay",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.circle.5x5xX.1.svg"
@@ -235,8 +223,6 @@
     "lid": "LZCOB200",
     "name": "_.cubeLarge",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "_.cubeLarge.1x1x1.3.png"
@@ -248,8 +234,6 @@
     "lid": "dojMw300",
     "name": "_.cubeMedium",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "_.cubeMedium.1x1x1.3.png"
@@ -261,8 +245,6 @@
     "lid": "xwTgs300",
     "name": "_.cubeSmall",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "_.cubeSmall.1x1x1.3.png"
@@ -275,7 +257,6 @@
     "name": "_.pin",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "3",
     "media": [
      "_.pin.2x2x1.3.png"
@@ -287,8 +268,6 @@
     "lid": "zNVkI000",
     "name": "_.wall",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.wall.1x1x1.1.png"
@@ -300,8 +279,6 @@
     "lid": "Lv6KO300",
     "name": "_.zone",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [],
     "mask": "_.zone.1x1xX.1.svg"
@@ -312,7 +289,6 @@
     "name": "_.zone",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.zone.2x2xX.1.svg"
@@ -323,7 +299,6 @@
     "name": "_.zone",
     "type": "overlay",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.zone.3x3xX.1.svg"
@@ -334,7 +309,6 @@
     "name": "_.zone",
     "type": "overlay",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.zone.4x4xX.1.svg"
@@ -345,7 +319,6 @@
     "name": "_.zone",
     "type": "overlay",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.zone.5x5xX.1.svg"
@@ -373,7 +346,6 @@
     "name": "_.glassDark",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "transparent",
     "media": [
      "_.glassDark.2x2x1.transparent.png"
@@ -385,7 +357,6 @@
     "name": "_.glassLight",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "transparent",
     "media": [
      "_.glassLight.2x2x1.transparent.png"
@@ -396,8 +367,6 @@
     "lid": "krH1S200",
     "name": "chest",
     "type": "tile",
-    "w": 1,
-    "h": 1,
     "bg": "transparent",
     "media": [
      "chest.1x1.transparent.png"
@@ -422,7 +391,6 @@
     "name": "room",
     "type": "tile",
     "w": 4,
-    "h": 4,
     "bg": "#808674",
     "media": [
      "room.4x4x1.808674.paper.jpg",
@@ -436,7 +404,6 @@
     "name": "stairs",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "#686E60",
     "media": [
      "stairs.2x2.686E60.paper.jpg"
@@ -450,8 +417,6 @@
     "lid": "wAksS100",
     "name": "_.bead",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.bead.1x1x1.1.png"
@@ -462,8 +427,6 @@
     "lid": "mAa-Q300",
     "name": "_.letter",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.letter.1x1x01.1.wood.svg",
@@ -500,8 +463,6 @@
     "lid": "sD_SB100",
     "name": "_.number",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.number.1x1x01.1.wood.svg",
@@ -522,8 +483,6 @@
     "lid": "oZX62300",
     "name": "_.plain",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "_.plain.1x1x1.0.wood.png"
@@ -535,8 +494,6 @@
     "lid": "Hn18v200",
     "name": "_.symbol",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.symbol.1x1x1.1.wood.svg",
@@ -550,8 +507,6 @@
     "lid": "hNjjH100",
     "name": "barbarian",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "barbarian.1x1.3.wood.svg"
@@ -563,8 +518,6 @@
     "lid": "JP3EE200",
     "name": "goblin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "goblin.1x1.6.wood.svg"
@@ -576,8 +529,6 @@
     "lid": "HfpyK000",
     "name": "orc",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "orc.1x1.6.wood.svg"
@@ -591,276 +542,264 @@
     "lid": "lPebe300",
     "name": "_.d10Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d10Dark.1x1x01.1.svg",
-     "_.d10Dark.1x1x02.1.svg",
-     "_.d10Dark.1x1x03.1.svg",
-     "_.d10Dark.1x1x04.1.svg",
-     "_.d10Dark.1x1x05.1.svg",
-     "_.d10Dark.1x1x06.1.svg",
-     "_.d10Dark.1x1x07.1.svg",
-     "_.d10Dark.1x1x08.1.svg",
-     "_.d10Dark.1x1x09.1.svg",
-     "_.d10Dark.1x1x10.1.svg"
+     "_.d10Dark.1x1x01x5.1.svg",
+     "_.d10Dark.1x1x02x5.1.svg",
+     "_.d10Dark.1x1x03x5.1.svg",
+     "_.d10Dark.1x1x04x5.1.svg",
+     "_.d10Dark.1x1x05x5.1.svg",
+     "_.d10Dark.1x1x06x5.1.svg",
+     "_.d10Dark.1x1x07x5.1.svg",
+     "_.d10Dark.1x1x08x5.1.svg",
+     "_.d10Dark.1x1x09x5.1.svg",
+     "_.d10Dark.1x1x10x5.1.svg"
     ],
-    "base": "_.d10Dark.1x1x00.1.png",
-    "mask": "_.d10Dark.1x1xXX.1.svg"
+    "base": "_.d10Dark.1x1x00x5.1.png",
+    "mask": "_.d10Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "PW2rJ000",
     "lid": "tVzk3200",
     "name": "_.d10Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d10Light.1x1x01.2.svg",
-     "_.d10Light.1x1x02.2.svg",
-     "_.d10Light.1x1x03.2.svg",
-     "_.d10Light.1x1x04.2.svg",
-     "_.d10Light.1x1x05.2.svg",
-     "_.d10Light.1x1x06.2.svg",
-     "_.d10Light.1x1x07.2.svg",
-     "_.d10Light.1x1x08.2.svg",
-     "_.d10Light.1x1x09.2.svg",
-     "_.d10Light.1x1x10.2.svg"
+     "_.d10Light.1x1x01x5.2.svg",
+     "_.d10Light.1x1x02x5.2.svg",
+     "_.d10Light.1x1x03x5.2.svg",
+     "_.d10Light.1x1x04x5.2.svg",
+     "_.d10Light.1x1x05x5.2.svg",
+     "_.d10Light.1x1x06x5.2.svg",
+     "_.d10Light.1x1x07x5.2.svg",
+     "_.d10Light.1x1x08x5.2.svg",
+     "_.d10Light.1x1x09x5.2.svg",
+     "_.d10Light.1x1x10x5.2.svg"
     ],
-    "base": "_.d10Light.1x1x00.2.png",
-    "mask": "_.d10Light.1x1xXX.2.svg"
+    "base": "_.d10Light.1x1x00x5.2.png",
+    "mask": "_.d10Light.1x1xXXx5.2.svg"
    },
    {
     "id": "v8Vvg200",
     "lid": "aeS5y000",
     "name": "_.d12Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d12Dark.1x1x01.1.svg",
-     "_.d12Dark.1x1x02.1.svg",
-     "_.d12Dark.1x1x03.1.svg",
-     "_.d12Dark.1x1x04.1.svg",
-     "_.d12Dark.1x1x05.1.svg",
-     "_.d12Dark.1x1x06.1.svg",
-     "_.d12Dark.1x1x07.1.svg",
-     "_.d12Dark.1x1x08.1.svg",
-     "_.d12Dark.1x1x09.1.svg",
-     "_.d12Dark.1x1x10.1.svg",
-     "_.d12Dark.1x1x11.1.svg",
-     "_.d12Dark.1x1x12.1.svg"
+     "_.d12Dark.1x1x01x5.1.svg",
+     "_.d12Dark.1x1x02x5.1.svg",
+     "_.d12Dark.1x1x03x5.1.svg",
+     "_.d12Dark.1x1x04x5.1.svg",
+     "_.d12Dark.1x1x05x5.1.svg",
+     "_.d12Dark.1x1x06x5.1.svg",
+     "_.d12Dark.1x1x07x5.1.svg",
+     "_.d12Dark.1x1x08x5.1.svg",
+     "_.d12Dark.1x1x09x5.1.svg",
+     "_.d12Dark.1x1x10x5.1.svg",
+     "_.d12Dark.1x1x11x5.1.svg",
+     "_.d12Dark.1x1x12x5.1.svg"
     ],
-    "base": "_.d12Dark.1x1x00.1.png",
-    "mask": "_.d12Dark.1x1xXX.1.svg"
+    "base": "_.d12Dark.1x1x00x5.1.png",
+    "mask": "_.d12Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "KWvBF000",
     "lid": "KKD3z300",
     "name": "_.d12Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d12Light.1x1x01.2.svg",
-     "_.d12Light.1x1x02.2.svg",
-     "_.d12Light.1x1x03.2.svg",
-     "_.d12Light.1x1x04.2.svg",
-     "_.d12Light.1x1x05.2.svg",
-     "_.d12Light.1x1x06.2.svg",
-     "_.d12Light.1x1x07.2.svg",
-     "_.d12Light.1x1x08.2.svg",
-     "_.d12Light.1x1x09.2.svg",
-     "_.d12Light.1x1x10.2.svg",
-     "_.d12Light.1x1x11.2.svg",
-     "_.d12Light.1x1x12.2.svg"
+     "_.d12Light.1x1x01x5.2.svg",
+     "_.d12Light.1x1x02x5.2.svg",
+     "_.d12Light.1x1x03x5.2.svg",
+     "_.d12Light.1x1x04x5.2.svg",
+     "_.d12Light.1x1x05x5.2.svg",
+     "_.d12Light.1x1x06x5.2.svg",
+     "_.d12Light.1x1x07x5.2.svg",
+     "_.d12Light.1x1x08x5.2.svg",
+     "_.d12Light.1x1x09x5.2.svg",
+     "_.d12Light.1x1x10x5.2.svg",
+     "_.d12Light.1x1x11x5.2.svg",
+     "_.d12Light.1x1x12x5.2.svg"
     ],
-    "base": "_.d12Light.1x1x00.2.png",
-    "mask": "_.d12Light.1x1xXX.2.svg"
+    "base": "_.d12Light.1x1x00x5.2.png",
+    "mask": "_.d12Light.1x1xXXx5.2.svg"
    },
    {
     "id": "y6zKl100",
     "lid": "z7DUO100",
     "name": "_.d20Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d20Dark.1x1x01.1.svg",
-     "_.d20Dark.1x1x02.1.svg",
-     "_.d20Dark.1x1x03.1.svg",
-     "_.d20Dark.1x1x04.1.svg",
-     "_.d20Dark.1x1x05.1.svg",
-     "_.d20Dark.1x1x06.1.svg",
-     "_.d20Dark.1x1x07.1.svg",
-     "_.d20Dark.1x1x08.1.svg",
-     "_.d20Dark.1x1x09.1.svg",
-     "_.d20Dark.1x1x10.1.svg",
-     "_.d20Dark.1x1x11.1.svg",
-     "_.d20Dark.1x1x12.1.svg",
-     "_.d20Dark.1x1x13.1.svg",
-     "_.d20Dark.1x1x14.1.svg",
-     "_.d20Dark.1x1x15.1.svg",
-     "_.d20Dark.1x1x16.1.svg",
-     "_.d20Dark.1x1x17.1.svg",
-     "_.d20Dark.1x1x18.1.svg",
-     "_.d20Dark.1x1x19.1.svg",
-     "_.d20Dark.1x1x20.1.svg"
+     "_.d20Dark.1x1x01x5.1.svg",
+     "_.d20Dark.1x1x02x5.1.svg",
+     "_.d20Dark.1x1x03x5.1.svg",
+     "_.d20Dark.1x1x04x5.1.svg",
+     "_.d20Dark.1x1x05x5.1.svg",
+     "_.d20Dark.1x1x06x5.1.svg",
+     "_.d20Dark.1x1x07x5.1.svg",
+     "_.d20Dark.1x1x08x5.1.svg",
+     "_.d20Dark.1x1x09x5.1.svg",
+     "_.d20Dark.1x1x10x5.1.svg",
+     "_.d20Dark.1x1x11x5.1.svg",
+     "_.d20Dark.1x1x12x5.1.svg",
+     "_.d20Dark.1x1x13x5.1.svg",
+     "_.d20Dark.1x1x14x5.1.svg",
+     "_.d20Dark.1x1x15x5.1.svg",
+     "_.d20Dark.1x1x16x5.1.svg",
+     "_.d20Dark.1x1x17x5.1.svg",
+     "_.d20Dark.1x1x18x5.1.svg",
+     "_.d20Dark.1x1x19x5.1.svg",
+     "_.d20Dark.1x1x20x5.1.svg"
     ],
-    "base": "_.d20Dark.1x1x00.1.png",
-    "mask": "_.d20Dark.1x1xXX.1.svg"
+    "base": "_.d20Dark.1x1x00x5.1.png",
+    "mask": "_.d20Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "Gz-zS200",
     "lid": "eIMc_300",
     "name": "_.d20Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d20Light.1x1x01.2.svg",
-     "_.d20Light.1x1x02.2.svg",
-     "_.d20Light.1x1x03.2.svg",
-     "_.d20Light.1x1x04.2.svg",
-     "_.d20Light.1x1x05.2.svg",
-     "_.d20Light.1x1x06.2.svg",
-     "_.d20Light.1x1x07.2.svg",
-     "_.d20Light.1x1x08.2.svg",
-     "_.d20Light.1x1x09.2.svg",
-     "_.d20Light.1x1x10.2.svg",
-     "_.d20Light.1x1x11.2.svg",
-     "_.d20Light.1x1x12.2.svg",
-     "_.d20Light.1x1x13.2.svg",
-     "_.d20Light.1x1x14.2.svg",
-     "_.d20Light.1x1x15.2.svg",
-     "_.d20Light.1x1x16.2.svg",
-     "_.d20Light.1x1x17.2.svg",
-     "_.d20Light.1x1x18.2.svg",
-     "_.d20Light.1x1x19.2.svg",
-     "_.d20Light.1x1x20.2.svg"
+     "_.d20Light.1x1x01x5.2.svg",
+     "_.d20Light.1x1x02x5.2.svg",
+     "_.d20Light.1x1x03x5.2.svg",
+     "_.d20Light.1x1x04x5.2.svg",
+     "_.d20Light.1x1x05x5.2.svg",
+     "_.d20Light.1x1x06x5.2.svg",
+     "_.d20Light.1x1x07x5.2.svg",
+     "_.d20Light.1x1x08x5.2.svg",
+     "_.d20Light.1x1x09x5.2.svg",
+     "_.d20Light.1x1x10x5.2.svg",
+     "_.d20Light.1x1x11x5.2.svg",
+     "_.d20Light.1x1x12x5.2.svg",
+     "_.d20Light.1x1x13x5.2.svg",
+     "_.d20Light.1x1x14x5.2.svg",
+     "_.d20Light.1x1x15x5.2.svg",
+     "_.d20Light.1x1x16x5.2.svg",
+     "_.d20Light.1x1x17x5.2.svg",
+     "_.d20Light.1x1x18x5.2.svg",
+     "_.d20Light.1x1x19x5.2.svg",
+     "_.d20Light.1x1x20x5.2.svg"
     ],
-    "base": "_.d20Light.1x1x00.2.png",
-    "mask": "_.d20Light.1x1xXX.2.svg"
+    "base": "_.d20Light.1x1x00x5.2.png",
+    "mask": "_.d20Light.1x1xXXx5.2.svg"
    },
    {
     "id": "pJtgf000",
     "lid": "SHt9A300",
     "name": "_.d4Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d4Dark.1x1x1.1.svg",
-     "_.d4Dark.1x1x2.1.svg",
-     "_.d4Dark.1x1x3.1.svg",
-     "_.d4Dark.1x1x4.1.svg"
+     "_.d4Dark.1x1x1x5.1.svg",
+     "_.d4Dark.1x1x2x5.1.svg",
+     "_.d4Dark.1x1x3x5.1.svg",
+     "_.d4Dark.1x1x4x5.1.svg"
     ],
-    "base": "_.d4Dark.1x1x0.1.png",
-    "mask": "_.d4Dark.1x1xX.1.svg"
+    "base": "_.d4Dark.1x1x0x5.1.png",
+    "mask": "_.d4Dark.1x1xXx5.1.svg"
    },
    {
     "id": "j8hqf000",
     "lid": "xY7Gr200",
     "name": "_.d4Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d4Light.1x1x1.2.svg",
-     "_.d4Light.1x1x2.2.svg",
-     "_.d4Light.1x1x3.2.svg",
-     "_.d4Light.1x1x4.2.svg"
+     "_.d4Light.1x1x1x5.2.svg",
+     "_.d4Light.1x1x2x5.2.svg",
+     "_.d4Light.1x1x3x5.2.svg",
+     "_.d4Light.1x1x4x5.2.svg"
     ],
-    "base": "_.d4Light.1x1x0.2.png",
-    "mask": "_.d4Light.1x1xX.2.svg"
+    "base": "_.d4Light.1x1x0x5.2.png",
+    "mask": "_.d4Light.1x1xXx5.2.svg"
    },
    {
     "id": "bc_Ix000",
     "lid": "jbmiY200",
     "name": "_.d6Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d6Dark.1x1x1.1.svg",
-     "_.d6Dark.1x1x2.1.svg",
-     "_.d6Dark.1x1x3.1.svg",
-     "_.d6Dark.1x1x4.1.svg",
-     "_.d6Dark.1x1x5.1.svg",
-     "_.d6Dark.1x1x6.1.svg"
+     "_.d6Dark.1x1x1x5.1.svg",
+     "_.d6Dark.1x1x2x5.1.svg",
+     "_.d6Dark.1x1x3x5.1.svg",
+     "_.d6Dark.1x1x4x5.1.svg",
+     "_.d6Dark.1x1x5x5.1.svg",
+     "_.d6Dark.1x1x6x5.1.svg"
     ],
-    "base": "_.d6Dark.1x1x0.1.png",
-    "mask": "_.d6Dark.1x1xX.1.svg"
+    "base": "_.d6Dark.1x1x0x5.1.png",
+    "mask": "_.d6Dark.1x1xXx5.1.svg"
    },
    {
     "id": "a8cCb000",
     "lid": "u7ZAS100",
     "name": "_.d6Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d6Light.1x1x1.2.svg",
-     "_.d6Light.1x1x2.2.svg",
-     "_.d6Light.1x1x3.2.svg",
-     "_.d6Light.1x1x4.2.svg",
-     "_.d6Light.1x1x5.2.svg",
-     "_.d6Light.1x1x6.2.svg"
+     "_.d6Light.1x1x1x5.2.svg",
+     "_.d6Light.1x1x2x5.2.svg",
+     "_.d6Light.1x1x3x5.2.svg",
+     "_.d6Light.1x1x4x5.2.svg",
+     "_.d6Light.1x1x5x5.2.svg",
+     "_.d6Light.1x1x6x5.2.svg"
     ],
-    "base": "_.d6Light.1x1x0.2.png",
-    "mask": "_.d6Light.1x1xX.2.svg"
+    "base": "_.d6Light.1x1x0x5.2.png",
+    "mask": "_.d6Light.1x1xXx5.2.svg"
    },
    {
     "id": "ZyitE300",
     "lid": "xCPfK300",
     "name": "_.d8Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d8Dark.1x1x1.1.svg",
-     "_.d8Dark.1x1x2.1.svg",
-     "_.d8Dark.1x1x3.1.svg",
-     "_.d8Dark.1x1x4.1.svg",
-     "_.d8Dark.1x1x5.1.svg",
-     "_.d8Dark.1x1x6.1.svg",
-     "_.d8Dark.1x1x7.1.svg",
-     "_.d8Dark.1x1x8.1.svg"
+     "_.d8Dark.1x1x1x5.1.svg",
+     "_.d8Dark.1x1x2x5.1.svg",
+     "_.d8Dark.1x1x3x5.1.svg",
+     "_.d8Dark.1x1x4x5.1.svg",
+     "_.d8Dark.1x1x5x5.1.svg",
+     "_.d8Dark.1x1x6x5.1.svg",
+     "_.d8Dark.1x1x7x5.1.svg",
+     "_.d8Dark.1x1x8x5.1.svg"
     ],
-    "base": "_.d8Dark.1x1x0.1.png",
-    "mask": "_.d8Dark.1x1xX.1.svg"
+    "base": "_.d8Dark.1x1x0x5.1.png",
+    "mask": "_.d8Dark.1x1xXx5.1.svg"
    },
    {
     "id": "Zavll000",
     "lid": "obzEu200",
     "name": "_.d8Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d8Light.1x1x1.2.svg",
-     "_.d8Light.1x1x2.2.svg",
-     "_.d8Light.1x1x3.2.svg",
-     "_.d8Light.1x1x4.2.svg",
-     "_.d8Light.1x1x5.2.svg",
-     "_.d8Light.1x1x6.2.svg",
-     "_.d8Light.1x1x7.2.svg",
-     "_.d8Light.1x1x8.2.svg"
+     "_.d8Light.1x1x1x5.2.svg",
+     "_.d8Light.1x1x2x5.2.svg",
+     "_.d8Light.1x1x3x5.2.svg",
+     "_.d8Light.1x1x4x5.2.svg",
+     "_.d8Light.1x1x5x5.2.svg",
+     "_.d8Light.1x1x6x5.2.svg",
+     "_.d8Light.1x1x7x5.2.svg",
+     "_.d8Light.1x1x8x5.2.svg"
     ],
-    "base": "_.d8Light.1x1x0.2.png",
-    "mask": "_.d8Light.1x1xX.2.svg"
+    "base": "_.d8Light.1x1x0x5.2.png",
+    "mask": "_.d8Light.1x1xXx5.2.svg"
    },
    {
     "id": "gXCJX200",
@@ -868,10 +807,9 @@
     "name": "_.dicemat",
     "type": "other",
     "w": 4,
-    "h": 4,
     "bg": "#808080",
     "media": [
-     "_.dicemat.4x4x1.jpg"
+     "_.dicemat.4x4x1x2.jpg"
     ]
    },
    {
@@ -880,10 +818,10 @@
     "name": "_.dicemat",
     "type": "other",
     "w": 8,
-    "h": 8,
+    "d": 5,
     "bg": "#808080",
     "media": [
-     "_.dicemat.8x8x1.png"
+     "_.dicemat.8x8x1x5.png"
     ]
    },
    {
@@ -891,38 +829,36 @@
     "lid": "MDuQt000",
     "name": "_.fateDark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.fateDark.1x1x1.1.svg",
-     "_.fateDark.1x1x2.1.svg",
-     "_.fateDark.1x1x3.1.svg",
-     "_.fateDark.1x1x4.1.svg",
-     "_.fateDark.1x1x5.1.svg",
-     "_.fateDark.1x1x6.1.svg"
+     "_.fateDark.1x1x1x5.1.svg",
+     "_.fateDark.1x1x2x5.1.svg",
+     "_.fateDark.1x1x3x5.1.svg",
+     "_.fateDark.1x1x4x5.1.svg",
+     "_.fateDark.1x1x5x5.1.svg",
+     "_.fateDark.1x1x6x5.1.svg"
     ],
-    "base": "_.fateDark.1x1x0.1.png",
-    "mask": "_.fateDark.1x1xX.1.svg"
+    "base": "_.fateDark.1x1x0x5.1.png",
+    "mask": "_.fateDark.1x1xXx5.1.svg"
    },
    {
     "id": "iCBYt200",
     "lid": "MTvWD100",
     "name": "_.fateLight",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.fateLight.1x1x1.2.svg",
-     "_.fateLight.1x1x2.2.svg",
-     "_.fateLight.1x1x3.2.svg",
-     "_.fateLight.1x1x4.2.svg",
-     "_.fateLight.1x1x5.2.svg",
-     "_.fateLight.1x1x6.2.svg"
+     "_.fateLight.1x1x1x5.2.svg",
+     "_.fateLight.1x1x2x5.2.svg",
+     "_.fateLight.1x1x3x5.2.svg",
+     "_.fateLight.1x1x4x5.2.svg",
+     "_.fateLight.1x1x5x5.2.svg",
+     "_.fateLight.1x1x6x5.2.svg"
     ],
-    "base": "_.fateLight.1x1x0.2.png",
-    "mask": "_.fateLight.1x1xX.2.svg"
+    "base": "_.fateLight.1x1x0x5.2.png",
+    "mask": "_.fateLight.1x1xXx5.2.svg"
    }
   ],
   "badge": [
@@ -931,8 +867,6 @@
     "lid": "Jxa0k200",
     "name": "_.badge",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "_.badge.svg"
@@ -943,8 +877,6 @@
     "lid": "RvGjJ000",
     "name": "_.target",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "_.target.svg"
@@ -957,8 +889,6 @@
     "lid": "CIZcg300",
     "name": "linen",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "linen.png"
@@ -969,8 +899,6 @@
     "lid": "MOevM100",
     "name": "none",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "none.png"
@@ -981,8 +909,6 @@
     "lid": "Hb9tz200",
     "name": "paper",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "paper.png"
@@ -993,8 +919,6 @@
     "lid": "LDpOJ000",
     "name": "rough",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "rough.png"
@@ -1005,8 +929,6 @@
     "lid": "wS-60300",
     "name": "wood",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "wood.png"

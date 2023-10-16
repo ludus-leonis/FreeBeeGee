@@ -6,7 +6,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Notable changes
 
-* TBD
+* added piece depth / customizable shadows
 
 ### Other changes
 

@@ -673,7 +673,7 @@ class FreeBeeGeeAPI
             $library->$type = [];
             $lastAsset = null;
             foreach (glob($roomFolder . 'assets/' . $type . '/*') as $filename) {
-                $asset = FreeBeeGeeAPI::fileToAsset(basename($filename));
+                $asset = FreeBeeGeeAPI::fileToAsset(basename($filename), $type);
                 $mediaBase = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x' . $asset->s;
 
                 if (
@@ -684,7 +684,7 @@ class FreeBeeGeeAPI
                 ) {
                     // this is a new asset. write out the old.
                     if ($lastAsset !== null) {
-                        array_push($library->$type, $lastAsset);
+                        array_push($library->$type, $this->cleanupAsset($lastAsset));
                     }
                     $lastAsset = (object) [
                         'id' => FreeBeeGeeAPI::generateAssetId($type, $asset->name, $asset->w, $asset->h), // 32bit safe
@@ -693,6 +693,7 @@ class FreeBeeGeeAPI
                         'type' => $type,
                         'w' => $asset->w,
                         'h' => $asset->h,
+                        'd' => $asset->d,
                         'bg' => $asset->bg,
                         'media' => []
                     ];
@@ -711,7 +712,7 @@ class FreeBeeGeeAPI
                 }
             }
             if ($lastAsset !== null) { // don't forget the last one!
-                array_push($library->$type, $lastAsset);
+                array_push($library->$type, $this->cleanupAsset($lastAsset));
             }
         }
 
@@ -754,6 +755,24 @@ class FreeBeeGeeAPI
         $digests = json_decode(file_get_contents($folder . 'digest.json'));
         $digests->$filename = 'crc32:' . crc32($data);
         file_put_contents($folder . 'digest.json', json_encode($digests));
+    }
+
+    /**
+     * Remove all history files.
+     *
+     * @param object $meta Room's parsed `meta.json`.
+     */
+    private function clearHistory(
+        object $meta
+    ) {
+        for ($table = 1; $table <= 9; $table++) {
+            for ($i = 0; $i <= UNDO_LEVELS - 1; $i++) {
+                $filename = "$meta->folder/history/tables/$table.json.$i";
+                if (is_file($filename)) {
+                    @unlink($filename);
+                }
+            }
+        }
     }
 
     // --- validators ----------------------------------------------------------
@@ -1539,6 +1558,57 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Cleanup assets by removing optional properties that contain default
+     * values and dropping unknown properties.
+     *
+     * @param object $asset Asset to cleanup
+     * @return object New, cleaned asset.
+     */
+    public function cleanupAsset(
+        object $asset
+    ): object {
+        $out = new \stdClass();
+
+        // remove unnecessary properties
+        foreach ($asset as $property => $value) {
+            switch ($property) {
+                case 'id':
+                case 'lid':
+                case 'name':
+                case 'type':
+                case 'bg':
+                case 'tx':
+                case 'media':
+                case 'mask':
+                case 'base':
+                    $out->$property = $value;
+                    break;
+                case 'w':
+                    if ($value !== 1) {
+                        $out->$property = $value;
+                    }
+                    break;
+                case 'h':
+                    if ($value !== $asset->w) {
+                        $out->$property = $value;
+                    }
+                    break;
+                case 'd':
+                    if ($asset->type === 'tile' || $asset->type === 'token' || $asset->type === 'other') {
+                        if ($value !== 2) {
+                            $out->$property = $value;
+                        }
+                    } elseif ($value !== 0) {
+                        $out->$property = $value;
+                    }
+                    break;
+            }
+        }
+
+        return $out;
+    }
+
+    /**
      * Parse incoming JSON for (new) assets.
      *
      * @param object $incoming Parsed asset from client.
@@ -1547,7 +1617,7 @@ class FreeBeeGeeAPI
      */
     private function validateAsset(
         object $incoming,
-        array $mandatory = ['name', 'format', 'type', 'w', 'h', 'base64', 'bg']
+        array $mandatory = ['name', 'format', 'type', 'w', 'h', 'd', 'base64', 'bg']
     ): object {
         $validated = new \stdClass();
 
@@ -1576,6 +1646,9 @@ class FreeBeeGeeAPI
                     break;
                 case 'h':
                     $validated->h = $this->api->assertInteger('h', $value, 1, 32);
+                    break;
+                case 'd':
+                    $validated->d = $this->api->assertInteger('d', $value, 0, 9);
                     break;
                 case 'base64':
                     $validated->base64 = $this->api->assertBase64('base64', $value, ASSET_SIZE_MAX);
@@ -2480,8 +2553,13 @@ class FreeBeeGeeAPI
         }
 
         // determine asset path elements
-        $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1.' .
-            str_replace('#', '', $asset->bg);
+        $filename = $asset->name . '.' . $asset->w . 'x' . $asset->h . 'x1';
+        if ($asset->type === 'tile' || $asset->type === 'token' || $asset->type === 'other') {
+            $filename .= $asset->d === 2 ? '.' : "x{$asset->d}.";
+        } else {
+            $filename .= $asset->d === 0 ? '.' : "x{$asset->d}.";
+        }
+        $filename .= str_replace('#', '', $asset->bg);
         if ($asset->tx ?? null) {
             $filename .= '.' . $asset->tx;
         }
@@ -2496,10 +2574,17 @@ class FreeBeeGeeAPI
         $room->library = $this->generateLibrary($meta->name);
         $this->writeAsJSONAndDigest($meta->folder, 'room.json', $room);
 
-        // return asset (without large blob)
         $this->api->unlockLock($lock);
-        unset($asset->base64);
-        $this->api->sendReply(201, json_encode($asset));
+
+        // return new asset (lookup actual object in room)
+        $newAsset = $this->findAsset($meta, FreeBeeGeeAPI::generateAssetId(
+            $asset->type,
+            $asset->name,
+            $asset->w,
+            $asset->h
+        ));
+
+        $this->api->sendReply(201, json_encode($newAsset));
     }
 
 
@@ -2527,8 +2612,8 @@ class FreeBeeGeeAPI
     /**
      * Update an asset in the filesystem.
      *
-     * Will update the library new asset information. Will also edit all table.json's
-     * if the asset edit changed the (derived) asset ID.
+     * Will update the library by renaming the media file. Will also edit all
+     * table.json's if the asset edit changed the (derived) asset ID.
      *
      * @param object $meta Room's parsed `meta.json`.
      * @param object $asset The parsed & validated asset to update.
@@ -2546,8 +2631,9 @@ class FreeBeeGeeAPI
 
             $folder = "$meta->folder/assets/$toUpdate->type";
             $toUpdate->name = $patch->name ?? $toUpdate->name;
+            $toUpdate->h = $patch->h ?? $toUpdate->h ?? $toUpdate->w ?? 1;
             $toUpdate->w = $patch->w ?? $toUpdate->w ?? 1;
-            $toUpdate->h = $patch->h ?? $toUpdate->h ?? 1;
+            $toUpdate->d = $patch->d ?? $toUpdate->d ?? null;
             $toUpdate->_hasBase = $toUpdate->base ?? false;
             $toUpdate->_hasMask = $toUpdate->mask ?? false;
             $toUpdate->_sMax = sizeof($toUpdate->media);
@@ -2618,11 +2704,13 @@ class FreeBeeGeeAPI
                     foreach ($table as $piece) {
                         if (property_exists($piece, 'a') && $piece->a === $patch->id) {
                             $piece->a = $toUpdate->_id;
+                            $piece->id = FreeBeeGeeAPI::generateId(); // change ID to force re-render
                         }
                     }
-                    file_put_contents($tablefile, json_encode($table));
+                    $this->writeAsJSONAndDigest($meta->folder, "tables/$i.json", $table);
                 }
             }
+            $this->clearHistory($meta);
 
             // regenerate library JSON
             $room->library = $this->generateLibrary($meta->name);
@@ -2642,24 +2730,46 @@ class FreeBeeGeeAPI
      * Honors all the rules for padding digits and/or omittting default values.
      */
     private function getAssetFilename(
-        string $folder,
+        string $type,
         object $patch,
         string $s,
         string $padding,
         string $ext
     ): string {
         $sPad = str_pad("{$s}", strlen("{$patch->_sMax}"), $padding, STR_PAD_LEFT);
+
+        // base filename and size
         $file = "{$patch->name}.{$patch->w}x{$patch->h}";
-        if ($patch->_sMax > 1 || $patch->_hasBase || $patch->_hasMask) {
+
+        // depth
+        $depth = '';
+        if ($patch->type === 'tile' || $patch->type === 'token' || $patch->type === 'other') {
+            if ($patch->d !== null && $patch->d !== 2) {
+                $depth = "x{$patch->d}";
+            }
+        } else {
+            if ($patch->d !== null && $patch->d !== 0) {
+                $depth = "x{$patch->d}";
+            }
+        }
+
+        // sides
+        if ($patch->_sMax > 1 || $patch->_hasBase || $patch->_hasMask || $depth !== '') {
             $file .= "x{$sPad}";
         }
+        $file .= $depth;
+
+        // color
         if ($patch->_tx || ($patch->_bg !== '0' && $patch->_bg !== '808080')) {
             $file .= ".{$patch->_bg}";
         }
+
+        // material
         if ($patch->_tx) {
             $file .= ".{$patch->_tx}";
         }
-        return "{$folder}/{$file}.{$ext}";
+
+        return "{$type}/{$file}.{$ext}";
     }
 
     /**
@@ -2885,28 +2995,44 @@ class FreeBeeGeeAPI
      * properties into JSON metadata.
      *
      * @param string $filename Filename to parse
+     * @param string $type Asset type for default shadow.
      * @return object Asset object (for JSON conversion).
      */
     public static function fileToAsset(
-        $filename
+        string $filename,
+        string $type
     ) {
         $asset = new \stdClass();
         $asset->media = [$filename];
         $asset->bg = '#808080';
 
         if (
-            preg_match(
-                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
+            preg_match( // upload.test.3x2x1x0.808080.wood.jpg
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)x([0-9]+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
                 $filename,
                 $matches
             )
         ) {
             $found = true;
         } elseif (
-            preg_match('/^(.*)\.([0-9]+)x([0-9]+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/', $filename, $matches)
+            preg_match( // upload.test.3x2x1.808080.wood.jpg
+                '/^(.*)\.([0-9]+)x([0-9]+)x([0-9]+|X+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
+                $filename,
+                $matches
+            )
+        ) {
+            $found = true;
+            array_splice($matches, 5, 0, '?'); // insert depth indicator
+        } elseif (
+            preg_match( // upload.test.3x2.808080.wood.jpg
+                '/^(.*)\.([0-9]+)x([0-9]+)(\.[^\.-]+)?([.-][^\.-]+)?\.[a-zA-Z0-9]+$/',
+                $filename,
+                $matches
+            )
         ) {
             $found = true;
             array_splice($matches, 4, 0, '1'); // insert side-1 indicator
+            array_splice($matches, 5, 0, '?'); // insert depth indicator
         } else {
             $found = false;
         }
@@ -2916,25 +3042,28 @@ class FreeBeeGeeAPI
             $asset->w = (int)$matches[2];
             $asset->h = (int)$matches[3];
             $asset->s = $matches[4];
+            if ($matches[5] !== '?') {
+                $asset->d = (int)$matches[5];
+            }
 
-            if (sizeof($matches) >= 6) {
-                switch ($matches[5]) {
+            if (sizeof($matches) >= 7) {
+                switch ($matches[6]) {
                     case '.transparent':
-                        $asset->bg = substr($matches[5], 1);
+                        $asset->bg = substr($matches[6], 1);
                         break;
                     default:
-                        if (preg_match('/^\.[a-fA-F0-9]{6}$/', $matches[5])) {
-                            $asset->bg = '#' . substr($matches[5], 1);
-                        } elseif (preg_match('/^\.[0-9][0-9]?$/', $matches[5])) {
-                            $asset->bg = substr($matches[5], 1);
+                        if (preg_match('/^\.[a-fA-F0-9]{6}$/', $matches[6])) {
+                            $asset->bg = '#' . substr($matches[6], 1);
+                        } elseif (preg_match('/^\.[0-9][0-9]?$/', $matches[6])) {
+                            $asset->bg = substr($matches[6], 1);
                             $asset->bg = $asset->bg;
                         }
                 }
             }
 
-            if (sizeof($matches) >= 7) {
-                if (preg_match(REGEXP_MATERIAL, substr($matches[6], 1))) {
-                    $asset->tx = substr($matches[6], 1);
+            if (sizeof($matches) >= 8) {
+                if (preg_match(REGEXP_MATERIAL, substr($matches[7], 1))) {
+                    $asset->tx = substr($matches[7], 1);
                 }
             }
         } elseif (
@@ -2945,6 +3074,21 @@ class FreeBeeGeeAPI
             $asset->w = 1;
             $asset->h = 1;
             $asset->s = 1;
+        }
+
+        if (!property_exists($asset, 'd')) {
+            switch ($type) {
+                case 'tile':
+                case 'token':
+                case 'other': // dice
+                    $asset->d = 2;
+                    break;
+                case 'overlay':
+                case 'badge':
+                case 'material':
+                default:
+                    $asset->d = 0;
+            }
         }
 
         return $asset;

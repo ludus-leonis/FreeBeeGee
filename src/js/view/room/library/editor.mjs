@@ -89,6 +89,12 @@ import {
   modalDelete
 } from './modal/delete.mjs'
 
+// --- events ------------------------------------------------------------------
+
+registerObserver('LibraryManager', HOOK_LIBRARY_EDIT, () => selection && modalEdit(selection))
+registerObserver('LibraryManager', HOOK_LIBRARY_RELOAD, () => showSpinner())
+registerObserver('LibraryManager', HOOK_LIBRARY_SELECT, id => { selection = id })
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -129,10 +135,6 @@ export function modalLibraryManager (xy) {
 
 let lastHash = null
 let selection = null
-
-registerObserver('LibraryManager', HOOK_LIBRARY_EDIT, () => selection && modalEdit(selection))
-registerObserver('LibraryManager', HOOK_LIBRARY_RELOAD, () => showSpinner())
-registerObserver('LibraryManager', HOOK_LIBRARY_SELECT, id => { selection = id })
 
 /**
  * Use table (piece) selection to pre-select an asset (if any).
@@ -237,7 +239,7 @@ function show (asset) {
     <table class="table-key-value">
       <tbody>
         <tr>
-          <td rowspan="4" class="is-preview">
+          <td rowspan="5" class="is-preview">
           </td>
           <th>ID</th>
           <td><code>${asset.id}</code></td>
@@ -249,6 +251,10 @@ function show (asset) {
         <tr>
           <th>Material</th>
           <td>${prettyName(asset.tx ?? 'none')}</td>
+        </tr>
+        <tr>
+          <th>Shadow</th>
+          <td>${asset.d}</td>
         </tr>
         <tr>
           <th>Actions</th>

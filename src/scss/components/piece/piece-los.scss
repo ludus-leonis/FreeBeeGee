@@ -27,14 +27,3 @@
   background: none;
   pointer-events: none;
 }
-
-// --- quality settings --------------------------------------------------------
-
-.is-quality-medium .piece-los {
-  filter: drop-shadow($shadow-flat);
-}
-
-.is-quality-high .piece-los,
-.is-quality-ultra .piece-los {
-  filter: drop-shadow($shadow);
-}

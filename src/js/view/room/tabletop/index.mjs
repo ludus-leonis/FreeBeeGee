@@ -607,79 +607,6 @@ export function getAllPiecesIds () {
 }
 
 /**
- * Convert a piece data object to a DOM node.
- *
- * @param {object} piece Full piece data object.
- * @returns {_} Converted FreeDOM node (not added to DOM yet).
- */
-export function pieceToNode (piece) {
-  let node
-
-  // create the dom node
-  const asset = findAsset(piece.a)
-  if (asset === null) {
-    switch (piece.a) {
-      case ID.POINTER:
-        node = createPointerPiece(piece.l)
-        break
-      case ID.LOS:
-        node = createLosPiece(piece.x, piece.y, piece.w, piece.h)
-        break
-      default:
-        node = createInvalidPiece(piece.l)
-    }
-  } else {
-    const uriSide = getAssetURL(asset, piece.s)
-    if (asset.base) { // layered asset
-      const uriBase = getAssetURL(asset, -1)
-      node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
-        '--fbg-image': url(uriBase),
-        '--fbg-decal': url(uriSide)
-      })
-    } else { // regular asset
-      node = _(`.piece.piece-${asset.type}`).create().css({
-        '--fbg-image': url(uriSide)
-      })
-    }
-    if (asset.tx) {
-      node.css({
-        '--fbg-material': url(getMaterialMedia(asset.tx))
-      })
-    } else {
-      node.remove('--fbg-material')
-    }
-    if (asset.mask) {
-      node.add('.has-mask')
-      const inner = _('.masked').create().css({ '--fbg-mask': url(getAssetURL(asset, -2)) })
-      node.add(inner)
-    }
-
-    if (asset.type !== LAYER_OVERLAY && asset.type !== LAYER_OTHER) {
-      if (!asset.bg.match(/^[0-9][0-9]?$/)) {
-        // color information is html color or 'transparent' -> apply
-        node.css({ '--fbg-color': asset.bg })
-      }
-    }
-
-    // backsides
-    if (piece.l === LAYER_TOKEN && piece._meta.sidesExtra > 0) {
-      if (piece.s >= piece._meta.sides) {
-        node.add('.is-backside')
-      }
-    }
-
-    if (piece._meta.hasHighlight) {
-      node.add('.has-highlight')
-    }
-  }
-
-  // set meta-classes on node
-  node.id = piece.id
-
-  return node
-}
-
-/**
  * Convert an asset data object to a DOM node. Usually for library previews.
  *
  * @param {object} asset Asset object.
@@ -707,27 +634,6 @@ export function assetToNode (asset, side = 0) {
       node.css({ '--fbg-color': colors[piece.c[0] - 1].value })
     }
   }
-
-  return node
-}
-
-/**
- * Convert a sticky note to a DOM node.
- *
- * @param {object} note Full note data object.
- * @returns {_} Converted FreeDOM node (not added to DOM yet).
- */
-export function noteToNode (note) {
-  const node = _('.piece.piece-note').create()
-
-  if (note.f & FLAGS.NOTE_TOPLEFT) {
-    node.add('.is-topleft')
-  } else {
-    node.remove('.is-topleft')
-  }
-
-  node.id = note.id
-  node.node().innerHTML = markdown(note.t?.[0])
 
   return node
 }
@@ -947,7 +853,7 @@ export function createLosPiece (x, y, width, height) {
   svg.setAttribute('fill', 'none')
   svg.setAttribute('viewBox', `0 0 ${Math.abs(width) + padding * 2} ${Math.abs(height) + padding * 2}`)
   svg.setAttribute('stroke', 'black')
-  svg.classList.add('piece', 'piece-other', 'piece-los')
+  svg.classList.add('piece', 'piece-other', 'piece-los', 'is-d-1')
 
   // base line
   const base = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -1078,6 +984,105 @@ export function zoom (direction) {
 }
 
 // --- internal ----------------------------------------------------------------
+
+/**
+ * Convert a piece data object to a DOM node.
+ *
+ * @param {object} piece Full piece data object.
+ * @returns {_} Converted FreeDOM node (not added to DOM yet).
+ */
+function pieceToNode (piece) {
+  let node
+
+  // create the dom node
+  const asset = findAsset(piece.a)
+  if (asset === null) {
+    switch (piece.a) {
+      case ID.POINTER:
+        node = createPointerPiece(piece.l)
+        break
+      case ID.LOS:
+        node = createLosPiece(piece.x, piece.y, piece.w, piece.h)
+        break
+      default:
+        node = createInvalidPiece(piece.l)
+    }
+  } else {
+    const uriSide = getAssetURL(asset, piece.s)
+    if (asset.base) { // layered asset
+      const uriBase = getAssetURL(asset, -1)
+      node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
+        '--fbg-image': url(uriBase),
+        '--fbg-decal': url(uriSide)
+      })
+    } else { // regular asset
+      node = _(`.piece.piece-${asset.type}`).create().css({
+        '--fbg-image': url(uriSide)
+      })
+    }
+
+    if (asset.tx) {
+      node.css({
+        '--fbg-material': url(getMaterialMedia(asset.tx))
+      })
+    } else {
+      node.remove('--fbg-material')
+    }
+    if (asset.mask) {
+      node.add('.has-mask')
+      const inner = _('.masked').create().css({ '--fbg-mask': url(getAssetURL(asset, -2)) })
+      node.add(inner)
+    }
+
+    if (asset.d && asset.d >= 1 && asset.d <= 9) {
+      node.add(`.is-d-${asset.d}`)
+    }
+
+    if (asset.type !== LAYER_OVERLAY && asset.type !== LAYER_OTHER) {
+      if (!asset.bg.match(/^[0-9][0-9]?$/)) {
+        // color information is html color or 'transparent' -> apply
+        node.css({ '--fbg-color': asset.bg })
+      }
+    }
+
+    // backsides
+    if (piece.l === LAYER_TOKEN && piece._meta.sidesExtra > 0) {
+      if (piece.s >= piece._meta.sides) {
+        node.add('.is-backside')
+      }
+    }
+
+    if (piece._meta.hasHighlight) {
+      node.add('.has-highlight')
+    }
+  }
+
+  // set meta-classes on node
+  node.id = piece.id
+
+  return node
+}
+
+/**
+ * Convert a sticky note to a DOM node.
+ *
+ * @param {object} note Full note data object.
+ * @returns {_} Converted FreeDOM node (not added to DOM yet).
+ */
+function noteToNode (note) {
+  const node = _('.piece.piece-note').create()
+
+  if (note.f & FLAGS.NOTE_TOPLEFT) {
+    node.add('.is-topleft')
+  } else {
+    node.remove('.is-topleft')
+  }
+
+  node.id = note.id
+  node.node().innerHTML = markdown(note.t?.[0])
+
+  return node
+}
 
 /**
  * Clone piece(s) to a given position.

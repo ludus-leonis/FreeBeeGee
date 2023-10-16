@@ -54,6 +54,9 @@ Optional fields:
 `h`
 : The default height for a *piece* using this *asset*, in grid spaces. Defaults to `w`.
 
+`d`
+: The depth for a *piece* using this *asset*, used to determine its shadow size. Defaults to `2` for tiles and tokens, and to `0` otherwise.
+
 `bg`
 : The background color of the *asset*. Defaults to '#808080'. See *Media filenames* below for possible values.
 

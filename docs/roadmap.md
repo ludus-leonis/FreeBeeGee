@@ -4,7 +4,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.23.0
 
-* [ ] token/tile height for more/less shadow
+* [X] asset depth setting for more/less shadow
 * [ ] exclude protected pieces from operation, instead of denying operation
 * [ ] moves selection via cursor keys
 * [ ] tweak minor grid visibility
@@ -12,12 +12,13 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] autopopulate empty data dir (for docker volumes)
 * [ ] snapshot download for demo mode
 * [ ] engine: grid-on-tile flag major/minor
+* [ ] zoom-to-cursor
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] table.json caching in demo mode
+    * [X] table.json caching in demo mode
     * [ ] dragging multi-selected hex tokens does not always snap correctly (hex)
-    * [ ] fix sass import warning
+    * [X] fix sass import warning
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -29,7 +30,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ### rather sooner (before v1)
 
 * [ ] doubleclick opens edit modal
-* [ ] refactor: use events more
 * [ ] plugin-hook
 * [ ] library editor: replace media/side
 * [ ] ui: decks/stacks
@@ -56,6 +56,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] API: check sides correspond to asset
 * [ ] API: hide .../data/... from URLs (via .htaccess)
 * [ ] API: obfuscate/hash room name
+* [ ] refactor: use events more
 * [ ] docs: template-template
 * [ ] docs: how-to make snapshot `.zip`s
 * [ ] repo: generate average piece color

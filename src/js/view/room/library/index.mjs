@@ -382,6 +382,7 @@ function modalUpload () {
       type,
       w: Number(_('#upload-w').value),
       h: Number(_('#upload-h').value),
+      d: ['tile', 'token'].includes(type) ? 2 : 0, // default depth
       base64: _('.is-preview-upload .piece').node().style.backgroundImage
         .replace(/^.*,/, '')
         .replace(/".*/, '')

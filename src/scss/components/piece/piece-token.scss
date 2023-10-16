@@ -130,15 +130,14 @@
 
 // --- quality settings --------------------------------------------------------
 
-.is-quality-medium .piece-token {
-  filter: drop-shadow($shadow-flat);
-}
+// .is-quality-medium .piece-token {
+//   filter: drop-shadow($shadow-flat);
+// }
 
 .is-quality-high .piece-token,
 .is-quality-ultra .piece-token {
   background-image: var(--fbg-material), var(--fbg-image);
   background-size: zoom(256px), cover;
-  filter: drop-shadow($shadow);
 
   @each $id in $random-ids {
     $i: index($random-ids, $id);

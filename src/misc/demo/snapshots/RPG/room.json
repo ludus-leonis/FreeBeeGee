@@ -1,10 +1,10 @@
 {
- "id": "bFhWhRHp",
+ "id": "Me4FT7Tf",
  "name": "demoroomrpg",
  "engine": "2.5.1",
  "setup": {
   "engine": "2.5.0",
-  "version": "0.22.0",
+  "version": "0.23.0-dev",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 48,
@@ -125,8 +125,6 @@
     "lid": "T28mo300",
     "name": "_.area",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [],
     "mask": "_.area.1x1xX.1.svg"
@@ -137,7 +135,6 @@
     "name": "_.area",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.area.2x2xX.1.svg"
@@ -148,7 +145,6 @@
     "name": "_.area",
     "type": "overlay",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.area.3x3xX.1.svg"
@@ -159,7 +155,6 @@
     "name": "_.area",
     "type": "overlay",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.area.4x4xX.1.svg"
@@ -170,7 +165,6 @@
     "name": "_.area",
     "type": "overlay",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.area.5x5xX.1.svg"
@@ -180,8 +174,6 @@
     "lid": "yk-7s000",
     "name": "_.circle",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [],
     "mask": "_.circle.1x1xX.1.svg"
@@ -192,7 +184,6 @@
     "name": "_.circle",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.circle.2x2xX.1.svg"
@@ -203,7 +194,6 @@
     "name": "_.circle",
     "type": "overlay",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.circle.3x3xX.1.svg"
@@ -214,7 +204,6 @@
     "name": "_.circle",
     "type": "overlay",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.circle.4x4xX.1.svg"
@@ -225,7 +214,6 @@
     "name": "_.circle",
     "type": "overlay",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.circle.5x5xX.1.svg"
@@ -235,8 +223,6 @@
     "lid": "LZCOB200",
     "name": "_.cubeLarge",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "_.cubeLarge.1x1x1.3.png"
@@ -248,8 +234,6 @@
     "lid": "dojMw300",
     "name": "_.cubeMedium",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "_.cubeMedium.1x1x1.3.png"
@@ -261,8 +245,6 @@
     "lid": "xwTgs300",
     "name": "_.cubeSmall",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "_.cubeSmall.1x1x1.3.png"
@@ -275,7 +257,6 @@
     "name": "_.pin",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "3",
     "media": [
      "_.pin.2x2x1.3.png"
@@ -287,8 +268,6 @@
     "lid": "zNVkI000",
     "name": "_.wall",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.wall.1x1x1.1.png"
@@ -300,8 +279,6 @@
     "lid": "Lv6KO300",
     "name": "_.zone",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [],
     "mask": "_.zone.1x1xX.1.svg"
@@ -312,7 +289,6 @@
     "name": "_.zone",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.zone.2x2xX.1.svg"
@@ -323,7 +299,6 @@
     "name": "_.zone",
     "type": "overlay",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.zone.3x3xX.1.svg"
@@ -334,7 +309,6 @@
     "name": "_.zone",
     "type": "overlay",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.zone.4x4xX.1.svg"
@@ -345,10 +319,43 @@
     "name": "_.zone",
     "type": "overlay",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.zone.5x5xX.1.svg"
+   },
+   {
+    "id": "FT2sb100",
+    "lid": "uacnv300",
+    "name": "altar",
+    "type": "overlay",
+    "w": 3,
+    "h": 2,
+    "bg": "transparent",
+    "media": [
+     "altar.3x2x1.transparent.png"
+    ]
+   },
+   {
+    "id": "PO-IW100",
+    "lid": "ud6Fg000",
+    "name": "chest",
+    "type": "overlay",
+    "bg": "transparent",
+    "media": [
+     "chest.1x1x1.transparent.png"
+    ]
+   },
+   {
+    "id": "sCd_x300",
+    "lid": "HWzN0000",
+    "name": "desk",
+    "type": "overlay",
+    "w": 3,
+    "h": 2,
+    "bg": "transparent",
+    "media": [
+     "desk.3x2x1.transparent.png"
+    ]
    },
    {
     "id": "sDTD4300",
@@ -366,12 +373,35 @@
     ]
    },
    {
+    "id": "VNsow100",
+    "lid": "OcMcr100",
+    "name": "fireplace",
+    "type": "overlay",
+    "w": 3,
+    "h": 2,
+    "bg": "transparent",
+    "media": [
+     "fireplace.3x2x1.transparent.png"
+    ]
+   },
+   {
+    "id": "ip9JQ000",
+    "lid": "O4Mq9000",
+    "name": "rack",
+    "type": "overlay",
+    "w": 3,
+    "h": 1,
+    "bg": "transparent",
+    "media": [
+     "rack.3x1x1.transparent.png"
+    ]
+   },
+   {
     "id": "dybjY000",
     "lid": "qH_mc000",
     "name": "rune",
     "type": "overlay",
     "w": 2,
-    "h": 2,
     "bg": "#808080",
     "media": [
      "rune.2x2x1.png",
@@ -382,12 +412,80 @@
     ]
    },
    {
+    "id": "HAuUS200",
+    "lid": "gtrez200",
+    "name": "sarcophagus",
+    "type": "overlay",
+    "w": 2,
+    "h": 3,
+    "bg": "transparent",
+    "media": [
+     "sarcophagus.2x3x1.transparent.png"
+    ]
+   },
+   {
+    "id": "UUFkX000",
+    "lid": "JF5hh200",
+    "name": "shelf",
+    "type": "overlay",
+    "w": 3,
+    "h": 1,
+    "bg": "transparent",
+    "media": [
+     "shelf.3x1x1.transparent.png"
+    ]
+   },
+   {
+    "id": "y33MC200",
+    "lid": "t2-aG300",
+    "name": "shelf.book",
+    "type": "overlay",
+    "w": 3,
+    "h": 1,
+    "bg": "transparent",
+    "media": [
+     "shelf.book.3x1x1.transparent.png"
+    ]
+   },
+   {
+    "id": "aQHss100",
+    "lid": "BSqEj000",
+    "name": "table",
+    "type": "overlay",
+    "w": 3,
+    "h": 2,
+    "bg": "transparent",
+    "media": [
+     "table.3x2x1.transparent.png"
+    ]
+   },
+   {
+    "id": "dbqUV200",
+    "lid": "xaQm3200",
+    "name": "throne",
+    "type": "overlay",
+    "bg": "transparent",
+    "media": [
+     "throne.1x1x1.transparent.png"
+    ]
+   },
+   {
+    "id": "r1KCj300",
+    "lid": "NEEJR000",
+    "name": "torture",
+    "type": "overlay",
+    "w": 3,
+    "h": 2,
+    "bg": "transparent",
+    "media": [
+     "torture.3x2x1.transparent.png"
+    ]
+   },
+   {
     "id": "B4UoL100",
     "lid": "YaEWw300",
     "name": "trapdoor",
     "type": "overlay",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "trapdoor.1x1x1.png"
@@ -401,7 +499,6 @@
     "name": "_.glassDark",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "transparent",
     "media": [
      "_.glassDark.2x2x1.transparent.png"
@@ -413,34 +510,9 @@
     "name": "_.glassLight",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "transparent",
     "media": [
      "_.glassLight.2x2x1.transparent.png"
-    ]
-   },
-   {
-    "id": "qMPD4300",
-    "lid": "EsBXT100",
-    "name": "altar",
-    "type": "tile",
-    "w": 3,
-    "h": 2,
-    "bg": "transparent",
-    "media": [
-     "altar.3x2x1.transparent.png"
-    ]
-   },
-   {
-    "id": "sVipP300",
-    "lid": "krH1S200",
-    "name": "chest",
-    "type": "tile",
-    "w": 1,
-    "h": 1,
-    "bg": "transparent",
-    "media": [
-     "chest.1x1x1.transparent.png"
     ]
    },
    {
@@ -448,8 +520,6 @@
     "lid": "CIKso100",
     "name": "corridor",
     "type": "tile",
-    "w": 1,
-    "h": 1,
     "bg": "transparent",
     "media": [
      "corridor.1x1x1.transparent.png"
@@ -473,7 +543,6 @@
     "name": "corridor.2x2",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "#8E9088",
     "media": [
      "corridor.2x2.2x2x1.8E9088.paper.jpg"
@@ -520,54 +589,16 @@
     "tx": "paper"
    },
    {
-    "id": "Ak50n100",
-    "lid": "vPsi9300",
-    "name": "desk",
-    "type": "tile",
-    "w": 3,
-    "h": 2,
-    "bg": "transparent",
-    "media": [
-     "desk.3x2x1.transparent.png"
-    ]
-   },
-   {
-    "id": "gjIF5200",
-    "lid": "WaL_G300",
-    "name": "fireplace",
-    "type": "tile",
-    "w": 3,
-    "h": 2,
-    "bg": "transparent",
-    "media": [
-     "fireplace.3x2x1.transparent.png"
-    ]
-   },
-   {
     "id": "TUANT000",
     "lid": "u_fQ7000",
     "name": "pit.1x1",
     "type": "tile",
-    "w": 1,
-    "h": 1,
     "bg": "#53594F",
     "media": [
      "pit.1x1.1x1x1.53594F.paper.jpg",
      "pit.1x1.1x1x2.525651.paper.jpg"
     ],
     "tx": "paper"
-   },
-   {
-    "id": "SF1h3200",
-    "lid": "ibeV0300",
-    "name": "rack",
-    "type": "tile",
-    "w": 3,
-    "h": 1,
-    "bg": "transparent",
-    "media": [
-     "rack.3x1x1.transparent.png"
-    ]
    },
    {
     "id": "tshHb000",
@@ -588,8 +619,6 @@
     "lid": "Nlbib100",
     "name": "room.1x1",
     "type": "tile",
-    "w": 1,
-    "h": 1,
     "bg": "#939782",
     "media": [
      "room.1x1.1x1x1.939782.paper.jpg"
@@ -602,7 +631,6 @@
     "name": "room.2x2",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "#73786A",
     "media": [
      "room.2x2.2x2x1.73786A.paper.jpg",
@@ -658,7 +686,6 @@
     "name": "room.4x4",
     "type": "tile",
     "w": 4,
-    "h": 4,
     "bg": "#808674",
     "media": [
      "room.4x4.4x4x1.808674.paper.jpg",
@@ -686,7 +713,6 @@
     "name": "room.5x5",
     "type": "tile",
     "w": 5,
-    "h": 5,
     "bg": "#848977",
     "media": [
      "room.5x5.5x5x1.848977.paper.jpg",
@@ -714,7 +740,6 @@
     "name": "room.8x8",
     "type": "tile",
     "w": 8,
-    "h": 8,
     "bg": "#8F957F",
     "media": [
      "room.8x8.8x8x1.8F957F.paper.jpg"
@@ -726,8 +751,6 @@
     "lid": "LJoxG000",
     "name": "rubble.1x1",
     "type": "tile",
-    "w": 1,
-    "h": 1,
     "bg": "#3A3C39",
     "media": [
      "rubble.1x1.1x1x1.3A3C39.paper.jpg"
@@ -748,24 +771,10 @@
     "tx": "paper"
    },
    {
-    "id": "Tzva7000",
-    "lid": "JkOPV000",
-    "name": "sarcophagus",
-    "type": "tile",
-    "w": 2,
-    "h": 3,
-    "bg": "transparent",
-    "media": [
-     "sarcophagus.2x3x1.transparent.png"
-    ]
-   },
-   {
     "id": "pYyFx300",
     "lid": "YTmPG000",
     "name": "secret",
     "type": "tile",
-    "w": 1,
-    "h": 1,
     "bg": "#767D6D",
     "media": [
      "secret.1x1x1.767D6D.paper.jpg"
@@ -773,77 +782,16 @@
     "tx": "paper"
    },
    {
-    "id": "bLswO200",
-    "lid": "TXKVR000",
-    "name": "shelf",
-    "type": "tile",
-    "w": 3,
-    "h": 1,
-    "bg": "transparent",
-    "media": [
-     "shelf.3x1x1.transparent.png"
-    ]
-   },
-   {
-    "id": "MFpjW200",
-    "lid": "WuoZ8000",
-    "name": "shelf.book",
-    "type": "tile",
-    "w": 3,
-    "h": 1,
-    "bg": "transparent",
-    "media": [
-     "shelf.book.3x1x1.transparent.png"
-    ]
-   },
-   {
     "id": "qWBP5300",
     "lid": "F-Tl9100",
     "name": "stairs.2x2",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "#686E60",
     "media": [
      "stairs.2x2.2x2x1.686E60.paper.jpg"
     ],
     "tx": "paper"
-   },
-   {
-    "id": "RXqDj300",
-    "lid": "zxL2P200",
-    "name": "table",
-    "type": "tile",
-    "w": 3,
-    "h": 2,
-    "bg": "transparent",
-    "media": [
-     "table.3x2x1.transparent.png"
-    ]
-   },
-   {
-    "id": "x4ApO100",
-    "lid": "kUg_t200",
-    "name": "throne",
-    "type": "tile",
-    "w": 1,
-    "h": 1,
-    "bg": "transparent",
-    "media": [
-     "throne.1x1x1.transparent.png"
-    ]
-   },
-   {
-    "id": "hn5cP100",
-    "lid": "s8osj300",
-    "name": "torture",
-    "type": "tile",
-    "w": 3,
-    "h": 2,
-    "bg": "transparent",
-    "media": [
-     "torture.3x2x1.transparent.png"
-    ]
    }
   ],
   "token": [
@@ -852,8 +800,6 @@
     "lid": "wAksS100",
     "name": "_.bead",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.bead.1x1x1.1.png"
@@ -864,8 +810,6 @@
     "lid": "mAa-Q300",
     "name": "_.letter",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.letter.1x1x01.1.wood.svg",
@@ -902,8 +846,6 @@
     "lid": "sD_SB100",
     "name": "_.number",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.number.1x1x01.1.wood.svg",
@@ -924,8 +866,6 @@
     "lid": "oZX62300",
     "name": "_.plain",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "_.plain.1x1x1.0.wood.png"
@@ -937,8 +877,6 @@
     "lid": "Hn18v200",
     "name": "_.symbol",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.symbol.1x1x1.1.wood.svg",
@@ -952,8 +890,6 @@
     "lid": "knW5n200",
     "name": "aasimar",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "aasimar.1x1.5.wood.svg"
@@ -966,7 +902,6 @@
     "name": "aboleth",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "aboleth.3x3.9.wood.svg"
@@ -978,8 +913,6 @@
     "lid": "G1BLm000",
     "name": "alien",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "alien.1x1.1.wood.svg"
@@ -992,7 +925,6 @@
     "name": "angel",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "angel.2x2.8.wood.svg"
@@ -1004,8 +936,6 @@
     "lid": "Rby97100",
     "name": "animatedObject",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "animatedObject.1x1.10.wood.svg"
@@ -1018,7 +948,6 @@
     "name": "ankheg",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "ankheg.2x2.4.wood.svg"
@@ -1030,8 +959,6 @@
     "lid": "RUH9J100",
     "name": "ant",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "ant.1x1.4.wood.svg"
@@ -1044,7 +971,6 @@
     "name": "ape.gorilla",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "0",
     "media": [
      "ape.gorilla.2x2.0.wood.svg"
@@ -1056,8 +982,6 @@
     "lid": "ezc1B100",
     "name": "archer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "archer.1x1.0.wood.svg"
@@ -1069,8 +993,6 @@
     "lid": "cayJn100",
     "name": "archon",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "archon.1x1.10.wood.svg"
@@ -1082,8 +1004,6 @@
     "lid": "zcBYq100",
     "name": "armadillo",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "armadillo.1x1.4.wood.svg"
@@ -1096,7 +1016,6 @@
     "name": "assassinVine",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "assassinVine.2x2.6.wood.svg"
@@ -1108,8 +1027,6 @@
     "lid": "NemOh300",
     "name": "azer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "azer.1x1.3.wood.svg"
@@ -1121,8 +1038,6 @@
     "lid": "F0Ze1000",
     "name": "bandit",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "bandit.1x1.0.wood.svg"
@@ -1134,8 +1049,6 @@
     "lid": "hNjjH100",
     "name": "barbarian",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "barbarian.1x1.0.wood.svg"
@@ -1147,8 +1060,6 @@
     "lid": "AppJ3200",
     "name": "barghest",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "barghest.1x1.0.wood.svg"
@@ -1160,8 +1071,6 @@
     "lid": "rpYEz100",
     "name": "basidirond",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "basidirond.1x1.6.wood.svg"
@@ -1173,8 +1082,6 @@
     "lid": "MUP8P000",
     "name": "basilisk",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "basilisk.1x1.10.wood.svg"
@@ -1186,8 +1093,6 @@
     "lid": "I0Zye200",
     "name": "bat",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "bat.1x1.1.wood.svg"
@@ -1200,7 +1105,6 @@
     "name": "bear.brown-",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "bear.brown-.2x2.4.wood.svg"
@@ -1212,8 +1116,6 @@
     "lid": "kB7qb300",
     "name": "bee",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "bee.1x1.5.wood.svg"
@@ -1225,8 +1127,6 @@
     "lid": "Sy8jH100",
     "name": "beetle.fire-",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "beetle.fire-.1x1.3.wood.svg"
@@ -1238,8 +1138,6 @@
     "lid": "Og3V-300",
     "name": "beetle.scarab",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "beetle.scarab.1x1.4.wood.svg"
@@ -1252,7 +1150,6 @@
     "name": "behir",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "behir.3x3.9.wood.svg"
@@ -1265,7 +1162,6 @@
     "name": "bison",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "bison.2x2.4.wood.svg"
@@ -1277,8 +1173,6 @@
     "lid": "a5YUo100",
     "name": "boar",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "boar.1x1.4.wood.svg"
@@ -1290,8 +1184,6 @@
     "lid": "ucmEe100",
     "name": "brute",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "brute.1x1.0.wood.svg"
@@ -1304,7 +1196,6 @@
     "name": "camel",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "5",
     "media": [
      "camel.2x2.5.wood.svg"
@@ -1316,8 +1207,6 @@
     "lid": "ThfXp200",
     "name": "cat",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "cat.1x1.0.wood.svg"
@@ -1329,8 +1218,6 @@
     "lid": "UVreJ300",
     "name": "cat.saber-toothed",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "cat.saber-toothed.1x1.5.wood.svg"
@@ -1342,8 +1229,6 @@
     "lid": "BGGnX000",
     "name": "caveman",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "caveman.1x1.0.wood.svg"
@@ -1356,7 +1241,6 @@
     "name": "centaur",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "centaur.2x2.4.wood.svg"
@@ -1368,8 +1252,6 @@
     "lid": "JuVpj000",
     "name": "centipede",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "centipede.1x1.6.wood.svg"
@@ -1382,7 +1264,6 @@
     "name": "chuul",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "chuul.2x2.4.wood.svg"
@@ -1395,7 +1276,6 @@
     "name": "cloaker",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "cloaker.2x2.10.wood.svg"
@@ -1407,8 +1287,6 @@
     "lid": "MWJkt300",
     "name": "clockwork",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "clockwork.1x1.5.wood.svg"
@@ -1420,8 +1298,6 @@
     "lid": "rZPZl200",
     "name": "cockatrice",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "cockatrice.1x1.4.wood.svg"
@@ -1433,8 +1309,6 @@
     "lid": "TU-KJ300",
     "name": "couatl",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "couatl.1x1.10.wood.svg"
@@ -1446,8 +1320,6 @@
     "lid": "Ue8td200",
     "name": "crab",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "crab.1x1.5.wood.svg"
@@ -1459,8 +1331,6 @@
     "lid": "GrhWz200",
     "name": "crawlingHand",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "crawlingHand.1x1.1.wood.svg"
@@ -1473,7 +1343,6 @@
     "name": "crocodile",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "crocodile.2x2.6.wood.svg"
@@ -1485,8 +1354,6 @@
     "lid": "hTrFn000",
     "name": "cultist",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "cultist.1x1.10.wood.svg"
@@ -1498,8 +1365,6 @@
     "lid": "x5Dmt000",
     "name": "darkmantle",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "darkmantle.1x1.1.wood.svg"
@@ -1511,8 +1376,6 @@
     "lid": "qhk79100",
     "name": "deathKnight",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "deathKnight.1x1.1.wood.svg"
@@ -1524,8 +1387,6 @@
     "lid": "NliC4100",
     "name": "deer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "deer.1x1.4.wood.svg"
@@ -1537,8 +1398,6 @@
     "lid": "EDC8-200",
     "name": "demilich",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "demilich.1x1.1.wood.svg"
@@ -1551,7 +1410,6 @@
     "name": "demon.bebilith",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "3",
     "media": [
      "demon.bebilith.3x3.3.wood.svg"
@@ -1563,8 +1421,6 @@
     "lid": "z9KaH200",
     "name": "demon.quasit",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "demon.quasit.1x1.3.wood.svg"
@@ -1576,8 +1432,6 @@
     "lid": "V3CLJ300",
     "name": "devil.imp",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "devil.imp.1x1.3.wood.svg"
@@ -1590,7 +1444,6 @@
     "name": "dinosaur.parasaurolophus",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "dinosaur.parasaurolophus.2x2.4.wood.svg"
@@ -1603,7 +1456,6 @@
     "name": "dinosaur.pterodactylus",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "dinosaur.pterodactylus.2x2.8.wood.svg"
@@ -1615,8 +1467,6 @@
     "lid": "PSgbZ200",
     "name": "dog",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "dog.1x1.4.wood.svg"
@@ -1628,8 +1478,6 @@
     "lid": "aueHX200",
     "name": "dolphin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "dolphin.1x1.9.wood.svg"
@@ -1641,8 +1489,6 @@
     "lid": "SnDeV000",
     "name": "doppelganger",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "doppelganger.1x1.0.wood.svg"
@@ -1655,7 +1501,6 @@
     "name": "dragon",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "3",
     "media": [
      "dragon.3x3.3.wood.svg"
@@ -1667,8 +1512,6 @@
     "lid": "DAA-q300",
     "name": "dragonfolk",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "dragonfolk.1x1.5.wood.svg"
@@ -1681,7 +1524,6 @@
     "name": "drider",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "drider.2x2.10.wood.svg"
@@ -1693,8 +1535,6 @@
     "lid": "tUi19200",
     "name": "duergar",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "duergar.1x1.0.wood.svg"
@@ -1706,8 +1546,6 @@
     "lid": "q9B-6100",
     "name": "dwarf",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "dwarf.1x1.0.wood.svg"
@@ -1719,8 +1557,6 @@
     "lid": "DLLr6200",
     "name": "eagle",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "8",
     "media": [
      "eagle.1x1.8.wood.svg"
@@ -1732,8 +1568,6 @@
     "lid": "y6l-V000",
     "name": "eel",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "eel.1x1.9.wood.svg"
@@ -1745,8 +1579,6 @@
     "lid": "ixH2q100",
     "name": "elemental.air",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "8",
     "media": [
      "elemental.air.1x1.8.wood.svg"
@@ -1758,8 +1590,6 @@
     "lid": "mlilp200",
     "name": "elemental.earth",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "elemental.earth.1x1.4.wood.svg"
@@ -1771,8 +1601,6 @@
     "lid": "J7k1e100",
     "name": "elemental.fire",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "elemental.fire.1x1.3.wood.svg"
@@ -1784,8 +1612,6 @@
     "lid": "ijYqi300",
     "name": "elemental.ice",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "8",
     "media": [
      "elemental.ice.1x1.8.wood.svg"
@@ -1797,8 +1623,6 @@
     "lid": "zfIqK100",
     "name": "elemental.water",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "elemental.water.1x1.9.wood.svg"
@@ -1811,7 +1635,6 @@
     "name": "elephant",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "0",
     "media": [
      "elephant.2x2.0.wood.svg"
@@ -1823,8 +1646,6 @@
     "lid": "jnxG1200",
     "name": "elf",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "elf.1x1.0.wood.svg"
@@ -1836,8 +1657,6 @@
     "lid": "EOk6R100",
     "name": "elf.dark-",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "elf.dark-.1x1.1.wood.svg"
@@ -1849,8 +1668,6 @@
     "lid": "eZ-iM100",
     "name": "ettercap",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "ettercap.1x1.10.wood.svg"
@@ -1863,7 +1680,6 @@
     "name": "ettin",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "ettin.2x2.4.wood.svg"
@@ -1875,8 +1691,6 @@
     "lid": "Dg60u000",
     "name": "fairy",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "fairy.1x1.10.wood.svg"
@@ -1888,8 +1702,6 @@
     "lid": "IQK9v300",
     "name": "fish",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "fish.1x1.9.wood.svg"
@@ -1902,7 +1714,6 @@
     "name": "floatingEye",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "floatingEye.2x2.10.wood.svg"
@@ -1914,8 +1725,6 @@
     "lid": "vqDOU100",
     "name": "flumph",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "flumph.1x1.10.wood.svg"
@@ -1928,7 +1737,6 @@
     "name": "fomorian",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [
      "fomorian.3x3.1.wood.svg"
@@ -1940,8 +1748,6 @@
     "lid": "JlSWH000",
     "name": "frog",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "frog.1x1.6.wood.svg"
@@ -1953,8 +1759,6 @@
     "lid": "cD4bb300",
     "name": "fungus",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "fungus.1x1.6.wood.svg"
@@ -1966,8 +1770,6 @@
     "lid": "sre0b300",
     "name": "gargoyle",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "gargoyle.1x1.0.wood.svg"
@@ -1980,7 +1782,6 @@
     "name": "genie.djinni",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "genie.djinni.2x2.8.wood.svg"
@@ -1992,8 +1793,6 @@
     "lid": "dz8_Y300",
     "name": "ghost",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "ghost.1x1.1.wood.svg"
@@ -2005,8 +1804,6 @@
     "lid": "PfADK100",
     "name": "ghoul",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "ghoul.1x1.1.wood.svg"
@@ -2019,7 +1816,6 @@
     "name": "giant.cyclops",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "giant.cyclops.2x2.4.wood.svg"
@@ -2032,7 +1828,6 @@
     "name": "giant.hill",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "4",
     "media": [
      "giant.hill.4x4.4.wood.svg"
@@ -2045,7 +1840,6 @@
     "name": "gibberingMouther",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "gibberingMouther.2x2.10.wood.svg"
@@ -2057,8 +1851,6 @@
     "lid": "UB0i1000",
     "name": "gnoll",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "gnoll.1x1.5.wood.svg"
@@ -2070,8 +1862,6 @@
     "lid": "lO-uo100",
     "name": "gnome",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "gnome.1x1.10.wood.svg"
@@ -2083,8 +1873,6 @@
     "lid": "MXy7t300",
     "name": "goat",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "goat.1x1.0.wood.svg"
@@ -2096,8 +1884,6 @@
     "lid": "JP3EE200",
     "name": "goblin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "goblin.1x1.6.wood.svg"
@@ -2109,8 +1895,6 @@
     "lid": "xPN0i000",
     "name": "golem.clay",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "golem.clay.1x1.4.wood.svg"
@@ -2122,8 +1906,6 @@
     "lid": "TJCVS200",
     "name": "golem.flesh",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "golem.flesh.1x1.4.wood.svg"
@@ -2135,8 +1917,6 @@
     "lid": "hh9Pm300",
     "name": "golem.iron",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "golem.iron.1x1.0.wood.svg"
@@ -2148,8 +1928,6 @@
     "lid": "iRhtf100",
     "name": "golem.stone",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "golem.stone.1x1.0.wood.svg"
@@ -2162,7 +1940,6 @@
     "name": "gorgon",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "0",
     "media": [
      "gorgon.2x2.0.wood.svg"
@@ -2175,7 +1952,6 @@
     "name": "griffon",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "5",
     "media": [
      "griffon.2x2.5.wood.svg"
@@ -2187,8 +1963,6 @@
     "lid": "fiI6w300",
     "name": "grimlock",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "grimlock.1x1.0.wood.svg"
@@ -2200,8 +1974,6 @@
     "lid": "Fy-9s100",
     "name": "hag.swamp",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "hag.swamp.1x1.10.wood.svg"
@@ -2213,8 +1985,6 @@
     "lid": "SLAvG000",
     "name": "halfling",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "halfling.1x1.0.wood.svg"
@@ -2226,8 +1996,6 @@
     "lid": "IjEMw000",
     "name": "harpy",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "harpy.1x1.10.wood.svg"
@@ -2239,8 +2007,6 @@
     "lid": "DPxWJ000",
     "name": "helmedTerror",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "helmedTerror.1x1.0.wood.svg"
@@ -2252,8 +2018,6 @@
     "lid": "l7sNB100",
     "name": "hooded",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "hooded.1x1.0.wood.svg"
@@ -2266,7 +2030,6 @@
     "name": "horse",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "horse.2x2.4.wood.svg"
@@ -2278,8 +2041,6 @@
     "lid": "duxlQ000",
     "name": "hound",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "hound.1x1.1.wood.svg"
@@ -2291,8 +2052,6 @@
     "lid": "FVjKV000",
     "name": "hound.hell-",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "hound.hell-.1x1.3.wood.svg"
@@ -2304,8 +2063,6 @@
     "lid": "bHF-K100",
     "name": "human",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "human.1x1.0.wood.svg"
@@ -2318,7 +2075,6 @@
     "name": "hydra",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "hydra.3x3.9.wood.svg"
@@ -2330,8 +2086,6 @@
     "lid": "AKD7x300",
     "name": "hyena",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "hyena.1x1.5.wood.svg"
@@ -2343,8 +2097,6 @@
     "lid": "q8GJS200",
     "name": "insect",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "insect.1x1.5.wood.svg"
@@ -2356,8 +2108,6 @@
     "lid": "ZM70y000",
     "name": "intellectDevourer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "intellectDevourer.1x1.10.wood.svg"
@@ -2369,8 +2119,6 @@
     "lid": "iGNCQ300",
     "name": "invisibleStalker",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "invisibleStalker.1x1.0.wood.svg"
@@ -2382,8 +2130,6 @@
     "lid": "gAg-o000",
     "name": "knight",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "knight.1x1.0.wood.svg"
@@ -2396,7 +2142,6 @@
     "name": "kraken",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "9",
     "media": [
      "kraken.4x4.9.wood.svg"
@@ -2408,8 +2153,6 @@
     "lid": "GNQKP200",
     "name": "lich",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "lich.1x1.1.wood.svg"
@@ -2422,7 +2165,6 @@
     "name": "lindwurm",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "10",
     "media": [
      "lindwurm.4x4.10.wood.svg"
@@ -2434,8 +2176,6 @@
     "lid": "LO7L0200",
     "name": "lion",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "lion.1x1.5.wood.svg"
@@ -2447,8 +2187,6 @@
     "lid": "os05L100",
     "name": "lizard",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "lizard.1x1.6.wood.svg"
@@ -2460,8 +2198,6 @@
     "lid": "Hd9oa300",
     "name": "lizardfolk",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "lizardfolk.1x1.6.wood.svg"
@@ -2473,8 +2209,6 @@
     "lid": "rrOEZ000",
     "name": "lycanthrope.werewolf",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "lycanthrope.werewolf.1x1.0.wood.svg"
@@ -2486,8 +2220,6 @@
     "lid": "Qv9E-300",
     "name": "lynx",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "lynx.1x1.4.wood.svg"
@@ -2499,8 +2231,6 @@
     "lid": "F5NIw300",
     "name": "magmin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "magmin.1x1.3.wood.svg"
@@ -2513,7 +2243,6 @@
     "name": "mammoth",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "mammoth.2x2.8.wood.svg"
@@ -2526,7 +2255,6 @@
     "name": "mantis",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "mantis.2x2.6.wood.svg"
@@ -2538,8 +2266,6 @@
     "lid": "cisiY200",
     "name": "mech",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "mech.1x1.0.wood.svg"
@@ -2551,8 +2277,6 @@
     "lid": "LiAsS200",
     "name": "medusa",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "medusa.1x1.10.wood.svg"
@@ -2564,8 +2288,6 @@
     "lid": "EhD4N300",
     "name": "merefolk",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "merefolk.1x1.9.wood.svg"
@@ -2577,8 +2299,6 @@
     "lid": "SMhph200",
     "name": "mimic",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "mimic.1x1.10.wood.svg"
@@ -2591,7 +2311,6 @@
     "name": "minotaur",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "minotaur.2x2.4.wood.svg"
@@ -2603,8 +2322,6 @@
     "lid": "YXe68300",
     "name": "monkey",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "monkey.1x1.4.wood.svg"
@@ -2616,8 +2333,6 @@
     "lid": "W1W4G300",
     "name": "mummy",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "mummy.1x1.1.wood.svg"
@@ -2630,7 +2345,6 @@
     "name": "naga.guardian",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "naga.guardian.2x2.9.wood.svg"
@@ -2642,8 +2356,6 @@
     "lid": "ZlDRe100",
     "name": "nymph",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "nymph.1x1.10.wood.svg"
@@ -2656,7 +2368,6 @@
     "name": "octopus",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "octopus.2x2.9.wood.svg"
@@ -2669,7 +2380,6 @@
     "name": "ogre",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "ogre.2x2.6.wood.svg"
@@ -2682,7 +2392,6 @@
     "name": "oni",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "3",
     "media": [
      "oni.2x2.3.wood.svg"
@@ -2695,7 +2404,6 @@
     "name": "ooze.blackPudding",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [
      "ooze.blackPudding.4x4.1.wood.svg"
@@ -2708,7 +2416,6 @@
     "name": "ooze.gelatinousCube",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "ooze.gelatinousCube.2x2.8.wood.svg"
@@ -2721,7 +2428,6 @@
     "name": "ooze.ochreJelly",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "5",
     "media": [
      "ooze.ochreJelly.2x2.5.wood.svg"
@@ -2733,8 +2439,6 @@
     "lid": "HfpyK000",
     "name": "orc",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "orc.1x1.6.wood.svg"
@@ -2746,8 +2450,6 @@
     "lid": "nOUEI100",
     "name": "overlord",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "overlord.1x1.1.wood.svg"
@@ -2759,8 +2461,6 @@
     "lid": "SQu8h200",
     "name": "owl",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "owl.1x1.4.wood.svg"
@@ -2773,7 +2473,6 @@
     "name": "owlbear",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "owlbear.2x2.4.wood.svg"
@@ -2786,7 +2485,6 @@
     "name": "pegasus",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "pegasus.2x2.8.wood.svg"
@@ -2798,8 +2496,6 @@
     "lid": "eRM3I000",
     "name": "piercer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "piercer.1x1.1.wood.svg"
@@ -2811,8 +2507,6 @@
     "lid": "sbT9q100",
     "name": "piranha",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "piranha.1x1.9.wood.svg"
@@ -2824,8 +2518,6 @@
     "lid": "amuNa000",
     "name": "pirate",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "pirate.1x1.9.wood.svg"
@@ -2838,7 +2530,6 @@
     "name": "plant.carnivorous",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "plant.carnivorous.2x2.6.wood.svg"
@@ -2850,8 +2541,6 @@
     "lid": "Rd1Pe300",
     "name": "priest",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "priest.1x1.0.wood.svg"
@@ -2863,8 +2552,6 @@
     "lid": "Yve3X200",
     "name": "raccoon",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "raccoon.1x1.1.wood.svg"
@@ -2876,8 +2563,6 @@
     "lid": "xxNC2000",
     "name": "rakshasa",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "rakshasa.1x1.5.wood.svg"
@@ -2889,8 +2574,6 @@
     "lid": "F9Viy000",
     "name": "rat",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "rat.1x1.4.wood.svg"
@@ -2902,8 +2585,6 @@
     "lid": "AiskC200",
     "name": "raven",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "raven.1x1.1.wood.svg"
@@ -2916,7 +2597,6 @@
     "name": "remorhaz",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "remorhaz.3x3.9.wood.svg"
@@ -2929,7 +2609,6 @@
     "name": "rhinoceros",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "rhinoceros.2x2.4.wood.svg"
@@ -2941,8 +2620,6 @@
     "lid": "uwzRq000",
     "name": "robot",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "robot.1x1.0.wood.svg"
@@ -2955,7 +2632,6 @@
     "name": "roc",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "3",
     "media": [
      "roc.4x4.3.wood.svg"
@@ -2968,7 +2644,6 @@
     "name": "roc.phoenix",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "3",
     "media": [
      "roc.phoenix.4x4.3.wood.svg"
@@ -2980,8 +2655,6 @@
     "lid": "gQiNr000",
     "name": "rustMonster",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "rustMonster.1x1.4.wood.svg"
@@ -2993,8 +2666,6 @@
     "lid": "KWYxk200",
     "name": "sahuagin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "sahuagin.1x1.9.wood.svg"
@@ -3006,8 +2677,6 @@
     "lid": "QmMw4300",
     "name": "scarecrow",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "scarecrow.1x1.5.wood.svg"
@@ -3020,7 +2689,6 @@
     "name": "scorpion",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "scorpion.2x2.4.wood.svg"
@@ -3033,7 +2701,6 @@
     "name": "seahorse",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "seahorse.2x2.9.wood.svg"
@@ -3045,8 +2712,6 @@
     "lid": "U_kxD200",
     "name": "sentinelGuardian",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "sentinelGuardian.1x1.0.wood.svg"
@@ -3058,8 +2723,6 @@
     "lid": "MuOhG300",
     "name": "shadow",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "shadow.1x1.0.wood.svg"
@@ -3072,7 +2735,6 @@
     "name": "shamblingMound",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "shamblingMound.2x2.6.wood.svg"
@@ -3085,7 +2747,6 @@
     "name": "shark",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "shark.2x2.9.wood.svg"
@@ -3098,7 +2759,6 @@
     "name": "shoggoth",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "10",
     "media": [
      "shoggoth.3x3.10.wood.svg"
@@ -3110,8 +2770,6 @@
     "lid": "Vgp1_200",
     "name": "skeleton",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "skeleton.1x1.1.wood.svg"
@@ -3123,8 +2781,6 @@
     "lid": "ZQTvK100",
     "name": "skull.flame-",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "skull.flame-.1x1.3.wood.svg"
@@ -3137,7 +2793,6 @@
     "name": "slug",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [
      "slug.3x3.1.wood.svg"
@@ -3149,8 +2804,6 @@
     "lid": "YZEvS200",
     "name": "snake.cobra",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "snake.cobra.1x1.4.wood.svg"
@@ -3162,8 +2815,6 @@
     "lid": "UfQK7300",
     "name": "snake.viper",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "snake.viper.1x1.6.wood.svg"
@@ -3175,8 +2826,6 @@
     "lid": "N-KKl300",
     "name": "spectre",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "spectre.1x1.1.wood.svg"
@@ -3189,7 +2838,6 @@
     "name": "sphinx",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "5",
     "media": [
      "sphinx.2x2.5.wood.svg"
@@ -3201,8 +2849,6 @@
     "lid": "V6mnK000",
     "name": "spider",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "spider.1x1.1.wood.svg"
@@ -3214,8 +2860,6 @@
     "lid": "vgrfb100",
     "name": "sprite.pixie",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "sprite.pixie.1x1.10.wood.svg"
@@ -3227,8 +2871,6 @@
     "lid": "RTduJ100",
     "name": "squidMind",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "squidMind.1x1.10.wood.svg"
@@ -3240,8 +2882,6 @@
     "lid": "NJv9X300",
     "name": "squirrel",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "squirrel.1x1.4.wood.svg"
@@ -3253,8 +2893,6 @@
     "lid": "ROD0w200",
     "name": "stirge",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "stirge.1x1.4.wood.svg"
@@ -3266,8 +2904,6 @@
     "lid": "R6TVR100",
     "name": "tengu",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "tengu.1x1.0.wood.svg"
@@ -3280,7 +2916,6 @@
     "name": "terrasque",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "4",
     "media": [
      "terrasque.4x4.4.wood.svg"
@@ -3292,8 +2927,6 @@
     "lid": "XVJY7100",
     "name": "tiger",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "tiger.1x1.1.wood.svg"
@@ -3306,7 +2939,6 @@
     "name": "treant",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "treant.2x2.6.wood.svg"
@@ -3318,8 +2950,6 @@
     "lid": "XiLOf200",
     "name": "triton.merrow",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "triton.merrow.1x1.9.wood.svg"
@@ -3331,8 +2961,6 @@
     "lid": "kl8sA100",
     "name": "troglodyte",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "troglodyte.1x1.0.wood.svg"
@@ -3345,7 +2973,6 @@
     "name": "troll",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "troll.2x2.6.wood.svg"
@@ -3358,7 +2985,6 @@
     "name": "turtle.dragon",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "9",
     "media": [
      "turtle.dragon.4x4.9.wood.svg"
@@ -3370,8 +2996,6 @@
     "lid": "mqDFq100",
     "name": "turtle.tortoise",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "turtle.tortoise.1x1.6.wood.svg"
@@ -3384,7 +3008,6 @@
     "name": "unicorn",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "unicorn.2x2.10.wood.svg"
@@ -3396,8 +3019,6 @@
     "lid": "RkpZP100",
     "name": "vampire",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "vampire.1x1x1.1.wood.svg",
@@ -3410,8 +3031,6 @@
     "lid": "aiSs_300",
     "name": "viking",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "viking.1x1.0.wood.svg"
@@ -3424,7 +3043,6 @@
     "name": "vile.water",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "vile.water.2x2.9.wood.svg"
@@ -3436,8 +3054,6 @@
     "lid": "xQDtU300",
     "name": "vulture",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "vulture.1x1.1.wood.svg"
@@ -3449,8 +3065,6 @@
     "lid": "fsRDT300",
     "name": "wasp",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "wasp.1x1.5.wood.svg"
@@ -3463,7 +3077,6 @@
     "name": "whale",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "whale.3x3.9.wood.svg"
@@ -3475,8 +3088,6 @@
     "lid": "LIt5j300",
     "name": "will-o-wisp",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "will-o-wisp.1x1.5.wood.svg"
@@ -3488,8 +3099,6 @@
     "lid": "eW-Cd000",
     "name": "wizard",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "wizard.1x1.10.wood.svg"
@@ -3501,8 +3110,6 @@
     "lid": "Sr3Yh200",
     "name": "wolf",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "wolf.1x1.0.wood.svg"
@@ -3515,7 +3122,6 @@
     "name": "worm.leeching",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "10",
     "media": [
      "worm.leeching.4x4.10.wood.svg"
@@ -3527,8 +3133,6 @@
     "lid": "Vqb4A300",
     "name": "wraith",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "wraith.1x1.1.wood.svg"
@@ -3541,7 +3145,6 @@
     "name": "yeti",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "yeti.2x2.8.wood.svg"
@@ -3553,8 +3156,6 @@
     "lid": "OngS0000",
     "name": "zombie",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "zombie.1x1.1.wood.svg"
@@ -3568,276 +3169,264 @@
     "lid": "lPebe300",
     "name": "_.d10Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d10Dark.1x1x01.1.svg",
-     "_.d10Dark.1x1x02.1.svg",
-     "_.d10Dark.1x1x03.1.svg",
-     "_.d10Dark.1x1x04.1.svg",
-     "_.d10Dark.1x1x05.1.svg",
-     "_.d10Dark.1x1x06.1.svg",
-     "_.d10Dark.1x1x07.1.svg",
-     "_.d10Dark.1x1x08.1.svg",
-     "_.d10Dark.1x1x09.1.svg",
-     "_.d10Dark.1x1x10.1.svg"
+     "_.d10Dark.1x1x01x5.1.svg",
+     "_.d10Dark.1x1x02x5.1.svg",
+     "_.d10Dark.1x1x03x5.1.svg",
+     "_.d10Dark.1x1x04x5.1.svg",
+     "_.d10Dark.1x1x05x5.1.svg",
+     "_.d10Dark.1x1x06x5.1.svg",
+     "_.d10Dark.1x1x07x5.1.svg",
+     "_.d10Dark.1x1x08x5.1.svg",
+     "_.d10Dark.1x1x09x5.1.svg",
+     "_.d10Dark.1x1x10x5.1.svg"
     ],
-    "base": "_.d10Dark.1x1x00.1.png",
-    "mask": "_.d10Dark.1x1xXX.1.svg"
+    "base": "_.d10Dark.1x1x00x5.1.png",
+    "mask": "_.d10Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "PW2rJ000",
     "lid": "tVzk3200",
     "name": "_.d10Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d10Light.1x1x01.2.svg",
-     "_.d10Light.1x1x02.2.svg",
-     "_.d10Light.1x1x03.2.svg",
-     "_.d10Light.1x1x04.2.svg",
-     "_.d10Light.1x1x05.2.svg",
-     "_.d10Light.1x1x06.2.svg",
-     "_.d10Light.1x1x07.2.svg",
-     "_.d10Light.1x1x08.2.svg",
-     "_.d10Light.1x1x09.2.svg",
-     "_.d10Light.1x1x10.2.svg"
+     "_.d10Light.1x1x01x5.2.svg",
+     "_.d10Light.1x1x02x5.2.svg",
+     "_.d10Light.1x1x03x5.2.svg",
+     "_.d10Light.1x1x04x5.2.svg",
+     "_.d10Light.1x1x05x5.2.svg",
+     "_.d10Light.1x1x06x5.2.svg",
+     "_.d10Light.1x1x07x5.2.svg",
+     "_.d10Light.1x1x08x5.2.svg",
+     "_.d10Light.1x1x09x5.2.svg",
+     "_.d10Light.1x1x10x5.2.svg"
     ],
-    "base": "_.d10Light.1x1x00.2.png",
-    "mask": "_.d10Light.1x1xXX.2.svg"
+    "base": "_.d10Light.1x1x00x5.2.png",
+    "mask": "_.d10Light.1x1xXXx5.2.svg"
    },
    {
     "id": "v8Vvg200",
     "lid": "aeS5y000",
     "name": "_.d12Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d12Dark.1x1x01.1.svg",
-     "_.d12Dark.1x1x02.1.svg",
-     "_.d12Dark.1x1x03.1.svg",
-     "_.d12Dark.1x1x04.1.svg",
-     "_.d12Dark.1x1x05.1.svg",
-     "_.d12Dark.1x1x06.1.svg",
-     "_.d12Dark.1x1x07.1.svg",
-     "_.d12Dark.1x1x08.1.svg",
-     "_.d12Dark.1x1x09.1.svg",
-     "_.d12Dark.1x1x10.1.svg",
-     "_.d12Dark.1x1x11.1.svg",
-     "_.d12Dark.1x1x12.1.svg"
+     "_.d12Dark.1x1x01x5.1.svg",
+     "_.d12Dark.1x1x02x5.1.svg",
+     "_.d12Dark.1x1x03x5.1.svg",
+     "_.d12Dark.1x1x04x5.1.svg",
+     "_.d12Dark.1x1x05x5.1.svg",
+     "_.d12Dark.1x1x06x5.1.svg",
+     "_.d12Dark.1x1x07x5.1.svg",
+     "_.d12Dark.1x1x08x5.1.svg",
+     "_.d12Dark.1x1x09x5.1.svg",
+     "_.d12Dark.1x1x10x5.1.svg",
+     "_.d12Dark.1x1x11x5.1.svg",
+     "_.d12Dark.1x1x12x5.1.svg"
     ],
-    "base": "_.d12Dark.1x1x00.1.png",
-    "mask": "_.d12Dark.1x1xXX.1.svg"
+    "base": "_.d12Dark.1x1x00x5.1.png",
+    "mask": "_.d12Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "KWvBF000",
     "lid": "KKD3z300",
     "name": "_.d12Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d12Light.1x1x01.2.svg",
-     "_.d12Light.1x1x02.2.svg",
-     "_.d12Light.1x1x03.2.svg",
-     "_.d12Light.1x1x04.2.svg",
-     "_.d12Light.1x1x05.2.svg",
-     "_.d12Light.1x1x06.2.svg",
-     "_.d12Light.1x1x07.2.svg",
-     "_.d12Light.1x1x08.2.svg",
-     "_.d12Light.1x1x09.2.svg",
-     "_.d12Light.1x1x10.2.svg",
-     "_.d12Light.1x1x11.2.svg",
-     "_.d12Light.1x1x12.2.svg"
+     "_.d12Light.1x1x01x5.2.svg",
+     "_.d12Light.1x1x02x5.2.svg",
+     "_.d12Light.1x1x03x5.2.svg",
+     "_.d12Light.1x1x04x5.2.svg",
+     "_.d12Light.1x1x05x5.2.svg",
+     "_.d12Light.1x1x06x5.2.svg",
+     "_.d12Light.1x1x07x5.2.svg",
+     "_.d12Light.1x1x08x5.2.svg",
+     "_.d12Light.1x1x09x5.2.svg",
+     "_.d12Light.1x1x10x5.2.svg",
+     "_.d12Light.1x1x11x5.2.svg",
+     "_.d12Light.1x1x12x5.2.svg"
     ],
-    "base": "_.d12Light.1x1x00.2.png",
-    "mask": "_.d12Light.1x1xXX.2.svg"
+    "base": "_.d12Light.1x1x00x5.2.png",
+    "mask": "_.d12Light.1x1xXXx5.2.svg"
    },
    {
     "id": "y6zKl100",
     "lid": "z7DUO100",
     "name": "_.d20Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d20Dark.1x1x01.1.svg",
-     "_.d20Dark.1x1x02.1.svg",
-     "_.d20Dark.1x1x03.1.svg",
-     "_.d20Dark.1x1x04.1.svg",
-     "_.d20Dark.1x1x05.1.svg",
-     "_.d20Dark.1x1x06.1.svg",
-     "_.d20Dark.1x1x07.1.svg",
-     "_.d20Dark.1x1x08.1.svg",
-     "_.d20Dark.1x1x09.1.svg",
-     "_.d20Dark.1x1x10.1.svg",
-     "_.d20Dark.1x1x11.1.svg",
-     "_.d20Dark.1x1x12.1.svg",
-     "_.d20Dark.1x1x13.1.svg",
-     "_.d20Dark.1x1x14.1.svg",
-     "_.d20Dark.1x1x15.1.svg",
-     "_.d20Dark.1x1x16.1.svg",
-     "_.d20Dark.1x1x17.1.svg",
-     "_.d20Dark.1x1x18.1.svg",
-     "_.d20Dark.1x1x19.1.svg",
-     "_.d20Dark.1x1x20.1.svg"
+     "_.d20Dark.1x1x01x5.1.svg",
+     "_.d20Dark.1x1x02x5.1.svg",
+     "_.d20Dark.1x1x03x5.1.svg",
+     "_.d20Dark.1x1x04x5.1.svg",
+     "_.d20Dark.1x1x05x5.1.svg",
+     "_.d20Dark.1x1x06x5.1.svg",
+     "_.d20Dark.1x1x07x5.1.svg",
+     "_.d20Dark.1x1x08x5.1.svg",
+     "_.d20Dark.1x1x09x5.1.svg",
+     "_.d20Dark.1x1x10x5.1.svg",
+     "_.d20Dark.1x1x11x5.1.svg",
+     "_.d20Dark.1x1x12x5.1.svg",
+     "_.d20Dark.1x1x13x5.1.svg",
+     "_.d20Dark.1x1x14x5.1.svg",
+     "_.d20Dark.1x1x15x5.1.svg",
+     "_.d20Dark.1x1x16x5.1.svg",
+     "_.d20Dark.1x1x17x5.1.svg",
+     "_.d20Dark.1x1x18x5.1.svg",
+     "_.d20Dark.1x1x19x5.1.svg",
+     "_.d20Dark.1x1x20x5.1.svg"
     ],
-    "base": "_.d20Dark.1x1x00.1.png",
-    "mask": "_.d20Dark.1x1xXX.1.svg"
+    "base": "_.d20Dark.1x1x00x5.1.png",
+    "mask": "_.d20Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "Gz-zS200",
     "lid": "eIMc_300",
     "name": "_.d20Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d20Light.1x1x01.2.svg",
-     "_.d20Light.1x1x02.2.svg",
-     "_.d20Light.1x1x03.2.svg",
-     "_.d20Light.1x1x04.2.svg",
-     "_.d20Light.1x1x05.2.svg",
-     "_.d20Light.1x1x06.2.svg",
-     "_.d20Light.1x1x07.2.svg",
-     "_.d20Light.1x1x08.2.svg",
-     "_.d20Light.1x1x09.2.svg",
-     "_.d20Light.1x1x10.2.svg",
-     "_.d20Light.1x1x11.2.svg",
-     "_.d20Light.1x1x12.2.svg",
-     "_.d20Light.1x1x13.2.svg",
-     "_.d20Light.1x1x14.2.svg",
-     "_.d20Light.1x1x15.2.svg",
-     "_.d20Light.1x1x16.2.svg",
-     "_.d20Light.1x1x17.2.svg",
-     "_.d20Light.1x1x18.2.svg",
-     "_.d20Light.1x1x19.2.svg",
-     "_.d20Light.1x1x20.2.svg"
+     "_.d20Light.1x1x01x5.2.svg",
+     "_.d20Light.1x1x02x5.2.svg",
+     "_.d20Light.1x1x03x5.2.svg",
+     "_.d20Light.1x1x04x5.2.svg",
+     "_.d20Light.1x1x05x5.2.svg",
+     "_.d20Light.1x1x06x5.2.svg",
+     "_.d20Light.1x1x07x5.2.svg",
+     "_.d20Light.1x1x08x5.2.svg",
+     "_.d20Light.1x1x09x5.2.svg",
+     "_.d20Light.1x1x10x5.2.svg",
+     "_.d20Light.1x1x11x5.2.svg",
+     "_.d20Light.1x1x12x5.2.svg",
+     "_.d20Light.1x1x13x5.2.svg",
+     "_.d20Light.1x1x14x5.2.svg",
+     "_.d20Light.1x1x15x5.2.svg",
+     "_.d20Light.1x1x16x5.2.svg",
+     "_.d20Light.1x1x17x5.2.svg",
+     "_.d20Light.1x1x18x5.2.svg",
+     "_.d20Light.1x1x19x5.2.svg",
+     "_.d20Light.1x1x20x5.2.svg"
     ],
-    "base": "_.d20Light.1x1x00.2.png",
-    "mask": "_.d20Light.1x1xXX.2.svg"
+    "base": "_.d20Light.1x1x00x5.2.png",
+    "mask": "_.d20Light.1x1xXXx5.2.svg"
    },
    {
     "id": "pJtgf000",
     "lid": "SHt9A300",
     "name": "_.d4Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d4Dark.1x1x1.1.svg",
-     "_.d4Dark.1x1x2.1.svg",
-     "_.d4Dark.1x1x3.1.svg",
-     "_.d4Dark.1x1x4.1.svg"
+     "_.d4Dark.1x1x1x5.1.svg",
+     "_.d4Dark.1x1x2x5.1.svg",
+     "_.d4Dark.1x1x3x5.1.svg",
+     "_.d4Dark.1x1x4x5.1.svg"
     ],
-    "base": "_.d4Dark.1x1x0.1.png",
-    "mask": "_.d4Dark.1x1xX.1.svg"
+    "base": "_.d4Dark.1x1x0x5.1.png",
+    "mask": "_.d4Dark.1x1xXx5.1.svg"
    },
    {
     "id": "j8hqf000",
     "lid": "xY7Gr200",
     "name": "_.d4Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d4Light.1x1x1.2.svg",
-     "_.d4Light.1x1x2.2.svg",
-     "_.d4Light.1x1x3.2.svg",
-     "_.d4Light.1x1x4.2.svg"
+     "_.d4Light.1x1x1x5.2.svg",
+     "_.d4Light.1x1x2x5.2.svg",
+     "_.d4Light.1x1x3x5.2.svg",
+     "_.d4Light.1x1x4x5.2.svg"
     ],
-    "base": "_.d4Light.1x1x0.2.png",
-    "mask": "_.d4Light.1x1xX.2.svg"
+    "base": "_.d4Light.1x1x0x5.2.png",
+    "mask": "_.d4Light.1x1xXx5.2.svg"
    },
    {
     "id": "bc_Ix000",
     "lid": "jbmiY200",
     "name": "_.d6Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d6Dark.1x1x1.1.svg",
-     "_.d6Dark.1x1x2.1.svg",
-     "_.d6Dark.1x1x3.1.svg",
-     "_.d6Dark.1x1x4.1.svg",
-     "_.d6Dark.1x1x5.1.svg",
-     "_.d6Dark.1x1x6.1.svg"
+     "_.d6Dark.1x1x1x5.1.svg",
+     "_.d6Dark.1x1x2x5.1.svg",
+     "_.d6Dark.1x1x3x5.1.svg",
+     "_.d6Dark.1x1x4x5.1.svg",
+     "_.d6Dark.1x1x5x5.1.svg",
+     "_.d6Dark.1x1x6x5.1.svg"
     ],
-    "base": "_.d6Dark.1x1x0.1.png",
-    "mask": "_.d6Dark.1x1xX.1.svg"
+    "base": "_.d6Dark.1x1x0x5.1.png",
+    "mask": "_.d6Dark.1x1xXx5.1.svg"
    },
    {
     "id": "a8cCb000",
     "lid": "u7ZAS100",
     "name": "_.d6Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d6Light.1x1x1.2.svg",
-     "_.d6Light.1x1x2.2.svg",
-     "_.d6Light.1x1x3.2.svg",
-     "_.d6Light.1x1x4.2.svg",
-     "_.d6Light.1x1x5.2.svg",
-     "_.d6Light.1x1x6.2.svg"
+     "_.d6Light.1x1x1x5.2.svg",
+     "_.d6Light.1x1x2x5.2.svg",
+     "_.d6Light.1x1x3x5.2.svg",
+     "_.d6Light.1x1x4x5.2.svg",
+     "_.d6Light.1x1x5x5.2.svg",
+     "_.d6Light.1x1x6x5.2.svg"
     ],
-    "base": "_.d6Light.1x1x0.2.png",
-    "mask": "_.d6Light.1x1xX.2.svg"
+    "base": "_.d6Light.1x1x0x5.2.png",
+    "mask": "_.d6Light.1x1xXx5.2.svg"
    },
    {
     "id": "ZyitE300",
     "lid": "xCPfK300",
     "name": "_.d8Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d8Dark.1x1x1.1.svg",
-     "_.d8Dark.1x1x2.1.svg",
-     "_.d8Dark.1x1x3.1.svg",
-     "_.d8Dark.1x1x4.1.svg",
-     "_.d8Dark.1x1x5.1.svg",
-     "_.d8Dark.1x1x6.1.svg",
-     "_.d8Dark.1x1x7.1.svg",
-     "_.d8Dark.1x1x8.1.svg"
+     "_.d8Dark.1x1x1x5.1.svg",
+     "_.d8Dark.1x1x2x5.1.svg",
+     "_.d8Dark.1x1x3x5.1.svg",
+     "_.d8Dark.1x1x4x5.1.svg",
+     "_.d8Dark.1x1x5x5.1.svg",
+     "_.d8Dark.1x1x6x5.1.svg",
+     "_.d8Dark.1x1x7x5.1.svg",
+     "_.d8Dark.1x1x8x5.1.svg"
     ],
-    "base": "_.d8Dark.1x1x0.1.png",
-    "mask": "_.d8Dark.1x1xX.1.svg"
+    "base": "_.d8Dark.1x1x0x5.1.png",
+    "mask": "_.d8Dark.1x1xXx5.1.svg"
    },
    {
     "id": "Zavll000",
     "lid": "obzEu200",
     "name": "_.d8Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d8Light.1x1x1.2.svg",
-     "_.d8Light.1x1x2.2.svg",
-     "_.d8Light.1x1x3.2.svg",
-     "_.d8Light.1x1x4.2.svg",
-     "_.d8Light.1x1x5.2.svg",
-     "_.d8Light.1x1x6.2.svg",
-     "_.d8Light.1x1x7.2.svg",
-     "_.d8Light.1x1x8.2.svg"
+     "_.d8Light.1x1x1x5.2.svg",
+     "_.d8Light.1x1x2x5.2.svg",
+     "_.d8Light.1x1x3x5.2.svg",
+     "_.d8Light.1x1x4x5.2.svg",
+     "_.d8Light.1x1x5x5.2.svg",
+     "_.d8Light.1x1x6x5.2.svg",
+     "_.d8Light.1x1x7x5.2.svg",
+     "_.d8Light.1x1x8x5.2.svg"
     ],
-    "base": "_.d8Light.1x1x0.2.png",
-    "mask": "_.d8Light.1x1xX.2.svg"
+    "base": "_.d8Light.1x1x0x5.2.png",
+    "mask": "_.d8Light.1x1xXx5.2.svg"
    },
    {
     "id": "gXCJX200",
@@ -3845,10 +3434,9 @@
     "name": "_.dicemat",
     "type": "other",
     "w": 4,
-    "h": 4,
     "bg": "#808080",
     "media": [
-     "_.dicemat.4x4x1.jpg"
+     "_.dicemat.4x4x1x2.jpg"
     ]
    },
    {
@@ -3857,10 +3445,10 @@
     "name": "_.dicemat",
     "type": "other",
     "w": 8,
-    "h": 8,
+    "d": 5,
     "bg": "#808080",
     "media": [
-     "_.dicemat.8x8x1.png"
+     "_.dicemat.8x8x1x5.png"
     ]
    },
    {
@@ -3868,74 +3456,70 @@
     "lid": "MDuQt000",
     "name": "_.fateDark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.fateDark.1x1x1.1.svg",
-     "_.fateDark.1x1x2.1.svg",
-     "_.fateDark.1x1x3.1.svg",
-     "_.fateDark.1x1x4.1.svg",
-     "_.fateDark.1x1x5.1.svg",
-     "_.fateDark.1x1x6.1.svg"
+     "_.fateDark.1x1x1x5.1.svg",
+     "_.fateDark.1x1x2x5.1.svg",
+     "_.fateDark.1x1x3x5.1.svg",
+     "_.fateDark.1x1x4x5.1.svg",
+     "_.fateDark.1x1x5x5.1.svg",
+     "_.fateDark.1x1x6x5.1.svg"
     ],
-    "base": "_.fateDark.1x1x0.1.png",
-    "mask": "_.fateDark.1x1xX.1.svg"
+    "base": "_.fateDark.1x1x0x5.1.png",
+    "mask": "_.fateDark.1x1xXx5.1.svg"
    },
    {
     "id": "iCBYt200",
     "lid": "MTvWD100",
     "name": "_.fateLight",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.fateLight.1x1x1.2.svg",
-     "_.fateLight.1x1x2.2.svg",
-     "_.fateLight.1x1x3.2.svg",
-     "_.fateLight.1x1x4.2.svg",
-     "_.fateLight.1x1x5.2.svg",
-     "_.fateLight.1x1x6.2.svg"
+     "_.fateLight.1x1x1x5.2.svg",
+     "_.fateLight.1x1x2x5.2.svg",
+     "_.fateLight.1x1x3x5.2.svg",
+     "_.fateLight.1x1x4x5.2.svg",
+     "_.fateLight.1x1x5x5.2.svg",
+     "_.fateLight.1x1x6x5.2.svg"
     ],
-    "base": "_.fateLight.1x1x0.2.png",
-    "mask": "_.fateLight.1x1xX.2.svg"
+    "base": "_.fateLight.1x1x0x5.2.png",
+    "mask": "_.fateLight.1x1xXx5.2.svg"
    },
    {
     "id": "smg1S000",
     "lid": "FZOAn300",
     "name": "classic.a",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "#808080",
     "media": [
-     "classic.a.1x1x1.svg",
-     "classic.a.1x1x2.svg",
-     "classic.a.1x1x3.svg",
-     "classic.a.1x1x4.svg",
-     "classic.a.1x1x5.svg",
-     "classic.a.1x1x6.svg"
+     "classic.a.1x1x1x5.svg",
+     "classic.a.1x1x2x5.svg",
+     "classic.a.1x1x3x5.svg",
+     "classic.a.1x1x4x5.svg",
+     "classic.a.1x1x5x5.svg",
+     "classic.a.1x1x6x5.svg"
     ],
-    "base": "classic.a.1x1x0.png"
+    "base": "classic.a.1x1x0x5.png"
    },
    {
     "id": "AYnEL100",
     "lid": "UkNvB300",
     "name": "classic.b",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "#808080",
     "media": [
-     "classic.b.1x1x1.svg",
-     "classic.b.1x1x2.svg",
-     "classic.b.1x1x3.svg",
-     "classic.b.1x1x4.svg",
-     "classic.b.1x1x5.svg",
-     "classic.b.1x1x6.svg"
+     "classic.b.1x1x1x5.svg",
+     "classic.b.1x1x2x5.svg",
+     "classic.b.1x1x3x5.svg",
+     "classic.b.1x1x4x5.svg",
+     "classic.b.1x1x5x5.svg",
+     "classic.b.1x1x6x5.svg"
     ],
-    "base": "classic.b.1x1x0.png"
+    "base": "classic.b.1x1x0x5.png"
    }
   ],
   "badge": [
@@ -3944,8 +3528,6 @@
     "lid": "Jxa0k200",
     "name": "_.badge",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "_.badge.svg"
@@ -3956,8 +3538,6 @@
     "lid": "RvGjJ000",
     "name": "_.target",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "_.target.svg"
@@ -3968,8 +3548,6 @@
     "lid": "QlYvr000",
     "name": "condition.blind",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.blind.svg"
@@ -3980,8 +3558,6 @@
     "lid": "xp_4e300",
     "name": "condition.dazed",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.dazed.svg"
@@ -3992,8 +3568,6 @@
     "lid": "ntBcb300",
     "name": "condition.deaf",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.deaf.svg"
@@ -4004,8 +3578,6 @@
     "lid": "h-gue000",
     "name": "condition.dominated",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.dominated.svg"
@@ -4016,8 +3588,6 @@
     "lid": "VvgTX200",
     "name": "condition.immobilized",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.immobilized.svg"
@@ -4028,8 +3598,6 @@
     "lid": "S5mTH000",
     "name": "condition.invisible",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.invisible.svg"
@@ -4040,8 +3608,6 @@
     "lid": "j01-H000",
     "name": "condition.marked",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.marked.svg"
@@ -4052,8 +3618,6 @@
     "lid": "Ou68a300",
     "name": "condition.petrified",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.petrified.svg"
@@ -4064,8 +3628,6 @@
     "lid": "u4b44300",
     "name": "condition.protected",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.protected.svg"
@@ -4076,8 +3638,6 @@
     "lid": "LI2C9300",
     "name": "condition.restrained",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.restrained.svg"
@@ -4088,8 +3648,6 @@
     "lid": "fztyq200",
     "name": "condition.slowed",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.slowed.svg"
@@ -4100,8 +3658,6 @@
     "lid": "rrD0p100",
     "name": "condition.stunned",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.stunned.svg"
@@ -4112,8 +3668,6 @@
     "lid": "bqTVI000",
     "name": "condition.unconscious",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.unconscious.svg"
@@ -4124,8 +3678,6 @@
     "lid": "wM3vB100",
     "name": "condition.weak",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.weak.svg"
@@ -4136,8 +3688,6 @@
     "lid": "A2lBk300",
     "name": "damage.acid",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.acid.svg"
@@ -4148,8 +3698,6 @@
     "lid": "VS7JZ100",
     "name": "damage.cold",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.cold.svg"
@@ -4160,8 +3708,6 @@
     "lid": "quuO-000",
     "name": "damage.fire",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.fire.svg"
@@ -4172,8 +3718,6 @@
     "lid": "MD-qe300",
     "name": "damage.force",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.force.svg"
@@ -4184,8 +3728,6 @@
     "lid": "vvaIC000",
     "name": "damage.lightning",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.lightning.svg"
@@ -4196,8 +3738,6 @@
     "lid": "dAYuS100",
     "name": "damage.necrotic",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.necrotic.svg"
@@ -4208,8 +3748,6 @@
     "lid": "Sa3hF000",
     "name": "damage.poison",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.poison.svg"
@@ -4220,8 +3758,6 @@
     "lid": "XrUhr200",
     "name": "damage.psychic",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.psychic.svg"
@@ -4232,8 +3768,6 @@
     "lid": "YjQpI100",
     "name": "damage.radiant",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.radiant.svg"
@@ -4244,8 +3778,6 @@
     "lid": "ZSIDE200",
     "name": "damage.thunder",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.thunder.svg"
@@ -4258,8 +3790,6 @@
     "lid": "CIZcg300",
     "name": "linen",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "linen.png"
@@ -4270,8 +3800,6 @@
     "lid": "MOevM100",
     "name": "none",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "none.png"
@@ -4282,8 +3810,6 @@
     "lid": "Hb9tz200",
     "name": "paper",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "paper.png"
@@ -4294,8 +3820,6 @@
     "lid": "LDpOJ000",
     "name": "rough",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "rough.png"
@@ -4306,8 +3830,6 @@
     "lid": "wS-60300",
     "name": "wood",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "wood.png"

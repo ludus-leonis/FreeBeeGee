@@ -25,16 +25,15 @@
 
 // --- quality settings --------------------------------------------------------
 
-.is-quality-medium .piece-tile {
-  filter: drop-shadow($shadow-flat);
-}
+// .is-quality-medium .piece-tile {
+//   filter: drop-shadow($shadow-flat);
+// }
 
 .is-quality-high .piece-tile,
 .is-quality-ultra .piece-tile {
   background-image: var(--fbg-material), var(--fbg-image);
   background-size: zoom(256px), cover;
   border-radius: zoom($piece-corner-radius);
-  filter: drop-shadow($shadow);
 
   @each $id in $random-ids {
     $i: index($random-ids, $id);

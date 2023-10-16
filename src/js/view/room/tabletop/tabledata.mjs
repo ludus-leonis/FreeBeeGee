@@ -470,6 +470,36 @@ export function sanitizePiecePatch (patch, pieceId = null) {
 }
 
 /**
+ * Add default properties to all library entries.
+ *
+ * @param {object} library Data object to populate.
+ * @returns {Array} Setup for chaining.
+ */
+export function populateLibraryDefaults (library) {
+  library.overlay = library.overlay ?? []
+  library.tile = library.tile ?? []
+  library.token = library.token ?? []
+  library.other = library.other ?? []
+  library.badge = library.badge ?? []
+  library.material = library.material ?? []
+
+  for (const piece of library.overlay) {
+    populateAssetDefaults(piece)
+  }
+  for (const piece of library.tile) {
+    populateAssetDefaults(piece)
+  }
+  for (const piece of library.token) {
+    populateAssetDefaults(piece)
+  }
+  for (const piece of library.other) {
+    populateAssetDefaults(piece)
+  }
+
+  return library
+}
+
+/**
  * Add default setup values to all properties that the API might omit.
  *
  * @param {object} setup Data object to populate.
@@ -488,6 +518,26 @@ export function populateSetupDefaults (setup) {
 
 export const FEATURE_DICEMAT = 'DICEMAT'
 export const FEATURE_DISCARD = 'DISCARD'
+
+/**
+ * Add default asset properties that the API might omit.
+ *
+ * @param {object} asset Data object to populate.
+ * @returns {object} Asset for chaining.
+ */
+export function populateAssetDefaults (asset) {
+  asset.w = asset.w ?? 1
+  asset.h = asset.h ?? asset.w
+  if (['token', 'tile', 'other'].includes(asset.type)) {
+    asset.d = asset.d ?? 2
+  } else {
+    asset.d = asset.d ?? 0
+  }
+
+  asset._hash = hash(JSON.stringify(asset))
+
+  return asset
+}
 
 /**
  * Add default piece values to all properties that the API might omit.
