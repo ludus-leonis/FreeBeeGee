@@ -8,6 +8,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added piece depth / customizable shadows
 * added cursor-key movement of selection
+* added support for some dedicated hardware keys (help, undo, copy, paste, zoom, ...)
 
 ### Other changes
 

@@ -12,7 +12,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] autopopulate empty data dir (for docker volumes)
 * [ ] engine: grid-on-tile flag major/minor
 * [ ] zoom-to-cursor
-* [ ] support more special hotkeys (copy, paste, zoom, ...)
+* [X] support more special hotkeys (copy, paste, zoom, ...)
 * [ ] rename overlays to stickers
 * [ ] pre-release
   * [ ] bump dependencies

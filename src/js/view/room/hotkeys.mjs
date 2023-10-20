@@ -237,7 +237,7 @@ function handleRoomKeys (keydown) {
       case 'c': // copy/clone
         if (keydown.ctrlKey) clipboardCopy(); else cloneSelected(getMouseCoords())
         break
-      case 'x': // paste
+      case 'x': // cut
         if (keydown.ctrlKey) {
           clipboardCopy()
           deleteSelected()
@@ -246,9 +246,22 @@ function handleRoomKeys (keydown) {
       case 'v': // paste
         if (keydown.ctrlKey) clipboardPaste(getMouseCoords())
         break
+      case 'Copy': // dedicated copy key
+        clipboardCopy()
+        break
+      case 'Cut': // dedicated cut key
+        clipboardCopy()
+        deleteSelected()
+        break
+      case 'Paste': // dedicated copy key
+        clipboardPaste(getMouseCoords())
+        break
       case 'u': // undo
       case 'z': // undo
         if (keydown.ctrlKey) undo()
+        break
+      case 'Undo': // dedicated undo key
+        undo()
         break
       case 'e': // edit
       case 'F2':
@@ -282,6 +295,7 @@ function handleRoomKeys (keydown) {
       case 'H':
       case '?':
       case 'F1':
+      case 'Help':
         modalHelp()
         break
       case 'r': // rotate CW
@@ -301,9 +315,11 @@ function handleRoomKeys (keydown) {
         break
       case '+': // zoom in
       case '=':
+      case 'ZoomIn':
         zoom(1)
         break
       case '-': // zoom out
+      case 'ZoomOut':
         zoom(-1)
         break
       case '>': // increase No.
