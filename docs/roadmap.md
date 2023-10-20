@@ -6,19 +6,21 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 * [X] asset depth setting for more/less shadow
 * [ ] exclude protected pieces from operation, instead of denying operation
-* [ ] moves selection via cursor keys
+* [X] move selection via cursor keys
 * [ ] tweak minor grid visibility
 * [ ] tooltip explanation for '3x3:3' in library window
 * [ ] autopopulate empty data dir (for docker volumes)
-* [ ] snapshot download for demo mode
 * [ ] engine: grid-on-tile flag major/minor
 * [ ] zoom-to-cursor
+* [ ] support more special hotkeys (copy, paste, zoom, ...)
+* [ ] rename overlays to stickers
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] table.json caching in demo mode
-    * [ ] dragging multi-selected hex tokens does not always snap correctly (hex)
+    * [ ] dragging multi-selected hex tokens does not always snap correctly
     * [X] fix sass import warning
+    * [ ] more tabletop/index.js tests
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -29,6 +31,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] snapshot download for demo mode
 * [ ] doubleclick opens edit modal
 * [ ] plugin-hook
 * [ ] library editor: replace media/side

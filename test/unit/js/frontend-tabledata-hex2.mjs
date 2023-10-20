@@ -40,6 +40,9 @@ import {
 
 const TEST_STATE = 5
 
+/**
+ * Initialize table+room data for tests.
+ */
 function setupTestData () {
   _test.setRoom(JSON.parse(roomJSON))
   for (let i = 1; i <= 9; i++) {
@@ -52,10 +55,20 @@ function setupTestData () {
   setTableNo(1, false)
 }
 
+/**
+ * Get current seconds.
+ *
+ * @returns {number} Seconds since epoch.
+ */
 function nowEpoch () {
   return Math.floor(new Date().getTime() / 1000)
 }
 
+/**
+ * Create mocked HTTP headers.
+ *
+ * @returns {[[string, *]]} Array of string->string headers.
+ */
 function headers () {
   return new Map([
     ['servertime', nowEpoch()]

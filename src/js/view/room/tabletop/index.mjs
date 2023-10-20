@@ -29,9 +29,13 @@ import {
   clamp,
   shuffle,
   recordTime,
-  brightness,
-  equalsJSON
+  equalsJSON,
+  mode
 } from '../../../lib/utils.mjs'
+
+import {
+  brightness
+} from '../../../lib/utils-html.mjs'
 
 import {
   sortByNumber
@@ -85,6 +89,8 @@ import {
   LAYER_TOKEN,
   LAYER_OTHER,
   ID,
+  TYPE_HEX,
+  TYPE_HEX2,
   findAsset,
   findPiece,
   findPiecesWithin,
@@ -93,6 +99,7 @@ import {
   getMaxZ,
   getTopLeft,
   getPieceBounds,
+  sortPiecesXY,
   nameToLayer,
   populatePieceDefaults,
   snap,
@@ -221,6 +228,103 @@ export function colorSelected (border = false) {
         }
     }
   }
+}
+
+/**
+ * Move selection.
+ *
+ * Will silently fail if nothing is selected, move would push selection out of
+ * table or items are locked.
+ *
+ * @param {number} x Move x in tiles. Can be negative.
+ * @param {number} y Move y in tiles. Can be negative.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object[]} Pieces to be moved.
+ */
+export function moveSelected (x, y, api = true) {
+  const setup = getSetup()
+  const pieces = sortPiecesXY(selectionGetPieces()).reverse()
+
+  // const clampCoords = {
+  //   x: clamp(this.dragData.xa, coords.x, room.width - 1 - this.dragData.xb),
+  //   y: clamp(this.dragData.ya, coords.y, room.height - 1 - this.dragData.yb)
+  // }
+
+  const dx = x / Math.abs(x || 1)
+  const dy = y / Math.abs(y || 1)
+  const offset = {}
+  switch (setup.type) {
+    case TYPE_HEX:
+      offset.xy = [
+        [[x * 0.859, y * 0.5], [x * 0.859, y], [x * 0.859, y * 0.5]],
+        [[x * 0.859, y], [x * 0.859, y], [x * 0.859, y]],
+        [[x * 0.859, y * 0.5], [x * 0.859, y], [x * 0.859, y * 0.5]]
+      ][dy + 1][dx + 1]
+      offset.dx = setup.gridSize
+      offset.dy = setup.gridSize
+      break
+    case TYPE_HEX2:
+      offset.xy = [
+        [[x * 0.5, y * 0.859], [x, y * 0.859], [x * 0.5, y * 0.859]],
+        [[x, y * 0.859], [x, y * 0.859], [x, y * 0.859]],
+        [[x * 0.5, y * 0.859], [x, y * 0.859], [x * 0.5, y * 0.859]]
+      ][dy + 1][dx + 1]
+      offset.dx = setup.gridSize
+      offset.dy = setup.gridSize
+      break
+    default:
+      offset.xy = [x, y]
+      offset.dx = setup.gridSize
+      offset.dy = setup.gridSize
+  }
+
+  // find the most-used row/col offset for hex zig-zag movement
+  const xs = []
+  const ys = []
+  if ([TYPE_HEX, TYPE_HEX2].includes(setup.type)) {
+    for (const piece of pieces) {
+      if (piece.f & FLAGS.NO_MOVE) continue
+      if (setup.type === TYPE_HEX) { // we need to move zig-zag on horizontal moves
+        if (Math.abs(x) === 1 && y === 0) {
+          const col = Math.round(piece.x / (setup.gridSize * 0.859))
+          ys.push(setup.gridSize / 2 * (col % 2 ? 1 : -1))
+        }
+      } else if (setup.type === TYPE_HEX2) { // we need to move zig-zag on horizontal moves
+        if (Math.abs(y) === 1 && x === 0) {
+          const row = Math.round(piece.y / (setup.gridSize * 0.859))
+          xs.push(setup.gridSize / 2 * (row % 2 ? 1 : -1))
+        }
+      }
+    }
+  }
+  offset.ox = mode(xs) ?? 0
+  offset.oy = mode(ys) ?? 0
+
+  const toMove = []
+  for (const piece of pieces) {
+    if (piece.f & FLAGS.NO_MOVE) continue
+    const xy = snap(
+      piece.x + offset.xy[0] * offset.dx + offset.ox,
+      piece.y + offset.xy[1] * offset.dy + offset.oy
+    )
+    toMove.push({
+      id: piece.id,
+      x: xy.x,
+      y: xy.y,
+      z: piece.z,
+      _meta: piece._meta
+    })
+  }
+
+  const box = getFeatures(toMove).boundingBox
+  if (box.left < 0 || box.top < 0 || box.right > getRoom().width || box.bottom > getRoom().height) {
+    return []
+  }
+
+  if (api) {
+    movePieces(toMove)
+  }
+  return toMove
 }
 
 /**

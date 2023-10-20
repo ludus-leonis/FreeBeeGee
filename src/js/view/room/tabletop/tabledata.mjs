@@ -328,6 +328,23 @@ export function findExpiredPieces (no = getTableNo()) {
 }
 
 /**
+ * Sort pieces based on bounding box coordinates, from top-left to bottom-right.
+ *
+ * @param {object[]} pieces Array of pieces.
+ * @returns {object} Object with features & bounds.
+ */
+export function sortPiecesXY (pieces) {
+  return pieces.sort((a, b) => {
+    const d = (a.x + a.y) - (b.x + b.y)
+    if (d === 0) {
+      return (a.x - b.x)
+    } else {
+      return d
+    }
+  })
+}
+
+/**
  * Determine the featureset all given pieces support. Also calculates bounds.
  *
  * @param {object[]} pieces Array of pieces.
@@ -336,73 +353,76 @@ export function findExpiredPieces (no = getTableNo()) {
 export function getFeatures (pieces) {
   const semi = [FEATURE_DICEMAT, FEATURE_DISCARD]
 
-  let features = {
-    edit: false,
-    rotate: false,
-    flip: false,
-    random: false,
-    pile: false,
-    top: false,
-    bottom: false,
-    clone: false,
-    delete: false,
-    color: false,
-    border: false,
-    number: false,
-    boundingBox: {}
-  }
-  if (pieces.length > 0) {
-    features = {
-      edit: pieces.length === 1,
-      rotate: true,
-      flip: true,
-      random: true,
-      pile: pieces.length > 1,
-      top: true,
-      bottom: true,
-      clone: true,
-      delete: true,
-      color: true,
-      border: true,
-      number: true,
-      boundingBox: {}
+  const features = pieces.length > 0
+    ? {
+        edit: pieces.length === 1,
+        rotate: true,
+        flip: true,
+        random: true,
+        move: true,
+        pile: pieces.length > 1,
+        top: true,
+        bottom: true,
+        clone: true,
+        delete: true,
+        color: true,
+        border: true,
+        number: true,
+        boundingBox: {}
+      }
+    : {
+        edit: false,
+        rotate: false,
+        flip: false,
+        random: false,
+        move: false,
+        pile: false,
+        top: false,
+        bottom: false,
+        clone: false,
+        delete: false,
+        color: false,
+        border: false,
+        number: false,
+        boundingBox: {}
+      }
+
+  for (const piece of pieces) {
+    if (piece.l === LAYER_OTHER) features.rotate = false
+    if (piece.f & FLAGS.NO_CLONE) features.clone = false
+    if (piece.f & FLAGS.NO_DELETE) features.delete = false
+    if (piece.f & FLAGS.NO_MOVE) features.move = false
+    if (piece.f & FLAGS.NO_MOVE) features.pile = false
+    if (!piece._meta?.hasColor) features.color = false
+    if (!piece._meta?.hasBorder) features.border = false
+    if (piece.l !== LAYER_TOKEN) features.number = false
+
+    if ((piece._meta?.sides ?? 1) + (piece._meta?.sidesExtra ?? 0) <= 1) features.flip = false
+    if (semi.includes(piece._meta?.feature)) features.flip = false
+
+    if ((piece._meta?.sides ?? 1) <= 1 && !semi.includes(piece._meta?.feature)) features.random = false
+
+    // plus/minus half-size of item?
+    if (piece.x - piece._meta.widthPx / 2 < (features.boundingBox.left ?? Number.MAX_VALUE)) {
+      features.boundingBox.left = Math.round(piece.x - piece._meta.widthPx / 2)
     }
-
-    for (const piece of pieces) {
-      if (piece.l === LAYER_OTHER) features.rotate = false
-      if (piece.f & FLAGS.NO_CLONE) features.clone = false
-      if (piece.f & FLAGS.NO_DELETE) features.delete = false
-      if (piece.f & FLAGS.NO_MOVE) features.pile = false
-      if (!piece._meta?.hasColor) features.color = false
-      if (!piece._meta?.hasBorder) features.border = false
-      if (piece.l !== LAYER_TOKEN) features.number = false
-
-      if ((piece._meta?.sides ?? 1) + (piece._meta?.sidesExtra ?? 0) <= 1) features.flip = false
-      if (semi.includes(piece._meta?.feature)) features.flip = false
-
-      if ((piece._meta?.sides ?? 1) <= 1 && !semi.includes(piece._meta?.feature)) features.random = false
-
-      // plus/minus half-size of item?
-      if (piece.x - piece._meta.widthPx / 2 < (features.boundingBox.left ?? Number.MAX_VALUE)) {
-        features.boundingBox.left = Math.round(piece.x - piece._meta.widthPx / 2)
-      }
-      if (piece.x + piece._meta.widthPx / 2 > (features.boundingBox.right ?? Number.MIN_VALUE)) {
-        features.boundingBox.right = Math.round(piece.x + piece._meta.widthPx / 2 - 1)
-      }
-      if (piece.y - piece._meta.heightPx / 2 < (features.boundingBox.top ?? Number.MAX_VALUE)) {
-        features.boundingBox.top = Math.round(piece.y - piece._meta.heightPx / 2)
-      }
-      if (piece.y + piece._meta.heightPx / 2 > (features.boundingBox.bottom ?? Number.MIN_VALUE)) {
-        features.boundingBox.bottom = Math.round(piece.y + piece._meta.heightPx / 2 - 1)
-      }
-      features.boundingBox.w = features.boundingBox.right - features.boundingBox.left + 1
-      features.boundingBox.h = features.boundingBox.bottom - features.boundingBox.top + 1
-      features.boundingBox.center = {
-        x: Math.floor((features.boundingBox.right + features.boundingBox.left + 1) / 2),
-        y: Math.floor((features.boundingBox.bottom + features.boundingBox.top + 1) / 2)
-      }
+    if (piece.x + piece._meta.widthPx / 2 > (features.boundingBox.right ?? Number.MIN_VALUE)) {
+      features.boundingBox.right = Math.round(piece.x + piece._meta.widthPx / 2 - 1)
+    }
+    if (piece.y - piece._meta.heightPx / 2 < (features.boundingBox.top ?? Number.MAX_VALUE)) {
+      features.boundingBox.top = Math.round(piece.y - piece._meta.heightPx / 2)
+    }
+    if (piece.y + piece._meta.heightPx / 2 > (features.boundingBox.bottom ?? Number.MIN_VALUE)) {
+      features.boundingBox.bottom = Math.round(piece.y + piece._meta.heightPx / 2 - 1)
+    }
+    features.boundingBox.w = features.boundingBox.right - features.boundingBox.left + 1
+    features.boundingBox.h = features.boundingBox.bottom - features.boundingBox.top + 1
+    features.boundingBox.center = {
+      x: Math.floor((features.boundingBox.right + features.boundingBox.left + 1) / 2),
+      y: Math.floor((features.boundingBox.bottom + features.boundingBox.top + 1) / 2)
     }
   }
+
   return features
 }
 

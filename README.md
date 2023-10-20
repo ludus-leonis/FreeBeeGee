@@ -8,7 +8,7 @@ A virtual gaming tabletop you can host on your own server.
 
 Your game. Your data.
 
-[FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Patreon](https://www.patreon.com/LudusLeonis) | [Docs](docs/DOCS.md)
+[FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Docs](docs/DOCS.md)
 
 ## Key features
 

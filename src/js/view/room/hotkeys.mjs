@@ -52,6 +52,7 @@ import {
   toTopSelected,
   randomSelected,
   numberSelected,
+  moveSelected,
   createNote,
   colorSelected,
   pileSelected,
@@ -158,6 +159,30 @@ function handleRoomKeys (keydown) {
     }
 
     switch (keydown.key) {
+      case 'ArrowDown':
+        if (keydown.shiftKey) moveSelected(0, 10); else moveSelected(0, 1)
+        break
+      case 'ArrowUp':
+        if (keydown.shiftKey) moveSelected(0, -10); else moveSelected(0, -1)
+        break
+      case 'ArrowLeft':
+        if (keydown.shiftKey) moveSelected(-10, 0); else moveSelected(-1, 0)
+        break
+      case 'ArrowRight':
+        if (keydown.shiftKey) moveSelected(10, 0); else moveSelected(1, 0)
+        break
+      case 'Home':
+        if (keydown.shiftKey) moveSelected(-10, -10); else moveSelected(-1, -1)
+        break
+      case 'PageUp':
+        if (keydown.shiftKey) moveSelected(10, -10); else moveSelected(1, -1)
+        break
+      case 'End':
+        if (keydown.shiftKey) moveSelected(-10, 10); else moveSelected(-1, 1)
+        break
+      case 'PageDown':
+        if (keydown.shiftKey) moveSelected(10, 10); else moveSelected(1, 1)
+        break
       case 'Delete': // delete selected
         deleteSelected()
         break

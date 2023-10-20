@@ -65,6 +65,12 @@ import {
 
 _setMock(1) // disable server calls, enable request-mirroring
 
+/**
+ * Split mock server reply for easier testing.
+ *
+ * @param {object} request Request object.
+ * @returns {object} Split properties path, method, body, headers and expectedStatus.
+ */
 function splitRequest (request) {
   return {
     path: request.path,
@@ -75,6 +81,9 @@ function splitRequest (request) {
   }
 }
 
+/**
+ * Initialize table+room data for tests.
+ */
 function setupTestData () {
   setTableNo(1, false)
 }

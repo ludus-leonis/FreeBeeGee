@@ -22,12 +22,9 @@
  */
 
 import {
-  brightness
-} from '../lib/utils.mjs'
-
-import {
   getStoreValue,
-  setStoreValue
+  setStoreValue,
+  brightness
 } from '../lib/utils-html.mjs'
 
 import {
@@ -686,7 +683,7 @@ export function updateAsset (asset, sync = true) {
 }
 
 /**
- * Remove an asset from the library. Will keep referencing pices on the table (which
+ * Remove an asset from the library. Will keep referencing pieces on the table (which
  * will get a placeholder image).
  *
  * Will only do an API call and rely on later sync to get the change back to the

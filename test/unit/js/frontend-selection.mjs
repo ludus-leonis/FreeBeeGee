@@ -44,6 +44,9 @@ import {
 
 const TEST_STATE = 5
 
+/**
+ * Initialize table+room data for tests.
+ */
 function setupTestData () {
   testSelection.selectionReset()
   _test.setRoom(JSON.parse(roomJSON))
@@ -700,7 +703,13 @@ describe('Frontend - selectionGetIds.mjs', function () {
   })
 })
 
-function node (obj) { // create a partial HTMLElement/node good enough for tests
+/**
+ * Create a partial HTMLElement/node good enough for tests.
+ *
+ * @param {object} obj Fake node object.
+ * @returns {object} Improved obj for chaining.
+ */
+function node (obj) { //
   if (!obj.classList) obj.classList = []
   obj.classList.contains = function (item) { return this.includes(item) }
   return obj

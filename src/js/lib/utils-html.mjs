@@ -205,6 +205,24 @@ export function inputMaxLength (input, maxLength, callback) {
   return length
 }
 
+// --- color -------------------------------------------------------------------
+
+/**
+ * Calculate brightness of an HTML hex-color value.
+ *
+ * @param {string} color E.g. '#ff0000'
+ * @returns {number} Grayscale brightness of color (0..255), e.g. 85.
+ */
+export function brightness (color) {
+  if (color === 'transparent') return 255 // all and nothing
+  const r = parseInt(color.substring(1, 3), 16)
+  const g = parseInt(color.substring(3, 5), 16)
+  const b = parseInt(color.substring(5, 7), 16)
+  return (r + g + b) / 3
+}
+
+// --- private -----------------------------------------------------------------
+
 /**
  * Find the length of the largest difference between two strings.
  *
