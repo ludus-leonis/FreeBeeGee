@@ -221,18 +221,19 @@ let prevSearch = ''
  * @param {_} tab Tab node to populate.
  * @param {object[]} assets Array of assets to add.
  * @param {boolean} expand If True, all asset sides will be added.
+ * @param {boolean} sideCount If True, a 'x/x' side count label will be added.
  */
-function sortPieces (tab, assets, expand = false) {
+function sortPieces (tab, assets, expand = false, sideCount = true) {
   const systemTiles = []
   const regularTiles = []
   for (const asset of sortByString(assets ?? [], 'name')) {
     const folder = asset.name.match(/^_\./) ? systemTiles : regularTiles
     if (expand) {
       for (let i = 0; i < (asset.media?.length ?? 1); i++) {
-        folder.push(assetToPreview(asset, i))
+        folder.push(assetToPreview(asset, i, sideCount))
       }
     } else {
-      folder.push(assetToPreview(asset))
+      folder.push(assetToPreview(asset, 0, sideCount))
     }
   }
   tab.add(regularTiles, systemTiles)
@@ -248,7 +249,7 @@ function refreshTabs () {
   sortPieces(_('#tab-tiles').empty(), library.tile, true)
   sortPieces(_('#tab-stickers').empty(), library.sticker)
   sortPieces(_('#tab-tokens').empty(), library.token, true)
-  sortPieces(_('#tab-other').empty(), library.other)
+  sortPieces(_('#tab-other').empty(), library.other, false, false)
 
   // enable selection
   _('#tabs-library .is-preview').on('click', click => {
@@ -642,10 +643,11 @@ function updatePreviewDOM (blob) {
  *
  * @param {object} asset The asset to convert.
  * @param {number} side Side to show, 0-based.
+ * @param {boolean} sideCount Show side 'x/y' label.
  * @returns {HTMLElement} Node for the modal.
  */
-function assetToPreview (asset, side = undefined) {
-  const max = _('.is-preview').create(assetToNode(asset, side ?? 0))
+function assetToPreview (asset, side = 0, sideCount = true) {
+  const max = _('.is-preview').create(assetToNode(asset, side))
   if (asset.w % 2 === 0) max.add('.is-even-x')
   if (asset.h % 2 === 0) max.add('.is-even-y')
 
@@ -655,14 +657,13 @@ function assetToPreview (asset, side = undefined) {
   if (asset.w > 2 || asset.h > 2) {
     tag = `${asset.w}x${asset.h}`
   }
-  if (asset.media.length > 1) {
-    tag += `:${asset.media.length}`
-  }
 
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
   let name = prettyName(asset.name)
-  if (side !== undefined && asset.media.length > 1) name += ` (${side + 1})`
-  card.add(_('p').create().add(prettyName(name)))
+  if (sideCount && asset.media.length > 1) name += ` <span class="is-faded-more">${side + 1}/${asset.media.length}</span>`
+  const label = _('p').create()
+  label.innerHTML = name
+  card.add(label)
   return card
 }
 

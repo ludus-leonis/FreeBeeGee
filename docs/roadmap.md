@@ -8,7 +8,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] exclude protected pieces from operation, instead of denying operation
 * [X] move selection via cursor keys
 * [ ] tweak minor grid visibility
-* [ ] cleanup '3x3:3' in library window and add tooltips
+* [X] cleanup 'x/y' and '3x3:3' in library window
 * [ ] system separator line in library window
 * [ ] autopopulate empty data dir (for docker volumes)
 * [ ] engine: grid-on-tile flag major/minor

@@ -13,7 +13,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
-* TBD
+* improved display of availables sides and sizes in the library
 
 
 ## v0.22.0 - Remorseful Reindeer
