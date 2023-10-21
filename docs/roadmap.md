@@ -9,7 +9,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] move selection via cursor keys
 * [ ] tweak minor grid visibility
 * [X] cleanup 'x/y' and '3x3:3' in library window
-* [ ] system separator line in library window
+* [X] system separator line in library window
 * [ ] autopopulate empty data dir (for docker volumes)
 * [ ] engine: grid-on-tile flag major/minor
 * [ ] zoom-to-cursor
@@ -32,6 +32,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] refactor: system asset flag instead of '_'
 * [ ] snapshot download for demo mode
 * [ ] doubleclick opens edit modal
 * [ ] plugin-hook

@@ -13,6 +13,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* added system-assets separator line in library window
 * improved display of availables sides and sizes in the library
 
 

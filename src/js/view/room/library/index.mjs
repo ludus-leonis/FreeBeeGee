@@ -131,7 +131,7 @@ export function modalLibrary (xy) {
         <input id="tab-5" type="radio" name="tabs" value="upload">
         <div class="tabs-tabs">
           <label for="tab-1" class="tabs-tab">Tiles</label>
-          <label for="tab-2" class="tabs-tab">Stickers</label>
+          <label for="tab-2" class="tabs-tab">Sticker</label>
           <label for="tab-3" class="tabs-tab">Token</label>
           <label for="tab-4" class="tabs-tab">Dice</label>
           <label for="tab-5" class="tabs-tab">Upload</label>
@@ -218,12 +218,13 @@ let prevSearch = ''
 /**
  * Sort library items for display in the tab(s).
  *
+ * @param {string} label Label/title for the separator.
  * @param {_} tab Tab node to populate.
  * @param {object[]} assets Array of assets to add.
  * @param {boolean} expand If True, all asset sides will be added.
  * @param {boolean} sideCount If True, a 'x/x' side count label will be added.
  */
-function sortPieces (tab, assets, expand = false, sideCount = true) {
+function sortPieces (label, tab, assets, expand = false, sideCount = true) {
   const systemTiles = []
   const regularTiles = []
   for (const asset of sortByString(assets ?? [], 'name')) {
@@ -236,7 +237,11 @@ function sortPieces (tab, assets, expand = false, sideCount = true) {
       folder.push(assetToPreview(asset, 0, sideCount))
     }
   }
-  tab.add(regularTiles, systemTiles)
+  if (regularTiles.length > 0) {
+    tab.add(regularTiles)
+    tab.add(_('label.col-12.is-center').create(`----- System ${label} -----`))
+  }
+  tab.add(systemTiles)
 }
 
 /**
@@ -246,10 +251,10 @@ function refreshTabs () {
   const library = getLibrary()
 
   // add items to their tab, sort system assets (_) last
-  sortPieces(_('#tab-tiles').empty(), library.tile, true)
-  sortPieces(_('#tab-stickers').empty(), library.sticker)
-  sortPieces(_('#tab-tokens').empty(), library.token, true)
-  sortPieces(_('#tab-other').empty(), library.other, false, false)
+  sortPieces('Tiles', _('#tab-tiles').empty(), library.tile, true)
+  sortPieces('Sticker', _('#tab-stickers').empty(), library.sticker)
+  sortPieces('Token', _('#tab-tokens').empty(), library.token, true)
+  sortPieces('Dice', _('#tab-other').empty(), library.other, false, false)
 
   // enable selection
   _('#tabs-library .is-preview').on('click', click => {

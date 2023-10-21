@@ -18,7 +18,7 @@ Your game. Your data.
 * Multiple tables per room. Use them for different game setups or dungeon levels.
 * Tile-/grid-based. Supports square and hex layouts, with snapping.
 * Classic game boards, dungeon tiles and 200+ monster token included. Upload your own, too.
-* Separate layers for tiles, stickers and tokens.
+* Separate layers for tiles, sticker and token.
 * Asset browser for your token/tiles. Individual libraries per room/game.
 * Sticky notes and dice trays.
 * Templates to setup tables and populate your library from.
