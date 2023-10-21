@@ -253,7 +253,7 @@ export const PREFS = {
   LAYERother: { name: 'layer5', default: undefined },
   LAYERtoken: { name: 'layer4', default: undefined },
   LAYERnote: { name: 'layer3', default: undefined },
-  LAYERoverlay: { name: 'layer2', default: undefined },
+  LAYERsticker: { name: 'layer2', default: undefined },
   LAYERtile: { name: 'layer1', default: undefined },
   GRID: { name: 'grid', default: 0 },
   LOS: { name: 'los', default: false },

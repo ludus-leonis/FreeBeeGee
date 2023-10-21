@@ -770,13 +770,13 @@ const roomJSON = `
     "image": "img/desktop-wood.jpg"
   },
   "library": {
-    "overlay": [{
+    "sticker": [{
       "media": ["area.1x1.1x1x1.svg", "##BACK##"],
       "w": 1,
       "h": 1,
       "bg": "#808080",
       "name": "area.1x1",
-      "type": "overlay",
+      "type": "sticker",
       "id": "7261fff0"
     }],
     "tile": [{

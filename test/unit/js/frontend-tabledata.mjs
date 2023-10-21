@@ -29,7 +29,7 @@ import {
 
 import {
   LAYER_TILE,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_TOKEN,
   LAYER_OTHER,
   findPiece,
@@ -134,7 +134,7 @@ describe('Frontend - tabledata.mjs', function () {
       // invalid limited searches
       expect(findAsset('f45f27b5', LAYER_TILE)).to.be.eql(null)
       expect(findAsset('f45f27b5', LAYER_TOKEN)).to.be.eql(null)
-      expect(findAsset('f45f27b5', LAYER_OVERLAY)).to.be.eql(null)
+      expect(findAsset('f45f27b5', LAYER_STICKER)).to.be.eql(null)
     }
   })
 
@@ -159,7 +159,7 @@ describe('Frontend - tabledata.mjs', function () {
       // invalid limited searches
       expect(findAssetByAlias('classic.a', LAYER_TILE)).to.be.eql(null)
       expect(findAssetByAlias('classic.a', LAYER_TOKEN)).to.be.eql(null)
-      expect(findAssetByAlias('classic.a', LAYER_OVERLAY)).to.be.eql(null)
+      expect(findAssetByAlias('classic.a', LAYER_STICKER)).to.be.eql(null)
       expect(findAssetByAlias('classic.a', 'nolayer')).to.be.eql(null)
     }
   })
@@ -421,7 +421,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(t2.h).to.be.eql(1)
     expect(t2.d).to.be.eql(2)
 
-    const t3 = populateAssetDefaults({ type: 'overlay' })
+    const t3 = populateAssetDefaults({ type: 'sticker' })
     expect(Object.keys(t3)).to.have.members(['_hash', 'type', 'w', 'h', 'd'])
     expect(t3.w).to.be.eql(1)
     expect(t3.h).to.be.eql(1)
@@ -538,8 +538,8 @@ describe('Frontend - tabledata.mjs', function () {
         expect(getMinZ(LAYER_TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(58)
         expect(getMinZ(LAYER_TOKEN)).to.be.eql(34)
         expect(getMinZ(LAYER_TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMinZ(LAYER_OVERLAY)).to.be.eql(0)
-        expect(getMinZ(LAYER_OVERLAY, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER_STICKER)).to.be.eql(0)
+        expect(getMinZ(LAYER_STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMinZ(LAYER_OTHER)).to.be.eql(0)
         expect(getMinZ(LAYER_OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMinZ()).to.be.eql(34)
@@ -548,8 +548,8 @@ describe('Frontend - tabledata.mjs', function () {
         expect(getMinZ(LAYER_TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMinZ(LAYER_TOKEN)).to.be.eql(0)
         expect(getMinZ(LAYER_TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMinZ(LAYER_OVERLAY)).to.be.eql(0)
-        expect(getMinZ(LAYER_OVERLAY, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER_STICKER)).to.be.eql(0)
+        expect(getMinZ(LAYER_STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMinZ(LAYER_OTHER)).to.be.eql(0)
         expect(getMinZ(LAYER_OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMinZ()).to.be.eql(0)
@@ -585,8 +585,8 @@ describe('Frontend - tabledata.mjs', function () {
         expect(getMaxZ(LAYER_TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(58)
         expect(getMaxZ(LAYER_TOKEN)).to.be.eql(35)
         expect(getMaxZ(LAYER_TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMaxZ(LAYER_OVERLAY)).to.be.eql(0)
-        expect(getMaxZ(LAYER_OVERLAY, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER_STICKER)).to.be.eql(0)
+        expect(getMaxZ(LAYER_STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMaxZ(LAYER_OTHER)).to.be.eql(0)
         expect(getMaxZ(LAYER_OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMaxZ()).to.be.eql(65)
@@ -595,8 +595,8 @@ describe('Frontend - tabledata.mjs', function () {
         expect(getMaxZ(LAYER_TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMaxZ(LAYER_TOKEN)).to.be.eql(0)
         expect(getMaxZ(LAYER_TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMaxZ(LAYER_OVERLAY)).to.be.eql(0)
-        expect(getMaxZ(LAYER_OVERLAY, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER_STICKER)).to.be.eql(0)
+        expect(getMaxZ(LAYER_STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMaxZ(LAYER_OTHER)).to.be.eql(0)
         expect(getMaxZ(LAYER_OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMaxZ()).to.be.eql(0)
@@ -996,13 +996,13 @@ const roomJSON = `
     "image": "img/desktop-wood.jpg"
   },
   "library": {
-    "overlay": [{
+    "sticker": [{
       "media": ["area.1x1.1x1x1.svg", "##BACK##"],
       "w": 1,
       "h": 1,
       "bg": "#808080",
       "name": "area.1x1",
-      "type": "overlay",
+      "type": "sticker",
       "id": "7261fff0"
     }],
     "tile": [{

@@ -108,7 +108,7 @@ final class FreeBeeGeeAPITest extends TestCase
     {
         $this->assertEquals('v-e4E300', FreeBeeGeeAPI::generateAssetId('tile', 'door', 1, 2));
         $this->assertEquals('v-e4E300', FreeBeeGeeAPI::generateAssetId('tile', 'door', '1', '2'));
-        $this->assertEquals('bn6Wv100', FreeBeeGeeAPI::generateAssetId('overlay', 'door', 1, 2));
+        $this->assertEquals('bn6Wv100', FreeBeeGeeAPI::generateAssetId('sticker', 'door', 1, 2));
         $this->assertEquals('v2AC0200', FreeBeeGeeAPI::generateAssetId('tile', 'wall.broken', 1, 2));
         $this->assertEquals('etAlG300', FreeBeeGeeAPI::generateAssetId('tile', 'door', 2, 2));
         $this->assertEquals('YrLnN100', FreeBeeGeeAPI::generateAssetId('tile', 'door', 2, 1));
@@ -132,7 +132,7 @@ final class FreeBeeGeeAPITest extends TestCase
             'LICENSE.md',
             'assets/badge/extra.svg',
             'assets/material/extra.svg',
-            'assets/overlay/aab.1x1.1x1x1.svg',
+            'assets/sticker/aab.1x1.1x1x1.svg',
             'assets/other/aaa.4x4x1.transparent.wood.jpg',
             'assets/tile/aac.9x9x1.svg',
             'assets/token/aad.plain.1x1x1.ffffff.svg',
@@ -622,7 +622,7 @@ final class FreeBeeGeeAPITest extends TestCase
     public function testCleanupTableJSON()
     {
         $library = (object) [
-            'overlay' => [],
+            'sticker' => [],
             'tile' => [],
             'token' => [],
             'other' => [],

@@ -65,13 +65,13 @@ export const stickyNoteColors = [
 ]
 
 export const LAYER_TILE = 'tile'
-export const LAYER_OVERLAY = 'overlay'
+export const LAYER_STICKER = 'sticker'
 export const LAYER_NOTE = 'note'
 export const LAYER_TOKEN = 'token'
 export const LAYER_OTHER = 'other'
 export const LAYERS = [ // reverse order
   LAYER_TILE,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_NOTE,
   LAYER_TOKEN,
   LAYER_OTHER
@@ -80,7 +80,7 @@ export const LAYERS = [ // reverse order
 export const assetTypes = [
   LAYER_TILE,
   LAYER_TOKEN,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_OTHER,
   'badge'
 ]
@@ -89,7 +89,7 @@ export const assetTypes = [
  * Find the name for a layer index.
  *
  * @param {number} layer Layer index, 1-based.
- * @returns {string} Layer name, e.g. 'overlay'.
+ * @returns {string} Layer name, e.g. 'sticker'.
  */
 function layerToName (layer) {
   return LAYERS[layer - 1]
@@ -98,7 +98,7 @@ function layerToName (layer) {
 /**
  * Find the index of a layer name.
  *
- * @param {string} name Name of layer, e.g. 'overlay'.
+ * @param {string} name Name of layer, e.g. 'sticker'.
  * @returns {number} Layer index.
  */
 export function nameToLayer (name) {
@@ -496,14 +496,14 @@ export function sanitizePiecePatch (patch, pieceId = null) {
  * @returns {Array} Setup for chaining.
  */
 export function populateLibraryDefaults (library) {
-  library.overlay = library.overlay ?? []
+  library.sticker = library.sticker ?? []
   library.tile = library.tile ?? []
   library.token = library.token ?? []
   library.other = library.other ?? []
   library.badge = library.badge ?? []
   library.material = library.material ?? []
 
-  for (const piece of library.overlay) {
+  for (const piece of library.sticker) {
     populateAssetDefaults(piece)
   }
   for (const piece of library.tile) {

@@ -597,7 +597,7 @@ function apiRoomAssets (roomName, assetId, data, headers) {
   switch (data.method) {
     case 'DELETE':
       temp = getRoom(roomName)
-      del(temp.library.overlay, 'id', assetId)
+      del(temp.library.sticker, 'id', assetId)
       del(temp.library.tile, 'id', assetId)
       del(temp.library.token, 'id', assetId)
       del(temp.library.other, 'id', assetId)

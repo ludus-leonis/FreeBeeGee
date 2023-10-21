@@ -82,7 +82,7 @@ export function modalHelp () {
             <ul>
               <li><strong>Dice</strong> are your friendly random number generators.</li>
               <li><strong>Tokens</strong> are round player figures, usually heroes and monsters.</li>
-              <li><strong>Overlays</strong> help you mark areas of interest.</li>
+              <li><strong>Stickers</strong> help you mark areas of interest.</li>
               <li><strong>Notes</strong> contain sticky notes.</li>
               <li><strong>Tiles</strong> are assembled to form your game board. They can be corridors, caves and more.</li>
             </ul>
@@ -117,7 +117,7 @@ export function modalHelp () {
           <div class="hotkeys">
             <p>The following general hotkeys are available. Hotkeys are <strong>case-sensitve</strong>.</p>
 
-            <p><span class="key">1</span>/<span class="key">2</span>/<span class="key">3</span>/<span class="key">4</span> Toggle dice/token/overlay/tile layer.</p>
+            <p><span class="key">1</span>/<span class="key">2</span>/<span class="key">3</span>/<span class="key">4</span> Toggle dice/token/sticker/tile layer.</p>
             <p><span class="key">l</span> Show library. Hint: The new piece will be added at the position the mouse cursor was before the library opened.</p>
             <p><span class="key">n</span> Add a new sticky note at the current mouse cursor position.</p>
             <p><span class="key">Space</span> Show laser-pointer at the current mouse cursor position.</p>

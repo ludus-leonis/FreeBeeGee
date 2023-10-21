@@ -84,7 +84,7 @@ import {
   FEATURE_DICEMAT,
   FEATURE_DISCARD,
   LAYER_TILE,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_NOTE,
   LAYER_TOKEN,
   LAYER_OTHER,
@@ -521,7 +521,7 @@ function createOrUpdatePieceDOM (piece) {
           '--fbg-color-invert': brightness(setup.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
-    } else if (piece.l === LAYER_OVERLAY || piece.l === LAYER_OTHER) {
+    } else if (piece.l === LAYER_STICKER || piece.l === LAYER_OTHER) {
       // no color
     } else {
       const asset = findAsset(piece.a)
@@ -1142,7 +1142,7 @@ function pieceToNode (piece) {
       node.add(`.is-d-${asset.d}`)
     }
 
-    if (asset.type !== LAYER_OVERLAY && asset.type !== LAYER_OTHER) {
+    if (asset.type !== LAYER_STICKER && asset.type !== LAYER_OTHER) {
       if (!asset.bg.match(/^[0-9][0-9]?$/)) {
         // color information is html color or 'transparent' -> apply
         node.css({ '--fbg-color': asset.bg })
@@ -1378,7 +1378,7 @@ function setItem (piece) {
   switch (piece.l) {
     case LAYER_TILE:
     case LAYER_TOKEN:
-    case LAYER_OVERLAY:
+    case LAYER_STICKER:
     case LAYER_OTHER:
       setPiece(piece)
       break

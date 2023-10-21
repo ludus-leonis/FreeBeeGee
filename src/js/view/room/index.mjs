@@ -41,7 +41,7 @@ import {
   iconLogo,
   iconDice,
   iconToken,
-  iconOverlay,
+  iconSticker,
   iconTile,
   iconAdd,
   iconEdit,
@@ -89,7 +89,7 @@ import {
 
 import {
   LAYER_TILE,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_TOKEN,
   LAYER_OTHER,
   TYPE_HEX,
@@ -218,7 +218,7 @@ export function runRoom (name, token) {
 /**
  * Toggle one of the layers on/off for selection.
  *
- * @param {string} layer Either LAYER_TILE, LAYER_OVERLAY or LAYER_TOKEN.
+ * @param {string} layer Either LAYER_TILE, LAYER_STICKER or LAYER_TOKEN.
  */
 export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
@@ -517,7 +517,7 @@ function setupRoom () {
           <div>
             <button id="btn-other" class="btn-icon" title="Toggle dice [1]">${iconDice}</button>
             <button id="btn-token" class="btn-icon" title="Toggle tokens [2]">${iconToken}</button>
-            <button id="btn-overlay" class="btn-icon" title="Toggle overlays [3]">${iconOverlay}</button>
+            <button id="btn-sticker" class="btn-icon" title="Toggle stickers [3]">${iconSticker}</button>
             <button id="btn-tile" class="btn-icon" title="Toggle tiles [4]">${iconTile}</button>
           </div>
 
@@ -550,7 +550,7 @@ function setupRoom () {
           <div id="layer-other" class="layer layer-other"></div>
           <div id="layer-token" class="layer layer-token"></div>
           <div id="layer-note" class="layer layer-note"></div>
-          <div id="layer-overlay" class="layer layer-overlay"></div>
+          <div id="layer-sticker" class="layer layer-sticker"></div>
           <div id="layer-tile" class="layer layer-tile"></div>
           <div id="layer-room" class="layer layer-room"></div>
         </div>
@@ -567,7 +567,7 @@ function setupRoom () {
 
   // setup menu for layers
   let undefinedCount = 0
-  for (const layer of [LAYER_TOKEN, LAYER_OVERLAY, LAYER_TILE, LAYER_OTHER]) {
+  for (const layer of [LAYER_TOKEN, LAYER_STICKER, LAYER_TILE, LAYER_OTHER]) {
     _('#btn-' + layer).on('click', () => toggleLayer(layer))
     const prop = getRoomPreference(PREFS['LAYER' + layer])
     if (prop === true) toggleLayer(layer) // stored enabled
@@ -578,7 +578,7 @@ function setupRoom () {
     if (getSetup().layersEnabled) {
       if (getSetup().layersEnabled.includes(LAYER_OTHER)) toggleLayer(LAYER_OTHER)
       if (getSetup().layersEnabled.includes(LAYER_TOKEN)) toggleLayer(LAYER_TOKEN)
-      if (getSetup().layersEnabled.includes(LAYER_OVERLAY)) toggleLayer(LAYER_OVERLAY)
+      if (getSetup().layersEnabled.includes(LAYER_STICKER)) toggleLayer(LAYER_STICKER)
       if (getSetup().layersEnabled.includes(LAYER_TILE)) toggleLayer(LAYER_TILE)
     } else {
       toggleLayer(LAYER_OTHER)

@@ -64,7 +64,7 @@ import {
 
 import {
   LAYER_TILE,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_TOKEN,
   LAYER_OTHER
 } from '../../view/room/tabletop/tabledata.mjs'
@@ -196,7 +196,7 @@ function handleRoomKeys (keydown) {
         if (keydown.ctrlKey | keydown.altKey) setTableNo(2); else toggleLayer(LAYER_TOKEN)
         break
       case '3': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(3); else toggleLayer(LAYER_OVERLAY)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(3); else toggleLayer(LAYER_STICKER)
         break
       case '4': // toggle layer, switch table
         if (keydown.ctrlKey | keydown.altKey) setTableNo(4); else toggleLayer(LAYER_TILE)

@@ -46,7 +46,7 @@ import {
 import {
   LAYER_TILE,
   LAYER_TOKEN,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_OTHER
 } from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
@@ -77,8 +77,8 @@ function testApiCrudRoom (api, version, room) {
     expect(body.width).to.be.eql(3072)
     expect(body.height).to.be.eql(2048)
     expect(body.library).to.be.an('object')
-    expect(Object.keys(body.library)).to.have.members([LAYER_TILE, LAYER_TOKEN, LAYER_OVERLAY, 'badge', 'material', LAYER_OTHER])
-    expect(body.library.overlay).to.be.an('array')
+    expect(Object.keys(body.library)).to.have.members([LAYER_TILE, LAYER_TOKEN, LAYER_STICKER, 'badge', 'material', LAYER_OTHER])
+    expect(body.library.sticker).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
     expect(body.library.material).to.be.an('array')
@@ -106,8 +106,8 @@ function testApiCrudRoom (api, version, room) {
     expect(body.width).to.be.eql(3072)
     expect(body.height).to.be.eql(2048)
     expect(body.library).to.be.an('object')
-    expect(Object.keys(body.library)).to.have.members([LAYER_TILE, LAYER_TOKEN, LAYER_OVERLAY, 'badge', 'material', LAYER_OTHER])
-    expect(body.library.overlay).to.be.an('array')
+    expect(Object.keys(body.library)).to.have.members([LAYER_TILE, LAYER_TOKEN, LAYER_STICKER, 'badge', 'material', LAYER_OTHER])
+    expect(body.library.sticker).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
     expect(body.library.material).to.be.an('array')

@@ -30,7 +30,7 @@ import {
 
 import {
   LAYER_TILE,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_NOTE,
   LAYER_TOKEN,
   LAYER_OTHER,
@@ -91,7 +91,7 @@ export function modalEdit (piece) {
         save = setupModalNote(piece)
         break
       case LAYER_TILE:
-      case LAYER_OVERLAY:
+      case LAYER_STICKER:
         save = setupModalTile(piece)
         break
       case LAYER_OTHER:

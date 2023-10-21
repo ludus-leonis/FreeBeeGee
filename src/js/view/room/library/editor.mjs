@@ -177,7 +177,7 @@ function updateManager () {
       const node = _('.filetree')
       node.add(createSubtree('Dice', 'other', library.other))
       node.add(createSubtree('Token', 'token', library.token))
-      node.add(createSubtree('Overlays', 'overlay', library.overlay))
+      node.add(createSubtree('Stickers', 'sticker', library.sticker))
       node.add(createSubtree('Tiles', 'tile', library.tile))
       // node.add(createSubtree('Badges', 'badge', library.badge))
 

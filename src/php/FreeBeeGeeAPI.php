@@ -34,8 +34,8 @@ const FLAG_NO_MOVE   = 0b00000100;
 const UNDO_LEVELS = 15; // 0-14
 
 const ASSET_SIZE_MAX = 1024 * 1024;
-const ASSET_TYPES = ['overlay', 'tile', 'token', 'other', 'badge', 'material'];
-const LAYERS = ['overlay', 'tile', 'token', 'other', 'note'];
+const ASSET_TYPES = ['sticker', 'tile', 'token', 'other', 'badge', 'material'];
+const LAYERS = ['sticker', 'tile', 'token', 'other', 'note'];
 const LABEL_LENGTH = 32;
 const NOTE_COLORS = ['yellow', 'orange', 'green', 'blue', 'pink'];
 const NOTE_LENGTH = 256;
@@ -688,7 +688,10 @@ class FreeBeeGeeAPI
                     }
                     $lastAsset = (object) [
                         'id' => FreeBeeGeeAPI::generateAssetId($type, $asset->name, $asset->w, $asset->h), // 32bit safe
-                        'lid' => FreeBeeGeeAPI::generateId(abs(crc32($type . '/' . $mediaBase))), // legacy ID
+                        'lid' => [
+                            // legacy ID <0.22 incl. side
+                            FreeBeeGeeAPI::generateId(abs(crc32($type . '/' . $mediaBase))), $type, $mediaBase
+                        ],
                         'name' => $asset->name,
                         'type' => $type,
                         'w' => $asset->w,
@@ -697,6 +700,15 @@ class FreeBeeGeeAPI
                         'bg' => $asset->bg,
                         'media' => []
                     ];
+                    if ($type === 'sticker') { // legacy IDs pre-sticker <0.23
+                        $lastAsset->lid[] = FreeBeeGeeAPI::generateId(abs(crc32('overlay/' . $mediaBase)));
+                        $lastAsset->lid[] = FreeBeeGeeAPI::generateAssetId(
+                            'overlay',
+                            $asset->name,
+                            $asset->w,
+                            $asset->h
+                        );
+                    }
                     if (property_exists($asset, 'tx')) {
                         $lastAsset->tx = $asset->tx;
                     }
@@ -1367,7 +1379,7 @@ class FreeBeeGeeAPI
             if (isset($out->a)) { // upgrade legacy IDs
                 foreach (
                     array_merge(
-                        $library->overlay,
+                        $library->sticker,
                         $library->tile,
                         $library->token,
                         $library->other,
@@ -1375,7 +1387,7 @@ class FreeBeeGeeAPI
                         $library->material
                     ) as $asset
                 ) {
-                    if ($out->a === $asset->lid) { // upgrade legacy IDs
+                    if (in_array($out->a, $asset->lid)) {
                         $out->a = $asset->id;
                         break;
                     }
@@ -1756,7 +1768,7 @@ class FreeBeeGeeAPI
      * @param string $image Path to image file, e.g. 'img/desktop-stone.jpg'.
      * @param string $colorAvg Hex fallback color, e.g. '#808080'.
      * @param string $colorScroll Hex color for scrollbar, e.g. '#606060'.
-     * @param string $gridColor Checker overlay to use ('white' or 'black').
+     * @param string $gridColor Checker sticker to use ('white' or 'black').
      * @return stdClass Populated background object.
      */
     private function getBackground(
@@ -2824,7 +2836,7 @@ class FreeBeeGeeAPI
         $roomFS = json_decode(file_get_contents($meta->folder . 'room.json'));
         foreach (
             array_merge(
-                $roomFS->library->overlay,
+                $roomFS->library->sticker,
                 $roomFS->library->tile,
                 $roomFS->library->token,
                 $roomFS->library->other,
@@ -3083,7 +3095,7 @@ class FreeBeeGeeAPI
                 case 'other': // dice
                     $asset->d = 2;
                     break;
-                case 'overlay':
+                case 'sticker':
                 case 'badge':
                 case 'material':
                 default:

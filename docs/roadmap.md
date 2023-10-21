@@ -8,12 +8,13 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] exclude protected pieces from operation, instead of denying operation
 * [X] move selection via cursor keys
 * [ ] tweak minor grid visibility
-* [ ] tooltip explanation for '3x3:3' in library window
+* [ ] cleanup '3x3:3' in library window and add tooltips
+* [ ] system separator line in library window
 * [ ] autopopulate empty data dir (for docker volumes)
 * [ ] engine: grid-on-tile flag major/minor
 * [ ] zoom-to-cursor
 * [X] support more special hotkeys (copy, paste, zoom, ...)
-* [ ] rename overlays to stickers
+* [X] rename overlays to stickers
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring

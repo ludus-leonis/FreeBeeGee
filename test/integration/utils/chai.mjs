@@ -39,7 +39,7 @@ export const ACCESS_ANY = '00000000-0000-0000-0000-000000000000'
 
 export const _ = { // asset count in system snapshot
   other: 16,
-  overlay: 20,
+  sticker: 20,
   tile: 2,
   token: 5,
   badge: 2,
@@ -48,7 +48,7 @@ export const _ = { // asset count in system snapshot
 
 export const classic = { // asset count in classic snapshot
   other: 0,
-  overlay: 0,
+  sticker: 0,
   tile: 10,
   token: 6,
   badge: 3,

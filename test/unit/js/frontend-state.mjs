@@ -136,7 +136,7 @@ describe('Frontend - state.mjs - basics', function () {
     expect(getSetup()).to.be.an('object')
     expect(getSetup().type).to.be.eql('grid-square')
     expect(getLibrary()).to.be.an('object')
-    expect(getLibrary().overlay).to.be.an('array')
+    expect(getLibrary().sticker).to.be.an('array')
     expect(getLibrary().tile).to.be.an('array')
     expect(getLibrary().other).to.be.an('array')
     expect(getLibrary().token).to.be.an('array')
@@ -491,13 +491,13 @@ const roomJSON = `
     "image": "img/desktop-wood.jpg"
   },
   "library": {
-    "overlay": [{
+    "sticker": [{
       "media": ["area.1x1.1x1x1.svg", "##BACK##"],
       "w": 1,
       "h": 1,
       "color": "#808080",
       "name": "area.1x1",
-      "type": "overlay",
+      "type": "sticker",
       "id": "7261fff0"
     }],
     "tile": [{

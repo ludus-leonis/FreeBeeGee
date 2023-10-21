@@ -215,7 +215,7 @@ gulp.task('img', gulp.series(() => {
  * @param {boolean} minimize If true, the asses/images will be minimized first.
  * @returns {object} Gulp pipe.
  */
-function snapshot (name, minimize = true) {
+function snapshot (name, minimize = false) {
   return gulp.series(() => { // step 1: optimize & cache images
     if (minimize) {
       return gulp.src([
@@ -258,11 +258,11 @@ gulp.task('dist', gulp.parallel(
   'html',
   'js-vendor',
   'php',
-  snapshot('RPG', false),
-  snapshot('Hex', false),
-  snapshot('Classic', false),
-  snapshot('Tutorial', false),
-  snapshot('_', false),
+  snapshot('RPG'),
+  snapshot('Hex'),
+  snapshot('Classic'),
+  snapshot('Tutorial'),
+  snapshot('_'),
   'fonts',
   'img',
   'favicon'

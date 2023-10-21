@@ -64,7 +64,7 @@ import {
 
 import {
   LAYER_TILE,
-  LAYER_OVERLAY,
+  LAYER_STICKER,
   LAYER_TOKEN,
   createPieceFromAsset,
   splitAssetFilename,
@@ -125,20 +125,20 @@ export function modalLibrary (xy) {
     _('#modal-body').innerHTML = `
       <div id="tabs-library" class="tabs">
         <input id="tab-1" type="radio" name="tabs" value="tile">
-        <input id="tab-2" type="radio" name="tabs" value="overlay">
+        <input id="tab-2" type="radio" name="tabs" value="sticker">
         <input id="tab-3" type="radio" name="tabs" value="token">
         <input id="tab-4" type="radio" name="tabs" value="other">
         <input id="tab-5" type="radio" name="tabs" value="upload">
         <div class="tabs-tabs">
           <label for="tab-1" class="tabs-tab">Tiles</label>
-          <label for="tab-2" class="tabs-tab">Overlays</label>
+          <label for="tab-2" class="tabs-tab">Stickers</label>
           <label for="tab-3" class="tabs-tab">Token</label>
           <label for="tab-4" class="tabs-tab">Dice</label>
           <label for="tab-5" class="tabs-tab">Upload</label>
         </div>
         <div class="tabs-content">
           <div class="container"><div id="tab-tiles" class="row"></div></div>
-          <div class="container"><div id="tab-overlays" class="row"></div></div>
+          <div class="container"><div id="tab-stickers" class="row"></div></div>
           <div class="container"><div id="tab-tokens" class="row"></div></div>
           <div class="container"><div id="tab-other" class="row"></div></div>
           <form class="container spacing-small"><div id="tab-upload" class="row">
@@ -216,46 +216,39 @@ export function modalLibrary (xy) {
 let prevSearch = ''
 
 /**
+ * Sort library items for display in the tab(s).
+ *
+ * @param {_} tab Tab node to populate.
+ * @param {object[]} assets Array of assets to add.
+ * @param {boolean} expand If True, all asset sides will be added.
+ */
+function sortPieces (tab, assets, expand = false) {
+  const systemTiles = []
+  const regularTiles = []
+  for (const asset of sortByString(assets ?? [], 'name')) {
+    const folder = asset.name.match(/^_\./) ? systemTiles : regularTiles
+    if (expand) {
+      for (let i = 0; i < (asset.media?.length ?? 1); i++) {
+        folder.push(assetToPreview(asset, i))
+      }
+    } else {
+      folder.push(assetToPreview(asset))
+    }
+  }
+  tab.add(regularTiles, systemTiles)
+}
+
+/**
  * Get a fresh dataset from the state and populate the tabs with the items.
  */
 function refreshTabs () {
   const library = getLibrary()
 
   // add items to their tab, sort system assets (_) last
-  const tiles = _('#tab-tiles').empty()
-  const systemTiles = []
-  const regularTiles = []
-  for (const asset of sortByString(library.tile ?? [], 'name')) {
-    for (let i = 0; i < (asset.media?.length ?? 1); i++) {
-      if (asset.name.match(/^_\./)) {
-        systemTiles.push(assetToPreview(asset, i))
-      } else {
-        regularTiles.push(assetToPreview(asset, i))
-      }
-    }
-  }
-  tiles.add(regularTiles, systemTiles)
-  const overlays = _('#tab-overlays').empty()
-  for (const asset of sortByString(library.overlay ?? [], 'name')) {
-    overlays.add(assetToPreview(asset))
-  }
-  const tokens = _('#tab-tokens').empty()
-  const systemTokens = []
-  const regularTokens = []
-  for (const asset of sortByString(library.token ?? [], 'name')) {
-    for (let i = 0; i < (asset.media?.length ?? 1); i++) {
-      if (asset.name.match(/^_\./)) {
-        systemTokens.push(assetToPreview(asset, i))
-      } else {
-        regularTokens.push(assetToPreview(asset, i))
-      }
-    }
-  }
-  tokens.add(regularTokens, systemTokens)
-  const other = _('#tab-other').empty()
-  for (const asset of sortByString(library.other ?? [], 'name')) {
-    other.add(assetToPreview(asset))
-  }
+  sortPieces(_('#tab-tiles').empty(), library.tile, true)
+  sortPieces(_('#tab-stickers').empty(), library.sticker)
+  sortPieces(_('#tab-tokens').empty(), library.token, true)
+  sortPieces(_('#tab-other').empty(), library.other)
 
   // enable selection
   _('#tabs-library .is-preview').on('click', click => {
@@ -409,7 +402,7 @@ function modalUpload () {
               case LAYER_TILE:
                 _('#tab-1').checked = true
                 break
-              case LAYER_OVERLAY:
+              case LAYER_STICKER:
                 _('#tab-2').checked = true
                 break
               case LAYER_TOKEN:
@@ -464,7 +457,7 @@ function uploadFailed (why) {
 function setupTabUpload () {
   // width
   const type = _('#upload-type')
-  for (const l of [LAYER_TOKEN, LAYER_OVERLAY, LAYER_TILE]) {
+  for (const l of [LAYER_TOKEN, LAYER_STICKER, LAYER_TILE]) {
     const option = _('option').create(toTitleCase(l))
     option.value = l
     if (l === LAYER_TOKEN) option.selected = true
@@ -598,7 +591,7 @@ function updatePreviewDOM (blob) {
 
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
-  if (type === LAYER_OVERLAY || type === LAYER_TILE) {
+  if (type === LAYER_STICKER || type === LAYER_TILE) {
     piece.css({ '--fbg-color': 'rgba(0,0,0,.05)' })
   } else {
     piece.css({ '--fbg-color': '#202020' })
@@ -651,8 +644,8 @@ function updatePreviewDOM (blob) {
  * @param {number} side Side to show, 0-based.
  * @returns {HTMLElement} Node for the modal.
  */
-function assetToPreview (asset, side = 0) {
-  const max = _('.is-preview').create(assetToNode(asset, side))
+function assetToPreview (asset, side = undefined) {
+  const max = _('.is-preview').create(assetToNode(asset, side ?? 0))
   if (asset.w % 2 === 0) max.add('.is-even-x')
   if (asset.h % 2 === 0) max.add('.is-even-y')
 
@@ -667,7 +660,8 @@ function assetToPreview (asset, side = 0) {
   }
 
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
-  const name = prettyName(asset.name) + (asset.media.length > 1 ? ` (${side + 1})` : '')
+  let name = prettyName(asset.name)
+  if (side !== undefined && asset.media.length > 1) name += ` (${side + 1})`
   card.add(_('p').create().add(prettyName(name)))
   return card
 }

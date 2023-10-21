@@ -115,7 +115,7 @@
       z-index: 3;
     }
 
-    &-overlay {
+    &-sticker {
       z-index: 2;
     }
 
@@ -128,7 +128,7 @@
     }
   }
 
-  @each $layer in (tile, overlay, token, other, note) {
+  @each $layer in (tile, sticker, token, other, note) {
     &.layer-#{$layer}-enabled {
       .layer-#{$layer} > * {
         pointer-events: all;
