@@ -138,15 +138,18 @@ export function clipboardPaste (xy) {
  * Delete the currently selected piece(s) from the table.
  *
  * Will silently fail if nothing is selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {string[]} Array of deleted piece IDs.
  */
-export function deleteSelected () {
-  if (!selectionGetFeatures().delete) return
-
+export function deleteSelected (api = true) {
   const ids = []
   for (const piece of selectionGetPieces()) {
+    if (piece.f & FLAGS.NO_DELETE) continue
     ids.push(piece.id)
   }
-  deletePieces(ids)
+  if (api) deletePieces(ids)
+  return ids
 }
 
 /**
@@ -333,15 +336,17 @@ export function moveSelected (x, y, api = true) {
  * Will silently fail if nothing is selected or items are locked.
  *
  * @param {boolean} randomize If the z order of all items will be randomized.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object[]} moved Pieces.
  */
-export function pileSelected (randomize = false) {
+export function pileSelected (randomize = false, api = true) {
   const features = selectionGetFeatures()
   const snapped = snap(features.boundingBox.center.x, features.boundingBox.center.y)
   const toMove = []
   const z = []
 
   for (const piece of selectionGetPieces()) {
-    if (piece.f & FLAGS.NO_MOVE) return // abort if one no-mover is here
+    if (piece.f & FLAGS.NO_MOVE) continue
     toMove.push({
       id: piece.id,
       x: snapped.x,
@@ -350,6 +355,7 @@ export function pileSelected (randomize = false) {
     })
     z.push(piece.z) // keep for shuffling
   }
+  if (toMove.length <= 1) return [] // need minimum 2 moveable pieces
   if (randomize) {
     shuffle(z)
     for (const piece of toMove) {
@@ -357,7 +363,8 @@ export function pileSelected (randomize = false) {
     }
   }
 
-  movePieces(toMove)
+  if (api) movePieces(toMove)
+  return toMove
 }
 
 /**
@@ -1193,13 +1200,15 @@ function noteToNode (note) {
  *
  * @param {object[]} pieces Array of pieces to clone.
  * @param {object} xy Grid position (in tiles), {x, y}.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object} To be cloned/created pieces.
  */
-function clonePieces (pieces, xy) {
+function clonePieces (pieces, xy, api = true) {
   const clones = []
-  const features = getFeatures(pieces)
-  const bounds = features.boundingBox
-  if (!features.clone) return
+  const toClone = pieces.filter(p => !(p.f & FLAGS.NO_CLONE))
 
+  const features = getFeatures(toClone)
+  const bounds = features.boundingBox
   const room = getRoom()
 
   // make sure the clone fits on the table
@@ -1208,7 +1217,7 @@ function clonePieces (pieces, xy) {
 
   const zLower = findMaxZBelow(features.boundingBox, xy)
   const zUpper = {} // one z per layer
-  for (const piece of sortByNumber(pieces, 'z', 0)) {
+  for (const piece of sortByNumber(toClone, 'z', 0)) {
     if (piece.f & FLAGS.NO_CLONE) continue
     const selectionOffset = {
       x: piece.x - bounds.center.x,
@@ -1227,8 +1236,9 @@ function clonePieces (pieces, xy) {
     clones.push(clone)
   }
   if (clones.length > 0) {
-    createPieces(clones, true)
+    if (api) createPieces(clones, true)
   }
+  return clones
 }
 
 /**
@@ -1401,4 +1411,8 @@ function setItem (piece) {
 function markdown (content) {
   return marked.parse((content ?? '').replaceAll('<', '&lt;'))
     .replaceAll('<a ', '<a target="_blank" rel="noopener noreferrer" ')
+}
+
+export const _test = {
+  clonePieces
 }

@@ -455,6 +455,19 @@ describe('Frontend - selectionGetIds.mjs', function () {
   })
 
   it('selectionGetFeatures()', function () {
+    const emptyBoudingBox = {
+      bottom: 0,
+      center: {
+        x: 0,
+        y: 0
+      },
+      h: 1,
+      left: 0,
+      right: 0,
+      top: 0,
+      w: 1
+    }
+
     // select a single token
     setTableNo(TEST_STATE, false)
     selectionAdd('49d045e1')
@@ -496,7 +509,7 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.color).to.be.eql(false)
         expect(features.border).to.be.eql(false)
         expect(features.number).to.be.eql(false)
-        expect(features.boundingBox).to.be.eql({})
+        expect(features.boundingBox).to.be.eql(emptyBoudingBox)
       }
     }
 
@@ -542,7 +555,7 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.color).to.be.eql(false)
         expect(features.border).to.be.eql(false)
         expect(features.number).to.be.eql(false)
-        expect(features.boundingBox).to.be.eql({})
+        expect(features.boundingBox).to.be.eql(emptyBoudingBox)
       }
     }
 
@@ -588,7 +601,7 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.color).to.be.eql(false)
         expect(features.border).to.be.eql(false)
         expect(features.number).to.be.eql(false)
-        expect(features.boundingBox).to.be.eql({})
+        expect(features.boundingBox).to.be.eql(emptyBoudingBox)
       }
     }
   })

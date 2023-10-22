@@ -5,7 +5,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.23.0
 
 * [X] asset depth setting for more/less shadow
-* [ ] exclude protected pieces from operation, instead of denying operation
+* [X] exclude protected pieces from multi-select operation, instead of denying it to all
 * [X] move selection via cursor keys
 * [ ] tweak minor grid visibility
 * [X] cleanup 'x/y' and '3x3:3' in library window
@@ -13,6 +13,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] autopopulate empty data dir (for docker volumes)
 * [ ] engine: grid-on-tile flag major/minor
 * [ ] zoom-to-cursor
+* [ ] different blue menu for measure and non-measure mode
 * [X] support more special hotkeys (copy, paste, zoom, ...)
 * [X] rename overlays to stickers
 * [ ] pre-release

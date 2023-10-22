@@ -356,43 +356,67 @@ export function getFeatures (pieces) {
   const features = pieces.length > 0
     ? {
         edit: pieces.length === 1,
-        rotate: true,
         flip: true,
         random: true,
-        move: true,
-        pile: pieces.length > 1,
         top: true,
         bottom: true,
-        clone: true,
-        delete: true,
         color: true,
         border: true,
         number: true,
-        boundingBox: {}
+        rotate: true,
+
+        // potentially protected
+        move: false,
+        pile: false,
+        clone: false,
+        delete: false,
+
+        boundingBox: {
+          top: Number.MAX_VALUE,
+          left: Number.MAX_VALUE,
+          right: Number.MIN_VALUE,
+          bottom: Number.MIN_VALUE,
+          w: 0,
+          h: 0,
+          center: { x: 0, y: 0 }
+        }
       }
     : {
         edit: false,
         rotate: false,
         flip: false,
         random: false,
-        move: false,
-        pile: false,
         top: false,
         bottom: false,
-        clone: false,
-        delete: false,
         color: false,
         border: false,
         number: false,
-        boundingBox: {}
+
+        move: false,
+        pile: false,
+        clone: false,
+        delete: false,
+
+        boundingBox: {
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          w: 1,
+          h: 1,
+          center: { x: 0, y: 0 }
+        }
       }
 
+  let moveable = 0
   for (const piece of pieces) {
     if (piece.l === LAYER_OTHER) features.rotate = false
-    if (piece.f & FLAGS.NO_CLONE) features.clone = false
-    if (piece.f & FLAGS.NO_DELETE) features.delete = false
-    if (piece.f & FLAGS.NO_MOVE) features.move = false
-    if (piece.f & FLAGS.NO_MOVE) features.pile = false
+    if (!(piece.f & FLAGS.NO_CLONE)) features.clone = true // at least one found
+    if (!(piece.f & FLAGS.NO_DELETE)) features.delete = true // at least one found
+    if (!(piece.f & FLAGS.NO_MOVE)) {
+      features.move = true // at least one found
+      moveable++
+    }
     if (!piece._meta?.hasColor) features.color = false
     if (!piece._meta?.hasBorder) features.border = false
     if (piece.l !== LAYER_TOKEN) features.number = false
@@ -422,6 +446,8 @@ export function getFeatures (pieces) {
       y: Math.floor((features.boundingBox.bottom + features.boundingBox.top + 1) / 2)
     }
   }
+
+  if (moveable > 1) features.pile = true
 
   return features
 }

@@ -231,7 +231,7 @@ function handleRoomKeys (keydown) {
       case 't': // to-top
         toTopSelected()
         break
-      case 'a': // copy/clone
+      case 'a': // select-all
         if (keydown.ctrlKey) selectionAddAll()
         break
       case 'c': // copy/clone
