@@ -7,7 +7,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] asset depth setting for more/less shadow
 * [X] exclude protected pieces from multi-select operation, instead of denying it to all
 * [X] move selection via cursor keys
-* [ ] tweak minor grid visibility
+* [X] tweak grid visibility
 * [X] cleanup 'x/y' and '3x3:3' in library window
 * [X] system separator line in library window
 * [ ] autopopulate empty data dir (for docker volumes)

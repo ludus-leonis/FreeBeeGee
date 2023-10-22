@@ -16,6 +16,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added system-assets separator line in library window
 * exclude protected pieces from multi-select operation, instead of denying it to all
 * improved display of availables sides and sizes in the library
+* improved grid visibility
 
 
 ## v0.22.0 - Remorseful Reindeer
