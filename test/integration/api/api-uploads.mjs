@@ -19,7 +19,6 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
@@ -40,7 +39,11 @@ import {
 
 // -----------------------------------------------------------------------------
 
-function testApiZipMinimal (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiZipMinimal (api, room) {
   testZIPUpload(api,
     () => '/rooms/',
     () => { return room },
@@ -104,7 +107,11 @@ function testApiZipMinimal (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiZipFull (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiZipFull (api, room) {
   testZIPUpload(api,
     () => '/rooms/',
     () => { return room },
@@ -179,11 +186,14 @@ function testApiZipFull (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - uploads', function () {
     runner((api, version, room) => {
-      describe('ZIP upload - minimal', () => testApiZipMinimal(api, version, room))
-      describe('ZIP upload - full', () => testApiZipFull(api, version, room))
+      describe('ZIP upload - minimal', () => testApiZipMinimal(api, room))
+      describe('ZIP upload - full', () => testApiZipFull(api, room))
     })
   })
 }

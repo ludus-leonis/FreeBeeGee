@@ -66,5 +66,5 @@ You will need a local PHP-cli installation so that the linter/phar file can run.
 
 * All styles are written in [SCSS](https://sass-lang.com/).
 * We follow the [7-1 pattern](https://sass-guidelin.es/#the-7-1-pattern) for naming files.
-* We use the `sass-lint` coding standard, with a few exception defined in `.sass-lint.yml`. The build will check & enforce that via a plugin.
+* We use the `stylelint` coding standard, with a few exception defined in `.stylelintrc.json`. The build will check & enforce that via a plugin.
 * FreeBeeGee is partly based on Bootstrap v5 (Reboot, Grid). However, each `*.scss` file only pulls in the modules it needs, not the full Bootstrap CSS.

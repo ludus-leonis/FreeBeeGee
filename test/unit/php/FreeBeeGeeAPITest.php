@@ -108,7 +108,7 @@ final class FreeBeeGeeAPITest extends TestCase
     {
         $this->assertEquals('v-e4E300', FreeBeeGeeAPI::generateAssetId('tile', 'door', 1, 2));
         $this->assertEquals('v-e4E300', FreeBeeGeeAPI::generateAssetId('tile', 'door', '1', '2'));
-        $this->assertEquals('bn6Wv100', FreeBeeGeeAPI::generateAssetId('sticker', 'door', 1, 2));
+        $this->assertEquals('UqGF9300', FreeBeeGeeAPI::generateAssetId('sticker', 'door', 1, 2));
         $this->assertEquals('v2AC0200', FreeBeeGeeAPI::generateAssetId('tile', 'wall.broken', 1, 2));
         $this->assertEquals('etAlG300', FreeBeeGeeAPI::generateAssetId('tile', 'door', 2, 2));
         $this->assertEquals('YrLnN100', FreeBeeGeeAPI::generateAssetId('tile', 'door', 2, 1));

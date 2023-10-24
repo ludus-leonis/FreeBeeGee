@@ -1,9 +1,9 @@
 {
- "id": "e2ELquso",
+ "id": "KYdFJiI-",
  "name": "demoroomtutorial",
- "engine": "2.5.1",
+ "engine": "2.6.1",
  "setup": {
-  "engine": "2.5.0",
+  "engine": "2.6.0",
   "version": "0.23.0-dev",
   "type": "grid-square",
   "gridSize": 64,
@@ -119,143 +119,154 @@
   ]
  },
  "library": {
-  "overlay": [
+  "sticker": [
    {
-    "id": "aRGFb300",
-    "lid": "T28mo300",
+    "id": "YIv-z200",
+    "lid": [
+     "jQUGG000",
+     "T28mo300",
+     "aRGFb300"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "bg": "1",
     "media": [],
     "mask": "_.area.1x1xX.1.svg"
    },
    {
-    "id": "Z9lUg100",
-    "lid": "ig-Kt200",
+    "id": "XixST000",
+    "lid": [
+     "iCliJ100",
+     "ig-Kt200",
+     "Z9lUg100"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
     "bg": "1",
     "media": [],
     "mask": "_.area.2x2xX.1.svg"
    },
    {
-    "id": "Qz08B000",
-    "lid": "Bu07x200",
+    "id": "qTP6e100",
+    "lid": [
+     "REMVi100",
+     "Bu07x200",
+     "Qz08B000"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "w": 3,
     "bg": "1",
     "media": [],
     "mask": "_.area.3x3xX.1.svg"
    },
    {
-    "id": "SKT2Y200",
-    "lid": "wPXsm000",
+    "id": "EPccl300",
+    "lid": [
+     "c3dxA300",
+     "wPXsm000",
+     "SKT2Y200"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "w": 4,
     "bg": "1",
     "media": [],
     "mask": "_.area.4x4xX.1.svg"
    },
    {
-    "id": "v5IOb300",
-    "lid": "XVoPF000",
+    "id": "NupYz200",
+    "lid": [
+     "bdE9p300",
+     "XVoPF000",
+     "v5IOb300"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "w": 5,
     "bg": "1",
     "media": [],
     "mask": "_.area.5x5xX.1.svg"
    },
    {
-    "id": "jWJP6100",
-    "lid": "yk-7s000",
+    "id": "Dcv9Q200",
+    "lid": [
+     "xJ3EG100",
+     "yk-7s000",
+     "jWJP6100"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "bg": "1",
     "media": [],
     "mask": "_.circle.1x1xX.1.svg"
    },
    {
-    "id": "k4gCt300",
-    "lid": "z68Zp100",
+    "id": "EOxqJ000",
+    "lid": [
+     "YXKgJ000",
+     "z68Zp100",
+     "k4gCt300"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
     "bg": "1",
     "media": [],
     "mask": "_.circle.2x2xX.1.svg"
    },
    {
-    "id": "xJ5mG200",
-    "lid": "E8HmA100",
+    "id": "dpPGo100",
+    "lid": [
+     "DNbTi000",
+     "E8HmA100",
+     "xJ5mG200"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "w": 3,
     "bg": "1",
     "media": [],
     "mask": "_.circle.3x3xX.1.svg"
    },
    {
-    "id": "jyYsL000",
-    "lid": "Fygdi300",
+    "id": "Plcx3300",
+    "lid": [
+     "aoSzA200",
+     "Fygdi300",
+     "jyYsL000"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "w": 4,
     "bg": "1",
     "media": [],
     "mask": "_.circle.4x4xX.1.svg"
    },
    {
-    "id": "m8DI6100",
-    "lid": "CHPAJ300",
+    "id": "u_pgQ200",
+    "lid": [
+     "dmjbp200",
+     "CHPAJ300",
+     "m8DI6100"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "w": 5,
     "bg": "1",
     "media": [],
     "mask": "_.circle.5x5xX.1.svg"
    },
    {
-    "id": "rfCka100",
-    "lid": "LZCOB200",
-    "name": "_.cubeLarge",
-    "type": "overlay",
-    "bg": "3",
-    "media": [
-     "_.cubeLarge.1x1x1.3.png"
+    "id": "NO50s200",
+    "lid": [
+     "gy5ty100",
+     "y2e6H000",
+     "HokYV100"
     ],
-    "mask": "_.cubeLarge.1x1xX.3.png"
-   },
-   {
-    "id": "je0yw100",
-    "lid": "dojMw300",
-    "name": "_.cubeMedium",
-    "type": "overlay",
-    "bg": "3",
-    "media": [
-     "_.cubeMedium.1x1x1.3.png"
-    ],
-    "mask": "_.cubeMedium.1x1xX.3.png"
-   },
-   {
-    "id": "R_vpv100",
-    "lid": "xwTgs300",
-    "name": "_.cubeSmall",
-    "type": "overlay",
-    "bg": "3",
-    "media": [
-     "_.cubeSmall.1x1x1.3.png"
-    ],
-    "mask": "_.cubeSmall.1x1xX.3.png"
-   },
-   {
-    "id": "HokYV100",
-    "lid": "y2e6H000",
     "name": "_.pin",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
     "bg": "3",
     "media": [
@@ -264,10 +275,14 @@
     "mask": "_.pin.2x2xX.3.svg"
    },
    {
-    "id": "goUQT300",
-    "lid": "zNVkI000",
+    "id": "i3dWg200",
+    "lid": [
+     "b5bEu300",
+     "zNVkI000",
+     "goUQT300"
+    ],
     "name": "_.wall",
-    "type": "overlay",
+    "type": "sticker",
     "bg": "1",
     "media": [
      "_.wall.1x1x1.1.png"
@@ -275,59 +290,97 @@
     "mask": "_.wall.1x1xX.1.png"
    },
    {
-    "id": "mKjdO100",
-    "lid": "Lv6KO300",
+    "id": "wPC3r000",
+    "lid": [
+     "PDSi0000",
+     "Lv6KO300",
+     "mKjdO100"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "bg": "1",
     "media": [],
     "mask": "_.zone.1x1xX.1.svg"
    },
    {
-    "id": "JgIuD300",
-    "lid": "udFmR200",
+    "id": "nbpg0200",
+    "lid": [
+     "eVrG5100",
+     "udFmR200",
+     "JgIuD300"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
     "bg": "1",
     "media": [],
     "mask": "_.zone.2x2xX.1.svg"
    },
    {
-    "id": "kVTKu200",
-    "lid": "d3eZa200",
+    "id": "GxcxR300",
+    "lid": [
+     "pP_3U100",
+     "d3eZa200",
+     "kVTKu200"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "w": 3,
     "bg": "1",
     "media": [],
     "mask": "_.zone.3x3xX.1.svg"
    },
    {
-    "id": "SR0A5000",
-    "lid": "MENAY000",
+    "id": "EIPGI100",
+    "lid": [
+     "Uu3oe300",
+     "MENAY000",
+     "SR0A5000"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "w": 4,
     "bg": "1",
     "media": [],
     "mask": "_.zone.4x4xX.1.svg"
    },
    {
-    "id": "fslkO100",
-    "lid": "fCmd1000",
+    "id": "R7xqr000",
+    "lid": [
+     "HgCLN300",
+     "fCmd1000",
+     "fslkO100"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "w": 5,
     "bg": "1",
     "media": [],
     "mask": "_.zone.5x5xX.1.svg"
    },
    {
-    "id": "sDTD4300",
-    "lid": "NWd-O100",
+    "id": "RoQgt200",
+    "lid": [
+     "gIdMu100",
+     "ud6Fg000",
+     "PO-IW100"
+    ],
+    "name": "chest",
+    "type": "sticker",
+    "bg": "transparent",
+    "media": [
+     "chest.1x1.transparent.png"
+    ]
+   },
+   {
+    "id": "bAlUi100",
+    "lid": [
+     "HwUFr000",
+     "NWd-O100",
+     "sDTD4300"
+    ],
     "name": "door",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
     "h": 1,
     "bg": "#808080",
@@ -341,8 +394,52 @@
   ],
   "tile": [
    {
+    "id": "f9BCV300",
+    "lid": [
+     "aSf9_000"
+    ],
+    "name": "_.cubeLarge",
+    "type": "tile",
+    "d": 6,
+    "bg": "3",
+    "media": [
+     "_.cubeLarge.1x1x1x6.3.png"
+    ],
+    "mask": "_.cubeLarge.1x1xXx6.3.png"
+   },
+   {
+    "id": "wiXm3200",
+    "lid": [
+     "a4dVe300"
+    ],
+    "name": "_.cubeMedium",
+    "type": "tile",
+    "d": 5,
+    "bg": "3",
+    "media": [
+     "_.cubeMedium.1x1x1x5.3.png"
+    ],
+    "mask": "_.cubeMedium.1x1xXx5.3.png"
+   },
+   {
+    "id": "lUuFK300",
+    "lid": [
+     "MEgF5100"
+    ],
+    "name": "_.cubeSmall",
+    "type": "tile",
+    "d": 4,
+    "bg": "3",
+    "media": [
+     "_.cubeSmall.1x1x1x4.3.png"
+    ],
+    "mask": "_.cubeSmall.1x1xXx4.3.png"
+   },
+   {
     "id": "i_6yU100",
-    "lid": "SoKu5200",
+    "lid": [
+     "SoKu5200"
+    ],
     "name": "_.glassDark",
     "type": "tile",
     "w": 2,
@@ -353,7 +450,9 @@
    },
    {
     "id": "rxt72100",
-    "lid": "xhnDI000",
+    "lid": [
+     "xhnDI000"
+    ],
     "name": "_.glassLight",
     "type": "tile",
     "w": 2,
@@ -363,18 +462,10 @@
     ]
    },
    {
-    "id": "sVipP300",
-    "lid": "krH1S200",
-    "name": "chest",
-    "type": "tile",
-    "bg": "transparent",
-    "media": [
-     "chest.1x1.transparent.png"
-    ]
-   },
-   {
     "id": "S7twe000",
-    "lid": "qgC-g200",
+    "lid": [
+     "qgC-g200"
+    ],
     "name": "corridor",
     "type": "tile",
     "w": 4,
@@ -387,7 +478,9 @@
    },
    {
     "id": "OobSu100",
-    "lid": "mvwK8200",
+    "lid": [
+     "mvwK8200"
+    ],
     "name": "room",
     "type": "tile",
     "w": 4,
@@ -400,7 +493,9 @@
    },
    {
     "id": "ivrka100",
-    "lid": "DJGYo200",
+    "lid": [
+     "DJGYo200"
+    ],
     "name": "stairs",
     "type": "tile",
     "w": 2,
@@ -414,7 +509,9 @@
   "token": [
    {
     "id": "p9Hr0300",
-    "lid": "wAksS100",
+    "lid": [
+     "wAksS100"
+    ],
     "name": "_.bead",
     "type": "token",
     "bg": "1",
@@ -424,7 +521,9 @@
    },
    {
     "id": "G8QAJ200",
-    "lid": "mAa-Q300",
+    "lid": [
+     "mAa-Q300"
+    ],
     "name": "_.letter",
     "type": "token",
     "bg": "1",
@@ -460,7 +559,9 @@
    },
    {
     "id": "ye4mx100",
-    "lid": "sD_SB100",
+    "lid": [
+     "sD_SB100"
+    ],
     "name": "_.number",
     "type": "token",
     "bg": "1",
@@ -480,7 +581,9 @@
    },
    {
     "id": "FFnzp100",
-    "lid": "oZX62300",
+    "lid": [
+     "oZX62300"
+    ],
     "name": "_.plain",
     "type": "token",
     "bg": "0",
@@ -491,7 +594,9 @@
    },
    {
     "id": "L1WtG000",
-    "lid": "Hn18v200",
+    "lid": [
+     "Hn18v200"
+    ],
     "name": "_.symbol",
     "type": "token",
     "bg": "1",
@@ -504,7 +609,9 @@
    },
    {
     "id": "U0kg8300",
-    "lid": "hNjjH100",
+    "lid": [
+     "hNjjH100"
+    ],
     "name": "barbarian",
     "type": "token",
     "bg": "3",
@@ -515,7 +622,9 @@
    },
    {
     "id": "OzcR1100",
-    "lid": "JP3EE200",
+    "lid": [
+     "JP3EE200"
+    ],
     "name": "goblin",
     "type": "token",
     "bg": "6",
@@ -526,7 +635,9 @@
    },
    {
     "id": "qUmNE300",
-    "lid": "HfpyK000",
+    "lid": [
+     "HfpyK000"
+    ],
     "name": "orc",
     "type": "token",
     "bg": "6",
@@ -539,7 +650,9 @@
   "other": [
    {
     "id": "hFoyZ200",
-    "lid": "lPebe300",
+    "lid": [
+     "lPebe300"
+    ],
     "name": "_.d10Dark",
     "type": "other",
     "d": 5,
@@ -561,7 +674,9 @@
    },
    {
     "id": "PW2rJ000",
-    "lid": "tVzk3200",
+    "lid": [
+     "tVzk3200"
+    ],
     "name": "_.d10Light",
     "type": "other",
     "d": 5,
@@ -583,7 +698,9 @@
    },
    {
     "id": "v8Vvg200",
-    "lid": "aeS5y000",
+    "lid": [
+     "aeS5y000"
+    ],
     "name": "_.d12Dark",
     "type": "other",
     "d": 5,
@@ -607,7 +724,9 @@
    },
    {
     "id": "KWvBF000",
-    "lid": "KKD3z300",
+    "lid": [
+     "KKD3z300"
+    ],
     "name": "_.d12Light",
     "type": "other",
     "d": 5,
@@ -631,7 +750,9 @@
    },
    {
     "id": "y6zKl100",
-    "lid": "z7DUO100",
+    "lid": [
+     "z7DUO100"
+    ],
     "name": "_.d20Dark",
     "type": "other",
     "d": 5,
@@ -663,7 +784,9 @@
    },
    {
     "id": "Gz-zS200",
-    "lid": "eIMc_300",
+    "lid": [
+     "eIMc_300"
+    ],
     "name": "_.d20Light",
     "type": "other",
     "d": 5,
@@ -695,7 +818,9 @@
    },
    {
     "id": "pJtgf000",
-    "lid": "SHt9A300",
+    "lid": [
+     "SHt9A300"
+    ],
     "name": "_.d4Dark",
     "type": "other",
     "d": 5,
@@ -711,7 +836,9 @@
    },
    {
     "id": "j8hqf000",
-    "lid": "xY7Gr200",
+    "lid": [
+     "xY7Gr200"
+    ],
     "name": "_.d4Light",
     "type": "other",
     "d": 5,
@@ -727,7 +854,9 @@
    },
    {
     "id": "bc_Ix000",
-    "lid": "jbmiY200",
+    "lid": [
+     "jbmiY200"
+    ],
     "name": "_.d6Dark",
     "type": "other",
     "d": 5,
@@ -745,7 +874,9 @@
    },
    {
     "id": "a8cCb000",
-    "lid": "u7ZAS100",
+    "lid": [
+     "u7ZAS100"
+    ],
     "name": "_.d6Light",
     "type": "other",
     "d": 5,
@@ -763,7 +894,9 @@
    },
    {
     "id": "ZyitE300",
-    "lid": "xCPfK300",
+    "lid": [
+     "xCPfK300"
+    ],
     "name": "_.d8Dark",
     "type": "other",
     "d": 5,
@@ -783,7 +916,9 @@
    },
    {
     "id": "Zavll000",
-    "lid": "obzEu200",
+    "lid": [
+     "obzEu200"
+    ],
     "name": "_.d8Light",
     "type": "other",
     "d": 5,
@@ -803,7 +938,9 @@
    },
    {
     "id": "gXCJX200",
-    "lid": "selr5000",
+    "lid": [
+     "selr5000"
+    ],
     "name": "_.dicemat",
     "type": "other",
     "w": 4,
@@ -814,7 +951,9 @@
    },
    {
     "id": "rEH5X200",
-    "lid": "FvPx9300",
+    "lid": [
+     "FvPx9300"
+    ],
     "name": "_.dicemat",
     "type": "other",
     "w": 8,
@@ -826,7 +965,9 @@
    },
    {
     "id": "BQ9I2100",
-    "lid": "MDuQt000",
+    "lid": [
+     "MDuQt000"
+    ],
     "name": "_.fateDark",
     "type": "other",
     "d": 5,
@@ -844,7 +985,9 @@
    },
    {
     "id": "iCBYt200",
-    "lid": "MTvWD100",
+    "lid": [
+     "MTvWD100"
+    ],
     "name": "_.fateLight",
     "type": "other",
     "d": 5,
@@ -864,7 +1007,9 @@
   "badge": [
    {
     "id": "ED1At200",
-    "lid": "Jxa0k200",
+    "lid": [
+     "Jxa0k200"
+    ],
     "name": "_.badge",
     "type": "badge",
     "bg": "#808080",
@@ -874,7 +1019,9 @@
    },
    {
     "id": "HP4Ig300",
-    "lid": "RvGjJ000",
+    "lid": [
+     "RvGjJ000"
+    ],
     "name": "_.target",
     "type": "badge",
     "bg": "#808080",
@@ -886,7 +1033,9 @@
   "material": [
    {
     "id": "brTTG000",
-    "lid": "CIZcg300",
+    "lid": [
+     "CIZcg300"
+    ],
     "name": "linen",
     "type": "material",
     "bg": "#808080",
@@ -896,7 +1045,9 @@
    },
    {
     "id": "QjDAr300",
-    "lid": "MOevM100",
+    "lid": [
+     "MOevM100"
+    ],
     "name": "none",
     "type": "material",
     "bg": "#808080",
@@ -906,7 +1057,9 @@
    },
    {
     "id": "H4W0w000",
-    "lid": "Hb9tz200",
+    "lid": [
+     "Hb9tz200"
+    ],
     "name": "paper",
     "type": "material",
     "bg": "#808080",
@@ -916,7 +1069,9 @@
    },
    {
     "id": "YDTSJ000",
-    "lid": "LDpOJ000",
+    "lid": [
+     "LDpOJ000"
+    ],
     "name": "rough",
     "type": "material",
     "bg": "#808080",
@@ -926,7 +1081,9 @@
    },
    {
     "id": "ljAne100",
-    "lid": "wS-60300",
+    "lid": [
+     "wS-60300"
+    ],
     "name": "wood",
     "type": "material",
     "bg": "#808080",

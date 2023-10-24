@@ -19,7 +19,6 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
@@ -44,7 +43,11 @@ const LABEL_MAX_LENGTH = 32
 
 // -----------------------------------------------------------------------------
 
-function testApiInvalidPiece (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiInvalidPiece (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -91,7 +94,11 @@ function testApiInvalidPiece (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiMinimalPiece (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiMinimalPiece (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -173,7 +180,11 @@ function testApiMinimalPiece (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceID (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceID (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -210,7 +221,11 @@ function testApiPieceID (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceL (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceL (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -259,7 +274,11 @@ function testApiPieceL (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceA (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceA (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -289,7 +308,11 @@ function testApiPieceA (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceX (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceX (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -338,7 +361,11 @@ function testApiPieceX (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceY (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceY (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -387,7 +414,11 @@ function testApiPieceY (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceZ (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceZ (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -436,7 +467,11 @@ function testApiPieceZ (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceR (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceR (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -502,7 +537,11 @@ function testApiPieceR (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceW (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceW (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -568,7 +607,11 @@ function testApiPieceW (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceH (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceH (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -634,7 +677,11 @@ function testApiPieceH (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceS (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceS (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -694,7 +741,11 @@ function testApiPieceS (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceN (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceN (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -754,7 +805,11 @@ function testApiPieceN (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceC (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceC (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -838,7 +893,11 @@ function testApiPieceC (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceT (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceT (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -922,7 +981,11 @@ function testApiPieceT (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceB (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceB (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -1012,7 +1075,11 @@ function testApiPieceB (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceF (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceF (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -1061,7 +1128,11 @@ function testApiPieceF (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiPieceExpires (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiPieceExpires (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
@@ -1131,7 +1202,11 @@ function testApiPieceExpires (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiCreatePieces (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiCreatePieces (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
@@ -1157,9 +1232,13 @@ function testApiCreatePieces (api, version, room) {
   closeTestroom(api, room)
 }
 
-let deleteIDs = []
+const deleteIDs = []
 
-function testApiDeletePieces (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiDeletePieces (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
@@ -1200,29 +1279,32 @@ function testApiDeletePieces (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - pieces', function () {
     runner((api, version, room) => {
-      describe('invalid pieces', () => testApiInvalidPiece(api, version, room))
-      describe('minimal pieces', () => testApiMinimalPiece(api, version, room))
-      describe('valid id', () => testApiPieceID(api, version, room))
-      describe('valid l', () => testApiPieceL(api, version, room))
-      describe('valid a', () => testApiPieceA(api, version, room))
-      describe('valid x', () => testApiPieceX(api, version, room))
-      describe('valid y', () => testApiPieceY(api, version, room))
-      describe('valid z', () => testApiPieceZ(api, version, room))
-      describe('valid r', () => testApiPieceR(api, version, room))
-      describe('valid w', () => testApiPieceW(api, version, room))
-      describe('valid h', () => testApiPieceH(api, version, room))
-      describe('valid s', () => testApiPieceS(api, version, room))
-      describe('valid n', () => testApiPieceN(api, version, room))
-      describe('valid c', () => testApiPieceC(api, version, room))
-      describe('valid t', () => testApiPieceT(api, version, room))
-      describe('valid b', () => testApiPieceB(api, version, room))
-      describe('valid f', () => testApiPieceF(api, version, room))
-      describe('valid expires', () => testApiPieceExpires(api, version, room))
-      describe('multi-create', () => testApiCreatePieces(api, version, room))
-      describe('multi-delete', () => testApiDeletePieces(api, version, room))
+      describe('invalid pieces', () => testApiInvalidPiece(api, room))
+      describe('minimal pieces', () => testApiMinimalPiece(api, room))
+      describe('valid id', () => testApiPieceID(api, room))
+      describe('valid l', () => testApiPieceL(api, room))
+      describe('valid a', () => testApiPieceA(api, room))
+      describe('valid x', () => testApiPieceX(api, room))
+      describe('valid y', () => testApiPieceY(api, room))
+      describe('valid z', () => testApiPieceZ(api, room))
+      describe('valid r', () => testApiPieceR(api, room))
+      describe('valid w', () => testApiPieceW(api, room))
+      describe('valid h', () => testApiPieceH(api, room))
+      describe('valid s', () => testApiPieceS(api, room))
+      describe('valid n', () => testApiPieceN(api, room))
+      describe('valid c', () => testApiPieceC(api, room))
+      describe('valid t', () => testApiPieceT(api, room))
+      describe('valid b', () => testApiPieceB(api, room))
+      describe('valid f', () => testApiPieceF(api, room))
+      describe('valid expires', () => testApiPieceExpires(api, room))
+      describe('multi-create', () => testApiCreatePieces(api, room))
+      describe('multi-delete', () => testApiDeletePieces(api, room))
     })
   })
 }

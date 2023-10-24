@@ -19,7 +19,6 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
@@ -44,7 +43,11 @@ import {
 let data = null
 let i
 
-function testApiMinimalTable (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiMinimalTable (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
@@ -80,7 +83,11 @@ function testApiMinimalTable (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiInvalidTable (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiInvalidTable (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
@@ -139,7 +146,11 @@ function testApiInvalidTable (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiInvalidPieces (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiInvalidPieces (api, room) {
   openTestroom(api, room, 'Classic')
 
   testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
@@ -166,7 +177,11 @@ function testApiInvalidPieces (api, version, room) {
 const LEVELS = 15
 let level
 
-function testApiUndo (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiUndo (api, room) {
   openTestroom(api, room, 'Classic')
 
   // create piece
@@ -228,13 +243,16 @@ function testApiUndo (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - tables', function () {
     runner((api, version, room) => {
-      describe('minimal tables', () => testApiMinimalTable(api, version, room))
-      describe('invalid tables', () => testApiInvalidTable(api, version, room))
-      describe('invalid pieces', () => testApiInvalidPieces(api, version, room))
-      describe('undo', () => testApiUndo(api, version, room))
+      describe('minimal tables', () => testApiMinimalTable(api, room))
+      describe('invalid tables', () => testApiInvalidTable(api, room))
+      describe('invalid pieces', () => testApiInvalidPieces(api, room))
+      describe('undo', () => testApiUndo(api, room))
     })
   })
 }

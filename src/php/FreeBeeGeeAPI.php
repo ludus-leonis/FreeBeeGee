@@ -49,6 +49,8 @@ const REGEXP_MATERIAL = '/^[0-9a-zA-Z]{1,32}$/';
 const REGEXP_ASSET_BG = '/^#[a-fA-F0-9]{6}|transparent|[0-9]+$/';
 const REGEXP_ASSET_NAME = '/^(_|[A-Za-z0-9-]{1,64})(.[A-Za-z0-9-]{1,64})?$/';
 
+const PASSWORD_UNKNOWN = '$2y$12$ZLUoJ7k6JODIgKk6et8ire6XxGDlCS4nupZo9NyJvSnomZ6lgFKGa';
+
 /**
  * FreeBeeGeeAPI - The tabletop backend.
  *
@@ -268,6 +270,18 @@ class FreeBeeGeeAPI
     }
 
     /**
+     * Get directory for system files.
+     *
+     * @param string $subpath Optional sub-path to append.
+     * @return string FS path to data dir, e.g. '/var/www/www.mysite.com/system/'
+     */
+    public function getSystemPath(
+        string $subpath = ''
+    ): string {
+        return $this->getAppFolder() . 'system/' . $subpath;
+    }
+
+    /**
      * Determine the filesystem-path where data for a particular room is stored.
      *
      * @param string $roomName Room name, e.g. 'darkEscapingQuelea'.
@@ -282,33 +296,44 @@ class FreeBeeGeeAPI
     /**
      * Obtain server config values.
      *
-     * Done by loading server.json from disk.
+     * Done by loading server.json from disk. If none exists, a default config
+     * file will be created.
      *
      * @return object Parsed server.json.
      */
     private function getServerConfig()
     {
-        if (is_file($this->api->getDataDir('server.json'))) {
-            $config = json_decode(file_get_contents($this->api->getDataDir('server.json')));
-            $config->version = '$VERSION$';
-            $config->engine = '$ENGINE$';
-            $config->maxAssetSize = ASSET_SIZE_MAX;
-            return $config;
-        } else {
-            // config not found - return system values
-            return json_decode('
+        $filename = $this->api->getDataDir('server.json');
+
+        if (!is_file($filename)) { // creating missing config file on-the-fly
+            $ok = file_put_contents($filename, json_encode(json_decode('
                 {
                     "ttl": 48,
                     "maxRooms": 32,
                     "maxRoomSizeMB": 16,
                     "snapshotUploads": false,
                     "defaultSnapshot": "Tutorial",
-                    "passwordCreate": "$2y$12$ZLUoJ7k6JODIgKk6et8ire6XxGDlCS4nupZo9NyJvSnomZ6lgFKGa",
-                    "version": "$VERSION$",
-                    "engine": "$ENGINE$"
+                    "passwordCreate": "' . PASSWORD_UNKNOWN . '"
                 }
-            ');
+            '), JSON_PRETTY_PRINT));
+            if ($ok === false) {
+                $this->sendError(500, 'can\'t create data/server.json');
+            }
         }
+
+        $config = json_decode(file_get_contents($filename));
+        return (object) [
+            'ttl' => $config->ttl ?? 48,
+            'maxRooms' => $config->maxRooms ?? 32,
+            'maxRoomSizeMB' => $config->maxRoomSizeMB ?? 16,
+            'snapshotUploads' => $config->snapshotUploads ?? false,
+            'defaultSnapshot' => $config->defaultSnapshot ?? "Tutorial",
+            'passwordCreate' => $config->passwordCreate ?? PASSWORD_UNKNOWN,
+
+            'version' => $this->version,
+            'engine' => $this->engine,
+            'maxAssetSize' => ASSET_SIZE_MAX
+        ];
     }
 
     /**
@@ -472,9 +497,9 @@ class FreeBeeGeeAPI
         }
 
         // unzip system setup next if it exists, possibly overwriting assets
-        if (is_file($this->api->getDataDir('snapshots/_.zip'))) {
+        if (is_file($this->getSystemPath('snapshots/_.zip'))) {
             $zip = new \ZipArchive();
-            if ($zip->open($this->api->getDataDir('snapshots/_.zip')) === true) {
+            if ($zip->open($this->getSystemPath('snapshots/_.zip')) === true) {
                 $zip->extractTo($folder);
                 $zip->close();
             } else {
@@ -690,7 +715,7 @@ class FreeBeeGeeAPI
                         'id' => FreeBeeGeeAPI::generateAssetId($type, $asset->name, $asset->w, $asset->h), // 32bit safe
                         'lid' => [
                             // legacy ID <0.22 incl. side
-                            FreeBeeGeeAPI::generateId(abs(crc32($type . '/' . $mediaBase))), $type, $mediaBase
+                            FreeBeeGeeAPI::generateId(abs(crc32($type . '/' . $mediaBase)))
                         ],
                         'name' => $asset->name,
                         'type' => $type,
@@ -806,7 +831,7 @@ class FreeBeeGeeAPI
         $valid = [];
 
         // available room size = config size minus system zip size
-        $systemSnapshotSize = $this->getZipSize($this->api->getDataDir('snapshots/_.zip'));
+        $systemSnapshotSize = $this->getZipSize($this->getSystemPath('snapshots/_.zip'));
         $sizeLeft = $this->getServerConfig()->maxRoomSizeMB * 1024 * 1024 - $systemSnapshotSize;
 
         // basic sanity tests
@@ -1701,7 +1726,7 @@ class FreeBeeGeeAPI
         $server = $this->getServerConfig();
 
         // this is a good opportunity for housekeeping
-        $this->deleteOldRooms(($server->ttl ?? 48) * 3600);
+        $this->deleteOldRooms(($server->ttl) * 3600);
 
         // assemble JSON
         $info = new \stdClass();
@@ -1709,14 +1734,17 @@ class FreeBeeGeeAPI
         $info->engine = $server->engine;
         $info->ttl = $server->ttl;
         $info->snapshotUploads = $server->snapshotUploads;
-        $info->defaultSnapshot = $server->defaultSnapshot ?? 'Tutorial';
+        $info->defaultSnapshot = $server->defaultSnapshot;
         $info->freeRooms = $this->getFreeRooms($server);
         $info->root = $this->api->getAPIPath();
 
         $info->backgrounds = $this->getBackgrounds();
 
-        if ($server->passwordCreate ?? '' !== '') {
+        if ($server->passwordCreate !== '') {
             $info->createPassword = true;
+        }
+        if ($server->passwordCreate === PASSWORD_UNKNOWN) {
+            $info->install = 1; // potential multiple install steps, but currently only one
         }
         $this->api->sendReply(200, json_encode($info));
     }
@@ -1746,16 +1774,44 @@ class FreeBeeGeeAPI
     /**
      * Send list of available snapshots to client.
      *
-     * Done by counting the .zip files in the snapshots folder. Will send JSON
+     * Done by listing the .zip files in the snapshots folders. Will send JSON
      * reply and terminate execution.
      */
     private function getSnapshots()
     {
+        // create missing snapshots folder on-the-fly
+        $customFolder = $this->api->getDataDir('snapshots');
+        if (!is_dir($customFolder)) {
+            if (!mkdir($customFolder, 0777, true)) { // create room folder
+                $this->api->sendError(500, 'can\'t create data/snapshots/ folder');
+            }
+            $ok = file_put_contents(
+                "$customFolder/README.md",
+                "# Custom snapshots\n\nPlace custom snapshot `.zip`s in this folder to make them available to all " .
+                "users for selection when creating new rooms. If you add e.g. a `Campaign.zip`, it will be shown in " .
+                "the room setup dialog as `Campagin (custom)`.\n\nFilenames can only contain A-Z, a-z and 0-9. Do " .
+                "not put a `Classic.zip`, `Hex.zip`, `RPG.zip` or `Tutorial.zip` here as they will be overruled by " .
+                "same-named system snapshots.\n"
+            );
+        }
+
         $snapshots = [];
+        foreach (glob($this->getSystemPath('snapshots/*zip')) as $filename) {
+            $zip = pathinfo($filename);
+            if ($zip['filename'] != '_') { // don't add '_' snapshot
+                $snapshots[] = (object) [
+                    'name' => $zip['filename'],
+                    'system' => true
+                ];
+            }
+        }
         foreach (glob($this->api->getDataDir('snapshots/*zip')) as $filename) {
             $zip = pathinfo($filename);
-            if ($zip['filename'] != '_') { // don't add system snapshot
-                $snapshots[] = $zip['filename'];
+            if ($zip['filename'] != '_') { // don't add '_' snapshot
+                $snapshots[] = (object) [
+                    'name' => $zip['filename'],
+                    'system' => false
+                ];
             }
         }
         $this->api->sendReply(200, json_encode($snapshots));
@@ -1937,12 +1993,15 @@ class FreeBeeGeeAPI
                 }
                 $zipPath = $_FILES[$validated->_files[0]]['tmp_name'] ?? 'invalid';
             } else {
-                $zipPath = $this->api->getDataDir("snapshots/$validated->snapshot.zip");
+                $zipPath = is_file($this->getSystemPath("snapshots/$validated->snapshot.zip"))
+                    ? $this->getSystemPath("snapshots/$validated->snapshot.zip")
+                    : $this->api->getDataDir("snapshots/$validated->snapshot.zip");
             }
 
             // doublecheck snapshot
             if (!is_file($zipPath)) {
-                $this->api->sendError(400, 'snapshot not available');
+                $this->api->sendError(400, "snapshot $validated->snapshot.zip not available: "
+                    . $this->getSystemPath("snapshots/$validated->snapshot.zip"));
             }
             $validEntries = $this->validateSnapshot($zipPath, $validated->convert);
 

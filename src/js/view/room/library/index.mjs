@@ -171,7 +171,7 @@ export function modalLibrary (xy) {
               </label>
             </div>
             <div class="col-6">
-              <p class="fbg-error"></p>
+              <p class="is-error"></p>
             </div>
           </div></form>
         </div>
@@ -340,7 +340,7 @@ function modalUpload () {
   _('#btn-ok').add('.is-spinner')
 
   // reset error
-  const errorMessage = _('#modal-body .fbg-error')
+  const errorMessage = _('#modal-body .is-error')
   errorMessage.innerHTML = ''
 
   // do sanity checks
@@ -454,7 +454,7 @@ function modalUpload () {
  * @param {string} why Info for user why the upload failed.
  */
 function uploadFailed (why) {
-  _('#modal-body .fbg-error').innerHTML = `Upload failed: ${why}`
+  _('#modal-body .is-error').innerHTML = `Upload failed: ${why}`
 }
 
 /**

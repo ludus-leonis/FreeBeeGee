@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
 
-# Create color variants of the area*.svg overlays into your /tmp folder.
+# Create color variants of the area*.svg stickers into your /tmp folder.
 
 colors=('#0d0d0d' '#3f8efc' '#0f956a' '#40bfbf' '#cc2936' '#bf40bf' '#ff6700' '#f2e4be')
 

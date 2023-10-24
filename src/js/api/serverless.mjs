@@ -383,7 +383,19 @@ function api (data, headers) {
 function apiSnapshots (data, headers) {
   switch (data.method) {
     case 'GET':
-      return delayPromise(200, ['Classic', 'Hex', 'RPG', 'Tutorial'], headers)
+      return delayPromise(200, [{
+        name: 'Classic',
+        system: true
+      }, {
+        name: 'Hex',
+        system: true
+      }, {
+        name: 'RPG',
+        system: true
+      }, {
+        name: 'Tutorial',
+        system: true
+      }], headers)
     default:
       throw new UnexpectedStatus(501, 'not implemented for demo')
   }

@@ -26,6 +26,7 @@ import {
 } from '../../lib/icons.mjs'
 
 import {
+  sortByString,
   bytesToIso,
   hoursToTimespan
 } from '../../lib/utils-text.mjs'
@@ -138,15 +139,15 @@ export function setupView (name) {
       const t = _('#snapshot')
 
       // determine preselected snapshot (with fallbacks)
-      let preselected = snapshots.length > 0 ? snapshots[0] : 'none'
-      if (snapshots.includes('Tutorial')) preselected = 'Tutorial'
-      if (snapshots.includes(getServerInfo().defaultSnapshot)) preselected = getServerInfo().defaultSnapshot
+      let preselected = snapshots.length > 0 ? snapshots[0].name : 'none'
+      if (snapshots.find(s => s.name === 'Tutorial')) preselected = 'Tutorial'
+      if (snapshots.find(s => s.name === getServerInfo().defaultSnapshot)) preselected = getServerInfo().defaultSnapshot
 
       t.innerHTML = ''
-      for (const snapshot of snapshots) {
-        const option = _('option').create(snapshot)
-        option.value = snapshot
-        if (snapshot === preselected) option.selected = true
+      for (const snapshot of sortByString(snapshots ?? [], 'name')) {
+        const option = _('option').create(snapshot.name + (snapshot.system ? '' : ' (custom)'))
+        option.value = snapshot.name
+        if (snapshot.name === preselected) option.selected = true
         t.add(option)
       }
       if (snapshots.length <= 0) {

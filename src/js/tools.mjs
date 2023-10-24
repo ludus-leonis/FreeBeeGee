@@ -28,7 +28,7 @@ import _ from 'lib/FreeDOM.mjs'
 export function setupBcrypt () {
   _('#tool-bcrypt').innerHTML = `
     <p class="spacing-none">
-      Use the form below to generate a bcrypt password hash for your <code>server.json</code>.
+      Let's create a nice bcrypt password hash for your <code>api/data/server.json</code>.
       Everything will happen only in your browser, your password is <strong>not sent anywhere</strong>.
     </p>
     <form class="container modal-edit modal-edit-token">
@@ -43,7 +43,7 @@ export function setupBcrypt () {
           <input id="tool-in2" name="tool-in2" type="password">
         </div>
         <div class="col-12">
-          <label for="tool-out">Your bcrypt password</label>
+          <label for="tool-out">Your bcrypt hash</label>
           <input id="tool-out" name="tool-out" type="text" readonly>
         </div>
       </div>

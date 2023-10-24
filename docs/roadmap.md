@@ -10,7 +10,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] tweak grid visibility
 * [X] cleanup 'x/y' and '3x3:3' in library window
 * [X] system separator line in library window
-* [ ] autopopulate empty data dir (for docker volumes)
+* [X] auto-populate empty data dir (for docker volumes)
 * [ ] engine: grid-on-tile flag major/minor
 * [ ] zoom-to-cursor
 * [ ] different blue menu for measure and non-measure mode
@@ -23,6 +23,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] dragging multi-selected hex tokens does not always snap correctly
     * [X] fix sass import warning
     * [ ] more tabletop/index.js tests
+    * [ ] add PHP 7.3 to self diagnosis
+    * [ ] Patrick Hand glyphbox
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

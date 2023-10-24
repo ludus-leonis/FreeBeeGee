@@ -19,7 +19,6 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
@@ -35,7 +34,11 @@ import {
 
 // -----------------------------------------------------------------------------
 
-function testApiSetupRPG (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSetupRPG (api, room) {
   // create room
   testJsonPost(api, () => '/rooms/', () => {
     return {
@@ -67,7 +70,11 @@ function testApiSetupRPG (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiSetupHex (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSetupHex (api, room) {
   // create room
   testJsonPost(api, () => '/rooms/', () => {
     return {
@@ -99,7 +106,11 @@ function testApiSetupHex (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiSetupClassic (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSetupClassic (api, room) {
   // create room
   testJsonPost(api, () => '/rooms/', () => {
     return {
@@ -131,7 +142,11 @@ function testApiSetupClassic (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiSetupTutorial (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSetupTutorial (api, room) {
   // create room
   testJsonPost(api, () => '/rooms/', () => {
     return {
@@ -165,13 +180,16 @@ function testApiSetupTutorial (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - snapshots', function () {
     runner((api, version, room) => {
-      describe('RPG', () => testApiSetupRPG(api, version, room))
-      describe('Hex', () => testApiSetupHex(api, version, room))
-      describe('Classic', () => testApiSetupClassic(api, version, room))
-      describe('Tutorial', () => testApiSetupTutorial(api, version, room))
+      describe('RPG', () => testApiSetupRPG(api, room))
+      describe('Hex', () => testApiSetupHex(api, room))
+      describe('Classic', () => testApiSetupClassic(api, room))
+      describe('Tutorial', () => testApiSetupTutorial(api, room))
     })
   })
 }

@@ -160,9 +160,8 @@ gulp.task('sass', () => {
 gulp.task('php', () => {
   // todo: run php -l
   return replace(gulp.src([
-    'src/php/**/*php',
-    'src/php/.htaccess*',
-    'src/php/**/*.json'
+    'src/php/**/.*',
+    'src/php/**/*'
   ]))
     .pipe(gulp.dest(dirs.site + '/api'))
 })
@@ -208,6 +207,14 @@ gulp.task('img', gulp.series(() => {
     .pipe(gulp.dest(dirs.site + '/img'))
 }))
 
+gulp.task('system', () => {
+  return replace(gulp.src([
+    'src/misc/system/**/.*',
+    'src/misc/system/**/*'
+  ]))
+    .pipe(gulp.dest(dirs.site + '/system'))
+})
+
 /**
  * Create a snapshot zip/tgz.
  *
@@ -248,7 +255,7 @@ function snapshot (name, minimize = false) {
   }, () => { // step 3: zip cache
     return gulp.src(dirs.cache + '/snapshots/' + name + '/**/*')
       .pipe(zip(name + '.zip'))
-      .pipe(gulp.dest(dirs.site + '/api/data/snapshots'))
+      .pipe(gulp.dest(dirs.site + '/system/snapshots'))
   })
 }
 
@@ -265,7 +272,8 @@ gulp.task('dist', gulp.parallel(
   snapshot('_'),
   'fonts',
   'img',
-  'favicon'
+  'favicon',
+  'system'
 ))
 
 // --- testing targets ---------------------------------------------------------

@@ -31,36 +31,54 @@ import {
 
 // -----------------------------------------------------------------------------
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 function testIndexExists (api) {
   testHttpGet(api, '/', body => {
     expect(body).to.contain('If you are like us, you\'ll have a JavaScript-Blocker installed.')
   })
 }
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 function testPrivacyExists (api) {
   testHttpGet(api, '/privacy', body => {
     expect(body).to.contain('This is the default privacy policy')
   })
 }
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 function testTermsExists (api) {
   testHttpGet(api, '/terms', body => {
     expect(body).to.contain('This website runs a copy of')
   })
 }
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 function testToolsExists (api) {
   testHttpGet(api, '/tools', body => {
     expect(body).to.contain('bcrypt tool')
   })
 }
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 function testNoVoid (api) {
   testHttpGet(api, '/void', body => {
     expect(body).to.contain('404 Not Found')
   }, 404)
 }
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 function testNoSubdir (api) {
   testHttpGet(api, '/xx/blueBird', body => {
     expect(body).to.contain('404 Not Found')
@@ -69,6 +87,9 @@ function testNoSubdir (api) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 export function run (api) {
   describe('UI', function () {
     describe('index exists', () => testIndexExists(api))

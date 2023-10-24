@@ -31,12 +31,19 @@ import {
   expect
 } from '../utils/chai.mjs'
 
+/**
+ * @param {string} body HTML payload to inject fakefetch script.
+ * @returns {string} Modified payload.
+ */
 function addFetch (body) {
   return body.replace('</body>', '<script>console.error(globalThis.fetch); globalThis.fetch = function () { console.log("fakefetch") }; console.error(globalThis.fetch)</script></body>')
 }
 
 // -----------------------------------------------------------------------------
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 function testHome (api) {
   testHttpGet(api, '/', body => {
     const dom = new JSDOM(addFetch(body), {
@@ -54,6 +61,9 @@ function testHome (api) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {string} api Base URL to test against.
+ */
 export function run (api) {
   describe('UI', function () {
     describe('home renders', () => testHome(api))

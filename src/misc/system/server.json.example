@@ -1,4 +1,5 @@
 {
+  "hint": "To use this example file, copy it to api/data/server.json ...",
   "ttl": 48,
   "maxRooms": 32,
   "maxRoomSizeMB": 16,

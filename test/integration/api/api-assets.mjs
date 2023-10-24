@@ -47,7 +47,11 @@ import {
 
 let data = null
 
-function testApiCreateAsset (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiCreateAsset (api, room) {
   openTestroom(api, room, 'RPG')
 
   // get library size
@@ -156,7 +160,11 @@ function testApiCreateAsset (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiUpdateAssetOtherBaseMask (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiUpdateAssetOtherBaseMask (api, room) {
   openTestroom(api, room, 'Classic')
 
   // check library
@@ -232,7 +240,11 @@ function testApiUpdateAssetOtherBaseMask (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiUpdateAssetIDs (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiUpdateAssetIDs (api, room) {
   openTestroom(api, room, 'Classic')
 
   // put 2 pieces on table
@@ -281,7 +293,11 @@ function testApiUpdateAssetIDs (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiUpdateAssetConflict (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiUpdateAssetConflict (api, room) {
   openTestroom(api, room, 'Classic')
 
   // patching first d4 asset works
@@ -314,24 +330,28 @@ function testApiUpdateAssetConflict (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiUpdateAssetStickerMaterial (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiUpdateAssetStickerMaterial (api, room) {
   openTestroom(api, room, 'Classic')
 
   // check library
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.tile.length).to.be.eql(12)
+    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
   }, 200)
 
-  // patch name
-  testJsonPatch(api, () => `/rooms/${room}/assets/kVTKu200/`, () => {
+  // patch name (_.zone.3x3)
+  testJsonPatch(api, () => `/rooms/${room}/assets/GxcxR300/`, () => {
     return {
-      id: 'kVTKu200',
+      id: 'GxcxR300',
       name: '_.fooBar',
       bg: '2'
     }
   }, body => {
     expect(body.name).to.be.eql('_.fooBar')
-    expect(body.id).to.be.eql('Jvqgu300')
+    expect(body.id).to.be.eql('pDGII000')
     expect(body.type).to.be.eql('sticker')
     expect(body.w).to.be.eql(3)
     expect(body.h).to.be.eql(undefined)
@@ -343,7 +363,7 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   }, 200)
 
   // patch d - non-default
-  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       d: 2
@@ -356,7 +376,7 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   }, 200)
 
   // patch d - default
-  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       d: 0
@@ -369,7 +389,7 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   }, 200)
 
   // patch known material
-  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'wood'
@@ -382,7 +402,7 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   }, 200)
 
   // patch unknown material
-  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'foobar'
@@ -392,7 +412,7 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   }, 400)
 
   // patch unknown material
-  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'null'
@@ -402,7 +422,7 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   }, 400)
 
   // patch no material
-  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'none'
@@ -415,7 +435,7 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   }, 200)
 
   // patch with bg
-  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'linen',
@@ -429,7 +449,7 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   }, 200)
 
   // patch no material
-  testJsonPatch(api, () => `/rooms/${room}/assets/Jvqgu300/`, () => {
+  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: null
@@ -454,7 +474,11 @@ function testApiUpdateAssetStickerMaterial (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiUpdateAssetTileColor (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiUpdateAssetTileColor (api, room) {
   openTestroom(api, room, 'Classic')
 
   // check library
@@ -566,7 +590,11 @@ function testApiUpdateAssetTileColor (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiUpdateAssetToken (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiUpdateAssetToken (api, room) {
   openTestroom(api, room, 'Classic')
 
   // check library
@@ -813,7 +841,11 @@ function testApiUpdateAssetToken (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiDeleteAsset (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiDeleteAsset (api, room) {
   openTestroom(api, room, 'Classic')
 
   // check library
@@ -840,7 +872,7 @@ function testApiDeleteAsset (api, version, room) {
   }, 200)
 
   // delete sticker
-  testJsonDelete(api, () => `/rooms/${room}/assets/SKT2Y200/`, 204)
+  testJsonDelete(api, () => `/rooms/${room}/assets/EPccl300/`, 204) // _.area.4x4
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker - 1)
     expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
@@ -911,17 +943,20 @@ function testApiDeleteAsset (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - assets', function () {
     runner((api, version, room) => {
-      describe('create', () => testApiCreateAsset(api, version, room))
-      describe('update (token)', () => testApiUpdateAssetToken(api, version, room))
-      describe('update (tile/color)', () => testApiUpdateAssetTileColor(api, version, room))
-      describe('update (sticker/material)', () => testApiUpdateAssetStickerMaterial(api, version, room))
-      describe('update (other/base/mask)', () => testApiUpdateAssetOtherBaseMask(api, version, room))
-      describe('update (conflict)', () => testApiUpdateAssetConflict(api, version, room))
-      describe('update (table id change)', () => testApiUpdateAssetIDs(api, version, room))
-      describe('delete', () => testApiDeleteAsset(api, version, room))
+      describe('create', () => testApiCreateAsset(api, room))
+      describe('update (token)', () => testApiUpdateAssetToken(api, room))
+      describe('update (tile/color)', () => testApiUpdateAssetTileColor(api, room))
+      describe('update (sticker/material)', () => testApiUpdateAssetStickerMaterial(api, room))
+      describe('update (other/base/mask)', () => testApiUpdateAssetOtherBaseMask(api, room))
+      describe('update (conflict)', () => testApiUpdateAssetConflict(api, room))
+      describe('update (table id change)', () => testApiUpdateAssetIDs(api, room))
+      describe('delete', () => testApiDeleteAsset(api, room))
     })
   })
 }

@@ -1,0 +1,6 @@
+# using rewrite instead of access rules for better apache 2.2/2.4 compatibility
+
+RewriteEngine on
+
+# Block access to all files and directories
+RewriteRule (.*) / [R=301,L]
