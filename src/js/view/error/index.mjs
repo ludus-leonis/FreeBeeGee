@@ -124,7 +124,7 @@ function detectProblem () {
               error.innerHTML = `
                 <p>The API is reporting unexpected errors or warnings. Please inform your admin that&nbsp;...</p>
                 <ul>
-                  <li>PHP 7.3 or higher is required to run FreeBeeGee,</li>
+                  <li>PHP 7.4 or higher is required to run FreeBeeGee,</li>
                   <li>the server might be out of resources,</li>
                   <li>the webserver's <code>error.log</code> might contain more clues.</li>
                 </ul>
@@ -150,7 +150,7 @@ function detectProblem () {
 
           // The api seems to deliver JSON. Try to pin down the problem better.
           let issues = ''
-          if (!errorJson.phpOk) issues += '<li>PHP 7.3 or higher is required.</li>'
+          if (!errorJson.phpOk) issues += '<li>PHP 7.4 or higher is required.</li>'
           if (!errorJson.moduleZip) issues += '<li>The PHP <code>zip</code> module is not available.</li>'
 
           if (issues !== '') {

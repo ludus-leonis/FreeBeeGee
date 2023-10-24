@@ -23,8 +23,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] dragging multi-selected hex tokens does not always snap correctly
     * [X] fix sass import warning
     * [ ] more tabletop/index.js tests
-    * [ ] add PHP 7.3 to self diagnosis
-    * [ ] Patrick Hand glyphbox
+    * [X] add PHP 7.3 to self diagnosis
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -39,6 +38,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] snapshot download for demo mode
 * [ ] doubleclick opens edit modal
 * [ ] plugin-hook
+* [ ] bug: font Patrick Hand glyphbox error
 * [ ] library editor: replace media/side
 * [ ] ui: decks/stacks
 * [ ] simplify/automate more deployment steps (ongoing)

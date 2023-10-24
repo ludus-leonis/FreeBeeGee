@@ -92,7 +92,7 @@ export function run (runner) {
     runner((api, version) => {
       describe('API Server-Info', () => testApiServerInfo(api))
       describe('API Snapshots', () => testApiSnapshots(api))
-      describe('self diagnosis', () => testApiIssues(api, version !== '72'))
+      describe('self diagnosis', () => testApiIssues(api, ['74', '80', '81', '82', '83'].includes(version)))
     })
   })
 }

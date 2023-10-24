@@ -16,6 +16,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * added system-assets separator line in library window
 * added better hint for new installations to set an admin password
+* added deprecated PHP 7.3 detection to self diagnosis
 * exclude protected pieces from multi-select operation, instead of denying it to all
 * improved display of availables sides and sizes in the library
 * improved grid visibility
