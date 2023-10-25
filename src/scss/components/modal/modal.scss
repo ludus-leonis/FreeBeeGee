@@ -158,8 +158,7 @@ $modal-padding: calc(var(--fbg-spacing) * 1.5);
   flex-shrink: 1;
   margin: 0;
   max-height: 70vh;
-  overflow-x: hidden;
-  overflow-y: auto;
+  overflow: hidden auto;
   padding: $modal-padding $modal-padding $spacing-small;
 
   &.is-maximizied {

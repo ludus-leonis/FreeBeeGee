@@ -130,6 +130,7 @@ $shadow-color: #000;
 
   .is-d-1 {
     $shadow-height-intensity: 1;
+
     filter:
     drop-shadow(shadow-spread(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 1));
   }
@@ -144,6 +145,7 @@ $shadow-color: #000;
 
   .is-d-3 {
     $shadow-height-intensity: .9;
+
     filter:
     drop-shadow(shadow-spread(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
     drop-shadow(shadow-spread(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
@@ -151,6 +153,7 @@ $shadow-color: #000;
 
   .is-d-4 {
     $shadow-height-intensity: .8;
+
     filter:
     drop-shadow(shadow-spread(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
     drop-shadow(shadow-spread(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
@@ -159,6 +162,7 @@ $shadow-color: #000;
 
   .is-d-5 {
     $shadow-height-intensity: .8;
+
     filter:
     drop-shadow(shadow-spread(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
     drop-shadow(shadow-spread(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
@@ -167,6 +171,7 @@ $shadow-color: #000;
 
   .is-d-6 {
     $shadow-height-intensity: .7;
+
     filter:
     drop-shadow(shadow-spread(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
     drop-shadow(shadow-spread(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
@@ -176,6 +181,7 @@ $shadow-color: #000;
 
   .is-d-7 {
     $shadow-height-intensity: .7;
+
     filter:
     drop-shadow(shadow-spread(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
     drop-shadow(shadow-spread(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
@@ -185,6 +191,7 @@ $shadow-color: #000;
 
   .is-d-8 {
     $shadow-height-intensity: .6;
+
     filter:
     drop-shadow(shadow-spread(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
     drop-shadow(shadow-spread(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
@@ -195,6 +202,7 @@ $shadow-color: #000;
 
   .is-d-9 {
     $shadow-height-intensity: .6;
+
     filter:
     drop-shadow(shadow-spread(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
     drop-shadow(shadow-spread(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
