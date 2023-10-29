@@ -30,6 +30,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed dragging multi-selection not snapping correctly
 * fixed a minor masked-token bug
 * fixed demo-labels in RPG snapshot
+* fixed low quality shadows going in wrong direction
 
 
 ## v0.22.0 - Remorseful Reindeer

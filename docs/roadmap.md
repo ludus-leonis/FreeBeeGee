@@ -27,7 +27,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] add PHP 7.3 to self diagnosis
     * [X] refactor LAYER_* to LAYER.*
     * [X] laser pointer not working
-    * [ ] review quality settings
+    * [X] low quality shadows going in wrong direction
   * [X] review docs
   * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
