@@ -26,7 +26,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] RPG orc label - badge
     * [X] add PHP 7.3 to self diagnosis
     * [X] refactor LAYER_* to LAYER.*
-    * [ ] laser pointer not working
+    * [X] laser pointer not working
+    * [ ] review quality settings
   * [X] review docs
   * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

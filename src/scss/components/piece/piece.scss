@@ -93,8 +93,7 @@ $piece-rotate: 1deg;
 
   &.is-pointer {
     animation: whirl 1s linear infinite;
-    background-image: url('img/pointer.png');
-    background-size: contain;
+    #{'--fbg-side'}: url('img/pointer.png');
     filter: none !important; // sass-lint:disable-line no-important
   }
 
