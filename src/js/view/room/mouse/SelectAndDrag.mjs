@@ -102,7 +102,7 @@ export class SelectAndDrag extends MouseButtonHandler {
     findRealClickTarget(piece, getMouseCoords()).then(target => {
       if (target) { // drag mode
         updateSelection(target, mousedown.ctrlKey)
-        this.dragStart()
+        this.dragStart(target.piece)
       } else { // select mode
         this.selectStart()
       }
@@ -193,7 +193,7 @@ export class SelectAndDrag extends MouseButtonHandler {
 
   // --- drag+drop -------------------------------------------------------------
 
-  dragStart () {
+  dragStart (piece) {
     const coords = getMouseCoords()
 
     if (this.isMoving()) { // you can't drag twice
@@ -226,6 +226,11 @@ export class SelectAndDrag extends MouseButtonHandler {
     this.dragData.xb = this.dragData.right - this.dragData.startX
     this.dragData.ya = this.dragData.startY - this.dragData.top
     this.dragData.yb = this.dragData.bottom - this.dragData.startY
+
+    // use click target center instead of selection center to avoid hickups
+    this.dragData.center.x = piece.x
+    this.dragData.center.y = piece.y
+
     this.dragData.finalCenterX = this.dragData.center.x
     this.dragData.finalCenterY = this.dragData.center.y
 

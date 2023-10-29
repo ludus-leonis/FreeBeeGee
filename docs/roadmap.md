@@ -17,9 +17,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] remember last used snapshot in create-room dialog
 * [ ] pre-release
   * [ ] bump dependencies
-  * [ ] bugfixes + refactoring
+  * [X] bugfixes + refactoring
     * [X] table.json caching in demo mode
-    * [ ] dragging multi-selected hex tokens does not always snap correctly
+    * [X] dragging multi-selection not snapping correctly
     * [X] fix sass import warning
     * [X] edit modal dropdown sizes
     * [X] token + mask + rounded
