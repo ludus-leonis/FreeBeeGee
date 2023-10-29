@@ -19,6 +19,7 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
+export const HOOK_SYNCNOW = 'HOOK_SYNCNOW'
 export const HOOK_LIBRARY_EDIT = 'HOOK_LIBRARY_EDIT'
 export const HOOK_LIBRARY_UPDATE = 'HOOK_LIBRARY_UPDATE'
 export const HOOK_LIBRARY_RELOAD = 'HOOK_LIBRARY_RELOAD'

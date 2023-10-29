@@ -25,7 +25,7 @@ import { expect } from 'chai'
 import { _setMock } from '../../../src/js/api/index.mjs'
 
 import {
-  LAYER_TOKEN,
+  LAYER,
   populatePieceDefaults
 } from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
@@ -65,6 +65,12 @@ import {
 
 _setMock(1) // disable server calls, enable request-mirroring
 
+/**
+ * Split mock server reply for easier testing.
+ *
+ * @param {object} request Request object.
+ * @returns {object} Split properties path, method, body, headers and expectedStatus.
+ */
 function splitRequest (request) {
   return {
     path: request.path,
@@ -75,6 +81,9 @@ function splitRequest (request) {
   }
 }
 
+/**
+ * Initialize table+room data for tests.
+ */
 function setupTestData () {
   setTableNo(1, false)
 }
@@ -127,7 +136,7 @@ describe('Frontend - state.mjs - basics', function () {
     expect(getSetup()).to.be.an('object')
     expect(getSetup().type).to.be.eql('grid-square')
     expect(getLibrary()).to.be.an('object')
-    expect(getLibrary().overlay).to.be.an('array')
+    expect(getLibrary().sticker).to.be.an('array')
     expect(getLibrary().tile).to.be.an('array')
     expect(getLibrary().other).to.be.an('array')
     expect(getLibrary().token).to.be.an('array')
@@ -433,7 +442,7 @@ describe('Frontend - state.mjs - API request JSON', function () {
     r = splitRequest(await addAsset({
       name: 'room',
       format: 'png',
-      type: LAYER_TOKEN,
+      type: LAYER.TOKEN,
       w: 1,
       h: 2,
       base64: '...content...',
@@ -482,13 +491,13 @@ const roomJSON = `
     "image": "img/desktop-wood.jpg"
   },
   "library": {
-    "overlay": [{
+    "sticker": [{
       "media": ["area.1x1.1x1x1.svg", "##BACK##"],
       "w": 1,
       "h": 1,
       "color": "#808080",
       "name": "area.1x1",
-      "type": "overlay",
+      "type": "sticker",
       "id": "7261fff0"
     }],
     "tile": [{

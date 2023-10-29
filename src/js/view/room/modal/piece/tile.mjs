@@ -29,6 +29,7 @@ import {
   setupBadge,
   setupColor,
   setupFlags,
+  setupGrid,
   setupLabel,
   setupRotate,
   setupSide,
@@ -54,6 +55,7 @@ export function setup (piece) {
   _('#modal-body').innerHTML = getModalTile(piece)
 
   setupLabel(piece, modalOk)
+  setupGrid(piece)
   setupBadge(piece)
   setupSize(piece)
   setupRotate(piece)
@@ -81,7 +83,7 @@ function modalOk () {
   updateRotate(piece, updates)
   updateSide(piece, updates)
   updateColor(piece, updates)
-  updateFlags(piece, updates)
+  updateFlags(piece, updates) // also does grid
 
   editPiece(piece.id, updates)
 
@@ -96,42 +98,42 @@ function modalOk () {
  */
 function getModalTile (piece) {
   let colorClass = 'd-none'
-  let sideClass = 'd-none'
-  let otherClass = 'col-lg-3'
+  let sizeClass = 'col-lg-3'
+  let rotateClass = 'col-lg-3'
+  let sideClass = 'col-lg-3'
 
-  if (piece._meta.hasColor && piece._meta.sides >= 2) {
-    colorClass = 'col-lg-4'
-    sideClass = 'col-lg-2'
-    otherClass = 'col-lg-2'
-  } else if (piece._meta.hasColor) {
+  if (piece._meta.hasColor) {
     colorClass = 'col-lg-3'
-    otherClass = 'col-lg-3'
-  } else if (piece._meta.sides >= 2) {
+    sizeClass = 'col-lg-2'
+    rotateClass = 'col-lg-2'
     sideClass = 'col-lg-3'
-    otherClass = 'col-lg-3'
   }
 
   return `
     <form class="container modal-edit modal-edit-tile">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
-        <div class="col-12">
+        <div class="col-12 col-lg-9">
           <label for="piece-label">Label</label>
           <input id="piece-label" name="piece-label" type="text" maxlength="32">
+        </div>
+        <div class="col-12 col-lg-3">
+          <label for="piece-grid">Grid</label>
+          <select id="piece-grid" name="piece-grid"></select>
         </div>
         <div class="col-6 ${colorClass}">
           <label for="piece-color">Color</label>
           <select id="piece-color" name="piece-color"></select>
         </div>
-        <div class="col-6 ${otherClass}">
+        <div class="col-6 ${sizeClass}">
           <label for="piece-w">Width</label>
           <select id="piece-w" name="piece-w"></select>
         </div>
-        <div class="col-6 ${otherClass}">
+        <div class="col-6 ${sizeClass}">
           <label for="piece-h">Height</label>
           <select id="piece-h" name="piece-h"></select>
         </div>
-        <div class="col-6 ${otherClass}">
+        <div class="col-6 ${rotateClass}">
           <label for="piece-r">Rotate</label>
           <select id="piece-r" name="piece-r"></select>
         </div>

@@ -31,28 +31,31 @@ import match from 'chai-match'
 import * as fs from 'fs'
 import AdmZip from 'adm-zip'
 import fetch from 'node-fetch'
+import { JSDOM } from 'jsdom'
 
-export const REGEXP_ID = /^[a-zA-Z0-9_-]{8}$/
-export const REGEXP_DIGEST = /^crc32:-?[0-9]+$/
+export const REGEXP = {
+  ID: /^[a-zA-Z0-9_-]{8}$/,
+  DIGEST: /^crc32:-?[0-9]+$/
+}
 export const p = JSON.parse(fs.readFileSync('package.json'))
 export const ACCESS_ANY = '00000000-0000-0000-0000-000000000000'
 
 export const _ = { // asset count in system snapshot
-  other: 16,
-  overlay: 20,
-  tile: 2,
-  token: 5,
   badge: 2,
-  material: 5
+  material: 5,
+  other: 16,
+  sticker: 17,
+  tile: 2,
+  token: 8
 }
 
 export const classic = { // asset count in classic snapshot
-  other: 0,
-  overlay: 0,
-  tile: 10,
-  token: 6,
   badge: 3,
-  material: 0
+  material: 0,
+  other: 0,
+  sticker: 0,
+  tile: 10,
+  token: 6
 }
 
 // --- request helpers ---------------------------------------------------------
@@ -67,13 +70,13 @@ chai
  * specific tests.
  *
  * @param {string} server Server URL/root without trailing slash.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
  */
 export function testHttpGet (server, path, payloadTests, status = 200) {
-  it(`GET ${server}${path}`, function () {
+  it(`GET ${server}${typeof path === 'string' ? path : path()}`, function () {
     return fetch(`${server}${path}`)
       .then(res => {
         expect(res.status).to.be.eql(status)
@@ -90,8 +93,8 @@ export function testHttpGet (server, path, payloadTests, status = 200) {
  * specific tests.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
@@ -130,9 +133,9 @@ const binaryParser = function (res, cb) {
  * specific tests. Used for non-JSON endpoints e.g. data blobs.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} headerTests Callback function. Will recieve the headers for further checking.
- * @param {function} payloadTests Callback function. Will recieve raw payload.
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} headerTests Callback function. Will recieve the headers for further checking.
+ * @param {Function} payloadTests Callback function. Will recieve raw payload.
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
  */
@@ -161,9 +164,9 @@ export function testGetBuffer (api, path, headerTests, payloadTests, status = 20
  * specific tests. Used for non-JSON endpoints e.g. data blobs.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} headerTests Callback function. Will recieve the headers for further checking.
- * @param {function} payloadTests Callback function. Will recieve raw payload.
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} headerTests Callback function. Will recieve the headers for further checking.
+ * @param {Function} payloadTests Callback function. Will recieve raw payload.
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method. Passed in query string, not in header, as if clicking links.
  */
@@ -191,11 +194,11 @@ export function testGetBufferQuery (api, path, headerTests, payloadTests, status
  * specific tests.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} name Function to return (possibly dynamic) room name.
- * @param {function} auth Function to return (possibly dynamic) password.
- * @param {function} upload Function to return (possibly dynamic) filename of file to upload.
- * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} name Function to return (possibly dynamic) room name.
+ * @param {Function} auth Function to return (possibly dynamic) password.
+ * @param {Function} upload Function to return (possibly dynamic) filename of file to upload.
+ * @param {Function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
  * @param {boolean} json If true (default), tests expects a json reply from PHP.
@@ -223,9 +226,9 @@ export function testZIPUpload (api, path, name, auth, upload, payloadTests, stat
  * specific tests.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} payload Function to return (possibly dynamic) payload to send.
- * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} payload Function to return (possibly dynamic) payload to send.
+ * @param {Function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
@@ -256,9 +259,9 @@ export function testJsonPost (api, path, payload, payloadTests, status = 200, to
  * specific tests.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} payload Function to return (possibly dynamic) payload to send.
- * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} payload Function to return (possibly dynamic) payload to send.
+ * @param {Function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
@@ -287,9 +290,9 @@ export function testJsonPut (api, path, payload, payloadTests, status = 200, tok
  * specific tests.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} payload Function to return (possibly dynamic) payload to send.
- * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} payload Function to return (possibly dynamic) payload to send.
+ * @param {Function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
@@ -318,7 +321,7 @@ export function testJsonPatch (api, path, payload, payloadTests, status = 200, t
  * specific tests.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
  * @param {number} status Expected HTTP status. Defaults to 204 = gone.
  * @param {string} token Optional API token method.
  */
@@ -346,9 +349,9 @@ export function testJsonDelete (api, path, status = 204, token = undefined) {
  * specific tests.
  *
  * @param {string} api Server URL to API root.
- * @param {function} path Function to return a path (possibly with dynamic ID) during runtime.
- * @param {function} payload Function to return (possibly dynamic) payload to send.
- * @param {function} payloadTests Callback function. Will recieve the parsed payload for
+ * @param {Function} path Function to return a path (possibly with dynamic ID) during runtime.
+ * @param {Function} payload Function to return (possibly dynamic) payload to send.
+ * @param {Function} payloadTests Callback function. Will recieve the parsed payload for
  *                                further checking.
  * @param {number} status Expected HTTP status. Defaults to 204 = gone.
  * @param {string} token Optional API token method.
@@ -375,6 +378,41 @@ export function testJsonDeleteBatch (api, path, payload, payloadTests, status = 
 }
 
 /**
+ * Fetch a website page and run tests on it via JSDOM.
+ *
+ * @param {string} url (Docker) Url to fetch.
+ * @param {Function} tests Test to run: (dom) => tests.
+ * @param {number} status Expected HTTP status, defaults to 200.
+ * @param {boolean} js If enabled (default), execute JS in JSDOM.
+ * @returns {Promise} Promise of execution.
+ */
+export function fetchAndTest (url, tests = () => Promise.resolve(), status = 200, js = true) {
+  const JSDOM_DELAY = 250
+
+  return fetch(url)
+    .then(res => {
+      expect(res.status).to.be.eql(status)
+      return res.text()
+    })
+    .then(async body => {
+      return new Promise(function (resolve) {
+        const options = {
+          url,
+          contentType: 'text/html',
+          includeNodeLocations: true,
+          storageQuota: 1000000,
+          resources: 'usable'
+        }
+        if (js) options.runScripts = 'dangerously'
+        const dom = new JSDOM(body, options)
+        dom.window.fetch = (path, data) => fetch(`${url}${path}`, data)
+        setTimeout(() => resolve(dom), JSDOM_DELAY)
+      })
+    })
+    .then(dom => tests(dom.window.document.body.innerHTML))
+}
+
+/**
  * Create a room.
  *
  * Convenient when creating the room itself is not being tested.
@@ -383,7 +421,6 @@ export function testJsonDeleteBatch (api, path, payload, payloadTests, status = 
  * @param {string} room Room name to create.
  * @param {string} snapshot Snapshot to use for room.
  * @param {string} password Optional password for the room.
- * @returns {string} API token for that room.
  */
 export function openTestroom (api, room, snapshot, password = undefined) {
   testJsonPost(api, () => '/rooms/', () => {
@@ -413,7 +450,7 @@ export function closeTestroom (api, room) {
 /**
  * Prepare a zip.
  *
- * @param {function} add Called with a zip object to add stuff.
+ * @param {Function} add Called with a zip object to add stuff.
  * @returns {Buffer} Zipped files as buffer for uploads.
  */
 export function zipCreate (add) {

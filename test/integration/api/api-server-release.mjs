@@ -19,7 +19,6 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
@@ -33,6 +32,9 @@ import {
 
 // -----------------------------------------------------------------------------
 
+/**
+ * @param {string} api API root path.
+ */
 function testApiServerInfo (api) {
   testJsonGet(api, () => '/', body => {
     expect(body).to.be.an('object')
@@ -55,14 +57,24 @@ function testApiServerInfo (api) {
   })
 }
 
+/**
+ * @param {string} api API root path.
+ */
 function testApiSnapshots (api) {
   testJsonGet(api, () => '/snapshots/', body => {
     expect(body).to.be.an('array')
-    expect(body).to.include('RPG')
-    expect(body).to.include('Classic')
+    expect(body.length).to.be.eql(4)
+    for (const snapshot of body) {
+      expect(snapshot.name).to.be.oneOf(['Classic', 'RPG', 'Hex', 'Tutorial'])
+      expect(snapshot.system).to.be.eql(true)
+    }
   })
 }
 
+/**
+ * @param {string} api API root path.
+ * @param {boolean} versionOK True for supported PHP versons.
+ */
 function testApiIssues (api, versionOK) {
   testJsonGet(api, () => '/issues/', body => {
     expect(body.phpOk).to.be.eql(versionOK)
@@ -72,12 +84,15 @@ function testApiIssues (api, versionOK) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - server/system endpoints', function () {
     runner((api, version) => {
       describe('API Server-Info', () => testApiServerInfo(api))
       describe('API Snapshots', () => testApiSnapshots(api))
-      describe('self diagnosis', () => testApiIssues(api, version !== '72'))
+      describe('self diagnosis', () => testApiIssues(api, ['74', '80', '81', '82', '83'].includes(version)))
     })
   })
 }

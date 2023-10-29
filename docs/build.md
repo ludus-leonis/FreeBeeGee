@@ -21,7 +21,7 @@ Not needed for the build, but to run the unit tests you will also need `php-toke
 
 ### Building Demo Mode
 
-In Demo Mode, FreeBeeGee will not use the PHP backend/API, but store everything in the browser's HTML storage. This disables some features (multiplayer, uploads, downloads). But as most other functions work, this is sufficient for trying out FreeBeeGee. Demo Mode can't be enabled during runtime - the demo version has to be built statically:
+In Demo Mode, FreeBeeGee will not use the PHP backend/API, but store everything in the browser's HTML storage. This disables some features (multiplayer, uploads, downloads). But as most other functions work, this is sufficient for trying out FreeBeeGee or screen sharing. Demo Mode can't be enabled during runtime - the demo version has to be built statically:
 
 ```
 git clone --depth 1 https://github.com/ludus-leonis/FreeBeeGee

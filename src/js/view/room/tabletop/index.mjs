@@ -29,9 +29,13 @@ import {
   clamp,
   shuffle,
   recordTime,
-  brightness,
-  equalsJSON
+  equalsJSON,
+  mode
 } from '../../../lib/utils.mjs'
+
+import {
+  brightness
+} from '../../../lib/utils-html.mjs'
 
 import {
   sortByNumber
@@ -49,12 +53,14 @@ import {
   deletePieces,
   numberPiece,
   flipPiece,
+  patchPieces,
   movePieces,
   movePiecePatch,
   colorPiece,
   rotatePiece,
   undo as tableUndo,
-  getRoomPreference
+  getRoomPreference,
+  getGridFile
 } from '../../../state/index.mjs'
 
 import {
@@ -79,12 +85,9 @@ import {
 import {
   FEATURE_DICEMAT,
   FEATURE_DISCARD,
-  LAYER_TILE,
-  LAYER_OVERLAY,
-  LAYER_NOTE,
-  LAYER_TOKEN,
-  LAYER_OTHER,
+  LAYER,
   ID,
+  GRID,
   findAsset,
   findPiece,
   findPiecesWithin,
@@ -93,6 +96,7 @@ import {
   getMaxZ,
   getTopLeft,
   getPieceBounds,
+  sortPiecesXY,
   nameToLayer,
   populatePieceDefaults,
   snap,
@@ -131,15 +135,18 @@ export function clipboardPaste (xy) {
  * Delete the currently selected piece(s) from the table.
  *
  * Will silently fail if nothing is selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {string[]} Array of deleted piece IDs.
  */
-export function deleteSelected () {
-  if (!selectionGetFeatures().delete) return
-
+export function deleteSelected (api = true) {
   const ids = []
   for (const piece of selectionGetPieces()) {
+    if (piece.f & FLAGS.NO_DELETE) continue
     ids.push(piece.id)
   }
-  deletePieces(ids)
+  if (api) deletePieces(ids)
+  return ids
 }
 
 /**
@@ -209,7 +216,7 @@ export function colorSelected (border = false) {
 
   for (const piece of selectionGetPieces()) {
     switch (piece.l) {
-      case LAYER_NOTE:
+      case LAYER.NOTE:
         // always change base color
         colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         break
@@ -224,20 +231,157 @@ export function colorSelected (border = false) {
 }
 
 /**
+ * Toggle / cycle overlay grid on selected tiles.
+ *
+ * Will silently fail if no tiles are selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object[]} Pieces to be modified.
+ */
+export function gridSelected (api = true) {
+  const toPatch = []
+  for (const piece of selectionGetPieces()) {
+    switch (piece.l) {
+      case LAYER.TILE:
+        if (piece.f & FLAGS.TILE_GRID_MINOR) {
+          toPatch.push({
+            id: piece.id,
+            f: (piece.f & 0b00111111) | FLAGS.TILE_GRID_MAJOR
+          })
+        } else if (piece.f & FLAGS.TILE_GRID_MAJOR) {
+          toPatch.push({
+            id: piece.id,
+            f: (piece.f & 0b00111111)
+          })
+        } else {
+          toPatch.push({
+            id: piece.id,
+            f: (piece.f & 0b00111111) | FLAGS.TILE_GRID_MINOR
+          })
+        }
+    }
+  }
+
+  if (api) {
+    patchPieces(toPatch)
+  }
+  return toPatch
+}
+
+/**
+ * Move selection.
+ *
+ * Will silently fail if nothing is selected, move would push selection out of
+ * table or items are locked.
+ *
+ * @param {number} x Move x in tiles. Can be negative.
+ * @param {number} y Move y in tiles. Can be negative.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object[]} Pieces to be moved.
+ */
+export function moveSelected (x, y, api = true) {
+  const setup = getSetup()
+  const pieces = sortPiecesXY(selectionGetPieces()).reverse()
+
+  // const clampCoords = {
+  //   x: clamp(this.dragData.xa, coords.x, room.width - 1 - this.dragData.xb),
+  //   y: clamp(this.dragData.ya, coords.y, room.height - 1 - this.dragData.yb)
+  // }
+
+  const dx = x / Math.abs(x || 1)
+  const dy = y / Math.abs(y || 1)
+  const offset = {}
+  switch (setup.type) {
+    case GRID.HEX:
+      offset.xy = [
+        [[x * 0.859, y * 0.5], [x * 0.859, y], [x * 0.859, y * 0.5]],
+        [[x * 0.859, y], [x * 0.859, y], [x * 0.859, y]],
+        [[x * 0.859, y * 0.5], [x * 0.859, y], [x * 0.859, y * 0.5]]
+      ][dy + 1][dx + 1]
+      offset.dx = setup.gridSize
+      offset.dy = setup.gridSize
+      break
+    case GRID.HEX2:
+      offset.xy = [
+        [[x * 0.5, y * 0.859], [x, y * 0.859], [x * 0.5, y * 0.859]],
+        [[x, y * 0.859], [x, y * 0.859], [x, y * 0.859]],
+        [[x * 0.5, y * 0.859], [x, y * 0.859], [x * 0.5, y * 0.859]]
+      ][dy + 1][dx + 1]
+      offset.dx = setup.gridSize
+      offset.dy = setup.gridSize
+      break
+    default:
+      offset.xy = [x, y]
+      offset.dx = setup.gridSize
+      offset.dy = setup.gridSize
+  }
+
+  // find the most-used row/col offset for hex zig-zag movement
+  const xs = []
+  const ys = []
+  if ([GRID.HEX, GRID.HEX2].includes(setup.type)) {
+    for (const piece of pieces) {
+      if (piece.f & FLAGS.NO_MOVE) continue
+      if (setup.type === GRID.HEX) { // we need to move zig-zag on horizontal moves
+        if (Math.abs(x) === 1 && y === 0) {
+          const col = Math.round(piece.x / (setup.gridSize * 0.859))
+          ys.push(setup.gridSize / 2 * (col % 2 ? 1 : -1))
+        }
+      } else if (setup.type === GRID.HEX2) { // we need to move zig-zag on horizontal moves
+        if (Math.abs(y) === 1 && x === 0) {
+          const row = Math.round(piece.y / (setup.gridSize * 0.859))
+          xs.push(setup.gridSize / 2 * (row % 2 ? 1 : -1))
+        }
+      }
+    }
+  }
+  offset.ox = mode(xs) ?? 0
+  offset.oy = mode(ys) ?? 0
+
+  const toMove = []
+  for (const piece of pieces) {
+    if (piece.f & FLAGS.NO_MOVE) continue
+    const xy = snap(
+      piece.x + offset.xy[0] * offset.dx + offset.ox,
+      piece.y + offset.xy[1] * offset.dy + offset.oy
+    )
+    toMove.push({
+      id: piece.id,
+      x: xy.x,
+      y: xy.y,
+      z: piece.z,
+      _meta: piece._meta
+    })
+  }
+
+  const box = getFeatures(toMove).boundingBox
+  if (box.left < 0 || box.top < 0 || box.right > getRoom().width || box.bottom > getRoom().height) {
+    return []
+  }
+
+  if (api) {
+    movePieces(toMove)
+  }
+  return toMove
+}
+
+/**
  * Pile up all selected pieces.
  *
  * Will silently fail if nothing is selected or items are locked.
  *
  * @param {boolean} randomize If the z order of all items will be randomized.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object[]} moved Pieces.
  */
-export function pileSelected (randomize = false) {
+export function pileSelected (randomize = false, api = true) {
   const features = selectionGetFeatures()
   const snapped = snap(features.boundingBox.center.x, features.boundingBox.center.y)
   const toMove = []
   const z = []
 
   for (const piece of selectionGetPieces()) {
-    if (piece.f & FLAGS.NO_MOVE) return // abort if one no-mover is here
+    if (piece.f & FLAGS.NO_MOVE) continue
     toMove.push({
       id: piece.id,
       x: snapped.x,
@@ -246,6 +390,7 @@ export function pileSelected (randomize = false) {
     })
     z.push(piece.z) // keep for shuffling
   }
+  if (toMove.length <= 1) return [] // need minimum 2 moveable pieces
   if (randomize) {
     shuffle(z)
     for (const piece of toMove) {
@@ -253,7 +398,8 @@ export function pileSelected (randomize = false) {
     }
   }
 
-  movePieces(toMove)
+  if (api) movePieces(toMove)
+  return toMove
 }
 
 /**
@@ -267,7 +413,7 @@ export function numberSelected (delta) {
   if (!selectionGetFeatures().number) return
 
   for (const piece of selectionGetPieces()) {
-    if (piece.l === LAYER_TOKEN) {
+    if (piece.l === LAYER.TOKEN) {
       numberPiece(piece.id, piece.n + delta) // 0=nothing, 1-9, A-F
     }
   }
@@ -355,13 +501,14 @@ function createOrUpdatePieceDOM (piece) {
     _piece.l !== piece.l ||
     _piece.w !== piece.w ||
     _piece.h !== piece.h ||
-    _piece.s !== piece.s
+    _piece.s !== piece.s ||
+    (_piece.f & 0b11111000) !== (piece.f & 0b11111000)
   ) {
     selection = selectionGetIds()
     div.delete()
   }
   if (!div.unique()) { // (re)create
-    const node = piece.l === LAYER_NOTE ? noteToNode(piece) : pieceToNode(piece)
+    const node = piece.l === LAYER.NOTE ? noteToNode(piece) : pieceToNode(piece)
     node.piece = _piece
     _piece = {}
     _('#layer-' + piece.l).add(node)
@@ -382,11 +529,9 @@ function createOrUpdatePieceDOM (piece) {
   }
   if (_piece.r !== piece.r) {
     div.remove('.is-r', '.is-r-*')
-    if (piece.l !== LAYER_OTHER) {
-      div.add('.is-r', `.is-r-${piece.r}`)
-      if (Math.abs(_piece.r - piece.r) > 180) {
-        div.add('.is-delay-r', `.is-delay-r-${_piece.r}`)
-      }
+    div.add('.is-r', `.is-r-${piece.r}`)
+    if (Math.abs(_piece.r - piece.r) > 180) {
+      div.add('.is-delay-r', `.is-delay-r-${_piece.r}`)
     }
   }
   if (_piece.w !== piece.w || _piece.h !== piece.h) {
@@ -396,14 +541,14 @@ function createOrUpdatePieceDOM (piece) {
   }
   if (_piece.n !== piece.n) {
     div.remove('.is-n', '.is-n-*')
-    if (piece.l === LAYER_TOKEN && piece.n !== 0) {
+    if (piece.l === LAYER.TOKEN && piece.n !== 0) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
 
   if (_piece.c?.[0] !== piece.c[0] || _piece.c?.[1] !== piece.c[1]) {
     // (background) color
-    if (piece.l === LAYER_NOTE) {
+    if (piece.l === LAYER.NOTE) {
       div.css({
         '--fbg-color': stickyNoteColors[piece.c[0]].value,
         '--fbg-color-invert': brightness(stickyNoteColors[piece.c[0]].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
@@ -417,7 +562,7 @@ function createOrUpdatePieceDOM (piece) {
           '--fbg-color-invert': brightness(setup.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
-    } else if (piece.l === LAYER_OVERLAY || piece.l === LAYER_OTHER) {
+    } else if (piece.l === LAYER.STICKER || piece.l === LAYER.OTHER) {
       // no color
     } else {
       const asset = findAsset(piece.a)
@@ -607,79 +752,6 @@ export function getAllPiecesIds () {
 }
 
 /**
- * Convert a piece data object to a DOM node.
- *
- * @param {object} piece Full piece data object.
- * @returns {_} Converted FreeDOM node (not added to DOM yet).
- */
-export function pieceToNode (piece) {
-  let node
-
-  // create the dom node
-  const asset = findAsset(piece.a)
-  if (asset === null) {
-    switch (piece.a) {
-      case ID.POINTER:
-        node = createPointerPiece(piece.l)
-        break
-      case ID.LOS:
-        node = createLosPiece(piece.x, piece.y, piece.w, piece.h)
-        break
-      default:
-        node = createInvalidPiece(piece.l)
-    }
-  } else {
-    const uriSide = getAssetURL(asset, piece.s)
-    if (asset.base) { // layered asset
-      const uriBase = getAssetURL(asset, -1)
-      node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
-        '--fbg-image': url(uriBase),
-        '--fbg-decal': url(uriSide)
-      })
-    } else { // regular asset
-      node = _(`.piece.piece-${asset.type}`).create().css({
-        '--fbg-image': url(uriSide)
-      })
-    }
-    if (asset.tx) {
-      node.css({
-        '--fbg-material': url(getMaterialMedia(asset.tx))
-      })
-    } else {
-      node.remove('--fbg-material')
-    }
-    if (asset.mask) {
-      node.add('.has-mask')
-      const inner = _('.masked').create().css({ '--fbg-mask': url(getAssetURL(asset, -2)) })
-      node.add(inner)
-    }
-
-    if (asset.type !== LAYER_OVERLAY && asset.type !== LAYER_OTHER) {
-      if (!asset.bg.match(/^[0-9][0-9]?$/)) {
-        // color information is html color or 'transparent' -> apply
-        node.css({ '--fbg-color': asset.bg })
-      }
-    }
-
-    // backsides
-    if (piece.l === LAYER_TOKEN && piece._meta.sidesExtra > 0) {
-      if (piece.s >= piece._meta.sides) {
-        node.add('.is-backside')
-      }
-    }
-
-    if (piece._meta.hasHighlight) {
-      node.add('.has-highlight')
-    }
-  }
-
-  // set meta-classes on node
-  node.id = piece.id
-
-  return node
-}
-
-/**
  * Convert an asset data object to a DOM node. Usually for library previews.
  *
  * @param {object} asset Asset object.
@@ -712,27 +784,6 @@ export function assetToNode (asset, side = 0) {
 }
 
 /**
- * Convert a sticky note to a DOM node.
- *
- * @param {object} note Full note data object.
- * @returns {_} Converted FreeDOM node (not added to DOM yet).
- */
-export function noteToNode (note) {
-  const node = _('.piece.piece-note').create()
-
-  if (note.f & FLAGS.NOTE_TOPLEFT) {
-    node.add('.is-topleft')
-  } else {
-    node.remove('.is-topleft')
-  }
-
-  node.id = note.id
-  node.node().innerHTML = markdown(note.t?.[0])
-
-  return node
-}
-
-/**
  * Convert a filename into a CSS url() and apply a scoped caching postfix.
  *
  * @param {string} file Filname for url().
@@ -759,12 +810,12 @@ export function createNote (xy) {
   selectionClear()
   const snapped = snap(xy.x, xy.y)
   modalEdit(populatePieceDefaults({
-    l: nameToLayer(LAYER_NOTE),
+    l: nameToLayer(LAYER.NOTE),
     w: 3,
     h: 3,
     x: snapped.x,
     y: snapped.y,
-    z: getMaxZ(LAYER_NOTE) + 1
+    z: getMaxZ(LAYER.NOTE) + 1
   }))
 }
 
@@ -867,12 +918,12 @@ export function pointTo (coords) {
 
   createPieces([{ // always create (even if it is a move)
     a: ID.POINTER,
-    l: LAYER_OTHER,
+    l: LAYER.OTHER,
     w: 1,
     h: 1,
     x: snapped.x,
     y: snapped.y,
-    z: getMaxZ(LAYER_OTHER) + 1
+    z: getMaxZ(LAYER.OTHER) + 1
   }])
 }
 
@@ -888,12 +939,12 @@ export function losTo (x, y, w, h) {
   if (w !== 0 || h !== 0) {
     createPieces([{
       a: ID.LOS,
-      l: LAYER_OTHER,
+      l: LAYER.OTHER,
       x,
       y,
       w,
       h,
-      z: getMaxZ(LAYER_OTHER) + 1
+      z: getMaxZ(LAYER.OTHER) + 1
     }])
   }
 }
@@ -947,7 +998,7 @@ export function createLosPiece (x, y, width, height) {
   svg.setAttribute('fill', 'none')
   svg.setAttribute('viewBox', `0 0 ${Math.abs(width) + padding * 2} ${Math.abs(height) + padding * 2}`)
   svg.setAttribute('stroke', 'black')
-  svg.classList.add('piece', 'piece-other', 'piece-los')
+  svg.classList.add('piece', 'piece-other', 'piece-los', 'is-d-1')
 
   // base line
   const base = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -1080,17 +1131,131 @@ export function zoom (direction) {
 // --- internal ----------------------------------------------------------------
 
 /**
+ * Convert a piece data object to a DOM node.
+ *
+ * @param {object} piece Full piece data object.
+ * @returns {_} Converted FreeDOM node (not added to DOM yet).
+ */
+function pieceToNode (piece) {
+  let node
+
+  // create the dom node
+  const asset = findAsset(piece.a)
+  if (asset === null) {
+    switch (piece.a) {
+      case ID.POINTER:
+        node = createPointerPiece(piece.l)
+        break
+      case ID.LOS:
+        node = createLosPiece(piece.x, piece.y, piece.w, piece.h)
+        break
+      default:
+        node = createInvalidPiece(piece.l)
+    }
+  } else {
+    const uriSide = getAssetURL(asset, piece.s)
+    if (asset.base) { // layered asset
+      const uriBase = getAssetURL(asset, -1)
+      node = _(`.piece.piece-${asset.type}`).create().css({
+        '--fbg-base': url(uriBase),
+        '--fbg-side': url(uriSide)
+      })
+    } else { // regular asset
+      node = _(`.piece.piece-${asset.type}`).create().css({
+        '--fbg-side': url(uriSide)
+      })
+    }
+
+    if (asset.tx) {
+      node.css({
+        '--fbg-material': url(getMaterialMedia(asset.tx))
+      })
+    } else {
+      node.remove('--fbg-material')
+    }
+    if (asset.mask) {
+      node.add('.has-mask').css({
+        '--fbg-mask': url(getAssetURL(asset, -2))
+      })
+      const inner = _('.is-mask').create()
+      node.add(inner)
+    }
+
+    if (asset.d && asset.d >= 1 && asset.d <= 9) {
+      node.add(`.is-d-${asset.d}`)
+    }
+
+    if (asset.type !== LAYER.STICKER && asset.type !== LAYER.OTHER) {
+      if (!asset.bg.match(/^[0-9][0-9]?$/)) {
+        // color information is html color or 'transparent' -> apply
+        node.css({ '--fbg-color': asset.bg })
+      }
+    }
+
+    // backsides
+    if (piece.l === LAYER.TOKEN && piece._meta.sidesExtra > 0) {
+      if (piece.s >= piece._meta.sides) {
+        node.add('.is-backside')
+      }
+    }
+
+    if (piece.f & FLAGS.TILE_GRID_MINOR) {
+      node.css({
+        '--fbg-grid': url(getGridFile(asset.bg, 'minor'))
+      })
+    }
+    if (piece.f & FLAGS.TILE_GRID_MAJOR) {
+      node.css({
+        '--fbg-grid': url(getGridFile(asset.bg, 'major'))
+      })
+    }
+
+    if (piece._meta.hasHighlight && !asset.mask) {
+      node.add('.has-highlight')
+    }
+  }
+
+  // set meta-classes on node
+  node.id = piece.id
+
+  return node
+}
+
+/**
+ * Convert a sticky note to a DOM node.
+ *
+ * @param {object} note Full note data object.
+ * @returns {_} Converted FreeDOM node (not added to DOM yet).
+ */
+function noteToNode (note) {
+  const node = _('.piece.piece-note').create()
+
+  if (note.f & FLAGS.NOTE_TOPLEFT) {
+    node.add('.is-topleft')
+  } else {
+    node.remove('.is-topleft')
+  }
+
+  node.id = note.id
+  node.node().innerHTML = markdown(note.t?.[0])
+
+  return node
+}
+
+/**
  * Clone piece(s) to a given position.
  *
  * @param {object[]} pieces Array of pieces to clone.
  * @param {object} xy Grid position (in tiles), {x, y}.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object} To be cloned/created pieces.
  */
-function clonePieces (pieces, xy) {
+function clonePieces (pieces, xy, api = true) {
   const clones = []
-  const features = getFeatures(pieces)
-  const bounds = features.boundingBox
-  if (!features.clone) return
+  const toClone = pieces.filter(p => !(p.f & FLAGS.NO_CLONE))
 
+  const features = getFeatures(toClone)
+  const bounds = features.boundingBox
   const room = getRoom()
 
   // make sure the clone fits on the table
@@ -1099,7 +1264,7 @@ function clonePieces (pieces, xy) {
 
   const zLower = findMaxZBelow(features.boundingBox, xy)
   const zUpper = {} // one z per layer
-  for (const piece of sortByNumber(pieces, 'z', 0)) {
+  for (const piece of sortByNumber(toClone, 'z', 0)) {
     if (piece.f & FLAGS.NO_CLONE) continue
     const selectionOffset = {
       x: piece.x - bounds.center.x,
@@ -1118,8 +1283,9 @@ function clonePieces (pieces, xy) {
     clones.push(clone)
   }
   if (clones.length > 0) {
-    createPieces(clones, true)
+    if (api) createPieces(clones, true)
   }
+  return clones
 }
 
 /**
@@ -1267,13 +1433,13 @@ function removeObsoletePieces (keepIds) {
  */
 function setItem (piece) {
   switch (piece.l) {
-    case LAYER_TILE:
-    case LAYER_TOKEN:
-    case LAYER_OVERLAY:
-    case LAYER_OTHER:
+    case LAYER.TILE:
+    case LAYER.TOKEN:
+    case LAYER.STICKER:
+    case LAYER.OTHER:
       setPiece(piece)
       break
-    case LAYER_NOTE:
+    case LAYER.NOTE:
       setNote(piece)
       break
     default:
@@ -1292,4 +1458,8 @@ function setItem (piece) {
 function markdown (content) {
   return marked.parse((content ?? '').replaceAll('<', '&lt;'))
     .replaceAll('<a ', '<a target="_blank" rel="noopener noreferrer" ')
+}
+
+export const _test = {
+  clonePieces
 }

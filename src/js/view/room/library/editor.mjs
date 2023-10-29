@@ -89,6 +89,12 @@ import {
   modalDelete
 } from './modal/delete.mjs'
 
+// --- events ------------------------------------------------------------------
+
+registerObserver('LibraryManager', HOOK_LIBRARY_EDIT, () => selection && modalEdit(selection))
+registerObserver('LibraryManager', HOOK_LIBRARY_RELOAD, () => showSpinner())
+registerObserver('LibraryManager', HOOK_LIBRARY_SELECT, id => { selection = id })
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -129,10 +135,6 @@ export function modalLibraryManager (xy) {
 
 let lastHash = null
 let selection = null
-
-registerObserver('LibraryManager', HOOK_LIBRARY_EDIT, () => selection && modalEdit(selection))
-registerObserver('LibraryManager', HOOK_LIBRARY_RELOAD, () => showSpinner())
-registerObserver('LibraryManager', HOOK_LIBRARY_SELECT, id => { selection = id })
 
 /**
  * Use table (piece) selection to pre-select an asset (if any).
@@ -175,7 +177,7 @@ function updateManager () {
       const node = _('.filetree')
       node.add(createSubtree('Dice', 'other', library.other))
       node.add(createSubtree('Token', 'token', library.token))
-      node.add(createSubtree('Overlays', 'overlay', library.overlay))
+      node.add(createSubtree('Stickers', 'sticker', library.sticker))
       node.add(createSubtree('Tiles', 'tile', library.tile))
       // node.add(createSubtree('Badges', 'badge', library.badge))
 
@@ -237,7 +239,7 @@ function show (asset) {
     <table class="table-key-value">
       <tbody>
         <tr>
-          <td rowspan="4" class="is-preview">
+          <td rowspan="5" class="is-preview">
           </td>
           <th>ID</th>
           <td><code>${asset.id}</code></td>
@@ -249,6 +251,10 @@ function show (asset) {
         <tr>
           <th>Material</th>
           <td>${prettyName(asset.tx ?? 'none')}</td>
+        </tr>
+        <tr>
+          <th>Shadow</th>
+          <td>${asset.d}</td>
         </tr>
         <tr>
           <th>Actions</th>
@@ -304,15 +310,6 @@ function assetToTable (asset) {
   table.add(tbody)
   let content = ''
 
-  if (asset.mask) {
-    content += `
-      <tr>
-        <td>Mask</td>
-        <td><code>${asset.mask}</code></td>
-        <td><a href="${getRoomMediaURL(getRoom().name, asset.type, asset.mask, DEMO_MODE)}" target="_blank">View</a></td>
-      </tr>
-    `
-  }
   let index = 0
   for (const media of asset.media) {
     content += `
@@ -323,6 +320,15 @@ function assetToTable (asset) {
       </tr>
     `
     index++
+  }
+  if (asset.mask) {
+    content += `
+      <tr>
+        <td>Mask</td>
+        <td><code>${asset.mask}</code></td>
+        <td><a href="${getRoomMediaURL(getRoom().name, asset.type, asset.mask, DEMO_MODE)}" target="_blank">View</a></td>
+      </tr>
+    `
   }
   if (asset.base) {
     content += `

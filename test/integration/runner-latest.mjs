@@ -30,6 +30,7 @@ import { run as runSnapshots } from './api/api-snapshots.mjs'
 import { run as runTables } from './api/api-tables.mjs'
 import { run as runTemplates } from './api/api-templates.mjs'
 import { run as runUploads } from './api/api-uploads.mjs'
+import { run as runInstall } from './api/api-install.mjs'
 
 const runner = function (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
@@ -48,3 +49,5 @@ runSnapshots(runner)
 runTables(runner)
 runTemplates(runner)
 runUploads(runner)
+
+runInstall(runner) // last tests - destructive!

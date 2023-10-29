@@ -1,6 +1,6 @@
 {
   "name": "gulp-shrinkr",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Optimize images during (Gulp) build.",
   "license": "AGPL-3.0-or-later",
   "type": "module",

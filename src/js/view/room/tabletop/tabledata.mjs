@@ -52,9 +52,11 @@ import {
   DEMO_MODE
 } from '../../../api/index.mjs'
 
-export const TYPE_SQUARE = 'grid-square'
-export const TYPE_HEX = 'grid-hex'
-export const TYPE_HEX2 = 'grid-hex2'
+export const GRID = {
+  SQUARE: 'grid-square',
+  HEX: 'grid-hex',
+  HEX2: 'grid-hex2'
+}
 
 export const stickyNoteColors = [
   { name: 'Yellow', value: '#ffeba6' },
@@ -64,24 +66,27 @@ export const stickyNoteColors = [
   { name: 'Pink', value: '#f4a0c6' }
 ]
 
-export const LAYER_TILE = 'tile'
-export const LAYER_OVERLAY = 'overlay'
-export const LAYER_NOTE = 'note'
-export const LAYER_TOKEN = 'token'
-export const LAYER_OTHER = 'other'
+export const LAYER = {
+  TILE: 'tile',
+  STICKER: 'sticker',
+  NOTE: 'note',
+  TOKEN: 'token',
+  OTHER: 'other'
+}
+
 export const LAYERS = [ // reverse order
-  LAYER_TILE,
-  LAYER_OVERLAY,
-  LAYER_NOTE,
-  LAYER_TOKEN,
-  LAYER_OTHER
+  LAYER.TILE,
+  LAYER.STICKER,
+  LAYER.NOTE,
+  LAYER.TOKEN,
+  LAYER.OTHER
 ]
 
 export const assetTypes = [
-  LAYER_TILE,
-  LAYER_TOKEN,
-  LAYER_OVERLAY,
-  LAYER_OTHER,
+  LAYER.TILE,
+  LAYER.TOKEN,
+  LAYER.STICKER,
+  LAYER.OTHER,
   'badge'
 ]
 
@@ -89,7 +94,7 @@ export const assetTypes = [
  * Find the name for a layer index.
  *
  * @param {number} layer Layer index, 1-based.
- * @returns {string} Layer name, e.g. 'overlay'.
+ * @returns {string} Layer name, e.g. 'sticker'.
  */
 function layerToName (layer) {
   return LAYERS[layer - 1]
@@ -98,7 +103,7 @@ function layerToName (layer) {
 /**
  * Find the index of a layer name.
  *
- * @param {string} name Name of layer, e.g. 'overlay'.
+ * @param {string} name Name of layer, e.g. 'sticker'.
  * @returns {number} Layer index.
  */
 export function nameToLayer (name) {
@@ -240,8 +245,8 @@ export function getAssetURL (asset, side = 0) {
  * @returns {object} Numeric coordinates as { top, left }.
  */
 export function getTopLeft (piece, x = piece.x, y = piece.y) {
-  const jitterX = piece.l === LAYER_TOKEN ? Math.abs(hash('x' + piece.id)) % 5 - 2 : 0
-  const jitterY = piece.l === LAYER_TOKEN ? Math.abs(hash('y' + piece.id)) % 5 - 2 : 0
+  const jitterX = piece.l === LAYER.TOKEN ? Math.abs(hash('x' + piece.id)) % 5 - 2 : 0
+  const jitterY = piece.l === LAYER.TOKEN ? Math.abs(hash('y' + piece.id)) % 5 - 2 : 0
 
   return {
     left: x - piece._meta.widthPx / 2 - piece._meta.originOffsetXPx + jitterX,
@@ -328,6 +333,23 @@ export function findExpiredPieces (no = getTableNo()) {
 }
 
 /**
+ * Sort pieces based on bounding box coordinates, from top-left to bottom-right.
+ *
+ * @param {object[]} pieces Array of pieces.
+ * @returns {object} Object with features & bounds.
+ */
+export function sortPiecesXY (pieces) {
+  return pieces.sort((a, b) => {
+    const d = (a.x + a.y) - (b.x + b.y)
+    if (d === 0) {
+      return (a.x - b.x)
+    } else {
+      return d
+    }
+  })
+}
+
+/**
  * Determine the featureset all given pieces support. Also calculates bounds.
  *
  * @param {object[]} pieces Array of pieces.
@@ -336,73 +358,101 @@ export function findExpiredPieces (no = getTableNo()) {
 export function getFeatures (pieces) {
   const semi = [FEATURE_DICEMAT, FEATURE_DISCARD]
 
-  let features = {
-    edit: false,
-    rotate: false,
-    flip: false,
-    random: false,
-    pile: false,
-    top: false,
-    bottom: false,
-    clone: false,
-    delete: false,
-    color: false,
-    border: false,
-    number: false,
-    boundingBox: {}
-  }
-  if (pieces.length > 0) {
-    features = {
-      edit: pieces.length === 1,
-      rotate: true,
-      flip: true,
-      random: true,
-      pile: pieces.length > 1,
-      top: true,
-      bottom: true,
-      clone: true,
-      delete: true,
-      color: true,
-      border: true,
-      number: true,
-      boundingBox: {}
+  const features = pieces.length > 0
+    ? {
+        edit: pieces.length === 1,
+        flip: true,
+        random: true,
+        top: true,
+        bottom: true,
+        color: true,
+        border: true,
+        number: true,
+        rotate: true,
+
+        // potentially protected
+        move: false,
+        pile: false,
+        clone: false,
+        delete: false,
+
+        boundingBox: {
+          top: Number.MAX_VALUE,
+          left: Number.MAX_VALUE,
+          right: Number.MIN_VALUE,
+          bottom: Number.MIN_VALUE,
+          w: 0,
+          h: 0,
+          center: { x: 0, y: 0 }
+        }
+      }
+    : {
+        edit: false,
+        rotate: false,
+        flip: false,
+        random: false,
+        top: false,
+        bottom: false,
+        color: false,
+        border: false,
+        number: false,
+
+        move: false,
+        pile: false,
+        clone: false,
+        delete: false,
+
+        boundingBox: {
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          w: 1,
+          h: 1,
+          center: { x: 0, y: 0 }
+        }
+      }
+
+  let moveable = 0
+  for (const piece of pieces) {
+    if (!(piece.f & FLAGS.NO_CLONE)) features.clone = true // at least one found
+    if (!(piece.f & FLAGS.NO_DELETE)) features.delete = true // at least one found
+    if (!(piece.f & FLAGS.NO_MOVE)) {
+      features.move = true // at least one found
+      moveable++
     }
+    if (!piece._meta?.hasColor) features.color = false
+    if (!piece._meta?.hasBorder) features.border = false
+    if (piece.l !== LAYER.TOKEN) features.number = false
 
-    for (const piece of pieces) {
-      if (piece.l === LAYER_OTHER) features.rotate = false
-      if (piece.f & FLAGS.NO_CLONE) features.clone = false
-      if (piece.f & FLAGS.NO_DELETE) features.delete = false
-      if (piece.f & FLAGS.NO_MOVE) features.pile = false
-      if (!piece._meta?.hasColor) features.color = false
-      if (!piece._meta?.hasBorder) features.border = false
-      if (piece.l !== LAYER_TOKEN) features.number = false
+    if ((piece._meta?.sides ?? 1) + (piece._meta?.sidesExtra ?? 0) <= 1) features.flip = false
+    if (semi.includes(piece._meta?.feature)) features.flip = false
 
-      if ((piece._meta?.sides ?? 1) + (piece._meta?.sidesExtra ?? 0) <= 1) features.flip = false
-      if (semi.includes(piece._meta?.feature)) features.flip = false
+    if ((piece._meta?.sides ?? 1) <= 1 && !semi.includes(piece._meta?.feature)) features.random = false
 
-      if ((piece._meta?.sides ?? 1) <= 1 && !semi.includes(piece._meta?.feature)) features.random = false
-
-      // plus/minus half-size of item?
-      if (piece.x - piece._meta.widthPx / 2 < (features.boundingBox.left ?? Number.MAX_VALUE)) {
-        features.boundingBox.left = Math.round(piece.x - piece._meta.widthPx / 2)
-      }
-      if (piece.x + piece._meta.widthPx / 2 > (features.boundingBox.right ?? Number.MIN_VALUE)) {
-        features.boundingBox.right = Math.round(piece.x + piece._meta.widthPx / 2 - 1)
-      }
-      if (piece.y - piece._meta.heightPx / 2 < (features.boundingBox.top ?? Number.MAX_VALUE)) {
-        features.boundingBox.top = Math.round(piece.y - piece._meta.heightPx / 2)
-      }
-      if (piece.y + piece._meta.heightPx / 2 > (features.boundingBox.bottom ?? Number.MIN_VALUE)) {
-        features.boundingBox.bottom = Math.round(piece.y + piece._meta.heightPx / 2 - 1)
-      }
-      features.boundingBox.w = features.boundingBox.right - features.boundingBox.left + 1
-      features.boundingBox.h = features.boundingBox.bottom - features.boundingBox.top + 1
-      features.boundingBox.center = {
-        x: Math.floor((features.boundingBox.right + features.boundingBox.left + 1) / 2),
-        y: Math.floor((features.boundingBox.bottom + features.boundingBox.top + 1) / 2)
-      }
+    // plus/minus half-size of item?
+    if (piece.x - piece._meta.widthPx / 2 < (features.boundingBox.left ?? Number.MAX_VALUE)) {
+      features.boundingBox.left = Math.round(piece.x - piece._meta.widthPx / 2)
+    }
+    if (piece.x + piece._meta.widthPx / 2 > (features.boundingBox.right ?? Number.MIN_VALUE)) {
+      features.boundingBox.right = Math.round(piece.x + piece._meta.widthPx / 2 - 1)
+    }
+    if (piece.y - piece._meta.heightPx / 2 < (features.boundingBox.top ?? Number.MAX_VALUE)) {
+      features.boundingBox.top = Math.round(piece.y - piece._meta.heightPx / 2)
+    }
+    if (piece.y + piece._meta.heightPx / 2 > (features.boundingBox.bottom ?? Number.MIN_VALUE)) {
+      features.boundingBox.bottom = Math.round(piece.y + piece._meta.heightPx / 2 - 1)
+    }
+    features.boundingBox.w = features.boundingBox.right - features.boundingBox.left + 1
+    features.boundingBox.h = features.boundingBox.bottom - features.boundingBox.top + 1
+    features.boundingBox.center = {
+      x: Math.floor((features.boundingBox.right + features.boundingBox.left + 1) / 2),
+      y: Math.floor((features.boundingBox.bottom + features.boundingBox.top + 1) / 2)
     }
   }
+
+  if (moveable > 1) features.pile = true
+
   return features
 }
 
@@ -423,7 +473,7 @@ export function sanitizePiecePatch (patch, pieceId = null) {
     switch (field) {
       case 'c':
         result[field] = []
-        colors = p?.l === LAYER_NOTE ? stickyNoteColors.length : (t.colors.length + 1)
+        colors = p?.l === LAYER.NOTE ? stickyNoteColors.length : (t.colors.length + 1)
         if (patch[field][0] !== undefined) result[field].push(mod(patch[field][0], colors))
         if (patch[field][1] !== undefined) result[field].push(mod(patch[field][1], t.borders.length + 1))
         break
@@ -470,6 +520,36 @@ export function sanitizePiecePatch (patch, pieceId = null) {
 }
 
 /**
+ * Add default properties to all library entries.
+ *
+ * @param {object} library Data object to populate.
+ * @returns {Array} Setup for chaining.
+ */
+export function populateLibraryDefaults (library) {
+  library.sticker = library.sticker ?? []
+  library.tile = library.tile ?? []
+  library.token = library.token ?? []
+  library.other = library.other ?? []
+  library.badge = library.badge ?? []
+  library.material = library.material ?? []
+
+  for (const piece of library.sticker) {
+    populateAssetDefaults(piece)
+  }
+  for (const piece of library.tile) {
+    populateAssetDefaults(piece)
+  }
+  for (const piece of library.token) {
+    populateAssetDefaults(piece)
+  }
+  for (const piece of library.other) {
+    populateAssetDefaults(piece)
+  }
+
+  return library
+}
+
+/**
  * Add default setup values to all properties that the API might omit.
  *
  * @param {object} setup Data object to populate.
@@ -488,6 +568,26 @@ export function populateSetupDefaults (setup) {
 
 export const FEATURE_DICEMAT = 'DICEMAT'
 export const FEATURE_DISCARD = 'DISCARD'
+
+/**
+ * Add default asset properties that the API might omit.
+ *
+ * @param {object} asset Data object to populate.
+ * @returns {object} Asset for chaining.
+ */
+export function populateAssetDefaults (asset) {
+  asset.w = asset.w ?? 1
+  asset.h = asset.h ?? asset.w
+  if (['token', 'tile', 'other'].includes(asset.type)) {
+    asset.d = asset.d ?? 2
+  } else {
+    asset.d = asset.d ?? 0
+  }
+
+  asset._hash = hash(JSON.stringify(asset))
+
+  return asset
+}
 
 /**
  * Add default piece values to all properties that the API might omit.
@@ -540,9 +640,9 @@ export function populatePieceDefaults (piece, headers = null) {
     const bgImage = getAssetURL(asset, asset.base ? -1 : piece.s)
     if (bgImage.match(/(png|svg)$/i)) piece._meta.mask = bgImage
     if (asset.mask) piece._meta.mask = getAssetURL(asset, -2)
-    if (piece.l === LAYER_TOKEN && piece.w <= 8 && piece.h <= 8) piece._meta.mask = `img/mask/token-${piece.w}x${piece.h}.svg`
+    if (piece.l === LAYER.TOKEN && piece.w <= 8 && piece.h <= 8) piece._meta.mask = `img/mask/token-${piece.w}x${piece.h}.svg`
     piece._meta.sides = asset.media.length ?? 1
-    piece._meta.sidesExtra = (piece.l === LAYER_TOKEN && piece._meta.sides === 1) ? 1 : 0
+    piece._meta.sidesExtra = (piece.l === LAYER.TOKEN && piece._meta.sides === 1) ? 1 : 0
 
     if (asset.id === ID.POINTER) {
       piece._meta.feature = 'POINTER'
@@ -562,8 +662,8 @@ export function populatePieceDefaults (piece, headers = null) {
     } else {
       piece._meta.hasColor = false
     }
-    piece._meta.hasBorder = piece.l === LAYER_TOKEN
-    if (asset.type === LAYER_TOKEN || piece._meta.hasColor === true || bgImage.match(/(jpg|jpeg)$/i)) {
+    piece._meta.hasBorder = piece.l === LAYER.TOKEN
+    if (asset.type === LAYER.TOKEN || piece._meta.hasColor === true || bgImage.match(/(jpg|jpeg)$/i)) {
       piece._meta.hasHighlight = true
     } else {
       piece._meta.hasHighlight = false
@@ -607,7 +707,7 @@ export function populatePiecesDefaults (pieces, headers = null) {
 /**
  * Determine the lowest z-index in use by the pieces in a layer.
  *
- * @param {string} layer Name of a layer, e.g. LAYER_TILE.
+ * @param {string} layer Name of a layer, e.g. LAYER.TILE.
  * @param {object} area Bounding rect in px to check pieces at least partly within.
  * @returns {number} Lowest CSS z-index, or 0 if layer is empty.
  */
@@ -639,7 +739,7 @@ export function sortZ (pieces) {
 /**
  * Determine the highest z-index in use by the pieces in a layer.
  *
- * @param {string} layer Name of a layer, e.g. LAYER_TILE.
+ * @param {string} layer Name of a layer, e.g. LAYER.TILE.
  * @param {object} area Bounding rect in px to check pieces at least partly within.
  * @returns {number} Highest CSS z-index, or 0 if area in layer is empty.
  */
@@ -766,9 +866,9 @@ export function snap (x, y, lod = 3) {
     return snapGrid(x, y, 8, 3) // snap to 4px
   }
   switch (setup.type) {
-    case TYPE_HEX:
+    case GRID.HEX:
       return snapHex(x, y, setup.gridSize, lod)
-    case TYPE_HEX2:
+    case GRID.HEX2:
       return snapHex2(x, y, setup.gridSize, lod)
     default:
       return snapGrid(x, y, setup.gridSize, lod)
@@ -872,8 +972,8 @@ export function splitAssetFilename (assetName) {
   }
 
   // guess the asset type
-  if (data.w) data.type = LAYER_TILE
-  if (data.w === data.h && data.w <= 3) data.type = LAYER_TOKEN
+  if (data.w) data.type = LAYER.TILE
+  if (data.w === data.h && data.w <= 3) data.type = LAYER.TOKEN
 
   return data
 }
@@ -896,7 +996,7 @@ export function isSolid (piece, x, y) {
 
   if (!piece) {
     return Promise.resolve(true) // no piece = no checking
-  } else if (piece.l === LAYER_TOKEN) {
+  } else if (piece.l === LAYER.TOKEN) {
     mask = `data:image/svg+xml;base64,${btoa(getTokenMaskSVG(piece.w, piece.h))}`
   } else if (!piece._meta?.mask) {
     return Promise.resolve(true) // no mask = full area is hit area

@@ -41,7 +41,7 @@ Mandatory fields:
 : The name of the *asset*. Used e.g. in the *library*.
 
 `type`
-: The type of the *asset*. Can be `tile`, `token`, `overlay` or `other`. This will usually define the type of *piece* this *asset* will use.
+: The type of the *asset*. Can be `tile`, `token`, `sticker`, `other`, `badge` or `material`. This will usually define the type of *piece* this *asset* will use.
 
 `media`
 : An array of media files. Supported are `*.png`, `*.svg` and `*.jpg`. Which of those is shown when depends on the data object using this *asset* (usually a *piece*).
@@ -53,6 +53,9 @@ Optional fields:
 
 `h`
 : The default height for a *piece* using this *asset*, in grid spaces. Defaults to `w`.
+
+`d`
+: The depth for a *piece* using this *asset*, used to determine its shadow size. Defaults to `2` for tiles and tokens, and to `0` otherwise.
 
 `bg`
 : The background color of the *asset*. Defaults to '#808080'. See *Media filenames* below for possible values.
@@ -87,10 +90,10 @@ mainName[.secondaryName][.{x}x{y}[x{s}]][.bg[.texture]].{ext}
 : The side this file represents, typically `1` or `2`, but an *asset* can have more than that - e.g. dice sides or enemy/color variants. FBG will cycle through those when a *piece* gets flipped. If omitted, side `1` is assumed.
 
 `bg`
-: An optional background color/style for this *asset*. Will be visible as placeholder during image loading, and shine through in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, a number (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash). If missing, it defaults to `0`.
+: An optional background color/style for this *asset*. Will be visible as placeholder during image loading, and shine through in transparent areas of the asset (if the image format supports alpha). Can be set to `transparent`, a number (the color set by the user for a *piece* in the edit dialog) or a six-digit HTML hex color (e.g. `bf40bf`, without a hash). If omitted, it defaults to `0`.
 
 `texture`
-: An optional texture for the *asset*. If present, an additional shade/texture will be applied on top of the media image to give it a rougher look. Can be `paper` or `wood`.
+: An optional texture for the *asset*. If present, an additional shade/texture will be applied on top of the media image to give it a rougher look. Be any material from the `material` folder in the room assets.
 
 ### Base images
 
@@ -118,7 +121,7 @@ The *library* object holds information about each *asset*, sorted by *asset* typ
 
 ```json
 {
-  "overlay": [
+  "sticker": [
     ... assets ...
   ],
   "tile": [
@@ -162,7 +165,7 @@ A minimal *piece* contains the following information:
 : The ID of the *piece*. The following IDs have a special meaning: 'ZZZZZZZZ' represents the pointer, 'ZZZZZZZY' represents the LOS line.
 
 `l`
-: The layer (number) to show the *piece* in. `1` = tile, `2` = overlay, `3` = note, `4` = token, `5` = other. In theory the *asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *asset* is used in the tile layer.
+: The layer (number) to show the *piece* in. `1` = tile, `2` = sticker, `3` = note, `4` = token, `5` = other. In theory the *asset* type does not have to match the layer it is shown in, but currently e.g. only a tile *asset* is used in the tile layer.
 
 `a`
 : The ID of the *asset*.
@@ -257,7 +260,7 @@ A *setup* preconfigures the tables of a *room* for a particular game.
 : An (optional) table number 1-9 to start on if the user does not have a preference stored for it yet. Useful if each table has a setup corresponding to player count, and starting at e.g. default 4 seems better than 1.
 
 `layersEnabled`
-: An (optional) array of layers to be enabled on room create. Can contain `tile`, `token`, `overlay` and/or `other`. If omitted, the default setting is to enable `token` and `other`. (Hint: The `note` layer is always enabled.)
+: An (optional) array of layers to be enabled on room create. Can contain `tile`, `token`, `sticker` and/or `other`. If omitted, the default setting is to enable `token` and `other`. (Hint: The `note` layer is always enabled.)
 
 `colors`
 : An array of (background) colors available to pieces on the table. Key-Value pairs with `name` and a `value` / RGB hex code. If empty, pieces can't have dynamic colors.

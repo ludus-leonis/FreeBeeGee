@@ -39,7 +39,9 @@ import {
 } from '../../lib/utils.mjs'
 
 import {
+  HOOK_SYNCNOW,
   HOOK_LIBRARY_UPDATE,
+  registerObserver,
   triggerEvent
 } from '../../lib/events.mjs'
 
@@ -63,24 +65,14 @@ import {
   modalInactive
 } from '../../view/room/modal/inactive.mjs'
 
-// --- public ------------------------------------------------------------------
-
-/**
- * Do a sync and start the automatic polling in the background.
- *
- * @param {Function} callback Optional function to call after first sync.
- */
-export function startAutoSync (callback = null) {
-  touch()
-  scheduleSync(0, callback)
-}
+// --- events ------------------------------------------------------------------
 
 /**
  * Trigger a poll, independent of time that passed since last poll.
  *
  * @param {Function} forceUIUpdate Do UI update even if digest didn't change.
  */
-export function syncNow (forceUIUpdate = false) {
+registerObserver('Sync', HOOK_SYNCNOW, (forceUIUpdate = false) => {
   if (isAutoSync()) {
     if (forceUIUpdate) {
       scheduleSync(0, () => {
@@ -92,6 +84,18 @@ export function syncNow (forceUIUpdate = false) {
   } else {
     fetchAndUpdateTable(getTableNo())
   }
+})
+
+// --- public ------------------------------------------------------------------
+
+/**
+ * Do a sync and start the automatic polling in the background.
+ *
+ * @param {Function} callback Optional function to call after first sync.
+ */
+export function startAutoSync (callback = null) {
+  touch()
+  scheduleSync(0, callback)
 }
 
 /**

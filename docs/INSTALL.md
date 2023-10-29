@@ -48,25 +48,22 @@ If you are using [Docker](https://en.wikipedia.org/wiki/Docker_(software)) on yo
 FBGPASS=supersecret docker run -d -e FBGPASS -p 8765:80 ghcr.io/ludus-leonis/freebeegee:latest
 ```
 
-Please, please pick a better password (!).
+Please, please pick a better password (!). FreeBeeGee should be running now at `http://localhost:8765/`.
 
-FreeBeeGee should be running now at `http://localhost:8765/`. If you want to persist room data, mount a volume for `/var/www/html/api/data/rooms`. To edit the config file, mount a local file as `/var/www/html/api/data/server.json` or copy the file out, edit and copy back in:
+Usually you'll want to persist room data, in that case mount a volume for `/var/www/html/api/data`:
 
 ```
-docker cp <containername>:/var/www/html/api/data/server.json /tmp/server.json
-... edit /tmp/server.json ...
-docker cp /tmp/server.json <containername>:/var/www/html/api/data/server.json
+docker run -d -p 8765:80 -v /home/username/fbg-data:/var/www/html/api/data ghcr.io/ludus-leonis/freebeegee:latest
 ```
 
-The new config file will be effective with the next page reload, no container restart necessary.
+FreeBeeGee will recreate all necessary files in this volume including a default `server.json`. You'll have to set your admin password there manually. Edits in your config file will be effective with the next page reload, no container restart necessary.
 
-As an alternative method, you can also mount a single volume for the whole `/var/www/html/api/data`. In that case make sure it is pre-populated with the content found in `FreeBeeGee/api/data` of a FreeBeeGee `*.tar.gz`/`*.zip` release.
 
 ## Configuration
 
-FreeBeeGee stores all non-static data in `api/data/`, where it expects its config files and will create directories for rooms and other content.
+FreeBeeGee stores all non-static data in `api/data/`, including config files and directories for rooms and other content. The directory is empty until you first open FreeBeeGee in your browser.
 
-The server config file is found in `api/data/server.json`:
+Launch FreeBeeGee in your browser. You'll be greeted by a setup page telling you to set an admin password, and the server should have create a default config file in `api/data/server.json`:
 
 ```
 {
@@ -79,17 +76,19 @@ The server config file is found in `api/data/server.json`:
 }
 ```
 
+There is also a `system/server.json.example` template file if you want to compare an existing configuration with the original after you updated FreeBeeGee.
+
 ### Admin passwords
 
-`passwordCreate` currently contains a single, bcrypt hashed password. It will be required to create but not to join rooms. Set it to an empty string (`""`) for no password.
+`passwordCreate` contains a single, bcrypt hashed password. It will be required to create but not to join rooms. FreeBeeGee ships with an unknown admin password. No rooms can be created until you either set one or explicitly disable it.
 
-You can generate a password hash using any bcrypt tool you like. You can use the tool found on the `/tools` page after you installed FreeBeeGee. Another option is the `htpasswd` command that comes with Apache:
+You can generate a password (hash) using any bcrypt tool you like. You can use the tool found on the `/tools` page after you installed FreeBeeGee. Another option is the `htpasswd` command that comes with Apache:
 
 ```
 htpasswd -bnBC 12 "" "mysupersecretpassword!!!11" | tr -d ':\n'
 ```
 
-FreeBeeGee ships with an unknown admin password. No rooms can be created until you either set one or explicitly disable it.
+To disable passwords, you can also set `passwordCreate` to an empty string (`""`).
 
 ### Uploads
 
@@ -97,6 +96,12 @@ Snapshot (savegame) uploads are disabled by default. To enable them, set `snapsh
 
 You can change the maximum upload file size via the `server.json` (see above). You also have to make sure that your PHP config file (`php.ini`) and/or your Apache/Proxy server settings allow that amount, too.
 
+## Backups
+
+FreeBeeGee will keep all dynamic data in `.../api/data/`. Backup this folder to keep your game data and configurations safe.
+
 ## Upgrading
 
-While FreeBeeGee is still a Zero-version (v0.x), no upgrade docs are provided. Internal things might change at any time, even rooms will break between versions. Download rooms you want to keep as snapshots, do a fresh install and recreate the rooms from the snapshots till we reach v1.0. FreeBeeGee tries to auto-upgrade snapshots if possible.
+While FreeBeeGee is still a Zero-version (v0.x), no upgrade paths are provided. However, you can usually switch to a newer version by extracting the new `.zip`/`.tar.gz` over your existing installation, or moving the `.../api/data` directory from an old to a new installation. You might still want to check the *Configuration* section above - maybe cool new `server.json` options are now available.
+
+FreeBeeGee will try to auto-upgrade older rooms when they are first opened. This usually works fine, but sometimes internal things change and you might loose pieces. If the [Release notes](https://github.com/ludus-leonis/FreeBeeGee/releases) of a particular version mentions BREAKING CHANGES, the risk of loosing pieces / parts of your tables are higher. You have been warned.

@@ -22,13 +22,15 @@
  */
 
 import {
+  getStoreValue,
+  setStoreValue,
   brightness
-} from '../lib/utils.mjs'
+} from '../lib/utils-html.mjs'
 
 import {
-  getStoreValue,
-  setStoreValue
-} from '../lib/utils-html.mjs'
+  HOOK_SYNCNOW,
+  triggerEvent
+} from '../lib/events.mjs'
 
 import {
   DEMO_MODE,
@@ -52,10 +54,6 @@ import {
 } from '../api/index.mjs'
 
 import {
-  syncNow
-} from '../view/room/sync.mjs'
-
-import {
   runError,
   apiError
 } from '../view/error/index.mjs'
@@ -63,11 +61,11 @@ import {
 import {
   ID,
   FEATURE_DICEMAT,
-  TYPE_HEX,
-  TYPE_HEX2,
+  GRID,
   findPiece,
   populatePiecesDefaults,
   populateSetupDefaults,
+  populateLibraryDefaults,
   clampToTableSize,
   nameToLayer,
   getRoomMediaURL,
@@ -77,6 +75,19 @@ import {
 import {
   selectionAdd
 } from '../view/room/tabletop/selection.mjs'
+
+// -----------------------------------------------------------------------------
+
+export const FLAGS = {
+  NO_DELETE: 0b00000001,
+  NO_CLONE: 0b00000010,
+  NO_MOVE: 0b00000100,
+
+  TILE_GRID_MINOR: 0b01000000,
+  TILE_GRID_MAJOR: 0b10000000,
+
+  NOTE_TOPLEFT: 0b10000000
+}
 
 // --- public ------------------------------------------------------------------
 
@@ -146,18 +157,42 @@ export function setTableNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     tableNo = no
     setRoomPreference(PREFS.TABLE, tableNo)
-    if (sync) syncNow(true)
+    if (sync) triggerEvent(HOOK_SYNCNOW, true)
   }
 }
 
 /**
  * Get (cached) state for a given slot/table.
  *
- * @param {number} no Table slot 0..9. Defaults to current one.
+ * @param {number} no Table slot 1..9. Defaults to current one.
  * @returns {object} Table array.
  */
 export function getTable (no = getTableNo()) {
   return tables[no]
+}
+
+/**
+ * Determine proper grid file.
+ *
+ * @param {string} bgcolor HTML color to find highest-contrast grid file for.
+ * @param {string} strength Grid style (major/minor)
+ * @returns {string} The grid image file.
+ */
+export function getGridFile (bgcolor, strength) {
+  const bright = brightness(bgcolor)
+  let color = 5
+  const window = 52
+  if (bright <= 128 - window) color = 1
+  if (bright >= 128 + window) color = 9
+
+  switch (room.setup?.type) {
+    case GRID.HEX:
+      return `img/grid-hex-${strength}-${color}.svg`
+    case GRID.HEX2:
+      return `img/grid-hex2-${strength}-${color}.svg`
+    default:
+      return `img/grid-square-${strength}-${color}.svg`
+  }
 }
 
 /**
@@ -171,19 +206,7 @@ export function getBackground () {
 
   if (!background.grid) { // determine matching grid file on the fly
     const gridType = getRoomPreference(PREFS.GRID)
-    const color = brightness(background.color) < 92 ? 'white' : 'black'
-    const style = gridType > 1 ? 'major' : 'minor'
-
-    switch (room.setup?.type) {
-      case TYPE_HEX:
-        background.gridFile = `img/grid-hex-${style}-${color}.svg`
-        break
-      case TYPE_HEX2:
-        background.gridFile = `img/grid-hex2-${style}-${color}.svg`
-        break
-      default:
-        background.gridFile = `img/grid-square-${style}-${color}.svg`
-    }
+    background.gridFile = getGridFile(background.color, gridType > 1 ? 'major' : 'minor')
   }
 
   return background
@@ -249,12 +272,13 @@ export function isLayerActive (layer) {
 }
 
 export const PREFS = {
+  SNAPSHOT: { name: 'snapshot', default: undefined },
   TOKEN: { name: 'token', default: '00000000-0000-0000-0000-000000000000' },
   TABLE: { name: 'table', default: null },
   LAYERother: { name: 'layer5', default: undefined },
   LAYERtoken: { name: 'layer4', default: undefined },
   LAYERnote: { name: 'layer3', default: undefined },
-  LAYERoverlay: { name: 'layer2', default: undefined },
+  LAYERsticker: { name: 'layer2', default: undefined },
   LAYERtile: { name: 'layer1', default: undefined },
   GRID: { name: 'grid', default: 0 },
   LOS: { name: 'los', default: false },
@@ -436,7 +460,7 @@ export function loadRoom (name, t) {
 export function patchSetup (setup, sync = true) {
   return apiPatchSetup(room.name, setup, getToken())
     .catch(error => apiError(error, room.name, [404]))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
@@ -459,7 +483,7 @@ export function addRoom (room, snapshot) {
  */
 export function undo (no = getTableNo(), sync = true) {
   return apiPostUndo(room.name, no, getToken())
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
@@ -590,13 +614,6 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
   )
 }
 
-export const FLAGS = {
-  NO_DELETE: 0b00000001,
-  NO_CLONE: 0b00000010,
-  NO_MOVE: 0b00000100,
-  NOTE_TOPLEFT: 0b10000000
-}
-
 /**
  * Update the falgs of a piece/token.
  *
@@ -645,7 +662,7 @@ export function deletePiece (pieceId, sync = true) {
   if (findPiece(pieceId)?.f & FLAGS.NO_DELETE) return Promise.resolve() // can't delete those
   return apiDeletePiece(room.name, getTableNo(), pieceId, getToken())
     .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
@@ -664,7 +681,7 @@ export function deletePieces (pieceIds, sync = true) {
   }
   return apiDeletePieces(room.name, getTableNo(), pieceIds, getToken())
     .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
@@ -680,11 +697,11 @@ export function deletePieces (pieceIds, sync = true) {
 export function updateAsset (asset, sync = true) {
   return apiPatchAsset(room.name, asset, getToken())
     .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
- * Remove an asset from the library. Will keep referencing pices on the table (which
+ * Remove an asset from the library. Will keep referencing pieces on the table (which
  * will get a placeholder image).
  *
  * Will only do an API call and rely on later sync to get the change back to the
@@ -697,7 +714,7 @@ export function updateAsset (asset, sync = true) {
 export function deleteAsset (assetId, sync = true) {
   return apiDeleteAsset(room.name, assetId, getToken())
     .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
@@ -712,7 +729,7 @@ export function deleteAsset (assetId, sync = true) {
 export function updateTable (table, sync = true) {
   return apiPutTable(room.name, getTableNo(), table, getToken())
     .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
@@ -759,7 +776,7 @@ export function createPieces (pieces, select = false, sync = true) {
       return ids
     })
     .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
@@ -828,7 +845,7 @@ export function isTabActive () {
  */
 export function setTabActive (state) {
   tabActive = state
-  if (state && room) syncNow()
+  if (state && room) triggerEvent(HOOK_SYNCNOW)
 }
 
 // --- internal ----------------------------------------------------------------
@@ -862,6 +879,7 @@ export function setTable (no, data) {
 export function setRoom (data) {
   if (data) {
     data.setup = populateSetupDefaults(data.setup)
+    data.library = populateLibraryDefaults(data.library)
   }
   room = data
 }
@@ -898,17 +916,17 @@ function patchPiece (pieceId, patch, sync = true) {
   if (patch.l) patch.l = nameToLayer(patch.l)
   return apiPatchPiece(room.name, getTableNo(), pieceId, patch, getToken())
     .catch(error => apiError(error, room.name, [404]))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
 
 /**
- * Update a piece on the server.
+ * Update pieces on the server.
  *
  * @param {object[]} patches Array of partial object of fields to send. Must include ids!
  * @param {object} sync If true (default), trigger table sync.
  * @returns {Promise<object>} Promise of the API request.
  */
-function patchPieces (patches, sync = true) {
+export function patchPieces (patches, sync = true) {
   const sane = []
   if (patches.length <= 0) return Promise.resolve() // nothing to do!
   for (const patch of patches) {
@@ -917,27 +935,8 @@ function patchPieces (patches, sync = true) {
   }
   return apiPatchPieces(room.name, getTableNo(), sane, getToken())
     .catch(error => apiError(error, room.name, [404]))
-    .finally(() => { if (sync) syncNow() })
+    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
 }
-
-// /**
-//  * Create a piece on the server.
-//  *
-//  * @param {object} piece The full piece to send to the server.
-//  * @param {boolean} select Optional. If false (default), piece will not get selected.
-//  * @param {boolean} sync Optional. If true (default), trigger table sync.
-//  * @returns {object} Promise of the ID of the new piece.
-//  */
-// function createPiece (piece, select = false, sync = true) {
-//   if (piece.l) piece.l = nameToLayer(piece.l)
-//   return apiPostPiece(room.name, getTableNo(), stripPiece(piece), getToken())
-//     .then(piece => {
-//       if (select) selectionAdd(piece.id, true)
-//       return piece.id
-//     })
-//     .catch(error => apiError(error, room.name))
-//     .finally(() => { if (sync) syncNow() })
-// }
 
 export const _test = {
   setTable,

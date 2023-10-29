@@ -26,6 +26,7 @@ import {
 } from '../../lib/icons.mjs'
 
 import {
+  sortByString,
   bytesToIso,
   hoursToTimespan
 } from '../../lib/utils-text.mjs'
@@ -40,8 +41,11 @@ import {
 } from '../../view/error/index.mjs'
 
 import {
+  PREFS,
   addRoom,
-  getServerInfo
+  getServerInfo,
+  setServerPreference,
+  getServerPreference
 } from '../../state/index.mjs'
 
 import {
@@ -138,15 +142,16 @@ export function setupView (name) {
       const t = _('#snapshot')
 
       // determine preselected snapshot (with fallbacks)
-      let preselected = snapshots.length > 0 ? snapshots[0] : 'none'
-      if (snapshots.includes('Tutorial')) preselected = 'Tutorial'
-      if (snapshots.includes(getServerInfo().defaultSnapshot)) preselected = getServerInfo().defaultSnapshot
+      let preselected = snapshots.length > 0 ? snapshots[0].name : 'none'
+      if (snapshots.find(s => s.name === 'Tutorial')) preselected = 'Tutorial'
+      if (snapshots.find(s => s.name === getServerInfo().defaultSnapshot)) preselected = getServerInfo().defaultSnapshot
+      if (snapshots.find(s => s.name === getServerPreference(PREFS.SNAPSHOT))) preselected = getServerPreference(PREFS.SNAPSHOT)
 
       t.innerHTML = ''
-      for (const snapshot of snapshots) {
-        const option = _('option').create(snapshot)
-        option.value = snapshot
-        if (snapshot === preselected) option.selected = true
+      for (const snapshot of sortByString(snapshots ?? [], 'name')) {
+        const option = _('option').create(snapshot.name + (snapshot.system ? '' : ' (custom)'))
+        option.value = snapshot.name
+        if (snapshot.name === preselected) option.selected = true
         t.add(option)
       }
       if (snapshots.length <= 0) {
@@ -256,6 +261,9 @@ function ok (name) {
 
   addRoom(room, snapshot)
     .then((remoteRoom) => {
+      if (!_('#mode').checked) { // not upload mode
+        setServerPreference(PREFS.SNAPSHOT, room.snapshot)
+      }
       navigateToRoom(remoteRoom.name)
     })
     .catch((error) => {

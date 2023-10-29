@@ -1,10 +1,10 @@
 {
- "id": "oHJuwwmo",
+ "id": "acVtd48x",
  "name": "demoroomhex",
- "engine": "2.5.1",
+ "engine": "2.6.1",
  "setup": {
-  "engine": "2.5.0",
-  "version": "0.22.0",
+  "engine": "2.6.0",
+  "version": "0.23.0",
   "type": "grid-hex",
   "gridSize": 64,
   "gridWidth": 48,
@@ -119,163 +119,155 @@
   ]
  },
  "library": {
-  "overlay": [
+  "sticker": [
    {
-    "id": "aRGFb300",
-    "lid": "T28mo300",
+    "id": "YIv-z200",
+    "lid": [
+     "jQUGG000",
+     "T28mo300",
+     "aRGFb300"
+    ],
     "name": "_.area",
-    "type": "overlay",
-    "w": 1,
-    "h": 1,
+    "type": "sticker",
     "bg": "1",
     "media": [],
     "mask": "_.area.1x1xX.1.svg"
    },
    {
-    "id": "Z9lUg100",
-    "lid": "ig-Kt200",
+    "id": "XixST000",
+    "lid": [
+     "iCliJ100",
+     "ig-Kt200",
+     "Z9lUg100"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.area.2x2xX.1.svg"
    },
    {
-    "id": "Qz08B000",
-    "lid": "Bu07x200",
+    "id": "qTP6e100",
+    "lid": [
+     "REMVi100",
+     "Bu07x200",
+     "Qz08B000"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.area.3x3xX.1.svg"
    },
    {
-    "id": "SKT2Y200",
-    "lid": "wPXsm000",
+    "id": "EPccl300",
+    "lid": [
+     "c3dxA300",
+     "wPXsm000",
+     "SKT2Y200"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.area.4x4xX.1.svg"
    },
    {
-    "id": "v5IOb300",
-    "lid": "XVoPF000",
+    "id": "NupYz200",
+    "lid": [
+     "bdE9p300",
+     "XVoPF000",
+     "v5IOb300"
+    ],
     "name": "_.area",
-    "type": "overlay",
+    "type": "sticker",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.area.5x5xX.1.svg"
    },
    {
-    "id": "jWJP6100",
-    "lid": "yk-7s000",
+    "id": "Dcv9Q200",
+    "lid": [
+     "xJ3EG100",
+     "yk-7s000",
+     "jWJP6100"
+    ],
     "name": "_.circle",
-    "type": "overlay",
-    "w": 1,
-    "h": 1,
+    "type": "sticker",
     "bg": "1",
     "media": [],
     "mask": "_.circle.1x1xX.1.svg"
    },
    {
-    "id": "k4gCt300",
-    "lid": "z68Zp100",
+    "id": "EOxqJ000",
+    "lid": [
+     "YXKgJ000",
+     "z68Zp100",
+     "k4gCt300"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.circle.2x2xX.1.svg"
    },
    {
-    "id": "xJ5mG200",
-    "lid": "E8HmA100",
+    "id": "dpPGo100",
+    "lid": [
+     "DNbTi000",
+     "E8HmA100",
+     "xJ5mG200"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.circle.3x3xX.1.svg"
    },
    {
-    "id": "jyYsL000",
-    "lid": "Fygdi300",
+    "id": "Plcx3300",
+    "lid": [
+     "aoSzA200",
+     "Fygdi300",
+     "jyYsL000"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.circle.4x4xX.1.svg"
    },
    {
-    "id": "m8DI6100",
-    "lid": "CHPAJ300",
+    "id": "u_pgQ200",
+    "lid": [
+     "dmjbp200",
+     "CHPAJ300",
+     "m8DI6100"
+    ],
     "name": "_.circle",
-    "type": "overlay",
+    "type": "sticker",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.circle.5x5xX.1.svg"
    },
    {
-    "id": "rfCka100",
-    "lid": "LZCOB200",
-    "name": "_.cubeLarge",
-    "type": "overlay",
-    "w": 1,
-    "h": 1,
-    "bg": "3",
-    "media": [
-     "_.cubeLarge.1x1x1.3.png"
+    "id": "NO50s200",
+    "lid": [
+     "gy5ty100",
+     "y2e6H000",
+     "HokYV100"
     ],
-    "mask": "_.cubeLarge.1x1xX.3.png"
-   },
-   {
-    "id": "je0yw100",
-    "lid": "dojMw300",
-    "name": "_.cubeMedium",
-    "type": "overlay",
-    "w": 1,
-    "h": 1,
-    "bg": "3",
-    "media": [
-     "_.cubeMedium.1x1x1.3.png"
-    ],
-    "mask": "_.cubeMedium.1x1xX.3.png"
-   },
-   {
-    "id": "R_vpv100",
-    "lid": "xwTgs300",
-    "name": "_.cubeSmall",
-    "type": "overlay",
-    "w": 1,
-    "h": 1,
-    "bg": "3",
-    "media": [
-     "_.cubeSmall.1x1x1.3.png"
-    ],
-    "mask": "_.cubeSmall.1x1xX.3.png"
-   },
-   {
-    "id": "HokYV100",
-    "lid": "y2e6H000",
     "name": "_.pin",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
-    "h": 2,
     "bg": "3",
     "media": [
      "_.pin.2x2x1.3.png"
@@ -283,69 +275,84 @@
     "mask": "_.pin.2x2xX.3.svg"
    },
    {
-    "id": "goUQT300",
-    "lid": "zNVkI000",
-    "name": "_.wall",
-    "type": "overlay",
-    "w": 1,
-    "h": 1,
-    "bg": "1",
-    "media": [
-     "_.wall.1x1x1.1.png"
+    "id": "i3dWg200",
+    "lid": [
+     "HyBNF300",
+     "rlnfp000",
+     "goUQT300"
     ],
-    "mask": "_.wall.1x1xX.1.png"
+    "name": "_.wall",
+    "type": "sticker",
+    "d": 5,
+    "bg": "1",
+    "media": [],
+    "mask": "_.wall.1x1xXx5.1.png"
    },
    {
-    "id": "mKjdO100",
-    "lid": "Lv6KO300",
+    "id": "wPC3r000",
+    "lid": [
+     "PDSi0000",
+     "Lv6KO300",
+     "mKjdO100"
+    ],
     "name": "_.zone",
-    "type": "overlay",
-    "w": 1,
-    "h": 1,
+    "type": "sticker",
     "bg": "1",
     "media": [],
     "mask": "_.zone.1x1xX.1.svg"
    },
    {
-    "id": "JgIuD300",
-    "lid": "udFmR200",
+    "id": "nbpg0200",
+    "lid": [
+     "eVrG5100",
+     "udFmR200",
+     "JgIuD300"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "w": 2,
-    "h": 2,
     "bg": "1",
     "media": [],
     "mask": "_.zone.2x2xX.1.svg"
    },
    {
-    "id": "kVTKu200",
-    "lid": "d3eZa200",
+    "id": "GxcxR300",
+    "lid": [
+     "pP_3U100",
+     "d3eZa200",
+     "kVTKu200"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [],
     "mask": "_.zone.3x3xX.1.svg"
    },
    {
-    "id": "SR0A5000",
-    "lid": "MENAY000",
+    "id": "EIPGI100",
+    "lid": [
+     "Uu3oe300",
+     "MENAY000",
+     "SR0A5000"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [],
     "mask": "_.zone.4x4xX.1.svg"
    },
    {
-    "id": "fslkO100",
-    "lid": "fCmd1000",
+    "id": "R7xqr000",
+    "lid": [
+     "HgCLN300",
+     "fCmd1000",
+     "fslkO100"
+    ],
     "name": "_.zone",
-    "type": "overlay",
+    "type": "sticker",
     "w": 5,
-    "h": 5,
     "bg": "1",
     "media": [],
     "mask": "_.zone.5x5xX.1.svg"
@@ -354,11 +361,12 @@
   "tile": [
    {
     "id": "i_6yU100",
-    "lid": "SoKu5200",
+    "lid": [
+     "SoKu5200"
+    ],
     "name": "_.glassDark",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "transparent",
     "media": [
      "_.glassDark.2x2x1.transparent.png"
@@ -366,11 +374,12 @@
    },
    {
     "id": "rxt72100",
-    "lid": "xhnDI000",
+    "lid": [
+     "xhnDI000"
+    ],
     "name": "_.glassLight",
     "type": "tile",
     "w": 2,
-    "h": 2,
     "bg": "transparent",
     "media": [
      "_.glassLight.2x2x1.transparent.png"
@@ -378,11 +387,11 @@
    },
    {
     "id": "sVipP300",
-    "lid": "krH1S200",
+    "lid": [
+     "krH1S200"
+    ],
     "name": "chest",
     "type": "tile",
-    "w": 1,
-    "h": 1,
     "bg": "transparent",
     "media": [
      "chest.1x1x1.transparent.png"
@@ -390,11 +399,11 @@
    },
    {
     "id": "KwiA9000",
-    "lid": "leGvU100",
+    "lid": [
+     "leGvU100"
+    ],
     "name": "coin",
     "type": "tile",
-    "w": 1,
-    "h": 1,
     "bg": "transparent",
     "media": [
      "coin.1x1x1.transparent.png"
@@ -402,371 +411,414 @@
    },
    {
     "id": "QQa3a000",
-    "lid": "i6DPv000",
+    "lid": [
+     "i6DPv000"
+    ],
     "name": "corridor",
     "type": "tile",
     "w": 2,
     "h": 1,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "corridor.2x1x1.transparent.png",
-     "corridor.2x1x2.transparent.png",
-     "corridor.2x1x3.transparent.png",
-     "corridor.2x1x4.transparent.png",
-     "corridor.2x1x5.transparent.png"
-    ]
+     "corridor.2x1x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "corridor.2x1xX.1.paper.svg"
    },
    {
     "id": "Lo0sB200",
-    "lid": "xctB7000",
+    "lid": [
+     "xctB7000"
+    ],
     "name": "difficultTerrain",
     "type": "tile",
     "w": 2,
     "h": 1,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "difficultTerrain.2x1x1.transparent.png",
-     "difficultTerrain.2x1x2.transparent.png",
-     "difficultTerrain.2x1x3.transparent.png",
-     "difficultTerrain.2x1x4.transparent.png",
-     "difficultTerrain.2x1x5.transparent.png"
-    ]
+     "difficultTerrain.2x1x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "difficultTerrain.2x1xX.1.paper.svg"
    },
    {
-    "id": "do7wE000",
-    "lid": "HlXsI200",
-    "name": "door.a",
+    "id": "gX-qu200",
+    "lid": [
+     "D8GCo200"
+    ],
+    "name": "doorA",
     "type": "tile",
     "w": 2,
     "h": 1,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "door.a.2x1x1.transparent.png",
-     "door.a.2x1x2.transparent.png"
-    ]
+     "doorA.2x1x1.1.paper.svg",
+     "doorA.2x1x2.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "doorA.2x1xX.1.paper.svg"
    },
    {
-    "id": "NO08J100",
-    "lid": "W_YBs200",
-    "name": "door.b",
+    "id": "wnzNp300",
+    "lid": [
+     "WyFtE200"
+    ],
+    "name": "doorB",
     "type": "tile",
     "w": 2,
     "h": 1,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "door.b.2x1x1.transparent.png",
-     "door.b.2x1x2.transparent.png"
-    ]
+     "doorB.2x1x1.1.paper.svg",
+     "doorB.2x1x2.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "doorB.2x1xX.1.paper.svg"
    },
    {
     "id": "dfWKF000",
-    "lid": "KW5tZ300",
+    "lid": [
+     "KW5tZ300"
+    ],
     "name": "hazard",
     "type": "tile",
     "w": 2,
     "h": 1,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "hazard.2x1x1.transparent.png",
-     "hazard.2x1x2.transparent.png",
-     "hazard.2x1x3.transparent.png",
-     "hazard.2x1x4.transparent.png",
-     "hazard.2x1x5.transparent.png"
-    ]
+     "hazard.2x1x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "hazard.2x1xX.1.paper.svg"
    },
    {
     "id": "ttnue300",
-    "lid": "YETD4000",
+    "lid": [
+     "YETD4000"
+    ],
     "name": "map.A",
     "type": "tile",
     "w": 4,
     "h": 5,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.A.4x5x1.transparent.png",
-     "map.A.4x5x2.transparent.png",
-     "map.A.4x5x3.transparent.png",
-     "map.A.4x5x4.transparent.png",
-     "map.A.4x5x5.transparent.png"
-    ]
+     "map.A.4x5x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.A.4x5xX.1.paper.svg"
    },
    {
-    "id": "Ys57_300",
-    "lid": "idtV9000",
+    "id": "JAJmY300",
+    "lid": [
+     "iBqie100"
+    ],
     "name": "map.B",
     "type": "tile",
-    "w": 5,
+    "w": 6,
     "h": 4,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.B.5x4x1.transparent.png",
-     "map.B.5x4x2.transparent.png",
-     "map.B.5x4x3.transparent.png",
-     "map.B.5x4x4.transparent.png",
-     "map.B.5x4x5.transparent.png"
-    ]
+     "map.B.6x4x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.B.6x4xX.1.paper.svg"
    },
    {
-    "id": "mTPuQ200",
-    "lid": "NbbnJ200",
+    "id": "B7adJ000",
+    "lid": [
+     "EpCJG300"
+    ],
     "name": "map.C",
     "type": "tile",
-    "w": 5,
-    "h": 5,
-    "bg": "transparent",
+    "w": 6,
+    "bg": "1",
     "media": [
-     "map.C.5x5x1.transparent.png",
-     "map.C.5x5x2.transparent.png",
-     "map.C.5x5x3.transparent.png",
-     "map.C.5x5x4.transparent.png",
-     "map.C.5x5x5.transparent.png"
-    ]
+     "map.C.6x6x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.C.6x6xX.1.paper.svg"
    },
    {
     "id": "tS75s200",
-    "lid": "Wzk7J000",
+    "lid": [
+     "Wzk7J000"
+    ],
     "name": "map.D",
     "type": "tile",
     "w": 6,
-    "h": 6,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.D.6x6x1.transparent.png",
-     "map.D.6x6x2.transparent.png",
-     "map.D.6x6x3.transparent.png",
-     "map.D.6x6x4.transparent.png",
-     "map.D.6x6x5.transparent.png"
-    ]
+     "map.D.6x6x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.D.6x6xX.1.paper.svg"
    },
    {
-    "id": "PngvT000",
-    "lid": "nPfba200",
+    "id": "Bh5tx200",
+    "lid": [
+     "id-q8200"
+    ],
     "name": "map.E",
     "type": "tile",
     "w": 6,
-    "h": 5,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.E.6x5x1.transparent.png",
-     "map.E.6x5x2.transparent.png",
-     "map.E.6x5x3.transparent.png",
-     "map.E.6x5x4.transparent.png",
-     "map.E.6x5x5.transparent.png"
-    ]
+     "map.E.6x6x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.E.6x6xX.1.paper.svg"
    },
    {
     "id": "bPETt200",
-    "lid": "FOg6Y000",
+    "lid": [
+     "FOg6Y000"
+    ],
     "name": "map.F",
     "type": "tile",
     "w": 9,
     "h": 3,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.F.9x3x1.transparent.png",
-     "map.F.9x3x2.transparent.png",
-     "map.F.9x3x3.transparent.png",
-     "map.F.9x3x4.transparent.png",
-     "map.F.9x3x5.transparent.png"
-    ]
+     "map.F.9x3x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.F.9x3xX.1.paper.svg"
    },
    {
     "id": "cUfy_000",
-    "lid": "BLNFK100",
+    "lid": [
+     "BLNFK100"
+    ],
     "name": "map.G",
     "type": "tile",
     "w": 4,
     "h": 8,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.G.4x8x1.transparent.png",
-     "map.G.4x8x2.transparent.png",
-     "map.G.4x8x3.transparent.png",
-     "map.G.4x8x4.transparent.png",
-     "map.G.4x8x5.transparent.png"
-    ]
+     "map.G.4x8x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.G.4x8xX.1.paper.svg"
    },
    {
     "id": "BEs8K000",
-    "lid": "N4R7l300",
+    "lid": [
+     "N4R7l300"
+    ],
     "name": "map.H",
     "type": "tile",
     "w": 7,
-    "h": 7,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.H.7x7x1.transparent.png",
-     "map.H.7x7x2.transparent.png",
-     "map.H.7x7x3.transparent.png",
-     "map.H.7x7x4.transparent.png",
-     "map.H.7x7x5.transparent.png"
-    ]
+     "map.H.7x7x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.H.7x7xX.1.paper.svg"
    },
    {
-    "id": "MAbx-100",
-    "lid": "m-yNf100",
+    "id": "GCTwj000",
+    "lid": [
+     "lc42e100"
+    ],
     "name": "map.I",
     "type": "tile",
     "w": 6,
-    "h": 6,
-    "bg": "transparent",
+    "h": 7,
+    "bg": "1",
     "media": [
-     "map.I.6x6x1.transparent.png",
-     "map.I.6x6x2.transparent.png",
-     "map.I.6x6x3.transparent.png",
-     "map.I.6x6x4.transparent.png",
-     "map.I.6x6x5.transparent.png"
-    ]
+     "map.I.6x7x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.I.6x7xX.1.paper.svg"
    },
    {
-    "id": "GgrmN200",
-    "lid": "GPA78100",
+    "id": "g0SSj000",
+    "lid": [
+     "p-nNn000"
+    ],
     "name": "map.J",
     "type": "tile",
     "w": 7,
-    "h": 9,
-    "bg": "transparent",
+    "h": 10,
+    "bg": "1",
     "media": [
-     "map.J.7x9x1.transparent.png",
-     "map.J.7x9x2.transparent.png",
-     "map.J.7x9x3.transparent.png",
-     "map.J.7x9x4.transparent.png",
-     "map.J.7x9x5.transparent.png"
-    ]
+     "map.J.7x10x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.J.7x10xX.1.paper.svg"
    },
    {
     "id": "S08DN300",
-    "lid": "MbTBg100",
+    "lid": [
+     "MbTBg100"
+    ],
     "name": "map.K",
     "type": "tile",
     "w": 9,
     "h": 8,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.K.9x8x1.transparent.png",
-     "map.K.9x8x2.transparent.png",
-     "map.K.9x8x3.transparent.png",
-     "map.K.9x8x4.transparent.png",
-     "map.K.9x8x5.transparent.png"
-    ]
+     "map.K.9x8x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.K.9x8xX.1.paper.svg"
    },
    {
-    "id": "tRLGP000",
-    "lid": "U59Qy000",
+    "id": "rLAEI200",
+    "lid": [
+     "lXy-w000"
+    ],
     "name": "map.L",
     "type": "tile",
     "w": 7,
-    "h": 5,
-    "bg": "transparent",
+    "h": 6,
+    "bg": "1",
     "media": [
-     "map.L.7x5x1.transparent.png",
-     "map.L.7x5x2.transparent.png",
-     "map.L.7x5x3.transparent.png",
-     "map.L.7x5x4.transparent.png",
-     "map.L.7x5x5.transparent.png"
-    ]
+     "map.L.7x6x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.L.7x6xX.1.paper.svg"
    },
    {
     "id": "rmCMg200",
-    "lid": "tiiU6200",
+    "lid": [
+     "tiiU6200"
+    ],
     "name": "map.M",
     "type": "tile",
     "w": 7,
     "h": 6,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.M.7x6x1.transparent.png",
-     "map.M.7x6x2.transparent.png",
-     "map.M.7x6x3.transparent.png",
-     "map.M.7x6x4.transparent.png",
-     "map.M.7x6x5.transparent.png"
-    ]
+     "map.M.7x6x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.M.7x6xX.1.paper.svg"
    },
    {
     "id": "I9ySL000",
-    "lid": "acM-Y200",
+    "lid": [
+     "acM-Y200"
+    ],
     "name": "map.N",
     "type": "tile",
     "w": 7,
     "h": 8,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "map.N.7x8x1.transparent.png",
-     "map.N.7x8x2.transparent.png",
-     "map.N.7x8x3.transparent.png",
-     "map.N.7x8x4.transparent.png",
-     "map.N.7x8x5.transparent.png"
-    ]
+     "map.N.7x8x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "map.N.7x8xX.1.paper.svg"
    },
    {
     "id": "WNP41200",
-    "lid": "OGrKv000",
+    "lid": [
+     "icRPG000"
+    ],
     "name": "obstacle",
     "type": "tile",
-    "w": 1,
     "h": 2,
-    "bg": "transparent",
-    "media": [
-     "obstacle.1x2x1.transparent.png",
-     "obstacle.1x2x2.transparent.png",
-     "obstacle.1x2x3.transparent.png",
-     "obstacle.1x2x4.transparent.png",
-     "obstacle.1x2x5.transparent.png"
-    ]
+    "bg": "1",
+    "media": [],
+    "tx": "paper",
+    "mask": "obstacle.1x2xX.1.paper.svg"
    },
    {
     "id": "Vdanq000",
-    "lid": "rUSmq100",
+    "lid": [
+     "rUSmq100"
+    ],
     "name": "obstacle",
     "type": "tile",
     "w": 2,
     "h": 1,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "obstacle.2x1x1.transparent.png",
-     "obstacle.2x1x2.transparent.png",
-     "obstacle.2x1x3.transparent.png",
-     "obstacle.2x1x4.transparent.png",
-     "obstacle.2x1x5.transparent.png"
-    ]
+     "obstacle.2x1x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "obstacle.2x1xX.1.paper.svg"
    },
    {
     "id": "Fz_98100",
-    "lid": "sGL92100",
+    "lid": [
+     "sGL92100"
+    ],
     "name": "trap",
     "type": "tile",
     "w": 2,
     "h": 1,
-    "bg": "transparent",
+    "bg": "1",
     "media": [
-     "trap.2x1x1.transparent.png",
-     "trap.2x1x2.transparent.png",
-     "trap.2x1x3.transparent.png",
-     "trap.2x1x4.transparent.png",
-     "trap.2x1x5.transparent.png"
-    ]
+     "trap.2x1x1.1.paper.svg"
+    ],
+    "tx": "paper",
+    "mask": "trap.2x1xX.1.paper.svg"
    }
   ],
   "token": [
    {
     "id": "p9Hr0300",
-    "lid": "wAksS100",
+    "lid": [
+     "wAksS100"
+    ],
     "name": "_.bead",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.bead.1x1x1.1.png"
     ]
    },
    {
+    "id": "oxCXA100",
+    "lid": [
+     "tNZWX100"
+    ],
+    "name": "_.cubeLarge",
+    "type": "token",
+    "d": 6,
+    "bg": "3",
+    "media": [
+     "_.cubeLarge.1x1x1x6.3.png"
+    ],
+    "mask": "_.cubeLarge.1x1xXx6.3.png"
+   },
+   {
+    "id": "oCYDx000",
+    "lid": [
+     "gVKN0000"
+    ],
+    "name": "_.cubeMedium",
+    "type": "token",
+    "d": 5,
+    "bg": "3",
+    "media": [
+     "_.cubeMedium.1x1x1x5.3.png"
+    ],
+    "mask": "_.cubeMedium.1x1xXx5.3.png"
+   },
+   {
+    "id": "mhvML100",
+    "lid": [
+     "THxo6000"
+    ],
+    "name": "_.cubeSmall",
+    "type": "token",
+    "d": 4,
+    "bg": "3",
+    "media": [
+     "_.cubeSmall.1x1x1x4.3.png"
+    ],
+    "mask": "_.cubeSmall.1x1xXx4.3.png"
+   },
+   {
     "id": "G8QAJ200",
-    "lid": "mAa-Q300",
+    "lid": [
+     "mAa-Q300"
+    ],
     "name": "_.letter",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.letter.1x1x01.1.wood.svg",
@@ -800,11 +852,11 @@
    },
    {
     "id": "ye4mx100",
-    "lid": "sD_SB100",
+    "lid": [
+     "sD_SB100"
+    ],
     "name": "_.number",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.number.1x1x01.1.wood.svg",
@@ -822,11 +874,11 @@
    },
    {
     "id": "FFnzp100",
-    "lid": "oZX62300",
+    "lid": [
+     "oZX62300"
+    ],
     "name": "_.plain",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "_.plain.1x1x1.0.wood.png"
@@ -835,11 +887,11 @@
    },
    {
     "id": "L1WtG000",
-    "lid": "Hn18v200",
+    "lid": [
+     "Hn18v200"
+    ],
     "name": "_.symbol",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "_.symbol.1x1x1.1.wood.svg",
@@ -850,11 +902,11 @@
    },
    {
     "id": "VqJGO200",
-    "lid": "knW5n200",
+    "lid": [
+     "knW5n200"
+    ],
     "name": "aasimar",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "aasimar.1x1.5.wood.svg"
@@ -863,11 +915,12 @@
    },
    {
     "id": "VmLDY300",
-    "lid": "Vei9n200",
+    "lid": [
+     "Vei9n200"
+    ],
     "name": "aboleth",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "aboleth.3x3.9.wood.svg"
@@ -876,11 +929,11 @@
    },
    {
     "id": "FrcHr000",
-    "lid": "G1BLm000",
+    "lid": [
+     "G1BLm000"
+    ],
     "name": "alien",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "alien.1x1.1.wood.svg"
@@ -889,11 +942,12 @@
    },
    {
     "id": "ipg9D300",
-    "lid": "RUbz8000",
+    "lid": [
+     "RUbz8000"
+    ],
     "name": "angel",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "angel.2x2.8.wood.svg"
@@ -902,11 +956,11 @@
    },
    {
     "id": "IB3sH300",
-    "lid": "Rby97100",
+    "lid": [
+     "Rby97100"
+    ],
     "name": "animatedObject",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "animatedObject.1x1.10.wood.svg"
@@ -915,11 +969,12 @@
    },
    {
     "id": "zTd8h100",
-    "lid": "yCVfx200",
+    "lid": [
+     "yCVfx200"
+    ],
     "name": "ankheg",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "ankheg.2x2.4.wood.svg"
@@ -928,11 +983,11 @@
    },
    {
     "id": "FME8v000",
-    "lid": "RUH9J100",
+    "lid": [
+     "RUH9J100"
+    ],
     "name": "ant",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "ant.1x1.4.wood.svg"
@@ -941,11 +996,12 @@
    },
    {
     "id": "vL1cA000",
-    "lid": "iIreL200",
+    "lid": [
+     "iIreL200"
+    ],
     "name": "ape.gorilla",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "0",
     "media": [
      "ape.gorilla.2x2.0.wood.svg"
@@ -954,11 +1010,11 @@
    },
    {
     "id": "SfDvW300",
-    "lid": "ezc1B100",
+    "lid": [
+     "ezc1B100"
+    ],
     "name": "archer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "archer.1x1.0.wood.svg"
@@ -967,11 +1023,11 @@
    },
    {
     "id": "LDtY_300",
-    "lid": "cayJn100",
+    "lid": [
+     "cayJn100"
+    ],
     "name": "archon",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "archon.1x1.10.wood.svg"
@@ -980,11 +1036,11 @@
    },
    {
     "id": "LkeIw100",
-    "lid": "zcBYq100",
+    "lid": [
+     "zcBYq100"
+    ],
     "name": "armadillo",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "armadillo.1x1.4.wood.svg"
@@ -993,11 +1049,12 @@
    },
    {
     "id": "UNpu0200",
-    "lid": "slq1R300",
+    "lid": [
+     "slq1R300"
+    ],
     "name": "assassinVine",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "assassinVine.2x2.6.wood.svg"
@@ -1006,11 +1063,11 @@
    },
    {
     "id": "ht6PY200",
-    "lid": "NemOh300",
+    "lid": [
+     "NemOh300"
+    ],
     "name": "azer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "azer.1x1.3.wood.svg"
@@ -1019,11 +1076,11 @@
    },
    {
     "id": "PLL8x000",
-    "lid": "F0Ze1000",
+    "lid": [
+     "F0Ze1000"
+    ],
     "name": "bandit",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "bandit.1x1.0.wood.svg"
@@ -1032,11 +1089,11 @@
    },
    {
     "id": "U0kg8300",
-    "lid": "hNjjH100",
+    "lid": [
+     "hNjjH100"
+    ],
     "name": "barbarian",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "barbarian.1x1.0.wood.svg"
@@ -1045,11 +1102,11 @@
    },
    {
     "id": "MoGg6300",
-    "lid": "AppJ3200",
+    "lid": [
+     "AppJ3200"
+    ],
     "name": "barghest",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "barghest.1x1.0.wood.svg"
@@ -1058,11 +1115,11 @@
    },
    {
     "id": "o23Se000",
-    "lid": "rpYEz100",
+    "lid": [
+     "rpYEz100"
+    ],
     "name": "basidirond",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "basidirond.1x1.6.wood.svg"
@@ -1071,11 +1128,11 @@
    },
    {
     "id": "t9660100",
-    "lid": "MUP8P000",
+    "lid": [
+     "MUP8P000"
+    ],
     "name": "basilisk",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "basilisk.1x1.10.wood.svg"
@@ -1084,11 +1141,11 @@
    },
    {
     "id": "Ng3Cv300",
-    "lid": "I0Zye200",
+    "lid": [
+     "I0Zye200"
+    ],
     "name": "bat",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "bat.1x1.1.wood.svg"
@@ -1097,11 +1154,12 @@
    },
    {
     "id": "S1y44000",
-    "lid": "rahWZ200",
+    "lid": [
+     "rahWZ200"
+    ],
     "name": "bear.brown-",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "bear.brown-.2x2.4.wood.svg"
@@ -1110,11 +1168,11 @@
    },
    {
     "id": "Nwszp000",
-    "lid": "kB7qb300",
+    "lid": [
+     "kB7qb300"
+    ],
     "name": "bee",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "bee.1x1.5.wood.svg"
@@ -1123,11 +1181,11 @@
    },
    {
     "id": "JpPfC200",
-    "lid": "Sy8jH100",
+    "lid": [
+     "Sy8jH100"
+    ],
     "name": "beetle.fire-",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "beetle.fire-.1x1.3.wood.svg"
@@ -1136,11 +1194,11 @@
    },
    {
     "id": "GUdwY300",
-    "lid": "Og3V-300",
+    "lid": [
+     "Og3V-300"
+    ],
     "name": "beetle.scarab",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "beetle.scarab.1x1.4.wood.svg"
@@ -1149,11 +1207,12 @@
    },
    {
     "id": "Nkun-200",
-    "lid": "BPQRF300",
+    "lid": [
+     "BPQRF300"
+    ],
     "name": "behir",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "behir.3x3.9.wood.svg"
@@ -1162,11 +1221,12 @@
    },
    {
     "id": "VI_Ej200",
-    "lid": "RRtL4200",
+    "lid": [
+     "RRtL4200"
+    ],
     "name": "bison",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "bison.2x2.4.wood.svg"
@@ -1175,11 +1235,11 @@
    },
    {
     "id": "R79at200",
-    "lid": "a5YUo100",
+    "lid": [
+     "a5YUo100"
+    ],
     "name": "boar",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "boar.1x1.4.wood.svg"
@@ -1188,11 +1248,11 @@
    },
    {
     "id": "AZcak100",
-    "lid": "ucmEe100",
+    "lid": [
+     "ucmEe100"
+    ],
     "name": "brute",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "brute.1x1.0.wood.svg"
@@ -1201,11 +1261,12 @@
    },
    {
     "id": "GcRwW200",
-    "lid": "nqtMP000",
+    "lid": [
+     "nqtMP000"
+    ],
     "name": "camel",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "5",
     "media": [
      "camel.2x2.5.wood.svg"
@@ -1214,11 +1275,11 @@
    },
    {
     "id": "lZOVU100",
-    "lid": "ThfXp200",
+    "lid": [
+     "ThfXp200"
+    ],
     "name": "cat",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "cat.1x1.0.wood.svg"
@@ -1227,11 +1288,11 @@
    },
    {
     "id": "a7Foy100",
-    "lid": "UVreJ300",
+    "lid": [
+     "UVreJ300"
+    ],
     "name": "cat.saber-toothed",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "cat.saber-toothed.1x1.5.wood.svg"
@@ -1240,11 +1301,11 @@
    },
    {
     "id": "vnCVj100",
-    "lid": "BGGnX000",
+    "lid": [
+     "BGGnX000"
+    ],
     "name": "caveman",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "caveman.1x1.0.wood.svg"
@@ -1253,11 +1314,12 @@
    },
    {
     "id": "QKbHs200",
-    "lid": "E0bno000",
+    "lid": [
+     "E0bno000"
+    ],
     "name": "centaur",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "centaur.2x2.4.wood.svg"
@@ -1266,11 +1328,11 @@
    },
    {
     "id": "qGmO1200",
-    "lid": "JuVpj000",
+    "lid": [
+     "JuVpj000"
+    ],
     "name": "centipede",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "centipede.1x1.6.wood.svg"
@@ -1279,11 +1341,12 @@
    },
    {
     "id": "TwVaO300",
-    "lid": "jLNsz200",
+    "lid": [
+     "jLNsz200"
+    ],
     "name": "chuul",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "chuul.2x2.4.wood.svg"
@@ -1292,11 +1355,12 @@
    },
    {
     "id": "jrZ8-300",
-    "lid": "AhqqH100",
+    "lid": [
+     "AhqqH100"
+    ],
     "name": "cloaker",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "cloaker.2x2.10.wood.svg"
@@ -1305,11 +1369,11 @@
    },
    {
     "id": "Qg3pN300",
-    "lid": "MWJkt300",
+    "lid": [
+     "MWJkt300"
+    ],
     "name": "clockwork",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "clockwork.1x1.5.wood.svg"
@@ -1318,11 +1382,11 @@
    },
    {
     "id": "pxuN-100",
-    "lid": "rZPZl200",
+    "lid": [
+     "rZPZl200"
+    ],
     "name": "cockatrice",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "cockatrice.1x1.4.wood.svg"
@@ -1331,11 +1395,11 @@
    },
    {
     "id": "ndC4q200",
-    "lid": "TU-KJ300",
+    "lid": [
+     "TU-KJ300"
+    ],
     "name": "couatl",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "couatl.1x1.10.wood.svg"
@@ -1344,11 +1408,11 @@
    },
    {
     "id": "fK_qS000",
-    "lid": "Ue8td200",
+    "lid": [
+     "Ue8td200"
+    ],
     "name": "crab",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "crab.1x1.5.wood.svg"
@@ -1357,11 +1421,11 @@
    },
    {
     "id": "QHLhI200",
-    "lid": "GrhWz200",
+    "lid": [
+     "GrhWz200"
+    ],
     "name": "crawlingHand",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "crawlingHand.1x1.1.wood.svg"
@@ -1370,11 +1434,12 @@
    },
    {
     "id": "JEBU6300",
-    "lid": "WHiN3000",
+    "lid": [
+     "WHiN3000"
+    ],
     "name": "crocodile",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "crocodile.2x2.6.wood.svg"
@@ -1383,11 +1448,11 @@
    },
    {
     "id": "Lmqk-100",
-    "lid": "hTrFn000",
+    "lid": [
+     "hTrFn000"
+    ],
     "name": "cultist",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "cultist.1x1.10.wood.svg"
@@ -1396,11 +1461,11 @@
    },
    {
     "id": "ReRvc100",
-    "lid": "x5Dmt000",
+    "lid": [
+     "x5Dmt000"
+    ],
     "name": "darkmantle",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "darkmantle.1x1.1.wood.svg"
@@ -1409,11 +1474,11 @@
    },
    {
     "id": "uZ2cn300",
-    "lid": "qhk79100",
+    "lid": [
+     "qhk79100"
+    ],
     "name": "deathKnight",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "deathKnight.1x1.1.wood.svg"
@@ -1422,11 +1487,11 @@
    },
    {
     "id": "ikDE-100",
-    "lid": "NliC4100",
+    "lid": [
+     "NliC4100"
+    ],
     "name": "deer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "deer.1x1.4.wood.svg"
@@ -1435,11 +1500,11 @@
    },
    {
     "id": "PPnWy100",
-    "lid": "EDC8-200",
+    "lid": [
+     "EDC8-200"
+    ],
     "name": "demilich",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "demilich.1x1.1.wood.svg"
@@ -1448,11 +1513,12 @@
    },
    {
     "id": "pDe-Z100",
-    "lid": "rjjeC000",
+    "lid": [
+     "rjjeC000"
+    ],
     "name": "demon.bebilith",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "3",
     "media": [
      "demon.bebilith.3x3.3.wood.svg"
@@ -1461,11 +1527,11 @@
    },
    {
     "id": "LpKqC100",
-    "lid": "z9KaH200",
+    "lid": [
+     "z9KaH200"
+    ],
     "name": "demon.quasit",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "demon.quasit.1x1.3.wood.svg"
@@ -1474,11 +1540,11 @@
    },
    {
     "id": "JiXjT100",
-    "lid": "V3CLJ300",
+    "lid": [
+     "V3CLJ300"
+    ],
     "name": "devil.imp",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "devil.imp.1x1.3.wood.svg"
@@ -1487,11 +1553,12 @@
    },
    {
     "id": "T8Qu3300",
-    "lid": "S6jnx000",
+    "lid": [
+     "S6jnx000"
+    ],
     "name": "dinosaur.parasaurolophus",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "dinosaur.parasaurolophus.2x2.4.wood.svg"
@@ -1500,11 +1567,12 @@
    },
    {
     "id": "AXzCF100",
-    "lid": "kT4qW200",
+    "lid": [
+     "kT4qW200"
+    ],
     "name": "dinosaur.pterodactylus",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "dinosaur.pterodactylus.2x2.8.wood.svg"
@@ -1513,11 +1581,11 @@
    },
    {
     "id": "FPD1x200",
-    "lid": "PSgbZ200",
+    "lid": [
+     "PSgbZ200"
+    ],
     "name": "dog",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "dog.1x1.4.wood.svg"
@@ -1526,11 +1594,11 @@
    },
    {
     "id": "dFwMn300",
-    "lid": "aueHX200",
+    "lid": [
+     "aueHX200"
+    ],
     "name": "dolphin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "dolphin.1x1.9.wood.svg"
@@ -1539,11 +1607,11 @@
    },
    {
     "id": "RSXgk300",
-    "lid": "SnDeV000",
+    "lid": [
+     "SnDeV000"
+    ],
     "name": "doppelganger",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "doppelganger.1x1.0.wood.svg"
@@ -1552,11 +1620,12 @@
    },
    {
     "id": "peYe0100",
-    "lid": "GQs4I100",
+    "lid": [
+     "GQs4I100"
+    ],
     "name": "dragon",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "3",
     "media": [
      "dragon.3x3.3.wood.svg"
@@ -1565,11 +1634,11 @@
    },
    {
     "id": "apCrB300",
-    "lid": "DAA-q300",
+    "lid": [
+     "DAA-q300"
+    ],
     "name": "dragonfolk",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "dragonfolk.1x1.5.wood.svg"
@@ -1578,11 +1647,12 @@
    },
    {
     "id": "R7dug300",
-    "lid": "qyMla100",
+    "lid": [
+     "qyMla100"
+    ],
     "name": "drider",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "drider.2x2.10.wood.svg"
@@ -1591,11 +1661,11 @@
    },
    {
     "id": "haNMR200",
-    "lid": "tUi19200",
+    "lid": [
+     "tUi19200"
+    ],
     "name": "duergar",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "duergar.1x1.0.wood.svg"
@@ -1604,11 +1674,11 @@
    },
    {
     "id": "KAEJI100",
-    "lid": "q9B-6100",
+    "lid": [
+     "q9B-6100"
+    ],
     "name": "dwarf",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "dwarf.1x1.0.wood.svg"
@@ -1617,11 +1687,11 @@
    },
    {
     "id": "sBpJt300",
-    "lid": "DLLr6200",
+    "lid": [
+     "DLLr6200"
+    ],
     "name": "eagle",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "8",
     "media": [
      "eagle.1x1.8.wood.svg"
@@ -1630,11 +1700,11 @@
    },
    {
     "id": "GjEeh300",
-    "lid": "y6l-V000",
+    "lid": [
+     "y6l-V000"
+    ],
     "name": "eel",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "eel.1x1.9.wood.svg"
@@ -1643,11 +1713,11 @@
    },
    {
     "id": "MApgN100",
-    "lid": "ixH2q100",
+    "lid": [
+     "ixH2q100"
+    ],
     "name": "elemental.air",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "8",
     "media": [
      "elemental.air.1x1.8.wood.svg"
@@ -1656,11 +1726,11 @@
    },
    {
     "id": "SiQsy200",
-    "lid": "mlilp200",
+    "lid": [
+     "mlilp200"
+    ],
     "name": "elemental.earth",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "elemental.earth.1x1.4.wood.svg"
@@ -1669,11 +1739,11 @@
    },
    {
     "id": "ktr4X100",
-    "lid": "J7k1e100",
+    "lid": [
+     "J7k1e100"
+    ],
     "name": "elemental.fire",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "elemental.fire.1x1.3.wood.svg"
@@ -1682,11 +1752,11 @@
    },
    {
     "id": "f_rYN000",
-    "lid": "ijYqi300",
+    "lid": [
+     "ijYqi300"
+    ],
     "name": "elemental.ice",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "8",
     "media": [
      "elemental.ice.1x1.8.wood.svg"
@@ -1695,11 +1765,11 @@
    },
    {
     "id": "alQjx200",
-    "lid": "zfIqK100",
+    "lid": [
+     "zfIqK100"
+    ],
     "name": "elemental.water",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "elemental.water.1x1.9.wood.svg"
@@ -1708,11 +1778,12 @@
    },
    {
     "id": "wPnQ-200",
-    "lid": "KyjDx200",
+    "lid": [
+     "KyjDx200"
+    ],
     "name": "elephant",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "0",
     "media": [
      "elephant.2x2.0.wood.svg"
@@ -1721,11 +1792,11 @@
    },
    {
     "id": "nRtxX200",
-    "lid": "jnxG1200",
+    "lid": [
+     "jnxG1200"
+    ],
     "name": "elf",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "elf.1x1.0.wood.svg"
@@ -1734,11 +1805,11 @@
    },
    {
     "id": "RRFxi300",
-    "lid": "EOk6R100",
+    "lid": [
+     "EOk6R100"
+    ],
     "name": "elf.dark-",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "elf.dark-.1x1.1.wood.svg"
@@ -1747,11 +1818,11 @@
    },
    {
     "id": "q9CEW100",
-    "lid": "eZ-iM100",
+    "lid": [
+     "eZ-iM100"
+    ],
     "name": "ettercap",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "ettercap.1x1.10.wood.svg"
@@ -1760,11 +1831,12 @@
    },
    {
     "id": "R_Bx3000",
-    "lid": "MoaEt300",
+    "lid": [
+     "MoaEt300"
+    ],
     "name": "ettin",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "ettin.2x2.4.wood.svg"
@@ -1773,11 +1845,11 @@
    },
    {
     "id": "stXMD000",
-    "lid": "Dg60u000",
+    "lid": [
+     "Dg60u000"
+    ],
     "name": "fairy",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "fairy.1x1.10.wood.svg"
@@ -1786,11 +1858,11 @@
    },
    {
     "id": "Sq8_u000",
-    "lid": "IQK9v300",
+    "lid": [
+     "IQK9v300"
+    ],
     "name": "fish",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "fish.1x1.9.wood.svg"
@@ -1799,11 +1871,12 @@
    },
    {
     "id": "iyc5j000",
-    "lid": "RaO7j000",
+    "lid": [
+     "RaO7j000"
+    ],
     "name": "floatingEye",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "floatingEye.2x2.10.wood.svg"
@@ -1812,11 +1885,11 @@
    },
    {
     "id": "wEL1H300",
-    "lid": "vqDOU100",
+    "lid": [
+     "vqDOU100"
+    ],
     "name": "flumph",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "flumph.1x1.10.wood.svg"
@@ -1825,11 +1898,12 @@
    },
    {
     "id": "a10kp100",
-    "lid": "Sr1sR300",
+    "lid": [
+     "Sr1sR300"
+    ],
     "name": "fomorian",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [
      "fomorian.3x3.1.wood.svg"
@@ -1838,11 +1912,11 @@
    },
    {
     "id": "TJhod200",
-    "lid": "JlSWH000",
+    "lid": [
+     "JlSWH000"
+    ],
     "name": "frog",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "frog.1x1.6.wood.svg"
@@ -1851,11 +1925,11 @@
    },
    {
     "id": "BIbeJ000",
-    "lid": "cD4bb300",
+    "lid": [
+     "cD4bb300"
+    ],
     "name": "fungus",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "fungus.1x1.6.wood.svg"
@@ -1864,11 +1938,11 @@
    },
    {
     "id": "T3zmr100",
-    "lid": "sre0b300",
+    "lid": [
+     "sre0b300"
+    ],
     "name": "gargoyle",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "gargoyle.1x1.0.wood.svg"
@@ -1877,11 +1951,12 @@
    },
    {
     "id": "i5bCq200",
-    "lid": "FIgoH200",
+    "lid": [
+     "FIgoH200"
+    ],
     "name": "genie.djinni",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "genie.djinni.2x2.8.wood.svg"
@@ -1890,11 +1965,11 @@
    },
    {
     "id": "aDZWL100",
-    "lid": "dz8_Y300",
+    "lid": [
+     "dz8_Y300"
+    ],
     "name": "ghost",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "ghost.1x1.1.wood.svg"
@@ -1903,11 +1978,11 @@
    },
    {
     "id": "clI9R300",
-    "lid": "PfADK100",
+    "lid": [
+     "PfADK100"
+    ],
     "name": "ghoul",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "ghoul.1x1.1.wood.svg"
@@ -1916,11 +1991,12 @@
    },
    {
     "id": "ezVIB200",
-    "lid": "zAaQJ200",
+    "lid": [
+     "zAaQJ200"
+    ],
     "name": "giant.cyclops",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "giant.cyclops.2x2.4.wood.svg"
@@ -1929,11 +2005,12 @@
    },
    {
     "id": "V0Xy1000",
-    "lid": "ljbMz000",
+    "lid": [
+     "ljbMz000"
+    ],
     "name": "giant.hill",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "4",
     "media": [
      "giant.hill.4x4.4.wood.svg"
@@ -1942,11 +2019,12 @@
    },
    {
     "id": "fRJmc300",
-    "lid": "ImQtC200",
+    "lid": [
+     "ImQtC200"
+    ],
     "name": "gibberingMouther",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "gibberingMouther.2x2.10.wood.svg"
@@ -1955,11 +2033,11 @@
    },
    {
     "id": "IZ8-k000",
-    "lid": "UB0i1000",
+    "lid": [
+     "UB0i1000"
+    ],
     "name": "gnoll",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "gnoll.1x1.5.wood.svg"
@@ -1968,11 +2046,11 @@
    },
    {
     "id": "YU3Si300",
-    "lid": "lO-uo100",
+    "lid": [
+     "lO-uo100"
+    ],
     "name": "gnome",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "gnome.1x1.10.wood.svg"
@@ -1981,11 +2059,11 @@
    },
    {
     "id": "lD6yq100",
-    "lid": "MXy7t300",
+    "lid": [
+     "MXy7t300"
+    ],
     "name": "goat",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "goat.1x1.0.wood.svg"
@@ -1994,11 +2072,11 @@
    },
    {
     "id": "OzcR1100",
-    "lid": "JP3EE200",
+    "lid": [
+     "JP3EE200"
+    ],
     "name": "goblin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "goblin.1x1.6.wood.svg"
@@ -2007,11 +2085,11 @@
    },
    {
     "id": "lSzdF200",
-    "lid": "xPN0i000",
+    "lid": [
+     "xPN0i000"
+    ],
     "name": "golem.clay",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "golem.clay.1x1.4.wood.svg"
@@ -2020,11 +2098,11 @@
    },
    {
     "id": "Rx0QF000",
-    "lid": "TJCVS200",
+    "lid": [
+     "TJCVS200"
+    ],
     "name": "golem.flesh",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "golem.flesh.1x1.4.wood.svg"
@@ -2033,11 +2111,11 @@
    },
    {
     "id": "QMuS-300",
-    "lid": "hh9Pm300",
+    "lid": [
+     "hh9Pm300"
+    ],
     "name": "golem.iron",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "golem.iron.1x1.0.wood.svg"
@@ -2046,11 +2124,11 @@
    },
    {
     "id": "rYqt0200",
-    "lid": "iRhtf100",
+    "lid": [
+     "iRhtf100"
+    ],
     "name": "golem.stone",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "golem.stone.1x1.0.wood.svg"
@@ -2059,11 +2137,12 @@
    },
    {
     "id": "Z7FsN100",
-    "lid": "SXJQf200",
+    "lid": [
+     "SXJQf200"
+    ],
     "name": "gorgon",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "0",
     "media": [
      "gorgon.2x2.0.wood.svg"
@@ -2072,11 +2151,12 @@
    },
    {
     "id": "kNB7M100",
-    "lid": "jLio3200",
+    "lid": [
+     "jLio3200"
+    ],
     "name": "griffon",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "5",
     "media": [
      "griffon.2x2.5.wood.svg"
@@ -2085,11 +2165,11 @@
    },
    {
     "id": "D0sNy300",
-    "lid": "fiI6w300",
+    "lid": [
+     "fiI6w300"
+    ],
     "name": "grimlock",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "grimlock.1x1.0.wood.svg"
@@ -2098,11 +2178,11 @@
    },
    {
     "id": "xGB4T300",
-    "lid": "Fy-9s100",
+    "lid": [
+     "Fy-9s100"
+    ],
     "name": "hag.swamp",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "hag.swamp.1x1.10.wood.svg"
@@ -2111,11 +2191,11 @@
    },
    {
     "id": "AfRyp300",
-    "lid": "SLAvG000",
+    "lid": [
+     "SLAvG000"
+    ],
     "name": "halfling",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "halfling.1x1.0.wood.svg"
@@ -2124,11 +2204,11 @@
    },
    {
     "id": "Rn758300",
-    "lid": "IjEMw000",
+    "lid": [
+     "IjEMw000"
+    ],
     "name": "harpy",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "harpy.1x1.10.wood.svg"
@@ -2137,11 +2217,11 @@
    },
    {
     "id": "Xn3wL100",
-    "lid": "DPxWJ000",
+    "lid": [
+     "DPxWJ000"
+    ],
     "name": "helmedTerror",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "helmedTerror.1x1.0.wood.svg"
@@ -2150,11 +2230,11 @@
    },
    {
     "id": "X0MiA000",
-    "lid": "l7sNB100",
+    "lid": [
+     "l7sNB100"
+    ],
     "name": "hooded",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "hooded.1x1.0.wood.svg"
@@ -2163,11 +2243,12 @@
    },
    {
     "id": "h0olA100",
-    "lid": "n696l100",
+    "lid": [
+     "n696l100"
+    ],
     "name": "horse",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "horse.2x2.4.wood.svg"
@@ -2176,11 +2257,11 @@
    },
    {
     "id": "hBmAU200",
-    "lid": "duxlQ000",
+    "lid": [
+     "duxlQ000"
+    ],
     "name": "hound",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "hound.1x1.1.wood.svg"
@@ -2189,11 +2270,11 @@
    },
    {
     "id": "cYMAC100",
-    "lid": "FVjKV000",
+    "lid": [
+     "FVjKV000"
+    ],
     "name": "hound.hell-",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "hound.hell-.1x1.3.wood.svg"
@@ -2202,11 +2283,11 @@
    },
    {
     "id": "TNjeW200",
-    "lid": "bHF-K100",
+    "lid": [
+     "bHF-K100"
+    ],
     "name": "human",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "human.1x1.0.wood.svg"
@@ -2215,11 +2296,12 @@
    },
    {
     "id": "xVzAj200",
-    "lid": "ZOjd-200",
+    "lid": [
+     "ZOjd-200"
+    ],
     "name": "hydra",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "hydra.3x3.9.wood.svg"
@@ -2228,11 +2310,11 @@
    },
    {
     "id": "baPvH200",
-    "lid": "AKD7x300",
+    "lid": [
+     "AKD7x300"
+    ],
     "name": "hyena",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "hyena.1x1.5.wood.svg"
@@ -2241,11 +2323,11 @@
    },
    {
     "id": "Fg3aB300",
-    "lid": "q8GJS200",
+    "lid": [
+     "q8GJS200"
+    ],
     "name": "insect",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "insect.1x1.5.wood.svg"
@@ -2254,11 +2336,11 @@
    },
    {
     "id": "S_JHy100",
-    "lid": "ZM70y000",
+    "lid": [
+     "ZM70y000"
+    ],
     "name": "intellectDevourer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "intellectDevourer.1x1.10.wood.svg"
@@ -2267,11 +2349,11 @@
    },
    {
     "id": "mkpuP000",
-    "lid": "iGNCQ300",
+    "lid": [
+     "iGNCQ300"
+    ],
     "name": "invisibleStalker",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "invisibleStalker.1x1.0.wood.svg"
@@ -2280,11 +2362,11 @@
    },
    {
     "id": "Zwy_N300",
-    "lid": "gAg-o000",
+    "lid": [
+     "gAg-o000"
+    ],
     "name": "knight",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "knight.1x1.0.wood.svg"
@@ -2293,11 +2375,12 @@
    },
    {
     "id": "M848c100",
-    "lid": "atC7v300",
+    "lid": [
+     "atC7v300"
+    ],
     "name": "kraken",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "9",
     "media": [
      "kraken.4x4.9.wood.svg"
@@ -2306,11 +2389,11 @@
    },
    {
     "id": "BzEVc200",
-    "lid": "GNQKP200",
+    "lid": [
+     "GNQKP200"
+    ],
     "name": "lich",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "lich.1x1.1.wood.svg"
@@ -2319,11 +2402,12 @@
    },
    {
     "id": "rqSU3200",
-    "lid": "ZGYs8000",
+    "lid": [
+     "ZGYs8000"
+    ],
     "name": "lindwurm",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "10",
     "media": [
      "lindwurm.4x4.10.wood.svg"
@@ -2332,11 +2416,11 @@
    },
    {
     "id": "SPaqP100",
-    "lid": "LO7L0200",
+    "lid": [
+     "LO7L0200"
+    ],
     "name": "lion",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "lion.1x1.5.wood.svg"
@@ -2345,11 +2429,11 @@
    },
    {
     "id": "AHJ2C000",
-    "lid": "os05L100",
+    "lid": [
+     "os05L100"
+    ],
     "name": "lizard",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "lizard.1x1.6.wood.svg"
@@ -2358,11 +2442,11 @@
    },
    {
     "id": "S97Jk100",
-    "lid": "Hd9oa300",
+    "lid": [
+     "Hd9oa300"
+    ],
     "name": "lizardfolk",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "lizardfolk.1x1.6.wood.svg"
@@ -2371,11 +2455,11 @@
    },
    {
     "id": "K9j_D000",
-    "lid": "rrOEZ000",
+    "lid": [
+     "rrOEZ000"
+    ],
     "name": "lycanthrope.werewolf",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "lycanthrope.werewolf.1x1.0.wood.svg"
@@ -2384,11 +2468,11 @@
    },
    {
     "id": "D1DiS000",
-    "lid": "Qv9E-300",
+    "lid": [
+     "Qv9E-300"
+    ],
     "name": "lynx",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "lynx.1x1.4.wood.svg"
@@ -2397,11 +2481,11 @@
    },
    {
     "id": "hpTGL100",
-    "lid": "F5NIw300",
+    "lid": [
+     "F5NIw300"
+    ],
     "name": "magmin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "magmin.1x1.3.wood.svg"
@@ -2410,11 +2494,12 @@
    },
    {
     "id": "S6LpH000",
-    "lid": "AdQ8-100",
+    "lid": [
+     "AdQ8-100"
+    ],
     "name": "mammoth",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "mammoth.2x2.8.wood.svg"
@@ -2423,11 +2508,12 @@
    },
    {
     "id": "TyvBu200",
-    "lid": "KsHbv100",
+    "lid": [
+     "KsHbv100"
+    ],
     "name": "mantis",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "mantis.2x2.6.wood.svg"
@@ -2436,11 +2522,11 @@
    },
    {
     "id": "j8fT7200",
-    "lid": "cisiY200",
+    "lid": [
+     "cisiY200"
+    ],
     "name": "mech",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "mech.1x1.0.wood.svg"
@@ -2449,11 +2535,11 @@
    },
    {
     "id": "fgbTn300",
-    "lid": "LiAsS200",
+    "lid": [
+     "LiAsS200"
+    ],
     "name": "medusa",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "medusa.1x1.10.wood.svg"
@@ -2462,11 +2548,11 @@
    },
    {
     "id": "YXTcb200",
-    "lid": "EhD4N300",
+    "lid": [
+     "EhD4N300"
+    ],
     "name": "merefolk",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "merefolk.1x1.9.wood.svg"
@@ -2475,11 +2561,11 @@
    },
    {
     "id": "oIhue300",
-    "lid": "SMhph200",
+    "lid": [
+     "SMhph200"
+    ],
     "name": "mimic",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "mimic.1x1.10.wood.svg"
@@ -2488,11 +2574,12 @@
    },
    {
     "id": "j9Kkl200",
-    "lid": "xy7RX200",
+    "lid": [
+     "xy7RX200"
+    ],
     "name": "minotaur",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "minotaur.2x2.4.wood.svg"
@@ -2501,11 +2588,11 @@
    },
    {
     "id": "bwfXx100",
-    "lid": "YXe68300",
+    "lid": [
+     "YXe68300"
+    ],
     "name": "monkey",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "monkey.1x1.4.wood.svg"
@@ -2514,11 +2601,11 @@
    },
    {
     "id": "d8fGk100",
-    "lid": "W1W4G300",
+    "lid": [
+     "W1W4G300"
+    ],
     "name": "mummy",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "mummy.1x1.1.wood.svg"
@@ -2527,11 +2614,12 @@
    },
    {
     "id": "CEjbS100",
-    "lid": "SvIeK300",
+    "lid": [
+     "SvIeK300"
+    ],
     "name": "naga.guardian",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "naga.guardian.2x2.9.wood.svg"
@@ -2540,11 +2628,11 @@
    },
    {
     "id": "EjCho300",
-    "lid": "ZlDRe100",
+    "lid": [
+     "ZlDRe100"
+    ],
     "name": "nymph",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "nymph.1x1.10.wood.svg"
@@ -2553,11 +2641,12 @@
    },
    {
     "id": "c8wg_100",
-    "lid": "hv10z300",
+    "lid": [
+     "hv10z300"
+    ],
     "name": "octopus",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "octopus.2x2.9.wood.svg"
@@ -2566,11 +2655,12 @@
    },
    {
     "id": "XTM3U300",
-    "lid": "DzFq3000",
+    "lid": [
+     "DzFq3000"
+    ],
     "name": "ogre",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "ogre.2x2.6.wood.svg"
@@ -2579,11 +2669,12 @@
    },
    {
     "id": "MKA8c100",
-    "lid": "MMN2A300",
+    "lid": [
+     "MMN2A300"
+    ],
     "name": "oni",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "3",
     "media": [
      "oni.2x2.3.wood.svg"
@@ -2592,11 +2683,12 @@
    },
    {
     "id": "drhkE200",
-    "lid": "ANGz7200",
+    "lid": [
+     "ANGz7200"
+    ],
     "name": "ooze.blackPudding",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "1",
     "media": [
      "ooze.blackPudding.4x4.1.wood.svg"
@@ -2605,11 +2697,12 @@
    },
    {
     "id": "qb8Qw000",
-    "lid": "xD5Xy100",
+    "lid": [
+     "xD5Xy100"
+    ],
     "name": "ooze.gelatinousCube",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "ooze.gelatinousCube.2x2.8.wood.svg"
@@ -2618,11 +2711,12 @@
    },
    {
     "id": "bsBzn000",
-    "lid": "EURmr300",
+    "lid": [
+     "EURmr300"
+    ],
     "name": "ooze.ochreJelly",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "5",
     "media": [
      "ooze.ochreJelly.2x2.5.wood.svg"
@@ -2631,11 +2725,11 @@
    },
    {
     "id": "qUmNE300",
-    "lid": "HfpyK000",
+    "lid": [
+     "HfpyK000"
+    ],
     "name": "orc",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "orc.1x1.6.wood.svg"
@@ -2644,11 +2738,11 @@
    },
    {
     "id": "CVZwS100",
-    "lid": "nOUEI100",
+    "lid": [
+     "nOUEI100"
+    ],
     "name": "overlord",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "overlord.1x1.1.wood.svg"
@@ -2657,11 +2751,11 @@
    },
    {
     "id": "sw6lW000",
-    "lid": "SQu8h200",
+    "lid": [
+     "SQu8h200"
+    ],
     "name": "owl",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "owl.1x1.4.wood.svg"
@@ -2670,11 +2764,12 @@
    },
    {
     "id": "WMLRd100",
-    "lid": "zL51Q200",
+    "lid": [
+     "zL51Q200"
+    ],
     "name": "owlbear",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "owlbear.2x2.4.wood.svg"
@@ -2683,11 +2778,12 @@
    },
    {
     "id": "FhjvZ300",
-    "lid": "CYB6f200",
+    "lid": [
+     "CYB6f200"
+    ],
     "name": "pegasus",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "pegasus.2x2.8.wood.svg"
@@ -2696,11 +2792,11 @@
    },
    {
     "id": "Da9EV300",
-    "lid": "eRM3I000",
+    "lid": [
+     "eRM3I000"
+    ],
     "name": "piercer",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "piercer.1x1.1.wood.svg"
@@ -2709,11 +2805,11 @@
    },
    {
     "id": "vi1eV000",
-    "lid": "sbT9q100",
+    "lid": [
+     "sbT9q100"
+    ],
     "name": "piranha",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "piranha.1x1.9.wood.svg"
@@ -2722,11 +2818,11 @@
    },
    {
     "id": "aI5hy000",
-    "lid": "amuNa000",
+    "lid": [
+     "amuNa000"
+    ],
     "name": "pirate",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "pirate.1x1.9.wood.svg"
@@ -2735,11 +2831,12 @@
    },
    {
     "id": "l_9qz300",
-    "lid": "qjr6w100",
+    "lid": [
+     "qjr6w100"
+    ],
     "name": "plant.carnivorous",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "plant.carnivorous.2x2.6.wood.svg"
@@ -2748,11 +2845,11 @@
    },
    {
     "id": "K0wNp200",
-    "lid": "Rd1Pe300",
+    "lid": [
+     "Rd1Pe300"
+    ],
     "name": "priest",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "priest.1x1.0.wood.svg"
@@ -2761,11 +2858,11 @@
    },
    {
     "id": "w0MfM200",
-    "lid": "Yve3X200",
+    "lid": [
+     "Yve3X200"
+    ],
     "name": "raccoon",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "raccoon.1x1.1.wood.svg"
@@ -2774,11 +2871,11 @@
    },
    {
     "id": "SUIwX200",
-    "lid": "xxNC2000",
+    "lid": [
+     "xxNC2000"
+    ],
     "name": "rakshasa",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "rakshasa.1x1.5.wood.svg"
@@ -2787,11 +2884,11 @@
    },
    {
     "id": "DzFgT200",
-    "lid": "F9Viy000",
+    "lid": [
+     "F9Viy000"
+    ],
     "name": "rat",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "rat.1x1.4.wood.svg"
@@ -2800,11 +2897,11 @@
    },
    {
     "id": "b6-r4200",
-    "lid": "AiskC200",
+    "lid": [
+     "AiskC200"
+    ],
     "name": "raven",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "raven.1x1.1.wood.svg"
@@ -2813,11 +2910,12 @@
    },
    {
     "id": "DiGY7200",
-    "lid": "pXRRS000",
+    "lid": [
+     "pXRRS000"
+    ],
     "name": "remorhaz",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "remorhaz.3x3.9.wood.svg"
@@ -2826,11 +2924,12 @@
    },
    {
     "id": "Pmtx_200",
-    "lid": "fErXq000",
+    "lid": [
+     "fErXq000"
+    ],
     "name": "rhinoceros",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "rhinoceros.2x2.4.wood.svg"
@@ -2839,11 +2938,11 @@
    },
    {
     "id": "Rs-K9200",
-    "lid": "uwzRq000",
+    "lid": [
+     "uwzRq000"
+    ],
     "name": "robot",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "robot.1x1.0.wood.svg"
@@ -2852,11 +2951,12 @@
    },
    {
     "id": "phraB000",
-    "lid": "wZQ-r100",
+    "lid": [
+     "wZQ-r100"
+    ],
     "name": "roc",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "3",
     "media": [
      "roc.4x4.3.wood.svg"
@@ -2865,11 +2965,12 @@
    },
    {
     "id": "Ezm-8300",
-    "lid": "v9FVz100",
+    "lid": [
+     "v9FVz100"
+    ],
     "name": "roc.phoenix",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "3",
     "media": [
      "roc.phoenix.4x4.3.wood.svg"
@@ -2878,11 +2979,11 @@
    },
    {
     "id": "ToTGV000",
-    "lid": "gQiNr000",
+    "lid": [
+     "gQiNr000"
+    ],
     "name": "rustMonster",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "rustMonster.1x1.4.wood.svg"
@@ -2891,11 +2992,11 @@
    },
    {
     "id": "hycyz300",
-    "lid": "KWYxk200",
+    "lid": [
+     "KWYxk200"
+    ],
     "name": "sahuagin",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "sahuagin.1x1.9.wood.svg"
@@ -2904,11 +3005,11 @@
    },
    {
     "id": "IWWz2200",
-    "lid": "QmMw4300",
+    "lid": [
+     "QmMw4300"
+    ],
     "name": "scarecrow",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "scarecrow.1x1.5.wood.svg"
@@ -2917,11 +3018,12 @@
    },
    {
     "id": "u7kog200",
-    "lid": "PKRnF000",
+    "lid": [
+     "PKRnF000"
+    ],
     "name": "scorpion",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "4",
     "media": [
      "scorpion.2x2.4.wood.svg"
@@ -2930,11 +3032,12 @@
    },
    {
     "id": "XJmts200",
-    "lid": "IPoXZ300",
+    "lid": [
+     "IPoXZ300"
+    ],
     "name": "seahorse",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "seahorse.2x2.9.wood.svg"
@@ -2943,11 +3046,11 @@
    },
    {
     "id": "EGJ2d100",
-    "lid": "U_kxD200",
+    "lid": [
+     "U_kxD200"
+    ],
     "name": "sentinelGuardian",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "sentinelGuardian.1x1.0.wood.svg"
@@ -2956,11 +3059,11 @@
    },
    {
     "id": "fKtdd000",
-    "lid": "MuOhG300",
+    "lid": [
+     "MuOhG300"
+    ],
     "name": "shadow",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "shadow.1x1.0.wood.svg"
@@ -2969,11 +3072,12 @@
    },
    {
     "id": "ahpbf000",
-    "lid": "ezQEI200",
+    "lid": [
+     "ezQEI200"
+    ],
     "name": "shamblingMound",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "shamblingMound.2x2.6.wood.svg"
@@ -2982,11 +3086,12 @@
    },
    {
     "id": "zTWnz100",
-    "lid": "iLXNO000",
+    "lid": [
+     "iLXNO000"
+    ],
     "name": "shark",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "shark.2x2.9.wood.svg"
@@ -2995,11 +3100,12 @@
    },
    {
     "id": "N7pbg300",
-    "lid": "ug0_q300",
+    "lid": [
+     "ug0_q300"
+    ],
     "name": "shoggoth",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "10",
     "media": [
      "shoggoth.3x3.10.wood.svg"
@@ -3008,11 +3114,11 @@
    },
    {
     "id": "vgTCL300",
-    "lid": "Vgp1_200",
+    "lid": [
+     "Vgp1_200"
+    ],
     "name": "skeleton",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "skeleton.1x1.1.wood.svg"
@@ -3021,11 +3127,11 @@
    },
    {
     "id": "DL1WA000",
-    "lid": "ZQTvK100",
+    "lid": [
+     "ZQTvK100"
+    ],
     "name": "skull.flame-",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "3",
     "media": [
      "skull.flame-.1x1.3.wood.svg"
@@ -3034,11 +3140,12 @@
    },
    {
     "id": "Iv571300",
-    "lid": "TOglt000",
+    "lid": [
+     "TOglt000"
+    ],
     "name": "slug",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "1",
     "media": [
      "slug.3x3.1.wood.svg"
@@ -3047,11 +3154,11 @@
    },
    {
     "id": "UO8VF200",
-    "lid": "YZEvS200",
+    "lid": [
+     "YZEvS200"
+    ],
     "name": "snake.cobra",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "snake.cobra.1x1.4.wood.svg"
@@ -3060,11 +3167,11 @@
    },
    {
     "id": "X3I03100",
-    "lid": "UfQK7300",
+    "lid": [
+     "UfQK7300"
+    ],
     "name": "snake.viper",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "snake.viper.1x1.6.wood.svg"
@@ -3073,11 +3180,11 @@
    },
    {
     "id": "IjGxB100",
-    "lid": "N-KKl300",
+    "lid": [
+     "N-KKl300"
+    ],
     "name": "spectre",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "spectre.1x1.1.wood.svg"
@@ -3086,11 +3193,12 @@
    },
    {
     "id": "eGJYR200",
-    "lid": "hE6bd200",
+    "lid": [
+     "hE6bd200"
+    ],
     "name": "sphinx",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "5",
     "media": [
      "sphinx.2x2.5.wood.svg"
@@ -3099,11 +3207,11 @@
    },
    {
     "id": "BLTHw200",
-    "lid": "V6mnK000",
+    "lid": [
+     "V6mnK000"
+    ],
     "name": "spider",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "spider.1x1.1.wood.svg"
@@ -3112,11 +3220,11 @@
    },
    {
     "id": "CjGf6000",
-    "lid": "vgrfb100",
+    "lid": [
+     "vgrfb100"
+    ],
     "name": "sprite.pixie",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "sprite.pixie.1x1.10.wood.svg"
@@ -3125,11 +3233,11 @@
    },
    {
     "id": "R8Uzh300",
-    "lid": "RTduJ100",
+    "lid": [
+     "RTduJ100"
+    ],
     "name": "squidMind",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "squidMind.1x1.10.wood.svg"
@@ -3138,11 +3246,11 @@
    },
    {
     "id": "F7F2v000",
-    "lid": "NJv9X300",
+    "lid": [
+     "NJv9X300"
+    ],
     "name": "squirrel",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "squirrel.1x1.4.wood.svg"
@@ -3151,11 +3259,11 @@
    },
    {
     "id": "wUpmB100",
-    "lid": "ROD0w200",
+    "lid": [
+     "ROD0w200"
+    ],
     "name": "stirge",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "4",
     "media": [
      "stirge.1x1.4.wood.svg"
@@ -3164,11 +3272,11 @@
    },
    {
     "id": "CfZYY100",
-    "lid": "R6TVR100",
+    "lid": [
+     "R6TVR100"
+    ],
     "name": "tengu",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "tengu.1x1.0.wood.svg"
@@ -3177,11 +3285,12 @@
    },
    {
     "id": "bpxEU300",
-    "lid": "owGpj300",
+    "lid": [
+     "owGpj300"
+    ],
     "name": "terrasque",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "4",
     "media": [
      "terrasque.4x4.4.wood.svg"
@@ -3190,11 +3299,11 @@
    },
    {
     "id": "dUca0100",
-    "lid": "XVJY7100",
+    "lid": [
+     "XVJY7100"
+    ],
     "name": "tiger",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "tiger.1x1.1.wood.svg"
@@ -3203,11 +3312,12 @@
    },
    {
     "id": "uZBMn000",
-    "lid": "vCCnD000",
+    "lid": [
+     "vCCnD000"
+    ],
     "name": "treant",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "treant.2x2.6.wood.svg"
@@ -3216,11 +3326,11 @@
    },
    {
     "id": "r1tQQ300",
-    "lid": "XiLOf200",
+    "lid": [
+     "XiLOf200"
+    ],
     "name": "triton.merrow",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "9",
     "media": [
      "triton.merrow.1x1.9.wood.svg"
@@ -3229,11 +3339,11 @@
    },
    {
     "id": "upVf3200",
-    "lid": "kl8sA100",
+    "lid": [
+     "kl8sA100"
+    ],
     "name": "troglodyte",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "troglodyte.1x1.0.wood.svg"
@@ -3242,11 +3352,12 @@
    },
    {
     "id": "LFzxM000",
-    "lid": "FV0ae100",
+    "lid": [
+     "FV0ae100"
+    ],
     "name": "troll",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "6",
     "media": [
      "troll.2x2.6.wood.svg"
@@ -3255,11 +3366,12 @@
    },
    {
     "id": "LHpQR200",
-    "lid": "a29Ju200",
+    "lid": [
+     "a29Ju200"
+    ],
     "name": "turtle.dragon",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "9",
     "media": [
      "turtle.dragon.4x4.9.wood.svg"
@@ -3268,11 +3380,11 @@
    },
    {
     "id": "Y6ZvR000",
-    "lid": "mqDFq100",
+    "lid": [
+     "mqDFq100"
+    ],
     "name": "turtle.tortoise",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "6",
     "media": [
      "turtle.tortoise.1x1.6.wood.svg"
@@ -3281,11 +3393,12 @@
    },
    {
     "id": "CDy9o300",
-    "lid": "uoc7O300",
+    "lid": [
+     "uoc7O300"
+    ],
     "name": "unicorn",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "10",
     "media": [
      "unicorn.2x2.10.wood.svg"
@@ -3294,11 +3407,11 @@
    },
    {
     "id": "qJ9mg200",
-    "lid": "RkpZP100",
+    "lid": [
+     "RkpZP100"
+    ],
     "name": "vampire",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "vampire.1x1x1.1.wood.svg",
@@ -3308,11 +3421,11 @@
    },
    {
     "id": "LS3OC200",
-    "lid": "aiSs_300",
+    "lid": [
+     "aiSs_300"
+    ],
     "name": "viking",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "viking.1x1.0.wood.svg"
@@ -3321,11 +3434,12 @@
    },
    {
     "id": "YR32W000",
-    "lid": "EVC_H300",
+    "lid": [
+     "EVC_H300"
+    ],
     "name": "vile.water",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "9",
     "media": [
      "vile.water.2x2.9.wood.svg"
@@ -3334,11 +3448,11 @@
    },
    {
     "id": "LoAkd200",
-    "lid": "xQDtU300",
+    "lid": [
+     "xQDtU300"
+    ],
     "name": "vulture",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "vulture.1x1.1.wood.svg"
@@ -3347,11 +3461,11 @@
    },
    {
     "id": "Dky-d300",
-    "lid": "fsRDT300",
+    "lid": [
+     "fsRDT300"
+    ],
     "name": "wasp",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "wasp.1x1.5.wood.svg"
@@ -3360,11 +3474,12 @@
    },
    {
     "id": "UwBBe300",
-    "lid": "rhFK6200",
+    "lid": [
+     "rhFK6200"
+    ],
     "name": "whale",
     "type": "token",
     "w": 3,
-    "h": 3,
     "bg": "9",
     "media": [
      "whale.3x3.9.wood.svg"
@@ -3373,11 +3488,11 @@
    },
    {
     "id": "snUN6100",
-    "lid": "LIt5j300",
+    "lid": [
+     "LIt5j300"
+    ],
     "name": "will-o-wisp",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "5",
     "media": [
      "will-o-wisp.1x1.5.wood.svg"
@@ -3386,11 +3501,11 @@
    },
    {
     "id": "H49hT300",
-    "lid": "eW-Cd000",
+    "lid": [
+     "eW-Cd000"
+    ],
     "name": "wizard",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "10",
     "media": [
      "wizard.1x1.10.wood.svg"
@@ -3399,11 +3514,11 @@
    },
    {
     "id": "CLoz0200",
-    "lid": "Sr3Yh200",
+    "lid": [
+     "Sr3Yh200"
+    ],
     "name": "wolf",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "0",
     "media": [
      "wolf.1x1.0.wood.svg"
@@ -3412,11 +3527,12 @@
    },
    {
     "id": "xIZqn100",
-    "lid": "toPLQ000",
+    "lid": [
+     "toPLQ000"
+    ],
     "name": "worm.leeching",
     "type": "token",
     "w": 4,
-    "h": 4,
     "bg": "10",
     "media": [
      "worm.leeching.4x4.10.wood.svg"
@@ -3425,11 +3541,11 @@
    },
    {
     "id": "R2yhn300",
-    "lid": "Vqb4A300",
+    "lid": [
+     "Vqb4A300"
+    ],
     "name": "wraith",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "wraith.1x1.1.wood.svg"
@@ -3438,11 +3554,12 @@
    },
    {
     "id": "KBjW7300",
-    "lid": "h8MT6000",
+    "lid": [
+     "h8MT6000"
+    ],
     "name": "yeti",
     "type": "token",
     "w": 2,
-    "h": 2,
     "bg": "8",
     "media": [
      "yeti.2x2.8.wood.svg"
@@ -3451,11 +3568,11 @@
    },
    {
     "id": "iEUhI100",
-    "lid": "OngS0000",
+    "lid": [
+     "OngS0000"
+    ],
     "name": "zombie",
     "type": "token",
-    "w": 1,
-    "h": 1,
     "bg": "1",
     "media": [
      "zombie.1x1.1.wood.svg"
@@ -3466,351 +3583,368 @@
   "other": [
    {
     "id": "hFoyZ200",
-    "lid": "lPebe300",
+    "lid": [
+     "lPebe300"
+    ],
     "name": "_.d10Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d10Dark.1x1x01.1.svg",
-     "_.d10Dark.1x1x02.1.svg",
-     "_.d10Dark.1x1x03.1.svg",
-     "_.d10Dark.1x1x04.1.svg",
-     "_.d10Dark.1x1x05.1.svg",
-     "_.d10Dark.1x1x06.1.svg",
-     "_.d10Dark.1x1x07.1.svg",
-     "_.d10Dark.1x1x08.1.svg",
-     "_.d10Dark.1x1x09.1.svg",
-     "_.d10Dark.1x1x10.1.svg"
+     "_.d10Dark.1x1x01x5.1.svg",
+     "_.d10Dark.1x1x02x5.1.svg",
+     "_.d10Dark.1x1x03x5.1.svg",
+     "_.d10Dark.1x1x04x5.1.svg",
+     "_.d10Dark.1x1x05x5.1.svg",
+     "_.d10Dark.1x1x06x5.1.svg",
+     "_.d10Dark.1x1x07x5.1.svg",
+     "_.d10Dark.1x1x08x5.1.svg",
+     "_.d10Dark.1x1x09x5.1.svg",
+     "_.d10Dark.1x1x10x5.1.svg"
     ],
-    "base": "_.d10Dark.1x1x00.1.png",
-    "mask": "_.d10Dark.1x1xXX.1.svg"
+    "base": "_.d10Dark.1x1x00x5.1.png",
+    "mask": "_.d10Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "PW2rJ000",
-    "lid": "tVzk3200",
+    "lid": [
+     "tVzk3200"
+    ],
     "name": "_.d10Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d10Light.1x1x01.2.svg",
-     "_.d10Light.1x1x02.2.svg",
-     "_.d10Light.1x1x03.2.svg",
-     "_.d10Light.1x1x04.2.svg",
-     "_.d10Light.1x1x05.2.svg",
-     "_.d10Light.1x1x06.2.svg",
-     "_.d10Light.1x1x07.2.svg",
-     "_.d10Light.1x1x08.2.svg",
-     "_.d10Light.1x1x09.2.svg",
-     "_.d10Light.1x1x10.2.svg"
+     "_.d10Light.1x1x01x5.2.svg",
+     "_.d10Light.1x1x02x5.2.svg",
+     "_.d10Light.1x1x03x5.2.svg",
+     "_.d10Light.1x1x04x5.2.svg",
+     "_.d10Light.1x1x05x5.2.svg",
+     "_.d10Light.1x1x06x5.2.svg",
+     "_.d10Light.1x1x07x5.2.svg",
+     "_.d10Light.1x1x08x5.2.svg",
+     "_.d10Light.1x1x09x5.2.svg",
+     "_.d10Light.1x1x10x5.2.svg"
     ],
-    "base": "_.d10Light.1x1x00.2.png",
-    "mask": "_.d10Light.1x1xXX.2.svg"
+    "base": "_.d10Light.1x1x00x5.2.png",
+    "mask": "_.d10Light.1x1xXXx5.2.svg"
    },
    {
     "id": "v8Vvg200",
-    "lid": "aeS5y000",
+    "lid": [
+     "aeS5y000"
+    ],
     "name": "_.d12Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d12Dark.1x1x01.1.svg",
-     "_.d12Dark.1x1x02.1.svg",
-     "_.d12Dark.1x1x03.1.svg",
-     "_.d12Dark.1x1x04.1.svg",
-     "_.d12Dark.1x1x05.1.svg",
-     "_.d12Dark.1x1x06.1.svg",
-     "_.d12Dark.1x1x07.1.svg",
-     "_.d12Dark.1x1x08.1.svg",
-     "_.d12Dark.1x1x09.1.svg",
-     "_.d12Dark.1x1x10.1.svg",
-     "_.d12Dark.1x1x11.1.svg",
-     "_.d12Dark.1x1x12.1.svg"
+     "_.d12Dark.1x1x01x5.1.svg",
+     "_.d12Dark.1x1x02x5.1.svg",
+     "_.d12Dark.1x1x03x5.1.svg",
+     "_.d12Dark.1x1x04x5.1.svg",
+     "_.d12Dark.1x1x05x5.1.svg",
+     "_.d12Dark.1x1x06x5.1.svg",
+     "_.d12Dark.1x1x07x5.1.svg",
+     "_.d12Dark.1x1x08x5.1.svg",
+     "_.d12Dark.1x1x09x5.1.svg",
+     "_.d12Dark.1x1x10x5.1.svg",
+     "_.d12Dark.1x1x11x5.1.svg",
+     "_.d12Dark.1x1x12x5.1.svg"
     ],
-    "base": "_.d12Dark.1x1x00.1.png",
-    "mask": "_.d12Dark.1x1xXX.1.svg"
+    "base": "_.d12Dark.1x1x00x5.1.png",
+    "mask": "_.d12Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "KWvBF000",
-    "lid": "KKD3z300",
+    "lid": [
+     "KKD3z300"
+    ],
     "name": "_.d12Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d12Light.1x1x01.2.svg",
-     "_.d12Light.1x1x02.2.svg",
-     "_.d12Light.1x1x03.2.svg",
-     "_.d12Light.1x1x04.2.svg",
-     "_.d12Light.1x1x05.2.svg",
-     "_.d12Light.1x1x06.2.svg",
-     "_.d12Light.1x1x07.2.svg",
-     "_.d12Light.1x1x08.2.svg",
-     "_.d12Light.1x1x09.2.svg",
-     "_.d12Light.1x1x10.2.svg",
-     "_.d12Light.1x1x11.2.svg",
-     "_.d12Light.1x1x12.2.svg"
+     "_.d12Light.1x1x01x5.2.svg",
+     "_.d12Light.1x1x02x5.2.svg",
+     "_.d12Light.1x1x03x5.2.svg",
+     "_.d12Light.1x1x04x5.2.svg",
+     "_.d12Light.1x1x05x5.2.svg",
+     "_.d12Light.1x1x06x5.2.svg",
+     "_.d12Light.1x1x07x5.2.svg",
+     "_.d12Light.1x1x08x5.2.svg",
+     "_.d12Light.1x1x09x5.2.svg",
+     "_.d12Light.1x1x10x5.2.svg",
+     "_.d12Light.1x1x11x5.2.svg",
+     "_.d12Light.1x1x12x5.2.svg"
     ],
-    "base": "_.d12Light.1x1x00.2.png",
-    "mask": "_.d12Light.1x1xXX.2.svg"
+    "base": "_.d12Light.1x1x00x5.2.png",
+    "mask": "_.d12Light.1x1xXXx5.2.svg"
    },
    {
     "id": "y6zKl100",
-    "lid": "z7DUO100",
+    "lid": [
+     "z7DUO100"
+    ],
     "name": "_.d20Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d20Dark.1x1x01.1.svg",
-     "_.d20Dark.1x1x02.1.svg",
-     "_.d20Dark.1x1x03.1.svg",
-     "_.d20Dark.1x1x04.1.svg",
-     "_.d20Dark.1x1x05.1.svg",
-     "_.d20Dark.1x1x06.1.svg",
-     "_.d20Dark.1x1x07.1.svg",
-     "_.d20Dark.1x1x08.1.svg",
-     "_.d20Dark.1x1x09.1.svg",
-     "_.d20Dark.1x1x10.1.svg",
-     "_.d20Dark.1x1x11.1.svg",
-     "_.d20Dark.1x1x12.1.svg",
-     "_.d20Dark.1x1x13.1.svg",
-     "_.d20Dark.1x1x14.1.svg",
-     "_.d20Dark.1x1x15.1.svg",
-     "_.d20Dark.1x1x16.1.svg",
-     "_.d20Dark.1x1x17.1.svg",
-     "_.d20Dark.1x1x18.1.svg",
-     "_.d20Dark.1x1x19.1.svg",
-     "_.d20Dark.1x1x20.1.svg"
+     "_.d20Dark.1x1x01x5.1.svg",
+     "_.d20Dark.1x1x02x5.1.svg",
+     "_.d20Dark.1x1x03x5.1.svg",
+     "_.d20Dark.1x1x04x5.1.svg",
+     "_.d20Dark.1x1x05x5.1.svg",
+     "_.d20Dark.1x1x06x5.1.svg",
+     "_.d20Dark.1x1x07x5.1.svg",
+     "_.d20Dark.1x1x08x5.1.svg",
+     "_.d20Dark.1x1x09x5.1.svg",
+     "_.d20Dark.1x1x10x5.1.svg",
+     "_.d20Dark.1x1x11x5.1.svg",
+     "_.d20Dark.1x1x12x5.1.svg",
+     "_.d20Dark.1x1x13x5.1.svg",
+     "_.d20Dark.1x1x14x5.1.svg",
+     "_.d20Dark.1x1x15x5.1.svg",
+     "_.d20Dark.1x1x16x5.1.svg",
+     "_.d20Dark.1x1x17x5.1.svg",
+     "_.d20Dark.1x1x18x5.1.svg",
+     "_.d20Dark.1x1x19x5.1.svg",
+     "_.d20Dark.1x1x20x5.1.svg"
     ],
-    "base": "_.d20Dark.1x1x00.1.png",
-    "mask": "_.d20Dark.1x1xXX.1.svg"
+    "base": "_.d20Dark.1x1x00x5.1.png",
+    "mask": "_.d20Dark.1x1xXXx5.1.svg"
    },
    {
     "id": "Gz-zS200",
-    "lid": "eIMc_300",
+    "lid": [
+     "eIMc_300"
+    ],
     "name": "_.d20Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d20Light.1x1x01.2.svg",
-     "_.d20Light.1x1x02.2.svg",
-     "_.d20Light.1x1x03.2.svg",
-     "_.d20Light.1x1x04.2.svg",
-     "_.d20Light.1x1x05.2.svg",
-     "_.d20Light.1x1x06.2.svg",
-     "_.d20Light.1x1x07.2.svg",
-     "_.d20Light.1x1x08.2.svg",
-     "_.d20Light.1x1x09.2.svg",
-     "_.d20Light.1x1x10.2.svg",
-     "_.d20Light.1x1x11.2.svg",
-     "_.d20Light.1x1x12.2.svg",
-     "_.d20Light.1x1x13.2.svg",
-     "_.d20Light.1x1x14.2.svg",
-     "_.d20Light.1x1x15.2.svg",
-     "_.d20Light.1x1x16.2.svg",
-     "_.d20Light.1x1x17.2.svg",
-     "_.d20Light.1x1x18.2.svg",
-     "_.d20Light.1x1x19.2.svg",
-     "_.d20Light.1x1x20.2.svg"
+     "_.d20Light.1x1x01x5.2.svg",
+     "_.d20Light.1x1x02x5.2.svg",
+     "_.d20Light.1x1x03x5.2.svg",
+     "_.d20Light.1x1x04x5.2.svg",
+     "_.d20Light.1x1x05x5.2.svg",
+     "_.d20Light.1x1x06x5.2.svg",
+     "_.d20Light.1x1x07x5.2.svg",
+     "_.d20Light.1x1x08x5.2.svg",
+     "_.d20Light.1x1x09x5.2.svg",
+     "_.d20Light.1x1x10x5.2.svg",
+     "_.d20Light.1x1x11x5.2.svg",
+     "_.d20Light.1x1x12x5.2.svg",
+     "_.d20Light.1x1x13x5.2.svg",
+     "_.d20Light.1x1x14x5.2.svg",
+     "_.d20Light.1x1x15x5.2.svg",
+     "_.d20Light.1x1x16x5.2.svg",
+     "_.d20Light.1x1x17x5.2.svg",
+     "_.d20Light.1x1x18x5.2.svg",
+     "_.d20Light.1x1x19x5.2.svg",
+     "_.d20Light.1x1x20x5.2.svg"
     ],
-    "base": "_.d20Light.1x1x00.2.png",
-    "mask": "_.d20Light.1x1xXX.2.svg"
+    "base": "_.d20Light.1x1x00x5.2.png",
+    "mask": "_.d20Light.1x1xXXx5.2.svg"
    },
    {
     "id": "pJtgf000",
-    "lid": "SHt9A300",
+    "lid": [
+     "SHt9A300"
+    ],
     "name": "_.d4Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d4Dark.1x1x1.1.svg",
-     "_.d4Dark.1x1x2.1.svg",
-     "_.d4Dark.1x1x3.1.svg",
-     "_.d4Dark.1x1x4.1.svg"
+     "_.d4Dark.1x1x1x5.1.svg",
+     "_.d4Dark.1x1x2x5.1.svg",
+     "_.d4Dark.1x1x3x5.1.svg",
+     "_.d4Dark.1x1x4x5.1.svg"
     ],
-    "base": "_.d4Dark.1x1x0.1.png",
-    "mask": "_.d4Dark.1x1xX.1.svg"
+    "base": "_.d4Dark.1x1x0x5.1.png",
+    "mask": "_.d4Dark.1x1xXx5.1.svg"
    },
    {
     "id": "j8hqf000",
-    "lid": "xY7Gr200",
+    "lid": [
+     "xY7Gr200"
+    ],
     "name": "_.d4Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d4Light.1x1x1.2.svg",
-     "_.d4Light.1x1x2.2.svg",
-     "_.d4Light.1x1x3.2.svg",
-     "_.d4Light.1x1x4.2.svg"
+     "_.d4Light.1x1x1x5.2.svg",
+     "_.d4Light.1x1x2x5.2.svg",
+     "_.d4Light.1x1x3x5.2.svg",
+     "_.d4Light.1x1x4x5.2.svg"
     ],
-    "base": "_.d4Light.1x1x0.2.png",
-    "mask": "_.d4Light.1x1xX.2.svg"
+    "base": "_.d4Light.1x1x0x5.2.png",
+    "mask": "_.d4Light.1x1xXx5.2.svg"
    },
    {
     "id": "bc_Ix000",
-    "lid": "jbmiY200",
+    "lid": [
+     "jbmiY200"
+    ],
     "name": "_.d6Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d6Dark.1x1x1.1.svg",
-     "_.d6Dark.1x1x2.1.svg",
-     "_.d6Dark.1x1x3.1.svg",
-     "_.d6Dark.1x1x4.1.svg",
-     "_.d6Dark.1x1x5.1.svg",
-     "_.d6Dark.1x1x6.1.svg"
+     "_.d6Dark.1x1x1x5.1.svg",
+     "_.d6Dark.1x1x2x5.1.svg",
+     "_.d6Dark.1x1x3x5.1.svg",
+     "_.d6Dark.1x1x4x5.1.svg",
+     "_.d6Dark.1x1x5x5.1.svg",
+     "_.d6Dark.1x1x6x5.1.svg"
     ],
-    "base": "_.d6Dark.1x1x0.1.png",
-    "mask": "_.d6Dark.1x1xX.1.svg"
+    "base": "_.d6Dark.1x1x0x5.1.png",
+    "mask": "_.d6Dark.1x1xXx5.1.svg"
    },
    {
     "id": "a8cCb000",
-    "lid": "u7ZAS100",
+    "lid": [
+     "u7ZAS100"
+    ],
     "name": "_.d6Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d6Light.1x1x1.2.svg",
-     "_.d6Light.1x1x2.2.svg",
-     "_.d6Light.1x1x3.2.svg",
-     "_.d6Light.1x1x4.2.svg",
-     "_.d6Light.1x1x5.2.svg",
-     "_.d6Light.1x1x6.2.svg"
+     "_.d6Light.1x1x1x5.2.svg",
+     "_.d6Light.1x1x2x5.2.svg",
+     "_.d6Light.1x1x3x5.2.svg",
+     "_.d6Light.1x1x4x5.2.svg",
+     "_.d6Light.1x1x5x5.2.svg",
+     "_.d6Light.1x1x6x5.2.svg"
     ],
-    "base": "_.d6Light.1x1x0.2.png",
-    "mask": "_.d6Light.1x1xX.2.svg"
+    "base": "_.d6Light.1x1x0x5.2.png",
+    "mask": "_.d6Light.1x1xXx5.2.svg"
    },
    {
     "id": "ZyitE300",
-    "lid": "xCPfK300",
+    "lid": [
+     "xCPfK300"
+    ],
     "name": "_.d8Dark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.d8Dark.1x1x1.1.svg",
-     "_.d8Dark.1x1x2.1.svg",
-     "_.d8Dark.1x1x3.1.svg",
-     "_.d8Dark.1x1x4.1.svg",
-     "_.d8Dark.1x1x5.1.svg",
-     "_.d8Dark.1x1x6.1.svg",
-     "_.d8Dark.1x1x7.1.svg",
-     "_.d8Dark.1x1x8.1.svg"
+     "_.d8Dark.1x1x1x5.1.svg",
+     "_.d8Dark.1x1x2x5.1.svg",
+     "_.d8Dark.1x1x3x5.1.svg",
+     "_.d8Dark.1x1x4x5.1.svg",
+     "_.d8Dark.1x1x5x5.1.svg",
+     "_.d8Dark.1x1x6x5.1.svg",
+     "_.d8Dark.1x1x7x5.1.svg",
+     "_.d8Dark.1x1x8x5.1.svg"
     ],
-    "base": "_.d8Dark.1x1x0.1.png",
-    "mask": "_.d8Dark.1x1xX.1.svg"
+    "base": "_.d8Dark.1x1x0x5.1.png",
+    "mask": "_.d8Dark.1x1xXx5.1.svg"
    },
    {
     "id": "Zavll000",
-    "lid": "obzEu200",
+    "lid": [
+     "obzEu200"
+    ],
     "name": "_.d8Light",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.d8Light.1x1x1.2.svg",
-     "_.d8Light.1x1x2.2.svg",
-     "_.d8Light.1x1x3.2.svg",
-     "_.d8Light.1x1x4.2.svg",
-     "_.d8Light.1x1x5.2.svg",
-     "_.d8Light.1x1x6.2.svg",
-     "_.d8Light.1x1x7.2.svg",
-     "_.d8Light.1x1x8.2.svg"
+     "_.d8Light.1x1x1x5.2.svg",
+     "_.d8Light.1x1x2x5.2.svg",
+     "_.d8Light.1x1x3x5.2.svg",
+     "_.d8Light.1x1x4x5.2.svg",
+     "_.d8Light.1x1x5x5.2.svg",
+     "_.d8Light.1x1x6x5.2.svg",
+     "_.d8Light.1x1x7x5.2.svg",
+     "_.d8Light.1x1x8x5.2.svg"
     ],
-    "base": "_.d8Light.1x1x0.2.png",
-    "mask": "_.d8Light.1x1xX.2.svg"
+    "base": "_.d8Light.1x1x0x5.2.png",
+    "mask": "_.d8Light.1x1xXx5.2.svg"
    },
    {
     "id": "gXCJX200",
-    "lid": "selr5000",
+    "lid": [
+     "selr5000"
+    ],
     "name": "_.dicemat",
     "type": "other",
     "w": 4,
-    "h": 4,
     "bg": "#808080",
     "media": [
-     "_.dicemat.4x4x1.jpg"
+     "_.dicemat.4x4x1x2.jpg"
     ]
    },
    {
     "id": "rEH5X200",
-    "lid": "FvPx9300",
+    "lid": [
+     "FvPx9300"
+    ],
     "name": "_.dicemat",
     "type": "other",
     "w": 8,
-    "h": 8,
+    "d": 5,
     "bg": "#808080",
     "media": [
-     "_.dicemat.8x8x1.png"
+     "_.dicemat.8x8x1x5.png"
     ]
    },
    {
     "id": "BQ9I2100",
-    "lid": "MDuQt000",
+    "lid": [
+     "MDuQt000"
+    ],
     "name": "_.fateDark",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "1",
     "media": [
-     "_.fateDark.1x1x1.1.svg",
-     "_.fateDark.1x1x2.1.svg",
-     "_.fateDark.1x1x3.1.svg",
-     "_.fateDark.1x1x4.1.svg",
-     "_.fateDark.1x1x5.1.svg",
-     "_.fateDark.1x1x6.1.svg"
+     "_.fateDark.1x1x1x5.1.svg",
+     "_.fateDark.1x1x2x5.1.svg",
+     "_.fateDark.1x1x3x5.1.svg",
+     "_.fateDark.1x1x4x5.1.svg",
+     "_.fateDark.1x1x5x5.1.svg",
+     "_.fateDark.1x1x6x5.1.svg"
     ],
-    "base": "_.fateDark.1x1x0.1.png",
-    "mask": "_.fateDark.1x1xX.1.svg"
+    "base": "_.fateDark.1x1x0x5.1.png",
+    "mask": "_.fateDark.1x1xXx5.1.svg"
    },
    {
     "id": "iCBYt200",
-    "lid": "MTvWD100",
+    "lid": [
+     "MTvWD100"
+    ],
     "name": "_.fateLight",
     "type": "other",
-    "w": 1,
-    "h": 1,
+    "d": 5,
     "bg": "2",
     "media": [
-     "_.fateLight.1x1x1.2.svg",
-     "_.fateLight.1x1x2.2.svg",
-     "_.fateLight.1x1x3.2.svg",
-     "_.fateLight.1x1x4.2.svg",
-     "_.fateLight.1x1x5.2.svg",
-     "_.fateLight.1x1x6.2.svg"
+     "_.fateLight.1x1x1x5.2.svg",
+     "_.fateLight.1x1x2x5.2.svg",
+     "_.fateLight.1x1x3x5.2.svg",
+     "_.fateLight.1x1x4x5.2.svg",
+     "_.fateLight.1x1x5x5.2.svg",
+     "_.fateLight.1x1x6x5.2.svg"
     ],
-    "base": "_.fateLight.1x1x0.2.png",
-    "mask": "_.fateLight.1x1xX.2.svg"
+    "base": "_.fateLight.1x1x0x5.2.png",
+    "mask": "_.fateLight.1x1xXx5.2.svg"
    }
   ],
   "badge": [
    {
     "id": "ED1At200",
-    "lid": "Jxa0k200",
+    "lid": [
+     "Jxa0k200"
+    ],
     "name": "_.badge",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "_.badge.svg"
@@ -3818,11 +3952,11 @@
    },
    {
     "id": "HP4Ig300",
-    "lid": "RvGjJ000",
+    "lid": [
+     "RvGjJ000"
+    ],
     "name": "_.target",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "_.target.svg"
@@ -3830,11 +3964,11 @@
    },
    {
     "id": "UHGC-200",
-    "lid": "QlYvr000",
+    "lid": [
+     "QlYvr000"
+    ],
     "name": "condition.blind",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.blind.svg"
@@ -3842,11 +3976,11 @@
    },
    {
     "id": "n7asL100",
-    "lid": "xp_4e300",
+    "lid": [
+     "xp_4e300"
+    ],
     "name": "condition.dazed",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.dazed.svg"
@@ -3854,11 +3988,11 @@
    },
    {
     "id": "LftF2000",
-    "lid": "ntBcb300",
+    "lid": [
+     "ntBcb300"
+    ],
     "name": "condition.deaf",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.deaf.svg"
@@ -3866,11 +4000,11 @@
    },
    {
     "id": "u-Ny3200",
-    "lid": "h-gue000",
+    "lid": [
+     "h-gue000"
+    ],
     "name": "condition.dominated",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.dominated.svg"
@@ -3878,11 +4012,11 @@
    },
    {
     "id": "Q2jIE300",
-    "lid": "VvgTX200",
+    "lid": [
+     "VvgTX200"
+    ],
     "name": "condition.immobilized",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.immobilized.svg"
@@ -3890,11 +4024,11 @@
    },
    {
     "id": "vByS2100",
-    "lid": "S5mTH000",
+    "lid": [
+     "S5mTH000"
+    ],
     "name": "condition.invisible",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.invisible.svg"
@@ -3902,11 +4036,11 @@
    },
    {
     "id": "P3F82200",
-    "lid": "j01-H000",
+    "lid": [
+     "j01-H000"
+    ],
     "name": "condition.marked",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.marked.svg"
@@ -3914,11 +4048,11 @@
    },
    {
     "id": "Mixm_100",
-    "lid": "Ou68a300",
+    "lid": [
+     "Ou68a300"
+    ],
     "name": "condition.petrified",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.petrified.svg"
@@ -3926,11 +4060,11 @@
    },
    {
     "id": "xdyOK000",
-    "lid": "u4b44300",
+    "lid": [
+     "u4b44300"
+    ],
     "name": "condition.protected",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.protected.svg"
@@ -3938,11 +4072,11 @@
    },
    {
     "id": "K4rch300",
-    "lid": "LI2C9300",
+    "lid": [
+     "LI2C9300"
+    ],
     "name": "condition.restrained",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.restrained.svg"
@@ -3950,11 +4084,11 @@
    },
    {
     "id": "biyNd000",
-    "lid": "fztyq200",
+    "lid": [
+     "fztyq200"
+    ],
     "name": "condition.slowed",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.slowed.svg"
@@ -3962,11 +4096,11 @@
    },
    {
     "id": "KH0Xl300",
-    "lid": "rrD0p100",
+    "lid": [
+     "rrD0p100"
+    ],
     "name": "condition.stunned",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.stunned.svg"
@@ -3974,11 +4108,11 @@
    },
    {
     "id": "z-EuK100",
-    "lid": "bqTVI000",
+    "lid": [
+     "bqTVI000"
+    ],
     "name": "condition.unconscious",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.unconscious.svg"
@@ -3986,11 +4120,11 @@
    },
    {
     "id": "G6i38000",
-    "lid": "wM3vB100",
+    "lid": [
+     "wM3vB100"
+    ],
     "name": "condition.weak",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "condition.weak.svg"
@@ -3998,11 +4132,11 @@
    },
    {
     "id": "PBoA7000",
-    "lid": "A2lBk300",
+    "lid": [
+     "A2lBk300"
+    ],
     "name": "damage.acid",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.acid.svg"
@@ -4010,11 +4144,11 @@
    },
    {
     "id": "dknSi300",
-    "lid": "VS7JZ100",
+    "lid": [
+     "VS7JZ100"
+    ],
     "name": "damage.cold",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.cold.svg"
@@ -4022,11 +4156,11 @@
    },
    {
     "id": "QggkY300",
-    "lid": "quuO-000",
+    "lid": [
+     "quuO-000"
+    ],
     "name": "damage.fire",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.fire.svg"
@@ -4034,11 +4168,11 @@
    },
    {
     "id": "CngHg000",
-    "lid": "MD-qe300",
+    "lid": [
+     "MD-qe300"
+    ],
     "name": "damage.force",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.force.svg"
@@ -4046,11 +4180,11 @@
    },
    {
     "id": "GXhBA300",
-    "lid": "vvaIC000",
+    "lid": [
+     "vvaIC000"
+    ],
     "name": "damage.lightning",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.lightning.svg"
@@ -4058,11 +4192,11 @@
    },
    {
     "id": "fnuSg100",
-    "lid": "dAYuS100",
+    "lid": [
+     "dAYuS100"
+    ],
     "name": "damage.necrotic",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.necrotic.svg"
@@ -4070,11 +4204,11 @@
    },
    {
     "id": "PFjB8300",
-    "lid": "Sa3hF000",
+    "lid": [
+     "Sa3hF000"
+    ],
     "name": "damage.poison",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.poison.svg"
@@ -4082,11 +4216,11 @@
    },
    {
     "id": "KOiPD300",
-    "lid": "XrUhr200",
+    "lid": [
+     "XrUhr200"
+    ],
     "name": "damage.psychic",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.psychic.svg"
@@ -4094,11 +4228,11 @@
    },
    {
     "id": "hf4Y5000",
-    "lid": "YjQpI100",
+    "lid": [
+     "YjQpI100"
+    ],
     "name": "damage.radiant",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.radiant.svg"
@@ -4106,11 +4240,11 @@
    },
    {
     "id": "DutAn000",
-    "lid": "ZSIDE200",
+    "lid": [
+     "ZSIDE200"
+    ],
     "name": "damage.thunder",
     "type": "badge",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "damage.thunder.svg"
@@ -4120,11 +4254,11 @@
   "material": [
    {
     "id": "brTTG000",
-    "lid": "CIZcg300",
+    "lid": [
+     "CIZcg300"
+    ],
     "name": "linen",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "linen.png"
@@ -4132,11 +4266,11 @@
    },
    {
     "id": "QjDAr300",
-    "lid": "MOevM100",
+    "lid": [
+     "MOevM100"
+    ],
     "name": "none",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "none.png"
@@ -4144,11 +4278,11 @@
    },
    {
     "id": "H4W0w000",
-    "lid": "Hb9tz200",
+    "lid": [
+     "Hb9tz200"
+    ],
     "name": "paper",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "paper.png"
@@ -4156,11 +4290,11 @@
    },
    {
     "id": "YDTSJ000",
-    "lid": "LDpOJ000",
+    "lid": [
+     "LDpOJ000"
+    ],
     "name": "rough",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "rough.png"
@@ -4168,11 +4302,11 @@
    },
    {
     "id": "ljAne100",
-    "lid": "wS-60300",
+    "lid": [
+     "wS-60300"
+    ],
     "name": "wood",
     "type": "material",
-    "w": 1,
-    "h": 1,
     "bg": "#808080",
     "media": [
      "wood.png"

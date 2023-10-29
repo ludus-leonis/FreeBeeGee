@@ -19,7 +19,6 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
@@ -44,7 +43,11 @@ import {
 
 let token = null
 
-function test401 (api, version, room) { // no token
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function test401 (api, room) { // no token
   openTestroom(api, room, 'Classic', 'myPassword')
   testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
@@ -83,7 +86,11 @@ function test401 (api, version, room) { // no token
   testJsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
 }
 
-function test403 (api, version, room) { // wrong token
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function test403 (api, room) { // wrong token
   openTestroom(api, room, 'Classic', 'myPassword')
   testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
@@ -122,7 +129,11 @@ function test403 (api, version, room) { // wrong token
   testJsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
 }
 
-function test20x (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function test20x (api, room) {
   // hint: 400 is also ok, as this means the permission checks were successfull
 
   openTestroom(api, room, 'Classic', 'myPassword')
@@ -162,7 +173,11 @@ function test20x (api, version, room) {
   testJsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
 }
 
-function testPasswordChange (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testPasswordChange (api, room) {
   openTestroom(api, room, 'Classic')
 
   // --- login to public room results in 0000 token ----------------------------
@@ -283,13 +298,16 @@ function testPasswordChange (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - auth', function () {
     runner((api, version, room) => {
-      describe('401 - no token', () => test401(api, version, room))
-      describe('403 - invalid token', () => test403(api, version, room))
-      describe('20x - valid token', () => test20x(api, version, room))
-      describe('password change', () => testPasswordChange(api, version, room))
+      describe('401 - no token', () => test401(api, room))
+      describe('403 - invalid token', () => test403(api, room))
+      describe('20x - valid token', () => test20x(api, room))
+      describe('password change', () => testPasswordChange(api, room))
     })
   })
 }

@@ -24,9 +24,9 @@ You have to set a password first (or disable it). See the [install instructions]
 
 ## How do I use snapshots?
 
-A snapshot is a `*.zip` files (a.k.a. savegame or backup) of your room. You can obtain it by using the download icon on the bottom left. You can use it to continue your game on the same or a different server - if the other server admin enabled snapshot uploads. See the [install instructions](INSTALL.md) how to do this.
+A snapshot is a `*.zip` file (a.k.a. savegame or backup) of your room. You can obtain it by using the download icon on the bottom left in a room. You can use it to continue your game on the same or a different server - if the other server's admin enabled snapshot uploads. See the [install instructions](INSTALL.md) how to do this.
 
-Assuming snapshot upload is enabled on a server, you will see the sentence *You may also upload a snapshot instead* below the snapshot dropdown:
+If snapshot upload is enabled on a server, you will see the sentence *You may also upload a snapshot instead* below the snapshot dropdown:
 
 <img src="troubleshooting-snapshot1.png" width="320px">
 
@@ -38,7 +38,7 @@ Assuming your snapshot is not too big, it will be used for this room. It will be
 
 ## Why does FreeBeeGee reject larger snapshots?
 
-This can have multiple reasons. Hover on the (?) icon of the error message to find out why.
+This can have multiple reasons. Hover over the (?) icon of the error message to find out why.
 
 * Your webserver might limit upload sizes. Check your httpd.conf. Managed web hosters might also have an option for that in their web console.
 * PHP might limit uploads. Check your php.ini. Managed web hosters might also have an option for that in their web console.
@@ -49,10 +49,10 @@ This can have multiple reasons. Hover on the (?) icon of the error message to fi
 
 You can install any snapshot on your server, avoiding the need to upload it during room create. Snapshots are just `*.zip` files with pre-configured assets and table layouts. You can obtain a snapshot by downloading it from any room you have joined via the icon on the bottom left.
 
-* Rename the `*.zip` file to something meaningfull, e.g. `Dungeon.zip` or `Chess.zip`. Snapshot names must not have spaces.
+* Rename the `*.zip` file to something meaningful, e.g. `Dungeon.zip` or `Chess.zip`. Snapshot names must not have spaces and can only contain a-z, A-Z and 0-9.
 * Copy the renamed file into `.../api/data/snapshots/`.
 
-Now *Dungeon* or *Chess* should appear in the snapshot dropdown when you set up new rooms.
+Now *Dungeon (custom)* or *Chess (custom)* should appear in the snapshot drop-down when you set up new rooms.
 
 In case the snapshot was from a different FreeBeeGee version, it will be converted each time you set up a room with it. To avoid having to do this every time, save a new snapshot after opening the room, and repeat the steps above with the new `*.zip`.
 
@@ -62,7 +62,7 @@ You can create custom game snapshots from scratch, too. Just create a `*.zip` fi
 
 ## Why are pieces missing after converting a snapshot?
 
-This happens when uploading older snapshots that use features that changed or were removed. Most of the time your library should be fine, but pieces on the table might be replaced with placeholder boxes. These boxes are a hint what is missing now. Delete them from the table and add the pieces again, or empty the table and start from scratch.
+This happens when uploading older snapshots that use features that changed or were removed. Most of the time your library should be fine, but pieces on the table might be replaced with placeholder X'es. These X'es are a hint what is missing now. Delete them from the table and add the pieces again, or empty the table and start from scratch.
 
 ## How can I report bugs?
 

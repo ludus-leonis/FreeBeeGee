@@ -44,6 +44,9 @@ import {
 
 const TEST_STATE = 5
 
+/**
+ * Initialize table+room data for tests.
+ */
 function setupTestData () {
   testSelection.selectionReset()
   _test.setRoom(JSON.parse(roomJSON))
@@ -452,6 +455,19 @@ describe('Frontend - selectionGetIds.mjs', function () {
   })
 
   it('selectionGetFeatures()', function () {
+    const emptyBoudingBox = {
+      bottom: 0,
+      center: {
+        x: 0,
+        y: 0
+      },
+      h: 1,
+      left: 0,
+      right: 0,
+      top: 0,
+      w: 1
+    }
+
     // select a single token
     setTableNo(TEST_STATE, false)
     selectionAdd('49d045e1')
@@ -493,7 +509,7 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.color).to.be.eql(false)
         expect(features.border).to.be.eql(false)
         expect(features.number).to.be.eql(false)
-        expect(features.boundingBox).to.be.eql({})
+        expect(features.boundingBox).to.be.eql(emptyBoudingBox)
       }
     }
 
@@ -539,7 +555,7 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.color).to.be.eql(false)
         expect(features.border).to.be.eql(false)
         expect(features.number).to.be.eql(false)
-        expect(features.boundingBox).to.be.eql({})
+        expect(features.boundingBox).to.be.eql(emptyBoudingBox)
       }
     }
 
@@ -585,7 +601,7 @@ describe('Frontend - selectionGetIds.mjs', function () {
         expect(features.color).to.be.eql(false)
         expect(features.border).to.be.eql(false)
         expect(features.number).to.be.eql(false)
-        expect(features.boundingBox).to.be.eql({})
+        expect(features.boundingBox).to.be.eql(emptyBoudingBox)
       }
     }
   })
@@ -700,7 +716,13 @@ describe('Frontend - selectionGetIds.mjs', function () {
   })
 })
 
-function node (obj) { // create a partial HTMLElement/node good enough for tests
+/**
+ * Create a partial HTMLElement/node good enough for tests.
+ *
+ * @param {object} obj Fake node object.
+ * @returns {object} Improved obj for chaining.
+ */
+function node (obj) { //
   if (!obj.classList) obj.classList = []
   obj.classList.contains = function (item) { return this.includes(item) }
   return obj
@@ -761,13 +783,13 @@ const roomJSON = `
     "image": "img/desktop-wood.jpg"
   },
   "library": {
-    "overlay": [{
+    "sticker": [{
       "media": ["area.1x1.1x1x1.svg", "##BACK##"],
       "w": 1,
       "h": 1,
       "bg": "#808080",
       "name": "area.1x1",
-      "type": "overlay",
+      "type": "sticker",
       "id": "7261fff0"
     }],
     "tile": [{

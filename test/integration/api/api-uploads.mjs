@@ -19,7 +19,6 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
@@ -29,7 +28,7 @@ import * as fs from 'fs'
 
 import {
   _,
-  REGEXP_ID,
+  REGEXP,
   p,
   expect,
   zipCreate,
@@ -40,7 +39,11 @@ import {
 
 // -----------------------------------------------------------------------------
 
-function testApiZipMinimal (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiZipMinimal (api, room) {
   testZIPUpload(api,
     () => '/rooms/',
     () => { return room },
@@ -51,7 +54,7 @@ function testApiZipMinimal (api, version, room) {
     body => {
       expect(body).to.be.an('object')
       expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
-      expect(body.id).to.match(REGEXP_ID)
+      expect(body.id).to.match(REGEXP.ID)
       expect(body.name).to.be.eql(room)
       expect(body.engine).to.be.eql(p.versionEngine)
       expect(body.width).to.be.eql(3072)
@@ -63,8 +66,8 @@ function testApiZipMinimal (api, version, room) {
       expect(body.library.material.length).to.be.eql(0 + _.material)
       expect(body.library.other).to.be.an('array')
       expect(body.library.other.length).to.be.eql(0 + _.other)
-      expect(body.library.overlay).to.be.an('array')
-      expect(body.library.overlay.length).to.be.eql(0 + _.overlay)
+      expect(body.library.sticker).to.be.an('array')
+      expect(body.library.sticker.length).to.be.eql(0 + _.sticker)
       expect(body.library.tile).to.be.an('array')
       expect(body.library.tile.length).to.be.eql(0 + _.tile)
       expect(body.library.token).to.be.an('array')
@@ -104,7 +107,11 @@ function testApiZipMinimal (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiZipFull (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiZipFull (api, room) {
   testZIPUpload(api,
     () => '/rooms/',
     () => { return room },
@@ -113,7 +120,7 @@ function testApiZipFull (api, version, room) {
     body => {
       expect(body).to.be.an('object')
       expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
-      expect(body.id).to.match(REGEXP_ID)
+      expect(body.id).to.match(REGEXP.ID)
       expect(body.name).to.be.eql(room)
       expect(body.engine).to.be.eql(p.versionEngine)
       expect(body.width).to.be.eql(3072)
@@ -122,7 +129,7 @@ function testApiZipFull (api, version, room) {
       expect(body.library.badge).to.be.an('array')
       expect(body.library.badge.length).to.be.eql(1 + _.badge)
       expect(body.library.badge[body.library.badge.length - 1].name).to.be.eql('extra')
-      expect(body.library.badge[body.library.badge.length - 1].w).to.be.eql(1)
+      expect(body.library.badge[body.library.badge.length - 1].w).to.be.eql(undefined)
       expect(body.library.material).to.be.an('array')
       expect(body.library.material.length).to.be.eql(1 + _.material)
       expect(body.library.material[body.library.material.length - 1].name).to.be.eql('wood')
@@ -130,10 +137,10 @@ function testApiZipFull (api, version, room) {
       expect(body.library.other.length).to.be.eql(1 + _.other)
       expect(body.library.other[body.library.other.length - 1].name).to.be.eql('aaa')
       expect(body.library.other[body.library.other.length - 1].w).to.be.eql(4)
-      expect(body.library.overlay).to.be.an('array')
-      expect(body.library.overlay.length).to.be.eql(1 + _.overlay)
-      expect(body.library.overlay[body.library.overlay.length - 1].name).to.be.eql('aab.1x1')
-      expect(body.library.overlay[body.library.overlay.length - 1].w).to.be.eql(1)
+      expect(body.library.sticker).to.be.an('array')
+      expect(body.library.sticker.length).to.be.eql(1 + _.sticker)
+      expect(body.library.sticker[body.library.sticker.length - 1].name).to.be.eql('aab.1x1')
+      expect(body.library.sticker[body.library.sticker.length - 1].w).to.be.eql(undefined)
       expect(body.library.tile).to.be.an('array')
       expect(body.library.tile.length).to.be.eql(1 + _.tile)
       expect(body.library.tile[body.library.tile.length - 1].name).to.be.eql('aac')
@@ -141,7 +148,7 @@ function testApiZipFull (api, version, room) {
       expect(body.library.token).to.be.an('array')
       expect(body.library.token.length).to.be.eql(1 + _.token)
       expect(body.library.token[body.library.token.length - 1].name).to.be.eql('aad.plain')
-      expect(body.library.token[body.library.token.length - 1].w).to.be.eql(1)
+      expect(body.library.token[body.library.token.length - 1].w).to.be.eql(undefined)
       expect(body.setup).to.be.an('object')
       expect(body.setup.type).to.be.eql('grid-square')
       expect(body.setup.gridSize).to.be.eql(64)
@@ -179,11 +186,14 @@ function testApiZipFull (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - uploads', function () {
     runner((api, version, room) => {
-      describe('ZIP upload - minimal', () => testApiZipMinimal(api, version, room))
-      describe('ZIP upload - full', () => testApiZipFull(api, version, room))
+      describe('ZIP upload - minimal', () => testApiZipMinimal(api, room))
+      describe('ZIP upload - full', () => testApiZipFull(api, room))
     })
   })
 }

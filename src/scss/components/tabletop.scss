@@ -23,14 +23,17 @@
 /// @access public
 ////
 
+body {
+  #{'--fbg-grid-x'}: 64px;
+  #{'--fbg-grid-y'}: 64px;
+}
+
 .tabletop {
   #{'--fbg-tabletop-image'}: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAQAAAAA3iMLMAAAAC0lEQVR4AWMgEQAAADAAAclXe4EAAAAASUVORK5CYII=');
   #{'--fbg-tabletop-color'}: #808080;
   #{'--fbg-tabletop-width'}: 1024px;
   #{'--fbg-tabletop-height'}: 1024px;
   #{'--fbg-tabletop-grid'}: 'none';
-  #{'--fbg-grid-x'}: 64px;
-  #{'--fbg-grid-y'}: 64px;
   #{'--fbg-zoom'}: 1;
 
   $tile-size: 64px;
@@ -115,7 +118,7 @@
       z-index: 3;
     }
 
-    &-overlay {
+    &-sticker {
       z-index: 2;
     }
 
@@ -128,7 +131,7 @@
     }
   }
 
-  @each $layer in (tile, overlay, token, other, note) {
+  @each $layer in (tile, sticker, token, other, note) {
     &.layer-#{$layer}-enabled {
       .layer-#{$layer} > * {
         pointer-events: all;

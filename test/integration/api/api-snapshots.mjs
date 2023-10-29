@@ -19,7 +19,6 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
@@ -39,6 +38,11 @@ import {
 
 import dateformat from 'dateformat'
 
+/**
+ * Calculate daylight standard time aware offset of CET/CEST timezone vs GMT.
+ *
+ * @returns {number} Offset in minutes.
+ */
 function dstOffset () { // return 60/120 depending if DST is off or on
   const now = new Date()
   return Math.max(
@@ -51,7 +55,11 @@ function dstOffset () { // return 60/120 depending if DST is off or on
 
 // -----------------------------------------------------------------------------
 
-function testApiSnapshotClassic (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshotClassic (api, room) {
   openTestroom(api, room, 'Classic')
 
   testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
@@ -87,7 +95,11 @@ function testApiSnapshotClassic (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiSnapshotRPG (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshotRPG (api, room) {
   openTestroom(api, room, 'RPG')
 
   testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
@@ -109,7 +121,11 @@ function testApiSnapshotRPG (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiSnapshotHex (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshotHex (api, room) {
   openTestroom(api, room, 'Hex')
 
   testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
@@ -121,7 +137,7 @@ function testApiSnapshotHex (api, version, room) {
     expect(entries).to.contain('LICENSE.md')
     expect(entries).to.contain('setup.json')
     expect(entries).to.contain('tables/1.json')
-    expect(entries).to.contain('assets/tile/map.B.5x4x1.transparent.png')
+    expect(entries).to.contain('assets/tile/map.B.6x4x1.1.paper.svg')
     expect(entries).not.to.contain('room.json')
     expect(entries).not.to.contain('snapshot.zip')
   }, 200)
@@ -131,7 +147,11 @@ function testApiSnapshotHex (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiSnapshotTutorial (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshotTutorial (api, room) {
   openTestroom(api, room, 'Tutorial')
 
   testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
@@ -154,7 +174,11 @@ function testApiSnapshotTutorial (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiSnapshotUpload (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshotUpload (api, room) {
   testZIPUpload(api,
     () => '/rooms/',
     () => { return room },
@@ -172,7 +196,11 @@ function testApiSnapshotUpload (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
-function testApiSnapshotVersions (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshotVersions (api, room) {
   const v = p.versionEngine.split('.')
   v[0] = Number.parseInt(v[0])
   v[1] = Number.parseInt(v[1])
@@ -317,6 +345,13 @@ function testApiSnapshotVersions (api, version, room) {
 
 // -----------------------------------------------------------------------------
 
+/**
+ * Create a random 'compressed' file/blob as if it would have a 0.825
+ * compression ratio.
+ *
+ * @param {number} mb MB to create.
+ * @returns {string} Random string of mb * 0.825 length.
+ */
 function blob (mb) {
   const chars = [...Array(256)].map((s, i) => String.fromCharCode(i))
   const result = []
@@ -327,7 +362,11 @@ function blob (mb) {
   return result.join('')
 }
 
-function testApiSnapshotSize (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshotSize (api, room) {
   const b = blob(1)
 
   // 33MB - size exceeds php but not webserver
@@ -396,16 +435,19 @@ function testApiSnapshotSize (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - snapshots', function () {
     runner((api, version, room) => {
-      describe('Classic', () => testApiSnapshotClassic(api, version, room))
-      describe('RPG', () => testApiSnapshotRPG(api, version, room))
-      describe('Hex', () => testApiSnapshotHex(api, version, room))
-      describe('Tutorial', () => testApiSnapshotTutorial(api, version, room))
-      describe('upload', () => testApiSnapshotUpload(api, version, room))
-      describe('versions', () => testApiSnapshotVersions(api, version, room))
-      describe('size', () => testApiSnapshotSize(api, version, room))
+      describe('Classic', () => testApiSnapshotClassic(api, room))
+      describe('RPG', () => testApiSnapshotRPG(api, room))
+      describe('Hex', () => testApiSnapshotHex(api, room))
+      describe('Tutorial', () => testApiSnapshotTutorial(api, room))
+      describe('upload', () => testApiSnapshotUpload(api, room))
+      describe('versions', () => testApiSnapshotVersions(api, room))
+      describe('size', () => testApiSnapshotSize(api, room))
     })
   })
 }

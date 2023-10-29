@@ -8,7 +8,7 @@ A virtual gaming tabletop you can host on your own server.
 
 Your game. Your data.
 
-[FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Patreon](https://www.patreon.com/LudusLeonis) | [Docs](docs/DOCS.md)
+[FreeBeeGee Homepage](https://freebeegee.org/) | [GitHub](https://github.com/ludus-leonis/FreeBeeGee) | [Docs](docs/DOCS.md)
 
 ## Key features
 
@@ -18,7 +18,7 @@ Your game. Your data.
 * Multiple tables per room. Use them for different game setups or dungeon levels.
 * Tile-/grid-based. Supports square and hex layouts, with snapping.
 * Classic game boards, dungeon tiles and 200+ monster token included. Upload your own, too.
-* Separate layers for tiles, overlays and tokens.
+* Separate layers for tiles, sticker and token.
 * Asset browser for your token/tiles. Individual libraries per room/game.
 * Sticky notes and dice trays.
 * Templates to setup tables and populate your library from.
@@ -27,7 +27,7 @@ Your game. Your data.
 * File & folder-based. No database required. Easy to install.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
 
-**Note:** This is an development version. A few eatures are still missing:
+**Note:** This is an development version. A few features are still missing:
 
 * Editing assets in the library is possible but limited.
 

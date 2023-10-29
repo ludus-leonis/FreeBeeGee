@@ -15,7 +15,7 @@ FreeBeeGee uses PHP only for the faceless JSON/Rest API and won't let it go anyw
 
 Yes, it would. But this is a compromise in favor of another design goal. PHP can do websockets, but most managed PHP-hosters won't allow running your own processes or listening on ports.
 
-We optimized the polling with auto-adapting intervals depending on what's going on in each game. This mechansim should be fine for running a few games simultaneously on even a small, shared PHP server. And we have this Distributed-is-king policy, so instead of optimizing one installation to serve thousands, why not just run it 10x?
+We optimized the polling with auto-adapting intervals depending on what's going on in each game. This mechanism should be fine for running a few rooms simultaneously on even a small, shared PHP server. And we have this Distributed-is-king policy, so instead of optimizing one installation to serve thousands, why not just run it 10x?
 
 ## No Database?
 
@@ -25,4 +25,4 @@ Most of the data processing is done by the clients, in JavaScript. The server mo
 
 ## What about concurrent data access?
 
-Each game is an isolated folder on the server. The vast majority of requests to the API are read-requests for static JSON files. Rare write-requests that change those files peak at ~1 request per second per game in typical games. That's when players are shifting pieces on the board. We are fine with simple file-based locking in combination with one lock file per running game.
+Each game is an isolated folder on the server. The vast majority of requests to the API are read-requests for static JSON files. Rare write-requests that change those files peak at ~1 request per second per game in typical games. That's when players are moving pieces on the tables. We are fine with simple file-based locking in combination with one lock file per room.

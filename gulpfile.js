@@ -36,7 +36,7 @@ import tar from 'gulp-tar'
 import zip from 'gulp-zip'
 import vinylSource from 'vinyl-source-stream'
 
-import dartSass from 'sass'
+import * as dartSass from 'sass'
 import gulpSass from 'gulp-sass'
 const sass = gulpSass(dartSass)
 
@@ -160,9 +160,8 @@ gulp.task('sass', () => {
 gulp.task('php', () => {
   // todo: run php -l
   return replace(gulp.src([
-    'src/php/**/*php',
-    'src/php/.htaccess*',
-    'src/php/**/*.json'
+    'src/php/**/.*',
+    'src/php/**/*'
   ]))
     .pipe(gulp.dest(dirs.site + '/api'))
 })
@@ -184,20 +183,19 @@ gulp.task('img', gulp.series(() => {
   return gulp.src([
     'src/img/**/*.jpg'
   ])
-    .pipe(changed(dirs.cache + '/img'))
     .pipe(shrinkr({
+      cacheDir: '.cache/img',
       jpg: { quality: 9 }
     }))
-    .pipe(gulp.dest(dirs.cache + '/img'))
 }, () => {
   // step 2 - optimize other assets
   return gulp.src([
     'src/img/**/*.svg',
     'src/img/**/*.png'
   ])
-    .pipe(changed(dirs.cache + '/img'))
-    .pipe(shrinkr())
-    .pipe(gulp.dest(dirs.cache + '/img'))
+    .pipe(shrinkr({
+      cacheDir: '.cache/img'
+    }))
 }, () => {
   // step 3 - use cached images
   return gulp.src([
@@ -208,6 +206,14 @@ gulp.task('img', gulp.series(() => {
     .pipe(gulp.dest(dirs.site + '/img'))
 }))
 
+gulp.task('system', () => {
+  return replace(gulp.src([
+    'src/misc/system/**/.*',
+    'src/misc/system/**/*'
+  ]))
+    .pipe(gulp.dest(dirs.site + '/system'))
+})
+
 /**
  * Create a snapshot zip/tgz.
  *
@@ -215,24 +221,39 @@ gulp.task('img', gulp.series(() => {
  * @param {boolean} minimize If true, the asses/images will be minimized first.
  * @returns {object} Gulp pipe.
  */
-function snapshot (name, minimize = true) {
-  return gulp.series(() => { // step 1: optimize & cache content
+function snapshot (name, minimize = false) {
+  return gulp.series(() => { // step 1: optimize & cache images
     if (minimize) {
-      return replace(gulp.src('src/snapshots/' + name + '/**/*'))
-        .pipe(changed(dirs.cache + '/snapshots/' + name))
+      return gulp.src([
+        'src/snapshots/' + name + '/**/*.jpg',
+        'src/snapshots/' + name + '/**/*.png',
+        'src/snapshots/' + name + '/**/*.svg'
+      ])
         .pipe(shrinkr({
+          cacheDir: '.cache/snapshots/' + name,
           jpg: { quality: 7 }
         }))
-        .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
     } else {
-      return replace(gulp.src('src/snapshots/' + name + '/**/*'))
+      return gulp.src([
+        'src/snapshots/' + name + '/**/*.jpg',
+        'src/snapshots/' + name + '/**/*.png',
+        'src/snapshots/' + name + '/**/*.svg'
+      ])
         .pipe(changed(dirs.cache + '/snapshots/' + name))
         .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
     }
-  }, () => { // step 2: zip cache
+  }, () => { // step 2: cache non-images
+    return replace(gulp.src([
+      'src/snapshots/' + name + '/**/*',
+      '!src/snapshots/' + name + '/**/*.jpg',
+      '!src/snapshots/' + name + '/**/*.png',
+      '!src/snapshots/' + name + '/**/*.svg'
+    ]))
+      .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
+  }, () => { // step 3: zip cache
     return gulp.src(dirs.cache + '/snapshots/' + name + '/**/*')
       .pipe(zip(name + '.zip'))
-      .pipe(gulp.dest(dirs.site + '/api/data/snapshots'))
+      .pipe(gulp.dest(dirs.site + '/system/snapshots'))
   })
 }
 
@@ -242,14 +263,15 @@ gulp.task('dist', gulp.parallel(
   'html',
   'js-vendor',
   'php',
-  snapshot('RPG', false),
-  snapshot('Hex', false),
-  snapshot('Classic', false),
-  snapshot('Tutorial', false),
-  snapshot('_', false),
+  snapshot('RPG'),
+  snapshot('Hex'),
+  snapshot('Classic'),
+  snapshot('Tutorial'),
+  snapshot('_'),
   'fonts',
   'img',
-  'favicon'
+  'favicon',
+  'system'
 ))
 
 // --- testing targets ---------------------------------------------------------
@@ -335,9 +357,9 @@ function demo (name) {
     return replace(gulp.src('src/snapshots/' + name + '/**/*'))
       .pipe(changed(dirs.cache + '/snapshots/' + name))
       .pipe(shrinkr({
+        cacheDir: '.cache/snapshots/' + name,
         jpg: { quality: 7 }
       }))
-      .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
   })
 }
 

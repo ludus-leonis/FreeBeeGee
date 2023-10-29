@@ -25,40 +25,15 @@
 
 // --- quality settings --------------------------------------------------------
 
-.is-quality-medium .piece-tile {
-  filter: drop-shadow($shadow-flat);
-}
-
-.is-quality-high .piece-tile,
-.is-quality-ultra .piece-tile {
-  background-image: var(--fbg-material), var(--fbg-image);
-  background-size: zoom(256px), cover;
+.is-quality-high .piece-tile {
   border-radius: zoom($piece-corner-radius);
-  filter: drop-shadow($shadow);
-
-  @each $id in $random-ids {
-    $i: index($random-ids, $id);
-
-    &[id^='#{$id}'] {
-      background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), center;
-    }
-  }
-
-  &.has-decal {
-    background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
-    background-size: zoom(256px), cover, cover;
-    @each $id in $random-ids {
-      $i: index($random-ids, $id);
-
-      &[id^='#{$id}'] {
-        background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), center, center;
-      }
-    }
-  }
 }
 
 .is-quality-ultra .piece-tile {
   @include rotate-random($piece-rotate);
+
+  border-radius: zoom($piece-corner-radius);
+
   @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
     &.is-w-#{$x} { #{'--fbg-r2'}: 0deg; }
     &.is-y-#{$x} { #{'--fbg-r2'}: 0deg; }

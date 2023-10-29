@@ -1,5 +1,5 @@
 /**
- * @file Handles the other/overlay editor modal.
+ * @file Handles the other/sticker editor modal.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license AGPL-3.0-or-later

@@ -63,9 +63,7 @@ import {
 } from '../../../state/index.mjs'
 
 import {
-  LAYER_TILE,
-  LAYER_OVERLAY,
-  LAYER_TOKEN,
+  LAYER,
   createPieceFromAsset,
   splitAssetFilename,
   snap
@@ -125,20 +123,20 @@ export function modalLibrary (xy) {
     _('#modal-body').innerHTML = `
       <div id="tabs-library" class="tabs">
         <input id="tab-1" type="radio" name="tabs" value="tile">
-        <input id="tab-2" type="radio" name="tabs" value="overlay">
+        <input id="tab-2" type="radio" name="tabs" value="sticker">
         <input id="tab-3" type="radio" name="tabs" value="token">
         <input id="tab-4" type="radio" name="tabs" value="other">
         <input id="tab-5" type="radio" name="tabs" value="upload">
         <div class="tabs-tabs">
           <label for="tab-1" class="tabs-tab">Tiles</label>
-          <label for="tab-2" class="tabs-tab">Overlays</label>
+          <label for="tab-2" class="tabs-tab">Sticker</label>
           <label for="tab-3" class="tabs-tab">Token</label>
           <label for="tab-4" class="tabs-tab">Dice</label>
           <label for="tab-5" class="tabs-tab">Upload</label>
         </div>
         <div class="tabs-content">
           <div class="container"><div id="tab-tiles" class="row"></div></div>
-          <div class="container"><div id="tab-overlays" class="row"></div></div>
+          <div class="container"><div id="tab-stickers" class="row"></div></div>
           <div class="container"><div id="tab-tokens" class="row"></div></div>
           <div class="container"><div id="tab-other" class="row"></div></div>
           <form class="container spacing-small"><div id="tab-upload" class="row">
@@ -171,7 +169,7 @@ export function modalLibrary (xy) {
               </label>
             </div>
             <div class="col-6">
-              <p class="fbg-error"></p>
+              <p class="is-error"></p>
             </div>
           </div></form>
         </div>
@@ -216,46 +214,45 @@ export function modalLibrary (xy) {
 let prevSearch = ''
 
 /**
+ * Sort library items for display in the tab(s).
+ *
+ * @param {string} label Label/title for the separator.
+ * @param {_} tab Tab node to populate.
+ * @param {object[]} assets Array of assets to add.
+ * @param {boolean} expand If True, all asset sides will be added.
+ * @param {boolean} sideCount If True, a 'x/x' side count label will be added.
+ */
+function sortPieces (label, tab, assets, expand = false, sideCount = true) {
+  const systemTiles = []
+  const regularTiles = []
+  for (const asset of sortByString(assets ?? [], 'name')) {
+    const folder = asset.name.match(/^_\./) ? systemTiles : regularTiles
+    if (expand) {
+      for (let i = 0; i < (asset.media?.length ?? 1); i++) {
+        folder.push(assetToPreview(asset, i, sideCount))
+      }
+    } else {
+      folder.push(assetToPreview(asset, 0, sideCount))
+    }
+  }
+  if (regularTiles.length > 0) {
+    tab.add(regularTiles)
+    tab.add(_('label.col-12.is-center').create(`----- System ${label} -----`))
+  }
+  tab.add(systemTiles)
+}
+
+/**
  * Get a fresh dataset from the state and populate the tabs with the items.
  */
 function refreshTabs () {
   const library = getLibrary()
 
   // add items to their tab, sort system assets (_) last
-  const tiles = _('#tab-tiles').empty()
-  const systemTiles = []
-  const regularTiles = []
-  for (const asset of sortByString(library.tile ?? [], 'name')) {
-    for (let i = 0; i < (asset.media?.length ?? 1); i++) {
-      if (asset.name.match(/^_\./)) {
-        systemTiles.push(assetToPreview(asset, i))
-      } else {
-        regularTiles.push(assetToPreview(asset, i))
-      }
-    }
-  }
-  tiles.add(regularTiles, systemTiles)
-  const overlays = _('#tab-overlays').empty()
-  for (const asset of sortByString(library.overlay ?? [], 'name')) {
-    overlays.add(assetToPreview(asset))
-  }
-  const tokens = _('#tab-tokens').empty()
-  const systemTokens = []
-  const regularTokens = []
-  for (const asset of sortByString(library.token ?? [], 'name')) {
-    for (let i = 0; i < (asset.media?.length ?? 1); i++) {
-      if (asset.name.match(/^_\./)) {
-        systemTokens.push(assetToPreview(asset, i))
-      } else {
-        regularTokens.push(assetToPreview(asset, i))
-      }
-    }
-  }
-  tokens.add(regularTokens, systemTokens)
-  const other = _('#tab-other').empty()
-  for (const asset of sortByString(library.other ?? [], 'name')) {
-    other.add(assetToPreview(asset))
-  }
+  sortPieces('Tiles', _('#tab-tiles').empty(), library.tile, true)
+  sortPieces('Sticker', _('#tab-stickers').empty(), library.sticker)
+  sortPieces('Token', _('#tab-tokens').empty(), library.token, true)
+  sortPieces('Dice', _('#tab-other').empty(), library.other, false, false)
 
   // enable selection
   _('#tabs-library .is-preview').on('click', click => {
@@ -341,7 +338,7 @@ function modalUpload () {
   _('#btn-ok').add('.is-spinner')
 
   // reset error
-  const errorMessage = _('#modal-body .fbg-error')
+  const errorMessage = _('#modal-body .is-error')
   errorMessage.innerHTML = ''
 
   // do sanity checks
@@ -382,6 +379,7 @@ function modalUpload () {
       type,
       w: Number(_('#upload-w').value),
       h: Number(_('#upload-h').value),
+      d: ['tile', 'token'].includes(type) ? 2 : 0, // default depth
       base64: _('.is-preview-upload .piece').node().style.backgroundImage
         .replace(/^.*,/, '')
         .replace(/".*/, '')
@@ -393,7 +391,7 @@ function modalUpload () {
     }
 
     // set bg color
-    if (type === LAYER_TOKEN || data.format === 'jpg') {
+    if (type === LAYER.TOKEN || data.format === 'jpg') {
       data.bg = _('#upload-color').value
     } else {
       data.bg = 'transparent'
@@ -405,13 +403,13 @@ function modalUpload () {
           .then(() => {
             refreshTabs()
             switch (data.type) {
-              case LAYER_TILE:
+              case LAYER.TILE:
                 _('#tab-1').checked = true
                 break
-              case LAYER_OVERLAY:
+              case LAYER.STICKER:
                 _('#tab-2').checked = true
                 break
-              case LAYER_TOKEN:
+              case LAYER.TOKEN:
                 _('#tab-3').checked = true
                 break
               default:
@@ -454,7 +452,7 @@ function modalUpload () {
  * @param {string} why Info for user why the upload failed.
  */
 function uploadFailed (why) {
-  _('#modal-body .fbg-error').innerHTML = `Upload failed: ${why}`
+  _('#modal-body .is-error').innerHTML = `Upload failed: ${why}`
 }
 
 /**
@@ -463,10 +461,10 @@ function uploadFailed (why) {
 function setupTabUpload () {
   // width
   const type = _('#upload-type')
-  for (const l of [LAYER_TOKEN, LAYER_OVERLAY, LAYER_TILE]) {
+  for (const l of [LAYER.TOKEN, LAYER.STICKER, LAYER.TILE]) {
     const option = _('option').create(toTitleCase(l))
     option.value = l
-    if (l === LAYER_TOKEN) option.selected = true
+    if (l === LAYER.TOKEN) option.selected = true
     type.add(option)
   }
   type.on('change', change => updatePreview())
@@ -531,7 +529,7 @@ function updatePreview (parseFilename = false) {
     } else {
       _('#upload-material').value = 'none'
     }
-    if ([LAYER_TILE, LAYER_TOKEN].includes(parts.type)) {
+    if ([LAYER.TILE, LAYER.TOKEN].includes(parts.type)) {
       _('#upload-type').value = parts.type
     }
 
@@ -553,16 +551,16 @@ function updatePreview (parseFilename = false) {
           const tilesY = Math.round(image.height / tilesize) || 1
           if (square) {
             if (tilesX <= 4) {
-              _('#upload-type').value = LAYER_TOKEN
+              _('#upload-type').value = LAYER.TOKEN
               _('#upload-w').value = tilesX
               _('#upload-h').value = tilesX
             } else {
-              _('#upload-type').value = LAYER_TILE
+              _('#upload-type').value = LAYER.TILE
               _('#upload-w').value = Math.min(tilesX, 32)
               _('#upload-h').value = Math.min(tilesY, 32)
             }
           } else {
-            _('#upload-type').value = LAYER_TILE
+            _('#upload-type').value = LAYER.TILE
             _('#upload-w').value = Math.min(tilesX, 32)
             _('#upload-h').value = Math.min(tilesY, 32)
           }
@@ -597,12 +595,12 @@ function updatePreviewDOM (blob) {
 
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
-  if (type === LAYER_OVERLAY || type === LAYER_TILE) {
+  if (type === LAYER.STICKER || type === LAYER.TILE) {
     piece.css({ '--fbg-color': 'rgba(0,0,0,.05)' })
   } else {
     piece.css({ '--fbg-color': '#202020' })
   }
-  if (type === LAYER_TOKEN) {
+  if (type === LAYER.TOKEN) {
     piece.add('.has-highlight')
   }
   piece.css({ '--fbg-material': url(getMaterialMedia(material)) })
@@ -648,9 +646,10 @@ function updatePreviewDOM (blob) {
  *
  * @param {object} asset The asset to convert.
  * @param {number} side Side to show, 0-based.
+ * @param {boolean} sideCount Show side 'x/y' label.
  * @returns {HTMLElement} Node for the modal.
  */
-function assetToPreview (asset, side = 0) {
+function assetToPreview (asset, side = 0, sideCount = true) {
   const max = _('.is-preview').create(assetToNode(asset, side))
   if (asset.w % 2 === 0) max.add('.is-even-x')
   if (asset.h % 2 === 0) max.add('.is-even-y')
@@ -661,13 +660,13 @@ function assetToPreview (asset, side = 0) {
   if (asset.w > 2 || asset.h > 2) {
     tag = `${asset.w}x${asset.h}`
   }
-  if (asset.media.length > 1) {
-    tag += `:${asset.media.length}`
-  }
 
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
-  const name = prettyName(asset.name) + (asset.media.length > 1 ? ` (${side + 1})` : '')
-  card.add(_('p').create().add(prettyName(name)))
+  let name = prettyName(asset.name)
+  if (sideCount && asset.media.length > 1) name += ` <span class="is-faded-more">${side + 1}/${asset.media.length}</span>`
+  const label = _('p').create()
+  label.innerHTML = name
+  card.add(label)
   return card
 }
 

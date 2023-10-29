@@ -31,7 +31,7 @@ Note that all files have to be in the root folder of the `ZIP`! Usually you want
 │  │  ├─ orc.1x1x1.png
 │  │  ├─ fighter.1x1x1.png
 │  │  └─ wizard.1x1x1.png
-│  ├─ overlay/
+│  ├─ sticker/
 │  │  ├─ door.2x1x1.png
 │  │  └─ table.3x2x1.png
 │  ├─ tile/
@@ -68,7 +68,7 @@ The copyright and license / usage conditions of this snapshot in [Markdown](http
 
 Assets are the images users can see in the library window.
 
-All assets must be placed in an `assets/` folder. Inside that folder there may be subfolders for each asset type: `token`, `overlay`, `tile` and `other`, plus a `tag` folder for condition icons used in token labels. Images within those subfolders (but not sub-subfolders) will automatically be sorted in the corresponding library category. You can omit folders if your snapshot does not need them.
+All assets must be placed in an `assets/` folder. Inside that folder there may be subfolders for each asset type: `token`, `sticker`, `tile` and `other`, plus a `tag` folder for condition icons used in token labels. Images within those subfolders (but not sub-subfolders) will automatically be sorted in the corresponding library category. You can omit folders if your snapshot does not need them.
 
 Asset filenames should follow a certain naming pattern so that FreeBeeGee can populate default meta fields (e.g. size, side, ...) automatically. The pattern is described in the [datamodel](datamodel.md#media-filenames) documentation. If the pattern is not followed, assets will still be used but default meta values will be set (e.g. size 1x1).
 

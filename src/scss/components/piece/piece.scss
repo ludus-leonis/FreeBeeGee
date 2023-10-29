@@ -53,17 +53,18 @@ $piece-rotate: 1deg;
   #{'--fbg-border-color'}: var(--fbg-color-medium);
   #{'--fbg-border-color-invert'}: var(--fbg-color-light);
   #{'--fbg-material'}: none;
-  #{'--fbg-decal'}: none;
-  #{'--fbg-image'}: none;
+  #{'--fbg-side'}: none;
+  #{'--fbg-base'}: none;
   #{'--fbg-mask'}: none;
+  #{'--fbg-grid'}: none;
 }
 
 .piece {
   align-items: center; // mainly for labels
   background-color: var(--fbg-color);
-  background-image: var(--fbg-image);
-  background-position: center;
-  background-size: cover;
+  background-image: none, var(--fbg-grid), var(--fbg-side), var(--fbg-base);
+  background-position: center, var(--fbg-grid-x-origin) var(--fbg-grid-y-origin), center, center;
+  background-size: cover, zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
   display: flex;
   height: zoom($piece-tile-size);
   justify-content: center;
@@ -92,8 +93,7 @@ $piece-rotate: 1deg;
 
   &.is-pointer {
     animation: whirl 1s linear infinite;
-    background-image: url('img/pointer.png');
-    background-size: contain;
+    #{'--fbg-side'}: url('img/pointer.png');
     filter: none !important; // sass-lint:disable-line no-important
   }
 
@@ -111,6 +111,17 @@ $piece-rotate: 1deg;
     }
   }
 
+  // --- material --------------------------------------------------------------
+
+  @each $id in $random-ids {
+    $i: index($random-ids, $id);
+
+    &[id^='#{$id}'] {
+      background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), var(--fbg-grid-x-origin) var(--fbg-grid-y-origin), center, center;
+    }
+  }
+
+
   // --- borders + 3d highlight ------------------------------------------------
 
   &.has-border {
@@ -119,6 +130,9 @@ $piece-rotate: 1deg;
 
   .is-quality-high &,
   .is-quality-ultra & {
+    background-image: var(--fbg-material), var(--fbg-grid), var(--fbg-side), var(--fbg-base);
+    background-size: zoom(256px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
+
     &.has-highlight {
       box-shadow: highlight();
 
@@ -184,26 +198,19 @@ $piece-rotate: 1deg;
     max-width: unset;
   }
 
-  // --- additional layer (dice) -----------------------------------------------
-
-  &.has-decal {
-    background-image: var(--fbg-decal), var(--fbg-image);
-    background-position: center, center;
-    background-size: cover, cover;
-  }
-
   // --- piece masks -----------------------------------------------------------
 
   &.has-mask {
-    #{'--fbg-color'}: $color-none;
     background-color: transparent;
-    box-shadow: none !important; // sass-lint:disable-line no-important
+    background-image: var(--fbg-side); // e.g. pin outer
+    background-position: center;
+    background-size: cover;
 
-    > .masked {
+    > .is-mask {
       background-color: var(--fbg-color);
-      background-image: var(--fbg-image);
-      background-position: center;
-      background-size: cover;
+      background-image: none, var(--fbg-grid), var(--fbg-side), var(--fbg-base);
+      background-position: center, var(--fbg-grid-x-origin) var(--fbg-grid-y-origin), center, center;
+      background-size: zoom(256px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
       height: 100%;
       mask-image: var(--fbg-mask);
       mask-position: center;
@@ -213,18 +220,14 @@ $piece-rotate: 1deg;
       width: 100%;
     }
 
-    &.has-decal { // move decal to inner div for masked pieces
-      background-image: var(--fbg-image);
-      background-position: center;
-      background-size: cover;
-
-      > .masked {
-        background-image: var(--fbg-decal), var(--fbg-image);
-        background-position: center, center;
-        background-size: cover, cover;
+    .is-quality-high &,
+    .is-quality-ultra & {
+      > .is-mask {
+        background-image: var(--fbg-material), var(--fbg-grid), var(--fbg-side), var(--fbg-base);
       }
     }
   }
+
 
   // --- drag-n-drop -----------------------------------------------------------
 
@@ -258,11 +261,11 @@ $piece-rotate: 1deg;
   }
 }
 
-// --- helpers -----------------------------------------------------------------
+// --- specific pieces ---------------------------------------------------------
 
 @import 'piece-token';
 @import 'piece-tile';
-@import 'piece-overlay';
+@import 'piece-sticker';
 @import 'piece-other';
 @import 'piece-note';
 @import 'piece-los';

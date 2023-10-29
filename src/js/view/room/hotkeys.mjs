@@ -52,6 +52,8 @@ import {
   toTopSelected,
   randomSelected,
   numberSelected,
+  moveSelected,
+  gridSelected,
   createNote,
   colorSelected,
   pileSelected,
@@ -62,10 +64,7 @@ import {
 } from '../../view/room/tabletop/index.mjs'
 
 import {
-  LAYER_TILE,
-  LAYER_OVERLAY,
-  LAYER_TOKEN,
-  LAYER_OTHER
+  LAYER
 } from '../../view/room/tabletop/tabledata.mjs'
 
 import {
@@ -158,6 +157,30 @@ function handleRoomKeys (keydown) {
     }
 
     switch (keydown.key) {
+      case 'ArrowDown':
+        if (keydown.shiftKey) moveSelected(0, 10); else moveSelected(0, 1)
+        break
+      case 'ArrowUp':
+        if (keydown.shiftKey) moveSelected(0, -10); else moveSelected(0, -1)
+        break
+      case 'ArrowLeft':
+        if (keydown.shiftKey) moveSelected(-10, 0); else moveSelected(-1, 0)
+        break
+      case 'ArrowRight':
+        if (keydown.shiftKey) moveSelected(10, 0); else moveSelected(1, 0)
+        break
+      case 'Home':
+        if (keydown.shiftKey) moveSelected(-10, -10); else moveSelected(-1, -1)
+        break
+      case 'PageUp':
+        if (keydown.shiftKey) moveSelected(10, -10); else moveSelected(1, -1)
+        break
+      case 'End':
+        if (keydown.shiftKey) moveSelected(-10, 10); else moveSelected(-1, 1)
+        break
+      case 'PageDown':
+        if (keydown.shiftKey) moveSelected(10, 10); else moveSelected(1, 1)
+        break
       case 'Delete': // delete selected
         deleteSelected()
         break
@@ -165,16 +188,16 @@ function handleRoomKeys (keydown) {
         pointTo(getMouseCoords())
         break
       case '1': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(1); else toggleLayer(LAYER_OTHER)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(1); else toggleLayer(LAYER.OTHER)
         break
       case '2': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(2); else toggleLayer(LAYER_TOKEN)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(2); else toggleLayer(LAYER.TOKEN)
         break
       case '3': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(3); else toggleLayer(LAYER_OVERLAY)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(3); else toggleLayer(LAYER.STICKER)
         break
       case '4': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(4); else toggleLayer(LAYER_TILE)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(4); else toggleLayer(LAYER.TILE)
         break
       case '5': // toggle layer, switch table
         if (keydown.ctrlKey | keydown.altKey) setTableNo(5)
@@ -206,13 +229,13 @@ function handleRoomKeys (keydown) {
       case 't': // to-top
         toTopSelected()
         break
-      case 'a': // copy/clone
+      case 'a': // select-all
         if (keydown.ctrlKey) selectionAddAll()
         break
       case 'c': // copy/clone
         if (keydown.ctrlKey) clipboardCopy(); else cloneSelected(getMouseCoords())
         break
-      case 'x': // paste
+      case 'x': // cut
         if (keydown.ctrlKey) {
           clipboardCopy()
           deleteSelected()
@@ -221,9 +244,22 @@ function handleRoomKeys (keydown) {
       case 'v': // paste
         if (keydown.ctrlKey) clipboardPaste(getMouseCoords())
         break
+      case 'Copy': // dedicated copy key
+        clipboardCopy()
+        break
+      case 'Cut': // dedicated cut key
+        clipboardCopy()
+        deleteSelected()
+        break
+      case 'Paste': // dedicated copy key
+        clipboardPaste(getMouseCoords())
+        break
       case 'u': // undo
       case 'z': // undo
         if (keydown.ctrlKey) undo()
+        break
+      case 'Undo': // dedicated undo key
+        undo()
         break
       case 'e': // edit
       case 'F2':
@@ -238,8 +274,11 @@ function handleRoomKeys (keydown) {
       case 'F': // flip backward
         flipSelected(false)
         break
-      case 'g': // grid
+      case 'G': // grid (table)
         toggleGrid()
+        break
+      case 'g': // grid (piece)
+        gridSelected()
         break
       case 'o': // token color
         colorSelected(false)
@@ -257,6 +296,7 @@ function handleRoomKeys (keydown) {
       case 'H':
       case '?':
       case 'F1':
+      case 'Help':
         modalHelp()
         break
       case 'r': // rotate CW
@@ -276,9 +316,11 @@ function handleRoomKeys (keydown) {
         break
       case '+': // zoom in
       case '=':
+      case 'ZoomIn':
         zoom(1)
         break
       case '-': // zoom out
+      case 'ZoomOut':
         zoom(-1)
         break
       case '>': // increase No.

@@ -15,7 +15,6 @@ module.exports = {
     sourceType: 'module'
   },
   ignorePatterns: [
-    'test/**/*'
   ],
   rules: {
     'jsdoc/no-multi-asterisks': 2,

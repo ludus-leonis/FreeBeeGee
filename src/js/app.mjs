@@ -28,6 +28,10 @@ import {
 } from './view/setup/index.mjs'
 
 import {
+  installer
+} from './view/installer/index.mjs'
+
+import {
   passwordView
 } from './view/password/index.mjs'
 
@@ -111,12 +115,14 @@ export function auth (roomName, password) {
 export function route () {
   apiGetServerInfo()
     .then(info => {
+      setServerInfo(info)
+
       if (info.version !== '$VERSION$') {
         console.info('update', info.version, '$VERSION$')
         runError('UPDATE')
+      } else if (info.install ?? 0 > 1) {
+        installer(info.install)
       } else {
-        setServerInfo(info)
-
         // run the corresponding screen/dialog
         const rootFolder = info.root.substr(0, info.root.length - '/api'.length)
         let path = window.location.pathname

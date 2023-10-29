@@ -19,14 +19,13 @@
  */
 
 /* global describe */
-/* eslint no-unused-expressions: 0 */
 
 // -----------------------------------------------------------------------------
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
 import {
-  REGEXP_ID,
+  REGEXP,
   p,
   expect,
   openTestroom,
@@ -44,17 +43,18 @@ import {
 } from '../utils/data.mjs'
 
 import {
-  LAYER_TILE,
-  LAYER_TOKEN,
-  LAYER_OVERLAY,
-  LAYER_OTHER
+  LAYER
 } from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 // -----------------------------------------------------------------------------
 
 let data = null
 
-function testApiCrudRoom (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiCrudRoom (api, room) {
   // get room - should not be there yet
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
@@ -71,14 +71,14 @@ function testApiCrudRoom (api, version, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.name).to.be.eql(room)
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.width).to.be.eql(3072)
     expect(body.height).to.be.eql(2048)
     expect(body.library).to.be.an('object')
-    expect(Object.keys(body.library)).to.have.members([LAYER_TILE, LAYER_TOKEN, LAYER_OVERLAY, 'badge', 'material', LAYER_OTHER])
-    expect(body.library.overlay).to.be.an('array')
+    expect(Object.keys(body.library)).to.have.members([LAYER.TILE, LAYER.TOKEN, LAYER.STICKER, 'badge', 'material', LAYER.OTHER])
+    expect(body.library.sticker).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
     expect(body.library.material).to.be.an('array')
@@ -100,14 +100,14 @@ function testApiCrudRoom (api, version, room) {
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.name).to.be.eql(room)
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.width).to.be.eql(3072)
     expect(body.height).to.be.eql(2048)
     expect(body.library).to.be.an('object')
-    expect(Object.keys(body.library)).to.have.members([LAYER_TILE, LAYER_TOKEN, LAYER_OVERLAY, 'badge', 'material', LAYER_OTHER])
-    expect(body.library.overlay).to.be.an('array')
+    expect(Object.keys(body.library)).to.have.members([LAYER.TILE, LAYER.TOKEN, LAYER.STICKER, 'badge', 'material', LAYER.OTHER])
+    expect(body.library.sticker).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
     expect(body.library.material).to.be.an('array')
@@ -133,7 +133,11 @@ function testApiCrudRoom (api, version, room) {
   testJsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
 }
 
-function testApiCrudSetup (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiCrudSetup (api, room) {
   openTestroom(api, room, 'RPG')
 
   // snapshots have limited CRUD capabilites, as they are created and read via rooms.
@@ -200,7 +204,11 @@ function testApiCrudSetup (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiCrudTable (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiCrudTable (api, room) {
   openTestroom(api, room, 'RPG')
 
   // get table
@@ -261,7 +269,11 @@ function testApiCrudTable (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiCrudPiece (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiCrudPiece (api, room) {
   openTestroom(api, room, 'RPG')
 
   // create piece
@@ -283,7 +295,7 @@ function testApiCrudPiece (api, version, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['id', 'l', 'a', 'x', 'y', 'z', 'n', 'c', 'b'])
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.l).to.be.eql(4)
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(18)
@@ -327,7 +339,7 @@ function testApiCrudPiece (api, version, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['id', 'l', 'a', 'x', 'y', 'z', 'n', 'c', 'b', 't'])
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.l).to.be.eql(4)
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(19)
@@ -468,7 +480,11 @@ function testApiCrudPiece (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiCrudPointer (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiCrudPointer (api, room) {
   openTestroom(api, room, 'RPG')
 
   // create pointer
@@ -563,7 +579,11 @@ function testApiCrudPointer (api, version, room) {
   closeTestroom(api, room)
 }
 
-function testApiCrudLos (api, version, room) {
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiCrudLos (api, room) {
   openTestroom(api, room, 'RPG')
 
   // create pointer
@@ -670,15 +690,18 @@ function testApiCrudLos (api, version, room) {
 
 // --- the test runners --------------------------------------------------------
 
+/**
+ * @param {object} runner Test runner to add our tests to.
+ */
 export function run (runner) {
   describe('API - CRUD roundtrips', function () {
     runner((api, version, room) => {
-      describe('CRUD room', () => testApiCrudRoom(api, version, room))
-      describe('CRUD setup', () => testApiCrudSetup(api, version, room))
-      describe('CRUD table', () => testApiCrudTable(api, version, room))
-      describe('CRUD piece', () => testApiCrudPiece(api, version, room))
-      describe('CRUD pointer', () => testApiCrudPointer(api, version, room))
-      describe('CRUD los', () => testApiCrudLos(api, version, room))
+      describe('CRUD room', () => testApiCrudRoom(api, room))
+      describe('CRUD setup', () => testApiCrudSetup(api, room))
+      describe('CRUD table', () => testApiCrudTable(api, room))
+      describe('CRUD piece', () => testApiCrudPiece(api, room))
+      describe('CRUD pointer', () => testApiCrudPointer(api, room))
+      describe('CRUD los', () => testApiCrudLos(api, room))
     })
   })
 }

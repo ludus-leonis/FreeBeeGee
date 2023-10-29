@@ -55,8 +55,7 @@ import {
 } from '../../../view/room/tabletop/index.mjs'
 
 import {
-  TYPE_HEX,
-  TYPE_HEX2,
+  GRID,
   getContentRect
 } from '../../../view/room/tabletop/tabledata.mjs'
 
@@ -296,7 +295,7 @@ export function modalSettings () {
   }
 
   const rotate = _('#table-rstep')
-  const range = [TYPE_HEX, TYPE_HEX2].includes(getSetup().type) ? [10, 30, 60] : [10, 45, 90]
+  const range = [GRID.HEX, GRID.HEX2].includes(getSetup().type) ? [10, 30, 60] : [10, 45, 90]
   for (const r of range) {
     const option = _('option').create(`${r}°`)
     option.value = r

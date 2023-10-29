@@ -48,6 +48,7 @@ import {
 } from '../../../../lib/utils-text.mjs'
 
 import {
+  HOOK_SYNCNOW,
   HOOK_LIBRARY_RELOAD,
   HOOK_LIBRARY_SELECT,
   triggerEvent
@@ -85,7 +86,11 @@ export function modalEdit (asset) {
             <label for="asset-y">Height</label>
             <select id="asset-y" name="asset-y"></select>
           </div>
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-3">
+            <label for="asset-d">Shadow</label>
+            <select id="asset-d" name="asset-d"></select>
+          </div>
+          <div class="col-12 col-md-3">
             <label for="asset-material">Material</label>
             <select id="asset-material" name="asset-material"></select>
           </div>
@@ -98,6 +103,9 @@ export function modalEdit (asset) {
             <input id="asset-rgb" name="asset-rgb" type="text" maxlength="7" pattern="${PATTERN_COLOR}" placeholder="#808080" required disabled>
           </div>
         </div>
+        <p>
+          Editing assets will clear the undo history.
+        </p>
       </form>
       <p class="server-feedback"></p>
     `,
@@ -123,6 +131,15 @@ export function modalEdit (asset) {
     h.value = i
     if (i === asset.h) h.selected = true
     height.add(h)
+  }
+
+  // shadow / depth / d
+  const shadow = _('#asset-d')
+  for (let i = 0; i <= 9; i++) {
+    const s = _('option').create(i)
+    s.value = i
+    if (i === asset.d) s.selected = true
+    shadow.add(s)
   }
 
   // material
@@ -212,6 +229,8 @@ function ok (asset) {
   if (asset.w !== x) patch.w = x
   const y = parseInt(_('#asset-y').value)
   if (asset.h !== y) patch.h = y
+  const d = parseInt(_('#asset-d').value)
+  if (asset.d !== d) patch.d = d
   if ((asset.tx ?? 'none') !== material.value) patch.tx = material.value
   const colorValue = color === 'Manual' ? _('#asset-rgb').value : color
   if (asset.bg !== colorValue) patch.bg = colorValue
@@ -239,6 +258,7 @@ function ok (asset) {
           break
         default: // no error - proceed
           getModal().hide()
+          triggerEvent(HOOK_SYNCNOW, true)
           triggerEvent(HOOK_LIBRARY_SELECT, asset)
           triggerEvent(HOOK_LIBRARY_RELOAD)
       }
