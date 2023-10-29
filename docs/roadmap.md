@@ -23,8 +23,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] fix sass import warning
     * [ ] edit modal dropdown sizes
     * [X] token + mask + rounded
-    * [ ] RPG orc label - badge
-    * [ ] room does not remember grid
+    * [X] RPG orc label - badge
     * [X] add PHP 7.3 to self diagnosis
     * [X] refactor LAYER_* to LAYER.*
   * [ ] review docs

@@ -26,6 +26,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * improved display of available asset sides and sizes in the library
 * improved grid visibility
 * fixed a minor masked-token bug
+* fixed demo-labels in RPG snapshot
 
 
 ## v0.22.0 - Remorseful Reindeer
