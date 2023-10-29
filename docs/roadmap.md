@@ -15,7 +15,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] support more special hotkeys (copy, paste, zoom, ...)
 * [X] rename overlays to stickers
 * [X] remember last used snapshot in create-room dialog
-* [ ] pre-release
+* [X] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
     * [X] table.json caching in demo mode
@@ -30,9 +30,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] low quality shadows going in wrong direction
   * [X] review docs
   * [X] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] review + run tests
-  * [ ] update screenshots
+  * [X] bump engine, version/codename & update CHANGELOG
+  * [X] review + run tests
+  * [X] update screenshots
 
 ## Backlog
 
