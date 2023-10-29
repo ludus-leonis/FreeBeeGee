@@ -50,10 +50,10 @@ export default (options = {}) => through.obj(async function (file, encoding, cal
     const shrunk = fs.readFileSync(cacheFile)
     if (shrunk.length < file.contents.length) {
       const pct = `${Math.round(shrunk.length * 100 / file.contents.length)}`.padStart(3, ' ')
-      fancyLog.info('shrinkr:', colors.green(`${pct}%`), file.path, '[CACHED]')
+      if (options.verbose) fancyLog.info('shrinkr:', colors.green(`${pct}%`), file.path, '[CACHED]')
       file.contents = shrunk
     } else {
-      fancyLog.info('shrinkr:', colors.gray('100%'), file.path, '[CACHED]')
+      if (options.verbose) fancyLog.info('shrinkr:', colors.gray('100%'), file.path, '[CACHED]')
     }
   } else {
     const shrunk = await shrink(file.contents, options)

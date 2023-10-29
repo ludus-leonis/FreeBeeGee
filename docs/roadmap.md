@@ -22,7 +22,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] dragging multi-selected hex tokens does not always snap correctly
     * [X] fix sass import warning
     * [ ] edit modal dropdown sizes
-    * [ ] token + mask + rounded
+    * [X] token + mask + rounded
     * [ ] RPG orc label - badge
     * [ ] room does not remember grid
     * [X] add PHP 7.3 to self diagnosis
