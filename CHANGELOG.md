@@ -2,6 +2,17 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.24.0 - ??? ???
+
+### Notable changes
+
+* TBD
+
+### Other changes
+
+* TBD
+
+
 ## v0.23.0 - Shady Shrew
 
 ### Notable changes

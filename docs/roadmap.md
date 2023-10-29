@@ -2,37 +2,17 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.23.0
+## v0.24.0
 
-* [X] asset depth setting for more/less shadow
-* [X] exclude protected pieces from multi-select operation, instead of denying it to all
-* [X] move selection via cursor keys
-* [X] tweak grid visibility
-* [X] cleanup 'x/y' and '3x3:3' in library window
-* [X] system separator line in library window
-* [X] auto-populate empty data dir (for docker volumes)
-* [X] grid-on-tile flag major/minor
-* [X] support more special hotkeys (copy, paste, zoom, ...)
-* [X] rename overlays to stickers
-* [X] remember last used snapshot in create-room dialog
-* [X] pre-release
-  * [X] bump dependencies
-  * [X] bugfixes + refactoring
-    * [X] table.json caching in demo mode
-    * [X] dragging multi-selection not snapping correctly
-    * [X] fix sass import warning
-    * [X] edit modal dropdown sizes
-    * [X] token + mask + rounded
-    * [X] RPG orc label - badge
-    * [X] add PHP 7.3 to self diagnosis
-    * [X] refactor LAYER_* to LAYER.*
-    * [X] laser pointer not working
-    * [X] low quality shadows going in wrong direction
-  * [X] review docs
-  * [X] review tutorial
-  * [X] bump engine, version/codename & update CHANGELOG
-  * [X] review + run tests
-  * [X] update screenshots
+* [ ] ???
+* [ ] pre-release
+  * [ ] bump dependencies
+  * [ ] bugfixes + refactoring
+  * [ ] review docs
+  * [ ] review tutorial
+  * [ ] bump engine, version/codename & update CHANGELOG
+  * [ ] review + run tests
+  * [ ] update screenshots
 
 ## Backlog
 
