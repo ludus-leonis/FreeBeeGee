@@ -26,6 +26,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * moved wooden cubes from tile to token section in library
 * improved display of available asset sides and sizes in the library
 * improved grid visibility
+* improved edit-tile dropdown sizes
 * fixed a minor masked-token bug
 * fixed demo-labels in RPG snapshot
 

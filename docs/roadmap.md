@@ -21,7 +21,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] table.json caching in demo mode
     * [ ] dragging multi-selected hex tokens does not always snap correctly
     * [X] fix sass import warning
-    * [ ] edit modal dropdown sizes
+    * [X] edit modal dropdown sizes
     * [X] token + mask + rounded
     * [X] RPG orc label - badge
     * [X] add PHP 7.3 to self diagnosis
