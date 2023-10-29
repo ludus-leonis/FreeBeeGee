@@ -272,6 +272,7 @@ export function isLayerActive (layer) {
 }
 
 export const PREFS = {
+  SNAPSHOT: { name: 'snapshot', default: undefined },
   TOKEN: { name: 'token', default: '00000000-0000-0000-0000-000000000000' },
   TABLE: { name: 'table', default: null },
   LAYERother: { name: 'layer5', default: undefined },

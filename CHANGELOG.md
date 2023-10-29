@@ -11,6 +11,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added minor/major grid-on-tiles option
 * added support for some dedicated hardware keys (help, undo, copy, paste, zoom, ...)
 * added rotation for dice
+* added create-room dialog will remember last used snapshot on this server
 * improved square and hex grids
 * improved and added full color support to all Hex tiles
 * simplified setup/upgrade/backup by auto-populating api/data

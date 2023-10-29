@@ -14,7 +14,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] grid-on-tile flag major/minor
 * [X] support more special hotkeys (copy, paste, zoom, ...)
 * [X] rename overlays to stickers
-* [ ] remember last used snapshot in create-room dialog
+* [X] remember last used snapshot in create-room dialog
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring

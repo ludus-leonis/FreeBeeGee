@@ -41,8 +41,11 @@ import {
 } from '../../view/error/index.mjs'
 
 import {
+  PREFS,
   addRoom,
-  getServerInfo
+  getServerInfo,
+  setServerPreference,
+  getServerPreference
 } from '../../state/index.mjs'
 
 import {
@@ -142,6 +145,7 @@ export function setupView (name) {
       let preselected = snapshots.length > 0 ? snapshots[0].name : 'none'
       if (snapshots.find(s => s.name === 'Tutorial')) preselected = 'Tutorial'
       if (snapshots.find(s => s.name === getServerInfo().defaultSnapshot)) preselected = getServerInfo().defaultSnapshot
+      if (snapshots.find(s => s.name === getServerPreference(PREFS.SNAPSHOT))) preselected = getServerPreference(PREFS.SNAPSHOT)
 
       t.innerHTML = ''
       for (const snapshot of sortByString(snapshots ?? [], 'name')) {
@@ -257,6 +261,9 @@ function ok (name) {
 
   addRoom(room, snapshot)
     .then((remoteRoom) => {
+      if (!_('#mode').checked) { // not upload mode
+        setServerPreference(PREFS.SNAPSHOT, room.snapshot)
+      }
       navigateToRoom(remoteRoom.name)
     })
     .catch((error) => {
