@@ -16,6 +16,7 @@ RUN mv /var/www/html/FreeBeeGee/* /var/www/html/FreeBeeGee/.[!.]* /var/www/html/
     echo 'chown -R www-data:www-data /var/www/html/' >> /app.sh && \
     echo 'if [[ "$FBGPASS" == "" ]]; then FBGPASS=`head /dev/urandom | tr -dc A-Za-z0-9 | head -c 16` ; fi' >> /app.sh && \
     echo 'BCRYPT=`htpasswd -bnBC 12 "" "$FBGPASS" | tr -d ":\\n"`' >> /app.sh && \
+    cp /var/www/html/system/server.json.example /var/www/html/api/data/server.json && \
     echo 'sed -i "s/\$2y\$12\$ZLUoJ7k6JODIgKk6et8ire6XxGDlCS4nupZo9NyJvSnomZ6lgFKGa/${BCRYPT//\//\\\/}/g" /var/www/html/api/data/server.json' >> /app.sh && \
     echo 'apache2-foreground' >> /app.sh && \
     chmod +x /app.sh
