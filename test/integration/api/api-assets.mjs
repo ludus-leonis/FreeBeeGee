@@ -817,7 +817,7 @@ function testApiUpdateAssetToken (api, room) {
 
   // final full get
   testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.token.length).to.be.eql(11)
+    expect(body.library.token.length).to.be.eql(_.token + classic.token)
     expect(body.library.token.find(i => i.id === 'G8QAJ200')).to.be.eql(undefined) // original ID gone
     const newAsset = body.library.token.find(i => i.id === 'HRXAK100')
 

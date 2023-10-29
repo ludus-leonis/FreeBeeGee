@@ -137,7 +137,7 @@ function testApiSnapshotHex (api, room) {
     expect(entries).to.contain('LICENSE.md')
     expect(entries).to.contain('setup.json')
     expect(entries).to.contain('tables/1.json')
-    expect(entries).to.contain('assets/tile/map.B.5x4x1.transparent.png')
+    expect(entries).to.contain('assets/tile/map.B.6x4x1.1.paper.svg')
     expect(entries).not.to.contain('room.json')
     expect(entries).not.to.contain('snapshot.zip')
   }, 200)

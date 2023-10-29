@@ -38,6 +38,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ### rather sooner (before v1)
 
 * [ ] zoom-to-cursor
+* [ ] switch to PHP 8.3 for docker release
 * [ ] different blue menu for measure and non-measure mode
 * [ ] refactor: cleanup responsibility state/tabletop abcSelected/abcPieces
   * [ ] more tabletop/index.js tests

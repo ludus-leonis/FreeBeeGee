@@ -43,8 +43,8 @@ export const _ = { // asset count in system snapshot
   material: 5,
   other: 16,
   sticker: 17,
-  tile: 5,
-  token: 5
+  tile: 2,
+  token: 8
 }
 
 export const classic = { // asset count in classic snapshot

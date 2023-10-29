@@ -22,6 +22,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added better hint for new installations if default password is still set
 * added deprecated PHP 7.3 detection to self diagnosis
 * added exclude of protected pieces from multi-select operation, instead of denying it to all
+* moved wooden cubes from tile to token section in library
 * improved display of available asset sides and sizes in the library
 * improved grid visibility
 
