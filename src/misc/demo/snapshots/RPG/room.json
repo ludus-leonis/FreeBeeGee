@@ -1,10 +1,10 @@
 {
- "id": "Kv7uKrHr",
+ "id": "FBI5WOD8",
  "name": "demoroomrpg",
  "engine": "2.6.1",
  "setup": {
   "engine": "2.6.0",
-  "version": "0.23.0-dev",
+  "version": "0.23.0",
   "type": "grid-square",
   "gridSize": 64,
   "gridWidth": 48,
@@ -277,17 +277,16 @@
    {
     "id": "i3dWg200",
     "lid": [
-     "b5bEu300",
-     "zNVkI000",
+     "HyBNF300",
+     "rlnfp000",
      "goUQT300"
     ],
     "name": "_.wall",
     "type": "sticker",
+    "d": 5,
     "bg": "1",
-    "media": [
-     "_.wall.1x1x1.1.png"
-    ],
-    "mask": "_.wall.1x1xX.1.png"
+    "media": [],
+    "mask": "_.wall.1x1xXx5.1.png"
    },
    {
     "id": "wPC3r000",
@@ -584,48 +583,6 @@
    }
   ],
   "tile": [
-   {
-    "id": "f9BCV300",
-    "lid": [
-     "aSf9_000"
-    ],
-    "name": "_.cubeLarge",
-    "type": "tile",
-    "d": 6,
-    "bg": "3",
-    "media": [
-     "_.cubeLarge.1x1x1x6.3.png"
-    ],
-    "mask": "_.cubeLarge.1x1xXx6.3.png"
-   },
-   {
-    "id": "wiXm3200",
-    "lid": [
-     "a4dVe300"
-    ],
-    "name": "_.cubeMedium",
-    "type": "tile",
-    "d": 5,
-    "bg": "3",
-    "media": [
-     "_.cubeMedium.1x1x1x5.3.png"
-    ],
-    "mask": "_.cubeMedium.1x1xXx5.3.png"
-   },
-   {
-    "id": "lUuFK300",
-    "lid": [
-     "MEgF5100"
-    ],
-    "name": "_.cubeSmall",
-    "type": "tile",
-    "d": 4,
-    "bg": "3",
-    "media": [
-     "_.cubeSmall.1x1x1x4.3.png"
-    ],
-    "mask": "_.cubeSmall.1x1xXx4.3.png"
-   },
    {
     "id": "i_6yU100",
     "lid": [
@@ -987,6 +944,48 @@
     "media": [
      "_.bead.1x1x1.1.png"
     ]
+   },
+   {
+    "id": "oxCXA100",
+    "lid": [
+     "tNZWX100"
+    ],
+    "name": "_.cubeLarge",
+    "type": "token",
+    "d": 6,
+    "bg": "3",
+    "media": [
+     "_.cubeLarge.1x1x1x6.3.png"
+    ],
+    "mask": "_.cubeLarge.1x1xXx6.3.png"
+   },
+   {
+    "id": "oCYDx000",
+    "lid": [
+     "gVKN0000"
+    ],
+    "name": "_.cubeMedium",
+    "type": "token",
+    "d": 5,
+    "bg": "3",
+    "media": [
+     "_.cubeMedium.1x1x1x5.3.png"
+    ],
+    "mask": "_.cubeMedium.1x1xXx5.3.png"
+   },
+   {
+    "id": "mhvML100",
+    "lid": [
+     "THxo6000"
+    ],
+    "name": "_.cubeSmall",
+    "type": "token",
+    "d": 4,
+    "bg": "3",
+    "media": [
+     "_.cubeSmall.1x1x1x4.3.png"
+    ],
+    "mask": "_.cubeSmall.1x1xXx4.3.png"
    },
    {
     "id": "G8QAJ200",
