@@ -16,7 +16,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] rename overlays to stickers
 * [X] remember last used snapshot in create-room dialog
 * [ ] pre-release
-  * [ ] bump dependencies
+  * [X] bump dependencies
   * [X] bugfixes + refactoring
     * [X] table.json caching in demo mode
     * [X] dragging multi-selection not snapping correctly
@@ -26,8 +26,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] RPG orc label - badge
     * [X] add PHP 7.3 to self diagnosis
     * [X] refactor LAYER_* to LAYER.*
-  * [ ] review docs
-  * [ ] review tutorial
+    * [ ] laser pointer not working
+  * [X] review docs
+  * [X] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
   * [ ] review + run tests
   * [ ] update screenshots

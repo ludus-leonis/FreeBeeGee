@@ -27,7 +27,7 @@ Your game. Your data.
 * File & folder-based. No database required. Easy to install.
 * Open source software (AGPL-3.0). Server/API written in PHP, client in JavaScript.
 
-**Note:** This is an development version. A few eatures are still missing:
+**Note:** This is an development version. A few features are still missing:
 
 * Editing assets in the library is possible but limited.
 

@@ -56,7 +56,7 @@ Usually you'll want to persist room data, in that case mount a volume for `/var/
 docker run -d -p 8765:80 -v /home/username/fbg-data:/var/www/html/api/data ghcr.io/ludus-leonis/freebeegee:latest
 ```
 
-FreeBeeGee will then recreate all necessary files in this volume including a default `server.json`. You'll have to set your admin password there manually. Edits in your config file will be effective with the next page reload, no container restart necessary.
+FreeBeeGee will recreate all necessary files in this volume including a default `server.json`. You'll have to set your admin password there manually. Edits in your config file will be effective with the next page reload, no container restart necessary.
 
 
 ## Configuration
