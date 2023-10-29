@@ -27,11 +27,7 @@ import {
 } from '../../../view/room/tabletop/index.mjs'
 
 import {
-  LAYER_NOTE,
-  LAYER_TILE,
-  LAYER_TOKEN,
-  LAYER_STICKER,
-  LAYER_OTHER,
+  LAYER,
   findPiece,
   findPiecesWithin,
   getFeatures
@@ -61,11 +57,11 @@ export function selectionAdd (id, forced = false) {
  */
 export function selectionAddAll () {
   const layers = {}
-  for (const layer of [LAYER_TILE, LAYER_TOKEN, LAYER_STICKER, LAYER_OTHER]) {
+  for (const layer of [LAYER.TILE, LAYER.TOKEN, LAYER.STICKER, LAYER.OTHER]) {
     layers[layer] = isLayerActive(layer)
   }
   for (const piece of getTable()) {
-    if ((layers[piece.l] || piece.l === LAYER_NOTE) && !selectionGetIds().includes(piece.id)) {
+    if ((layers[piece.l] || piece.l === LAYER.NOTE) && !selectionGetIds().includes(piece.id)) {
       selectionGetIds().push(piece.id)
     }
   }
@@ -119,7 +115,7 @@ export function selectNode (node, toggle = false) {
 /**
  * Clear the selection of pieces.
  *
- * @param {string} layer Either LAYER_TILE, LAYER_STICKER or LAYER_TOKEN to clear a specific
+ * @param {string} layer Either LAYER.TILE, LAYER.STICKER or LAYER.TOKEN to clear a specific
  *                       layer, or 'all' for all layers.
  */
 export function selectionClear (layer = 'all') {
@@ -131,7 +127,7 @@ export function selectionClear (layer = 'all') {
 /**
  * Get all currently selected pieces.
  *
- * @param {string} layer Either LAYER_TILE, LAYER_STICKER or LAYER_TOKEN to clear a specific
+ * @param {string} layer Either LAYER.TILE, LAYER.STICKER or LAYER.TOKEN to clear a specific
  *                       layer, or 'all' for all layers.
  * @returns {object[]} Possibly empty array of selected pieces.
  */

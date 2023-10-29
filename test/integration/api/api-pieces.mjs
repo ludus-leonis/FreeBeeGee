@@ -25,7 +25,7 @@
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
 import {
-  REGEXP_ID,
+  REGEXP,
   expect,
   openTestroom,
   closeTestroom,
@@ -163,7 +163,7 @@ function testApiMinimalPiece (api, room) {
     }
   }, body => {
     expect(body).to.have.all.keys('id', 'l', 'a', 'x', 'y', 'z')
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.l).to.be.eql(1)
     expect(body.a).to.be.eql('12345678')
     expect(body.x).to.be.eql(2)
@@ -190,13 +190,13 @@ function testApiPieceID (api, room) {
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal }
   }, body => {
-    expect(body.id).to.be.match(REGEXP_ID)
+    expect(body.id).to.be.match(REGEXP.ID)
   }, 201)
 
   testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { ...pieceMinimal, id: '87654321' }
   }, body => {
-    expect(body.id).to.be.match(REGEXP_ID)
+    expect(body.id).to.be.match(REGEXP.ID)
     expect(body.id).not.to.be.eql('87654321')
   }, 201)
 

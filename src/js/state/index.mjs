@@ -61,8 +61,7 @@ import {
 import {
   ID,
   FEATURE_DICEMAT,
-  TYPE_HEX,
-  TYPE_HEX2,
+  GRID,
   findPiece,
   populatePiecesDefaults,
   populateSetupDefaults,
@@ -187,9 +186,9 @@ export function getGridFile (bgcolor, strength) {
   if (bright >= 128 + window) color = 9
 
   switch (room.setup?.type) {
-    case TYPE_HEX:
+    case GRID.HEX:
       return `img/grid-hex-${strength}-${color}.svg`
-    case TYPE_HEX2:
+    case GRID.HEX2:
       return `img/grid-hex2-${strength}-${color}.svg`
     default:
       return `img/grid-square-${strength}-${color}.svg`

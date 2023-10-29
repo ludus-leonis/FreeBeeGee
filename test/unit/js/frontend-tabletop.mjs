@@ -30,9 +30,7 @@ import {
 } from '../../../src/js/state/index.mjs'
 
 import {
-  TYPE_SQUARE,
-  TYPE_HEX,
-  TYPE_HEX2,
+  GRID,
   getFeatures,
   populatePiecesDefaults,
   findPiece
@@ -70,7 +68,7 @@ describe('Frontend - tabletop.mjs', function () {
   })
 
   it('moveSelected() square', function () {
-    getSetup().type = TYPE_SQUARE
+    getSetup().type = GRID.SQUARE
     testState.setTable(1, populatePiecesDefaults([
       { ...JSON.parse(pieceJSON), id: '1', x: 32 + 64 * 0, y: 32 + 64 * 0 },
       { ...JSON.parse(pieceJSON), id: '2', x: 32 + 64 * 1, y: 32 + 64 * 1, f: FLAGS.NO_MOVE },
@@ -126,7 +124,7 @@ describe('Frontend - tabletop.mjs', function () {
   })
 
   it('moveSelected() hex', function () {
-    getSetup().type = TYPE_HEX
+    getSetup().type = GRID.HEX
     testState.setTable(1, populatePiecesDefaults([
       { ...JSON.parse(pieceJSON), id: '4', x: 55, y: 32 },
       { ...JSON.parse(pieceJSON), id: '5', x: 32 + 64 * 1, y: 32 + 64 * 1, f: FLAGS.NO_MOVE },
@@ -191,7 +189,7 @@ describe('Frontend - tabletop.mjs', function () {
   })
 
   it('moveSelected() hex2', function () {
-    getSetup().type = TYPE_HEX2
+    getSetup().type = GRID.HEX2
     testState.setTable(1, populatePiecesDefaults([
       { ...JSON.parse(pieceJSON), id: '7', x: 32, y: 55 },
       { ...JSON.parse(pieceJSON), id: '8', x: 32 + 64 * 1, y: 32 + 64 * 1, f: FLAGS.NO_MOVE },

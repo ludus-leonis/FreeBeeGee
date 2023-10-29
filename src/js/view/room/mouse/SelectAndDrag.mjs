@@ -48,7 +48,7 @@ import {
   findPiecesContained,
   snap,
   ID,
-  LAYER_NOTE
+  LAYER
 } from '../../../view/room/tabletop/tabledata.mjs'
 
 import {
@@ -184,7 +184,7 @@ export class SelectAndDrag extends MouseButtonHandler {
       right: this.multiselect.width >= 0 ? this.multiselect.x + this.multiselect.width : this.multiselect.x,
       bottom: this.multiselect.height >= 0 ? this.multiselect.y + this.multiselect.height : this.multiselect.y
     })) {
-      if (isLayerActive(piece.l) || piece.l === LAYER_NOTE) {
+      if (isLayerActive(piece.l) || piece.l === LAYER.NOTE) {
         selectionAdd(piece.id)
       }
     }

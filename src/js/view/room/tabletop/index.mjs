@@ -85,14 +85,9 @@ import {
 import {
   FEATURE_DICEMAT,
   FEATURE_DISCARD,
-  LAYER_TILE,
-  LAYER_STICKER,
-  LAYER_NOTE,
-  LAYER_TOKEN,
-  LAYER_OTHER,
+  LAYER,
   ID,
-  TYPE_HEX,
-  TYPE_HEX2,
+  GRID,
   findAsset,
   findPiece,
   findPiecesWithin,
@@ -221,7 +216,7 @@ export function colorSelected (border = false) {
 
   for (const piece of selectionGetPieces()) {
     switch (piece.l) {
-      case LAYER_NOTE:
+      case LAYER.NOTE:
         // always change base color
         colorPiece(piece.id, piece.c[0] + 1, piece.c[1])
         break
@@ -247,7 +242,7 @@ export function gridSelected (api = true) {
   const toPatch = []
   for (const piece of selectionGetPieces()) {
     switch (piece.l) {
-      case LAYER_TILE:
+      case LAYER.TILE:
         if (piece.f & FLAGS.TILE_GRID_MINOR) {
           toPatch.push({
             id: piece.id,
@@ -297,7 +292,7 @@ export function moveSelected (x, y, api = true) {
   const dy = y / Math.abs(y || 1)
   const offset = {}
   switch (setup.type) {
-    case TYPE_HEX:
+    case GRID.HEX:
       offset.xy = [
         [[x * 0.859, y * 0.5], [x * 0.859, y], [x * 0.859, y * 0.5]],
         [[x * 0.859, y], [x * 0.859, y], [x * 0.859, y]],
@@ -306,7 +301,7 @@ export function moveSelected (x, y, api = true) {
       offset.dx = setup.gridSize
       offset.dy = setup.gridSize
       break
-    case TYPE_HEX2:
+    case GRID.HEX2:
       offset.xy = [
         [[x * 0.5, y * 0.859], [x, y * 0.859], [x * 0.5, y * 0.859]],
         [[x, y * 0.859], [x, y * 0.859], [x, y * 0.859]],
@@ -324,15 +319,15 @@ export function moveSelected (x, y, api = true) {
   // find the most-used row/col offset for hex zig-zag movement
   const xs = []
   const ys = []
-  if ([TYPE_HEX, TYPE_HEX2].includes(setup.type)) {
+  if ([GRID.HEX, GRID.HEX2].includes(setup.type)) {
     for (const piece of pieces) {
       if (piece.f & FLAGS.NO_MOVE) continue
-      if (setup.type === TYPE_HEX) { // we need to move zig-zag on horizontal moves
+      if (setup.type === GRID.HEX) { // we need to move zig-zag on horizontal moves
         if (Math.abs(x) === 1 && y === 0) {
           const col = Math.round(piece.x / (setup.gridSize * 0.859))
           ys.push(setup.gridSize / 2 * (col % 2 ? 1 : -1))
         }
-      } else if (setup.type === TYPE_HEX2) { // we need to move zig-zag on horizontal moves
+      } else if (setup.type === GRID.HEX2) { // we need to move zig-zag on horizontal moves
         if (Math.abs(y) === 1 && x === 0) {
           const row = Math.round(piece.y / (setup.gridSize * 0.859))
           xs.push(setup.gridSize / 2 * (row % 2 ? 1 : -1))
@@ -418,7 +413,7 @@ export function numberSelected (delta) {
   if (!selectionGetFeatures().number) return
 
   for (const piece of selectionGetPieces()) {
-    if (piece.l === LAYER_TOKEN) {
+    if (piece.l === LAYER.TOKEN) {
       numberPiece(piece.id, piece.n + delta) // 0=nothing, 1-9, A-F
     }
   }
@@ -513,7 +508,7 @@ function createOrUpdatePieceDOM (piece) {
     div.delete()
   }
   if (!div.unique()) { // (re)create
-    const node = piece.l === LAYER_NOTE ? noteToNode(piece) : pieceToNode(piece)
+    const node = piece.l === LAYER.NOTE ? noteToNode(piece) : pieceToNode(piece)
     node.piece = _piece
     _piece = {}
     _('#layer-' + piece.l).add(node)
@@ -546,14 +541,14 @@ function createOrUpdatePieceDOM (piece) {
   }
   if (_piece.n !== piece.n) {
     div.remove('.is-n', '.is-n-*')
-    if (piece.l === LAYER_TOKEN && piece.n !== 0) {
+    if (piece.l === LAYER.TOKEN && piece.n !== 0) {
       div.add('.is-n', '.is-n-' + piece.n)
     }
   }
 
   if (_piece.c?.[0] !== piece.c[0] || _piece.c?.[1] !== piece.c[1]) {
     // (background) color
-    if (piece.l === LAYER_NOTE) {
+    if (piece.l === LAYER.NOTE) {
       div.css({
         '--fbg-color': stickyNoteColors[piece.c[0]].value,
         '--fbg-color-invert': brightness(stickyNoteColors[piece.c[0]].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
@@ -567,7 +562,7 @@ function createOrUpdatePieceDOM (piece) {
           '--fbg-color-invert': brightness(setup.colors[piece.c[0] - 1].value) > 128 ? 'var(--fbg-color-dark)' : 'var(--fbg-color-light)'
         })
       }
-    } else if (piece.l === LAYER_STICKER || piece.l === LAYER_OTHER) {
+    } else if (piece.l === LAYER.STICKER || piece.l === LAYER.OTHER) {
       // no color
     } else {
       const asset = findAsset(piece.a)
@@ -815,12 +810,12 @@ export function createNote (xy) {
   selectionClear()
   const snapped = snap(xy.x, xy.y)
   modalEdit(populatePieceDefaults({
-    l: nameToLayer(LAYER_NOTE),
+    l: nameToLayer(LAYER.NOTE),
     w: 3,
     h: 3,
     x: snapped.x,
     y: snapped.y,
-    z: getMaxZ(LAYER_NOTE) + 1
+    z: getMaxZ(LAYER.NOTE) + 1
   }))
 }
 
@@ -923,12 +918,12 @@ export function pointTo (coords) {
 
   createPieces([{ // always create (even if it is a move)
     a: ID.POINTER,
-    l: LAYER_OTHER,
+    l: LAYER.OTHER,
     w: 1,
     h: 1,
     x: snapped.x,
     y: snapped.y,
-    z: getMaxZ(LAYER_OTHER) + 1
+    z: getMaxZ(LAYER.OTHER) + 1
   }])
 }
 
@@ -944,12 +939,12 @@ export function losTo (x, y, w, h) {
   if (w !== 0 || h !== 0) {
     createPieces([{
       a: ID.LOS,
-      l: LAYER_OTHER,
+      l: LAYER.OTHER,
       x,
       y,
       w,
       h,
-      z: getMaxZ(LAYER_OTHER) + 1
+      z: getMaxZ(LAYER.OTHER) + 1
     }])
   }
 }
@@ -1190,7 +1185,7 @@ function pieceToNode (piece) {
       node.add(`.is-d-${asset.d}`)
     }
 
-    if (asset.type !== LAYER_STICKER && asset.type !== LAYER_OTHER) {
+    if (asset.type !== LAYER.STICKER && asset.type !== LAYER.OTHER) {
       if (!asset.bg.match(/^[0-9][0-9]?$/)) {
         // color information is html color or 'transparent' -> apply
         node.css({ '--fbg-color': asset.bg })
@@ -1198,7 +1193,7 @@ function pieceToNode (piece) {
     }
 
     // backsides
-    if (piece.l === LAYER_TOKEN && piece._meta.sidesExtra > 0) {
+    if (piece.l === LAYER.TOKEN && piece._meta.sidesExtra > 0) {
       if (piece.s >= piece._meta.sides) {
         node.add('.is-backside')
       }
@@ -1438,13 +1433,13 @@ function removeObsoletePieces (keepIds) {
  */
 function setItem (piece) {
   switch (piece.l) {
-    case LAYER_TILE:
-    case LAYER_TOKEN:
-    case LAYER_STICKER:
-    case LAYER_OTHER:
+    case LAYER.TILE:
+    case LAYER.TOKEN:
+    case LAYER.STICKER:
+    case LAYER.OTHER:
       setPiece(piece)
       break
-    case LAYER_NOTE:
+    case LAYER.NOTE:
       setNote(piece)
       break
     default:

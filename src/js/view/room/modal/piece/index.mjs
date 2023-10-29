@@ -29,11 +29,7 @@ import {
 } from '../../../../view/room/modal.mjs'
 
 import {
-  LAYER_TILE,
-  LAYER_STICKER,
-  LAYER_NOTE,
-  LAYER_TOKEN,
-  LAYER_OTHER,
+  LAYER,
   getAssetURL
 } from '../../../../view/room/tabletop/tabledata.mjs'
 
@@ -87,17 +83,17 @@ export function modalEdit (piece) {
 
     let save = null
     switch (piece.l) {
-      case LAYER_NOTE:
+      case LAYER.NOTE:
         save = setupModalNote(piece)
         break
-      case LAYER_TILE:
-      case LAYER_STICKER:
+      case LAYER.TILE:
+      case LAYER.STICKER:
         save = setupModalTile(piece)
         break
-      case LAYER_OTHER:
+      case LAYER.OTHER:
         save = setupModalOther(piece)
         break
-      case LAYER_TOKEN:
+      case LAYER.TOKEN:
       default:
         save = setupModalToken(piece)
         break

@@ -25,7 +25,7 @@
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
 import {
-  REGEXP_ID,
+  REGEXP,
   p,
   expect,
   openTestroom,
@@ -43,10 +43,7 @@ import {
 } from '../utils/data.mjs'
 
 import {
-  LAYER_TILE,
-  LAYER_TOKEN,
-  LAYER_STICKER,
-  LAYER_OTHER
+  LAYER
 } from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 // -----------------------------------------------------------------------------
@@ -74,13 +71,13 @@ function testApiCrudRoom (api, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.name).to.be.eql(room)
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.width).to.be.eql(3072)
     expect(body.height).to.be.eql(2048)
     expect(body.library).to.be.an('object')
-    expect(Object.keys(body.library)).to.have.members([LAYER_TILE, LAYER_TOKEN, LAYER_STICKER, 'badge', 'material', LAYER_OTHER])
+    expect(Object.keys(body.library)).to.have.members([LAYER.TILE, LAYER.TOKEN, LAYER.STICKER, 'badge', 'material', LAYER.OTHER])
     expect(body.library.sticker).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
@@ -103,13 +100,13 @@ function testApiCrudRoom (api, room) {
   testJsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.name).to.be.eql(room)
     expect(body.engine).to.be.eql(p.versionEngine)
     expect(body.width).to.be.eql(3072)
     expect(body.height).to.be.eql(2048)
     expect(body.library).to.be.an('object')
-    expect(Object.keys(body.library)).to.have.members([LAYER_TILE, LAYER_TOKEN, LAYER_STICKER, 'badge', 'material', LAYER_OTHER])
+    expect(Object.keys(body.library)).to.have.members([LAYER.TILE, LAYER.TOKEN, LAYER.STICKER, 'badge', 'material', LAYER.OTHER])
     expect(body.library.sticker).to.be.an('array')
     expect(body.library.tile).to.be.an('array')
     expect(body.library.token).to.be.an('array')
@@ -298,7 +295,7 @@ function testApiCrudPiece (api, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['id', 'l', 'a', 'x', 'y', 'z', 'n', 'c', 'b'])
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.l).to.be.eql(4)
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(18)
@@ -342,7 +339,7 @@ function testApiCrudPiece (api, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['id', 'l', 'a', 'x', 'y', 'z', 'n', 'c', 'b', 't'])
-    expect(body.id).to.match(REGEXP_ID)
+    expect(body.id).to.match(REGEXP.ID)
     expect(body.l).to.be.eql(4)
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(19)

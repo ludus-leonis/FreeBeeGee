@@ -33,8 +33,10 @@ import AdmZip from 'adm-zip'
 import fetch from 'node-fetch'
 import { JSDOM } from 'jsdom'
 
-export const REGEXP_ID = /^[a-zA-Z0-9_-]{8}$/
-export const REGEXP_DIGEST = /^crc32:-?[0-9]+$/
+export const REGEXP = {
+  ID: /^[a-zA-Z0-9_-]{8}$/,
+  DIGEST: /^crc32:-?[0-9]+$/
+}
 export const p = JSON.parse(fs.readFileSync('package.json'))
 export const ACCESS_ANY = '00000000-0000-0000-0000-000000000000'
 

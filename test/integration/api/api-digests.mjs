@@ -25,7 +25,7 @@
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
 import {
-  REGEXP_DIGEST,
+  REGEXP,
   expect,
   openTestroom,
   closeTestroom,
@@ -91,7 +91,7 @@ function testApiRoomDigest (api, room) {
   // fetch digest
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body).to.be.an('object')
-    expect(body['room.json']).to.match(REGEXP_DIGEST)
+    expect(body['room.json']).to.match(REGEXP.DIGEST)
     digest = body['room.json']
   })
 
@@ -174,7 +174,7 @@ function testApiTableDigest (api, room) {
 
   // fetch digest
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP_DIGEST)
+    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
     digest = body['tables/9.json']
   })
 
@@ -184,7 +184,7 @@ function testApiTableDigest (api, room) {
 
   // get didn't change digest
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP_DIGEST)
+    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
     expect(body['tables/9.json']).to.be.eql(digest)
   })
 
@@ -199,7 +199,7 @@ function testApiTableDigest (api, room) {
     expect(body.gridHeight).to.be.eql(256)
   })
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP_DIGEST)
+    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
     expect(body['tables/9.json']).to.be.eql(digest)
   })
 
@@ -211,7 +211,7 @@ function testApiTableDigest (api, room) {
     data = body[0].id
   }, 200)
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP_DIGEST)
+    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
     expect(body['tables/9.json']).not.to.be.eql(digest)
     digest = body['tables/9.json']
   })
@@ -223,7 +223,7 @@ function testApiTableDigest (api, room) {
     expect(body.w).to.be.eql(8)
   }, 200)
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP_DIGEST)
+    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
     expect(body['tables/9.json']).not.to.be.eql(digest)
   })
 
@@ -250,7 +250,7 @@ function testApiSetupDigest (api, room) {
   // fetch digest
   testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body).to.be.an('object')
-    expect(body['setup.json']).to.match(REGEXP_DIGEST)
+    expect(body['setup.json']).to.match(REGEXP.DIGEST)
     digest = body['setup.json']
   })
 
@@ -327,7 +327,7 @@ function testApiDigestHeader (api, room) {
 
   // room digest
   testGetBuffer(api, () => `/rooms/${room}/`, headers => {
-    expect(headers.digest).to.match(REGEXP_DIGEST)
+    expect(headers.digest).to.match(REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
@@ -338,7 +338,7 @@ function testApiDigestHeader (api, room) {
 
   // table digest
   testGetBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
-    expect(headers.digest).to.match(REGEXP_DIGEST)
+    expect(headers.digest).to.match(REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
@@ -360,7 +360,7 @@ function testApiDigestHeader (api, room) {
 
   // room digest
   testGetBuffer(api, () => `/rooms/${room}/`, headers => {
-    expect(headers.digest).to.match(REGEXP_DIGEST)
+    expect(headers.digest).to.match(REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
@@ -371,7 +371,7 @@ function testApiDigestHeader (api, room) {
 
   // table digest
   testGetBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
-    expect(headers.digest).to.match(REGEXP_DIGEST)
+    expect(headers.digest).to.match(REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
@@ -389,7 +389,7 @@ function testApiDigestHeader (api, room) {
 
   // room digest
   testGetBuffer(api, () => `/rooms/${room}/`, headers => {
-    expect(headers.digest).to.match(REGEXP_DIGEST)
+    expect(headers.digest).to.match(REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
@@ -400,7 +400,7 @@ function testApiDigestHeader (api, room) {
 
   // table digest
   testGetBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
-    expect(headers.digest).to.match(REGEXP_DIGEST)
+    expect(headers.digest).to.match(REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)

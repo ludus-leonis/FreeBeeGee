@@ -63,9 +63,7 @@ import {
 } from '../../../state/index.mjs'
 
 import {
-  LAYER_TILE,
-  LAYER_STICKER,
-  LAYER_TOKEN,
+  LAYER,
   createPieceFromAsset,
   splitAssetFilename,
   snap
@@ -393,7 +391,7 @@ function modalUpload () {
     }
 
     // set bg color
-    if (type === LAYER_TOKEN || data.format === 'jpg') {
+    if (type === LAYER.TOKEN || data.format === 'jpg') {
       data.bg = _('#upload-color').value
     } else {
       data.bg = 'transparent'
@@ -405,13 +403,13 @@ function modalUpload () {
           .then(() => {
             refreshTabs()
             switch (data.type) {
-              case LAYER_TILE:
+              case LAYER.TILE:
                 _('#tab-1').checked = true
                 break
-              case LAYER_STICKER:
+              case LAYER.STICKER:
                 _('#tab-2').checked = true
                 break
-              case LAYER_TOKEN:
+              case LAYER.TOKEN:
                 _('#tab-3').checked = true
                 break
               default:
@@ -463,10 +461,10 @@ function uploadFailed (why) {
 function setupTabUpload () {
   // width
   const type = _('#upload-type')
-  for (const l of [LAYER_TOKEN, LAYER_STICKER, LAYER_TILE]) {
+  for (const l of [LAYER.TOKEN, LAYER.STICKER, LAYER.TILE]) {
     const option = _('option').create(toTitleCase(l))
     option.value = l
-    if (l === LAYER_TOKEN) option.selected = true
+    if (l === LAYER.TOKEN) option.selected = true
     type.add(option)
   }
   type.on('change', change => updatePreview())
@@ -531,7 +529,7 @@ function updatePreview (parseFilename = false) {
     } else {
       _('#upload-material').value = 'none'
     }
-    if ([LAYER_TILE, LAYER_TOKEN].includes(parts.type)) {
+    if ([LAYER.TILE, LAYER.TOKEN].includes(parts.type)) {
       _('#upload-type').value = parts.type
     }
 
@@ -553,16 +551,16 @@ function updatePreview (parseFilename = false) {
           const tilesY = Math.round(image.height / tilesize) || 1
           if (square) {
             if (tilesX <= 4) {
-              _('#upload-type').value = LAYER_TOKEN
+              _('#upload-type').value = LAYER.TOKEN
               _('#upload-w').value = tilesX
               _('#upload-h').value = tilesX
             } else {
-              _('#upload-type').value = LAYER_TILE
+              _('#upload-type').value = LAYER.TILE
               _('#upload-w').value = Math.min(tilesX, 32)
               _('#upload-h').value = Math.min(tilesY, 32)
             }
           } else {
-            _('#upload-type').value = LAYER_TILE
+            _('#upload-type').value = LAYER.TILE
             _('#upload-w').value = Math.min(tilesX, 32)
             _('#upload-h').value = Math.min(tilesY, 32)
           }
@@ -597,12 +595,12 @@ function updatePreviewDOM (blob) {
 
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
-  if (type === LAYER_STICKER || type === LAYER_TILE) {
+  if (type === LAYER.STICKER || type === LAYER.TILE) {
     piece.css({ '--fbg-color': 'rgba(0,0,0,.05)' })
   } else {
     piece.css({ '--fbg-color': '#202020' })
   }
-  if (type === LAYER_TOKEN) {
+  if (type === LAYER.TOKEN) {
     piece.add('.has-highlight')
   }
   piece.css({ '--fbg-material': url(getMaterialMedia(material)) })

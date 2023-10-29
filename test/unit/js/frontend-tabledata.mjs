@@ -28,10 +28,7 @@ import {
 } from '../../../src/js/state/index.mjs'
 
 import {
-  LAYER_TILE,
-  LAYER_STICKER,
-  LAYER_TOKEN,
-  LAYER_OTHER,
+  LAYER,
   findPiece,
   findAsset,
   findAssetByAlias,
@@ -128,13 +125,13 @@ describe('Frontend - tabledata.mjs', function () {
       expect(findAsset('f45f27b5').id).to.be.eql('f45f27b5')
 
       // valid limited searches
-      expect(findAsset('f45f27b5', LAYER_OTHER)).to.be.an('object')
-      expect(findAsset('f45f27b5', LAYER_OTHER).id).to.be.eql('f45f27b5')
+      expect(findAsset('f45f27b5', LAYER.OTHER)).to.be.an('object')
+      expect(findAsset('f45f27b5', LAYER.OTHER).id).to.be.eql('f45f27b5')
 
       // invalid limited searches
-      expect(findAsset('f45f27b5', LAYER_TILE)).to.be.eql(null)
-      expect(findAsset('f45f27b5', LAYER_TOKEN)).to.be.eql(null)
-      expect(findAsset('f45f27b5', LAYER_STICKER)).to.be.eql(null)
+      expect(findAsset('f45f27b5', LAYER.TILE)).to.be.eql(null)
+      expect(findAsset('f45f27b5', LAYER.TOKEN)).to.be.eql(null)
+      expect(findAsset('f45f27b5', LAYER.STICKER)).to.be.eql(null)
     }
   })
 
@@ -153,13 +150,13 @@ describe('Frontend - tabledata.mjs', function () {
       expect(findAssetByAlias('classic.a').id).to.be.eql('f45f27b5')
 
       // valid limited searches
-      expect(findAssetByAlias('classic.a', LAYER_OTHER)).to.be.an('object')
-      expect(findAssetByAlias('classic.a', LAYER_OTHER).id).to.be.eql('f45f27b5')
+      expect(findAssetByAlias('classic.a', LAYER.OTHER)).to.be.an('object')
+      expect(findAssetByAlias('classic.a', LAYER.OTHER).id).to.be.eql('f45f27b5')
 
       // invalid limited searches
-      expect(findAssetByAlias('classic.a', LAYER_TILE)).to.be.eql(null)
-      expect(findAssetByAlias('classic.a', LAYER_TOKEN)).to.be.eql(null)
-      expect(findAssetByAlias('classic.a', LAYER_STICKER)).to.be.eql(null)
+      expect(findAssetByAlias('classic.a', LAYER.TILE)).to.be.eql(null)
+      expect(findAssetByAlias('classic.a', LAYER.TOKEN)).to.be.eql(null)
+      expect(findAssetByAlias('classic.a', LAYER.STICKER)).to.be.eql(null)
       expect(findAssetByAlias('classic.a', 'nolayer')).to.be.eql(null)
     }
   })
@@ -215,24 +212,24 @@ describe('Frontend - tabledata.mjs', function () {
         expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eql(0)
 
         // correct layer
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, LAYER_OTHER, i).length).to.be.eql(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, LAYER_OTHER, i).length).to.be.eql(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, LAYER_OTHER, i).length).to.be.eql(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, LAYER_OTHER, i).length).to.be.eql(1)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, LAYER_OTHER, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, LAYER_OTHER, i).length).to.be.eql(1)
-        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, LAYER_OTHER, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, LAYER.OTHER, i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, LAYER.OTHER, i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, LAYER.OTHER, i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, LAYER.OTHER, i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, LAYER.OTHER, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, LAYER.OTHER, i).length).to.be.eql(1)
+        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, LAYER.OTHER, i).length).to.be.eql(0)
 
         // wrong layer
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, LAYER_TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 32, bottom: 192 - 32 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 33, bottom: 192 - 33 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 31, top: 192 + 31, right: 1000, bottom: 1000 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 32, top: 192 + 32, right: 1000, bottom: 1000 }, LAYER.TILE, i).length).to.be.eql(0)
       } else {
         // all layers
         expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, 'all', i).length).to.be.eql(0)
@@ -242,18 +239,18 @@ describe('Frontend - tabledata.mjs', function () {
         expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, 'all', i).length).to.be.eql(0)
 
         // 'correct' layer
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, LAYER_OTHER, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, LAYER_OTHER, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, LAYER_OTHER, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, LAYER_OTHER, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, LAYER_OTHER, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, LAYER.OTHER, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, LAYER.OTHER, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, LAYER.OTHER, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, LAYER.OTHER, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, LAYER.OTHER, i).length).to.be.eql(0)
 
         // wrong layer
-        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, LAYER_TILE, i).length).to.be.eql(0)
-        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, LAYER_TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: Number.MIN_VALUE, top: Number.MIN_VALUE, right: Number.MAX_VALUE, bottom: Number.MAX_VALUE }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 1000, bottom: 1000 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 + 10, bottom: 192 + 10 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 0, top: 0, right: 256 - 10, bottom: 192 - 10 }, LAYER.TILE, i).length).to.be.eql(0)
+        expect(findPiecesWithin({ left: 256 + 64 - 10, top: 192 + 64 - 10, right: 1000, bottom: 1000 }, LAYER.TILE, i).length).to.be.eql(0)
       }
     }
   })
@@ -534,24 +531,24 @@ describe('Frontend - tabledata.mjs', function () {
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
       if (i === TEST_STATE) {
-        expect(getMinZ(LAYER_TILE)).to.be.eql(56)
-        expect(getMinZ(LAYER_TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(58)
-        expect(getMinZ(LAYER_TOKEN)).to.be.eql(34)
-        expect(getMinZ(LAYER_TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMinZ(LAYER_STICKER)).to.be.eql(0)
-        expect(getMinZ(LAYER_STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMinZ(LAYER_OTHER)).to.be.eql(0)
-        expect(getMinZ(LAYER_OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER.TILE)).to.be.eql(56)
+        expect(getMinZ(LAYER.TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(58)
+        expect(getMinZ(LAYER.TOKEN)).to.be.eql(34)
+        expect(getMinZ(LAYER.TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER.STICKER)).to.be.eql(0)
+        expect(getMinZ(LAYER.STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER.OTHER)).to.be.eql(0)
+        expect(getMinZ(LAYER.OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMinZ()).to.be.eql(34)
       } else {
-        expect(getMinZ(LAYER_TILE)).to.be.eql(0)
-        expect(getMinZ(LAYER_TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMinZ(LAYER_TOKEN)).to.be.eql(0)
-        expect(getMinZ(LAYER_TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMinZ(LAYER_STICKER)).to.be.eql(0)
-        expect(getMinZ(LAYER_STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMinZ(LAYER_OTHER)).to.be.eql(0)
-        expect(getMinZ(LAYER_OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER.TILE)).to.be.eql(0)
+        expect(getMinZ(LAYER.TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER.TOKEN)).to.be.eql(0)
+        expect(getMinZ(LAYER.TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER.STICKER)).to.be.eql(0)
+        expect(getMinZ(LAYER.STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMinZ(LAYER.OTHER)).to.be.eql(0)
+        expect(getMinZ(LAYER.OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMinZ()).to.be.eql(0)
       }
     }
@@ -581,24 +578,24 @@ describe('Frontend - tabledata.mjs', function () {
     for (let i = 1; i <= 9; i++) {
       setTableNo(i, false)
       if (i === TEST_STATE) {
-        expect(getMaxZ(LAYER_TILE)).to.be.eql(65)
-        expect(getMaxZ(LAYER_TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(58)
-        expect(getMaxZ(LAYER_TOKEN)).to.be.eql(35)
-        expect(getMaxZ(LAYER_TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMaxZ(LAYER_STICKER)).to.be.eql(0)
-        expect(getMaxZ(LAYER_STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMaxZ(LAYER_OTHER)).to.be.eql(0)
-        expect(getMaxZ(LAYER_OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER.TILE)).to.be.eql(65)
+        expect(getMaxZ(LAYER.TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(58)
+        expect(getMaxZ(LAYER.TOKEN)).to.be.eql(35)
+        expect(getMaxZ(LAYER.TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER.STICKER)).to.be.eql(0)
+        expect(getMaxZ(LAYER.STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER.OTHER)).to.be.eql(0)
+        expect(getMaxZ(LAYER.OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMaxZ()).to.be.eql(65)
       } else {
-        expect(getMaxZ(LAYER_TILE)).to.be.eql(0)
-        expect(getMaxZ(LAYER_TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMaxZ(LAYER_TOKEN)).to.be.eql(0)
-        expect(getMaxZ(LAYER_TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMaxZ(LAYER_STICKER)).to.be.eql(0)
-        expect(getMaxZ(LAYER_STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
-        expect(getMaxZ(LAYER_OTHER)).to.be.eql(0)
-        expect(getMaxZ(LAYER_OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER.TILE)).to.be.eql(0)
+        expect(getMaxZ(LAYER.TILE, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER.TOKEN)).to.be.eql(0)
+        expect(getMaxZ(LAYER.TOKEN, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER.STICKER)).to.be.eql(0)
+        expect(getMaxZ(LAYER.STICKER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
+        expect(getMaxZ(LAYER.OTHER)).to.be.eql(0)
+        expect(getMaxZ(LAYER.OTHER, { left: 961, top: 129, right: 961, bottom: 129 })).to.be.eql(0)
         expect(getMaxZ()).to.be.eql(0)
       }
     }
@@ -648,7 +645,7 @@ describe('Frontend - tabledata.mjs', function () {
   it('createPieceFromAsset()', function () {
     const piece = createPieceFromAsset('bb07ac49')
     expect(piece.a).to.be.eql('bb07ac49')
-    expect(piece.l).to.be.eql(LAYER_OTHER)
+    expect(piece.l).to.be.eql(LAYER.OTHER)
     expect(piece.w).to.be.eql(4)
     expect(piece.h).to.be.eql(4)
     expect(piece.x).to.be.eql(0)
@@ -722,7 +719,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(3)
     expect(asset.bg).to.be.eql(undefined)
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('door.1x2.jpg')
     expect(asset.name).to.be.eql('door')
@@ -731,7 +728,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql(undefined)
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('door.1x2x3.123456.jpg')
     expect(asset.name).to.be.eql('door')
@@ -740,7 +737,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(3)
     expect(asset.bg).to.be.eql('123456')
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('door.1x2.123456.jpg')
     expect(asset.name).to.be.eql('door')
@@ -749,7 +746,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('123456')
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('dungeon.doorOpen.3x2x1.png')
     expect(asset.name).to.be.eql('dungeon.doorOpen')
@@ -758,7 +755,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql(undefined)
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('dungeon.doorOpen.3x2.png')
     expect(asset.name).to.be.eql('dungeon.doorOpen')
@@ -767,7 +764,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql(undefined)
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('dungeon.doorOpen.3x2x1.transparent.png')
     expect(asset.name).to.be.eql('dungeon.doorOpen')
@@ -776,7 +773,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('transparent')
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('dungeon.doorOpen.3x2.transparent.png')
     expect(asset.name).to.be.eql('dungeon.doorOpen')
@@ -785,7 +782,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('transparent')
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('asdf.svg')
     expect(asset.name).to.be.eql('asdf')
@@ -812,7 +809,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('transparent')
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('dungeon.doorOpen.3x2.transparent.png')
     expect(asset.name).to.be.eql('dungeon.doorOpen')
@@ -821,7 +818,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('transparent')
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('monster.1x1x1.jpg')
     expect(asset.name).to.be.eql('monster')
@@ -830,7 +827,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql(undefined)
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TOKEN)
+    expect(asset.type).to.be.eql(LAYER.TOKEN)
 
     asset = splitAssetFilename('monster.1x1.jpg')
     expect(asset.name).to.be.eql('monster')
@@ -839,7 +836,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql(undefined)
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TOKEN)
+    expect(asset.type).to.be.eql(LAYER.TOKEN)
 
     asset = splitAssetFilename('monster.2x2x1.abcdef.jpg')
     expect(asset.name).to.be.eql('monster')
@@ -848,7 +845,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('abcdef')
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TOKEN)
+    expect(asset.type).to.be.eql(LAYER.TOKEN)
 
     asset = splitAssetFilename('monster.2x2.abcdef.jpg')
     expect(asset.name).to.be.eql('monster')
@@ -857,7 +854,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('abcdef')
     expect(asset.tx).to.be.eql(undefined)
-    expect(asset.type).to.be.eql(LAYER_TOKEN)
+    expect(asset.type).to.be.eql(LAYER.TOKEN)
 
     asset = splitAssetFilename('tile.4x8x2.abcdef-wood.jpg')
     expect(asset.name).to.be.eql('tile')
@@ -866,7 +863,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(2)
     expect(asset.bg).to.be.eql('abcdef')
     expect(asset.tx).to.be.eql('wood')
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('tile.4x8.abcdef-wood.jpg')
     expect(asset.name).to.be.eql('tile')
@@ -875,7 +872,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('abcdef')
     expect(asset.tx).to.be.eql('wood')
-    expect(asset.type).to.be.eql(LAYER_TILE)
+    expect(asset.type).to.be.eql(LAYER.TILE)
 
     asset = splitAssetFilename('monster.2x2x1.1-paper.jpg')
     expect(asset.name).to.be.eql('monster')
@@ -884,7 +881,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('1')
     expect(asset.tx).to.be.eql('paper')
-    expect(asset.type).to.be.eql(LAYER_TOKEN)
+    expect(asset.type).to.be.eql(LAYER.TOKEN)
 
     asset = splitAssetFilename('monster.2x2.1-paper.jpg')
     expect(asset.name).to.be.eql('monster')
@@ -893,7 +890,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('1')
     expect(asset.tx).to.be.eql('paper')
-    expect(asset.type).to.be.eql(LAYER_TOKEN)
+    expect(asset.type).to.be.eql(LAYER.TOKEN)
 
     asset = splitAssetFilename('monster.3x3x1.transparent.wood.jpg')
     expect(asset.name).to.be.eql('monster')
@@ -902,7 +899,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('transparent')
     expect(asset.tx).to.be.eql('wood')
-    expect(asset.type).to.be.eql(LAYER_TOKEN)
+    expect(asset.type).to.be.eql(LAYER.TOKEN)
 
     asset = splitAssetFilename('monster.3x3.transparent.wood.jpg')
     expect(asset.name).to.be.eql('monster')
@@ -911,7 +908,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(asset.s).to.be.eql(1)
     expect(asset.bg).to.be.eql('transparent')
     expect(asset.tx).to.be.eql('wood')
-    expect(asset.type).to.be.eql(LAYER_TOKEN)
+    expect(asset.type).to.be.eql(LAYER.TOKEN)
   })
 })
 

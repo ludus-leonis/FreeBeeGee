@@ -26,7 +26,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [ ] RPG orc label - badge
     * [ ] room does not remember grid
     * [X] add PHP 7.3 to self diagnosis
-    * [ ] refactor LAYER_* to LAYER.*
+    * [X] refactor LAYER_* to LAYER.*
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

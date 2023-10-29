@@ -64,10 +64,7 @@ import {
 } from '../../view/room/tabletop/index.mjs'
 
 import {
-  LAYER_TILE,
-  LAYER_STICKER,
-  LAYER_TOKEN,
-  LAYER_OTHER
+  LAYER
 } from '../../view/room/tabletop/tabledata.mjs'
 
 import {
@@ -191,16 +188,16 @@ function handleRoomKeys (keydown) {
         pointTo(getMouseCoords())
         break
       case '1': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(1); else toggleLayer(LAYER_OTHER)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(1); else toggleLayer(LAYER.OTHER)
         break
       case '2': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(2); else toggleLayer(LAYER_TOKEN)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(2); else toggleLayer(LAYER.TOKEN)
         break
       case '3': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(3); else toggleLayer(LAYER_STICKER)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(3); else toggleLayer(LAYER.STICKER)
         break
       case '4': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(4); else toggleLayer(LAYER_TILE)
+        if (keydown.ctrlKey | keydown.altKey) setTableNo(4); else toggleLayer(LAYER.TILE)
         break
       case '5': // toggle layer, switch table
         if (keydown.ctrlKey | keydown.altKey) setTableNo(5)

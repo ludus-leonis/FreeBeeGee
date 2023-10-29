@@ -40,7 +40,7 @@ import {
 } from '../utils/chai.mjs'
 
 import {
-  LAYER_TILE
+  LAYER
 } from '../../../src/js/view/room/tabletop/tabledata.mjs'
 
 // -----------------------------------------------------------------------------
@@ -71,7 +71,7 @@ function testApiCreateAsset (api, room) {
       h: 2,
       w: 3,
       d: 4,
-      type: LAYER_TILE,
+      type: LAYER.TILE,
       tx: 'wood',
       name: 'upload.test'
     }
@@ -83,7 +83,7 @@ function testApiCreateAsset (api, room) {
     expect(body.h).to.be.eql(2)
     expect(body.w).to.be.eql(3)
     expect(body.d).to.be.eql(4)
-    expect(body.type).to.be.eql(LAYER_TILE)
+    expect(body.type).to.be.eql(LAYER.TILE)
     expect(body.name).to.be.eql('upload.test')
     expect(body.tx).to.be.eql('wood')
   }, 201)
@@ -103,7 +103,7 @@ function testApiCreateAsset (api, room) {
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
     expect(body.library.tile[index].d).to.be.eql(4)
-    expect(body.library.tile[index].type).to.be.eql(LAYER_TILE)
+    expect(body.library.tile[index].type).to.be.eql(LAYER.TILE)
     expect(body.library.tile[index].name).to.be.eql('upload.test')
     expect(body.library.tile[index].tx).to.be.eql('wood')
   }, 200)
@@ -117,7 +117,7 @@ function testApiCreateAsset (api, room) {
       h: 2,
       w: 3,
       d: 2, // default depth for tiles
-      type: LAYER_TILE,
+      type: LAYER.TILE,
       tx: 'wood',
       name: 'upload.test2'
     }
@@ -127,7 +127,7 @@ function testApiCreateAsset (api, room) {
     expect(body.h).to.be.eql(2)
     expect(body.w).to.be.eql(3)
     expect(body.d).to.be.eql(undefined)
-    expect(body.type).to.be.eql(LAYER_TILE)
+    expect(body.type).to.be.eql(LAYER.TILE)
     expect(body.name).to.be.eql('upload.test2')
     expect(body.tx).to.be.eql('wood')
   }, 201)
@@ -147,7 +147,7 @@ function testApiCreateAsset (api, room) {
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
     expect(body.library.tile[index].d).to.be.eql(undefined)
-    expect(body.library.tile[index].type).to.be.eql(LAYER_TILE)
+    expect(body.library.tile[index].type).to.be.eql(LAYER.TILE)
     expect(body.library.tile[index].name).to.be.eql('upload.test2')
     expect(body.library.tile[index].tx).to.be.eql('wood')
   }, 200)

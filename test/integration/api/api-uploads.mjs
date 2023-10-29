@@ -28,7 +28,7 @@ import * as fs from 'fs'
 
 import {
   _,
-  REGEXP_ID,
+  REGEXP,
   p,
   expect,
   zipCreate,
@@ -54,7 +54,7 @@ function testApiZipMinimal (api, room) {
     body => {
       expect(body).to.be.an('object')
       expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
-      expect(body.id).to.match(REGEXP_ID)
+      expect(body.id).to.match(REGEXP.ID)
       expect(body.name).to.be.eql(room)
       expect(body.engine).to.be.eql(p.versionEngine)
       expect(body.width).to.be.eql(3072)
@@ -120,7 +120,7 @@ function testApiZipFull (api, room) {
     body => {
       expect(body).to.be.an('object')
       expect(body).to.have.all.keys(['id', 'name', 'engine', 'width', 'height', 'library', 'setup', 'credits'])
-      expect(body.id).to.match(REGEXP_ID)
+      expect(body.id).to.match(REGEXP.ID)
       expect(body.name).to.be.eql(room)
       expect(body.engine).to.be.eql(p.versionEngine)
       expect(body.width).to.be.eql(3072)
