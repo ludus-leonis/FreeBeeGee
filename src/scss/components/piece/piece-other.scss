@@ -33,6 +33,7 @@ $piece-other-shadow: zoom(3px) zoom(3px) zoom(4px) $color-black-50a;
 
 .is-quality-ultra .piece-other {
   @include rotate-random($piece-rotate * 4);
+
   @for $x from 8 through 32 { // disable rotation for 8+ sized tiles
     &.is-w-#{$x} { #{'--fbg-r2'}: 0deg; }
     &.is-y-#{$x} { #{'--fbg-r2'}: 0deg; }

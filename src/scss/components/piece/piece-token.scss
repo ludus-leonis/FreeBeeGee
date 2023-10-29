@@ -130,39 +130,11 @@
 
 // --- quality settings --------------------------------------------------------
 
-// .is-quality-medium .piece-token {
-//   filter: drop-shadow($shadow-flat);
-// }
-
 .is-quality-high .piece-token,
 .is-quality-ultra .piece-token {
-  background-image: var(--fbg-material), var(--fbg-image);
-  background-size: zoom(256px), cover;
-
-  @each $id in $random-ids {
-    $i: index($random-ids, $id);
-
-    &[id^='#{$id}'] {
-      background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), center;
-    }
-  }
-
   &.is-border-0 {
     &.is-n::after {
       opacity: .85;
-    }
-  }
-
-  &.has-decal {
-    background-image: var(--fbg-material), var(--fbg-decal), var(--fbg-image);
-    background-size: zoom(256px), cover, cover;
-
-    @each $id in $random-ids {
-      $i: index($random-ids, $id);
-
-      &[id^='#{$id}'] {
-        background-position: zoom(calc(256px / 64 * $i)) zoom(192px * $i), center, center;
-      }
     }
   }
 }

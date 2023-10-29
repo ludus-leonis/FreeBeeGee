@@ -29,6 +29,7 @@ import {
   setupBadge,
   setupColor,
   setupFlags,
+  setupGrid,
   setupLabel,
   setupRotate,
   setupSide,
@@ -54,6 +55,7 @@ export function setup (piece) {
   _('#modal-body').innerHTML = getModalTile(piece)
 
   setupLabel(piece, modalOk)
+  setupGrid(piece)
   setupBadge(piece)
   setupSize(piece)
   setupRotate(piece)
@@ -81,7 +83,7 @@ function modalOk () {
   updateRotate(piece, updates)
   updateSide(piece, updates)
   updateColor(piece, updates)
-  updateFlags(piece, updates)
+  updateFlags(piece, updates) // also does grid
 
   editPiece(piece.id, updates)
 
@@ -115,9 +117,13 @@ function getModalTile (piece) {
     <form class="container modal-edit modal-edit-tile">
       <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
       <div class="row">
-        <div class="col-12">
+        <div class="col-12 col-lg-10">
           <label for="piece-label">Label</label>
           <input id="piece-label" name="piece-label" type="text" maxlength="32">
+        </div>
+        <div class="col-12 col-lg-2">
+          <label for="piece-grid">Grid</label>
+          <select id="piece-grid" name="piece-grid"></select>
         </div>
         <div class="col-6 ${colorClass}">
           <label for="piece-color">Color</label>

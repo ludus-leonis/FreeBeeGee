@@ -77,6 +77,19 @@ import {
   selectionAdd
 } from '../view/room/tabletop/selection.mjs'
 
+// -----------------------------------------------------------------------------
+
+export const FLAGS = {
+  NO_DELETE: 0b00000001,
+  NO_CLONE: 0b00000010,
+  NO_MOVE: 0b00000100,
+
+  TILE_GRID_MINOR: 0b01000000,
+  TILE_GRID_MAJOR: 0b10000000,
+
+  NOTE_TOPLEFT: 0b10000000
+}
+
 // --- public ------------------------------------------------------------------
 
 /**
@@ -160,6 +173,30 @@ export function getTable (no = getTableNo()) {
 }
 
 /**
+ * Determine proper grid file.
+ *
+ * @param {string} bgcolor HTML color to find highest-contrast grid file for.
+ * @param {string} strength Grid style (major/minor)
+ * @returns {string} The grid image file.
+ */
+export function getGridFile (bgcolor, strength) {
+  const bright = brightness(bgcolor)
+  let color = 5
+  const window = 52
+  if (bright <= 128 - window) color = 1
+  if (bright >= 128 + window) color = 9
+
+  switch (room.setup?.type) {
+    case TYPE_HEX:
+      return `img/grid-hex-${strength}-${color}.svg`
+    case TYPE_HEX2:
+      return `img/grid-hex2-${strength}-${color}.svg`
+    default:
+      return `img/grid-square-${strength}-${color}.svg`
+  }
+}
+
+/**
  * Get current background image data.
  *
  * @returns {object} Current table background.
@@ -170,19 +207,7 @@ export function getBackground () {
 
   if (!background.grid) { // determine matching grid file on the fly
     const gridType = getRoomPreference(PREFS.GRID)
-    const color = brightness(background.color) < 92 ? 'white' : 'black'
-    const style = gridType > 1 ? 'major' : 'minor'
-
-    switch (room.setup?.type) {
-      case TYPE_HEX:
-        background.gridFile = `img/grid-hex-${style}-${color}.svg`
-        break
-      case TYPE_HEX2:
-        background.gridFile = `img/grid-hex2-${style}-${color}.svg`
-        break
-      default:
-        background.gridFile = `img/grid-square-${style}-${color}.svg`
-    }
+    background.gridFile = getGridFile(background.color, gridType > 1 ? 'major' : 'minor')
   }
 
   return background
@@ -589,13 +614,6 @@ export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
   )
 }
 
-export const FLAGS = {
-  NO_DELETE: 0b00000001,
-  NO_CLONE: 0b00000010,
-  NO_MOVE: 0b00000100,
-  NOTE_TOPLEFT: 0b10000000
-}
-
 /**
  * Update the falgs of a piece/token.
  *
@@ -902,13 +920,13 @@ function patchPiece (pieceId, patch, sync = true) {
 }
 
 /**
- * Update a piece on the server.
+ * Update pieces on the server.
  *
  * @param {object[]} patches Array of partial object of fields to send. Must include ids!
  * @param {object} sync If true (default), trigger table sync.
  * @returns {Promise<object>} Promise of the API request.
  */
-function patchPieces (patches, sync = true) {
+export function patchPieces (patches, sync = true) {
   const sane = []
   if (patches.length <= 0) return Promise.resolve() // nothing to do!
   for (const patch of patches) {

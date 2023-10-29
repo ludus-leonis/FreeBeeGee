@@ -183,20 +183,19 @@ gulp.task('img', gulp.series(() => {
   return gulp.src([
     'src/img/**/*.jpg'
   ])
-    .pipe(changed(dirs.cache + '/img'))
     .pipe(shrinkr({
+      cacheDir: '.cache/img',
       jpg: { quality: 9 }
     }))
-    .pipe(gulp.dest(dirs.cache + '/img'))
 }, () => {
   // step 2 - optimize other assets
   return gulp.src([
     'src/img/**/*.svg',
     'src/img/**/*.png'
   ])
-    .pipe(changed(dirs.cache + '/img'))
-    .pipe(shrinkr())
-    .pipe(gulp.dest(dirs.cache + '/img'))
+    .pipe(shrinkr({
+      cacheDir: '.cache/img'
+    }))
 }, () => {
   // step 3 - use cached images
   return gulp.src([
@@ -222,7 +221,7 @@ gulp.task('system', () => {
  * @param {boolean} minimize If true, the asses/images will be minimized first.
  * @returns {object} Gulp pipe.
  */
-function snapshot (name, minimize = false) {
+function snapshot (name, minimize = true) {
   return gulp.series(() => { // step 1: optimize & cache images
     if (minimize) {
       return gulp.src([
@@ -230,11 +229,10 @@ function snapshot (name, minimize = false) {
         'src/snapshots/' + name + '/**/*.png',
         'src/snapshots/' + name + '/**/*.svg'
       ])
-        .pipe(changed(dirs.cache + '/snapshots/' + name))
         .pipe(shrinkr({
+          cacheDir: '.cache/snapshots/' + name,
           jpg: { quality: 7 }
         }))
-        .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
     } else {
       return gulp.src([
         'src/snapshots/' + name + '/**/*.jpg',
@@ -359,9 +357,9 @@ function demo (name) {
     return replace(gulp.src('src/snapshots/' + name + '/**/*'))
       .pipe(changed(dirs.cache + '/snapshots/' + name))
       .pipe(shrinkr({
+        cacheDir: '.cache/snapshots/' + name,
         jpg: { quality: 7 }
       }))
-      .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
   })
 }
 

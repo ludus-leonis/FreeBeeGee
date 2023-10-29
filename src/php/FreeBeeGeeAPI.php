@@ -567,7 +567,7 @@ class FreeBeeGeeAPI
     {
         return [
             $this->getBackground('Cardboard', 'img/desktop-cardboard.jpg', '#B2997D', '#7F6D59'),
-            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#31555E', '#4A818E'),
+            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#375F68', '#547C86'),
             $this->getBackground('Casino', 'img/desktop-casino.jpg', '#2D5B3D', '#3A7750'),
             $this->getBackground('Concrete', 'img/desktop-concrete.jpg', '#6C6964', '#494540'),
             $this->getBackground('Dark', 'img/desktop-dark.jpg', '#212121', '#444444'),

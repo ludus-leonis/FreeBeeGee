@@ -53,12 +53,14 @@ import {
   deletePieces,
   numberPiece,
   flipPiece,
+  patchPieces,
   movePieces,
   movePiecePatch,
   colorPiece,
   rotatePiece,
   undo as tableUndo,
-  getRoomPreference
+  getRoomPreference,
+  getGridFile
 } from '../../../state/index.mjs'
 
 import {
@@ -231,6 +233,44 @@ export function colorSelected (border = false) {
         }
     }
   }
+}
+
+/**
+ * Toggle / cycle overlay grid on selected tiles.
+ *
+ * Will silently fail if no tiles are selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object[]} Pieces to be modified.
+ */
+export function gridSelected (api = true) {
+  const toPatch = []
+  for (const piece of selectionGetPieces()) {
+    switch (piece.l) {
+      case LAYER_TILE:
+        if (piece.f & FLAGS.TILE_GRID_MINOR) {
+          toPatch.push({
+            id: piece.id,
+            f: (piece.f & 0b00111111) | FLAGS.TILE_GRID_MAJOR
+          })
+        } else if (piece.f & FLAGS.TILE_GRID_MAJOR) {
+          toPatch.push({
+            id: piece.id,
+            f: (piece.f & 0b00111111)
+          })
+        } else {
+          toPatch.push({
+            id: piece.id,
+            f: (piece.f & 0b00111111) | FLAGS.TILE_GRID_MINOR
+          })
+        }
+    }
+  }
+
+  if (api) {
+    patchPieces(toPatch)
+  }
+  return toPatch
 }
 
 /**
@@ -466,7 +506,8 @@ function createOrUpdatePieceDOM (piece) {
     _piece.l !== piece.l ||
     _piece.w !== piece.w ||
     _piece.h !== piece.h ||
-    _piece.s !== piece.s
+    _piece.s !== piece.s ||
+    (_piece.f & 0b11111000) !== (piece.f & 0b11111000)
   ) {
     selection = selectionGetIds()
     div.delete()
@@ -493,11 +534,9 @@ function createOrUpdatePieceDOM (piece) {
   }
   if (_piece.r !== piece.r) {
     div.remove('.is-r', '.is-r-*')
-    if (piece.l !== LAYER_OTHER) {
-      div.add('.is-r', `.is-r-${piece.r}`)
-      if (Math.abs(_piece.r - piece.r) > 180) {
-        div.add('.is-delay-r', `.is-delay-r-${_piece.r}`)
-      }
+    div.add('.is-r', `.is-r-${piece.r}`)
+    if (Math.abs(_piece.r - piece.r) > 180) {
+      div.add('.is-delay-r', `.is-delay-r-${_piece.r}`)
     }
   }
   if (_piece.w !== piece.w || _piece.h !== piece.h) {
@@ -1122,13 +1161,13 @@ function pieceToNode (piece) {
     const uriSide = getAssetURL(asset, piece.s)
     if (asset.base) { // layered asset
       const uriBase = getAssetURL(asset, -1)
-      node = _(`.piece.piece-${asset.type}.has-decal`).create().css({
-        '--fbg-image': url(uriBase),
-        '--fbg-decal': url(uriSide)
+      node = _(`.piece.piece-${asset.type}`).create().css({
+        '--fbg-base': url(uriBase),
+        '--fbg-side': url(uriSide)
       })
     } else { // regular asset
       node = _(`.piece.piece-${asset.type}`).create().css({
-        '--fbg-image': url(uriSide)
+        '--fbg-side': url(uriSide)
       })
     }
 
@@ -1140,8 +1179,10 @@ function pieceToNode (piece) {
       node.remove('--fbg-material')
     }
     if (asset.mask) {
-      node.add('.has-mask')
-      const inner = _('.masked').create().css({ '--fbg-mask': url(getAssetURL(asset, -2)) })
+      node.add('.has-mask').css({
+        '--fbg-mask': url(getAssetURL(asset, -2))
+      })
+      const inner = _('.is-mask').create()
       node.add(inner)
     }
 
@@ -1163,7 +1204,18 @@ function pieceToNode (piece) {
       }
     }
 
-    if (piece._meta.hasHighlight) {
+    if (piece.f & FLAGS.TILE_GRID_MINOR) {
+      node.css({
+        '--fbg-grid': url(getGridFile(asset.bg, 'minor'))
+      })
+    }
+    if (piece.f & FLAGS.TILE_GRID_MAJOR) {
+      node.css({
+        '--fbg-grid': url(getGridFile(asset.bg, 'major'))
+      })
+    }
+
+    if (piece._meta.hasHighlight && !asset.mask) {
       node.add('.has-highlight')
     }
   }

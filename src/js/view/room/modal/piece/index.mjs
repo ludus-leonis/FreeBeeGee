@@ -240,15 +240,20 @@ export function updateColorBorder (piece, updates) {
  * @param {object} updates The update object for the API call.
  */
 export function updateFlags (piece, updates) {
-  let f = 0
-  if (_('#piece-no-move').checked) f |= FLAGS.NO_MOVE
-  if (_('#piece-no-delete').checked) f |= FLAGS.NO_DELETE
-  if (_('#piece-no-clone').checked) f |= FLAGS.NO_CLONE
-  const noteType = _('#piece-note-type')
-  if (noteType.exists()) {
-    if (noteType.value === 'tl') f |= FLAGS.NOTE_TOPLEFT
+  let flags = 0
+
+  if (_('#piece-no-move').checked) flags |= FLAGS.NO_MOVE
+  if (_('#piece-no-delete').checked) flags |= FLAGS.NO_DELETE
+  if (_('#piece-no-clone').checked) flags |= FLAGS.NO_CLONE
+  const tileGrid = _('#piece-grid')
+  if (tileGrid.exists()) {
+    if (tileGrid.value === 'minor') flags |= FLAGS.TILE_GRID_MINOR
+    if (tileGrid.value === 'major') flags |= FLAGS.TILE_GRID_MAJOR
   }
-  if (f !== piece.f) updates.f = f
+  const noteType = _('#piece-note-type')
+  if (noteType.exists() && noteType.value === 'tl') flags |= FLAGS.NOTE_TOPLEFT
+
+  if (flags !== piece.f) updates.f = flags
 }
 
 /**
@@ -291,6 +296,31 @@ export function updateLabel (piece, updates) {
     updates.l = piece.l
     updates.t = [label]
   }
+}
+
+/**
+ * Populate modal field(s) with grid information.
+ *
+ * @param {object} piece The piece's data object.
+ */
+export function setupGrid (piece) {
+  // piece number
+  const grid = _('#piece-grid')
+
+  let option = _('option').create('None')
+  option.value = 'none'
+  if (!(piece.f & FLAGS.TILE_GRID_MINOR || piece.f & FLAGS.TILE_GRID_MAJOR)) option.selected = true
+  grid.add(option)
+
+  option = _('option').create('Minor')
+  option.value = 'minor'
+  if (piece.f & FLAGS.TILE_GRID_MINOR) option.selected = true
+  grid.add(option)
+
+  option = _('option').create('Major')
+  option.value = 'major'
+  if (piece.f & FLAGS.TILE_GRID_MAJOR) option.selected = true
+  grid.add(option)
 }
 
 /**

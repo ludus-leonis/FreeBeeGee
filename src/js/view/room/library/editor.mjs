@@ -310,15 +310,6 @@ function assetToTable (asset) {
   table.add(tbody)
   let content = ''
 
-  if (asset.mask) {
-    content += `
-      <tr>
-        <td>Mask</td>
-        <td><code>${asset.mask}</code></td>
-        <td><a href="${getRoomMediaURL(getRoom().name, asset.type, asset.mask, DEMO_MODE)}" target="_blank">View</a></td>
-      </tr>
-    `
-  }
   let index = 0
   for (const media of asset.media) {
     content += `
@@ -329,6 +320,15 @@ function assetToTable (asset) {
       </tr>
     `
     index++
+  }
+  if (asset.mask) {
+    content += `
+      <tr>
+        <td>Mask</td>
+        <td><code>${asset.mask}</code></td>
+        <td><a href="${getRoomMediaURL(getRoom().name, asset.type, asset.mask, DEMO_MODE)}" target="_blank">View</a></td>
+      </tr>
+    `
   }
   if (asset.base) {
     content += `

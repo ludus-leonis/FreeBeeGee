@@ -410,7 +410,6 @@ export function getFeatures (pieces) {
 
   let moveable = 0
   for (const piece of pieces) {
-    if (piece.l === LAYER_OTHER) features.rotate = false
     if (!(piece.f & FLAGS.NO_CLONE)) features.clone = true // at least one found
     if (!(piece.f & FLAGS.NO_DELETE)) features.delete = true // at least one found
     if (!(piece.f & FLAGS.NO_MOVE)) {

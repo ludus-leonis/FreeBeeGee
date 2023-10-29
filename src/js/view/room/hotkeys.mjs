@@ -53,6 +53,7 @@ import {
   randomSelected,
   numberSelected,
   moveSelected,
+  gridSelected,
   createNote,
   colorSelected,
   pileSelected,
@@ -276,8 +277,11 @@ function handleRoomKeys (keydown) {
       case 'F': // flip backward
         flipSelected(false)
         break
-      case 'g': // grid
+      case 'G': // grid (table)
         toggleGrid()
+        break
+      case 'g': // grid (piece)
+        gridSelected()
         break
       case 'o': // token color
         colorSelected(false)

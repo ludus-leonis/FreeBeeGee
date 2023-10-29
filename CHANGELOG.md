@@ -2,23 +2,27 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.23.0 - ??? ???
+## v0.23.0 - Shady Shrew
 
 ### Notable changes
 
-* added piece depth / customizable shadows
 * added cursor-key movement of selection
+* added piece depth / customizable shadows
+* added minor/major grid-on-tiles option
 * added support for some dedicated hardware keys (help, undo, copy, paste, zoom, ...)
+* added rotation for dice
+* improved square and hex grids
+* improved and added full color support to all Hex tiles
 * simplified setup/upgrade/backup by auto-populating api/data
-* renamed overlays to stickers
+* renamed overlays to stickers and removed their default shadows
 
 ### Other changes
 
 * added system-assets separator line in library window
-* added better hint for new installations to set an admin password
+* added better hint for new installations if default password is still set
 * added deprecated PHP 7.3 detection to self diagnosis
-* exclude protected pieces from multi-select operation, instead of denying it to all
-* improved display of availables sides and sizes in the library
+* added exclude of protected pieces from multi-select operation, instead of denying it to all
+* improved display of available asset sides and sizes in the library
 * improved grid visibility
 
 
@@ -36,7 +40,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * fixed selection lost after clone/copy in demo mode
 * fixed wrong piece color '0'
 * fixed room auto upgrade do not recreating mandatory folders
-* fixed wrong dropdown opens left of edit field
+* fixed wrong drop-down opens left of edit field
 * fixed [enter] no longer closing edit modals
 * fixed holding keys repeats actions
 * refactored internal asset ID calculation

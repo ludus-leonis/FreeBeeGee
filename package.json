@@ -3,7 +3,7 @@
   "version": "0.23.0-dev",
   "versionEngine": "2.6.1",
   "type": "module",
-  "codename": "??? ???",
+  "codename": "Shady Shrew",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",

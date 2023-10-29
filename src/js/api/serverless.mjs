@@ -350,7 +350,7 @@ function api (data, headers) {
         root: root + 'api',
         backgrounds: [
           { name: 'Cardboard', image: 'img/desktop-cardboard.jpg', color: '#b2997d', scroller: '#7f6d59' },
-          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#31555E', scroller: '#4a818e' },
+          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#375F68', scroller: '#547C86' },
           { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2D5B3D', scroller: '#3a7750' },
           { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#6C6964', scroller: '#494540' },
           { name: 'Dark', image: 'img/desktop-dark.jpg', color: '#212121', scroller: '#444444' },

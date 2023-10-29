@@ -49,6 +49,7 @@ import {
   _test,
   pileSelected,
   moveSelected,
+  gridSelected,
   deleteSelected
 } from '../../../src/js/view/room/tabletop/index.mjs'
 
@@ -256,6 +257,57 @@ describe('Frontend - tabletop.mjs', function () {
     expect(move6[1].y).to.be.eql(55)
     expect(selectionGetPieces().length).to.be.eql(3)
     expect(selectionGetFeatures().move).to.be.eql(true)
+    selectionClear()
+  })
+
+  it('gridSelected() square', function () {
+    testState.setTable(1, populatePiecesDefaults([
+      { ...JSON.parse(pieceJSON), id: 'S1', l: 1 },
+      { ...JSON.parse(pieceJSON), id: 'S2', l: 1, f: FLAGS.NO_MOVE },
+      { ...JSON.parse(pieceJSON), id: 'S3', l: 1, f: FLAGS.TILE_GRID_MINOR },
+      { ...JSON.parse(pieceJSON), id: 'S4', l: 1, f: FLAGS.TILE_GRID_MAJOR | FLAGS.NO_CLONE },
+      { ...JSON.parse(pieceJSON), id: 'S5', l: 2 }
+    ]))
+    expect(gridSelected(false)).to.be.eql([])
+    expect(selectionGetPieces().length).to.be.eql(0)
+    expect(selectionGetFeatures().move).to.be.eql(false)
+
+    selectionAdd('S1')
+    const grid1 = gridSelected(false)
+    expect(selectionGetPieces().length).to.be.eql(1)
+    expect(grid1.length).to.be.eql(1)
+    expect(grid1[0].id).to.be.eql('S1')
+    expect(grid1[0].f).to.be.eql(FLAGS.TILE_GRID_MINOR)
+    selectionClear()
+
+    selectionAdd('S2')
+    expect(selectionGetPieces().length).to.be.eql(1)
+    const grid2 = gridSelected(false)
+    expect(grid2.length).to.be.eql(1)
+    expect(grid2[0].id).to.be.eql('S2')
+    expect(grid2[0].f).to.be.eql(FLAGS.NO_MOVE | FLAGS.TILE_GRID_MINOR)
+    selectionClear()
+
+    selectionAdd('S3')
+    expect(selectionGetPieces().length).to.be.eql(1)
+    const grid3 = gridSelected(false)
+    expect(grid3.length).to.be.eql(1)
+    expect(grid3[0].id).to.be.eql('S3')
+    expect(grid3[0].f).to.be.eql(FLAGS.TILE_GRID_MAJOR)
+    selectionClear()
+
+    selectionAdd('S4')
+    expect(selectionGetPieces().length).to.be.eql(1)
+    const grid4 = gridSelected(false)
+    expect(grid4.length).to.be.eql(1)
+    expect(grid4[0].id).to.be.eql('S4')
+    expect(grid4[0].f).to.be.eql(FLAGS.NO_CLONE)
+    selectionClear()
+
+    selectionAdd('S5')
+    expect(selectionGetPieces().length).to.be.eql(1)
+    const grid5 = gridSelected(false)
+    expect(grid5.length).to.be.eql(0)
     selectionClear()
   })
 

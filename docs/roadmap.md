@@ -11,19 +11,22 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] cleanup 'x/y' and '3x3:3' in library window
 * [X] system separator line in library window
 * [X] auto-populate empty data dir (for docker volumes)
-* [ ] engine: grid-on-tile flag major/minor
-* [ ] zoom-to-cursor
-* [ ] different blue menu for measure and non-measure mode
+* [X] grid-on-tile flag major/minor
 * [X] support more special hotkeys (copy, paste, zoom, ...)
 * [X] rename overlays to stickers
+* [ ] remember last used snapshot in create-room dialog
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] table.json caching in demo mode
     * [ ] dragging multi-selected hex tokens does not always snap correctly
     * [X] fix sass import warning
-    * [ ] more tabletop/index.js tests
+    * [ ] edit modal dropdown sizes
+    * [ ] token + mask + rounded
+    * [ ] RPG orc label - badge
+    * [ ] room does not remember grid
     * [X] add PHP 7.3 to self diagnosis
+    * [ ] refactor LAYER_* to LAYER.*
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -34,6 +37,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
+* [ ] zoom-to-cursor
+* [ ] different blue menu for measure and non-measure mode
+* [ ] refactor: cleanup responsibility state/tabletop abcSelected/abcPieces
+  * [ ] more tabletop/index.js tests
+  * [ ] move abcSelected to selection.js?
+* [ ] invert svg/decal on white
 * [ ] refactor: system asset flag instead of '_'
 * [ ] snapshot download for demo mode
 * [ ] doubleclick opens edit modal
@@ -45,7 +54,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] ui: move dice more
+* [ ] ui: move dice more / rotate
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
@@ -67,7 +76,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] refactor: use events more
 * [ ] docs: template-template
 * [ ] docs: how-to make snapshot `.zip`s
-* [ ] repo: generate average piece color
+* [ ] repo: generate average piece color & svg mask
 * [ ] API: catch all unhandled warnings/exceptions in PHP API and return 500
 * [ ] docs: API Docs
 

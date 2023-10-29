@@ -436,14 +436,39 @@ export function setupBackground () {
     '--fbg-tabletop-image': url(background.image)
   })
 
+  switch (room.setup?.type) {
+    case TYPE_HEX:
+      _('body').css({
+        '--fbg-grid-x': '110px',
+        '--fbg-grid-y': '64px',
+        '--fbg-grid-x-origin': 'center',
+        '--fbg-grid-y-origin': 'center'
+      })
+      break
+    case TYPE_HEX2:
+      _('body').css({
+        '--fbg-grid-x': '64px',
+        '--fbg-grid-y': '110px',
+        '--fbg-grid-x-origin': 'center',
+        '--fbg-grid-y-origin': 'center'
+      })
+      break
+    default:
+      _('body').css({
+        '--fbg-grid-x': '64px',
+        '--fbg-grid-y': '64px',
+        '--fbg-grid-x-origin': '0',
+        '--fbg-grid-y-origin': '0'
+      })
+  }
+
   // setup background / wallpaper + grid
   _('#tabletop').remove('.has-grid', '--fbg-tabletop-grid')
+
   if (gridType > 0) {
     _('#tabletop').add('.has-grid')
     _('#tabletop').css({
-      '--fbg-tabletop-grid': url(background.gridFile),
-      '--fbg-grid-x': room.setup?.type === TYPE_HEX ? '110px' : '64px',
-      '--fbg-grid-y': room.setup?.type === TYPE_HEX2 ? '110px' : '64px'
+      '--fbg-tabletop-grid': url(background.gridFile)
     })
   }
 
