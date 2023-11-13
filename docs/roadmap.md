@@ -10,7 +10,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
-    * [ ] note font won't scale properly
+    * [X] note padding won't zoom properly
     * [ ] clone no-clone object disables edit without reselection
     * [X] refactor imports and module responsibility
     * [ ] should token numbers increase on cut+paste?

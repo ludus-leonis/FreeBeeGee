@@ -42,7 +42,7 @@ $piece-note-rotate: 4deg;
   font-size: zoom(2em); // 32px
   font-variant-ligatures: none;
   overflow: hidden;
-  padding: $spacing-medium;
+  padding: zoom($spacing-medium);
   position: relative;
   text-align: center;
   word-break: break-word;
@@ -69,17 +69,17 @@ $piece-note-rotate: 4deg;
 
   &.is-w-1 {
     font-size: zoom(.5em); // 8px
-    padding: $spacing-tiny;
+    padding: zoom($spacing-tiny);
   }
 
   &.is-w-2 {
     font-size: zoom(.75em); // 12px
-    padding: $spacing-small;
+    padding: zoom($spacing-small);
   }
 
   &.is-w-3 {
     font-size: zoom(1.125em); // 18px
-    padding: $spacing-small;
+    padding: zoom($spacing-small);
   }
 
   &.is-w-4 {
