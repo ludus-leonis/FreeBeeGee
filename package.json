@@ -112,6 +112,7 @@
   },
   "overrides": {
     "chokidar": "^3.5.3",
-    "glob-parent": "^6.0.2"
+    "glob-parent": "^6.0.2",
+    "postcss": "^8.4.31"
   }
 }
