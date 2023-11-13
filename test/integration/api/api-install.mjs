@@ -26,23 +26,24 @@
 
 import fs from 'fs'
 
-import {
-  p,
-  expect,
-  testJsonGet,
-  fetchAndTest
-} from '../utils/chai.mjs'
-
-const FBGdir = 'dist/FreeBeeGee/'
+import Test, { expect } from '../utils/test.mjs'
 
 // -----------------------------------------------------------------------------
+
+export default {
+  run
+}
+
+// -----------------------------------------------------------------------------
+
+const FBGdir = 'dist/FreeBeeGee/'
 
 /**
  * @param {string} api API root path.
  * @param {boolean} versionOK True for supported PHP versons.
  */
 function testApiIssues (api, versionOK) {
-  testJsonGet(api, () => '/issues/', body => {
+  Test.jsonGet(api, () => '/issues/', body => {
     expect(body.phpOk).to.be.eql(versionOK)
     expect(body.moduleZip).to.be.eql(true)
   }, 200)
@@ -55,7 +56,7 @@ async function testNoHtaccess (root) {
   fs.renameSync(`${FBGdir}.htaccess`, `${FBGdir}.htaccess.bak`)
 
   // shows the fallback/help index.html
-  await fetchAndTest(root, body => {
+  await Test.fetchAndTest(root, body => {
     expect(body).to.contain('Unfortunately, this webserver can\'t run FreeBeeGee (yet).')
   })
 }
@@ -69,7 +70,7 @@ async function testInvalidHtaccess (api, root) {
   fs.writeFileSync(`${FBGdir}.htaccess`, 'syntax error in htaccess')
 
   // shows the apache 500 page
-  await fetchAndTest(root, body => {
+  await Test.fetchAndTest(root, body => {
     expect(body).to.contain('Internal Server Error')
   }, 500)
 }
@@ -81,7 +82,7 @@ async function testNoModRewrite (root) {
   fs.renameSync(`${FBGdir}.htaccess`, `${FBGdir}.htaccess.bak`)
   fs.writeFileSync(`${FBGdir}.htaccess`, '')
 
-  await fetchAndTest(root, body => {
+  await Test.fetchAndTest(root, body => {
     expect(body).to.contain('Unfortunately, this webserver can\'t run FreeBeeGee (yet).')
   })
 }
@@ -93,7 +94,7 @@ async function testNoModRewrite (root) {
  * @returns {Promise} Promise of completion of test.
  */
 function testNoJs (root) {
-  return fetchAndTest(root, body => {
+  return Test.fetchAndTest(root, body => {
     expect(body).to.contain('JavaScript required')
   }, 200, false)
 }
@@ -105,7 +106,7 @@ function testNoJs (root) {
 async function testDefaultPassword (root) {
   fs.renameSync(`${FBGdir}api/data/server.json`, `${FBGdir}api/data/server.json.bak`)
 
-  await fetchAndTest(root, body => {
+  await Test.fetchAndTest(root, body => {
     expect(body).to.contain('you\'ll have to set an admin password')
   })
 }
@@ -117,9 +118,9 @@ async function testDefaultPassword (root) {
 async function testUpdateAvailable (root) {
   fs.renameSync(`${FBGdir}api/FreeBeeGeeAPI.php`, `${FBGdir}api/FreeBeeGeeAPI.php.bak`)
   const fbg = fs.readFileSync(`${FBGdir}api/FreeBeeGeeAPI.php.bak`, { encoding: 'utf8', flag: 'r' })
-  fs.writeFileSync(`${FBGdir}api/FreeBeeGeeAPI.php`, fbg.replaceAll(p.version, '2.3.4'))
+  fs.writeFileSync(`${FBGdir}api/FreeBeeGeeAPI.php`, fbg.replaceAll(Test.p.version, '2.3.4'))
 
-  await fetchAndTest(root, body => {
+  await Test.fetchAndTest(root, body => {
     expect(body).to.contain('Update available')
   })
 }
@@ -129,7 +130,7 @@ async function testUpdateAvailable (root) {
  * @returns {Promise} Promise of completion of test.
  */
 function testReady (root) {
-  return fetchAndTest(root, body => {
+  return Test.fetchAndTest(root, body => {
     expect(body).to.contain('no spaces or funky letters')
   })
 }
@@ -139,7 +140,7 @@ function testReady (root) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - install', function () {
     afterEach(function () {
       for (const path of [

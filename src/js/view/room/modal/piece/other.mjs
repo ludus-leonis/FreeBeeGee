@@ -20,29 +20,16 @@
  */
 
 import _ from '../../../../lib/FreeDOM.mjs'
+import Modal from './index.mjs'
+import State from '../../../../state/index.mjs'
 
-import {
-  editPiece
-} from '../../../../state/index.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  setupBadge,
-  setupColor,
-  setupFlags,
-  setupLabel,
-  setupRotate,
-  setupSide,
-  setupSize,
-  updateBadge,
-  updateColor,
-  updateFlags,
-  updateLabel,
-  updateRotate,
-  updateSide,
-  updateSize
-} from './index.mjs'
+export default {
+  create
+}
 
-// --- public ------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 /**
  * Show the edit-piece modal.
@@ -50,21 +37,19 @@ import {
  * @param {object} piece The piece's data object.
  * @returns {Function} Callback for ok/save button.
  */
-export function setup (piece) {
+function create (piece) {
   _('#modal-body').innerHTML = getModalOther(piece)
 
-  setupLabel(piece, modalOk)
-  setupBadge(piece)
-  setupSize(piece)
-  setupRotate(piece)
-  setupSide(piece)
-  setupColor(piece)
-  setupFlags(piece)
+  Modal.setupLabel(piece, modalOk)
+  Modal.setupBadge(piece)
+  Modal.setupSize(piece)
+  Modal.setupRotate(piece)
+  Modal.setupSide(piece)
+  Modal.setupColor(piece)
+  Modal.setupFlags(piece)
 
   return modalOk
 }
-
-// --- internal ----------------------------------------------------------------
 
 /**
  * Hides modal and pushes changes to the state.
@@ -75,15 +60,15 @@ function modalOk () {
   const piece = _('#modal').node().piece
   const updates = {}
 
-  updateLabel(piece, updates)
-  updateBadge(piece, updates)
-  updateSize(piece, updates)
-  updateRotate(piece, updates)
-  updateSide(piece, updates)
-  updateColor(piece, updates)
-  updateFlags(piece, updates)
+  Modal.updateLabel(piece, updates)
+  Modal.updateBadge(piece, updates)
+  Modal.updateSize(piece, updates)
+  Modal.updateRotate(piece, updates)
+  Modal.updateSide(piece, updates)
+  Modal.updateColor(piece, updates)
+  Modal.updateFlags(piece, updates)
 
-  editPiece(piece.id, updates)
+  State.editPiece(piece.id, updates)
 
   return true
 }

@@ -24,13 +24,13 @@
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
-import {
-  p,
-  expect,
-  closeTestroom,
-  testJsonGet,
-  testJsonPost
-} from '../utils/chai.mjs'
+import Test, { expect } from '../utils/test.mjs'
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
 
 // -----------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ import {
  */
 function testApiSetupRPG (api, room) {
   // create room
-  testJsonPost(api, () => '/rooms/', () => {
+  Test.jsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
       snapshot: 'RPG',
@@ -49,7 +49,7 @@ function testApiSetupRPG (api, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngine)
+    expect(body.engine).to.be.eql(Test.p.versionEngine)
     expect(body.library).to.be.an('object')
     expect(body.library.sticker.length).to.be.gte(5)
     expect(body.library.tile.length).to.be.gte(10)
@@ -62,12 +62,12 @@ function testApiSetupRPG (api, room) {
   }, 201)
 
   // check table
-  testJsonGet(api, () => `/rooms/${room}/tables/1/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.gte(16)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -76,7 +76,7 @@ function testApiSetupRPG (api, room) {
  */
 function testApiSetupHex (api, room) {
   // create room
-  testJsonPost(api, () => '/rooms/', () => {
+  Test.jsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
       snapshot: 'Hex',
@@ -85,7 +85,7 @@ function testApiSetupHex (api, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngine)
+    expect(body.engine).to.be.eql(Test.p.versionEngine)
     expect(body.library).to.be.an('object')
     expect(body.library.sticker.length).to.be.gte(0)
     expect(body.library.tile.length).to.be.gte(10)
@@ -98,12 +98,12 @@ function testApiSetupHex (api, room) {
   }, 201)
 
   // check table
-  testJsonGet(api, () => `/rooms/${room}/tables/1/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.gte(16)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -112,7 +112,7 @@ function testApiSetupHex (api, room) {
  */
 function testApiSetupClassic (api, room) {
   // create room
-  testJsonPost(api, () => '/rooms/', () => {
+  Test.jsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
       snapshot: 'Classic',
@@ -121,7 +121,7 @@ function testApiSetupClassic (api, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngine)
+    expect(body.engine).to.be.eql(Test.p.versionEngine)
     expect(body.library).to.be.an('object')
     expect(body.library.sticker.length).to.be.gte(1)
     expect(body.library.tile.length).to.be.gte(3)
@@ -134,12 +134,12 @@ function testApiSetupClassic (api, room) {
   }, 201)
 
   // check table
-  testJsonGet(api, () => `/rooms/${room}/tables/1/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(1) // 1 sticky note
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -148,7 +148,7 @@ function testApiSetupClassic (api, room) {
  */
 function testApiSetupTutorial (api, room) {
   // create room
-  testJsonPost(api, () => '/rooms/', () => {
+  Test.jsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
       snapshot: 'Tutorial',
@@ -157,7 +157,7 @@ function testApiSetupTutorial (api, room) {
   }, body => {
     expect(body).to.be.an('object')
     expect(body.name).to.be.eql(room)
-    expect(body.engine).to.be.eql(p.versionEngine)
+    expect(body.engine).to.be.eql(Test.p.versionEngine)
     expect(body.library).to.be.an('object')
     expect(body.library.sticker.length).to.be.gte(1)
     expect(body.library.tile.length).to.be.gte(1)
@@ -170,12 +170,12 @@ function testApiSetupTutorial (api, room) {
   }, 201)
 
   // check table
-  testJsonGet(api, () => `/rooms/${room}/tables/1/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/`, body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.gte(4)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // --- the test runners --------------------------------------------------------
@@ -183,7 +183,7 @@ function testApiSetupTutorial (api, room) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - snapshots', function () {
     runner((api, version, room) => {
       describe('RPG', () => testApiSetupRPG(api, room))

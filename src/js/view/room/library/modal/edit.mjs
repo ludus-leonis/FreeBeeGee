@@ -20,55 +20,30 @@
  */
 
 import _ from '../../../../lib/FreeDOM.mjs'
+import Event from '../../../../lib/event.mjs'
+import Modal from '../../../../view/room/modal.mjs'
+import ModalDisabled from '../../../../view/room/modal/disabled.mjs'
+import State from '../../../../state/index.mjs'
+import Text from '../../../../lib/util-text.mjs'
+import Util from '../../../../lib/util.mjs'
 
-import {
-  DEMO_MODE
-} from '../../../../api/index.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  createModalConfirm,
-  getModal
-} from '../../../../view/room/modal.mjs'
+export default {
+  open
+}
 
-import {
-  getLibrary,
-  getSetup,
-  updateAsset
-} from '../../../../state/index.mjs'
-
-import {
-  PATTERN_ASSET_NAME,
-  PATTERN_COLOR,
-  generateAnimal
-} from '../../../../lib/utils.mjs'
-
-import {
-  prettyName,
-  unprettyName
-} from '../../../../lib/utils-text.mjs'
-
-import {
-  HOOK_SYNCNOW,
-  HOOK_LIBRARY_RELOAD,
-  HOOK_LIBRARY_SELECT,
-  triggerEvent
-} from '../../../../lib/events.mjs'
-
-import {
-  modalDisabled
-} from '../../../../view/room/modal/disabled.mjs'
-
-// --- public ------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 /**
  * Show the asset editor modal.
  *
  * @param {string} asset Asset to be edited.
  */
-export function modalEdit (asset) {
-  const setup = getSetup()
+function open (asset) {
+  const setup = State.getSetup()
 
-  createModalConfirm(
+  Modal.createConfirm(
     '<h3 class="modal-title">Edit asset</h3>',
     `
       <form class="container modal-edit modal-edit-token">
@@ -76,7 +51,7 @@ export function modalEdit (asset) {
         <div class="row">
           <div class="col-12">
             <label for="asset-name">Name</label>
-            <input id="asset-name" name="asset-name" type="text" maxlength="64" pattern="${PATTERN_ASSET_NAME}" placeholder="e.g. '${generateAnimal()}'" required>
+            <input id="asset-name" name="asset-name" type="text" maxlength="64" pattern="${Util.REGEXP.ASSET_NAME}" placeholder="e.g. '${Util.generateAnimal()}'" required>
           </div>
           <div class="col-6 col-md-3">
             <label for="asset-x">Width</label>
@@ -100,7 +75,7 @@ export function modalEdit (asset) {
           </div>
           <div class="col-12 col-md-6">
             <label for="asset-rgb">Color value</label>
-            <input id="asset-rgb" name="asset-rgb" type="text" maxlength="7" pattern="${PATTERN_COLOR}" placeholder="#808080" required disabled>
+            <input id="asset-rgb" name="asset-rgb" type="text" maxlength="7" pattern="${Util.REGEXP.COLOR}" placeholder="#808080" required disabled>
           </div>
         </div>
         <p>
@@ -116,7 +91,7 @@ export function modalEdit (asset) {
 
   // name
   const name = _('#asset-name')
-  name.value = prettyName(asset.name, false)
+  name.value = Text.prettyName(asset.name, false)
 
   // size
   const width = _('#asset-x')
@@ -144,8 +119,8 @@ export function modalEdit (asset) {
 
   // material
   const materials = _('#asset-material')
-  for (const material of getLibrary().material) {
-    const option = _('option').create(prettyName(material.name))
+  for (const material of State.getLibrary().material) {
+    const option = _('option').create(Text.prettyName(material.name))
     option.value = material.name
     if (material.name === (asset.tx ?? 'none')) option.selected = true
     materials.add(option)
@@ -198,7 +173,7 @@ function updateColor (asset) {
       _('#asset-rgb').disabled = false
       break
     default:
-      _('#asset-rgb').value = getSetup().colors[parseInt(value) - 1].value
+      _('#asset-rgb').value = State.getSetup().colors[parseInt(value) - 1].value
       _('#asset-rgb').disabled = true
   }
 }
@@ -223,7 +198,7 @@ function ok (asset) {
   }
 
   const patch = {}
-  const name = unprettyName(_('#asset-name').value)
+  const name = Text.unprettyName(_('#asset-name').value)
   if (asset.name !== name) patch.name = name
   const x = parseInt(_('#asset-x').value)
   if (asset.w !== x) patch.w = x
@@ -238,16 +213,16 @@ function ok (asset) {
   if (Object.keys(patch).length > 0) {
     patch.id = asset.id
   } else {
-    getModal().hide()
+    Modal.close()
   }
 
-  if (DEMO_MODE) {
-    getModal().hide()
-    modalDisabled('would have edited your asset by now')
+  if (State.SERVERLESS) {
+    Modal.close()
+    ModalDisabled.open('would have edited your asset by now')
     return
   }
 
-  updateAsset(patch)
+  State.updateAsset(patch)
     .then(asset => {
       switch (asset._error) {
         case 'ASSET_ID_CONFLICT':
@@ -257,10 +232,10 @@ function ok (asset) {
           _('.server-feedback').add('.show').innerHTML = 'Someone just removed/renamed this asset. Please reload the library.'
           break
         default: // no error - proceed
-          getModal().hide()
-          triggerEvent(HOOK_SYNCNOW, true)
-          triggerEvent(HOOK_LIBRARY_SELECT, asset)
-          triggerEvent(HOOK_LIBRARY_RELOAD)
+          Modal.close()
+          Event.trigger(Event.HOOK.SYNCNOW, true)
+          Event.trigger(Event.HOOK.LIBRARY_SELECT, asset)
+          Event.trigger(Event.HOOK.LIBRARY_RELOAD)
       }
     })
 }

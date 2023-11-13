@@ -25,13 +25,16 @@
 
 // Mocha / Chai 'test' to generate static files for the demo version
 
-import {
-  testJsonPost
-} from '../integration/utils/chai.mjs'
+import Test from '../integration/utils/test.mjs'
 
 import * as fs from 'fs'
 
-function runTests (what) {
+/**
+ * Run a test against a given API.
+ *
+ * @param {Function} what Test function to run.
+ */
+function runner (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
   const api = 'http://play81.local/api'
 
@@ -40,8 +43,13 @@ function runTests (what) {
 
 // -----------------------------------------------------------------------------
 
+/**
+ * Generate RPG snapshot files.
+ *
+ * @param {string} api API to fetch real files from.
+ */
 function testGenerateRPG (api) {
-  testJsonPost(api, () => '/rooms/', () => {
+  Test.jsonPost(api, () => '/rooms/', () => {
     return {
       name: 'demoroomrpg',
       snapshot: 'RPG',
@@ -55,8 +63,13 @@ function testGenerateRPG (api) {
   }, 201)
 }
 
+/**
+ * Generate hex snapshot files.
+ *
+ * @param {string} api API to fetch real files from.
+ */
 function testGenerateHex (api) {
-  testJsonPost(api, () => '/rooms/', () => {
+  Test.jsonPost(api, () => '/rooms/', () => {
     return {
       name: 'demoroomhex',
       snapshot: 'Hex',
@@ -70,8 +83,13 @@ function testGenerateHex (api) {
   }, 201)
 }
 
+/**
+ * Generate classic snapshot files.
+ *
+ * @param {string} api API to fetch real files from.
+ */
 function testGenerateClassic (api) {
-  testJsonPost(api, () => '/rooms/', () => {
+  Test.jsonPost(api, () => '/rooms/', () => {
     return {
       name: 'demoroomclassic',
       snapshot: 'Classic',
@@ -85,8 +103,13 @@ function testGenerateClassic (api) {
   }, 201)
 }
 
+/**
+ * Generate tutorial snapshot files.
+ *
+ * @param {string} api API to fetch real files from.
+ */
 function testGenerateTutorial (api) {
-  testJsonPost(api, () => '/rooms/', () => {
+  Test.jsonPost(api, () => '/rooms/', () => {
     return {
       name: 'demoroomtutorial',
       snapshot: 'Tutorial',
@@ -103,7 +126,7 @@ function testGenerateTutorial (api) {
 // --- the test runners --------------------------------------------------------
 
 describe('generate snapshots', function () {
-  runTests((api, version) => {
+  runner((api, version) => {
     describe('snapshot RPG', () => testGenerateRPG(api))
     describe('snapshot Hex', () => testGenerateHex(api))
     describe('snapshot Classic', () => testGenerateClassic(api))

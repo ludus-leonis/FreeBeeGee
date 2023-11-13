@@ -20,50 +20,23 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  getToken,
-  getRoom,
-  reloadRoom,
-  getTableNo,
-  fetchTable,
-  isTabActive
-} from '../../state/index.mjs'
+import Api from '../../api/index.mjs'
+import Content from '../../view/room/tabletop/content.mjs'
+import Dom from '../../view/room/tabletop/dom.mjs'
+import Error from '../../view/error.mjs'
+import Event from '../../lib/event.mjs'
+import ModalInactive from '../../view/room/modal/inactive.mjs'
+import Room from '../../view/room/index.mjs'
+import State from '../../state/index.mjs'
+import Util from '../../lib/util.mjs'
 
-import {
-  apiGetRoomDigest
-} from '../../api/index.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  clamp,
-  recordTime
-} from '../../lib/utils.mjs'
-
-import {
-  HOOK_SYNCNOW,
-  HOOK_LIBRARY_UPDATE,
-  registerObserver,
-  triggerEvent
-} from '../../lib/events.mjs'
-
-import {
-  apiError
-} from '../../view/error/index.mjs'
-
-import {
-  updateRoom
-} from '../../view/room/index.mjs'
-
-import {
-  updateTabletop
-} from '../../view/room/tabletop/index.mjs'
-
-import {
-  findExpiredPieces
-} from '../../view/room/tabletop/tabledata.mjs'
-
-import {
-  modalInactive
-} from '../../view/room/modal/inactive.mjs'
+export default {
+  startAutoSync,
+  stopAutoSync,
+  touch
+}
 
 // --- events ------------------------------------------------------------------
 
@@ -72,17 +45,17 @@ import {
  *
  * @param {Function} forceUIUpdate Do UI update even if digest didn't change.
  */
-registerObserver('Sync', HOOK_SYNCNOW, (forceUIUpdate = false) => {
+Event.register('Sync', Event.HOOK.SYNCNOW, (forceUIUpdate = false) => {
   if (isAutoSync()) {
     if (forceUIUpdate) {
       scheduleSync(0, () => {
-        updateTabletop(getTableNo())
+        Dom.updateTabletop(State.getTableNo())
       })
     } else {
       scheduleSync(0)
     }
   } else {
-    fetchAndUpdateTable(getTableNo())
+    fetchAndUpdateTable(State.getTableNo())
   }
 })
 
@@ -93,7 +66,7 @@ registerObserver('Sync', HOOK_SYNCNOW, (forceUIUpdate = false) => {
  *
  * @param {Function} callback Optional function to call after first sync.
  */
-export function startAutoSync (callback = null) {
+function startAutoSync (callback = null) {
   touch()
   scheduleSync(0, callback)
 }
@@ -101,7 +74,7 @@ export function startAutoSync (callback = null) {
 /**
  * Stop/pause the automatic polling in the background.
  */
-export function stopAutoSync () {
+function stopAutoSync () {
   setTimeout(() => {
     syncNextMs = -1
     clearTimeout(syncTimeout)
@@ -114,7 +87,7 @@ export function stopAutoSync () {
  * @param {?boolean} remote If true, the remote timestamp is touched. Otherwise
  *                          the local is.
  */
-export function touch (remote = false) {
+function touch (remote = false) {
   if (remote) {
     lastRemoteActivity = Date.now()
   } else {
@@ -192,19 +165,19 @@ function scheduleSync (ms = 0, callback = null) {
  * @returns {Promise} Promise of an integer. 0 = no sync, 1+ = table to sync.
  */
 function checkRoomDigests () {
-  const room = getRoom()
+  const room = State.getRoom()
   const start = Date.now()
   lastNetworkActivity = Date.now()
-  return apiGetRoomDigest(room.name, getToken())
+  return Api.getRoomDigest(room.name, State.getToken())
     .then(digest => {
-      const table = getTableNo()
-      recordTime('sync-network', Date.now() - start)
+      const table = State.getTableNo()
+      Util.recordTime('sync-network', Date.now() - start)
 
       // verify room metadata
       if (digest['room.json'] !== lastDigests['room.json']) {
         return syncRoom().then(() => {
           touch(true)
-          triggerEvent(HOOK_LIBRARY_UPDATE)
+          Event.trigger(Event.HOOK.LIBRARY_UPDATE)
           return table
         })
       }
@@ -212,7 +185,7 @@ function checkRoomDigests () {
       // verify currently active table hasn't changed
       if (
         digest[`tables/${table}.json`] !== lastDigests[`tables/${table}.json`] ||
-        findExpiredPieces(table).length > 0
+        Content.findPiecesExpired(table).length > 0
       ) {
         touch(true)
         return table
@@ -222,7 +195,7 @@ function checkRoomDigests () {
       for (let i = 1; i <= 9; i++) {
         if (
           digest[`tables/${i}.json`] !== lastDigests[`tables/${i}.json`] ||
-          findExpiredPieces(i).length > 0
+          Content.findPiecesExpired(i).length > 0
         ) {
           touch(true)
           return i
@@ -231,7 +204,7 @@ function checkRoomDigests () {
 
       return 0
     })
-    .catch(error => apiError(error, room.name))
+    .catch(error => Error.apiError(error, room.name))
 }
 
 /**
@@ -245,12 +218,12 @@ function checkRoomDigests () {
  */
 function fetchAndUpdateTable (dirtyTableNo) {
   lastNetworkActivity = Date.now()
-  return fetchTable(dirtyTableNo)
+  return State.fetchTable(dirtyTableNo)
     .then(table => {
       lastDigests[`tables/${dirtyTableNo}.json`] = table.headers.get('digest')
 
-      if (dirtyTableNo === getTableNo()) {
-        updateTabletop(dirtyTableNo) // use cleanedup data
+      if (dirtyTableNo === State.getTableNo()) {
+        Dom.updateTabletop(dirtyTableNo) // use cleanedup data
       }
     })
 }
@@ -265,13 +238,13 @@ function fetchAndUpdateTable (dirtyTableNo) {
  */
 function syncRoom () {
   lastNetworkActivity = Date.now()
-  return reloadRoom()
+  return State.reloadRoom()
     .then(room => {
       lastDigests['room.json'] = room.headers.get('digest')
-      updateRoom()
+      Room.updateRoom()
       return false
     })
-    .catch(error => apiError(error, getRoom().name))
+    .catch(error => Error.apiError(error, State.getRoom().name))
 }
 
 /**
@@ -288,13 +261,13 @@ function calculateNextSyncTime () {
 
   if (local > 15 * 60 * 1000) { // 15min
     stopAutoSync()
-    modalInactive(() => {
+    ModalInactive.open(() => {
       touch()
       startAutoSync()
     })
   }
 
-  let maxTime = isTabActive()
+  let maxTime = State.isTabActive()
     ? (remote < 1000 ? fastestSynctime : 5000) // max 5s
     : 60000 // max 60s
 
@@ -303,9 +276,9 @@ function calculateNextSyncTime () {
     maxTime = Math.min(maxTime, hidSyncMax)
   }
 
-  syncNextMs = clamp(
+  syncNextMs = Util.clamp(
     fastestSynctime,
-    Math.floor(syncNextMs * (isTabActive() ? 1.05 : 1.5)),
+    Math.floor(syncNextMs * (State.isTabActive() ? 1.05 : 1.5)),
     maxTime
   )
 

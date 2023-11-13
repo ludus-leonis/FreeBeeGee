@@ -20,66 +20,54 @@
 
 /* global describe, it */
 
-import { expect } from 'chai'
+import { expect } from '../../integration/utils/test.mjs'
 
-import {
-  uuid,
-  bytesToIso,
-  hash,
-  hoursToTimespan,
-  toTitleCase,
-  toCamelCase,
-  prettyName,
-  sortByNumber,
-  sortByString,
-  unCamelCase,
-  unprettyName
-} from '../../../src/js/lib/utils-text.mjs'
+import Text from '../../../src/js/lib/util-text.mjs'
 
-describe('Frontend - utils.mjs - Text', function () {
+describe('Frontend - util-text.mjs', function () {
   it('uuid()', function () {
-    expect(uuid(0)).to.be.eql('00000000-0000-4000-8000-000000000000')
-    expect(uuid()).not.to.be.eql('00000000-0000-4000-8000-000000000000')
-    const id1 = uuid()
-    const id2 = uuid()
+    expect(Text.uuid(0)).to.be.eql('00000000-0000-4000-8000-000000000000')
+    expect(Text.uuid()).not.to.be.eql('00000000-0000-4000-8000-000000000000')
+    const id1 = Text.uuid()
+    const id2 = Text.uuid()
     expect(id1).not.to.be.eql(id2)
   })
 
   it('hash()', function () {
-    expect(hash('hello world')).to.be.eql(1794106052)
+    expect(Text.hash('hello world')).to.be.eql(1794106052)
   })
 
   it('toTitleCase()', function () {
-    expect(toTitleCase('hello world')).to.be.eql('Hello World')
-    expect(toTitleCase('helloworld')).to.be.eql('Helloworld')
-    expect(toTitleCase(' h e l l o ')).to.be.eql(' H E L L O ')
-    expect(toTitleCase('hELLO wORLD')).to.be.eql('Hello World')
-    expect(toTitleCase('HELLO WORLD')).to.be.eql('Hello World')
-    expect(toTitleCase(' hello   world ')).to.be.eql(' Hello   World ')
-    expect(toTitleCase('hello.world')).to.be.eql('Hello.world')
+    expect(Text.toTitleCase('hello world')).to.be.eql('Hello World')
+    expect(Text.toTitleCase('helloworld')).to.be.eql('Helloworld')
+    expect(Text.toTitleCase(' h e l l o ')).to.be.eql(' H E L L O ')
+    expect(Text.toTitleCase('hELLO wORLD')).to.be.eql('Hello World')
+    expect(Text.toTitleCase('HELLO WORLD')).to.be.eql('Hello World')
+    expect(Text.toTitleCase(' hello   world ')).to.be.eql(' Hello   World ')
+    expect(Text.toTitleCase('hello.world')).to.be.eql('Hello.world')
   })
 
   it('toCamelCase()', function () {
-    expect(toCamelCase('hello world')).to.be.eql('helloWorld')
-    expect(toCamelCase('helloworld')).to.be.eql('helloworld')
-    expect(toCamelCase(' h e l l o ')).to.be.eql('HELLO')
-    expect(toCamelCase('hELLO wORLD')).to.be.eql('helloWorld')
-    expect(toCamelCase('HELLO WORLD')).to.be.eql('helloWorld')
-    expect(toCamelCase(' hello   world ')).to.be.eql('HelloWorld')
-    expect(toCamelCase('hello.world')).to.be.eql('helloWorld')
+    expect(Text.toCamelCase('hello world')).to.be.eql('helloWorld')
+    expect(Text.toCamelCase('helloworld')).to.be.eql('helloworld')
+    expect(Text.toCamelCase(' h e l l o ')).to.be.eql('HELLO')
+    expect(Text.toCamelCase('hELLO wORLD')).to.be.eql('helloWorld')
+    expect(Text.toCamelCase('HELLO WORLD')).to.be.eql('helloWorld')
+    expect(Text.toCamelCase(' hello   world ')).to.be.eql('HelloWorld')
+    expect(Text.toCamelCase('hello.world')).to.be.eql('helloWorld')
   })
 
   it('unCamelCase()', function () {
-    expect(unCamelCase('helloWorld')).to.be.eql('Hello World')
-    expect(unCamelCase('helloworld')).to.be.eql('Helloworld')
-    expect(unCamelCase('helloWorldWorld')).to.be.eql('Hello World World')
-    expect(unCamelCase('helloWorld World')).to.be.eql('Hello World World')
-    expect(unCamelCase(' hello World World ')).to.be.eql('Hello World World')
+    expect(Text.unCamelCase('helloWorld')).to.be.eql('Hello World')
+    expect(Text.unCamelCase('helloworld')).to.be.eql('Helloworld')
+    expect(Text.unCamelCase('helloWorldWorld')).to.be.eql('Hello World World')
+    expect(Text.unCamelCase('helloWorld World')).to.be.eql('Hello World World')
+    expect(Text.unCamelCase(' hello World World ')).to.be.eql('Hello World World')
   })
 
-  it('sortByString()', function () {
-    expect(sortByString([], 'none')).to.be.eql([])
-    expect(sortByString([
+  it('sortString()', function () {
+    expect(Text.sortString([], 'none')).to.be.eql([])
+    expect(Text.sortString([
       { id: 'one' },
       { id: 'two' },
       { id: 'three' }
@@ -90,9 +78,9 @@ describe('Frontend - utils.mjs - Text', function () {
     ])
   })
 
-  it('sortByNumber()', function () {
-    expect(sortByNumber([], 'none')).to.be.eql([])
-    expect(sortByNumber([
+  it('sortNumber()', function () {
+    expect(Text.sortNumber([], 'none')).to.be.eql([])
+    expect(Text.sortNumber([
       { z: '15' },
       { z: '-4' },
       { z: '8' }
@@ -101,7 +89,7 @@ describe('Frontend - utils.mjs - Text', function () {
       { z: '8' },
       { z: '15' }
     ])
-    expect(sortByNumber([
+    expect(Text.sortNumber([
       { z: '15' },
       { z: '-4' },
       { }
@@ -110,7 +98,7 @@ describe('Frontend - utils.mjs - Text', function () {
       { },
       { z: '15' }
     ])
-    expect(sortByNumber([
+    expect(Text.sortNumber([
       { z: '15' },
       { z: '-4' },
       { }
@@ -119,7 +107,7 @@ describe('Frontend - utils.mjs - Text', function () {
       { z: '-4' },
       { z: '15' }
     ])
-    expect(sortByNumber([
+    expect(Text.sortNumber([
       { z: '15' },
       { z: '-4' },
       { }
@@ -131,57 +119,57 @@ describe('Frontend - utils.mjs - Text', function () {
   })
 
   it('bytesToIso()', function () {
-    expect(bytesToIso(0)).to.be.eql('0 bytes')
-    expect(bytesToIso(1)).to.be.eql('1 byte')
-    expect(bytesToIso(2)).to.be.eql('2 bytes')
-    expect(bytesToIso(1023)).to.be.eql('1023 bytes')
-    expect(bytesToIso(1024)).to.be.eql('1 kB')
-    expect(bytesToIso(1024 * 1024 - 1)).to.be.eql('1023 kB')
-    expect(bytesToIso(1024 * 1024)).to.be.eql('1 MB')
-    expect(bytesToIso(1024 * 1024 * 1024 - 1)).to.be.eql('1023 MB')
-    expect(bytesToIso(1024 * 1024 * 1024)).to.be.eql('1 GB')
+    expect(Text.bytesToIso(0)).to.be.eql('0 bytes')
+    expect(Text.bytesToIso(1)).to.be.eql('1 byte')
+    expect(Text.bytesToIso(2)).to.be.eql('2 bytes')
+    expect(Text.bytesToIso(1023)).to.be.eql('1023 bytes')
+    expect(Text.bytesToIso(1024)).to.be.eql('1 kB')
+    expect(Text.bytesToIso(1024 * 1024 - 1)).to.be.eql('1023 kB')
+    expect(Text.bytesToIso(1024 * 1024)).to.be.eql('1 MB')
+    expect(Text.bytesToIso(1024 * 1024 * 1024 - 1)).to.be.eql('1023 MB')
+    expect(Text.bytesToIso(1024 * 1024 * 1024)).to.be.eql('1 GB')
   })
 
   it('hoursToTimespan()', function () {
-    expect(hoursToTimespan(0)).to.be.eql('0 hours')
-    expect(hoursToTimespan(1)).to.be.eql('1 hour')
-    expect(hoursToTimespan(2)).to.be.eql('2 hours')
-    expect(hoursToTimespan(95)).to.be.eql('95 hours')
-    expect(hoursToTimespan(96)).to.be.eql('4 days')
-    expect(hoursToTimespan(96, true)).to.be.eql('4 days')
-    expect(hoursToTimespan(96, false)).to.be.eql('4 days')
-    expect(hoursToTimespan(97)).to.be.eql('4 days')
-    expect(hoursToTimespan(97, true)).to.be.eql('4 days')
-    expect(hoursToTimespan(97, false)).to.be.eql('5 days')
-    expect(hoursToTimespan(2400)).to.be.eql('100 days')
-    expect(hoursToTimespan(2400, true)).to.be.eql('100 days')
-    expect(hoursToTimespan(2400, false)).to.be.eql('100 days')
-    expect(hoursToTimespan(2401)).to.be.eql('14 weeks')
-    expect(hoursToTimespan(2401, true)).to.be.eql('14 weeks')
-    expect(hoursToTimespan(2401, false)).to.be.eql('15 weeks')
+    expect(Text.hoursToTimespan(0)).to.be.eql('0 hours')
+    expect(Text.hoursToTimespan(1)).to.be.eql('1 hour')
+    expect(Text.hoursToTimespan(2)).to.be.eql('2 hours')
+    expect(Text.hoursToTimespan(95)).to.be.eql('95 hours')
+    expect(Text.hoursToTimespan(96)).to.be.eql('4 days')
+    expect(Text.hoursToTimespan(96, true)).to.be.eql('4 days')
+    expect(Text.hoursToTimespan(96, false)).to.be.eql('4 days')
+    expect(Text.hoursToTimespan(97)).to.be.eql('4 days')
+    expect(Text.hoursToTimespan(97, true)).to.be.eql('4 days')
+    expect(Text.hoursToTimespan(97, false)).to.be.eql('5 days')
+    expect(Text.hoursToTimespan(2400)).to.be.eql('100 days')
+    expect(Text.hoursToTimespan(2400, true)).to.be.eql('100 days')
+    expect(Text.hoursToTimespan(2400, false)).to.be.eql('100 days')
+    expect(Text.hoursToTimespan(2401)).to.be.eql('14 weeks')
+    expect(Text.hoursToTimespan(2401, true)).to.be.eql('14 weeks')
+    expect(Text.hoursToTimespan(2401, false)).to.be.eql('15 weeks')
   })
 
   it('prettyName()', function () {
-    expect(prettyName('dungeon')).to.be.eql('Dungeon')
-    expect(prettyName('dungeon.door')).to.be.eql('Dungeon, Door')
-    expect(prettyName('dungeon.ironDoor')).to.be.eql('Dungeon, Iron Door')
-    expect(prettyName(' dunGeon.ironDoor ')).to.be.eql('Dun Geon, Iron Door')
+    expect(Text.prettyName('dungeon')).to.be.eql('Dungeon')
+    expect(Text.prettyName('dungeon.door')).to.be.eql('Dungeon, Door')
+    expect(Text.prettyName('dungeon.ironDoor')).to.be.eql('Dungeon, Iron Door')
+    expect(Text.prettyName(' dunGeon.ironDoor ')).to.be.eql('Dun Geon, Iron Door')
 
-    expect(prettyName('_.door')).to.be.eql('Door')
-    expect(prettyName('_.door', true)).to.be.eql('Door')
-    expect(prettyName('_.door', false)).to.be.eql('_, Door')
+    expect(Text.prettyName('_.door')).to.be.eql('Door')
+    expect(Text.prettyName('_.door', true)).to.be.eql('Door')
+    expect(Text.prettyName('_.door', false)).to.be.eql('_, Door')
   })
 
   it('unprettyName()', function () {
-    expect(unprettyName('Dungeon')).to.be.eql('dungeon')
-    expect(unprettyName('Dungeon, ')).to.be.eql('dungeon')
-    expect(unprettyName('Dungeon, Door')).to.be.eql('dungeon.door')
-    expect(unprettyName('Dungeon, Iron Door')).to.be.eql('dungeon.ironDoor')
-    expect(unprettyName('  Dun  Geon ,  Iron  Door  ')).to.be.eql('dunGeon.ironDoor')
+    expect(Text.unprettyName('Dungeon')).to.be.eql('dungeon')
+    expect(Text.unprettyName('Dungeon, ')).to.be.eql('dungeon')
+    expect(Text.unprettyName('Dungeon, Door')).to.be.eql('dungeon.door')
+    expect(Text.unprettyName('Dungeon, Iron Door')).to.be.eql('dungeon.ironDoor')
+    expect(Text.unprettyName('  Dun  Geon ,  Iron  Door  ')).to.be.eql('dunGeon.ironDoor')
 
-    expect(unprettyName('_')).to.be.eql('_')
-    expect(unprettyName('_, ')).to.be.eql('_')
-    expect(unprettyName('_, Iron Door')).to.be.eql('_.ironDoor')
-    expect(unprettyName('  _  , Iron Door  ')).to.be.eql('_.ironDoor')
+    expect(Text.unprettyName('_')).to.be.eql('_')
+    expect(Text.unprettyName('_, ')).to.be.eql('_')
+    expect(Text.unprettyName('_, Iron Door')).to.be.eql('_.ironDoor')
+    expect(Text.unprettyName('  _  , Iron Door  ')).to.be.eql('_.ironDoor')
   })
 })

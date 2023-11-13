@@ -19,7 +19,15 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../lib/FreeDOM.mjs'
+import _ from './FreeDOM.mjs'
+
+// -----------------------------------------------------------------------------
+
+export default {
+  create
+}
+
+// -----------------------------------------------------------------------------
 
 /**
  * Display a card-style page on dark background. Replaces the current body content.
@@ -29,7 +37,7 @@ import _ from '../lib/FreeDOM.mjs'
  * @param {string} footer Optional HTML to be shown as .p-small footer below the card.
  * @returns {_} FreeDOM object with preselected body for customizatons.
  */
-export function createScreen (headline, content, footer = '') {
+function create (headline, content, footer = '') {
   const body = _('body')
   _('body').add('.page-boxed').innerHTML = `
     <div class="container is-slim">
@@ -49,26 +57,4 @@ export function createScreen (headline, content, footer = '') {
   `
 
   return body
-}
-
-/**
- * Hide the server feedback widgets.
- */
-export function clearServerFeedback () {
-  _('.server-feedback').remove('.show')
-  _('#server-feedback-form').remove('.show')
-}
-
-/**
- * Show a server feedback (error message).
- *
- * @param {string} message Message to show.
- * @param {string} form HTML form to add.
- */
-export function serverFeedback (message, form) {
-  clearServerFeedback()
-  _('.server-feedback').add('.show').innerHTML = message
-  if (form) {
-    _('#server-feedback-form').add('.show').innerHTML = form
-  }
 }

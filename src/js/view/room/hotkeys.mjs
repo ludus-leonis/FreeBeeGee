@@ -20,92 +20,28 @@
  */
 
 import _ from '../../lib/FreeDOM.mjs'
+import Browser from '../../lib/util-browser.mjs'
+import Content from '../../view/room/tabletop/content.mjs'
+import Dom from '../../view/room/tabletop/dom.mjs'
+import Event from '../../lib/event.mjs'
+import Modal from '../../view/room/modal.mjs'
+import ModalHelp from '../../view/room/modal/help.mjs'
+import ModalLibrary from '../../view/room/library/index.mjs'
+import ModalSettings from '../../view/room/modal/settings.mjs'
+import Mouse from '../../view/room/mouse/index.mjs'
+import Room from '../../view/room/index.mjs'
+import Selection from '../../view/room/tabletop/selection.mjs'
+import State from '../../state/index.mjs'
+import Sync from '../../view/room/sync.mjs'
+import Window from '../../view/room/window.mjs'
+import WindowLibrary from '../../view/room/library/editor.mjs'
 
-import {
-  setTableNo
-} from '../../state/index.mjs'
-
-import {
-  isModalActive,
-  modalClose
-} from '../../view/room/modal.mjs'
-
-import {
-  isWindowActive,
-  closeWindow
-} from '../../view/room/window.mjs'
-
-import {
-  toggleLayer,
-  toggleGrid,
-  toggleLos
-} from '../../view/room/index.mjs'
-
-import {
-  settings,
-  clipboardPaste,
-  rotateSelected,
-  deleteSelected,
-  cloneSelected,
-  editSelected,
-  flipSelected,
-  toTopSelected,
-  randomSelected,
-  numberSelected,
-  moveSelected,
-  gridSelected,
-  createNote,
-  colorSelected,
-  pileSelected,
-  toBottomSelected,
-  pointTo,
-  undo,
-  zoom
-} from '../../view/room/tabletop/index.mjs'
-
-import {
-  LAYER
-} from '../../view/room/tabletop/tabledata.mjs'
-
-import {
-  isDragging,
-  isLMBLos,
-  release,
-  getMouseCoords
-} from '../../view/room/mouse/index.mjs'
-
-import {
-  touch
-} from '../../view/room/sync.mjs'
-
-import {
-  modalLibrary
-} from '../../view/room/library/index.mjs'
-
-import {
-  modalLibraryManager
-} from '../../view/room/library/editor.mjs'
-
-import {
-  modalHelp
-} from '../../view/room/modal/help.mjs'
-
-import {
-  HOOK_LIBRARY_EDIT,
-  triggerEvent
-} from '../../lib/events.mjs'
-
-import {
-  clipboardCopy,
-  selectionAddAll
-} from '../../view/room/tabletop/selection.mjs'
-
-import {
-  toggleFullscreen
-} from '../../lib/utils-html.mjs'
+// -----------------------------------------------------------------------------
 
 /** register the keyboard handler on document load */
 document.addEventListener('keydown', keydown => handleRoomKeys(keydown))
+
+// -----------------------------------------------------------------------------
 
 /**
  * Call proper functions after certain keys are pressed.
@@ -115,41 +51,41 @@ document.addEventListener('keydown', keydown => handleRoomKeys(keydown))
 function handleRoomKeys (keydown) {
   if (!_('#tabletop').exists()) return
 
-  touch()
+  Sync.touch()
 
   if (keydown.key === 'Escape') { // close modals on ESC
-    if (isModalActive()) {
-      modalClose()
+    if (Modal.isOpen()) {
+      Modal.close()
       keydown.stopPropagation()
       return
-    } else if (isWindowActive()) {
-      closeWindow()
+    } else if (Window.isOpen()) {
+      Window.close()
       keydown.stopPropagation()
       return
     }
   }
 
-  if (isDragging() && !isModalActive() && !isWindowActive()) { // keys that work while dragging
+  if (Mouse.isDragging() && !Modal.isOpen() && !Window.isOpen()) { // keys that work while dragging
     switch (keydown.key) {
       case ' ':
-        if (isLMBLos(true)) release(0)
+        if (Mouse.isLMBLos(true)) Mouse.release(0)
         keydown.stopPropagation()
         keydown.preventDefault()
         return
     }
   }
 
-  if (!isDragging() && !isModalActive() && isWindowActive()) { // keys for the library window
+  if (!Mouse.isDragging() && !Modal.isOpen() && Window.isOpen()) { // keys for the library window
     switch (keydown.key) {
       case 'e': // edit
       case 'F2':
-        triggerEvent(HOOK_LIBRARY_EDIT)
+        Event.trigger(Event.HOOK.LIBRARY_EDIT)
         break
     }
     return
   }
 
-  if (!isDragging() && !isModalActive() && !isWindowActive()) { // keys that don't work while dragging
+  if (!Mouse.isDragging() && !Modal.isOpen() && !Window.isOpen()) { // keys that don't work while dragging
     if (keydown.repeat) { // prevent key-repeat on held keys
       keydown.stopPropagation()
       keydown.preventDefault()
@@ -158,176 +94,176 @@ function handleRoomKeys (keydown) {
 
     switch (keydown.key) {
       case 'ArrowDown':
-        if (keydown.shiftKey) moveSelected(0, 10); else moveSelected(0, 1)
+        if (keydown.shiftKey) Selection.moveTiles(0, 10); else Selection.moveTiles(0, 1)
         break
       case 'ArrowUp':
-        if (keydown.shiftKey) moveSelected(0, -10); else moveSelected(0, -1)
+        if (keydown.shiftKey) Selection.moveTiles(0, -10); else Selection.moveTiles(0, -1)
         break
       case 'ArrowLeft':
-        if (keydown.shiftKey) moveSelected(-10, 0); else moveSelected(-1, 0)
+        if (keydown.shiftKey) Selection.moveTiles(-10, 0); else Selection.moveTiles(-1, 0)
         break
       case 'ArrowRight':
-        if (keydown.shiftKey) moveSelected(10, 0); else moveSelected(1, 0)
+        if (keydown.shiftKey) Selection.moveTiles(10, 0); else Selection.moveTiles(1, 0)
         break
       case 'Home':
-        if (keydown.shiftKey) moveSelected(-10, -10); else moveSelected(-1, -1)
+        if (keydown.shiftKey) Selection.moveTiles(-10, -10); else Selection.moveTiles(-1, -1)
         break
       case 'PageUp':
-        if (keydown.shiftKey) moveSelected(10, -10); else moveSelected(1, -1)
+        if (keydown.shiftKey) Selection.moveTiles(10, -10); else Selection.moveTiles(1, -1)
         break
       case 'End':
-        if (keydown.shiftKey) moveSelected(-10, 10); else moveSelected(-1, 1)
+        if (keydown.shiftKey) Selection.moveTiles(-10, 10); else Selection.moveTiles(-1, 1)
         break
       case 'PageDown':
-        if (keydown.shiftKey) moveSelected(10, 10); else moveSelected(1, 1)
+        if (keydown.shiftKey) Selection.moveTiles(10, 10); else Selection.moveTiles(1, 1)
         break
       case 'Delete': // delete selected
-        deleteSelected()
+        Selection.remove()
         break
       case ' ':
-        pointTo(getMouseCoords())
+        Dom.pointTo(Mouse.getMouseCoords())
         break
       case '1': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(1); else toggleLayer(LAYER.OTHER)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(1); else Room.toggleLayer(Content.LAYER.OTHER)
         break
       case '2': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(2); else toggleLayer(LAYER.TOKEN)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(2); else Room.toggleLayer(Content.LAYER.TOKEN)
         break
       case '3': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(3); else toggleLayer(LAYER.STICKER)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(3); else Room.toggleLayer(Content.LAYER.STICKER)
         break
       case '4': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(4); else toggleLayer(LAYER.TILE)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(4); else Room.toggleLayer(Content.LAYER.TILE)
         break
       case '5': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(5)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(5)
         break
       case '6': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(6)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(6)
         break
       case '7': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(7)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(7)
         break
       case '8': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(8)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(8)
         break
       case '9': // toggle layer, switch table
-        if (keydown.ctrlKey | keydown.altKey) setTableNo(9)
+        if (keydown.ctrlKey | keydown.altKey) State.setTableNo(9)
         break
       case 'l': // library / add piece
-        modalLibrary(getMouseCoords())
+        ModalLibrary.open(Mouse.getMouseCoords())
         break
       case 'L': // library / editor
-        modalLibraryManager(getMouseCoords())
+        WindowLibrary.open(Mouse.getMouseCoords())
         break
       case 'n': // library / add piece
-        createNote(getMouseCoords())
+        Dom.createNote(Mouse.getMouseCoords())
         break
       case 'b': // to-bottom
-        toBottomSelected()
+        Selection.toBottom()
         break
       case 't': // to-top
-        toTopSelected()
+        Selection.toTop()
         break
       case 'a': // select-all
-        if (keydown.ctrlKey) selectionAddAll()
+        if (keydown.ctrlKey) Selection.selectAll()
         break
       case 'c': // copy/clone
-        if (keydown.ctrlKey) clipboardCopy(); else cloneSelected(getMouseCoords())
+        if (keydown.ctrlKey) Selection.copy(); else Selection.clone(Mouse.getMouseCoords())
         break
       case 'x': // cut
         if (keydown.ctrlKey) {
-          clipboardCopy()
-          deleteSelected()
+          Selection.copy()
+          Selection.remove()
         }
         break
       case 'v': // paste
-        if (keydown.ctrlKey) clipboardPaste(getMouseCoords())
+        if (keydown.ctrlKey) Selection.paste(Mouse.getMouseCoords())
         break
       case 'Copy': // dedicated copy key
-        clipboardCopy()
+        Selection.copy()
         break
       case 'Cut': // dedicated cut key
-        clipboardCopy()
-        deleteSelected()
+        Selection.copy()
+        Selection.remove()
         break
       case 'Paste': // dedicated copy key
-        clipboardPaste(getMouseCoords())
+        Selection.paste(Mouse.getMouseCoords())
         break
       case 'u': // undo
       case 'z': // undo
-        if (keydown.ctrlKey) undo()
+        if (keydown.ctrlKey) State.undo()
         break
       case 'Undo': // dedicated undo key
-        undo()
+        State.undo()
         break
       case 'e': // edit
       case 'F2':
-        editSelected()
+        Selection.edit()
         break
       case 'F11':
-        toggleFullscreen()
+        Browser.toggleFullscreen()
         break
       case 'f': // flip forward
-        flipSelected()
+        Selection.flip()
         break
       case 'F': // flip backward
-        flipSelected(false)
+        Selection.flip(false)
         break
       case 'G': // grid (table)
-        toggleGrid()
+        Room.toggleGrid()
         break
       case 'g': // grid (piece)
-        gridSelected()
+        Selection.grid()
         break
       case 'o': // token color
-        colorSelected(false)
+        Selection.toggleColor()
         break
       case 'O': // outline color
-        colorSelected(true)
+        Selection.toggleBorder()
         break
       case 'p': // pile/stack selection
-        pileSelected(false)
+        Selection.pile()
         break
       // case 'P': // pile/stack selection + randomize
-      //   pileSelected(true)
+      //   Selection.pile(true)
       //   break
       case 'h': // help
       case 'H':
       case '?':
       case 'F1':
       case 'Help':
-        modalHelp()
+        ModalHelp.open()
         break
       case 'r': // rotate CW
-        rotateSelected()
+        Selection.rotate()
         break
       case 'R': // rotate CCW
-        rotateSelected(false)
+        Selection.rotate(false)
         break
       case 'm': // measure/LOS tool
-        toggleLos()
+        Room.toggleLos()
         break
       case 'S': // settings
-        settings()
+        ModalSettings.open()
         break
       case '#': // random side
-        randomSelected()
+        Selection.random()
         break
       case '+': // zoom in
       case '=':
       case 'ZoomIn':
-        zoom(1)
+        Dom.zoom(1)
         break
       case '-': // zoom out
       case 'ZoomOut':
-        zoom(-1)
+        Dom.zoom(-1)
         break
       case '>': // increase No.
-        numberSelected(1)
+        Selection.number(1)
         break
       case '<': // decrease No.
-        numberSelected(-1)
+        Selection.number(-1)
         break
       default:
         return // nothing in the switch() triggered

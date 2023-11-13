@@ -21,72 +21,91 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  getStoreValue,
-  setStoreValue,
-  brightness
-} from '../lib/utils-html.mjs'
-
-import {
-  HOOK_SYNCNOW,
-  triggerEvent
-} from '../lib/events.mjs'
-
-import {
-  DEMO_MODE,
-  UnexpectedStatus,
-  apiGetTable,
-  apiPutTable,
-  apiGetRoom,
-  apiPostRoom,
-  apiDeleteRoom,
-  apiPatchSetup,
-  apiPatchPiece,
-  apiPatchPieces,
-  apiDeletePiece,
-  apiDeletePieces,
-  apiPatchAsset,
-  apiPostPieces,
-  apiPostUndo,
-  apiPostAsset,
-  apiDeleteAsset,
-  apiPatchRoomAuth
-} from '../api/index.mjs'
-
-import {
-  runError,
-  apiError
-} from '../view/error/index.mjs'
-
-import {
-  ID,
-  FEATURE_DICEMAT,
-  GRID,
-  findPiece,
-  populatePiecesDefaults,
-  populateSetupDefaults,
-  populateLibraryDefaults,
-  clampToTableSize,
-  nameToLayer,
-  getRoomMediaURL,
-  sanitizePiecePatch
-} from '../view/room/tabletop/tabledata.mjs'
-
-import {
-  selectionAdd
-} from '../view/room/tabletop/selection.mjs'
+import Api from '../api/index.mjs'
+import Browser from '../lib/util-browser.mjs'
+import Content from '../view/room/tabletop/content.mjs'
+import Error from '../view/error.mjs'
+import Event from '../lib/event.mjs'
+import Selection from '../view/room/tabletop/selection.mjs'
 
 // -----------------------------------------------------------------------------
 
-export const FLAGS = {
-  NO_DELETE: 0b00000001,
-  NO_CLONE: 0b00000010,
-  NO_MOVE: 0b00000100,
+const SERVERLESS = ('true' === '$SERVERLESS$')
 
-  TILE_GRID_MINOR: 0b01000000,
-  TILE_GRID_MAJOR: 0b10000000,
+const PREF = {
+  BACKGROUND: { name: 'background', default: 'Wood' },
+  DISCLAIMER: { name: 'disclaimer', default: false },
+  GRID: { name: 'grid', default: 0 },
+  LAYERnote: { name: 'layer3', default: undefined },
+  LAYERother: { name: 'layer5', default: undefined },
+  LAYERsticker: { name: 'layer2', default: undefined },
+  LAYERtile: { name: 'layer1', default: undefined },
+  LAYERtoken: { name: 'layer4', default: undefined },
+  LOS: { name: 'los', default: false },
+  PIECE_ROTATE: { name: 'pieceRotate', default: undefined },
+  QUALITY: { name: 'quality', default: 3 },
+  SCROLL: { name: 'scroll', default: {} },
+  SNAPSHOT: { name: 'snapshot', default: undefined },
+  TAB_HELP: { name: 'tabHelp', default: 'tab-1' },
+  TAB_LIBRARY: { name: 'tabLibrary', default: 'tab-1' },
+  TAB_SETTINGS: { name: 'tabSettings', default: 'tab-1' },
+  TABLE: { name: 'table', default: null },
+  TOKEN: { name: 'token', default: '00000000-0000-0000-0000-000000000000' },
+  ZOOM: { name: 'zoom', default: 1.0 }
+}
 
-  NOTE_TOPLEFT: 0b10000000
+export default {
+  PREF,
+  SERVERLESS,
+
+  addAsset,
+  addRoom,
+  cleanupStore,
+  createPieces,
+  deleteAsset,
+  deleteRoom,
+  editPiece,
+  fetchTable,
+  getBackground,
+  getColorLabel,
+  getGridFile,
+  getLayer,
+  getLibrary,
+  getPreference,
+  getRoom,
+  getRoomPreference,
+  getServerInfo,
+  getServerPreference,
+  getSetup,
+  getTable,
+  getTableNo,
+  getTablePreference,
+  getToken,
+  isLayerActive,
+  isTabActive,
+  loadRoom,
+  movePieces,
+  patchPieces,
+  patchSetup,
+  reloadRoom,
+  remove,
+  setPreference,
+  setRoomPassword,
+  setRoomPreference,
+  setServerInfo,
+  setServerPreference,
+  setTabActive,
+  setTableNo,
+  setTablePreference,
+  undo,
+  updateAsset,
+  updatePieces,
+  updateTable,
+
+  _private: {
+    setRoom,
+    setTable
+  }
 }
 
 // --- public ------------------------------------------------------------------
@@ -96,7 +115,7 @@ export const FLAGS = {
  *
  * @returns {object} The cached server metadata object.
  */
-export function getServerInfo () {
+function getServerInfo () {
   return serverInfo
 }
 
@@ -105,7 +124,7 @@ export function getServerInfo () {
  *
  * @param {object} info The serverInfo meta object.
  */
-export function setServerInfo (info) {
+function setServerInfo (info) {
   serverInfo = info
 }
 
@@ -114,7 +133,7 @@ export function setServerInfo (info) {
  *
  * @returns {object} Token
  */
-export function getToken () {
+function getToken () {
   return token
 }
 
@@ -123,7 +142,7 @@ export function getToken () {
  *
  * @returns {object} Room's metadata.
  */
-export function getRoom () {
+function getRoom () {
   return room
 }
 
@@ -132,7 +151,7 @@ export function getRoom () {
  *
  * @returns {object} Current room's setup metadata.
  */
-export function getSetup () {
+function getSetup () {
   return getRoom()?.setup
 }
 
@@ -141,7 +160,7 @@ export function getSetup () {
  *
  * @returns {number} Table number.
  */
-export function getTableNo () {
+function getTableNo () {
   return tableNo
 }
 
@@ -153,11 +172,11 @@ export function getTableNo () {
  * @param {number} no Table to set (1..9).
  * @param {boolean} sync Force sync after setting status. Unit tests might disable that.
  */
-export function setTableNo (no, sync = true) {
+function setTableNo (no, sync = true) {
   if (no >= 1 && no <= 9) {
     tableNo = no
-    setRoomPreference(PREFS.TABLE, tableNo)
-    if (sync) triggerEvent(HOOK_SYNCNOW, true)
+    setRoomPreference(PREF.TABLE, tableNo)
+    if (sync) Event.trigger(Event.HOOK.SYNCNOW, true)
   }
 }
 
@@ -167,8 +186,19 @@ export function setTableNo (no, sync = true) {
  * @param {number} no Table slot 1..9. Defaults to current one.
  * @returns {object} Table array.
  */
-export function getTable (no = getTableNo()) {
+function getTable (no = getTableNo()) {
   return tables[no]
+}
+
+/**
+ * Get (cached) state for a given layer in a slot/table.
+ *
+ * @param {string} layer Name of layer.
+ * @param {number} no Table slot 1..9. Defaults to current one.
+ * @returns {object} Layer array.
+ */
+function getLayer (layer, no = getTableNo()) {
+  return tables[no].filter(p => p.l === layer)
 }
 
 /**
@@ -178,17 +208,17 @@ export function getTable (no = getTableNo()) {
  * @param {string} strength Grid style (major/minor)
  * @returns {string} The grid image file.
  */
-export function getGridFile (bgcolor, strength) {
-  const bright = brightness(bgcolor)
+function getGridFile (bgcolor, strength) {
+  const bright = Browser.brightness(bgcolor)
   let color = 5
   const window = 52
   if (bright <= 128 - window) color = 1
   if (bright >= 128 + window) color = 9
 
   switch (room.setup?.type) {
-    case GRID.HEX:
+    case Content.GRID.HEX:
       return `img/grid-hex-${strength}-${color}.svg`
-    case GRID.HEX2:
+    case Content.GRID.HEX2:
       return `img/grid-hex2-${strength}-${color}.svg`
     default:
       return `img/grid-square-${strength}-${color}.svg`
@@ -200,30 +230,16 @@ export function getGridFile (bgcolor, strength) {
  *
  * @returns {object} Current table background.
  */
-export function getBackground () {
-  const bgName = getServerPreference(PREFS.BACKGROUND)
+function getBackground () {
+  const bgName = getServerPreference(PREF.BACKGROUND)
   const background = serverInfo.backgrounds.find(b => b.name === bgName) ?? serverInfo.backgrounds.find(b => b.name === 'Wood') ?? serverInfo.backgrounds[0]
 
   if (!background.grid) { // determine matching grid file on the fly
-    const gridType = getRoomPreference(PREFS.GRID)
+    const gridType = getRoomPreference(PREF.GRID)
     background.gridFile = getGridFile(background.color, gridType > 1 ? 'major' : 'minor')
   }
 
   return background
-}
-
-/**
- * Get the material media path for a material name.
- *
- * Reverts to first = no material if not found.
- *
- * @param {string} name The material's name, e.g. 'wood'.
- * @returns {string} Media path, e.g. 'api/data/rooms/roomname/assets/material/wood.png'
- */
-export function getMaterialMedia (name) {
-  const material = getLibrary()?.material?.find(m => m.name === name)
-  const filename = material?.media[0] ?? 'none.png'
-  return getRoomMediaURL(getRoom()?.name, 'material', filename, DEMO_MODE)
 }
 
 /**
@@ -232,7 +248,7 @@ export function getMaterialMedia (name) {
  * @param {any} backgroundColor A bg value.
  * @returns {string} Label for the UI.
  */
-export function getColorLabel (backgroundColor) {
+function getColorLabel (backgroundColor) {
   if (backgroundColor.match(/^#/)) {
     return `${backgroundColor}`
   }
@@ -247,8 +263,6 @@ export function getColorLabel (backgroundColor) {
     return 'transparent'
   }
 
-  // TODO: piece?
-
   return '#808080' // default color
 }
 
@@ -257,7 +271,7 @@ export function getColorLabel (backgroundColor) {
  *
  * @returns {object} Current room's library metadata.
  */
-export function getLibrary () {
+function getLibrary () {
   return getRoom()?.library
 }
 
@@ -267,30 +281,8 @@ export function getLibrary () {
  * @param {string} layer Name of layer.
  * @returns {boolean} True if active.
  */
-export function isLayerActive (layer) {
-  return getRoomPreference(PREFS['LAYER' + layer])
-}
-
-export const PREFS = {
-  SNAPSHOT: { name: 'snapshot', default: undefined },
-  TOKEN: { name: 'token', default: '00000000-0000-0000-0000-000000000000' },
-  TABLE: { name: 'table', default: null },
-  LAYERother: { name: 'layer5', default: undefined },
-  LAYERtoken: { name: 'layer4', default: undefined },
-  LAYERnote: { name: 'layer3', default: undefined },
-  LAYERsticker: { name: 'layer2', default: undefined },
-  LAYERtile: { name: 'layer1', default: undefined },
-  GRID: { name: 'grid', default: 0 },
-  LOS: { name: 'los', default: false },
-  SCROLL: { name: 'scroll', default: {} },
-  ZOOM: { name: 'zoom', default: 1.0 },
-  PIECE_ROTATE: { name: 'pieceRotate', default: undefined },
-  BACKGROUND: { name: 'background', default: 'Wood' },
-  QUALITY: { name: 'quality', default: 3 },
-  DISCLAIMER: { name: 'disclaimer', default: false },
-  TAB_HELP: { name: 'tabHelp', default: 'tab-1' },
-  TAB_LIBRARY: { name: 'tabLibrary', default: 'tab-1' },
-  TAB_SETTINGS: { name: 'tabSettings', default: 'tab-1' }
+function isLayerActive (layer) {
+  return getRoomPreference(PREF['LAYER' + layer])
 }
 
 /**
@@ -300,9 +292,9 @@ export const PREFS = {
  * @param {string} pref Property name in object stored in that key.
  * @param {object} value Object to store in the property.
  */
-export function setPreference (key, pref, value) {
+function setPreference (key, pref, value) {
   if (!pref.name) console.error('unknown pref', pref)
-  setStoreValue(key, pref.name, value)
+  Browser.setStoreValue(key, pref.name, value)
 }
 
 /**
@@ -312,9 +304,9 @@ export function setPreference (key, pref, value) {
  * @param {string} pref Property name in object stored in that key.
  * @returns {object} value Object stored in the property.
  */
-export function getPreference (key, pref) {
+function getPreference (key, pref) {
   if (!pref.name) console.error('unknown pref', pref)
-  return getStoreValue(key, pref.name) ?? pref.default
+  return Browser.getStoreValue(key, pref.name) ?? pref.default
 }
 
 /**
@@ -323,7 +315,7 @@ export function getPreference (key, pref) {
  * @param {string} pref Setting to obtain.
  * @returns {string} The setting's value.
  */
-export function getServerPreference (pref) {
+function getServerPreference (pref) {
   return getPreference('freebeegee', pref)
 }
 
@@ -333,7 +325,7 @@ export function getServerPreference (pref) {
  * @param {string} pref Setting to set.
  * @param {string} value The value to set.
  */
-export function setServerPreference (pref, value) {
+function setServerPreference (pref, value) {
   setPreference('freebeegee', pref, value)
 }
 
@@ -344,7 +336,7 @@ export function setServerPreference (pref, value) {
  * @param {string} pref Setting to obtain.
  * @returns {string} The setting's value.
  */
-export function getRoomPreference (pref) {
+function getRoomPreference (pref) {
   return getPreference(`freebeegee-${room.id}`, pref)
 }
 
@@ -355,9 +347,9 @@ export function getRoomPreference (pref) {
  * @param {string} pref Setting to set.
  * @param {string} value The value to set.
  */
-export function setRoomPreference (pref, value) {
+function setRoomPreference (pref, value) {
   setPreference(`freebeegee-${room.id}`, pref, value)
-  setStoreValue(`freebeegee-${room.id}`, 't', Math.floor(new Date().getTime() / 1000)) // touch
+  Browser.setStoreValue(`freebeegee-${room.id}`, 't', Math.floor(new Date().getTime() / 1000)) // touch
 }
 
 /**
@@ -368,8 +360,8 @@ export function setRoomPreference (pref, value) {
  * @param {number} no Table number. Defaults to curren table.
  * @returns {string} The setting's value.
  */
-export function getTablePreference (pref, no = getTableNo()) {
-  const table = getStoreValue(`freebeegee-${room.id}`, `table${no}`) ?? {}
+function getTablePreference (pref, no = getTableNo()) {
+  const table = Browser.getStoreValue(`freebeegee-${room.id}`, `table${no}`) ?? {}
   return table[pref.name] ?? pref.default
 }
 
@@ -381,17 +373,17 @@ export function getTablePreference (pref, no = getTableNo()) {
  * @param {string} value The value to set.
  * @param {number} no Table number. Defaults to curren table.
  */
-export function setTablePreference (pref, value, no = getTableNo()) {
-  const table = getStoreValue(`r${room.id}`, `table${no}`) ?? {}
+function setTablePreference (pref, value, no = getTableNo()) {
+  const table = Browser.getStoreValue(`r${room.id}`, `table${no}`) ?? {}
   table[pref.name] = value
-  setStoreValue(`freebeegee-${room.id}`, `table${no}`, table)
-  setStoreValue(`freebeegee-${room.id}`, 't', Math.floor(new Date().getTime() / 1000)) // touch
+  Browser.setStoreValue(`freebeegee-${room.id}`, `table${no}`, table)
+  Browser.setStoreValue(`freebeegee-${room.id}`, 't', Math.floor(new Date().getTime() / 1000)) // touch
 }
 
 /**
  * Remove old and unused entries (rooms) from the HTML local store.
  */
-export function cleanupStore () {
+function cleanupStore () {
   const store = globalThis.localStorage
 
   // clean obsolete entries
@@ -421,7 +413,7 @@ export function cleanupStore () {
  *
  * @returns {Promise} Promise of room data object.
  */
-export function reloadRoom () {
+function reloadRoom () {
   return loadRoom(room.name, token)
 }
 
@@ -432,20 +424,20 @@ export function reloadRoom () {
  * @param {string} t The current API token.
  * @returns {Promise<object>} Room data object.
  */
-export function loadRoom (name, t) {
+function loadRoom (name, t) {
   token = t
-  return apiGetRoom(name, getToken(), true)
+  return Api.getRoom(name, getToken(), true)
     .then(response => {
       if (response.status === 400) {
-        runError('ROOM_INVALID', name)
+        Error.runError('ROOM_INVALID', name)
       } else if (response.status === 200) {
         setRoom(response.body)
         return response
       } else {
-        apiError(new UnexpectedStatus(response.status, response.body), name)
+        Error.apiError(new Api.UnexpectedStatus(response.status, response.body), name)
       }
     })
-    .catch(error => apiError(error, name))
+    .catch(error => Error.apiError(error, name))
 }
 
 /**
@@ -457,10 +449,10 @@ export function loadRoom (name, t) {
  * @param {object} sync Optional. If true (default), trigger table sync.
  * @returns {Promise<object>} Updated setup object.
  */
-export function patchSetup (setup, sync = true) {
-  return apiPatchSetup(room.name, setup, getToken())
-    .catch(error => apiError(error, room.name, [404]))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
+function patchSetup (setup, sync = true) {
+  return Api.patchSetup(room.name, setup, getToken())
+    .catch(error => Error.apiError(error, room.name, [404]))
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }
 
 /**
@@ -470,8 +462,8 @@ export function patchSetup (setup, sync = true) {
  * @param {object} snapshot File input or null if no snapshot is to be uploaded.
  * @returns {Promise<object>} The created room metadata object.
  */
-export function addRoom (room, snapshot) {
-  return apiPostRoom(room, snapshot, getToken())
+function addRoom (room, snapshot) {
+  return Api.postRoom(room, snapshot, getToken())
 }
 
 /**
@@ -481,9 +473,9 @@ export function addRoom (room, snapshot) {
  * @param {object} sync Optional. If true (default), trigger table sync.
  * @returns {Promise<void>} Promise of execution.
  */
-export function undo (no = getTableNo(), sync = true) {
-  return apiPostUndo(room.name, no, getToken())
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
+function undo (no = getTableNo(), sync = true) {
+  return Api.postUndo(room.name, no, getToken())
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }
 
 /**
@@ -495,12 +487,12 @@ export function undo (no = getTableNo(), sync = true) {
  * @param {?number} z New z. Will not be changed if null.
  * @returns {object} A JSON piece patch ready to be sent to the API.
  */
-export function movePiecePatch (pieceId, x = null, y = null, z = null) {
+function movePiecePatch (pieceId, x = null, y = null, z = null) {
   const patch = { id: pieceId }
   if (x != null) patch.x = x
   if (y != null) patch.y = y
   if (z != null) {
-    if (findPiece(pieceId)?._meta?.feature === FEATURE_DICEMAT) {
+    if (Content.findPiece(pieceId)?._meta?.feature === Content.FEATURE.DICEMAT) {
       if (x || y) {
         // ignore z on move
       } else {
@@ -511,7 +503,7 @@ export function movePiecePatch (pieceId, x = null, y = null, z = null) {
     }
   }
 
-  return sanitizePiecePatch(patch)
+  return Content.sanitizePiecePatch(patch)
 }
 
 /**
@@ -520,113 +512,16 @@ export function movePiecePatch (pieceId, x = null, y = null, z = null) {
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {string} pieceId ID of piece to change.
- * @param {?number} x New x. Will not be changed if null.
- * @param {?number} y New y. Will not be changed if null.
- * @param {?number} z New z. Will not be changed if null.
- * @param {object} sync Optional. If true (default), trigger table sync.
- * @returns {Promise<object>} The modified piece.
- */
-export function movePiece (pieceId, x = null, y = null, z = null, sync = true) {
-  return patchPiece(pieceId, movePiecePatch(pieceId, x, y, z), sync)
-}
-
-/**
- * Set the x/y/z of a piece of the current table.
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {object[]} moves Array of objects {id, x, y, z} like movePiece().
+ * @param {object[]} moves Array of objects {id, x, y, z}.
  * @param {object} sync Optional. If true (default), trigger table sync.
  * @returns {Promise<object[]>} The modified pieces.
  */
-export function movePieces (moves, sync = true) {
+function movePieces (moves, sync = true) {
   const patches = []
   for (const move of moves) {
     patches.push(movePiecePatch(move.id, move.x, move.y, move.z))
   }
   return patchPieces(patches, sync)
-}
-
-/**
- * Rotate a piece of the current table.
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {string} pieceId ID of piece to change.
- * @param {number} r New rotation (0, 60, 90, 120, 180, 260, 270).
- * @param {object} sync Optional. If true (default), trigger table sync.
- * @returns {Promise<object>} The modified piece.
- */
-export function rotatePiece (pieceId, r = 0, sync = true) {
-  return patchPiece(pieceId, sanitizePiecePatch({ r }), sync)
-}
-
-/**
- * Update the number/letter of a piece/token.
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {string} pieceId ID of piece to change.
- * @param {number} n New number (0..27).
- * @param {object} sync Optional. If true (default), trigger table sync.
- * @returns {Promise<object>} The modified piece.
- */
-export function numberPiece (pieceId, n = 0, sync = true) {
-  return patchPiece(pieceId, sanitizePiecePatch({ n }), sync)
-}
-
-/**
- * Flip a piece of the current table and show another side of it.
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {string} pieceId ID of piece to change.
- * @param {number} side New side. Zero-based.
- * @param {object} sync Optional. If true (default), trigger table sync.
- * @returns {Promise<object>} The modified piece.
- */
-export function flipPiece (pieceId, side, sync = true) {
-  return patchPiece(pieceId, sanitizePiecePatch({ s: side }, pieceId))
-}
-
-/**
- * Change the piece/outline/border color.
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {string} pieceId ID of piece to change.
- * @param {number} color1 New color index. Zero-based.
- * @param {number} color2 New color index. Zero-based.
- * @param {object} sync Optional. If true (default), trigger table sync.
- * @returns {Promise<object>} The modified piece.
- */
-export function colorPiece (pieceId, color1 = 0, color2 = 0, sync = true) {
-  return patchPiece(
-    pieceId,
-    sanitizePiecePatch({ c: [color1, color2] }, pieceId),
-    sync
-  )
-}
-
-/**
- * Update the falgs of a piece/token.
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {string} pieceId ID of piece to change.
- * @param {number} f New flag bits.
- * @param {object} sync Optional. If true (default), trigger table sync.
- * @returns {Promise<object>} The modified piece.
- */
-export function flagPiece (pieceId, f = 0, sync = true) {
-  return patchPiece(pieceId, sanitizePiecePatch({ f }), sync)
 }
 
 /**
@@ -641,47 +536,32 @@ export function flagPiece (pieceId, f = 0, sync = true) {
  * @param {object} sync Optional. If true (default), trigger table sync.
  * @returns {Promise<object>} The modified piece.
  */
-export function editPiece (pieceId, updates, sync = true) {
+function editPiece (pieceId, updates, sync = true) {
   if (Object.keys(updates).length > 0) {
-    return patchPiece(pieceId, sanitizePiecePatch(updates, pieceId), sync)
+    return patchPiece(pieceId, Content.sanitizePiecePatch(updates, pieceId), sync)
   }
   return Promise.resolve({}) // nothing to do
 }
 
 /**
- * Remove a piece from the current table (from the room, not from the library).
+ * Remove/delete a piece from the current table (from the room, not from the library).
  *
  * Will only do an API call and rely on later sync to get the change back to the
  * data model.
  *
- * @param {string} pieceId ID of piece to remove.
+ * @param {object[]} pieces Pieces to remove (id field mandatory).
  * @param {object} sync Optional. If true (default), trigger table sync.
- * @returns {Promise<object>} The deleted piece.
+ * @returns {Promise<void>} Promise of completion.
  */
-export function deletePiece (pieceId, sync = true) {
-  if (findPiece(pieceId)?.f & FLAGS.NO_DELETE) return Promise.resolve() // can't delete those
-  return apiDeletePiece(room.name, getTableNo(), pieceId, getToken())
-    .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
-}
-
-/**
- * Remove a piece from the current table (from the room, not from the library).
- *
- * Will only do an API call and rely on later sync to get the change back to the
- * data model.
- *
- * @param {string[]} pieceIds ID of pieces to remove.
- * @param {object} sync Optional. If true (default), trigger table sync.
- * @returns {Promise<object>} The deleted piece.
- */
-export function deletePieces (pieceIds, sync = true) {
-  for (const pieceId of pieceIds) {
-    if (findPiece(pieceId)?.f & FLAGS.NO_DELETE) return Promise.resolve() // can't delete those
+function remove (pieces, sync = true) {
+  const ids = []
+  for (const piece of pieces) {
+    ids.push(piece.id)
   }
-  return apiDeletePieces(room.name, getTableNo(), pieceIds, getToken())
-    .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
+  if (ids.length <= 0) return Promise.resolve() // nothing to do!
+  return Api.deletePieces(room.name, getTableNo(), ids, getToken())
+    .catch(error => Error.apiError(error, room.name))
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }
 
 /**
@@ -694,10 +574,10 @@ export function deletePieces (pieceIds, sync = true) {
  * @param {object} sync Optional. If true (default), trigger table sync.
  * @returns {Promise<object>} The modified asset.
  */
-export function updateAsset (asset, sync = true) {
-  return apiPatchAsset(room.name, asset, getToken())
-    .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
+function updateAsset (asset, sync = true) {
+  return Api.patchAsset(room.name, asset, getToken())
+    .catch(error => Error.apiError(error, room.name))
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }
 
 /**
@@ -711,10 +591,10 @@ export function updateAsset (asset, sync = true) {
  * @param {object} sync Optional. If true (default), trigger table sync.
  * @returns {Promise} Promise of execution.
  */
-export function deleteAsset (assetId, sync = true) {
-  return apiDeleteAsset(room.name, assetId, getToken())
-    .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
+function deleteAsset (assetId, sync = true) {
+  return Api.deleteAsset(room.name, assetId, getToken())
+    .catch(error => Error.apiError(error, room.name))
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }
 
 /**
@@ -726,10 +606,10 @@ export function deleteAsset (assetId, sync = true) {
  * @param {object} sync Optional. If true (default), trigger table sync.
  * @returns {Promise<object>} The modified table.
  */
-export function updateTable (table, sync = true) {
-  return apiPutTable(room.name, getTableNo(), table, getToken())
-    .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
+function updateTable (table, sync = true) {
+  return Api.putTable(room.name, getTableNo(), table, getToken())
+    .catch(error => Error.apiError(error, room.name))
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }
 
 /**
@@ -741,7 +621,7 @@ export function updateTable (table, sync = true) {
  * @param {object} sync Optional. If true (default), trigger table sync.
  * @returns {Promise<object[]>} The modified pieces.
  */
-export function updatePieces (pieces, sync = true) {
+function updatePieces (pieces, sync = true) {
   if (pieces && pieces.length > 0) return patchPieces(pieces, sync)
   return Promise.resolve({}) // nothing to do
 }
@@ -756,27 +636,28 @@ export function updatePieces (pieces, sync = true) {
  * @param {boolean} sync Optional. If true (default), trigger table sync.
  * @returns {Promise<object>} The created pieces.
  */
-export function createPieces (pieces, select = false, sync = true) {
+function createPieces (pieces, select = false, sync = true) {
   if (!pieces || pieces.length <= 0) return Promise.resolve([])
 
   const toSend = []
   for (let piece of pieces) {
-    if (piece.l) piece.l = nameToLayer(piece.l)
-    if (piece.a !== ID.LOS) piece = clampToTableSize(piece)
+    if (piece.l) piece.l = Content.nameToLayer(piece.l)
+    if (piece.a !== Content.ID.LOS) piece = Content.clampToTableSize(piece)
     toSend.push(stripPiece(piece))
   }
 
-  return apiPostPieces(room.name, getTableNo(), toSend, getToken())
-    .then(pieces => {
+  return Api.postPieces(room.name, getTableNo(), toSend, getToken())
+    .then(reply => {
+      const pieces = reply.data?.body ? JSON.parse(reply.data.body) : reply // map test mode reply
       const ids = []
       for (const piece of pieces) {
-        if (select) selectionAdd(piece.id, true)
+        if (select) Selection.select(piece.id, true)
         ids.push(piece.id)
       }
-      return ids
+      return reply
     })
-    .catch(error => apiError(error, room.name))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
+    .catch(error => Error.apiError(error, room.name))
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }
 
 /**
@@ -785,8 +666,8 @@ export function createPieces (pieces, select = false, sync = true) {
  * @param {object} asset The asset to add/upload.
  * @returns {Promise<object>} The created asset.
  */
-export function addAsset (asset) {
-  return apiPostAsset(room.name, asset, getToken())
+function addAsset (asset) {
+  return Api.postAsset(room.name, asset, getToken())
 }
 
 /**
@@ -794,8 +675,8 @@ export function addAsset (asset) {
  *
  * @returns {Promise} Promise of execution.
  */
-export function deleteRoom () {
-  return apiDeleteRoom(room.name, getToken())
+function deleteRoom () {
+  return Api.deleteRoom(room.name, getToken())
 }
 
 /**
@@ -804,8 +685,8 @@ export function deleteRoom () {
  * @param {string} password The new password.
  * @returns {Promise} Promise of execution.
  */
-export function setRoomPassword (password) {
-  return apiPatchRoomAuth(room.name, {
+function setRoomPassword (password) {
+  return Api.patchRoomAuth(room.name, {
     password
   }, getToken())
 }
@@ -816,13 +697,13 @@ export function setRoomPassword (password) {
  * @param {number} no Number of table 0..9.
  * @returns {Promise} Promise of a table object.
  */
-export function fetchTable (no) {
-  return apiGetTable(room.name, no, getToken(), true)
+function fetchTable (no) {
+  return Api.getTable(room.name, no, getToken(), true)
     .then(table => {
-      setTable(no, populatePiecesDefaults(table.body, table.headers))
+      setTable(no, Content.populatePiecesDefaults(table.body, table.headers))
       return table
     })
-    .catch(error => apiError(error, room.name))
+    .catch(error => Error.apiError(error, room.name))
 }
 
 // --- HTTP error handling -----------------------------------------------------
@@ -832,7 +713,7 @@ export function fetchTable (no) {
  *
  * @returns {boolean} True if yes.
  */
-export function isTabActive () {
+function isTabActive () {
   return tabActive
 }
 
@@ -843,9 +724,9 @@ export function isTabActive () {
  *
  * @param {boolean} state New browser tab state.
  */
-export function setTabActive (state) {
+function setTabActive (state) {
   tabActive = state
-  if (state && room) triggerEvent(HOOK_SYNCNOW)
+  if (state && room) Event.trigger(Event.HOOK.SYNCNOW)
 }
 
 // --- internal ----------------------------------------------------------------
@@ -865,7 +746,7 @@ let tabActive = true /** is the current tab/window active/maximized? */
  * @param {number} no Table number.
  * @param {object} data Table data.
  */
-export function setTable (no, data) {
+function setTable (no, data) {
   tables[no] = data
 }
 
@@ -876,10 +757,10 @@ export function setTable (no, data) {
  *
  * @param {object} data Room data.
  */
-export function setRoom (data) {
+function setRoom (data) {
   if (data) {
-    data.setup = populateSetupDefaults(data.setup)
-    data.library = populateLibraryDefaults(data.library)
+    data.setup = Content.populateSetupDefaults(data.setup)
+    data.library = Content.populateLibraryDefaults(data.library)
   }
   room = data
 }
@@ -913,10 +794,10 @@ function stripPiece (piece) {
  * @returns {object} Promise of the API request.
  */
 function patchPiece (pieceId, patch, sync = true) {
-  if (patch.l) patch.l = nameToLayer(patch.l)
-  return apiPatchPiece(room.name, getTableNo(), pieceId, patch, getToken())
-    .catch(error => apiError(error, room.name, [404]))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
+  if (patch.l) patch.l = Content.nameToLayer(patch.l)
+  return Api.patchPiece(room.name, getTableNo(), pieceId, patch, getToken())
+    .catch(error => Error.apiError(error, room.name, [404]))
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }
 
 /**
@@ -926,19 +807,14 @@ function patchPiece (pieceId, patch, sync = true) {
  * @param {object} sync If true (default), trigger table sync.
  * @returns {Promise<object>} Promise of the API request.
  */
-export function patchPieces (patches, sync = true) {
+function patchPieces (patches, sync = true) {
   const sane = []
-  if (patches.length <= 0) return Promise.resolve() // nothing to do!
   for (const patch of patches) {
-    if (patch.l) patch.l = nameToLayer(patch.l)
-    sane.push(sanitizePiecePatch(patch, patch.id))
+    if (patch.l) patch.l = Content.nameToLayer(patch.l)
+    sane.push(Content.sanitizePiecePatch(patch, patch.id))
   }
-  return apiPatchPieces(room.name, getTableNo(), sane, getToken())
-    .catch(error => apiError(error, room.name, [404]))
-    .finally(() => { if (sync) triggerEvent(HOOK_SYNCNOW) })
-}
-
-export const _test = {
-  setTable,
-  setRoom
+  if (sane.length <= 0) return Promise.resolve() // nothing to do!
+  return Api.patchPieces(room.name, getTableNo(), sane, getToken())
+    .catch(error => Error.apiError(error, room.name, [404]))
+    .finally(() => { if (sync) Event.trigger(Event.HOOK.SYNCNOW) })
 }

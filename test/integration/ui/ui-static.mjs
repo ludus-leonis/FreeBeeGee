@@ -24,10 +24,13 @@
 
 // Mocha / Chai tests for UI/DOM tests
 
-import {
-  testHttpGet,
-  expect
-} from '../utils/chai.mjs'
+import Test, { expect } from '../utils/test.mjs'
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
 
 // -----------------------------------------------------------------------------
 
@@ -35,7 +38,7 @@ import {
  * @param {string} api Base URL to test against.
  */
 function testIndexExists (api) {
-  testHttpGet(api, '/', body => {
+  Test.httpGet(api, '/', body => {
     expect(body).to.contain('If you are like us, you\'ll have a JavaScript-Blocker installed.')
   })
 }
@@ -44,7 +47,7 @@ function testIndexExists (api) {
  * @param {string} api Base URL to test against.
  */
 function testPrivacyExists (api) {
-  testHttpGet(api, '/privacy', body => {
+  Test.httpGet(api, '/privacy', body => {
     expect(body).to.contain('This is the default privacy policy')
   })
 }
@@ -53,7 +56,7 @@ function testPrivacyExists (api) {
  * @param {string} api Base URL to test against.
  */
 function testTermsExists (api) {
-  testHttpGet(api, '/terms', body => {
+  Test.httpGet(api, '/terms', body => {
     expect(body).to.contain('This website runs a copy of')
   })
 }
@@ -62,7 +65,7 @@ function testTermsExists (api) {
  * @param {string} api Base URL to test against.
  */
 function testToolsExists (api) {
-  testHttpGet(api, '/tools', body => {
+  Test.httpGet(api, '/tools', body => {
     expect(body).to.contain('bcrypt tool')
   })
 }
@@ -71,7 +74,7 @@ function testToolsExists (api) {
  * @param {string} api Base URL to test against.
  */
 function testNoVoid (api) {
-  testHttpGet(api, '/void', body => {
+  Test.httpGet(api, '/void', body => {
     expect(body).to.contain('404 Not Found')
   }, 404)
 }
@@ -80,7 +83,7 @@ function testNoVoid (api) {
  * @param {string} api Base URL to test against.
  */
 function testNoSubdir (api) {
-  testHttpGet(api, '/xx/blueBird', body => {
+  Test.httpGet(api, '/xx/blueBird', body => {
     expect(body).to.contain('404 Not Found')
   }, 404)
 }
@@ -90,7 +93,7 @@ function testNoSubdir (api) {
 /**
  * @param {string} api Base URL to test against.
  */
-export function run (api) {
+function run (api) {
   describe('UI', function () {
     describe('index exists', () => testIndexExists(api))
     describe('privacy exists', () => testPrivacyExists(api))

@@ -20,22 +20,22 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
+import Modal from '../../../view/room/modal.mjs'
 
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../view/room/modal.mjs'
+// -----------------------------------------------------------------------------
 
-// --- public ------------------------------------------------------------------
+export default {
+  open
+}
+
+// -----------------------------------------------------------------------------
 
 /**
  * Inform user about demo mode restrictions.
  */
-export function modalDemo () {
-  if (!isModalActive()) {
-    createModal(true)
+function open () {
+  if (!Modal.isOpen()) {
+    Modal.create(true)
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Welcome to demo mode!</h3>
@@ -55,10 +55,8 @@ export function modalDemo () {
       <button id='btn-close' type="button" class="btn btn-primary">Cool!</button>
     `
 
-    _('#btn-close').on('click', () => getModal().hide())
-    _('#modal')
-      .on('hidden.bs.modal', () => { modalClose() })
+    _('#btn-close').on('click', () => Modal.close())
 
-    getModal().show()
+    Modal.open()
   }
 }

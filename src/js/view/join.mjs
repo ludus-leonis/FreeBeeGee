@@ -19,37 +19,21 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
+import _ from '../lib/FreeDOM.mjs'
+import App from '../app.mjs'
+import Browser from '../lib/util-browser.mjs'
+import Screen from '../lib/screen.mjs'
+import State from '../state/index.mjs'
+import Text from '../lib/util-text.mjs'
+import Util from '../lib/util.mjs'
 
-import {
-  createScreen
-} from '../../view/screen.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  getServerInfo
-} from '../../state/index.mjs'
+export default {
+  show
+}
 
-import {
-  PATTERN_ROOM_NAME,
-  generateName,
-  generateUsername
-} from '../../lib/utils.mjs'
-
-import {
-  getGetParameter
-} from '../../lib/utils-html.mjs'
-
-import {
-  hoursToTimespan
-} from '../../lib/utils-text.mjs'
-
-import {
-  DEMO_MODE
-} from '../../api/index.mjs'
-
-import {
-  navigateToRoom
-} from '../../app.mjs'
+// -----------------------------------------------------------------------------
 
 /** Limit room names like hilariousGazingPenguin */
 const roomNameMaxLength = 48
@@ -57,20 +41,20 @@ const roomNameMaxLength = 48
 /**
  * Show the enter-name dialog.
  */
-export function runJoin () {
-  const ttl = getServerInfo().ttl
-  const intro = DEMO_MODE
+function show () {
+  const ttl = State.getServerInfo().ttl
+  const intro = State.SERVERLESS
     ? '<p>Welcome to the FreeBeeGee Demo!</p>'
     : ''
-  const intro2 = DEMO_MODE
+  const intro2 = State.SERVERLESS
     ? '<p>For this demo <strong>no data is stored on the server</strong>. If you clear your browser\'s site/cache data, your rooms &amp; tables will be gone.</p>'
     : ''
-  createScreen(
+  Screen.create(
     'Pick a room',
     `
       ${intro}
       <label for="name">Room name</label>
-      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${roomNameMaxLength}" pattern="${PATTERN_ROOM_NAME}">
+      <input id="name" name="name" type="text" placeholder="DustyDish" maxlength="${roomNameMaxLength}" pattern="${Util.REGEXP.ROOM_NAME}">
       <p class="p-small spacing-tiny">Min. 8 characters - no spaces or funky letters, please.</p>
       ${intro2}
 
@@ -78,7 +62,7 @@ export function runJoin () {
     `,
 
     ttl > 0
-      ? `This server deletes rooms after ${hoursToTimespan(ttl)} of inactivity.`
+      ? `This server deletes rooms after ${Text.hoursToTimespan(ttl)} of inactivity.`
       : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 
@@ -129,13 +113,13 @@ export function runJoin () {
       input.value = input.value.replace(/[^a-zA-Z0-9]/gi, '').substr(0, roomNameMaxLength)
     })
   })
-  name.value = getGetParameter('room').replace(/[^a-zA-Z0-9]/gi, '').substr(0, roomNameMaxLength)
-  name.placeholder = generateName()
+  name.value = Browser.getGetParameter('room').replace(/[^a-zA-Z0-9]/gi, '').substr(0, roomNameMaxLength)
+  name.placeholder = Util.generateName()
   name.focus()
 
   const user = _('#user')
-  user.value = getGetParameter('user').trim()
-  user.placeholder = generateUsername()
+  user.value = Browser.getGetParameter('user').trim()
+  user.placeholder = Util.generateUsername()
 
   _('#ok').on('click', click => { click.preventDefault(); ok() })
 }
@@ -150,6 +134,6 @@ function ok () {
   if (invalid) {
     invalid.focus()
   } else {
-    navigateToRoom(_('#name').valueOrPlaceholder())
+    App.navigateToRoom(_('#name').valueOrPlaceholder())
   }
 }

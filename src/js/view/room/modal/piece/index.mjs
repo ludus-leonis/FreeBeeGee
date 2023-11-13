@@ -20,61 +20,52 @@
  */
 
 import _ from '../../../../lib/FreeDOM.mjs'
+import Content from '../../../../view/room/tabletop/content.mjs'
+import Dom from '../../../../view/room/tabletop/dom.mjs'
+import Modal from '../../../../view/room/modal.mjs'
+import ModalNote from './note.mjs'
+import ModalOther from './other.mjs'
+import ModalTile from './tile.mjs'
+import ModalToken from './token.mjs'
+import State from '../../../../state/index.mjs'
+import Text from '../../../../lib/util-text.mjs'
+import Util from '../../../../lib/util.mjs'
 
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../../view/room/modal.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  LAYER,
-  getAssetURL
-} from '../../../../view/room/tabletop/tabledata.mjs'
+export default {
+  open,
+  setupBadge,
+  setupColor,
+  setupColorBorder,
+  setupFlags,
+  setupGrid,
+  setupLabel,
+  setupNumber,
+  setupRotate,
+  setupSide,
+  setupSize,
+  updateBadge,
+  updateColor,
+  updateColorBorder,
+  updateFlags,
+  updateLabel,
+  updateNumber,
+  updateRotate,
+  updateSide,
+  updateSize
+}
 
-import {
-  PREFS,
-  FLAGS,
-  getSetup,
-  getLibrary,
-  getRoomPreference
-} from '../../../../state/index.mjs'
-
-import {
-  equalsJSON
-} from '../../../../lib/utils.mjs'
-
-import {
-  prettyName
-} from '../../../../lib/utils-text.mjs'
-
-import {
-  setup as setupModalToken
-} from './token.mjs'
-
-import {
-  setup as setupModalOther
-} from './other.mjs'
-
-import {
-  setup as setupModalTile
-} from './tile.mjs'
-
-import {
-  setup as setupModalNote
-} from './note.mjs'
-
-// --- public ------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 /**
  * Show the edit-piece modal.
  *
  * @param {object} piece A piece to show.
  */
-export function modalEdit (piece) {
-  if (piece != null && !isModalActive()) {
-    const node = createModal()
+function open (piece) {
+  if (piece != null && !Modal.isOpen()) {
+    const node = Modal.create()
     node.piece = piece
 
     _('#modal-header').innerHTML = `
@@ -83,19 +74,19 @@ export function modalEdit (piece) {
 
     let save = null
     switch (piece.l) {
-      case LAYER.NOTE:
-        save = setupModalNote(piece)
+      case Content.LAYER.NOTE:
+        save = ModalNote.create(piece)
         break
-      case LAYER.TILE:
-      case LAYER.STICKER:
-        save = setupModalTile(piece)
+      case Content.LAYER.TILE:
+      case Content.LAYER.STICKER:
+        save = ModalTile.create(piece)
         break
-      case LAYER.OTHER:
-        save = setupModalOther(piece)
+      case Content.LAYER.OTHER:
+        save = ModalOther.create(piece)
         break
-      case LAYER.TOKEN:
+      case Content.LAYER.TOKEN:
       default:
-        save = setupModalToken(piece)
+        save = ModalToken.create(piece)
         break
     }
 
@@ -104,11 +95,10 @@ export function modalEdit (piece) {
       <button id='btn-ok' type="button" class="btn btn-primary">Apply</button>
     `
 
-    _('#btn-close').on('click', () => getModal().hide())
-    _('#btn-ok').on('click', () => save() && getModal().hide())
-    _('#modal').on('hidden.bs.modal', () => modalClose())
+    _('#btn-close').on('click', () => Modal.close())
+    _('#btn-ok').on('click', () => save() && Modal.close())
 
-    getModal().show()
+    Modal.open()
 
     const input = document.getElementById('piece-label')
     input?.focus()
@@ -121,18 +111,18 @@ export function modalEdit (piece) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupBadge (piece) {
+function setupBadge (piece) {
   // badges
   const badges = _('#piece-badges')
-  for (const badge of getLibrary().badge) {
+  for (const badge of State.getLibrary().badge) {
     const span = _('span.toggle-icon').create().css({
-      backgroundImage: `url('${getAssetURL(badge)}'`
+      backgroundImage: `url('${Dom.getAssetURL(badge)}'`
     }).on('click', () => {
       span.toggle('.active')
     })
     if (piece.b?.includes(badge.id)) span.add('.active')
     span.badge = badge
-    span.title = prettyName(badge.name)
+    span.title = Text.prettyName(badge.name)
     badges.add(span)
   }
 }
@@ -143,12 +133,12 @@ export function setupBadge (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateBadge (piece, updates) {
+function updateBadge (piece, updates) {
   const b = []
   for (const node of _('#piece-badges .active').nodes()) {
     b.push(node.badge.id)
   }
-  if (!equalsJSON(piece.b, b)) {
+  if (!Util.equalsJSON(piece.b, b)) {
     updates.b = b
   }
 }
@@ -158,9 +148,9 @@ export function updateBadge (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupColor (piece) {
+function setupColor (piece) {
   const pieceColor = _('#piece-color')
-  const setup = getSetup()
+  const setup = State.getSetup()
 
   // default/none color
   const option = _('option').create('none')
@@ -182,10 +172,10 @@ export function setupColor (piece) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupColorBorder (piece) {
+function setupColorBorder (piece) {
   // border color
   const borderColor = _('#piece-border')
-  const setup = getSetup()
+  const setup = State.getSetup()
 
   // default/none color
   const option = _('option').create('none')
@@ -208,7 +198,7 @@ export function setupColorBorder (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateColor (piece, updates) {
+function updateColor (piece, updates) {
   const c = Number(_('#piece-color').value)
   if (c !== piece.c[0]) {
     updates.c = [c]
@@ -221,7 +211,7 @@ export function updateColor (piece, updates) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateColorBorder (piece, updates) {
+function updateColorBorder (piece, updates) {
   const c = Number(_('#piece-color').value)
   const c2 = Number(_('#piece-border').value)
   if (c !== piece.c[0] || c2 !== piece.c[1]) {
@@ -235,19 +225,19 @@ export function updateColorBorder (piece, updates) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateFlags (piece, updates) {
+function updateFlags (piece, updates) {
   let flags = 0
 
-  if (_('#piece-no-move').checked) flags |= FLAGS.NO_MOVE
-  if (_('#piece-no-delete').checked) flags |= FLAGS.NO_DELETE
-  if (_('#piece-no-clone').checked) flags |= FLAGS.NO_CLONE
+  if (_('#piece-no-move').checked) flags |= Content.FLAG.NO_MOVE
+  if (_('#piece-no-delete').checked) flags |= Content.FLAG.NO_DELETE
+  if (_('#piece-no-clone').checked) flags |= Content.FLAG.NO_CLONE
   const tileGrid = _('#piece-grid')
   if (tileGrid.exists()) {
-    if (tileGrid.value === 'minor') flags |= FLAGS.TILE_GRID_MINOR
-    if (tileGrid.value === 'major') flags |= FLAGS.TILE_GRID_MAJOR
+    if (tileGrid.value === 'minor') flags |= Content.FLAG.TILE_GRID_MINOR
+    if (tileGrid.value === 'major') flags |= Content.FLAG.TILE_GRID_MAJOR
   }
   const noteType = _('#piece-note-type')
-  if (noteType.exists() && noteType.value === 'tl') flags |= FLAGS.NOTE_TOPLEFT
+  if (noteType.exists() && noteType.value === 'tl') flags |= Content.FLAG.NOTE_TOPLEFT
 
   if (flags !== piece.f) updates.f = flags
 }
@@ -258,7 +248,7 @@ export function updateFlags (piece, updates) {
  * @param {object} piece The piece's data object.
  * @param {Function} onEnter Optional callback to be run on enter.
  */
-export function setupLabel (piece, onEnter) {
+function setupLabel (piece, onEnter) {
   const label = _('#piece-label')
   label.value = piece.t?.[0] ?? ''
   if (onEnter) {
@@ -266,7 +256,7 @@ export function setupLabel (piece, onEnter) {
       switch (keydown.keyCode) {
         case 13: // simulate submitbutton push
           keydown.preventDefault()
-          onEnter() && getModal().hide()
+          onEnter() && Modal.close()
       }
     })
   }
@@ -278,7 +268,7 @@ export function setupLabel (piece, onEnter) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateLabel (piece, updates) {
+function updateLabel (piece, updates) {
   const label = _('#piece-label').value.trim()
   if (piece.t?.length > 0) { // piece had label
     if (label.length <= 0) {
@@ -299,23 +289,23 @@ export function updateLabel (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupGrid (piece) {
+function setupGrid (piece) {
   // piece number
   const grid = _('#piece-grid')
 
   let option = _('option').create('None')
   option.value = 'none'
-  if (!(piece.f & FLAGS.TILE_GRID_MINOR || piece.f & FLAGS.TILE_GRID_MAJOR)) option.selected = true
+  if (!(piece.f & Content.FLAG.TILE_GRID_MINOR || piece.f & Content.FLAG.TILE_GRID_MAJOR)) option.selected = true
   grid.add(option)
 
   option = _('option').create('Minor')
   option.value = 'minor'
-  if (piece.f & FLAGS.TILE_GRID_MINOR) option.selected = true
+  if (piece.f & Content.FLAG.TILE_GRID_MINOR) option.selected = true
   grid.add(option)
 
   option = _('option').create('Major')
   option.value = 'major'
-  if (piece.f & FLAGS.TILE_GRID_MAJOR) option.selected = true
+  if (piece.f & Content.FLAG.TILE_GRID_MAJOR) option.selected = true
   grid.add(option)
 }
 
@@ -324,7 +314,7 @@ export function setupGrid (piece) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupNumber (piece) {
+function setupNumber (piece) {
   // piece number
   const pieceNo = _('#piece-number')
   const option = _('option').create('none')
@@ -346,7 +336,7 @@ export function setupNumber (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateNumber (piece, updates) {
+function updateNumber (piece, updates) {
   const n = Number(_('#piece-number').value)
   if (n !== piece.n) updates.n = n
 }
@@ -356,9 +346,9 @@ export function updateNumber (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupRotate (piece) {
+function setupRotate (piece) {
   const pieceR = _('#piece-r')
-  const increment = getRoomPreference(PREFS.PIECE_ROTATE)
+  const increment = State.getRoomPreference(State.PREF.PIECE_ROTATE)
   for (let r = 0; r < 360; r += increment) {
     const option = _('option').create(r === 0 ? '0°' : r + '°')
     option.value = r
@@ -373,7 +363,7 @@ export function setupRotate (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateRotate (piece, updates) {
+function updateRotate (piece, updates) {
   const r = Number(_('#piece-r').value)
   if (r !== piece.r) updates.r = r
 }
@@ -383,7 +373,7 @@ export function updateRotate (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupSide (piece) {
+function setupSide (piece) {
   const pieceSide = _('#piece-side')
   const sides = piece._meta.sides + piece._meta.sidesExtra
   for (let s = 1; s <= sides; s++) {
@@ -405,7 +395,7 @@ export function setupSide (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateSide (piece, updates) {
+function updateSide (piece, updates) {
   const side = Number(_('#piece-side').value)
   if (side !== piece.s) updates.s = side
 }
@@ -415,7 +405,7 @@ export function updateSide (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupSize (piece) {
+function setupSize (piece) {
   // width
   const pieceW = _('#piece-w')
   for (let w = 1; w <= 32; w++) {
@@ -441,7 +431,7 @@ export function setupSize (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-export function updateSize (piece, updates) {
+function updateSize (piece, updates) {
   const w = Number(_('#piece-w').value)
   const h = Number(_('#piece-h').value)
   if (w !== piece.w || h !== piece.h) { // always send both
@@ -455,10 +445,10 @@ export function updateSize (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-export function setupFlags (piece) {
-  _('#piece-no-move').checked = piece.f & FLAGS.NO_MOVE
-  _('#piece-no-delete').checked = piece.f & FLAGS.NO_DELETE
-  _('#piece-no-clone').checked = piece.f & FLAGS.NO_CLONE
+function setupFlags (piece) {
+  _('#piece-no-move').checked = piece.f & Content.FLAG.NO_MOVE
+  _('#piece-no-delete').checked = piece.f & Content.FLAG.NO_DELETE
+  _('#piece-no-clone').checked = piece.f & Content.FLAG.NO_CLONE
 }
 
 // --- internal ----------------------------------------------------------------

@@ -89,7 +89,7 @@ function replace (pipe) {
     .pipe(repl('$DESCRIPTION$', p.description, { skipBinary: true }))
     .pipe(repl('$COLOR$', p.color, { skipBinary: true }))
     .pipe(repl('$URL$', p.homepage, { skipBinary: true }))
-    .pipe(repl('$DEMOMODE$', demomode, { skipBinary: true }))
+    .pipe(repl('$SERVERLESS$', demomode, { skipBinary: true }))
     .pipe(repl('$SITE$', site, { skipBinary: true }))
 }
 
@@ -134,7 +134,7 @@ gulp.task('js-vendor', () => {
 
 gulp.task('js-main', () => {
   return replace(browserify([
-    'src/js/main.mjs',
+    'src/js/app.mjs',
     'src/js/view/room/hotkeys.mjs'
   ], {
     paths: ['src/js']

@@ -26,22 +26,15 @@
 
 import * as fs from 'fs'
 
-import {
-  _,
-  classic,
-  expect,
-  openTestroom,
-  closeTestroom,
-  testJsonGet,
-  testJsonPatch,
-  testJsonPost,
-  testJsonDelete,
-  testGetBuffer
-} from '../utils/chai.mjs'
+import Test, { expect } from '../utils/test.mjs'
 
-import {
-  LAYER
-} from '../../../src/js/view/room/tabletop/tabledata.mjs'
+import Content from '../../../src/js/view/room/tabletop/content.mjs'
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
 
 // -----------------------------------------------------------------------------
 
@@ -52,10 +45,10 @@ let data = null
  * @param {string} room Room name to use for test.
  */
 function testApiCreateAsset (api, room) {
-  openTestroom(api, room, 'RPG')
+  Test.openTestroom(api, room, 'RPG')
 
   // get library size
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
     expect(body.library).to.be.an('object')
     data = body.library
@@ -63,7 +56,7 @@ function testApiCreateAsset (api, room) {
 
   // upload asset
   const image = fs.readFileSync('test/data/tile.jpg', { encoding: 'utf8', flag: 'r' })
-  testJsonPost(api, () => `/rooms/${room}/assets/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/assets/`, () => {
     return {
       base64: Buffer.from(image).toString('base64'),
       bg: '#808080',
@@ -71,7 +64,7 @@ function testApiCreateAsset (api, room) {
       h: 2,
       w: 3,
       d: 4,
-      type: LAYER.TILE,
+      type: Content.LAYER.TILE,
       tx: 'wood',
       name: 'upload.test'
     }
@@ -83,13 +76,13 @@ function testApiCreateAsset (api, room) {
     expect(body.h).to.be.eql(2)
     expect(body.w).to.be.eql(3)
     expect(body.d).to.be.eql(4)
-    expect(body.type).to.be.eql(LAYER.TILE)
+    expect(body.type).to.be.eql(Content.LAYER.TILE)
     expect(body.name).to.be.eql('upload.test')
     expect(body.tx).to.be.eql('wood')
   }, 201)
 
   // library must contain asset now
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
     expect(body.library).to.be.an('object')
     expect(body.library.tile.length).to.be.eql(data.tile.length + 1)
@@ -103,13 +96,13 @@ function testApiCreateAsset (api, room) {
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
     expect(body.library.tile[index].d).to.be.eql(4)
-    expect(body.library.tile[index].type).to.be.eql(LAYER.TILE)
+    expect(body.library.tile[index].type).to.be.eql(Content.LAYER.TILE)
     expect(body.library.tile[index].name).to.be.eql('upload.test')
     expect(body.library.tile[index].tx).to.be.eql('wood')
   }, 200)
 
   // upload another asset
-  testJsonPost(api, () => `/rooms/${room}/assets/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/assets/`, () => {
     return {
       base64: Buffer.from(image).toString('base64'),
       bg: '#808080',
@@ -117,7 +110,7 @@ function testApiCreateAsset (api, room) {
       h: 2,
       w: 3,
       d: 2, // default depth for tiles
-      type: LAYER.TILE,
+      type: Content.LAYER.TILE,
       tx: 'wood',
       name: 'upload.test2'
     }
@@ -127,13 +120,13 @@ function testApiCreateAsset (api, room) {
     expect(body.h).to.be.eql(2)
     expect(body.w).to.be.eql(3)
     expect(body.d).to.be.eql(undefined)
-    expect(body.type).to.be.eql(LAYER.TILE)
+    expect(body.type).to.be.eql(Content.LAYER.TILE)
     expect(body.name).to.be.eql('upload.test2')
     expect(body.tx).to.be.eql('wood')
   }, 201)
 
   // library must contain asset now
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body).to.be.an('object')
     expect(body.library).to.be.an('object')
     expect(body.library.tile.length).to.be.eql(data.tile.length + 2)
@@ -147,17 +140,17 @@ function testApiCreateAsset (api, room) {
     expect(body.library.tile[index].h).to.be.eql(2)
     expect(body.library.tile[index].w).to.be.eql(3)
     expect(body.library.tile[index].d).to.be.eql(undefined)
-    expect(body.library.tile[index].type).to.be.eql(LAYER.TILE)
+    expect(body.library.tile[index].type).to.be.eql(Content.LAYER.TILE)
     expect(body.library.tile[index].name).to.be.eql('upload.test2')
     expect(body.library.tile[index].tx).to.be.eql('wood')
   }, 200)
 
   // check asset blob
-  testGetBuffer(api, () => `/data/rooms/${room}/assets/tile/upload.test2.3x2x1.808080.wood.jpg`, () => {}, (buffer) => {
+  Test.getBuffer(api, () => `/data/rooms/${room}/assets/tile/upload.test2.3x2x1.808080.wood.jpg`, () => {}, (buffer) => {
     expect(buffer.toString('utf-8')).to.be.eql(image)
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -165,15 +158,15 @@ function testApiCreateAsset (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiUpdateAssetOtherBaseMask (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // check library
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
   }, 200)
 
   // patch name < 10 sides - _.d4Light
-  testJsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
     return {
       id: 'j8hqf000',
       name: 'barFoo.fooBar',
@@ -195,7 +188,7 @@ function testApiUpdateAssetOtherBaseMask (api, room) {
   }, 200)
 
   // patch name >= 10 sides - _.d12Dark
-  testJsonPatch(api, () => `/rooms/${room}/assets/v8Vvg200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/v8Vvg200/`, () => {
     return {
       id: 'v8Vvg200',
       name: 'fooBar.fooBar',
@@ -228,16 +221,16 @@ function testApiUpdateAssetOtherBaseMask (api, room) {
   }, 200)
 
   // final full get
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -245,10 +238,10 @@ function testApiUpdateAssetOtherBaseMask (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiUpdateAssetIDs (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // put 2 pieces on table
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { // add letter-token
       l: 4,
       a: '73740cdf',
@@ -257,7 +250,7 @@ function testApiUpdateAssetIDs (api, room) {
       z: 10
     }
   }, body => {}, 201)
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return { // add die
       l: 4,
       a: 'j8hqf000',
@@ -268,13 +261,13 @@ function testApiUpdateAssetIDs (api, room) {
   }, body => {}, 201)
 
   // get & compare pieces before change
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body[0].a).to.be.eql('j8hqf000')
     expect(body[1].a).to.be.eql('73740cdf')
   })
 
   // rename die asset
-  testJsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
     return {
       id: 'j8hqf000',
       name: 'barFoo.fooBar',
@@ -285,12 +278,12 @@ function testApiUpdateAssetIDs (api, room) {
   }, 200)
 
   // get & compare pieces after change - one piece changed
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body[0].a).to.be.eql('EJwm7300') // new
     expect(body[1].a).to.be.eql('73740cdf') // old
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -298,10 +291,10 @@ function testApiUpdateAssetIDs (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiUpdateAssetConflict (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // patching first d4 asset works
-  testJsonPatch(api, () => `/rooms/${room}/assets/pJtgf000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pJtgf000/`, () => {
     return {
       id: 'pJtgf000',
       name: 'patch.conflict',
@@ -316,7 +309,7 @@ function testApiUpdateAssetConflict (api, room) {
   }, 200)
 
   // patching second d4 asset fails
-  testJsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/j8hqf000/`, () => {
     return {
       id: 'j8hqf000',
       name: 'patch.conflict',
@@ -327,7 +320,7 @@ function testApiUpdateAssetConflict (api, room) {
     expect(body._messages[0]).to.match(/asset S8aOf000 already exists/)
   }, 409)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -335,15 +328,15 @@ function testApiUpdateAssetConflict (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiUpdateAssetStickerMaterial (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // check library
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile)
   }, 200)
 
   // patch name (_.zone.3x3)
-  testJsonPatch(api, () => `/rooms/${room}/assets/GxcxR300/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/GxcxR300/`, () => {
     return {
       id: 'GxcxR300',
       name: '_.fooBar',
@@ -363,7 +356,7 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 200)
 
   // patch d - non-default
-  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       d: 2
@@ -376,7 +369,7 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 200)
 
   // patch d - default
-  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       d: 0
@@ -389,7 +382,7 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 200)
 
   // patch known material
-  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'wood'
@@ -402,7 +395,7 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 200)
 
   // patch unknown material
-  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'foobar'
@@ -412,7 +405,7 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 400)
 
   // patch unknown material
-  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'null'
@@ -422,7 +415,7 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 400)
 
   // patch no material
-  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'none'
@@ -435,7 +428,7 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 200)
 
   // patch with bg
-  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: 'linen',
@@ -449,7 +442,7 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 200)
 
   // patch no material
-  testJsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/pDGII000/`, () => {
     return {
       id: 'kVTKu200',
       tx: null
@@ -462,16 +455,16 @@ function testApiUpdateAssetStickerMaterial (api, room) {
   }, 200)
 
   // final full get
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -479,15 +472,15 @@ function testApiUpdateAssetStickerMaterial (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiUpdateAssetTileColor (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // check library
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile)
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
       id: 'r67iL000',
       bg: '3'
@@ -500,7 +493,7 @@ function testApiUpdateAssetTileColor (api, room) {
   }, 200)
 
   // unpatch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
       id: 'r67iL000',
       bg: null
@@ -513,7 +506,7 @@ function testApiUpdateAssetTileColor (api, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
       id: 'r67iL000',
       bg: '#aabbcc'
@@ -526,7 +519,7 @@ function testApiUpdateAssetTileColor (api, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
       id: 'r67iL000',
       bg: '#808080'
@@ -539,7 +532,7 @@ function testApiUpdateAssetTileColor (api, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
       id: 'r67iL000',
       bg: 'transparent'
@@ -552,7 +545,7 @@ function testApiUpdateAssetTileColor (api, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
       id: 'r67iL000',
       bg: '0'
@@ -565,7 +558,7 @@ function testApiUpdateAssetTileColor (api, room) {
   }, 200)
 
   // patch color
-  testJsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/r67iL000/`, () => {
     return {
       id: 'r67iL000',
       tx: 'linen'
@@ -578,16 +571,16 @@ function testApiUpdateAssetTileColor (api, room) {
   }, 200)
 
   // final full get
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -595,15 +588,15 @@ function testApiUpdateAssetTileColor (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiUpdateAssetToken (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // check library
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
   }, 200)
 
   // can't patch ID
-  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
       id: 'foobar'
     }
@@ -612,7 +605,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 400)
 
   // can't patch type
-  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
       id: 'G8QAJ200',
       type: 'tile'
@@ -622,7 +615,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // can't patch media directly
-  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
       id: 'G8QAJ200',
       media: []
@@ -632,7 +625,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // can't patch mask
-  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
       id: 'G8QAJ200',
       mask: 'nope.png'
@@ -642,7 +635,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // can't patch base
-  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
       id: 'G8QAJ200',
       base: 'nope.png'
@@ -652,7 +645,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // can't patch unkown field
-  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
       id: 'G8QAJ200',
       foobar: 'nope.png'
@@ -662,7 +655,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 400)
 
   // patch name
-  testJsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/G8QAJ200/`, () => {
     return {
       id: 'G8QAJ200',
       name: 'blah'
@@ -684,7 +677,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // patch w
-  testJsonPatch(api, () => `/rooms/${room}/assets/rh0-6200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/rh0-6200/`, () => {
     return {
       id: 'rh0-6200',
       w: 5
@@ -706,7 +699,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // patch h
-  testJsonPatch(api, () => `/rooms/${room}/assets/rNqB1200/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/rNqB1200/`, () => {
     return {
       id: 'rNqB1200',
       h: 3
@@ -728,7 +721,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // patch d - default
-  testJsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
     return {
       id: 'HRXAK100',
       d: 2
@@ -750,7 +743,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // patch d - non-default
-  testJsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
     return {
       id: 'HRXAK100',
       d: 8
@@ -772,7 +765,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // patch tx
-  testJsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
     return {
       id: 'HRXAK100',
       tx: 'linen'
@@ -794,7 +787,7 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // patch bg
-  testJsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/assets/HRXAK100/`, () => {
     return {
       id: 'HRXAK100',
       bg: '3'
@@ -816,8 +809,8 @@ function testApiUpdateAssetToken (api, room) {
   }, 200)
 
   // final full get
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
     expect(body.library.token.find(i => i.id === 'G8QAJ200')).to.be.eql(undefined) // original ID gone
     const newAsset = body.library.token.find(i => i.id === 'HRXAK100')
 
@@ -836,7 +829,7 @@ function testApiUpdateAssetToken (api, room) {
     }
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -846,99 +839,99 @@ function testApiUpdateAssetToken (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiDeleteAsset (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // check library
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
   // delete invalid id
-  testJsonDelete(api, () => `/rooms/${room}/assets/blah/`, 204)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/blah/`, 204)
 
   // check library
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
   // delete sticker
-  testJsonDelete(api, () => `/rooms/${room}/assets/EPccl300/`, 204) // _.area.4x4
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker - 1)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/EPccl300/`, 204) // _.area.4x4
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker - 1)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
   // delete tile
-  testJsonDelete(api, () => `/rooms/${room}/assets/ZFRq_100/`, 204)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker - 1)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/ZFRq_100/`, 204)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker - 1)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
   // delete token
-  testJsonDelete(api, () => `/rooms/${room}/assets/GYWId200/`, 204)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker - 1)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token - 1)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/GYWId200/`, 204)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker - 1)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token - 1)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
   // delete other
-  testJsonDelete(api, () => `/rooms/${room}/assets/hFoyZ200/`, 204)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker - 1)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token - 1)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other - 1)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/hFoyZ200/`, 204)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker - 1)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token - 1)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other - 1)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
   // delete badge
-  testJsonDelete(api, () => `/rooms/${room}/assets/B5K2G200/`, 204)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker - 1)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token - 1)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other - 1)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge - 1)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/B5K2G200/`, 204)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker - 1)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token - 1)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other - 1)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge - 1)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
   // delete material not possible
-  testJsonDelete(api, () => `/rooms/${room}/assets/H4W0w000/`, 403)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/H4W0w000/`, 403)
 
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
-    expect(body.library.sticker.length).to.be.eql(_.sticker + classic.sticker - 1)
-    expect(body.library.tile.length).to.be.eql(_.tile + classic.tile - 1)
-    expect(body.library.token.length).to.be.eql(_.token + classic.token - 1)
-    expect(body.library.other.length).to.be.eql(_.other + classic.other - 1)
-    expect(body.library.badge.length).to.be.eql(_.badge + classic.badge - 1)
-    expect(body.library.material.length).to.be.eql(_.material + classic.material)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
+    expect(body.library.sticker.length).to.be.eql(Test.snapshot._.sticker + Test.snapshot.classic.sticker - 1)
+    expect(body.library.tile.length).to.be.eql(Test.snapshot._.tile + Test.snapshot.classic.tile - 1)
+    expect(body.library.token.length).to.be.eql(Test.snapshot._.token + Test.snapshot.classic.token - 1)
+    expect(body.library.other.length).to.be.eql(Test.snapshot._.other + Test.snapshot.classic.other - 1)
+    expect(body.library.badge.length).to.be.eql(Test.snapshot._.badge + Test.snapshot.classic.badge - 1)
+    expect(body.library.material.length).to.be.eql(Test.snapshot._.material + Test.snapshot.classic.material)
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // --- the test runners --------------------------------------------------------
@@ -946,7 +939,7 @@ function testApiDeleteAsset (api, room) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - assets', function () {
     runner((api, version, room) => {
       describe('create', () => testApiCreateAsset(api, room))

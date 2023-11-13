@@ -22,38 +22,28 @@
 import { marked } from '../../../../../node_modules/marked/lib/marked.cjs'
 
 import _ from '../../../lib/FreeDOM.mjs'
+import Modal from '../../../view/room/modal.mjs'
+import State from '../../../state/index.mjs'
+import Util from '../../../lib/util.mjs'
 
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../view/room/modal.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  getRoom,
-  PREFS,
-  getRoomPreference,
-  setRoomPreference,
-  getSetup
-} from '../../../state/index.mjs'
+export default {
+  open
+}
 
-import {
-  timeRecords
-} from '../../../lib/utils.mjs'
-
-// --- public ------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 /**
  * Show the help window.
  *
  * Contains basis help, shortcuts and an About section.
  */
-export function modalHelp () {
-  if (!isModalActive()) {
-    createModal(true)
+function open () {
+  if (!Modal.isOpen()) {
+    Modal.create(true)
 
-    const setup = getSetup()
+    const setup = State.getSetup()
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">FreeBeeGee v$VERSION$ “$CODENAME$”</h3>
@@ -153,7 +143,7 @@ export function modalHelp () {
           <div class="copyright">
             <h2>Room assets</h2>
 
-            ${marked.parse(getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+            ${marked.parse(State.getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
 
             <h2>UI assets</h2>
 
@@ -172,7 +162,7 @@ export function modalHelp () {
 
             <h3>Statistics</h3>
 
-            <p>Refresh time: ${Math.ceil(timeRecords['sync-network'].reduce((a, b) => a + b) / timeRecords['sync-network'].length)}ms network + ${Math.ceil(timeRecords['sync-ui'].reduce((a, b) => a + b) / timeRecords['sync-ui'].length)}ms browser</p>
+            <p>Refresh time: ${Math.ceil(Util.timeRecords['sync-network'].reduce((a, b) => a + b) / Util.timeRecords['sync-network'].length)}ms network + ${Math.ceil(Util.timeRecords['sync-ui'].reduce((a, b) => a + b) / Util.timeRecords['sync-ui'].length)}ms browser</p>
 
             <p>Engine version: $ENGINE$</p>
 
@@ -187,15 +177,14 @@ export function modalHelp () {
     `
 
     _('input[name="tabs"]').on('change', change => {
-      setRoomPreference(PREFS.TAB_HELP, change.target.id)
+      State.setRoomPreference(State.PREF.TAB_HELP, change.target.id)
     })
 
-    const preselect = getRoomPreference(PREFS.TAB_HELP)
+    const preselect = State.getRoomPreference(State.PREF.TAB_HELP)
     _('#' + preselect).checked = true
 
-    _('#btn-close').on('click', () => getModal().hide())
-    _('#modal').on('hidden.bs.modal', () => modalClose())
+    _('#btn-close').on('click', () => Modal.close())
 
-    getModal().show()
+    Modal.open()
   }
 }

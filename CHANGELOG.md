@@ -10,7 +10,8 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
-* TBD
+* fixed pointer/los-line part of selection
+* refactored imports and module responsibility
 
 
 ## v0.23.0 - Shady Shrew

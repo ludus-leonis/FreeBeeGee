@@ -18,44 +18,54 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  runError,
-  apiError
-} from './view/error/index.mjs'
+import Api from './api/index.mjs'
+import Error from './view/error.mjs'
+import Room from './view/room/index.mjs'
+import State from './state/index.mjs'
+import Tools from './view/tools.mjs'
+import ViewCreate from './view/create.mjs'
+import ViewInstaller from './view/installer.mjs'
+import ViewJoin from './view/join.mjs'
+import ViewPassword from './view/password.mjs'
 
-import {
-  setupView
-} from './view/setup/index.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  installer
-} from './view/installer/index.mjs'
+export default {
+  auth,
+  navigateToJoin,
+  navigateToRoom,
+  reload,
+  route
+}
 
-import {
-  passwordView
-} from './view/password/index.mjs'
+// --- startup & page routing --------------------------------------------------
 
-import {
-  runRoom
-} from './view/room/index.mjs'
+if (typeof document !== 'undefined') { // don't run in non-browser (test) environments
+  document.onreadystatechange = function (event) {
+    if (document.readyState === 'complete') {
+      if (document.getElementById('tool-bcrypt')) {
+        return Tools.setupBcrypt()
+      }
 
-import {
-  runJoin
-} from './view/join/index.mjs'
+      // time to setup our routes
+      route()
+    }
+  }
 
-import {
-  setServerInfo
-} from './state/index.mjs'
+  document.addEventListener('visibilitychange', (visibilitychange) => {
+    if (globalThis.hidden) {
+      State.setTabActive(false)
+    } else {
+      State.setTabActive(true)
+    }
+  })
+}
 
-import {
-  apiGetServerInfo,
-  apiPostRoomAuth
-} from './api/index.mjs'
-
+// -----------------------------------------------------------------------------
 /**
  * Reload the current page.
  */
-export function navigateReload () {
+function reload () {
   globalThis.location.reload()
 }
 
@@ -64,7 +74,7 @@ export function navigateReload () {
  *
  * @param {?string} roomName Optional name of room to add in redirect.
  */
-export function navigateToJoin (roomName) {
+function navigateToJoin (roomName) {
   if (roomName) {
     goto('./?room=' + roomName)
   } else {
@@ -77,7 +87,7 @@ export function navigateToJoin (roomName) {
  *
  * @param {string} roomName Name of room to go to.
  */
-export function navigateToRoom (roomName) {
+function navigateToRoom (roomName) {
   goto('./' + roomName)
 }
 
@@ -90,45 +100,45 @@ export function navigateToRoom (roomName) {
  * @param {string} roomName Room name (user input).
  * @param {string} password Password (user input).
  */
-export function auth (roomName, password) {
+function auth (roomName, password) {
   // try to login
-  apiPostRoomAuth(roomName, {
+  Api.postRoomAuth(roomName, {
     password
   }, true)
     .then((auth) => {
       if (auth.status === 200) {
-        runRoom(roomName, auth.body.token)
+        Room.runRoom(roomName, auth.body.token)
       } else if (auth.status === 403) {
-        passwordView(roomName, password === undefined)
+        ViewPassword.show(roomName, password === undefined)
       } else if (auth.status === 404) {
-        setupView(roomName)
+        ViewCreate.show(roomName)
       } else {
-        runError()
+        Error.runError()
       }
     })
-    .catch(error => apiError(error, roomName))
+    .catch(error => Error.apiError(error, roomName))
 }
 
 /**
  * Main entry point for the app. Will route the page to the proper code.
  */
-export function route () {
-  apiGetServerInfo()
+function route () {
+  Api.getServerInfo()
     .then(info => {
-      setServerInfo(info)
+      State.setServerInfo(info)
 
       if (info.version !== '$VERSION$') {
         console.info('update', info.version, '$VERSION$')
-        runError('UPDATE')
+        Error.runError('UPDATE')
       } else if (info.install ?? 0 > 1) {
-        installer(info.install)
+        ViewInstaller.show(info.install)
       } else {
         // run the corresponding screen/dialog
         const rootFolder = info.root.substr(0, info.root.length - '/api'.length)
         let path = window.location.pathname
         if (path[0] !== '/') path = '/' + path
         if (path === rootFolder || path === rootFolder + '/') {
-          runJoin()
+          ViewJoin.show()
         } else if (path.endsWith('/')) {
           globalThis.location = path.substr(0, path.length - 1)
         } else {
@@ -136,7 +146,7 @@ export function route () {
         }
       }
     })
-    .catch(error => apiError(error))
+    .catch(error => Error.apiError(error))
 }
 
 /**

@@ -20,17 +20,17 @@
 
 /* global describe */
 
-import { run as runAssets } from './api/api-assets.mjs'
-import { run as runCrud } from './api/api-crud.mjs'
-import { run as runDigests } from './api/api-digests.mjs'
-import { run as runPermissions } from './api/api-permissions.mjs'
-import { run as runPieces } from './api/api-pieces.mjs'
-import { run as runServer } from './api/api-server.mjs'
-import { run as runSnapshots } from './api/api-snapshots.mjs'
-import { run as runTables } from './api/api-tables.mjs'
-import { run as runTemplates } from './api/api-templates.mjs'
-import { run as runUploads } from './api/api-uploads.mjs'
-import { run as runInstall } from './api/api-install.mjs'
+import Assets from './api/api-assets.mjs'
+import Crud from './api/api-crud.mjs'
+import Digests from './api/api-digests.mjs'
+import Permissions from './api/api-permissions.mjs'
+import Pieces from './api/api-pieces.mjs'
+import Server from './api/api-server.mjs'
+import Snapshots from './api/api-snapshots.mjs'
+import Tables from './api/api-tables.mjs'
+import Templates from './api/api-templates.mjs'
+import Uploads from './api/api-uploads.mjs'
+import Install from './api/api-install.mjs'
 
 const runner = function (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
@@ -39,15 +39,15 @@ const runner = function (what) {
   describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.local'), '81', `${room}81`) })
 }
 
-runAssets(runner)
-runCrud(runner)
-runDigests(runner)
-runPermissions(runner)
-runPieces(runner)
-runServer(runner)
-runSnapshots(runner)
-runTables(runner)
-runTemplates(runner)
-runUploads(runner)
+Assets.run(runner)
+Crud.run(runner)
+Digests.run(runner)
+Permissions.run(runner)
+Pieces.run(runner)
+Server.run(runner)
+Snapshots.run(runner)
+Tables.run(runner)
+Templates.run(runner)
+Uploads.run(runner)
 
-runInstall(runner) // last tests - destructive!
+Install.run(runner) // last tests - destructive!

@@ -24,11 +24,13 @@
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
-import {
-  p,
-  expect,
-  testJsonGet
-} from '../utils/chai.mjs'
+import Test, { expect } from '../utils/test.mjs'
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
 
 // -----------------------------------------------------------------------------
 
@@ -36,14 +38,14 @@ import {
  * @param {string} api API root path.
  */
 function testApiServerInfo (api) {
-  testJsonGet(api, () => '/', body => {
+  Test.jsonGet(api, () => '/', body => {
     expect(body).to.be.an('object')
     expect(body).to.have.all.keys(['createPassword', 'freeRooms', 'ttl', 'version', 'defaultSnapshot', 'backgrounds', 'engine', 'root', 'snapshotUploads'])
     expect(body.createPassword).to.be.eql(true)
     expect(body.freeRooms).to.be.eql(32)
     expect(body.ttl).to.be.eql(48)
     expect(body.defaultSnapshot).to.be.eql('Tutorial')
-    expect(body.engine).to.be.eql(p.versionEngine)
+    expect(body.engine).to.be.eql(Test.p.versionEngine)
     expect(body.root).to.be.eql('/api')
     expect(body.snapshotUploads).to.be.eql(false)
     expect(body.version).to.match(/^[0-9]+\.[0-9]+\.[0-9]+/)
@@ -61,7 +63,7 @@ function testApiServerInfo (api) {
  * @param {string} api API root path.
  */
 function testApiSnapshots (api) {
-  testJsonGet(api, () => '/snapshots/', body => {
+  Test.jsonGet(api, () => '/snapshots/', body => {
     expect(body).to.be.an('array')
     expect(body.length).to.be.eql(4)
     for (const snapshot of body) {
@@ -76,7 +78,7 @@ function testApiSnapshots (api) {
  * @param {boolean} versionOK True for supported PHP versons.
  */
 function testApiIssues (api, versionOK) {
-  testJsonGet(api, () => '/issues/', body => {
+  Test.jsonGet(api, () => '/issues/', body => {
     expect(body.phpOk).to.be.eql(versionOK)
     expect(body.moduleZip).to.be.eql(true)
   }, 200)
@@ -87,7 +89,7 @@ function testApiIssues (api, versionOK) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - server/system endpoints', function () {
     runner((api, version) => {
       describe('API Server-Info', () => testApiServerInfo(api))

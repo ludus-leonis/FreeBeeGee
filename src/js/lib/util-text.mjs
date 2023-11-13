@@ -19,13 +19,28 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
+export default {
+  anId,
+  bytesToIso,
+  hash,
+  hoursToTimespan,
+  prettyName,
+  sortNumber,
+  sortString,
+  toCamelCase,
+  toTitleCase,
+  unCamelCase,
+  unprettyName,
+  uuid
+}
+
 /**
  * Generate an alphanumeric ID.
  *
  * @param {number} digits Length of ID, defaults to 8.
  * @returns {string} Random Hex-string.
  */
-export function anId (digits = 8) {
+function anId (digits = 8) {
   // taken from https://stackoverflow.com/questions/58325771/how-to-generate-random-hex-string-in-javascript
   return 'X' + [...Array(digits - 1)].map(() => Math.floor(Math.random() * 36).toString(36)).join('')
 }
@@ -36,7 +51,7 @@ export function anId (digits = 8) {
  * @param {number} seed Optional seed for UUID, defaults to Math.random()
  * @returns {string} UUID.
  */
-export function uuid (seed = null) {
+function uuid (seed = null) {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
     const s = seed === null ? Math.random() : seed
     const r = s * 16 | 0
@@ -51,7 +66,7 @@ export function uuid (seed = null) {
  * @param {number} bytes Bytes to display, e.g. 1024
  * @returns {string} Compact version inkluding units, e.g. '1k'.
  */
-export function bytesToIso (bytes) {
+function bytesToIso (bytes) {
   if (bytes === 1) {
     return '1 byte'
   }
@@ -74,7 +89,7 @@ export function bytesToIso (bytes) {
  * @param {boolean} roundDown Round down (true) or up (false). Defaults to true.
  * @returns {string} String representation, e.g. '11 days'.
  */
-export function hoursToTimespan (hours, roundDown = true) {
+function hoursToTimespan (hours, roundDown = true) {
   if (hours === 1) {
     return '1 hour'
   }
@@ -95,7 +110,7 @@ export function hoursToTimespan (hours, roundDown = true) {
  * @param {string} string String to hash.
  * @returns {number} A hash value.
  */
-export function hash (string) {
+function hash (string) {
   let hash = 0
   for (let i = 0; i < string.length; i++) {
     hash = ((hash << 5) - hash) + string.charCodeAt(i)
@@ -110,7 +125,7 @@ export function hash (string) {
  * @param {string} string String to title-case.
  * @returns {string} Title-cased string.
  */
-export function toTitleCase (string) {
+function toTitleCase (string) {
   return string.replace(/\w\S*/g, txt =>
     txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase()
   )
@@ -122,7 +137,7 @@ export function toTitleCase (string) {
  * @param {string} string String to camel-case.
  * @returns {string} Camel-cased string.
  */
-export function toCamelCase (string) {
+function toCamelCase (string) {
   return string.replace(/[a-zA-Z0-9-]+/g, function (match, index) {
     const lower = match.toLowerCase()
     return index === 0 ? lower : (lower.charAt(0).toUpperCase() + lower.slice(1))
@@ -135,7 +150,7 @@ export function toCamelCase (string) {
  * @param {string} string String to un-camel-case.
  * @returns {string} Un-camel-cased string.
  */
-export function unCamelCase (string) {
+function unCamelCase (string) {
   return toTitleCase(string.replace(/([A-Z])/g, ' $1').replace(/\s+/g, ' ').trim())
 }
 
@@ -146,7 +161,7 @@ export function unCamelCase (string) {
  * @param {string} property Property to sort by.
  * @returns {Array} Sorted array.
  */
-export function sortByString (objects, property) {
+function sortString (objects, property) {
   return objects.sort((a, b) => {
     const valueA = (a[property] ?? '').toLowerCase()
     const valueB = (b[property] ?? '').toLowerCase()
@@ -162,7 +177,7 @@ export function sortByString (objects, property) {
  * @param {number} fallback A default value for objects without that property.
  * @returns {Array} Sorted array.
  */
-export function sortByNumber (objects, property, fallback = 0) {
+function sortNumber (objects, property, fallback = 0) {
   return objects.sort((a, b) => {
     return (a[property] ?? fallback) - (b[property] ?? fallback)
   })
@@ -175,7 +190,7 @@ export function sortByNumber (objects, property, fallback = 0) {
  * @param {string} hideUnderscore If true (default), underscore groups are removed.
  * @returns {string} Improved name, e.g. 'Dungeon, Iron Door'.
  */
-export function prettyName (assetName = '', hideUnderscore = true) {
+function prettyName (assetName = '', hideUnderscore = true) {
   const split = assetName.split('.')
   if (split.length <= 1) {
     return unCamelCase(split[0])
@@ -193,7 +208,7 @@ export function prettyName (assetName = '', hideUnderscore = true) {
  * @param {string} assetName Name to convert, e.g. 'Dungeon, Iron Door'.
  * @returns {string} Alias for filename, e.g. 'dungeon.ironDoor'.
  */
-export function unprettyName (assetName = '') {
+function unprettyName (assetName = '') {
   const split = assetName.split(',')
   const group = split[0].trim()
   if (split.length <= 1) {

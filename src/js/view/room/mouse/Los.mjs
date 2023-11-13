@@ -20,24 +20,10 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  MouseButtonHandler
-} from '../../../view/room/mouse/_MouseButtonHandler.mjs'
-
-import {
-  losTo,
-  createLosPiece
-} from '../../../view/room/tabletop/index.mjs'
-
-import {
-  ID,
-  snap
-} from '../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  getMouseCoords
-} from '../../../view/room/mouse/index.mjs'
+import { MouseButtonHandler } from './_MouseButtonHandler.mjs'
+import Content from '../../../view/room/tabletop/content.mjs'
+import Dom from '../../../view/room/tabletop/dom.mjs'
+import Mouse from '../../../view/room/mouse/index.mjs'
 
 export class Los extends MouseButtonHandler {
   constructor () {
@@ -60,8 +46,8 @@ export class Los extends MouseButtonHandler {
       return
     }
 
-    const coords = getMouseCoords()
-    const snapped = snap(coords.x, coords.y, 2)
+    const coords = Mouse.getMouseCoords()
+    const snapped = Content.snap(coords.x, coords.y, 2)
 
     this.los = {
       originX: mousedown.shiftKey ? coords.x : snapped.x,
@@ -73,21 +59,21 @@ export class Los extends MouseButtonHandler {
 
   drag (mousemove) {
     if (this.isDragging()) {
-      const coords = getMouseCoords()
-      const snapped = snap(coords.x, coords.y, 2)
+      const coords = Mouse.getMouseCoords()
+      const snapped = Content.snap(coords.x, coords.y, 2)
       const width = (mousemove.shiftKey ? coords.x : snapped.x) - this.los.originX
       const height = (mousemove.shiftKey ? coords.y : snapped.y) - this.los.originY
 
       if (width !== this.los.width || height !== this.los.height) {
         // we need to re-create the SVG
-        _(`#${ID.LOS}-drag`).delete()
+        _(`#${Content.ID.LOS}-drag`).delete()
 
         this.los.width = width
         this.los.height = height
 
         if (width !== 0 || height !== 0) { // we don't care about zero-length lines
-          const svg = createLosPiece(this.los.originX, this.los.originY, this.los.width, this.los.height)
-          svg.id = `${ID.LOS}-drag`
+          const svg = Dom.createLosPiece(this.los.originX, this.los.originY, this.los.width, this.los.height)
+          svg.id = `${Content.ID.LOS}-drag`
           _('#layer-other').add(svg)
         }
       }
@@ -102,14 +88,14 @@ export class Los extends MouseButtonHandler {
         mouseup.preventDefault()
       } else {
         // persist line on server after space press
-        losTo(this.los.originX, this.los.originY, this.los.width, this.los.height)
+        Dom.losTo(this.los.originX, this.los.originY, this.los.width, this.los.height)
       }
       this.cancel()
     }
   }
 
   cancel () {
-    _(`#${ID.LOS}-drag`).delete()
+    _(`#${Content.ID.LOS}-drag`).delete()
     this.los = null
   }
 }

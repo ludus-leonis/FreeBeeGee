@@ -22,6 +22,6 @@
 // We can only run those tests that work with a default server.json here.
 // So e.g. no snapshot/uploads, as they are off per default.
 
-import { run as uiStatic } from './ui/ui-static.mjs'
+import Static from './ui/ui-static.mjs'
 
-uiStatic('http://localhost:8765')
+Static.run('http://localhost:8765')

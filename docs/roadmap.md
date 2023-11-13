@@ -4,10 +4,17 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.24.0
 
-* [ ] ???
+* [ ] zoom-to-cursor
+* [ ] ui: rotate dice on random
+* [ ] ui: random 360° rotation for pieces
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
+    * [ ] note font won't scale properly
+    * [ ] clone no-clone object disables edit without reselection
+    * [X] refactor imports and module responsibility
+    * [ ] should token numbers increase on cut+paste?
+    * [ ] linen material border
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -18,12 +25,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
-* [ ] zoom-to-cursor
+* [ ] refactor: always use getFeatures([piece]) to check
+* [ ] refactor: test selectionFeatures() for mixed selections, e.g. .flip
+* [ ] refactor: always use numeric layer number in 'l' (no string translation)
+* [ ] refactor: frontend-state: test all State.xyz, all API endpoints
 * [ ] switch to PHP 8.3 for docker release
 * [ ] different blue menu for measure and non-measure mode
-* [ ] refactor: cleanup responsibility state/tabletop abcSelected/abcPieces
-  * [ ] more tabletop/index.js tests
-  * [ ] move abcSelected to selection.js?
 * [ ] invert svg/decal on white
 * [ ] refactor: system asset flag instead of '_'
 * [ ] snapshot download for demo mode
@@ -36,7 +43,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] ui: move dice more / rotate
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)

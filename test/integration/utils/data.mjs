@@ -18,20 +18,26 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
+import url from 'url'
+import fs from 'fs'
+import path from 'path'
+
 // -----------------------------------------------------------------------------
 
-export const pieceMinimal = {
+// HINT: testdata here is API data, not JS/populateDefaults() data
+
+const pieceMinimal = () => ({
   l: 1,
-  a: '12345_78',
+  a: 'p9Hr0300', // _.bead
   x: 2,
   y: 3,
   z: 4
-}
+})
 
-export const pieceFull = {
-  id: 'X-40cdf7',
+const pieceFull = () => ({
+  id: 'Ta3RTTni',
   l: 4,
-  a: '7374_cdf',
+  a: 'ye4mx100', // _.number
   x: 11,
   y: 22,
   z: 33,
@@ -44,4 +50,52 @@ export const pieceFull = {
   b: ['badge-id'],
   t: ['some text'],
   expires: 1234567890
+})
+
+const noteFull = () => ({
+  l: 3,
+  x: 960,
+  y: 1280,
+  z: 3,
+  w: 3,
+  h: 2,
+  id: 'A8JWIH0K',
+  t: ['Note content']
+})
+
+const serverRaw = fs.readFileSync(
+  path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'server.json'),
+  'UTF-8'
+)
+
+const roomRaw = fs.readFileSync(
+  path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'room.json'),
+  'UTF-8'
+)
+
+const roomHexRaw = fs.readFileSync(
+  path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'room-hex.json'),
+  'UTF-8'
+)
+
+const roomHex2Raw = fs.readFileSync(
+  path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'room-hex2.json'),
+  'UTF-8'
+)
+
+const tableRaw = fs.readFileSync(
+  path.resolve(path.dirname(url.fileURLToPath(import.meta.url)), 'table.json'),
+  'UTF-8'
+)
+
+export default {
+  pieceMinimal,
+  pieceFull,
+  noteFull,
+
+  server: function () { return JSON.parse(serverRaw) },
+  room: function () { return JSON.parse(roomRaw) },
+  roomHex: function () { return JSON.parse(roomHexRaw) },
+  roomHex2: function () { return JSON.parse(roomHex2Raw) },
+  table: function () { return JSON.parse(tableRaw) }
 }

@@ -20,48 +20,34 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
+import Dom from '../../../view/room/tabletop/dom.mjs'
+import { Grab } from './Grab.mjs'
+import { Los } from './Los.mjs'
+import Popup from '../../../view/room/tabletop/popup.mjs'
+import Room from '../../../view/room/index.mjs'
+import { SelectAndDrag } from './SelectAndDrag.mjs'
+import { SelectAndProperties } from './SelectAndProperties.mjs'
+import Sync from '../../../view/room/sync.mjs'
 
-import {
-  getTableCoordinates
-} from '../../../view/room/index.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  touch
-} from '../../../view/room/sync.mjs'
+export default {
+  enableDragAndDrop,
+  getMouseCoords,
+  isDragging,
+  isLMBLos,
+  release,
+  toggleLMBLos
+}
 
-import {
-  pointTo
-  // zoom
-} from '../../../view/room/tabletop/index.mjs'
-
-import {
-  SelectAndDrag
-} from '../../../view/room/mouse/SelectAndDrag.mjs'
-
-import {
-  SelectAndProperties
-} from '../../../view/room/mouse/SelectAndProperties.mjs'
-
-import {
-  Grab
-} from '../../../view/room/mouse/Grab.mjs'
-
-import {
-  Los
-} from '../../../view/room/mouse/Los.mjs'
-
-import {
-  popupHide
-} from '../../../view/room/tabletop/popup.mjs'
-
-// --- public ------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 /**
  * Determine if user is currently dropping (move while mouse button down) something.
  *
  * @returns {boolean} True if so, false if not.
  */
-export function isDragging () {
+function isDragging () {
   return dragCurrent !== null
 }
 
@@ -70,8 +56,8 @@ export function isDragging () {
  *
  * @returns {object} Object with x and y in pixels on the tabletop.
  */
-export function getMouseCoords () {
-  return getTableCoordinates(mouseX, mouseY)
+function getMouseCoords () {
+  return Room.getTableCoordinates(mouseX, mouseY)
 }
 
 /**
@@ -79,7 +65,7 @@ export function getMouseCoords () {
  *
  * @param {string} tabletop Selector/ID for tabletop div.
  */
-export function enableDragAndDrop (tabletop) {
+function enableDragAndDrop (tabletop) {
   _(tabletop)
     .on('mousedown', mousedown => mouseDown(mousedown))
     .on('mousemove', mousemove => mouseMove(mousemove)) // also tracks cursor
@@ -89,7 +75,7 @@ export function enableDragAndDrop (tabletop) {
 /**
  * Enable LOS drawing mode on the left mouse button.
  */
-export function toggleLMBLos () {
+function toggleLMBLos () {
   if (dragCurrent === null) {
     if (isLMBLos()) {
       dragHandlers[0] = new SelectAndDrag()
@@ -105,7 +91,7 @@ export function toggleLMBLos () {
  * @param {boolean} active If true, will also check if an actual drag is going on. Default false.
  * @returns {boolean} True if Los mode is on.
  */
-export function isLMBLos (active = false) {
+function isLMBLos (active = false) {
   if (active) {
     return dragHandlers[0] instanceof Los && dragHandlers[0].isDragging()
   }
@@ -117,7 +103,7 @@ export function isLMBLos (active = false) {
  *
  * @param {number} no Number of the mouse button (0/1/2 = left/middle/right).
  */
-export function release (no) {
+function release (no) {
   if (dragHandlers[no].isDragging()) {
     dragHandlers[no].release()
     dragCurrent = null
@@ -157,14 +143,14 @@ let dragCurrent = null // current 'move' handler
  */
 function mouseDown (mousedown) {
   if (![mousedown.target.id, mousedown.target.parentNode?.id].includes('popper')) {
-    popupHide()
+    Popup.close()
   }
   if (dragCurrent != null) { // cancel any drag in progress
     dragHandlers[dragCurrent].cancel()
     dragCurrent = null
   }
   if (mousedown.button === 0 && mousedown.shiftKey && !isLMBLos()) {
-    pointTo(getMouseCoords())
+    Dom.pointTo(getMouseCoords())
     return
   }
   if (dragHandlers?.[mousedown.button]) {
@@ -181,7 +167,7 @@ function mouseDown (mousedown) {
  * @param {MouseEvent} mousemove The triggering mouse event.
  */
 function mouseMove (mousemove) {
-  touch()
+  Sync.touch()
   touchMousePosition(mousemove.clientX, mousemove.clientY)
 
   if (dragCurrent != null) {

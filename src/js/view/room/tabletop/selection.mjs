@@ -22,50 +22,110 @@
 // This only operates on state, not on DOM.
 // Selection is different for each table and always applies to current one.
 
-import {
-  updateSelectionDOM
-} from '../../../view/room/tabletop/index.mjs'
+import Content from '../../../view/room/tabletop/content.mjs'
+import Dom from '../../../view/room/tabletop/dom.mjs'
+import ModalEdit from '../../../view/room/modal/piece/index.mjs'
+import State from '../../../state/index.mjs'
 
-import {
-  LAYER,
-  findPiece,
-  findPiecesWithin,
-  getFeatures
-} from '../../../view/room/tabletop/tabledata.mjs'
+// -----------------------------------------------------------------------------
 
-import {
-  getTable,
-  getTableNo,
-  isLayerActive
-} from '../../../state/index.mjs'
+export default {
+  clear,
+  clipboardGetPieces,
+  clone,
+  copy,
+  edit,
+  flip,
+  getFeatures,
+  getIds,
+  getPieces,
+  grid,
+  isSelectedId,
+  moveTiles,
+  number,
+  paste,
+  pile,
+  random,
+  remove,
+  rotate,
+  select,
+  selectAll,
+  selectNode,
+  toBottom,
+  toggleBorder,
+  toggleColor,
+  toTop,
+  unselect,
+
+  _private: {
+    selectionReset: function () { // exposed only for testing
+      selectionIds = [[], [], [], [], [], [], [], [], [], []]
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
 
 /**
  * Add a piece to the selection.
  *
  * @param {string} id Piece id to select.
  * @param {boolean} forced If false (default), selection will only happen if piece exists.
+ * @returns {boolean} True if id could be found and added, false otherwise.
  */
-export function selectionAdd (id, forced = false) {
-  const piece = findPiece(id)
-  if ((piece || forced) && !selectionGetIds().includes(id)) {
-    selectionGetIds().push(id)
+function select (id, forced = false) {
+  const piece = Content.findPiece(id)
+  if ([Content.ID.POINTER, Content.ID.LOS].includes(piece?.a)) return false
+  if ((piece || forced) && !getIds().includes(id)) {
+    getIds().push(id)
+    return true
   }
+  return false
 }
 
 /**
  * Add all pieces on the table to the selection.
  */
-export function selectionAddAll () {
+function selectAll () {
   const layers = {}
-  for (const layer of [LAYER.TILE, LAYER.TOKEN, LAYER.STICKER, LAYER.OTHER]) {
-    layers[layer] = isLayerActive(layer)
+  for (const layer of [Content.LAYER.TILE, Content.LAYER.TOKEN, Content.LAYER.STICKER, Content.LAYER.OTHER]) {
+    layers[layer] = State.isLayerActive(layer)
   }
-  for (const piece of getTable()) {
-    if ((layers[piece.l] || piece.l === LAYER.NOTE) && !selectionGetIds().includes(piece.id)) {
-      selectionGetIds().push(piece.id)
+  for (const piece of State.getTable()) {
+    if ([Content.ID.POINTER, Content.ID.LOS].includes(piece.a)) continue
+    if ((layers[piece.l] || piece.l === Content.LAYER.NOTE) && !getIds().includes(piece.id)) {
+      getIds().push(piece.id)
     }
   }
-  updateSelectionDOM()
+  Dom.updateSelection()
+}
+
+/**
+ * Remove a piece from the selection.
+ *
+ * @param {string} id Piece id to remove.
+ * @returns {boolean} True if id could be found and was unselected, false otherwise
+ */
+function unselect (id) {
+  const piece = Content.findPiece(id)
+  if (piece && getIds().includes(id)) {
+    const selection = getIds()
+    selection.splice(selection.indexOf(id), 1)
+    return true
+  }
+  return false
+}
+
+/**
+ * Clear the selection of pieces.
+ *
+ * @param {string} layer Either LAYER.TILE, LAYER.STICKER or LAYER.TOKEN to clear a specific
+ *                       layer, or 'all' for all layers.
+ */
+function clear (layer = 'all') {
+  for (const piece of getPieces(layer)) {
+    unselect(piece.id)
+  }
 }
 
 /**
@@ -74,8 +134,8 @@ export function selectionAddAll () {
  * @param {string} id ID to check.
  * @returns {boolean} True, if this element is selected.
  */
-export function isSelectedId (id) {
-  return selectionGetIds().includes(id)
+function isSelectedId (id) {
+  return getIds().includes(id)
 }
 
 /**
@@ -85,7 +145,7 @@ export function isSelectedId (id) {
  * @param {boolean} toggle If false (default), selection replaces all previous.
  *                         If true, selection is added/removed.
  */
-export function selectNode (node, toggle = false) {
+function selectNode (node, toggle = false) {
   if (toggle) { // toggle-selects add/remove one item to the selection
     // no change on table click
     if (node.id === 'tabletop') return
@@ -93,34 +153,22 @@ export function selectNode (node, toggle = false) {
     // invert selection state (if it is a piece)
     if (node.piece) {
       if (isSelectedId(node.piece.id)) {
-        selectionRemove(node.piece.id)
+        unselect(node.piece.id)
       } else {
-        selectionAdd(node.piece.id)
+        select(node.piece.id)
       }
     }
   } else { // non-toggle-selects replace selection
-    // selectionClear everything if 'nothing' was clicked
+    // clear selection if 'nothing' was clicked
     if (!node || node.id === 'tabletop') {
-      selectionClear()
+      clear()
       return
     }
 
     if (node.piece) {
-      selectionClear()
-      selectionAdd(node.piece.id)
+      clear()
+      select(node.piece.id)
     }
-  }
-}
-
-/**
- * Clear the selection of pieces.
- *
- * @param {string} layer Either LAYER.TILE, LAYER.STICKER or LAYER.TOKEN to clear a specific
- *                       layer, or 'all' for all layers.
- */
-export function selectionClear (layer = 'all') {
-  for (const piece of selectionGetPieces(layer)) {
-    selectionRemove(piece.id)
   }
 }
 
@@ -131,9 +179,9 @@ export function selectionClear (layer = 'all') {
  *                       layer, or 'all' for all layers.
  * @returns {object[]} Possibly empty array of selected pieces.
  */
-export function selectionGetPieces (layer = 'all') {
+function getPieces (layer = 'all') {
   const selected = []
-  for (const piece of getTable()) {
+  for (const piece of State.getTable()) {
     if (layer === 'all' || piece.l === layer) {
       if (isSelectedId(piece.id)) selected.push(piece)
     }
@@ -146,8 +194,8 @@ export function selectionGetPieces (layer = 'all') {
  *
  * @returns {object[]} Possibly empty array of selected pieces.
  */
-export function selectionGetIds () {
-  return selectionIds[getTableNo()]
+function getIds () {
+  return selectionIds[State.getTableNo()]
 }
 
 /**
@@ -155,51 +203,8 @@ export function selectionGetIds () {
  *
  * @returns {object} Object with features true/false.
  */
-export function selectionGetFeatures () {
-  return getFeatures(selectionGetPieces())
-}
-
-/**
- * Find all highest Z values below bounds.
- *
- * @param {object} bounds {top, left, right, bottom} to search within.
- * @param {object} center Center {x, y} of selection.
- * @returns {object} Contains higest z per layer as {tile, token, ...}.
- */
-export function findMaxZBelow (bounds, center) {
-  const zLower = {}
-  for (const piece of findPiecesWithinBounds(bounds, center, true)) {
-    if (!isSelectedId(piece.id)) {
-      if (piece.z > (zLower[piece.l] ?? Number.MIN_VALUE)) zLower[piece.l] = piece.z
-    }
-  }
-  return zLower
-}
-
-/**
- * Find all lowest Z values below bounds.
- *
- * @param {object} bounds {top, left, right, bottom} to search within.
- * @param {object} center Center {x, y} of selection.
- * @returns {object} Contains lowest z per layer as {tile, token, ...}.
- */
-export function findMinZBelow (bounds, center) {
-  const zLower = {}
-  for (const piece of findPiecesWithinBounds(bounds, center, true)) {
-    if (!isSelectedId(piece.id)) {
-      if (piece.z < (zLower[piece.l] ?? Number.MAX_VALUE)) zLower[piece.l] = piece.z
-    }
-  }
-  return zLower
-}
-
-/**
- * Copy the currently selected piece(s) into our clipboard.
- *
- * Will silently fail if nothing is selected.
- */
-export function clipboardCopy () {
-  clipboard.pieces = selectionGetPieces()
+function getFeatures () {
+  return Content.getFeatures(getPieces())
 }
 
 /**
@@ -207,8 +212,211 @@ export function clipboardCopy () {
  *
  * @returns {object} Object with features true/false.
  */
-export function clipboardGetPieces () {
+function clipboardGetPieces () {
   return clipboard.pieces
+}
+
+// --- manipulate selected pieces ----------------------------------------------
+
+/**
+ * Clone the currently selected piece(s) to a given position.
+ *
+ * Will silently fail if nothing is selected.
+ *
+ * @param {object} xy Grid x/y position (in tiles).
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function clone (xy, api = true) {
+  const toClone = getPieces()
+  clear()
+  return Content.clone(toClone, xy, api)
+}
+
+/**
+ * Copy the currently selected piece(s) into our clipboard.
+ *
+ * Will silently fail if nothing is selected.
+ */
+function copy () {
+  clipboard.pieces = getPieces()
+}
+
+/**
+ * Clone the currently copied (clipboard) piece(s) to a given position.
+ *
+ * Will silently fail if clipboard is empty.
+ *
+ * @param {object} xy Grid x/y position (in tiles).
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function paste (xy, api = true) {
+  clear()
+  return Content.clone(clipboardGetPieces(), xy, api)
+}
+
+/**
+ * Rotate the currently selected pieces.
+ *
+ * Done in increments based on game type.
+ *
+ * @param {boolean} cw Optional direction. True = CW (default), False = CCW.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function rotate (cw = true, api = true) {
+  return Content.rotate(getPieces(), cw, api)
+}
+
+/**
+ * Move the currently selected pieces to the top within their layers.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function toTop (api = true) {
+  return Content.toTop(getPieces(), api)
+}
+
+/**
+ * Move the currently selected pieces to the bottom within their layers.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function toBottom (api = true) {
+  return Content.toBottom(getPieces(), api)
+}
+
+/**
+ * Delete selected pieces.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function remove (api = true) {
+  return Content.remove(getPieces(), api)
+}
+
+/**
+ * Switch the piece/border color of the currently selected piece.
+ *
+ * Will cycle through all available colors and silently fail if nothing is selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function toggleColor (api = true) {
+  return Content.toggleColor(getPieces(), api)
+}
+
+/**
+ * Switch the piece/border color of the currently selected piece.
+ *
+ * Will cycle through all available colors and silently fail if nothing is selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function toggleBorder (api = true) {
+  return Content.toggleBorder(getPieces(), api)
+}
+
+/**
+ * Flip the currently selected piece to its next side.
+ *
+ * Will cycle the sides and silently fail if nothing is selected.
+ *
+ * @param {boolean} forward If true (default), will cycle forward, otherwise backward.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function flip (forward = true, api = true) {
+  return Content.flip(getPieces(), forward, api)
+}
+
+/**
+ * Move selection. Honors diagonal movement for hex grids.
+ *
+ * Will silently fail if nothing is selected, move would push selection out of
+ * table or items are locked.
+ *
+ * @param {number} x Move x in tiles. Can be negative.
+ * @param {number} y Move y in tiles. Can be negative.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {object[]} Pieces to be moved.
+ */
+function moveTiles (x, y, api = true) {
+  return Content.moveTiles(getPieces(), x, y, api)
+}
+
+/**
+ * Increase/decrease the token number (if it is a token).
+ *
+ * Will cycle through all states
+ *
+ * @param {number} delta Amount to increase.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function number (delta, api = true) {
+  return Content.number(getPieces(), delta, api)
+}
+
+/**
+ * Pile up all selected pieces.
+ *
+ * Will silently fail if nothing is selected.
+ *
+ * @param {boolean} randomize If the z order of all items will be randomized.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function pile (randomize = false, api = true) {
+  return Content.pile(getPieces(), randomize, api)
+}
+
+/**
+ * Toggle / cycle overlay grid on selected tiles.
+ *
+ * Will silently fail if no tiles are selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function grid (api = true) {
+  return Content.grid(getPieces(), api)
+}
+
+/**
+ * Randomize the seleced piece.
+ *
+ * What happens depends a bit on the piece type, but usually it is flipped to a
+ * random side. It also gets rotated and/or moved on the dicemat, so that there
+ * is a visual difference even if the same side randomly comes up.
+ *
+ * Will silently fail if no tiles are selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function random (api = true) {
+  return Content.random(getPieces(), api)
+}
+
+/**
+ * Show edit dialog for currently selected piece (if only one).
+ *
+ * Will silently fail if nothing is selected.
+ */
+function edit () {
+  if (!getFeatures().edit) return
+
+  const selected = getPieces()
+  if (selected.length === 1) {
+    ModalEdit.open(Content.findPiece(selected[0].id))
+  }
 }
 
 // -----------------------------------------------------------------------------
@@ -217,56 +425,4 @@ let selectionIds = [[], [], [], [], [], [], [], [], [], []] // 1+9 tables
 
 const clipboard = {
   pieces: []
-}
-
-/**
- * Find all pieces at current (or future) area.
- *
- * Mostly used before moving a selection to a new position what pieces might affect z.
- *
- * @param {object} bounds {top, left, right, bottom} to search within.
- * @param {object} center Optional alterate center {x, y} of selection.
- * @param {boolean} padding If true, selection will extend 2px on all sides.
- * @returns {Array} Array of nodes/pieces that are in or touch that area.
- */
-function findPiecesWithinBounds (bounds, center = {}, padding = false) {
-  const offset = {
-    x: center.x ? center.x - bounds.center.x : 0,
-    y: center.y ? center.y - bounds.center.y : 0
-  }
-  const rect = padding
-    ? {
-        top: bounds.top + offset.y - 2,
-        bottom: bounds.bottom + offset.y + 2,
-        left: bounds.left + offset.x - 2,
-        right: bounds.right + offset.x + 2
-      }
-    : {
-        top: bounds.top + offset.y,
-        bottom: bounds.bottom + offset.y,
-        left: bounds.left + offset.x,
-        right: bounds.right + offset.x
-      }
-  return findPiecesWithin(rect)
-}
-
-/**
- * Remove a piece from the selection.
- *
- * @param {string} id Piece id to remove.
- */
-function selectionRemove (id) {
-  const piece = findPiece(id)
-  if (piece && selectionGetIds().includes(id)) {
-    const selection = selectionGetIds()
-    selection.splice(selection.indexOf(id), 1)
-  }
-}
-
-export const _private = {
-  findPiecesWithinBounds,
-  selectionRemove,
-  selectionReset: function () { // exposed only for testing
-    selectionIds = [[], [], [], [], [], [], [], [], [], []]
-  }
 }

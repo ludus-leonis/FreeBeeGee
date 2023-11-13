@@ -1,5 +1,5 @@
 /**
- * @file Common modal handling. Keeps one modal instance at a time.
+ * @file Common fullscreen-modal handling. Keeps one instance at a time.
  * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license AGPL-3.0-or-later
@@ -20,30 +20,28 @@
  */
 
 import _ from '../../lib/FreeDOM.mjs'
+import Sync from '../../view/room/sync.mjs'
 
-import {
-  startAutoSync
-} from '../../view/room/sync.mjs'
+// -----------------------------------------------------------------------------
+
+export default {
+  close,
+  create,
+  isOpen
+}
+
+// -----------------------------------------------------------------------------
 
 let window = null // currently open instance
 
 // --- public ------------------------------------------------------------------
 
 /**
- * Get the currently open modal.
- *
- * @returns {object} Bootstrap modal or null if currently closed.
- */
-export function getWindow () {
-  return window
-}
-
-/**
  * Determine if the/a modal is currently open.
  *
  * @returns {boolean} True, if there is a modal open.
  */
-export function isWindowActive () {
+function isOpen () {
   return window !== null
 }
 
@@ -52,8 +50,8 @@ export function isWindowActive () {
  *
  * @returns {_} The modal's FreeDOM node ('#window').
  */
-export function createWindow () {
-  closeWindow()
+function create () {
+  close()
   window = _('#window.window.is-noselect').create()
   window.add(_('.window-header').create())
   window.add(_('.window-body').create())
@@ -67,8 +65,8 @@ export function createWindow () {
  *
  * Will also empty the `#modal` DOM node for reuse and trigger a new API poll.
  */
-export function closeWindow () {
+function close () {
   window = null
   _('.window').delete() // delete all DOM nodes
-  startAutoSync() // might have gotten shut down in long-opened windows
+  Sync.startAutoSync() // might have gotten shut down in long-opened windows
 }
