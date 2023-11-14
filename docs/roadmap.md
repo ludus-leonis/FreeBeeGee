@@ -5,8 +5,8 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 ## v0.24.0
 
 * [ ] zoom-to-cursor
-* [ ] ui: rotate dice on random
-* [ ] ui: random 360° rotation for pieces
+* [ ] rotate dice on random
+* [X] random 360° rotation for pieces via Alt+r
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring

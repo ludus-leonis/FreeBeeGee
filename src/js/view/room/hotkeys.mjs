@@ -206,9 +206,13 @@ function handleRoomKeys (keydown) {
         break
       case 'f': // flip forward
         Selection.flip()
+        if (keydown.altKey) Selection.flipRandom(); else Selection.flip()
         break
       case 'F': // flip backward
         Selection.flip(false)
+        break
+      case '#': // random side
+        Selection.flipRandom()
         break
       case 'G': // grid (table)
         Room.toggleGrid()
@@ -236,7 +240,7 @@ function handleRoomKeys (keydown) {
         ModalHelp.open()
         break
       case 'r': // rotate CW
-        Selection.rotate()
+        if (keydown.altKey) Selection.rotateRandom(); else Selection.rotate()
         break
       case 'R': // rotate CCW
         Selection.rotate(false)
@@ -246,9 +250,6 @@ function handleRoomKeys (keydown) {
         break
       case 'S': // settings
         ModalSettings.open()
-        break
-      case '#': // random side
-        Selection.random()
         break
       case '+': // zoom in
       case '=':

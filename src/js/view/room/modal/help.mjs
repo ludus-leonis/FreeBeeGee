@@ -123,12 +123,12 @@ function open () {
 
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
-            <p><span class="key">r</span>/<span class="key">R</span> Rotate piece clockwise/counter-clockwise.</p>
+            <p><span class="key">r</span>/<span class="key">R</span> Rotate piece clockwise/counter-clockwise. <span class="key">Alt</span> + <span class="key">r</span> Random rotate.</p>
             <p><span class="key">f</span>/<span class="key">F</span> Flip piece forward/backward. Pieces can have one, two or even more sides.</p>
+            <p><span class="key">#</span>, <span class="key">Alt</span> + <span class="key">f</span> Roll dice / all dice on trays / flip piece to a random side.</p>
             <p><span class="key">o</span> Change piece color (if a piece supports that).</p>
             <p><span class="key">O</span> Change outline/border color (token only).</p>
             <p><span class="key">p</span> Pile selected pieces.</p>
-            <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
             <p><span class="key">t</span> Move selected piece to the top of its layer.</p>
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>

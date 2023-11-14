@@ -1115,6 +1115,14 @@ describe('Frontend - content.mjs', function () {
     ])
   })
 
+  it('rotateRandom()', async function () {
+    expect(Test.mock(await Content.rotateRandom([], false))).to.be.eql({})
+
+    expect(Test.mock(await Content.rotateRandom([
+      { ...Test.data.pieceFull(), id: 'R1', r: 0 }
+    ], true, false)).body[0]).to.have.all.keys('id', 'r')
+  })
+
   it('flip()', async function () { // set room + asset
     const pieces = [
       { ...Test.data.pieceFull(), id: 'F1', s: 0, l: 1 },
@@ -1244,7 +1252,7 @@ describe('Frontend - content.mjs', function () {
     ])
   })
 
-  it('random() dice', async function () {
+  it('flipRandom() dice', async function () {
     const pieces = Content.populatePiecesDefaults([
       { ...Test.data.pieceFull(), id: 'F1', l: 4 },
       { ...Test.data.pieceFull(), id: 'F2', l: 4 },
@@ -1254,14 +1262,14 @@ describe('Frontend - content.mjs', function () {
     ])
     Test.setupTestData(pieces)
 
-    expect(Test.mock(await Content.random([], false))).to.be.eql({})
+    expect(Test.mock(await Content.flipRandom([], false))).to.be.eql({})
 
-    const r = Test.mock(await Content.random([pieces[0], pieces[1]], false)).body
+    const r = Test.mock(await Content.flipRandom([pieces[0], pieces[1]], false)).body
     expect(r[0]).to.have.all.keys('id', 'x', 'y', 's')
     expect(r[1]).to.have.all.keys('id', 'x', 'y', 's')
   })
 
-  it('random() dicemat', async function () {
+  it('flipRandom() dicemat', async function () {
     const pieces = Content.populatePiecesDefaults([
       { ...Test.data.pieceFull(), id: 'F1', z: 1, l: 5 },
       { ...Test.data.pieceFull(), id: 'F2', z: 2, l: 5 },
@@ -1271,7 +1279,7 @@ describe('Frontend - content.mjs', function () {
     ])
     Test.setupTestData(pieces)
 
-    const r = Test.mock(await Content.random([pieces[2]], false)).body
+    const r = Test.mock(await Content.flipRandom([pieces[2]], false)).body
     expect(r.length).to.be.eql(2)
     expect(r[0].id).to.be.eql('F4')
     expect(r[0]).to.have.all.keys('id', 'x', 'y', 's')
@@ -1279,7 +1287,7 @@ describe('Frontend - content.mjs', function () {
     expect(r[1]).to.have.all.keys('id', 'x', 'y', 's')
   })
 
-  it('random() discard', async function () {
+  it('flipRandom() discard', async function () {
     const pieces = Content.populatePiecesDefaults([
       { ...Test.data.pieceFull(), id: 'F1', z: 1, l: 5 },
       { ...Test.data.pieceFull(), id: 'F2', z: 2, l: 5 },
@@ -1289,7 +1297,7 @@ describe('Frontend - content.mjs', function () {
     ])
     Test.setupTestData(pieces)
 
-    const r = Test.mock(await Content.random([pieces[2]], false)).body
+    const r = Test.mock(await Content.flipRandom([pieces[2]], false)).body
     expect(r.length).to.be.eql(2)
     expect(r[0].id).to.be.eql('F4')
     expect(r[0]).to.have.all.keys('id', 'x', 'y', 'z', 's')

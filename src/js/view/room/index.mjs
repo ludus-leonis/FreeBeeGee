@@ -532,7 +532,7 @@ function setupRoom () {
   _('#btn-f').on('click', () => Selection.flip())
   _('#btn-s').on('click', () => toggleLos())
   _('#btn-S').on('click', () => ModalSettings.open())
-  _('#btn-hash').on('click', () => Selection.random())
+  _('#btn-hash').on('click', () => Selection.flipRandom())
   _('#btn-del').on('click', () => Selection.remove())
 
   // setup remaining menu

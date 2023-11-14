@@ -36,6 +36,7 @@ export default {
   copy,
   edit,
   flip,
+  flipRandom,
   getFeatures,
   getIds,
   getPieces,
@@ -45,9 +46,9 @@ export default {
   number,
   paste,
   pile,
-  random,
   remove,
   rotate,
+  rotateRandom,
   select,
   selectAll,
   selectNode,
@@ -261,6 +262,18 @@ function paste (xy, api = true) {
  *
  * Done in increments based on game type.
  *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function rotateRandom (api = true) {
+  return Content.rotateRandom(getPieces(), api)
+}
+
+/**
+ * Rotate the currently selected pieces.
+ *
+ * Done in increments based on game type.
+ *
  * @param {boolean} cw Optional direction. True = CW (default), False = CCW.
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
@@ -337,6 +350,22 @@ function flip (forward = true, api = true) {
 }
 
 /**
+ * Randomize the seleced piece.
+ *
+ * What happens depends a bit on the piece type, but usually it is flipped to a
+ * random side. It also gets rotated and/or moved on the dicemat, so that there
+ * is a visual difference even if the same side randomly comes up.
+ *
+ * Will silently fail if no tiles are selected.
+ *
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function flipRandom (api = true) {
+  return Content.flipRandom(getPieces(), api)
+}
+
+/**
  * Move selection. Honors diagonal movement for hex grids.
  *
  * Will silently fail if nothing is selected, move would push selection out of
@@ -387,22 +416,6 @@ function pile (randomize = false, api = true) {
  */
 function grid (api = true) {
   return Content.grid(getPieces(), api)
-}
-
-/**
- * Randomize the seleced piece.
- *
- * What happens depends a bit on the piece type, but usually it is flipped to a
- * random side. It also gets rotated and/or moved on the dicemat, so that there
- * is a visual difference even if the same side randomly comes up.
- *
- * Will silently fail if no tiles are selected.
- *
- * @param {boolean} api If true, send the data to the API (default).
- * @returns {Promise<object>} Resulting API request (for testing).
- */
-function random (api = true) {
-  return Content.random(getPieces(), api)
 }
 
 /**

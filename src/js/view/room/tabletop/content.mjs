@@ -95,6 +95,7 @@ export default {
   findPiecesExpired,
   findRealClickTarget,
   flip,
+  flipRandom,
   getFeatures,
   getSetupCenter,
   getTopLeft,
@@ -107,7 +108,7 @@ export default {
   populatePieceDefaults,
   populatePiecesDefaults,
   populateSetupDefaults,
-  random,
+  rotateRandom,
   remove,
   rotate,
   sanitizePiecePatch,
@@ -331,6 +332,24 @@ function toggleBorder (pieces, api = true) {
 }
 
 /**
+ * Rotate pieces randomly.
+ *
+ * @param {object[]} pieces Pieces to rotate.
+ * @param {boolean} api If true, send the data to the API (default).
+ * @returns {Promise<object>} Resulting API request (for testing).
+ */
+function rotateRandom (pieces, api = true) {
+  const toPatch = []
+  for (const piece of pieces) {
+    toPatch.push(sanitizePiecePatch({
+      id: piece.id,
+      r: Math.floor(Math.random() * 360)
+    }))
+  }
+  return State.patchPieces(toPatch, api)
+}
+
+/**
  * Rotate pieces one increment.
  *
  * Increments are based on game type and room settings.
@@ -455,7 +474,7 @@ function pile (pieces, randomize = false, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function random (pieces, api = true) {
+function flipRandom (pieces, api = true) {
   const toPatch = []
   for (const piece of pieces) {
     switch (piece._meta.feature) {

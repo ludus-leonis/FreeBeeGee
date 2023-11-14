@@ -69,7 +69,7 @@ function piece (piece) {
   popupClick('#popper .flip', () => { Selection.flip() })
   popupClick('#popper .pile', () => { Selection.pile() })
   // popupClick('#popper .shuffle', () => { Selection.pile(true) })
-  popupClick('#popper .random', () => { Selection.random() })
+  popupClick('#popper .random', () => { Selection.flipRandom() })
   popupClick('#popper .top', () => { Selection.toTop() })
   popupClick('#popper .bottom', () => { Selection.toBottom() })
   popupClick('#popper .delete', () => { Selection.remove() })

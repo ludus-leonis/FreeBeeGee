@@ -725,6 +725,21 @@ describe('Frontend - selection.mjs', function () {
     Selection.clear()
   })
 
+  it('rotateRandom()', async function () {
+    const pieces = [
+      { ...Test.data.pieceFull(), id: 'R1', r: 0 }
+    ]
+    Test.setupTestData(pieces)
+
+    Selection.clear()
+    expect(Test.mock(await Selection.rotateRandom(true, false))).to.be.eql({})
+    expect(Test.mock(await Selection.rotateRandom(false, false))).to.be.eql({})
+
+    Selection.select('R1')
+    expect(Test.mock(await Selection.rotateRandom(true, false)).body[0]).to.have.all.keys('id', 'r')
+    Selection.clear()
+  })
+
   it('flip()', async function () {
     const pieces = [
       { ...Test.data.pieceMinimal(), id: 'F1', a: 'BQ9I2100', l: 4, s: 1 },
@@ -840,7 +855,7 @@ describe('Frontend - selection.mjs', function () {
     Selection.clear()
   })
 
-  it('random()', async function () {
+  it('flipRandom()', async function () {
     const pieces = [
       { ...Test.data.pieceMinimal(), id: 'F1', a: 'BQ9I2100', l: 4 },
       { ...Test.data.pieceMinimal(), id: 'F2', a: 'BQ9I2100', l: 4 },
@@ -850,10 +865,10 @@ describe('Frontend - selection.mjs', function () {
     Test.setupTestData(pieces)
 
     Selection.clear()
-    expect(Test.mock(await Selection.random(false))).to.be.eql({})
+    expect(Test.mock(await Selection.flipRandom(false))).to.be.eql({})
 
     Selection.select('F2')
-    const r = Test.mock(await Selection.random(false)).body
+    const r = Test.mock(await Selection.flipRandom(false)).body
     expect(r.length).to.be.eql(1)
     expect(r[0].id).to.be.eql('F2')
     expect(r[0]).to.have.all.keys('id', 'x', 'y', 's')
@@ -861,7 +876,7 @@ describe('Frontend - selection.mjs', function () {
 
     Selection.select('F1')
     Selection.select('F4')
-    const r2 = Test.mock(await Selection.random(false)).body
+    const r2 = Test.mock(await Selection.flipRandom(false)).body
     expect(r2.length).to.be.eql(2)
     expect(r2[0].id).to.be.eql('F1')
     expect(r2[0]).to.have.all.keys('id', 'x', 'y', 's')
