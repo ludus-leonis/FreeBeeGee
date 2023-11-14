@@ -11,10 +11,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
     * [X] note padding won't zoom properly
-    * [ ] clone no-clone object disables edit without reselection
+    * [X] clone no-clone object disables edit without reselection
     * [X] refactor imports and module responsibility
     * [ ] should token numbers increase on cut+paste?
-    * [ ] linen material border
+    * [X] linen material border
+    * [ ] token number below material?
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
