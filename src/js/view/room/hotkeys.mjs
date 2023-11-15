@@ -172,20 +172,16 @@ function handleRoomKeys (keydown) {
         if (keydown.ctrlKey) Selection.copy(); else Selection.clone(Mouse.getMouseCoords())
         break
       case 'x': // cut
-        if (keydown.ctrlKey) {
-          Selection.copy()
-          Selection.remove()
-        }
+        if (keydown.ctrlKey) Selection.cut()
+        break
+      case 'Cut': // dedicated cut key
+        Selection.cut()
         break
       case 'v': // paste
         if (keydown.ctrlKey) Selection.paste(Mouse.getMouseCoords())
         break
       case 'Copy': // dedicated copy key
         Selection.copy()
-        break
-      case 'Cut': // dedicated cut key
-        Selection.copy()
-        Selection.remove()
         break
       case 'Paste': // dedicated copy key
         Selection.paste(Mouse.getMouseCoords())

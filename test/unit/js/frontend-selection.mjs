@@ -620,7 +620,7 @@ describe('Frontend - selection.mjs', function () {
 
   it('copy() paste()', async function () {
     const pieces = [
-      { ...Test.data.pieceFull(), id: 'P1', x: 64, y: 64 },
+      { ...Test.data.pieceFull(), id: 'P1', x: 64, y: 64, n: 1 },
       { ...Test.data.pieceFull(), id: 'P2', x: 32 + 64 * 1, y: 32 + 64 * 1, f: Content.FLAG.NO_DELETE },
       { ...Test.data.pieceFull(), id: 'P3', x: 256, y: 128 },
       { ...Test.data.pieceFull(), id: 'P4', x: 1256, y: 1128 }
@@ -630,18 +630,41 @@ describe('Frontend - selection.mjs', function () {
     Selection.select('P1')
     Selection.select('P2')
     await Selection.copy()
-    const c = Test.mock(await Selection.paste({ x: 1024, y: 1024 }, false)).body
-    expect(c.length).to.be.eql(2)
-    expect(c[0].id).to.be.eql('P1')
-    expect(c[1].id).to.be.eql('P2')
+    const copy1 = Test.mock(await Selection.paste({ x: 1024, y: 1024 }, false)).body
+    expect(copy1.length).to.be.eql(2)
+    expect(copy1[0].id).to.be.eql('P1')
+    expect(copy1[0].n).to.be.eql(2) // copy -> increase
+    expect(copy1[1].id).to.be.eql('P2')
+    const copy2 = Test.mock(await Selection.paste({ x: 1024, y: 1024 }, false)).body
+    expect(copy2.length).to.be.eql(2)
+    expect(copy2[0].id).to.be.eql('P1')
+    expect(copy2[0].n).to.be.eql(3) // copy -> more increase
+    expect(copy2[1].id).to.be.eql('P2')
+    expect(Selection.getPieces().length).to.be.eql(2) // copy won't remove
+    Selection.clear()
+
+    Selection.select('P1')
+    Selection.select('P2')
+    await Selection.cut()
+    const cut1 = Test.mock(await Selection.paste({ x: 1024, y: 1024 }, false)).body
+    expect(cut1.length).to.be.eql(2)
+    expect(cut1[0].id).to.be.eql('P1')
+    expect(cut1[0].n).to.be.eql(1) // cut -> no increase
+    expect(cut1[1].id).to.be.eql('P2')
+    const cut2 = Test.mock(await Selection.paste({ x: 1024, y: 1024 }, false)).body
+    expect(cut2.length).to.be.eql(2)
+    expect(cut2[0].id).to.be.eql('P1')
+    expect(cut2[0].n).to.be.eql(2) // cut -> first increase
+    expect(cut2[1].id).to.be.eql('P2')
+    expect(Selection.getPieces().length).to.be.eql(0) // cut removes
     Selection.clear()
 
     // change selection -> no effect
     Selection.select('P3')
-    const c2 = Test.mock(await Selection.paste({ x: 1024, y: 1024 }, false)).body
-    expect(c2.length).to.be.eql(2)
-    expect(c2[0].id).to.be.eql('P1')
-    expect(c2[1].id).to.be.eql('P2')
+    const c3 = Test.mock(await Selection.paste({ x: 1024, y: 1024 }, false)).body
+    expect(c3.length).to.be.eql(2)
+    expect(c3[0].id).to.be.eql('P1')
+    expect(c3[1].id).to.be.eql('P2')
   })
 
   it('moveTiles()', async function () {

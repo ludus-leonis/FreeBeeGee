@@ -821,15 +821,21 @@ describe('Frontend - content.mjs', function () {
     ]
     Test.setupTestData(pieces)
 
-    expect(Test.mock(await Content.clone([], { x: 256, y: 256 }, false))).to.be.eql({})
-    expect(Test.mock(await Content.clone([pieces[1]], { x: 256, y: 256 }, false))).to.be.eql({})
+    expect(Test.mock(await Content.clone([], { x: 256, y: 256 }, 1, false))).to.be.eql({})
+    expect(Test.mock(await Content.clone([pieces[1]], { x: 256, y: 256 }, 1, false))).to.be.eql({})
 
-    expect(Test.mock(await Content.clone([pieces[1], pieces[2]], { x: 256, y: 256 }, false)).body).to.be.eql([{
+    expect(Test.mock(await Content.clone([pieces[1], pieces[2]], { x: 256, y: 256 }, 1, false)).body).to.be.eql([{
       ...Test.data.pieceFull(), id: 'Z3', x: 256, y: 256, z: 26, l: 1, n: pieces[2].n + 1, f: Content.FLAG.TILE_GRID_MAJOR
     }])
 
-    expect(Test.mock(await Content.clone([pieces[1], pieces[2]], { x: 512, y: 512 }, false)).body).to.be.eql([{
+    expect(Test.mock(await Content.clone([pieces[1], pieces[2]], { x: 512, y: 512 }, 0, false)).body).to.be.eql([{
+      ...Test.data.pieceFull(), id: 'Z3', x: 512, y: 512, z: 27, l: 1, n: pieces[2].n, f: Content.FLAG.TILE_GRID_MAJOR
+    }])
+    expect(Test.mock(await Content.clone([pieces[1], pieces[2]], { x: 512, y: 512 }, 1, false)).body).to.be.eql([{
       ...Test.data.pieceFull(), id: 'Z3', x: 512, y: 512, z: 27, l: 1, n: pieces[2].n + 1, f: Content.FLAG.TILE_GRID_MAJOR
+    }])
+    expect(Test.mock(await Content.clone([pieces[1], pieces[2]], { x: 512, y: 512 }, 2, false)).body).to.be.eql([{
+      ...Test.data.pieceFull(), id: 'Z3', x: 512, y: 512, z: 27, l: 1, n: pieces[2].n + 2, f: Content.FLAG.TILE_GRID_MAJOR
     }])
 
     Test.setupTestData([
@@ -842,24 +848,21 @@ describe('Frontend - content.mjs', function () {
     const b = Content.findPiece('B')
     const c = Content.findPiece('C')
 
-    const clone1 = Test.mock(await Content.clone([a], { x: 64 + 64 * 10, y: 64 + 64 * 8 }, false)).body // will snap!
-    // const clone1 = DOM._private.clonePieces([a], { x: 64 + 64 * 10, y: 64 + 64 * 8 }, false)
+    const clone1 = Test.mock(await Content.clone([a], { x: 64 + 64 * 10, y: 64 + 64 * 8 }, 1, false)).body // will snap!
     expect(clone1.length).to.be.eql(1)
     expect(clone1[0].id).to.be.eql('A')
     expect(clone1[0].x).to.be.eql(64 + 64 * 10)
     expect(clone1[0].y).to.be.eql(64 + 64 * 8)
     expect(Content.getFeatures([a]).clone).to.be.eql(true)
 
-    const clone2 = Test.mock(await Content.clone([a, b], { x: 64 + 64 * 10, y: 64 + 64 * 8 }, false)).body // will snap!
-    // const clone2 = DOM._private.clonePieces([a, b], { x: 64 + 64 * 10, y: 64 + 64 * 8 }, false) // will snap!
+    const clone2 = Test.mock(await Content.clone([a, b], { x: 64 + 64 * 10, y: 64 + 64 * 8 }, 1, false)).body // will snap!
     expect(clone2.length).to.be.eql(1)
     expect(clone2[0].id).to.be.eql('A')
     expect(clone2[0].x).to.be.eql(64 + 64 * 10)
     expect(clone2[0].y).to.be.eql(64 + 64 * 8)
     expect(Content.getFeatures([a, b]).clone).to.be.eql(true)
 
-    const clone3 = Test.mock(await Content.clone([a, b, c], { x: 64 * 10, y: 64 * 8 }, false)).body // will snap!
-    // const clone3 = DOM._private.clonePieces([a, b, c], { x: 64 * 10, y: 64 * 8 }, false) // will snap!
+    const clone3 = Test.mock(await Content.clone([a, b, c], { x: 64 * 10, y: 64 * 8 }, 1, false)).body // will snap!
     expect(clone3.length).to.be.eql(2)
     expect(clone3[0].id).to.be.eql('A')
     expect(clone3[0].x).to.be.eql(64 * 10 - (256 - 64) / 2)

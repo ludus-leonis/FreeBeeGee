@@ -137,10 +137,11 @@ export default {
  *
  * @param {object[]} pieces Pieces to clone.
  * @param {object} xy New grid x/y position (in tiles).
+ * @param {number} nth 0 = cut+paste, >0 = nth paste in a row.
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function clone (pieces, xy, api = true) {
+function clone (pieces, xy, nth = 1, api = true) {
   const clones = []
   const toClone = pieces.filter(p => !(p.f & FLAG.NO_CLONE))
 
@@ -167,8 +168,8 @@ function clone (pieces, xy, api = true) {
     clone.y = snapped.y
     zUpper[clone.l] = (zUpper[clone.l] ?? 0) + 1 // init or increase
     clone.z = (zLower[clone.l] ?? 0) + zUpper[clone.l]
-    if (clone.n > 0) { // increase clone letter (if it has one)
-      clone.n = clone.n + 1
+    if (nth > 0 && clone.n > 0) { // increase clone letter (if it has one)
+      clone.n = clone.n + nth
       if (clone.n >= 36) clone.n = 1
     }
     clones.push(clone)

@@ -33,6 +33,7 @@ export default {
   clear,
   clipboardGetPieces,
   clone,
+  cut,
   copy,
   edit,
   flip,
@@ -231,16 +232,28 @@ function clipboardGetPieces () {
 function clone (xy, api = true) {
   const toClone = getPieces()
   clear()
-  return Content.clone(toClone, xy, api)
+  return Content.clone(toClone, xy, 1, api)
 }
 
 /**
  * Copy the currently selected piece(s) into our clipboard.
  *
  * Will silently fail if nothing is selected.
+ *
+ * @param {boolean} cut If true, selection was cut. Stored for later.
  */
-function copy () {
+function copy (cut = false) {
   clipboard.pieces = getPieces()
+  clipboard.pastes = 1
+}
+
+/**
+ * Cut the currently selected piece(s) into our clipboard.
+ */
+function cut () {
+  clipboard.pieces = getPieces()
+  clipboard.pastes = 0
+  remove()
 }
 
 /**
@@ -254,7 +267,7 @@ function copy () {
  */
 function paste (xy, api = true) {
   clear()
-  return Content.clone(clipboardGetPieces(), xy, api)
+  return Content.clone(clipboardGetPieces(), xy, clipboard.pastes++, api)
 }
 
 /**
@@ -437,5 +450,6 @@ function edit () {
 let selectionIds = [[], [], [], [], [], [], [], [], [], []] // 1+9 tables
 
 const clipboard = {
-  pieces: []
+  pieces: [],
+  pastes: 0
 }
