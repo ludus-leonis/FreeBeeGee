@@ -10,6 +10,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 ### Other changes
 
+* added slight stain marks to tabletop
 * improved material rendering and fixed linen border bug
 * improved copy/cut/paste behavior for numbered tokens
 * improved token number circle to have material
