@@ -16,7 +16,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] should token numbers increase on cut+paste?
     * [X] long token label + 2 icons cutoff wrong
     * [X] linen material border
-    * [ ] token number below material?
+    * [X] token number material
+    * [ ] upload preview - no shadow
+    * [ ] upload preview - no material on default token
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG
@@ -57,6 +59,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: randomize button
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
+* [ ] outline material overlay
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
 * [ ] build: minify js

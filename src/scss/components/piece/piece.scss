@@ -32,6 +32,8 @@ $piece-margin: 3px;
 $piece-corner-radius: 2px;
 $piece-rotate: 1deg;
 
+$material-size: 512;
+
 // --- piece basics (size, ...) ------------------------------------------------
 
 @keyframes whirl {
@@ -112,8 +114,6 @@ $piece-rotate: 1deg;
   }
 
   // --- material --------------------------------------------------------------
-
-  $material-size: 512;
 
   @each $id in $random-ids {
     $i: index($random-ids, $id);
