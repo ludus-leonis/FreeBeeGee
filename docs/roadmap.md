@@ -14,6 +14,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] clone no-clone object disables edit without reselection
     * [X] refactor imports and module responsibility
     * [ ] should token numbers increase on cut+paste?
+    * [X] long token label + 2 icons cutoff wrong
     * [X] linen material border
     * [ ] token number below material?
   * [ ] review docs

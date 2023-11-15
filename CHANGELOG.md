@@ -12,6 +12,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 
 * improved material rendering and fixed linen border bug
 * fixed pointer/los-line part of selection
+* fixed token label has sometimes odd cut-off
 * refactored imports and module responsibility
 
 

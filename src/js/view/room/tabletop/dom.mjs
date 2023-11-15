@@ -249,9 +249,9 @@ function setPiece (piece) {
     if (changed) {
       const content = _('#' + piece.id + ' .label').empty()
 
-      // update text part
+      // update text part, add space at end if there are icons
       if (piece.t?.length >= 1) {
-        content.add(_('span').create(piece.t[0]))
+        content.innerHTML = piece.t[0] + ((piece.b ?? []).length > 0 ? ' ' : '')
       }
 
       // update icon part
