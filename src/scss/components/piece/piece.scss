@@ -113,11 +113,13 @@ $piece-rotate: 1deg;
 
   // --- material --------------------------------------------------------------
 
+  $material-size: 512;
+
   @each $id in $random-ids {
     $i: index($random-ids, $id);
 
     &[id^='#{$id}'] {
-      background-position: zoom(($i * 64px) % 256) zoom(math.floor(math.div(($i * 64px), 256))), var(--fbg-grid-x-origin) var(--fbg-grid-y-origin), center, center;
+      background-position: zoom(($i * 64px) % math.div($material-size, 2)) zoom(math.floor(math.div(($i * 64px), math.div($material-size, 2)))), var(--fbg-grid-x-origin) var(--fbg-grid-y-origin), center, center;
     }
   }
 
@@ -130,7 +132,7 @@ $piece-rotate: 1deg;
   .is-quality-high &,
   .is-quality-ultra & {
     background-image: var(--fbg-material), var(--fbg-grid), var(--fbg-side), var(--fbg-base);
-    background-size: zoom(512px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
+    background-size: zoom($material-size * .5px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
 
     &.has-highlight {
       box-shadow: highlight();
@@ -205,7 +207,7 @@ $piece-rotate: 1deg;
       background-color: var(--fbg-color);
       background-image: none, var(--fbg-grid), var(--fbg-side), var(--fbg-base);
       background-position: center, var(--fbg-grid-x-origin) var(--fbg-grid-y-origin), center, center;
-      background-size: zoom(256px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
+      background-size: zoom($material-size * .5px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
       height: 100%;
       mask-image: var(--fbg-mask);
       mask-position: center;
