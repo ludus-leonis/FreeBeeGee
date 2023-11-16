@@ -894,7 +894,7 @@ describe('Frontend - selection.mjs', function () {
     const r = Test.mock(await Selection.flipRandom(false)).body
     expect(r.length).to.be.eql(1)
     expect(r[0].id).to.be.eql('F2')
-    expect(r[0]).to.have.all.keys('id', 'x', 'y', 's')
+    expect(r[0]).to.have.all.keys('id', 'x', 'y', 's', 'r')
     Selection.clear()
 
     Selection.select('F1')
@@ -902,9 +902,9 @@ describe('Frontend - selection.mjs', function () {
     const r2 = Test.mock(await Selection.flipRandom(false)).body
     expect(r2.length).to.be.eql(2)
     expect(r2[0].id).to.be.eql('F1')
-    expect(r2[0]).to.have.all.keys('id', 'x', 'y', 's')
+    expect(r2[0]).to.have.all.keys('id', 'x', 'y', 's', 'r')
     expect(r2[1].id).to.be.eql('F4')
-    expect(r2[1]).to.have.all.keys('id', 'x', 'y', 's')
+    expect(r2[1]).to.have.all.keys('id', 'x', 'y', 's', 'r')
     Selection.clear()
   })
 

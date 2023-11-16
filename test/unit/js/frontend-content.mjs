@@ -1268,8 +1268,8 @@ describe('Frontend - content.mjs', function () {
     expect(Test.mock(await Content.flipRandom([], false))).to.be.eql({})
 
     const r = Test.mock(await Content.flipRandom([pieces[0], pieces[1]], false)).body
-    expect(r[0]).to.have.all.keys('id', 'x', 'y', 's')
-    expect(r[1]).to.have.all.keys('id', 'x', 'y', 's')
+    expect(r[0]).to.have.all.keys('id', 'x', 'y', 's', 'r')
+    expect(r[1]).to.have.all.keys('id', 'x', 'y', 's', 'r')
   })
 
   it('flipRandom() dicemat', async function () {
@@ -1285,9 +1285,9 @@ describe('Frontend - content.mjs', function () {
     const r = Test.mock(await Content.flipRandom([pieces[2]], false)).body
     expect(r.length).to.be.eql(2)
     expect(r[0].id).to.be.eql('F4')
-    expect(r[0]).to.have.all.keys('id', 'x', 'y', 's')
+    expect(r[0]).to.have.all.keys('id', 'x', 'y', 's', 'r')
     expect(r[1].id).to.be.eql('F5')
-    expect(r[1]).to.have.all.keys('id', 'x', 'y', 's')
+    expect(r[1]).to.have.all.keys('id', 'x', 'y', 's', 'r')
   })
 
   it('flipRandom() discard', async function () {

@@ -31,7 +31,8 @@ import Util from '../../../lib/util.mjs'
 
 const FEATURE = {
   DICEMAT: 'DICEMAT',
-  DISCARD: 'DISCARD'
+  DISCARD: 'DISCARD',
+  DICE: 'DICE'
 }
 
 const FLAG = {
@@ -487,7 +488,7 @@ function flipRandom (pieces, api = true) {
         break
       default: // ordinary piece
         if (getFeatures([piece]).random && piece._meta.sides > 1) { // only randomize multi-sided tokens
-          toPatch.push(randomPiece(piece))
+          toPatch.push(flipRandomPiece(piece))
         }
     }
   }
@@ -1177,6 +1178,10 @@ function populatePieceDefaults (piece, headers = null) {
     piece._meta.sides = asset.media.length ?? 1
     piece._meta.sidesExtra = (piece.l === LAYER.TOKEN && piece._meta.sides === 1) ? 1 : 0
 
+    if (piece.l === LAYER.OTHER && asset.w === 1 && asset.h === 1) {
+      piece._meta.feature = FEATURE.DICE
+    }
+
     switch (asset.name) {
       case '_.dicemat':
         piece._meta.feature = FEATURE.DICEMAT
@@ -1370,8 +1375,7 @@ function randomDicemat (dicemat) {
 
     // update the piece
     toPatch.push({
-      id: piece.id,
-      s: Math.floor(Math.random() * piece._meta.sides),
+      ...flipRandomPiece(piece),
       x: dicemat.x - dicemat._meta.widthPx / 2 + coord.x,
       y: dicemat.y - dicemat._meta.heightPx / 2 + coord.y
     })
@@ -1429,27 +1433,34 @@ function randomDiscard (discard) {
  * Flip a piece to a random side. Also move/shift it a bit.
  *
  * @param {object} piece Piece to randomize.
- * @returns {object[]} Resulting patche.
+ * @param {boolean} jiggle If true (default), more and rotate piece slightly.
+ * @returns {object[]} Resulting patch.
  */
-function randomPiece (piece) {
+function flipRandomPiece (piece, jiggle = true) {
   const setup = State.getSetup()
 
-  // slide token around
-  let slideX = Math.floor(Math.random() * 3) - 1
-  let slideY = Math.floor(Math.random() * 3) - 1
-  if (slideX === 0 && slideY === 0) {
-    slideX = 1
-    slideY = 1
-  }
-  const offset = Math.floor(setup.gridSize / 2)
-  const x = Math.abs(Util.clamp(0, piece.x + slideX * offset, (setup.gridWidth - 1) * setup.gridSize))
-  const y = Math.abs(Util.clamp(0, piece.y + slideY * offset, (setup.gridHeight - 1) * setup.gridSize))
-  return {
+  const patch = {
     id: piece.id,
-    s: Math.floor(Math.random() * piece._meta.sides),
-    x,
-    y
+    s: Math.floor(Math.random() * piece._meta.sides)
   }
+
+  if (jiggle) {
+    // slide token around
+    let slideX = Math.floor(Math.random() * 3) - 1
+    let slideY = Math.floor(Math.random() * 3) - 1
+    if (slideX === 0 && slideY === 0) {
+      slideX = 1
+      slideY = 1
+    }
+    const offset = Math.floor(setup.gridSize / 2)
+    patch.x = Math.abs(Util.clamp(0, piece.x + slideX * offset, (setup.gridWidth - 1) * setup.gridSize))
+    patch.y = Math.abs(Util.clamp(0, piece.y + slideY * offset, (setup.gridHeight - 1) * setup.gridSize))
+
+    // give it a random rotation +/- 10°
+    patch.r = Math.floor(Math.random() * 21) - 10
+  }
+
+  return patch
 }
 /**
  * Extract parts (group, name, size, etc.) from an asset filename and guess best type.

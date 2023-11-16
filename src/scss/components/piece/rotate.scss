@@ -67,14 +67,19 @@ $rotate-jitter: (-1) (-.97) (-.94) (-.91) (-.88) (-.84) (-.81) (-.78) (-.75) (-.
 
 // --- animation/transition fixes ----------------------------------------------
 
-@for $r from 1 through 359 {
+// 359 -> 001: set to -1 and disable transition; wait 10ms; remove delay classes
+// 001 -> 359: set to 361 and disable transition; wait 10ms; remove delay classes
+
+@for $r from 180 through 359 {
   .is-delay-r-#{$r} {
     #{'--fbg-r'}: ($r - 360) * 1deg;
   }
 }
 
-.is-delay-r-0 {
-  #{'--fbg-r'}: 360deg;
+@for $r from 0 through 179 {
+  .is-delay-r-#{$r} {
+    #{'--fbg-r'}: ($r + 360) * 1deg;
+  }
 }
 
 .is-delay-r {
