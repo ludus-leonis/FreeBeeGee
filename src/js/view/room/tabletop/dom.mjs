@@ -703,22 +703,35 @@ function createSelectPiece (x, y, width, height) {
 /**
  * Zoom in/out in available increments.
  *
- * @param {number} direction If positive, zoom in. Otherwise zoom out.
+ * @param {number} steps If positive, zoom 1 step in. Otherwise zoom 1 step out.
+ * @param {object} center Optional coordinates to zoom to as {x, y}. Defaults to screen center.
  */
-function zoom (direction) {
+function zoom (steps, center = {}) {
   const current = State.getRoomPreference(State.PREF.ZOOM)
 
-  if (direction === 0) { // set to 100%
+  const viewCenter = Room.getViewCenter()
+  const offset = {
+    x: (center.x ?? viewCenter.x) - viewCenter.x,
+    y: (center.y ?? viewCenter.y) - viewCenter.y
+  }
+
+  if (steps === 0) { // set to 100%
     Room.setupZoom(1)
-  } else if (direction > 0) { // zoom in
+  } else if (steps > 0) { // zoom in
     const next = ZOOM_LEVELS.filter(zoom => zoom > current)
     if (next.length > 0) {
-      Room.setupZoom(next[0])
+      const zoom = next[0]
+      const zoomDiff = 1 - current / zoom
+      Room.setupZoom(zoom)
+      Room.setViewCenter(viewCenter.x + offset.x * zoomDiff, viewCenter.y + offset.y * zoomDiff)
     }
   } else { // zoom out
     const next = ZOOM_LEVELS.filter(zoom => zoom < current)
     if (next.length > 0) {
-      Room.setupZoom(next.pop())
+      const zoom = next.pop()
+      const zoomDiff = 1 - current / zoom
+      Room.setupZoom(zoom)
+      Room.setViewCenter(viewCenter.x + offset.x * zoomDiff, viewCenter.y + offset.y * zoomDiff)
     }
   }
 }

@@ -168,7 +168,7 @@ function mouseDown (mousedown) {
  */
 function mouseMove (mousemove) {
   Sync.touch()
-  touchMousePosition(mousemove.clientX, mousemove.clientY)
+  touchMousePosition(mousemove.clientX, mousemove.clientY) // inclusive sidenav
 
   if (dragCurrent != null) {
     const buttonMask = dragCurrent === 0 ? 1 : (dragCurrent === 2 ? 2 : 4)

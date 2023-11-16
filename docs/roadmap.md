@@ -4,9 +4,11 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ## v0.24.0
 
-* [ ] zoom-to-cursor
+* [X] zoom-to-cursor
 * [ ] rotate dice on random
 * [X] random 360° rotation for pieces via Alt+r
+* [ ] different blue menu for measure and non-measure mode
+* [ ] use png for mask + image in upload
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring
@@ -34,7 +36,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] refactor: always use numeric layer number in 'l' (no string translation)
 * [ ] refactor: frontend-state: test all State.xyz, all API endpoints
 * [ ] switch to PHP 8.3 for docker release
-* [ ] different blue menu for measure and non-measure mode
 * [ ] invert svg/decal on white
 * [ ] refactor: system asset flag instead of '_'
 * [ ] snapshot download for demo mode

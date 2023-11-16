@@ -43,12 +43,14 @@ import Sync from '../../view/room/sync.mjs'
 export default {
   getScrollPositionNative,
   getTableCoordinates,
+  getViewCenter,
   restoreScrollPosition,
   runRoom,
   setCursor,
   setScrollPositionNative,
   setupBackground,
   setupZoom,
+  setViewCenter,
   toggleGrid,
   toggleLayer,
   toggleLos,
@@ -109,6 +111,21 @@ function getViewCenter () {
     x: scroller.scrollLeft + Math.floor(scroller.clientWidth / 2),
     y: scroller.scrollTop + Math.floor(scroller.clientHeight / 2)
   }, -1)
+}
+
+/**
+ * Set current center of the viewport of the scroll position.
+ *
+ * @param {number} x X-coordinate in tabletop px.
+ * @param {number} y Y-coordinate in tabletop px.
+ */
+function setViewCenter (x, y) {
+  const zoom = State.getRoomPreference(State.PREF.ZOOM)
+  const newCenter = zoomCoordinates({
+    x: Math.floor(x - scroller.clientWidth / 2 / zoom),
+    y: Math.floor(y - scroller.clientHeight / 2 / zoom)
+  })
+  setScrollPositionNative(newCenter.x, newCenter.y)
 }
 
 /**
@@ -322,12 +339,7 @@ function setupZoom (zoom) {
     _('#tabletop').remove('.is-delay-*')
   }, 10)
 
-  // move center of view
-  const newCenter = zoomCoordinates({
-    x: Math.floor(center.x - scroller.clientWidth / 2 / zoom),
-    y: Math.floor(center.y - scroller.clientHeight / 2 / zoom)
-  })
-  scroller.node().scrollTo(newCenter.x, newCenter.y)
+  setViewCenter(center.x, center.y)
 
   updateStatusline()
 }
@@ -548,7 +560,7 @@ function setupRoom () {
   _('#room').on('wheel', wheel => {
     if (event.ctrlKey) {
       event.preventDefault()
-      Dom.zoom(Math.sign(event.deltaY * -1))
+      Dom.zoom(Math.sign(event.deltaY * -1), Mouse.getMouseCoords())
     }
   }, true)
 
