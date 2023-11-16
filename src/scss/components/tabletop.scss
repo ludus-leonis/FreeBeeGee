@@ -67,7 +67,7 @@ body {
   }
 
   .is-quality-ultra & {
-    background-image: none, url('img/stain.png'), var(--fbg-tabletop-image);
+    background-image: var(--fbg-tabletop-grid), url('img/stain.png'), var(--fbg-tabletop-image);
     background-size: zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), zoom(2048px), zoom(1536px);
     filter: grayscale(10%) sepia(5%);
   }
