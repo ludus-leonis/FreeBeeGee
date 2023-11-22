@@ -128,6 +128,7 @@ function clear (layer = 'all') {
   for (const piece of getPieces(layer)) {
     unselect(piece.id)
   }
+  Dom.updateSelection()
 }
 
 /**

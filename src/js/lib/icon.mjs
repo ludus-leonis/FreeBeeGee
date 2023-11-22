@@ -75,8 +75,11 @@ const SEARCH = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" v
 
 const CLOSE = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>'
 
+const BALL = svgIcon('<circle cx="14.13" cy="9.399" r="10" transform="rotate(11.37)"/><path d="M4.265 5.103c7.597 3.91 10.112 8.231 12.278 15.533"/><path d="M6.557 19.87c4.089-6.395 8.217-8.682 14.566-10.202M16.975 3.884c-4.089 6.394-8.217 8.682-14.566 10.2"/>')
+
 export default {
   ADD,
+  BALL,
   BOTTOM,
   CLOSE,
   COPY,
@@ -100,4 +103,14 @@ export default {
   TILE,
   TOKEN,
   TOP
+}
+
+/**
+ * Create an inline 24x24 SVG icon.
+ *
+ * @param {string} content SVG content excluding SVG tags.
+ * @returns {string} SVG string.
+ */
+function svgIcon (content) {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${content}</svg'`
 }

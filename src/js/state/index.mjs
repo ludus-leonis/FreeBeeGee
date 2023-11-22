@@ -41,7 +41,7 @@ const PREF = {
   LAYERsticker: { name: 'layer2', default: undefined },
   LAYERtile: { name: 'layer1', default: undefined },
   LAYERtoken: { name: 'layer4', default: undefined },
-  LOS: { name: 'los', default: false },
+  MODE: { name: 'mode', default: 'MAIN' },
   PIECE_ROTATE: { name: 'pieceRotate', default: undefined },
   QUALITY: { name: 'quality', default: 3 },
   SCROLL: { name: 'scroll', default: {} },

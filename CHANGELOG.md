@@ -17,6 +17,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * improved material rendering and fixed linen border bug
 * improved copy/cut/paste behavior for numbered tokens
 * improved token number circle to have material
+* improved blue main menu bar
 * fixed pointer/los-line part of selection
 * fixed token label has sometimes odd cut-off
 * refactored imports and module responsibility

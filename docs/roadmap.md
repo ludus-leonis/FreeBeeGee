@@ -7,7 +7,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] zoom-to-cursor
 * [X] rotate dice on random
 * [X] random 360° rotation for pieces via Alt+r
-* [ ] different blue menu for measure and non-measure mode
+* [X] different blue menu for measure and non-measure mode
 * [ ] use png for mask + image in upload
 * [ ] pre-release
   * [ ] bump dependencies

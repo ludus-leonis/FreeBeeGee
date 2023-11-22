@@ -20,9 +20,7 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
-import Dom from '../../../view/room/tabletop/dom.mjs'
 import { Grab } from './Grab.mjs'
-import { Los } from './Los.mjs'
 import Popup from '../../../view/room/tabletop/popup.mjs'
 import Room from '../../../view/room/index.mjs'
 import { SelectAndDrag } from './SelectAndDrag.mjs'
@@ -35,9 +33,8 @@ export default {
   enableDragAndDrop,
   getMouseCoords,
   isDragging,
-  isLMBLos,
   release,
-  toggleLMBLos
+  setButtons
 }
 
 // -----------------------------------------------------------------------------
@@ -73,29 +70,20 @@ function enableDragAndDrop (tabletop) {
 }
 
 /**
- * Enable LOS drawing mode on the left mouse button.
- */
-function toggleLMBLos () {
-  if (dragCurrent === null) {
-    if (isLMBLos()) {
-      dragHandlers[0] = new SelectAndDrag()
-    } else {
-      dragHandlers[0] = new Los()
-    }
-  }
-}
-
-/**
- * Enable LOS drawing mode on the left mouse button.
+ * Set the actions that happen on left/center/right mouse buttons.
  *
- * @param {boolean} active If true, will also check if an actual drag is going on. Default false.
- * @returns {boolean} True if Los mode is on.
+ * @param {object} left Left mouse button.
+ * @param {object} center Center mouse button.
+ * @param {object} right Right mouse button.
  */
-function isLMBLos (active = false) {
-  if (active) {
-    return dragHandlers[0] instanceof Los && dragHandlers[0].isDragging()
-  }
-  return dragHandlers[0] instanceof Los
+function setButtons (
+  left = new SelectAndDrag(),
+  center = new Grab(),
+  right = new SelectAndProperties()
+) {
+  dragHandlers[0] = left
+  dragHandlers[1] = center
+  dragHandlers[2] = right
 }
 
 /**
@@ -127,9 +115,9 @@ function touchMousePosition (x, y) {
 }
 
 const dragHandlers = [
-  new SelectAndDrag(), // LMB
-  new Grab(), // CMB
-  new SelectAndProperties() // RMB
+  null, // LMB
+  null, // CMB
+  null // RMB
 ]
 
 let dragCurrent = null // current 'move' handler
@@ -149,10 +137,7 @@ function mouseDown (mousedown) {
     dragHandlers[dragCurrent].cancel()
     dragCurrent = null
   }
-  if (mousedown.button === 0 && mousedown.shiftKey && !isLMBLos()) {
-    Dom.pointTo(getMouseCoords())
-    return
-  }
+  if (Room.getMode().mousedown(mousedown)) return
   if (dragHandlers?.[mousedown.button]) {
     dragCurrent = mousedown.button
     dragHandlers[dragCurrent].push(mousedown)

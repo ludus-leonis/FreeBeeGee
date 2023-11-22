@@ -217,6 +217,8 @@ function createOrUpdatePieceDOM (piece) {
  * Propagate selection of data/state to DOM.
  */
 function updateSelection () {
+  if (typeof document === 'undefined') return // not available in tests
+
   const selection = Selection.getIds()
   _('#tabletop .piece').each(node => {
     if (selection.includes(node.id)) {

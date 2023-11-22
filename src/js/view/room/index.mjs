@@ -31,8 +31,9 @@ import Icon from '../../lib/icon.mjs'
 import ModalDemo from '../../view/room/modal/demo.mjs'
 import ModalDisabled from '../../view/room/modal/disabled.mjs'
 import ModalHelp from '../../view/room/modal/help.mjs'
-import ModalLibrary from '../../view/room/library/index.mjs'
 import ModalSettings from '../../view/room/modal/settings.mjs'
+import ModeMain from './mode/Main.mjs'
+import ModeMeasure from './mode/Measure.mjs'
 import Mouse from '../../view/room/mouse/index.mjs'
 import Selection from './tabletop/selection.mjs'
 import State from '../../state/index.mjs'
@@ -40,20 +41,28 @@ import Sync from '../../view/room/sync.mjs'
 
 // -----------------------------------------------------------------------------
 
+const MODE = {
+  MAIN: 'MAIN',
+  MEASURE: 'MEASURE'
+}
+
 export default {
+  MODE,
+
+  getMode,
   getScrollPositionNative,
   getTableCoordinates,
   getViewCenter,
   restoreScrollPosition,
   runRoom,
   setCursor,
+  setMode,
   setScrollPositionNative,
   setupBackground,
   setupZoom,
   setViewCenter,
   toggleGrid,
   toggleLayer,
-  toggleLos,
   updateMenu,
   updateRoom,
   updateSelection,
@@ -64,6 +73,36 @@ export default {
 // -----------------------------------------------------------------------------
 
 /**
+ * Get the room's current mode specifics.
+ *
+ * @returns {object} Mode object.
+ */
+function getMode () {
+  return mode
+}
+
+/**
+ * Set the room's current mode .
+ *
+ * @param {string} m MODE.* to enable.
+ */
+function setMode (m) {
+  switch (m) {
+    case MODE.MEASURE:
+      mode?.quit()
+      State.setRoomPreference(State.PREF.MODE, MODE.MEASURE)
+      mode = new ModeMeasure()
+      break
+    case MODE.MAIN:
+    default:
+      mode?.quit()
+      State.setRoomPreference(State.PREF.MODE, MODE.MAIN)
+      mode = new ModeMain()
+  }
+  mode.enter()
+}
+
+/**
  * Set the room mouse cursor (pointer, cross, ...)
  *
  * @param {?string} cursor Cursor (class), or undefined to revert to default cursor.
@@ -72,10 +111,6 @@ function setCursor (cursor) {
   scroller.remove('.cursor-*')
   if (cursor) {
     scroller.add(cursor)
-  } else {
-    if (Mouse.isLMBLos()) {
-      scroller.add('.cursor-cross')
-    }
   }
 }
 
@@ -158,21 +193,6 @@ function toggleLayer (layer) {
 }
 
 /**
- * Toggle the ruler on/off.
- */
-function toggleLos () {
-  _('#btn-s').toggle('.active')
-  Mouse.toggleLMBLos()
-  if (Mouse.isLMBLos()) {
-    setCursor('.cursor-cross')
-    State.setRoomPreference(State.PREF.LOS, true)
-  } else {
-    setCursor()
-    State.setRoomPreference(State.PREF.LOS, false)
-  }
-}
-
-/**
  * Toggle grid display on/off.
  *
  * @param {number} value Grid value (0..2).
@@ -196,27 +216,7 @@ function toggleGrid (value) {
  * Mostly based on if a piece is selected or not.
  */
 function updateMenu () {
-  // (de)activate menu
-  const menu = _('.menu-selected')
-  const pieces = Selection.getPieces()
-
-  _('.menu-selected button').remove('.disabled')
-  _('.menu-selected button').add('.disabled')
-  if (pieces.length <= 0) {
-    menu.add('.disabled')
-  } else {
-    menu.remove('.disabled')
-
-    const features = Selection.getFeatures()
-    if (features.edit) _('#btn-e').remove('.disabled')
-    if (features.rotate) _('#btn-r').remove('.disabled')
-    if (features.flip) _('#btn-f').remove('.disabled')
-    if (features.random) _('#btn-hash').remove('.disabled')
-    if (features.top) _('#btn-t').remove('.disabled')
-    if (features.bottom) _('#btn-b').remove('.disabled')
-    if (features.clone) _('#btn-c').remove('.disabled')
-    if (features.delete) _('#btn-del').remove('.disabled')
-  }
+  mode.update()
 }
 
 /**
@@ -430,6 +430,8 @@ function updateSelection (node, toggle = false) {
 
 let scroller = null /** keep reference to scroller div - we need it often */
 
+let mode = null
+
 /**
  * Setup the room screen / HTML.
  */
@@ -438,21 +440,21 @@ function setupRoom () {
 
   const room = State.getRoom()
 
-  let mode = '.is-grid-square'
+  let grid = '.is-grid-square'
   switch (room.setup?.type) {
     case Content.GRID.HEX:
-      mode = '.is-grid-hex'
+      grid = '.is-grid-hex'
       State.setRoomPreference(State.PREF.PIECE_ROTATE, State.getRoomPreference(State.PREF.PIECE_ROTATE) ?? 60)
       break
     case Content.GRID.HEX2:
-      mode = '.is-grid-hex2'
+      grid = '.is-grid-hex2'
       State.setRoomPreference(State.PREF.PIECE_ROTATE, State.getRoomPreference(State.PREF.PIECE_ROTATE) ?? 60)
       break
     default: // square
       State.setRoomPreference(State.PREF.PIECE_ROTATE, State.getRoomPreference(State.PREF.PIECE_ROTATE) ?? 90)
   }
 
-  _('body').remove('.page-boxed').add(mode).innerHTML = `
+  _('body').remove('.page-boxed').add(grid).innerHTML = `
     <div id="room" class="room is-fullscreen is-noselect">
       <div class="menu">
         <div>
@@ -467,21 +469,7 @@ function setupRoom () {
             <button id="btn-tile" class="btn-icon" title="Toggle tiles [4]">${Icon.TILE}</button>
           </div>
 
-          <div class="spacing-small">
-            <button id="btn-s" class="btn-icon" title="Measure [m]">${Icon.RULER}</button>
-            <button id="btn-a" class="btn-icon" title="Open library [l]">${Icon.ADD}</button>
-          </div>
-
-          <div class="menu-selected disabled spacing-small">
-            <button id="btn-e" class="btn-icon" title="Edit [e]">${Icon.EDIT}</button>
-            <button id="btn-r" class="btn-icon" title="Rotate [r]">${Icon.ROTATE}</button>
-            <button id="btn-f" class="btn-icon" title="Flip [f]">${Icon.FLIP}</button>
-            <button id="btn-hash" class="btn-icon" title="Random [#]">${Icon.SHUFFLE}</button>
-            <button id="btn-t" class="btn-icon" title="To top [t]">${Icon.TOP}</button>
-            <button id="btn-b" class="btn-icon" title="To bottom [b]">${Icon.BOTTOM}</button>
-            <button id="btn-c" class="btn-icon" title="Copy [ctrl][c]">${Icon.COPY}</button>
-            <button id="btn-del" class="btn-icon" title="Delete [Del]">${Icon.DELETE}</button>
-          </div>
+          <div class="menu-mode spacing-small"></div>
         </div>
         <div>
           <button id="btn-h" class="btn-icon" title="Help [h]">${Icon.HELP}</button>
@@ -532,22 +520,11 @@ function setupRoom () {
     }
   }
 
-  if (State.getRoomPreference(State.PREF.LOS)) toggleLos()
-
-  // setup menu for selection
-  _('#btn-a').on('click', () => ModalLibrary.open(getViewCenter()))
-  _('#btn-e').on('click', () => Selection.edit())
-  _('#btn-r').on('click', () => Selection.rotate())
-  _('#btn-c').on('click', () => Selection.copy())
-  _('#btn-t').on('click', () => Selection.toTop())
-  _('#btn-b').on('click', () => Selection.toBottom())
-  _('#btn-f').on('click', () => Selection.flip())
-  _('#btn-s').on('click', () => toggleLos())
-  _('#btn-S').on('click', () => ModalSettings.open())
-  _('#btn-hash').on('click', () => Selection.flipRandom())
-  _('#btn-del').on('click', () => Selection.remove())
+  // game mode
+  setMode(State.getRoomPreference(State.PREF.MODE))
 
   // setup remaining menu
+  _('#btn-S').on('click', () => ModalSettings.open())
   _('#btn-h').on('click', () => ModalHelp.open())
   _('#btn-q').on('click', () => App.navigateToJoin(State.getRoom().name))
 
