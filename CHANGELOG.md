@@ -9,6 +9,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * added random rotation for pieces via Alt+r
 * added zoom-to-cursor for Ctrl+mousewheel
 * added (slight) random rotation to dice when rolled
+* added Tatami background and tweaked Carpet/Leather backgrounds
 
 ### Other changes
 

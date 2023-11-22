@@ -567,12 +567,12 @@ class FreeBeeGeeAPI
     {
         return [
             $this->getBackground('Cardboard', 'img/desktop-cardboard.jpg', '#B2997D', '#7F6D59'),
-            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#375F68', '#547C86'),
+            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#A99C82', '#766852'),
             $this->getBackground('Casino', 'img/desktop-casino.jpg', '#2D5B3D', '#3A7750'),
             $this->getBackground('Concrete', 'img/desktop-concrete.jpg', '#6C6964', '#494540'),
             $this->getBackground('Dark', 'img/desktop-dark.jpg', '#212121', '#444444'),
             $this->getBackground('Ice', 'img/desktop-ice.jpg', '#7B909D', '#BAC1C7'),
-            $this->getBackground('Leather', 'img/desktop-leather.jpg', '#3C2D26', '#6A4B40'),
+            $this->getBackground('Leather', 'img/desktop-leather.jpg', '#4F2A23', '#875D54'),
             $this->getBackground('Marble', 'img/desktop-marble.jpg', '#B6AB99', '#80725E'),
             $this->getBackground('Metal', 'img/desktop-metal.jpg', '#565859', '#3E3E3E'),
             $this->getBackground('Paper', 'img/desktop-paper.jpg', '#CBCBCB', '#989898'),
@@ -581,6 +581,7 @@ class FreeBeeGeeAPI
             $this->getBackground('Sand', 'img/desktop-sand.jpg', '#D7D2BF', '#A19E8F'),
             $this->getBackground('Snow', 'img/desktop-snow.jpg', '#FAFAFA', '#C9C9C9'),
             $this->getBackground('Space', 'img/desktop-space.jpg', '#101010', '#404040'),
+            $this->getBackground('Tatami', 'img/desktop-tatami.jpg', '#D2C49E', '#786C4A'),
             $this->getBackground('Wood', 'img/desktop-wood.jpg', '#524A43', '#3E3935'),
         ];
     }

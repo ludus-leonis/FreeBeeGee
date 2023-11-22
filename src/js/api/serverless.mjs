@@ -338,12 +338,12 @@ function api (data, headers) {
         root: root + 'api',
         backgrounds: [
           { name: 'Cardboard', image: 'img/desktop-cardboard.jpg', color: '#b2997d', scroller: '#7f6d59' },
-          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#375F68', scroller: '#547C86' },
+          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#A99C82', scroller: '#766852' },
           { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2D5B3D', scroller: '#3a7750' },
           { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#6C6964', scroller: '#494540' },
           { name: 'Dark', image: 'img/desktop-dark.jpg', color: '#212121', scroller: '#444444' },
           { name: 'Ice', image: 'img/desktop-ice.jpg', color: '#7B909D', scroller: '#BAC1C7' },
-          { name: 'Leather', image: 'img/desktop-leather.jpg', color: '#3C2D26', scroller: '#6a4b40' },
+          { name: 'Leather', image: 'img/desktop-leather.jpg', color: '#4F2A23', scroller: '#875D54' },
           { name: 'Marble', image: 'img/desktop-marble.jpg', color: '#B6AB99', scroller: '#80725e' },
           { name: 'Metal', image: 'img/desktop-metal.jpg', color: '#565859', scroller: '#3e3e3e' },
           { name: 'Paper', image: 'img/desktop-paper.jpg', color: '#cbcbcb', scroller: '#989898' },
@@ -352,6 +352,7 @@ function api (data, headers) {
           { name: 'Sand', image: 'img/desktop-sand.jpg', color: '#D7D2BF', scroller: '#a19e8f' },
           { name: 'Snow', image: 'img/desktop-snow.jpg', color: '#FAFAFA', scroller: '#C9C9C9' },
           { name: 'Space', image: 'img/desktop-space.jpg', color: '#101010', scroller: '#404040' },
+          { name: 'Tatami', image: 'img/desktop-tatami.jpg', color: '#D2C49E', scroller: '#786C4A' },
           { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3E3935' }
         ]
       }, headers)
