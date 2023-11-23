@@ -20,7 +20,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] linen material border
     * [X] token number material
     * [ ] upload preview - no shadow
-    * [ ] upload preview - no material on default token
+    * [X] upload preview - no material on default token
   * [ ] review docs
   * [ ] review tutorial
   * [ ] bump engine, version/codename & update CHANGELOG

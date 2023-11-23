@@ -20,6 +20,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * improved blue main menu bar
 * fixed pointer/los-line part of selection
 * fixed token label has sometimes odd cut-off
+* fixed missing material on default upload preview token
 * refactored imports and module responsibility
 
 

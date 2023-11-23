@@ -868,15 +868,16 @@ export function updatePreviewDOM (blob) {
     })
   } else { // show upload placeholder
     piece.css({
-      backgroundImage: url('img/upload.svg'),
-      backgroundRepeat: 'no-repeat'
+      backgroundImage: 'var(--fbg-material), url("img/upload.svg")',
+      backgroundRepeat: 'repeat, no-repeat',
+      backgroundPosition: 'center'
     })
     if (w <= 1 || h <= 1) {
-      piece.css({ backgroundSize: '32px' })
+      piece.css({ backgroundSize: '256px, 32px' })
     } else if (w <= 8 || h <= 8) {
-      piece.css({ backgroundSize: '64px' })
+      piece.css({ backgroundSize: '256px, 64px' })
     } else {
-      piece.css({ backgroundSize: '128px' })
+      piece.css({ backgroundSize: '256px, 128px' })
     }
   }
 
