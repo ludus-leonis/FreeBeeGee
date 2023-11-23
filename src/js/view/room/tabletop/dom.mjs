@@ -837,14 +837,25 @@ export function updatePreviewDOM (blob) {
 
   // add piece to DOM
   const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
-  if (type === Content.LAYER.STICKER || type === Content.LAYER.TILE) {
+  if (type === Content.LAYER.STICKER) {
     piece.css({ '--fbg-color': 'rgba(0,0,0,.05)' })
   } else {
-    piece.css({ '--fbg-color': '#202020' })
+    piece.css({ '--fbg-color': '#404040' })
   }
-  if (type === Content.LAYER.TOKEN) {
-    piece.add('.has-highlight')
+
+  // add shadow
+  switch (type) {
+    case Content.LAYER.TOKEN:
+    case Content.LAYER.TILE:
+      piece.add('.has-highlight', '.is-d-2')
+      break
+    case Content.LAYER.STICKER:
+      piece.add('.is-d-0')
+      break
+    default:
+      // nothing
   }
+
   piece.css({ '--fbg-material': url(getMaterialMedia(material)) })
 
   if (w > 16 || h > 16) {

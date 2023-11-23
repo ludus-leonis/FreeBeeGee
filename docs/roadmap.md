@@ -19,7 +19,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] long token label + 2 icons cutoff wrong
     * [X] linen material border
     * [X] token number material
-    * [ ] upload preview - no shadow
+    * [X] upload preview - no shadow
     * [X] upload preview - no material on default token
   * [ ] review docs
   * [ ] review tutorial
