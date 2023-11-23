@@ -8,7 +8,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] rotate dice on random
 * [X] random 360° rotation for pieces via Alt+r
 * [X] different blue menu for measure and non-measure mode
-* [ ] use png for mask + image in upload
+* [X] use png for mask
 * [ ] pre-release
   * [ ] bump dependencies
   * [ ] bugfixes + refactoring

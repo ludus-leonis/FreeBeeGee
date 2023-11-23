@@ -776,6 +776,14 @@ function pieceToNode (piece) {
       })
       const inner = _('.is-mask').create()
       node.add(inner)
+    } else if (asset.type !== Content.LAYER.TOKEN && uriSide.match(/\.png/i)) { // create map from png alpha
+      node.add('.has-mask').css({
+        '--fbg-mask': url(uriSide)
+      })
+      const inner = _('.is-mask').create()
+      node.add(inner)
+    } else if (piece._meta.hasHighlight) {
+      node.add('.has-highlight')
     }
 
     if (asset.d && asset.d >= 1 && asset.d <= 9) {
@@ -805,10 +813,6 @@ function pieceToNode (piece) {
       node.css({
         '--fbg-grid': url(State.getGridFile(asset.bg, 'major'))
       })
-    }
-
-    if (piece._meta.hasHighlight && !asset.mask) {
-      node.add('.has-highlight')
     }
   }
 
