@@ -37,8 +37,6 @@ export class Main extends Mode {
   enter () { // initialize UI
     const menu = _('.menu-mode')
     menu.innerHTML = `
-      <button id="btn-m" class="btn-icon" title="Measure mode [m]">${Icon.RULER}</button>
-
       <button id="btn-a" class="btn-icon" title="Open library [l]">${Icon.ADD}</button>
       <button id="btn-e" class="btn-icon" title="Edit [e]">${Icon.EDIT}</button>
       <button id="btn-r" class="btn-icon" title="Rotate [r]">${Icon.ROTATE}</button>
@@ -49,8 +47,6 @@ export class Main extends Mode {
       <button id="btn-c" class="btn-icon" title="Copy [ctrl][c]">${Icon.COPY}</button>
       <button id="btn-del" class="btn-icon" title="Delete [Del]">${Icon.DELETE}</button>
     `
-
-    _('#btn-m').on('click', () => Room.setMode(Room.MODE.MEASURE))
 
     _('#btn-a').on('click', () => ModalLibrary.open(Room.getViewCenter()))
     _('#btn-e').on('click', () => Selection.edit())
@@ -81,7 +77,6 @@ export class Main extends Mode {
     _('.menu-mode button').remove('.disabled')
     _('.menu-mode button').add('.disabled')
 
-    _('#btn-m').remove('.disabled')
     _('#btn-a').remove('.disabled')
     const features = Selection.getFeatures()
     if (features.edit) _('#btn-e').remove('.disabled')

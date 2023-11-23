@@ -59,16 +59,19 @@ export function getMode () {
  * @param {string} m MODE.* to enable.
  */
 export function setMode (m) {
+  _('.menu-modes button').remove('.active')
   switch (m) {
     case MODE.MEASURE:
       mode?.quit()
       State.setRoomPreference(State.PREF.MODE, MODE.MEASURE)
+      _('#btn-m2').add('.active')
       mode = new ModeMeasure()
       break
     case MODE.MAIN:
     default:
       mode?.quit()
       State.setRoomPreference(State.PREF.MODE, MODE.MAIN)
+      _('#btn-m1').add('.active')
       mode = new ModeMain()
   }
   mode.enter()
@@ -382,6 +385,11 @@ function setupRoom () {
             <button id="btn-tile" class="btn-icon" title="Toggle tiles [4]">${Icon.TILE}</button>
           </div>
 
+          <div class="menu-modes spacing-small">
+            <button id="btn-m1" class="btn-icon" title="Main mode [m]">${Icon.BALL}</button>
+            <button id="btn-m2" class="btn-icon" title="Measure mode [m]">${Icon.RULER}</button>
+          </div>
+
           <div class="menu-mode spacing-small"></div>
         </div>
         <div>
@@ -438,6 +446,8 @@ function setupRoom () {
 
   // setup remaining menu
   _('#btn-S').on('click', () => ModalSettings.open())
+  _('#btn-m1').on('click', () => setMode(MODE.MAIN))
+  _('#btn-m2').on('click', () => setMode(MODE.MEASURE))
   _('#btn-h').on('click', () => ModalHelp.open())
   _('#btn-q').on('click', () => App.navigateToJoin(State.getRoom().name))
 

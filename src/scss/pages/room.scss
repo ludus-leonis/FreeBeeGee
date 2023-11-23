@@ -63,22 +63,25 @@
       border-radius: 0;
       color: $color-white-100;
       margin: 0;
-      padding: $spacing-tiny $spacing-micro;
-
-      &.active {
-        color: $color-black-100;
-      }
+      padding: $spacing-micro;
 
       svg {
         height: px(20);
         width: px(20);
       }
+
+      &.active svg {
+        background-color: $color-white-100;
+        border-radius: 2px;
+        box-shadow: 0 0 0 2px $color-white-100;
+        color: $color-primary;
+      }
     }
 
     .btn-icon.disabled,
     .disabled > .btn-icon {
-      color: $color-white-25a;
       cursor: not-allowed;
+      opacity: .25;
     }
 
     > div {

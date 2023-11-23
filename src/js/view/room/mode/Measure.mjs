@@ -22,7 +22,6 @@
 import _ from '../../../lib/FreeDOM.mjs'
 import { Mode } from './_Mode.mjs'
 import * as Dom from '../tabletop/dom.mjs'
-import * as Icon from '../../../lib/icon.mjs'
 import * as Mouse from '../mouse/index.mjs'
 import * as Room from '../index.mjs'
 import { Grab } from '../mouse/Grab.mjs'
@@ -31,11 +30,7 @@ import { Los } from '../mouse/Los.mjs'
 export class Measure extends Mode {
   enter () { // initialize UI
     const menu = _('.menu-mode')
-    menu.innerHTML = `
-      <button id="btn-m" class="btn-icon" title="Play mode [m]">${Icon.BALL}</button>
-    `
-
-    _('#btn-m').on('click', () => Room.setMode(Room.MODE.MAIN))
+    menu.innerHTML = ''
 
     Mouse.setButtons(
       new Los(),
@@ -54,7 +49,6 @@ export class Measure extends Mode {
     // (de)activate menu
     _('.menu-mode button').remove('.disabled')
     _('.menu-mode button').add('.disabled')
-    _('#btn-m').remove('.disabled')
   }
 
   keydown (keydown) {
