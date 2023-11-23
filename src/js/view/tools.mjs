@@ -22,18 +22,10 @@ import * as bcrypt from 'bcryptjs'
 
 import _ from '../lib/FreeDOM.mjs'
 
-// -----------------------------------------------------------------------------
-
-export default {
-  setupBcrypt
-}
-
-// -----------------------------------------------------------------------------
-
 /**
  *
  */
-function setupBcrypt () {
+export function setupBcrypt () {
   _('#tool-bcrypt').innerHTML = `
     <p class="spacing-none">
       Let's create a nice bcrypt password hash for your <code>api/data/server.json</code>.

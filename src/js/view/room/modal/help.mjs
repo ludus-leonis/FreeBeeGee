@@ -22,24 +22,16 @@
 import { marked } from '../../../../../node_modules/marked/lib/marked.cjs'
 
 import _ from '../../../lib/FreeDOM.mjs'
-import Modal from '../../../view/room/modal.mjs'
-import State from '../../../state/index.mjs'
-import Util from '../../../lib/util.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  open
-}
-
-// -----------------------------------------------------------------------------
+import * as Modal from '../../../view/room/modal.mjs'
+import * as State from '../../../state/index.mjs'
+import * as Util from '../../../lib/util.mjs'
 
 /**
  * Show the help window.
  *
  * Contains basis help, shortcuts and an About section.
  */
-function open () {
+export function open () {
   if (!Modal.isOpen()) {
     Modal.create(true)
 

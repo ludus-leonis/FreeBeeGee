@@ -20,28 +20,20 @@
  */
 
 import _ from '../lib/FreeDOM.mjs'
-import Api from '../api/index.mjs'
-import App from '../app.mjs'
-import Error from './error.mjs'
-import Icon from '../lib/icon.mjs'
-import Screen from '../lib/screen.mjs'
-import State from '../state/index.mjs'
-import Text from '../lib/util-text.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  show
-}
-
-// -----------------------------------------------------------------------------
+import * as Api from '../api/index.mjs'
+import * as App from '../app.mjs'
+import * as Error from './error.mjs'
+import * as Icon from '../lib/icon.mjs'
+import * as Screen from '../lib/screen.mjs'
+import * as State from '../state/index.mjs'
+import * as Text from '../lib/util-text.mjs'
 
 /**
  * Show a setup-room dialog.
  *
  * @param {string} name The room name the user entered in the join dialog.
  */
-function show (name) {
+export function show (name) {
   if (State.getServerInfo().freeRooms <= 0) {
     Error.runError('NO_SLOT')
     return

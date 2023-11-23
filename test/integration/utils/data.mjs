@@ -26,7 +26,7 @@ import path from 'path'
 
 // HINT: testdata here is API data, not JS/populateDefaults() data
 
-const pieceMinimal = () => ({
+export const pieceMinimal = () => ({
   l: 1,
   a: 'p9Hr0300', // _.bead
   x: 2,
@@ -34,7 +34,7 @@ const pieceMinimal = () => ({
   z: 4
 })
 
-const pieceFull = () => ({
+export const pieceFull = () => ({
   id: 'Ta3RTTni',
   l: 4,
   a: 'ye4mx100', // _.number
@@ -52,7 +52,7 @@ const pieceFull = () => ({
   expires: 1234567890
 })
 
-const noteFull = () => ({
+export const noteFull = () => ({
   l: 3,
   x: 960,
   y: 1280,
@@ -88,14 +88,8 @@ const tableRaw = fs.readFileSync(
   'UTF-8'
 )
 
-export default {
-  pieceMinimal,
-  pieceFull,
-  noteFull,
-
-  server: function () { return JSON.parse(serverRaw) },
-  room: function () { return JSON.parse(roomRaw) },
-  roomHex: function () { return JSON.parse(roomHexRaw) },
-  roomHex2: function () { return JSON.parse(roomHex2Raw) },
-  table: function () { return JSON.parse(tableRaw) }
-}
+export const server = function () { return JSON.parse(serverRaw) }
+export const room = function () { return JSON.parse(roomRaw) }
+export const roomHex = function () { return JSON.parse(roomHexRaw) }
+export const roomHex2 = function () { return JSON.parse(roomHex2Raw) }
+export const table = function () { return JSON.parse(tableRaw) }

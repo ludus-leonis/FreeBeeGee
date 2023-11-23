@@ -20,18 +20,18 @@
  */
 
 import _ from '../../lib/FreeDOM.mjs'
-import Browser from '../../lib/util-browser.mjs'
-import Content from '../../view/room/tabletop/content.mjs'
-import Dom from '../../view/room/tabletop/dom.mjs'
-import Event from '../../lib/event.mjs'
-import Modal from '../../view/room/modal.mjs'
-import ModalHelp from '../../view/room/modal/help.mjs'
-import ModalSettings from '../../view/room/modal/settings.mjs'
-import Mouse from '../../view/room/mouse/index.mjs'
-import Room from '../../view/room/index.mjs'
-import State from '../../state/index.mjs'
-import Sync from '../../view/room/sync.mjs'
-import Window from '../../view/room/window.mjs'
+import * as Browser from '../../lib/util-browser.mjs'
+import * as Content from '../../view/room/tabletop/content.mjs'
+import * as Dom from '../../view/room/tabletop/dom.mjs'
+import * as Event from '../../lib/event.mjs'
+import * as Modal from '../../view/room/modal.mjs'
+import * as ModalHelp from '../../view/room/modal/help.mjs'
+import * as ModalSettings from '../../view/room/modal/settings.mjs'
+import * as Mouse from '../../view/room/mouse/index.mjs'
+import * as Room from '../../view/room/index.mjs'
+import * as State from '../../state/index.mjs'
+import * as Sync from '../../view/room/sync.mjs'
+import * as Window from '../../view/room/window.mjs'
 
 // -----------------------------------------------------------------------------
 
@@ -63,12 +63,10 @@ function handleRoomKeys (keydown) {
   }
 
   if (Mouse.isDragging() && !Modal.isOpen() && !Window.isOpen()) { // keys that work while dragging
-    switch (keydown.key) {
-      case ' ':
-        if (Mouse.isLMBLos(true)) Mouse.release(0)
-        keydown.stopPropagation()
-        keydown.preventDefault()
-        return
+    if (Room.getMode().keydrag(keydown)) {
+      keydown.stopPropagation()
+      keydown.preventDefault()
+      return
     }
   }
 

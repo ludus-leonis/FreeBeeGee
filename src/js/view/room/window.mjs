@@ -20,17 +20,7 @@
  */
 
 import _ from '../../lib/FreeDOM.mjs'
-import Sync from '../../view/room/sync.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  close,
-  create,
-  isOpen
-}
-
-// -----------------------------------------------------------------------------
+import * as Sync from '../../view/room/sync.mjs'
 
 let window = null // currently open instance
 
@@ -41,7 +31,7 @@ let window = null // currently open instance
  *
  * @returns {boolean} True, if there is a modal open.
  */
-function isOpen () {
+export function isOpen () {
   return window !== null
 }
 
@@ -50,7 +40,7 @@ function isOpen () {
  *
  * @returns {_} The modal's FreeDOM node ('#window').
  */
-function create () {
+export function create () {
   close()
   window = _('#window.window.is-noselect').create()
   window.add(_('.window-header').create())
@@ -65,7 +55,7 @@ function create () {
  *
  * Will also empty the `#modal` DOM node for reuse and trigger a new API poll.
  */
-function close () {
+export function close () {
   window = null
   _('.window').delete() // delete all DOM nodes
   Sync.startAutoSync() // might have gotten shut down in long-opened windows

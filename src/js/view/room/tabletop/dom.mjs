@@ -23,39 +23,26 @@
 import { marked } from '../../../../../node_modules/marked/lib/marked.cjs'
 
 import _ from '../../../lib/FreeDOM.mjs'
-import Browser from '../../../lib/util-browser.mjs'
-import Content from '../../../view/room/tabletop/content.mjs'
-import ModalEdit from '../../../view/room/modal/piece/index.mjs'
-import Popup from '../../../view/room/tabletop/popup.mjs'
-import Room from '../../../view/room/index.mjs'
-import Selection from './selection.mjs'
-import State from '../../../state/index.mjs'
-import Util from '../../../lib/util.mjs'
+import * as Browser from '../../../lib/util-browser.mjs'
+import * as Content from '../../../view/room/tabletop/content.mjs'
+import * as ModalEdit from '../../../view/room/modal/piece/index.mjs'
+import * as Popup from '../../../view/room/tabletop/popup.mjs'
+import * as Room from '../../../view/room/index.mjs'
+import * as Selection from './selection.mjs'
+import * as State from '../../../state/index.mjs'
+import * as Util from '../../../lib/util.mjs'
 
 // -----------------------------------------------------------------------------
 
-const ZOOM_LEVELS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
+export const ZOOM_LEVELS = [0.5, 0.75, 1, 1.25, 1.5, 1.75, 2]
 
-export default {
-  ZOOM_LEVELS,
+// ----------------------------------------------------------------------------
 
-  assetToNode,
-  createLosPiece,
-  createNote,
-  createSelectPiece,
-  getAssetURL,
-  getMaterialMedia,
-  getRoomMediaURL,
-  losTo,
-  moveContent,
-  moveNodeTo,
-  pointTo,
-  updatePreviewDOM,
-  updateQuality,
-  updateSelection,
-  updateTabletop,
-  url,
-  zoom
+/**
+ * Initialize Dom helper variables.
+ */
+export function init () {
+  scroller = _('#scroller')
 }
 
 // ----------------------------------------------------------------------------
@@ -67,7 +54,7 @@ export default {
  *
  * @param {number} value Quality setting. 0 = low, 1 = medium, 2 = high, 3 = ultra
  */
-function updateQuality (value) {
+export function updateQuality (value) {
   const body = _('body').remove('.is-quality-*')
   switch (State.getServerPreference(State.PREF.QUALITY)) {
     case 0:
@@ -96,7 +83,7 @@ function setTableSurface (no) {
   if (tabletop.tableNo !== no) { // no need to re-update unchanged no.
     tabletop.tableNo = no
     tabletop.remove('.table-*').add(`.table-${no}`)
-    Room.restoreScrollPosition()
+    restoreScrollPosition()
   }
 }
 
@@ -216,7 +203,7 @@ function createOrUpdatePieceDOM (piece) {
 /**
  * Propagate selection of data/state to DOM.
  */
-function updateSelection () {
+export function updateSelection () {
   if (typeof document === 'undefined') return // not available in tests
 
   const selection = Selection.getIds()
@@ -301,7 +288,7 @@ function setNote (note) {
  * @param {string} file File name.
  * @returns {string} URL to be used in a CSS url('..') expression.
  */
-function getRoomMediaURL (type, file) {
+export function getRoomMediaURL (type, file) {
   if (State.SERVERLESS) {
     return `demo/${State.getRoom().setup.name}/assets/${type}/${file}`
   } else {
@@ -317,7 +304,7 @@ function getRoomMediaURL (type, file) {
  * @param {string} name The material's name, e.g. 'wood'.
  * @returns {string} Media path, e.g. 'api/data/rooms/roomname/assets/material/wood.png'
  */
-function getMaterialMedia (name) {
+export function getMaterialMedia (name) {
   const material = State.getLibrary()?.material?.find(m => m.name === name)
   const filename = material?.media[0] ?? 'none.png'
   return getRoomMediaURL('material', filename)
@@ -330,7 +317,7 @@ function getMaterialMedia (name) {
  * @param {number} side Side/media to get, -2 = mask, -1 = base. Defaults to 0=first.
  * @returns {string} URL to be used in url() or img.src.
  */
-function getAssetURL (asset, side = 0) {
+export function getAssetURL (asset, side = 0) {
   if (side >= asset.media.length) {
     return getRoomMediaURL('material', 'none.png')
   }
@@ -364,7 +351,7 @@ function getAllPiecesIds () {
  * @param {number} side Side to use, defaults to 0 = first side.
  * @returns {_} Converted FreeDOM node (not added to DOM yet).
  */
-function assetToNode (asset, side = 0) {
+export function assetToNode (asset, side = 0) {
   const piece = Content.populatePieceDefaults({
     id: 'x' + asset.id,
     a: asset.id,
@@ -396,7 +383,7 @@ function assetToNode (asset, side = 0) {
  * @param {boolean} pin If true (optional), will append room id to pin caching.
  * @returns {_} Converted FreeDOM node (not added to DOM yet).
  */
-function url (file, pin = true) {
+export function url (file, pin = true) {
   let cache = ''
   if (pin) {
     const room = State.getRoom()
@@ -412,7 +399,7 @@ function url (file, pin = true) {
  *
  * @param {object} xy {x, y} coordinates (tile) where to add.
  */
-function createNote (xy) {
+export function createNote (xy) {
   Selection.clear()
   const snapped = Content.snap(xy.x, xy.y)
   ModalEdit.open(Content.populatePieceDefaults({
@@ -434,7 +421,7 @@ function createNote (xy) {
  * @param {number} offsetX Delta of new x position.
  * @param {number} offsetY Delta of new y position.
  */
-function moveContent (offsetX, offsetY) {
+export function moveContent (offsetX, offsetY) {
   const setup = State.getSetup()
   switch (setup.type) {
     case 'grid-hex':
@@ -474,7 +461,7 @@ function moveContent (offsetX, offsetY) {
  *
  * @param {number} tableNo Table number to display.
  */
-function updateTabletop (tableNo) {
+export function updateTabletop (tableNo) {
   const tableData = State.getTable(tableNo)
   const start = Date.now()
 
@@ -504,7 +491,7 @@ function updateTabletop (tableNo) {
  *
  * @param {object} coords {x, y} object, in table px.
  */
-function pointTo (coords) {
+export function pointTo (coords) {
   const setup = State.getSetup()
   const room = State.getRoom()
 
@@ -532,7 +519,7 @@ function pointTo (coords) {
  * @param {number} w Width of bounding box, can be negative.
  * @param {number} h Height of bounding box, can be negative.
  */
-function losTo (x, y, w, h) {
+export function losTo (x, y, w, h) {
   if (w !== 0 || h !== 0) {
     State.createPieces([{
       a: Content.ID.LOS,
@@ -553,7 +540,7 @@ function losTo (x, y, w, h) {
  * @param {number} x New x coordinate in px.
  * @param {number} y New y coordinate in px.
  */
-function moveNodeTo (element, x, y) {
+export function moveNodeTo (element, x, y) {
   if (element.piece.f & Content.FLAG.NO_MOVE) return // we do not move frozen pieces
   if (element.x === x && element.y === y) return // no need to move to same place
 
@@ -576,7 +563,7 @@ function moveNodeTo (element, x, y) {
  * @param {number} height Height in px. Can be negative.
  * @returns {_} FreeDOM node, not added to DOM yet.
  */
-function createLosPiece (x, y, width, height) {
+export function createLosPiece (x, y, width, height) {
   const zoom = State.getRoomPreference(State.PREF.ZOOM)
   x *= zoom
   y *= zoom
@@ -668,7 +655,7 @@ function createLosPiece (x, y, width, height) {
  * @param {number} height Height in px. Can be negative.
  * @returns {_} FreeDOM node, not added to DOM yet.
  */
-function createSelectPiece (x, y, width, height) {
+export function createSelectPiece (x, y, width, height) {
   const zoom = State.getRoomPreference(State.PREF.ZOOM)
   x *= zoom
   y *= zoom
@@ -708,7 +695,7 @@ function createSelectPiece (x, y, width, height) {
  * @param {number} steps If positive, zoom 1 step in. Otherwise zoom 1 step out.
  * @param {object} center Optional coordinates to zoom to as {x, y}. Defaults to screen center.
  */
-function zoom (steps, center = {}) {
+export function zoom (steps, center = {}) {
   const current = State.getRoomPreference(State.PREF.ZOOM)
 
   const viewCenter = Room.getViewCenter()
@@ -836,7 +823,7 @@ function pieceToNode (piece) {
  *
  * @param {string} blob The URL() image data loaded by the browser.
  */
-function updatePreviewDOM (blob) {
+export function updatePreviewDOM (blob) {
   const preview = _('.modal-library .is-preview-upload').remove('.is-*').add('.is-preview-upload')
   preview.innerHTML = ''
 
@@ -1002,4 +989,90 @@ function setItem (piece) {
 function markdown (content) {
   return marked.parse((content ?? '').replaceAll('<', '&lt;'))
     .replaceAll('<a ', '<a target="_blank" rel="noopener noreferrer" ')
+}
+
+// --- scroller ------------------------------------------------------------------------
+
+let scroller = null /** keep reference to scroller div - we need it often */
+
+/**
+ * Setup the scroller.
+ *
+ * @param {string} fgColor Main/foreground color.
+ * @param {string} bgColor Background color.
+ */
+export function setupScroller (fgColor, bgColor) {
+  // setup scroller
+  scroller = _('#scroller')
+  scroller.css({ // this is for moz://a
+    scrollbarColor: `${fgColor} ${bgColor}`,
+    '--fbg-color-scroll-fg': fgColor,
+    '--fbg-color-scroll-bg': bgColor
+  })
+}
+
+/**
+ * Get origin coordinates of tabletop/scroller pane (excl. navigation bar).
+ *
+ * @returns {object} browser bounds of scroller.
+ */
+export function getScrollerBounds () {
+  return scroller.node().getBoundingClientRect()
+}
+
+/**
+ * Get current top-left tabletop scroll position.
+ *
+ * @returns {object} Contains x and y in pixel.
+ */
+export function getScrollPosition () {
+  return {
+    x: scroller.scrollLeft,
+    y: scroller.scrollTop,
+    w: scroller.clientWidth,
+    h: scroller.clientHeight
+  }
+}
+
+/**
+ * Get current tabletop scroll position.
+ *
+ * @param {number} x X-coordinate.
+ * @param {number} y Y-coordinate.
+ */
+export function setScrollPosition (x, y) {
+  scroller.node().scrollTo(x, y)
+}
+
+/**
+ * Restore the scroll position from properties (if any).
+ *
+ * Defaults to the center of the table setup if no last scroll position ist known.
+ */
+function restoreScrollPosition () {
+  const last = State.getTablePreference(State.PREF.SCROLL)
+  const zoom = State.getRoomPreference(State.PREF.ZOOM)
+  const coords = {}
+  if (last.x && last.y) {
+    coords.x = last.x - Math.floor(scroller.clientWidth / 2 / zoom)
+    coords.y = last.y - Math.floor(scroller.clientHeight / 2 / zoom)
+  } else {
+    const center = Content.getSetupCenter()
+    coords.x = Math.floor(center.x - scroller.clientWidth / 2 / zoom)
+    coords.y = Math.floor(center.y - scroller.clientHeight / 2 / zoom)
+  }
+  const zoomed = Room.zoomCoordinates(coords)
+  scroller.node().scrollTo(zoomed.x, zoomed.y)
+}
+
+/**
+ * Set the room mouse cursor (pointer, cross, ...)
+ *
+ * @param {?string} cursor Cursor (class), or undefined to revert to default cursor.
+ */
+export function setCursor (cursor) {
+  scroller.remove('.cursor-*')
+  if (cursor) {
+    scroller.add(cursor)
+  }
 }

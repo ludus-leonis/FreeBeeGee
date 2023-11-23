@@ -21,14 +21,14 @@
 
 import _ from '../../../lib/FreeDOM.mjs'
 import { MouseButtonHandler } from './_MouseButtonHandler.mjs'
-import Content from '../../../view/room/tabletop/content.mjs'
-import Dom from '../../../view/room/tabletop/dom.mjs'
-import Mouse from '../../../view/room/mouse/index.mjs'
-import Room from '../../../view/room/index.mjs'
-import Selection from '../../../view/room/tabletop/selection.mjs'
-import State from '../../../state/index.mjs'
-import Text from '../../../lib/util-text.mjs'
-import Util from '../../../lib/util.mjs'
+import * as Content from '../../../view/room/tabletop/content.mjs'
+import * as Dom from '../../../view/room/tabletop/dom.mjs'
+import * as Mouse from '../../../view/room/mouse/index.mjs'
+import * as Room from '../../../view/room/index.mjs'
+import * as Selection from '../../../view/room/tabletop/selection.mjs'
+import * as State from '../../../state/index.mjs'
+import * as Text from '../../../lib/util-text.mjs'
+import * as Util from '../../../lib/util.mjs'
 
 export class SelectAndDrag extends MouseButtonHandler {
   constructor () {
@@ -94,7 +94,7 @@ export class SelectAndDrag extends MouseButtonHandler {
 
   cancel () {
     this.clear()
-    Room.setCursor()
+    Dom.setCursor()
   }
 
   clear () {
@@ -211,7 +211,7 @@ export class SelectAndDrag extends MouseButtonHandler {
 
   dragContinue (shiftKey) {
     if (!this.dragData.cursor) { // set cursor (only once)
-      Room.setCursor('.cursor-grab')
+      Dom.setCursor('.cursor-grab')
       this.dragData.cursor = true
     }
 

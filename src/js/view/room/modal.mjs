@@ -20,28 +20,16 @@
  */
 
 import _ from '../../lib/FreeDOM.mjs'
-import Sync from '../../view/room/sync.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  close,
-  create,
-  createConfirm,
-  isOpen,
-  open
-}
+import * as Sync from '../../view/room/sync.mjs'
 
 let modal = null /** Currently open Bootstrap modal instance */
-
-// --- public ------------------------------------------------------------------
 
 /**
  * Determine if the/a modal is currently open.
  *
  * @returns {boolean} True, if there is a modal open.
  */
-function isOpen () {
+export function isOpen () {
   return modal !== null
 }
 
@@ -53,7 +41,7 @@ function isOpen () {
  * @param {string} html Modal body content.
  * @returns {_} The modal's FreeDOM node ('#modal').
  */
-function createRaw (html) {
+export function createRaw (html) {
   const node = _('#modal.modal.is-noselect').create()
   node.tabindex = -1
   _('body').add(node)
@@ -87,7 +75,7 @@ function createRaw (html) {
  *                        regular (smaller) modal will be created.
  * @returns {_} The modal's FreeDOM node ('#modal').
  */
-function create (large = false) {
+export function create (large = false) {
   const node = createRaw(`
       <div class="modal-dialog">
         <div id="modal-content" class="modal-content">
@@ -106,7 +94,7 @@ function create (large = false) {
 /**
  * Open/show modal if it already exists. Will not create one.
  */
-function open () {
+export function open () {
   modal?.show()
 }
 
@@ -115,7 +103,7 @@ function open () {
  *
  * Will also empty the `#modal` DOM node for reuse and trigger a new API poll.
  */
-function close () {
+export function close () {
   if (isOpen()) {
     modal.dispose()
     modal = null
@@ -136,7 +124,7 @@ function close () {
  * @param {object} data Data to pass on to OK handler.
  * @param {Function} onOk Handler to call on OK click.
  */
-function createConfirm (title, body, button, data = {}, onOk = () => true) {
+export function createConfirm (title, body, button, data = {}, onOk = () => true) {
   if (!isOpen()) {
     create()
 

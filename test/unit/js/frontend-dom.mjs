@@ -20,10 +20,11 @@
 
 /* global describe, it, beforeEach */
 
-import Test, { expect } from '../../integration/utils/test.mjs'
+import * as Content from '../../../src/js/view/room/tabletop/content.mjs'
+import * as Dom from '../../../src/js/view/room/tabletop/dom.mjs'
 
-import Content from '../../../src/js/view/room/tabletop/content.mjs'
-import Dom from '../../../src/js/view/room/tabletop/dom.mjs'
+import * as Test from '../../integration/utils/test.mjs'
+const expect = Test.expect
 
 describe('Frontend - dom.mjs', function () {
   beforeEach(function () {

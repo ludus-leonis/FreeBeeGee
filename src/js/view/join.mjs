@@ -20,20 +20,12 @@
  */
 
 import _ from '../lib/FreeDOM.mjs'
-import App from '../app.mjs'
-import Browser from '../lib/util-browser.mjs'
-import Screen from '../lib/screen.mjs'
-import State from '../state/index.mjs'
-import Text from '../lib/util-text.mjs'
-import Util from '../lib/util.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  show
-}
-
-// -----------------------------------------------------------------------------
+import * as App from '../app.mjs'
+import * as Browser from '../lib/util-browser.mjs'
+import * as Screen from '../lib/screen.mjs'
+import * as State from '../state/index.mjs'
+import * as Text from '../lib/util-text.mjs'
+import * as Util from '../lib/util.mjs'
 
 /** Limit room names like hilariousGazingPenguin */
 const roomNameMaxLength = 48
@@ -41,7 +33,7 @@ const roomNameMaxLength = 48
 /**
  * Show the enter-name dialog.
  */
-function show () {
+export function show () {
   const ttl = State.getServerInfo().ttl
   const intro = State.SERVERLESS
     ? '<p>Welcome to the FreeBeeGee Demo!</p>'

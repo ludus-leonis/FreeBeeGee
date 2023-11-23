@@ -22,29 +22,19 @@
 import { createPopper } from '@popperjs/core'
 
 import _ from '../../../lib/FreeDOM.mjs'
-import Dom from '../../../view/room/tabletop/dom.mjs'
-import Icon from '../../../lib/icon.mjs'
-import ModalLibrary from '../../../view/room/library/index.mjs'
-import ModalSettings from '../../../view/room/modal/settings.mjs'
-import Room from '../../../view/room/index.mjs'
-import Selection from './selection.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  close,
-  piece,
-  table
-}
-
-// -----------------------------------------------------------------------------
+import * as Dom from '../../../view/room/tabletop/dom.mjs'
+import * as Icon from '../../../lib/icon.mjs'
+import * as ModalLibrary from '../../../view/room/library/index.mjs'
+import * as ModalSettings from '../../../view/room/modal/settings.mjs'
+import * as Room from '../../../view/room/index.mjs'
+import * as Selection from './selection.mjs'
 
 /**
  * Show the popup menu for a piece.
  *
  * @param {object} piece The piece.
  */
-function piece (piece) {
+export function piece (piece) {
   close()
   const popup = _('#popper.popup.is-content').create()
   const f = Selection.getFeatures()
@@ -86,7 +76,7 @@ function piece (piece) {
  *
  * @param {object} coords {x, y} coords to show the popup at.
  */
-function table (coords) {
+export function table (coords) {
   close()
   const anchor = _('#popper-anchor.popup-anchor').create()
   const popup = _('#popper.popup.is-content').create()
@@ -123,7 +113,7 @@ function table (coords) {
  *
  * @param {string} id If this optional ID is given, the popup is only removed if it belongs to it.
  */
-function close (id) {
+export function close (id) {
   const popper = _('#popper')
   if (id && popper.exists() && popper.node().for !== id) return
   popper.delete()

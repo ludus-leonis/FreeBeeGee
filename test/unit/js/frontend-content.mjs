@@ -20,10 +20,11 @@
 
 /* global describe, it, beforeEach */
 
-import Test, { expect } from '../../integration/utils/test.mjs'
+import * as Content from '../../../src/js/view/room/tabletop/content.mjs'
+import * as State from '../../../src/js/state/index.mjs'
 
-import Content from '../../../src/js/view/room/tabletop/content.mjs'
-import State from '../../../src/js/state/index.mjs'
+import * as Test from '../../integration/utils/test.mjs'
+const expect = Test.expect
 
 /**
  * Get current seconds.

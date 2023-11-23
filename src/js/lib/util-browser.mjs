@@ -19,19 +19,6 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
-export default {
-  brightness,
-  fakeTabularNums,
-  getGetParameter,
-  getStoreValue,
-  getStoreValues,
-  inputMaxLength,
-  removeStoreValue,
-  resizeImage,
-  setStoreValue,
-  toggleFullscreen
-}
-
 // --- HTML5 + browser ---------------------------------------------------------
 
 /**
@@ -40,7 +27,7 @@ export default {
  * @param {string} name Name of parameter.
  * @returns {string} Value of parameter. Defaults to '' if parameter is missing.
  */
-function getGetParameter (name) {
+export function getGetParameter (name) {
   if (typeof URLSearchParams === 'undefined') {
     return ''
   }
@@ -60,7 +47,7 @@ function getGetParameter (name) {
  *                        sessionStorage will be used.
  * @returns {(string | undefined)} Retrieved value.
  */
-function getStoreValues (key, local = true) {
+export function getStoreValues (key, local = true) {
   if (typeof Storage !== 'undefined') {
     const store = local ? globalThis.localStorage : globalThis.sessionStorage
     return JSON.parse(store.getItem(key) ?? '{}')
@@ -82,7 +69,7 @@ function getStoreValues (key, local = true) {
  *                        sessionStorage will be used.
  * @returns {(string | undefined)} Retrieved value.
  */
-function getStoreValue (key, property, local = true) {
+export function getStoreValue (key, property, local = true) {
   return getStoreValues(key, local)[property]
 }
 
@@ -97,7 +84,7 @@ function getStoreValue (key, property, local = true) {
  * @param {boolean} local If true, the localStorage will be used. Otherwise the
  *                        sessionStorage will be used.
  */
-function setStoreValue (key, property, value, local = true) {
+export function setStoreValue (key, property, value, local = true) {
   if (typeof Storage !== 'undefined') {
     const store = local ? globalThis.localStorage : globalThis.sessionStorage
     const prefs = JSON.parse(store.getItem(key) ?? '{}')
@@ -119,7 +106,7 @@ function setStoreValue (key, property, value, local = true) {
  * @param {boolean} local If true, the localStorage will be used. Otherwise the
  *                        sessionStorage will be used.
  */
-function removeStoreValue (key, local = true) {
+export function removeStoreValue (key, local = true) {
   if (typeof Storage !== 'undefined') {
     const store = local ? globalThis.localStorage : globalThis.sessionStorage
     store.removeItem(key)
@@ -133,7 +120,7 @@ function removeStoreValue (key, local = true) {
  *
  * @returns {boolean} True, if screen is now in fullscreen.
  */
-function toggleFullscreen () {
+export function toggleFullscreen () {
   if (typeof document === 'undefined') return false
   if (!document.fullscreenElement &&
       !document.mozFullScreenElement &&
@@ -177,7 +164,7 @@ function toggleFullscreen () {
  * @param {number} dimension Size to shrink to.
  * @returns {HTMLCanvasElement} Canvas with resized image. Does not honor aspect ratio and will deform.
  */
-function resizeImage (image, dimension) {
+export function resizeImage (image, dimension) {
   const canvas = document.createElement('canvas')
   canvas.width = dimension
   canvas.height = dimension
@@ -197,7 +184,7 @@ function resizeImage (image, dimension) {
  * @param {Function} callback Will be called after each content change with the current content length.
  * @returns {number} Current/trimmed content length in bytes.
  */
-function inputMaxLength (input, maxLength, callback) {
+export function inputMaxLength (input, maxLength, callback) {
   input.previousValue = input.value
 
   input.addEventListener('input', event => {
@@ -226,7 +213,7 @@ function inputMaxLength (input, maxLength, callback) {
  * @param {string} color E.g. '#ff0000'
  * @returns {number} Grayscale brightness of color (0..255), e.g. 85.
  */
-function brightness (color) {
+export function brightness (color) {
   if (color === 'transparent') return 255 // all and nothing
   const r = parseInt(color.substring(1, 3), 16)
   const g = parseInt(color.substring(3, 5), 16)
@@ -243,7 +230,7 @@ function brightness (color) {
  * @param {string} b Second string.
  * @returns {number} Length of the difference.
  */
-function getChangeLength (a, b) {
+export function getChangeLength (a, b) {
   let shorter = a.length < b.length ? a.split('') : b.split('')
   let longer = a.length < b.length ? b.split('') : a.split('')
 
@@ -269,7 +256,7 @@ function getChangeLength (a, b) {
  * @param {string} text String to parse for numbers.
  * @returns {string} HTML markup.
  */
-function fakeTabularNums (text) {
+export function fakeTabularNums (text) {
   return text.replace(/([0-9])/g, '<span class="is-tabular">$1</span>')
 }
 

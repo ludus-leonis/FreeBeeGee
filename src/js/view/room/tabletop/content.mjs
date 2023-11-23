@@ -22,20 +22,20 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
-import Dom from '../../../view/room/tabletop/dom.mjs'
-import State from '../../../state/index.mjs'
-import Text from '../../../lib/util-text.mjs'
-import Util from '../../../lib/util.mjs'
+import * as Dom from '../../../view/room/tabletop/dom.mjs'
+import * as State from '../../../state/index.mjs'
+import * as Text from '../../../lib/util-text.mjs'
+import * as Util from '../../../lib/util.mjs'
 
 // -----------------------------------------------------------------------------
 
-const FEATURE = {
+export const FEATURE = {
   DICEMAT: 'DICEMAT',
   DISCARD: 'DISCARD',
   DICE: 'DICE'
 }
 
-const FLAG = {
+export const FLAG = {
   NO_DELETE: 0b00000001,
   NO_CLONE: 0b00000010,
   NO_MOVE: 0b00000100,
@@ -46,19 +46,19 @@ const FLAG = {
   NOTE_TOPLEFT: 0b10000000
 }
 
-const GRID = {
+export const GRID = {
   SQUARE: 'grid-square',
   HEX: 'grid-hex',
   HEX2: 'grid-hex2'
 }
 
-const ID = {
+export const ID = {
   POINTER: 'ZZZZZZZZ',
   LOS: 'ZZZZZZZY',
   SELECT: 'ZZZZZZZZX'
 }
 
-const LAYER = {
+export const LAYER = {
   TILE: 'tile',
   STICKER: 'sticker',
   NOTE: 'note',
@@ -66,7 +66,7 @@ const LAYER = {
   OTHER: 'other'
 }
 
-const NOTE_COLOR = [
+export const NOTE_COLOR = [
   { name: 'Yellow', value: '#ffeba6' },
   { name: 'Orange', value: '#fdce97' },
   { name: 'Green', value: '#bffabb' },
@@ -74,61 +74,13 @@ const NOTE_COLOR = [
   { name: 'Pink', value: '#f4a0c6' }
 ]
 
-// -----------------------------------------------------------------------------
-
-export default {
-  FEATURE,
-  FLAG,
-  GRID,
-  ID,
-  LAYER,
-  NOTE_COLOR,
-
-  clampToTableSize,
-  clone,
-  countAssets,
-  createPieceFromAsset,
-  findAsset,
-  findLayerMaxZ,
-  findMaxZs,
-  findPiece,
-  findPiecesContained,
-  findPiecesExpired,
-  findRealClickTarget,
-  flip,
-  flipRandom,
-  getFeatures,
-  getSetupCenter,
-  getTopLeft,
-  grid,
-  moveTiles,
-  nameToLayer,
-  number,
-  pile,
-  populateLibraryDefaults,
-  populatePieceDefaults,
-  populatePiecesDefaults,
-  populateSetupDefaults,
-  rotateRandom,
-  remove,
-  rotate,
-  sanitizePiecePatch,
-  snap,
-  splitAssetFilename,
-  toBottom,
-  toggleBorder,
-  toggleColor,
-  toTop,
-
-  _private: {
-    findMinZs,
-    findPiecesWithin,
-    findPiecesWithinBounds,
-    getPieceBounds,
-    move,
-    populateAssetDefaults,
-    sortZ
-  }
+export const _private = {
+  findPiecesWithin,
+  findPiecesWithinBounds,
+  getPieceBounds,
+  move,
+  populateAssetDefaults,
+  sortZ
 }
 
 // -----------------------------------------------------------------------------
@@ -142,7 +94,7 @@ export default {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function clone (pieces, xy, nth = 1, api = true) {
+export function clone (pieces, xy, nth = 1, api = true) {
   const clones = []
   const toClone = pieces.filter(p => !(p.f & FLAG.NO_CLONE))
 
@@ -190,7 +142,7 @@ function clone (pieces, xy, nth = 1, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {object[]} Pieces to be moved.
  */
-function moveTiles (pieces, x, y, api = true) {
+export function moveTiles (pieces, x, y, api = true) {
   const setup = State.getSetup()
   pieces = sortPiecesXY(pieces).reverse()
 
@@ -265,7 +217,7 @@ function moveTiles (pieces, x, y, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {object[]} Pieces to be moved.
  */
-function move (pieces, x, y, lod = 3, api = true) {
+export function move (pieces, x, y, lod = 3, api = true) {
   const toPatch = []
   const features = []
   for (const piece of pieces) {
@@ -298,7 +250,7 @@ function move (pieces, x, y, lod = 3, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function toggleColor (pieces, api = true) {
+export function toggleColor (pieces, api = true) {
   const toPatch = []
   for (const piece of pieces) {
     if (piece._meta?.hasColor) {
@@ -320,7 +272,7 @@ function toggleColor (pieces, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function toggleBorder (pieces, api = true) {
+export function toggleBorder (pieces, api = true) {
   const toPatch = []
   for (const piece of pieces) {
     if (piece._meta?.hasBorder) {
@@ -340,7 +292,7 @@ function toggleBorder (pieces, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function rotateRandom (pieces, api = true) {
+export function rotateRandom (pieces, api = true) {
   const toPatch = []
   for (const piece of pieces) {
     toPatch.push(sanitizePiecePatch({
@@ -361,7 +313,7 @@ function rotateRandom (pieces, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function rotate (pieces, cw = true, api = true) {
+export function rotate (pieces, cw = true, api = true) {
   const toPatch = []
   const increment = State.getRoomPreference(State.PREF.PIECE_ROTATE)
   for (const piece of pieces) {
@@ -383,7 +335,7 @@ function rotate (pieces, cw = true, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function flip (pieces, forward = true, api = true) {
+export function flip (pieces, forward = true, api = true) {
   const toPatch = []
   for (const piece of pieces) {
     if (getFeatures([piece]).flip) {
@@ -406,7 +358,7 @@ function flip (pieces, forward = true, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function grid (pieces, api = true) {
+export function grid (pieces, api = true) {
   const toPatch = []
   for (const piece of pieces) {
     switch (piece.l) {
@@ -440,7 +392,7 @@ function grid (pieces, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function pile (pieces, randomize = false, api = true) {
+export function pile (pieces, randomize = false, api = true) {
   const features = getFeatures(pieces)
   const snapped = snap(features.boundingBox.center.x, features.boundingBox.center.y)
   const z = []
@@ -476,7 +428,7 @@ function pile (pieces, randomize = false, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function flipRandom (pieces, api = true) {
+export function flipRandom (pieces, api = true) {
   const toPatch = []
   for (const piece of pieces) {
     switch (piece._meta.feature) {
@@ -501,7 +453,7 @@ function flipRandom (pieces, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function toTop (pieces, api = true) {
+export function toTop (pieces, api = true) {
   const allPieces = findPiecesWithin(getFeatures(pieces).boundingBox)
   const zLower = findMaxZs(allPieces, pieces)
   const zUpper = {} // one z per layer
@@ -526,7 +478,7 @@ function toTop (pieces, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function toBottom (pieces, api = true) {
+export function toBottom (pieces, api = true) {
   const allPieces = findPiecesWithin(getFeatures(pieces).boundingBox)
   const zLower = findMinZs(allPieces, pieces)
   const zUpper = {} // one z per layer
@@ -551,7 +503,7 @@ function toBottom (pieces, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function remove (pieces, api = true) {
+export function remove (pieces, api = true) {
   const toRemove = []
   for (const piece of pieces) {
     if (!(piece.f & FLAG.NO_DELETE)) {
@@ -571,7 +523,7 @@ function remove (pieces, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function number (pieces, delta, api = true) {
+export function number (pieces, delta, api = true) {
   if (!delta) {
     return Promise.resolve()
   }
@@ -597,7 +549,7 @@ function number (pieces, delta, api = true) {
  * @param {object} center Optional {x, y} object of shifted target area.
  * @returns {object} Contains higest z per layer as {tile, token, ...}.
  */
-function findMaxZs (include, exclude = [], center = {}) {
+export function findMaxZs (include, exclude = [], center = {}) {
   if (center.x !== undefined) {
     // find z in shape of 'include' but around 'center' instead
     const box = getFeatures(include).boundingBox
@@ -623,7 +575,7 @@ function findMaxZs (include, exclude = [], center = {}) {
  * @param {string} layer Layer name.
  * @returns {number} highest z, e.g. 23.
  */
-function findLayerMaxZ (layer) {
+export function findLayerMaxZ (layer) {
   return findMaxZs(State.getLayer(layer))[layer] ?? 0
 }
 /**
@@ -645,7 +597,7 @@ function findMinZs (include, exclude = []) {
 
 // -----------------------------------------------------------------------------
 
-const LAYERS = [ // reverse order
+export const LAYERS = [ // reverse order
   LAYER.TILE,
   LAYER.STICKER,
   LAYER.NOTE,
@@ -659,7 +611,7 @@ const LAYERS = [ // reverse order
  * @param {number} layer Layer index, 1-based.
  * @returns {string} Layer name, e.g. 'sticker'.
  */
-function layerToName (layer) {
+export function layerToName (layer) {
   return LAYERS[layer - 1]
 }
 
@@ -669,7 +621,7 @@ function layerToName (layer) {
  * @param {string} name Name of layer, e.g. 'sticker'.
  * @returns {number} Layer index.
  */
-function nameToLayer (name) {
+export function nameToLayer (name) {
   return LAYERS.indexOf(name) + 1
 }
 
@@ -680,7 +632,7 @@ function nameToLayer (name) {
  * @param {number} no Table number, defaults to current one.
  * @returns {object} Piece, or null if not found.
  */
-function findPiece (id, no = State.getTableNo()) {
+export function findPiece (id, no = State.getTableNo()) {
   for (const piece of State.getTable(no)) {
     if (piece.id === id) {
       return piece
@@ -690,7 +642,7 @@ function findPiece (id, no = State.getTableNo()) {
   return null
 }
 
-const ASSET_TYPES = [
+export const ASSET_TYPES = [
   LAYER.TILE,
   LAYER.TOKEN,
   LAYER.STICKER,
@@ -705,7 +657,7 @@ const ASSET_TYPES = [
  * @param {string} layer Optional layer to limit/speed up search.
  * @returns {object} Asset, or null if not found.
  */
-function findAsset (id, layer = 'any') {
+export function findAsset (id, layer = 'any') {
   const library = State.getLibrary()
 
   for (const assetType of ASSET_TYPES) {
@@ -725,7 +677,7 @@ function findAsset (id, layer = 'any') {
  * @param {string} id Asset ID to lookup.
  * @returns {number} Count of pieces using that asset across all tables.
  */
-function countAssets (id) {
+export function countAssets (id) {
   let count = 0
 
   for (let no = 1; no <= 9; no++) {
@@ -750,7 +702,7 @@ function countAssets (id) {
  * @param {number} y Y coordinate of supposed center (defaults to piece.y)
  * @returns {object} Numeric coordinates as { top, left }.
  */
-function getTopLeft (piece, x = piece.x, y = piece.y) {
+export function getTopLeft (piece, x = piece.x, y = piece.y) {
   const jitterX = piece.l === LAYER.TOKEN ? Math.abs(Text.hash('x' + piece.id)) % 5 - 2 : 0
   const jitterY = piece.l === LAYER.TOKEN ? Math.abs(Text.hash('y' + piece.id)) % 5 - 2 : 0
 
@@ -836,7 +788,7 @@ function findPiecesWithinBounds (bounds, center = {}, padding = false) {
  * @param {number} no Table number, defaults to current one.
  * @returns {Array} Array of nodes/pieces that are in or touch that area.
  */
-function findPiecesContained (rect, layer = 'all', no = State.getTableNo()) {
+export function findPiecesContained (rect, layer = 'all', no = State.getTableNo()) {
   const pieces = []
 
   for (const piece of State.getTable(no)) {
@@ -856,7 +808,7 @@ function findPiecesContained (rect, layer = 'all', no = State.getTableNo()) {
  * @param {number} no Table number, defaults to current one.
  * @returns {Array} Array of nodes/pieces that are expired.
  */
-function findPiecesExpired (no = State.getTableNo()) {
+export function findPiecesExpired (no = State.getTableNo()) {
   const pieces = []
 
   const now = new Date()
@@ -892,7 +844,7 @@ function sortPiecesXY (pieces) {
  * @param {object[]} pieces Array of pieces.
  * @returns {object} Object with features & bounds.
  */
-function getFeatures (pieces) {
+export function getFeatures (pieces) {
   const semi = [FEATURE.DICEMAT, FEATURE.DISCARD]
 
   const features = pieces.length > 0
@@ -1000,7 +952,7 @@ function getFeatures (pieces) {
  * @param {string} pieceId Optional corresponding piece ID for additional tests.
  * @returns {object} Sanitized piece.
  */
-function sanitizePiecePatch (patch, pieceId = null) {
+export function sanitizePiecePatch (patch, pieceId = null) {
   const r = State.getRoom()
   const t = State.getSetup()
   const p = pieceId === null ? null : findPiece(pieceId)
@@ -1062,7 +1014,7 @@ function sanitizePiecePatch (patch, pieceId = null) {
  * @param {object} library Data object to populate.
  * @returns {Array} Setup for chaining.
  */
-function populateLibraryDefaults (library) {
+export function populateLibraryDefaults (library) {
   library.sticker = library.sticker ?? []
   library.tile = library.tile ?? []
   library.token = library.token ?? []
@@ -1092,7 +1044,7 @@ function populateLibraryDefaults (library) {
  * @param {object} setup Data object to populate.
  * @returns {Array} Setup for chaining.
  */
-function populateSetupDefaults (setup) {
+export function populateSetupDefaults (setup) {
   setup.borders = setup.borders ?? []
 
   setup._meta = {
@@ -1130,7 +1082,7 @@ function populateAssetDefaults (asset) {
  * @param {object} headers Optional headers object (for date checking).
  * @returns {object} Piece for chaining.
  */
-function populatePieceDefaults (piece, headers = null) {
+export function populatePieceDefaults (piece, headers = null) {
   const colors = State.getSetup()?.colors ?? []
 
   piece.l = layerToName(piece.l ?? 0)
@@ -1222,7 +1174,7 @@ function populatePieceDefaults (piece, headers = null) {
  * @param {object} headers Optional headers object (for date checking).
  * @returns {object[]} Pieces array for chaining.
  */
-function populatePiecesDefaults (pieces, headers = null) {
+export function populatePiecesDefaults (pieces, headers = null) {
   const nonExpired = []
   const now = new Date()
   for (const piece of pieces ?? []) {
@@ -1256,7 +1208,7 @@ function sortZ (pieces) {
  * @param {number} y Y-position (px).
  * @returns {object} Piece data object.
  */
-function createPieceFromAsset (assetId, x = 0, y = 0) {
+export function createPieceFromAsset (assetId, x = 0, y = 0) {
   const asset = findAsset(assetId)
   const xy = snap(x, y)
 
@@ -1283,7 +1235,7 @@ function createPieceFromAsset (assetId, x = 0, y = 0) {
  * @param {object} piece Piece to clamp.
  * @returns {object} Clamped piece.
  */
-function clampToTableSize (piece) {
+export function clampToTableSize (piece) {
   const room = State.getRoom()
   piece.x = Util.clamp(0, piece.x, room.width - 1)
   piece.y = Util.clamp(0, piece.y, room.height - 1)
@@ -1302,7 +1254,7 @@ function clampToTableSize (piece) {
  *                     4 = no snap
  * @returns {object} Closest grid vertex to original x/y as {x, y}.
  */
-function snap (x, y, lod = 3) {
+export function snap (x, y, lod = 3) {
   if (lod >= 4) return { x: Math.round(x), y: Math.round(y) } // disabled snap
 
   const setup = State.getSetup()
@@ -1328,7 +1280,7 @@ function snap (x, y, lod = 3) {
  * @param {number} no Table number. Defaults to current one.
  * @returns {object} Object with x and y.
  */
-function getSetupCenter (no = State.getTableNo()) {
+export function getSetupCenter (no = State.getTableNo()) {
   const pieces = State.getTable(no)
   if (pieces.length <= 0) { // use table center for empty tables
     const setup = State.getSetup()
@@ -1468,7 +1420,7 @@ function flipRandomPiece (piece, jiggle = true) {
  * @param {string} assetName Asset filename.
  * @returns {object} Parsed elements.
  */
-function splitAssetFilename (assetName) {
+export function splitAssetFilename (assetName) {
   const data = {}
 
   let match = assetName.match(/^(.*)\.[a-zA-Z0-9]+$/)
@@ -1616,7 +1568,7 @@ function isSolid (piece, x, y) {
  * @param {object} target If not null, the caller thinks this is the target.
  * @returns {Promise<Element>} Real click target.
  */
-function findRealClickTarget (node, coords, target = null) {
+export function findRealClickTarget (node, coords, target = null) {
   // find all potential pieces in all layers.
   const pieces = []
   if (node.piece) pieces.push(node.piece)

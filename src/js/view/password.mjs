@@ -20,16 +20,8 @@
  */
 
 import _ from '../lib/FreeDOM.mjs'
-import App from '../app.mjs'
-import Screen from '../lib/screen.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  show
-}
-
-// -----------------------------------------------------------------------------
+import * as App from '../app.mjs'
+import * as Screen from '../lib/screen.mjs'
 
 /**
  * Show a password dialog.
@@ -37,7 +29,7 @@ export default {
  * @param {string} roomName The room name the user entered in the join dialog.
  * @param {boolean} first If true, this is the first password attempt (no error message shown).
  */
-function show (roomName, first) {
+export function show (roomName, first) {
   Screen.create(
     'Room password required',
     `

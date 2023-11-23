@@ -20,15 +20,7 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
-import Modal from '../../../view/room/modal.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  open
-}
-
-// -----------------------------------------------------------------------------
+import * as Modal from '../../../view/room/modal.mjs'
 
 /**
  * Show the help window.
@@ -37,7 +29,7 @@ export default {
  *
  * @param {Function} callback Function to call upon modal close/wakeup.
  */
-function open (callback) {
+export function open (callback) {
   if (!Modal.isOpen()) {
     Modal.create()
 

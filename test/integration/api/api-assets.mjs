@@ -26,9 +26,10 @@
 
 import * as fs from 'fs'
 
-import Test, { expect } from '../utils/test.mjs'
+import * as Content from '../../../src/js/view/room/tabletop/content.mjs'
 
-import Content from '../../../src/js/view/room/tabletop/content.mjs'
+import * as Test from '../utils/test.mjs'
+const expect = Test.expect
 
 // -----------------------------------------------------------------------------
 

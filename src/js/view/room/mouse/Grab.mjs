@@ -20,8 +20,8 @@
  */
 
 import { MouseButtonHandler } from './_MouseButtonHandler.mjs'
-import Room from '../../../view/room/index.mjs'
-import Util from '../../../lib/util.mjs'
+import * as Dom from '../tabletop/dom.mjs'
+import * as Util from '../../../lib/util.mjs'
 
 export class Grab extends MouseButtonHandler {
   constructor () {
@@ -55,7 +55,7 @@ export class Grab extends MouseButtonHandler {
     this.grabbing = {
       startX: mousedown.clientX, // no need to compensate, as we
       startY: mousedown.clientY, // only calculate offset anyway
-      origin: Room.getScrollPositionNative(),
+      origin: Dom.getScrollPosition(),
       rectInner: tabletop.getBoundingClientRect(),
       rectOuter: tabletop.parentNode.getBoundingClientRect()
     }
@@ -66,7 +66,7 @@ export class Grab extends MouseButtonHandler {
   drag (mousemove) {
     if (this.isDragging()) {
       if (!this.grabbing.cursor) { // set cursor (only once)
-        Room.setCursor('.cursor-grab')
+        Dom.setCursor('.cursor-grab')
         this.grabbing.cursor = true
       }
 
@@ -80,7 +80,7 @@ export class Grab extends MouseButtonHandler {
         this.grabbing.origin.y + (this.grabbing.startY - mousemove.clientY),
         this.grabbing.rectInner.height - this.grabbing.rectOuter.height
       )
-      Room.setScrollPositionNative(scrollToX, scrollToY)
+      Dom.setScrollPosition(scrollToX, scrollToY)
       mousemove.preventDefault()
     }
   }
@@ -91,6 +91,6 @@ export class Grab extends MouseButtonHandler {
 
   cancel () {
     this.grabbing = null
-    Room.setCursor()
+    Dom.setCursor()
   }
 }

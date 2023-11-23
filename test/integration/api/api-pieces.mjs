@@ -24,7 +24,8 @@
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
-import Test, { expect } from '../utils/test.mjs'
+import * as Test from '../utils/test.mjs'
+const expect = Test.expect
 
 // -----------------------------------------------------------------------------
 

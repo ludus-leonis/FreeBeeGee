@@ -20,33 +20,25 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
-import Api from '../../../api/index.mjs'
-import Browser from '../../../lib/util-browser.mjs'
-import Content from '../../../view/room/tabletop/content.mjs'
-import Dom from '../../../view/room/tabletop/dom.mjs'
-import Icon from '../../../lib/icon.mjs'
-import Modal from '../../../view/room/modal.mjs'
-import ModalDisabled from '../../../view/room/modal/disabled.mjs'
-import Selection from '../../../view/room/tabletop/selection.mjs'
-import State from '../../../state/index.mjs'
-import Text from '../../../lib/util-text.mjs'
-import Util from '../../../lib/util.mjs'
-import WindowLibrary from './editor.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  open
-}
-
-// -----------------------------------------------------------------------------
+import * as Api from '../../../api/index.mjs'
+import * as Browser from '../../../lib/util-browser.mjs'
+import * as Content from '../../../view/room/tabletop/content.mjs'
+import * as Dom from '../../../view/room/tabletop/dom.mjs'
+import * as Icon from '../../../lib/icon.mjs'
+import * as Modal from '../../../view/room/modal.mjs'
+import * as ModalDisabled from '../../../view/room/modal/disabled.mjs'
+import * as Selection from '../../../view/room/tabletop/selection.mjs'
+import * as State from '../../../state/index.mjs'
+import * as Text from '../../../lib/util-text.mjs'
+import * as Util from '../../../lib/util.mjs'
+import * as WindowLibrary from './editor.mjs'
 
 /**
  * Show the pieces library modal.
  *
  * @param {object} xy {x, y} coordinates (tile) where to add.
  */
-function open (xy) {
+export function open (xy) {
   if (!Modal.isOpen()) {
     const node = Modal.create(true)
     node.xy = xy

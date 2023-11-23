@@ -23,61 +23,33 @@
 import shajs from 'sha.js'
 
 import _ from '../../lib/FreeDOM.mjs'
-import App from '../../app.mjs'
-import Browser from '../../lib/util-browser.mjs'
-import Content from '../../view/room/tabletop/content.mjs'
-import Dom from '../../view/room/tabletop/dom.mjs'
-import Icon from '../../lib/icon.mjs'
-import ModalDemo from '../../view/room/modal/demo.mjs'
-import ModalDisabled from '../../view/room/modal/disabled.mjs'
-import ModalHelp from '../../view/room/modal/help.mjs'
-import ModalSettings from '../../view/room/modal/settings.mjs'
-import ModeMain from './mode/Main.mjs'
-import ModeMeasure from './mode/Measure.mjs'
-import Mouse from '../../view/room/mouse/index.mjs'
-import Selection from './tabletop/selection.mjs'
-import State from '../../state/index.mjs'
-import Sync from '../../view/room/sync.mjs'
+import * as App from '../../app.mjs'
+import * as Browser from '../../lib/util-browser.mjs'
+import * as Content from '../../view/room/tabletop/content.mjs'
+import * as Dom from '../../view/room/tabletop/dom.mjs'
+import * as Icon from '../../lib/icon.mjs'
+import * as ModalDemo from '../../view/room/modal/demo.mjs'
+import * as ModalDisabled from '../../view/room/modal/disabled.mjs'
+import * as ModalHelp from '../../view/room/modal/help.mjs'
+import * as ModalSettings from '../../view/room/modal/settings.mjs'
+import { Main as ModeMain } from './mode/Main.mjs'
+import { Measure as ModeMeasure } from './mode/Measure.mjs'
+import * as Mouse from '../../view/room/mouse/index.mjs'
+import * as Selection from './tabletop/selection.mjs'
+import * as State from '../../state/index.mjs'
+import * as Sync from '../../view/room/sync.mjs'
 
-// -----------------------------------------------------------------------------
-
-const MODE = {
+export const MODE = {
   MAIN: 'MAIN',
   MEASURE: 'MEASURE'
 }
-
-export default {
-  MODE,
-
-  getMode,
-  getScrollPositionNative,
-  getTableCoordinates,
-  getViewCenter,
-  restoreScrollPosition,
-  runRoom,
-  setCursor,
-  setMode,
-  setScrollPositionNative,
-  setupBackground,
-  setupZoom,
-  setViewCenter,
-  toggleGrid,
-  toggleLayer,
-  updateMenu,
-  updateRoom,
-  updateSelection,
-  updateStatusline,
-  zoomCoordinates
-}
-
-// -----------------------------------------------------------------------------
 
 /**
  * Get the room's current mode specifics.
  *
  * @returns {object} Mode object.
  */
-function getMode () {
+export function getMode () {
   return mode
 }
 
@@ -86,7 +58,7 @@ function getMode () {
  *
  * @param {string} m MODE.* to enable.
  */
-function setMode (m) {
+export function setMode (m) {
   switch (m) {
     case MODE.MEASURE:
       mode?.quit()
@@ -103,48 +75,15 @@ function setMode (m) {
 }
 
 /**
- * Set the room mouse cursor (pointer, cross, ...)
- *
- * @param {?string} cursor Cursor (class), or undefined to revert to default cursor.
- */
-function setCursor (cursor) {
-  scroller.remove('.cursor-*')
-  if (cursor) {
-    scroller.add(cursor)
-  }
-}
-
-/**
- * Get current top-left tabletop scroll position.
- *
- * @returns {object} Contains x and y in pixel.
- */
-function getScrollPositionNative () {
-  return {
-    x: scroller.scrollLeft,
-    y: scroller.scrollTop
-  }
-}
-
-/**
- * Get current tabletop scroll position.
- *
- * @param {number} x X-coordinate.
- * @param {number} y Y-coordinate.
- */
-function setScrollPositionNative (x, y) {
-  scroller.node().scrollTo(x, y)
-}
-
-/**
  * Get current center of the viewport of the scroll position.
  *
  * @returns {object} Contains tablespace x and y in pixel.
  */
-function getViewCenter () {
+export function getViewCenter () {
+  const scroll = Dom.getScrollPosition()
   return zoomCoordinates({
-    x: scroller.scrollLeft + Math.floor(scroller.clientWidth / 2),
-    y: scroller.scrollTop + Math.floor(scroller.clientHeight / 2)
+    x: scroll.x + Math.floor(scroll.w / 2),
+    y: scroll.y + Math.floor(scroll.h / 2)
   }, -1)
 }
 
@@ -154,13 +93,14 @@ function getViewCenter () {
  * @param {number} x X-coordinate in tabletop px.
  * @param {number} y Y-coordinate in tabletop px.
  */
-function setViewCenter (x, y) {
+export function setViewCenter (x, y) {
   const zoom = State.getRoomPreference(State.PREF.ZOOM)
+  const scroll = Dom.getScrollPosition()
   const newCenter = zoomCoordinates({
-    x: Math.floor(x - scroller.clientWidth / 2 / zoom),
-    y: Math.floor(y - scroller.clientHeight / 2 / zoom)
+    x: Math.floor(x - scroll.w / 2 / zoom),
+    y: Math.floor(y - scroll.h / 2 / zoom)
   })
-  setScrollPositionNative(newCenter.x, newCenter.y)
+  Dom.setScrollPosition(newCenter.x, newCenter.y)
 }
 
 /**
@@ -169,7 +109,7 @@ function setViewCenter (x, y) {
  * @param {string} name Name of room, e.g. hilariousGazingPenguin.
  * @param {string} token API access token for this room.
  */
-function runRoom (name, token) {
+export function runRoom (name, token) {
   console.info('$NAME$ v$VERSION$, room ' + name)
 
   State.loadRoom(name, token)
@@ -181,7 +121,7 @@ function runRoom (name, token) {
  *
  * @param {string} layer Either LAYER.TILE, LAYER.STICKER or LAYER.TOKEN.
  */
-function toggleLayer (layer) {
+export function toggleLayer (layer) {
   _('#btn-' + layer).toggle('.active')
   _('#tabletop').toggle('.layer-' + layer + '-enabled')
   if (_('#btn-' + layer + '.active').exists()) {
@@ -197,7 +137,7 @@ function toggleLayer (layer) {
  *
  * @param {number} value Grid value (0..2).
  */
-function toggleGrid (value) {
+export function toggleGrid (value) {
   switch (value) {
     case 0:
     case 1:
@@ -215,7 +155,7 @@ function toggleGrid (value) {
  *
  * Mostly based on if a piece is selected or not.
  */
-function updateMenu () {
+export function updateMenu () {
   mode.update()
 }
 
@@ -226,7 +166,7 @@ function updateMenu () {
  *
  * @returns {_} Room FreeDOM element for further customization.
  */
-function updateRoom () {
+export function updateRoom () {
   const room = State.getRoom()
 
   return _('#tabletop').css({
@@ -244,12 +184,13 @@ function updateRoom () {
  * @param {number} windowY A window y coordinate e.g. from a click event.
  * @returns {object} The absolute room coordinate as {x, y}.
  */
-function getTableCoordinates (windowX, windowY) {
-  const origin = scroller.node().getBoundingClientRect()
+export function getTableCoordinates (windowX, windowY) {
+  const origin = Dom.getScrollerBounds()
+  const pos = Dom.getScrollPosition()
 
   return zoomCoordinates({
-    x: windowX - origin.left + scroller.scrollLeft,
-    y: windowY - origin.top + scroller.scrollTop
+    x: windowX - origin.left + pos.x,
+    y: windowY - origin.top + pos.y
   }, -1)
 }
 
@@ -262,7 +203,7 @@ function getTableCoordinates (windowX, windowY) {
  * @param {number} direction 1 = multiply, -1 = divide
  * @returns {object} Zoom coordinates as {x, y}.
  */
-function zoomCoordinates (coords, direction = 1) {
+export function zoomCoordinates (coords, direction = 1) {
   if (coords.zoom) {
     const zzoom = direction > 0 ? coords.zoom : (1 / coords.zoom)
     return {
@@ -283,7 +224,7 @@ function zoomCoordinates (coords, direction = 1) {
 /**
  * Update the status line (clock etc.).
  */
-function updateStatusline () {
+export function updateStatusline () {
   const time = new Date().toLocaleTimeString('de', {
     hour12: false,
     hour: '2-digit',
@@ -301,32 +242,11 @@ function updateStatusline () {
 }
 
 /**
- * Restore the scroll position from properties (if any).
- *
- * Defaults to the center of the table setup if no last scroll position ist known.
- */
-function restoreScrollPosition () {
-  const last = State.getTablePreference(State.PREF.SCROLL)
-  const zoom = State.getRoomPreference(State.PREF.ZOOM)
-  const coords = {}
-  if (last.x && last.y) {
-    coords.x = last.x - Math.floor(scroller.clientWidth / 2 / zoom)
-    coords.y = last.y - Math.floor(scroller.clientHeight / 2 / zoom)
-  } else {
-    const center = Content.getSetupCenter()
-    coords.x = Math.floor(center.x - scroller.clientWidth / 2 / zoom)
-    coords.y = Math.floor(center.y - scroller.clientHeight / 2 / zoom)
-  }
-  const zoomed = zoomCoordinates(coords)
-  scroller.node().scrollTo(zoomed.x, zoomed.y)
-}
-
-/**
  * Set table magnification.
  *
  * @param {number} zoom Zoom factor. 1 is no zoom / 100%.
  */
-function setupZoom (zoom) {
+export function setupZoom (zoom) {
   const center = getViewCenter()
   State.setRoomPreference(State.PREF.ZOOM, zoom)
   const tabletop = _('#tabletop')
@@ -347,7 +267,7 @@ function setupZoom (zoom) {
 /**
  * Set backround to tabletop.
  */
-function setupBackground () {
+export function setupBackground () {
   const room = State.getRoom()
   const gridType = State.getRoomPreference(State.PREF.GRID)
   const background = State.getBackground()
@@ -393,12 +313,7 @@ function setupBackground () {
     })
   }
 
-  // setup scroller
-  scroller.css({ // this is for moz://a
-    scrollbarColor: `${background.scroller} ${background.color}`,
-    '--fbg-color-scroll-fg': background.scroller,
-    '--fbg-color-scroll-bg': background.color
-  })
+  Dom.setupScroller(background.scroller, background.color)
 }
 
 /**
@@ -408,7 +323,7 @@ function setupBackground () {
  * @param {boolean} toggle If false (default), selection replaces all previous.
  *                         If true, selection is added/removed (crtl-click).
  */
-function updateSelection (node, toggle = false) {
+export function updateSelection (node, toggle = false) {
   if (toggle) {
     if (node) {
       Selection.selectNode(node, true)
@@ -427,8 +342,6 @@ function updateSelection (node, toggle = false) {
 }
 
 // --- internal ----------------------------------------------------------------
-
-let scroller = null /** keep reference to scroller div - we need it often */
 
 let mode = null
 
@@ -493,9 +406,6 @@ function setupRoom () {
     </div>
   `
 
-  // keep global reference for scroll-tracking
-  scroller = _('#scroller')
-
   // load preferences
   Dom.updateQuality()
 
@@ -520,6 +430,9 @@ function setupRoom () {
     }
   }
 
+  setupBackground()
+  setupZoom(State.getRoomPreference(State.PREF.ZOOM))
+
   // game mode
   setMode(State.getRoomPreference(State.PREF.MODE))
 
@@ -527,9 +440,6 @@ function setupRoom () {
   _('#btn-S').on('click', () => ModalSettings.open())
   _('#btn-h').on('click', () => ModalHelp.open())
   _('#btn-q').on('click', () => App.navigateToJoin(State.getRoom().name))
-
-  setupBackground()
-  setupZoom(State.getRoomPreference(State.PREF.ZOOM))
 
   _('body').on('contextmenu', e => e.preventDefault())
 

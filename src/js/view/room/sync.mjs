@@ -20,23 +20,15 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import Api from '../../api/index.mjs'
-import Content from '../../view/room/tabletop/content.mjs'
-import Dom from '../../view/room/tabletop/dom.mjs'
-import Error from '../../view/error.mjs'
-import Event from '../../lib/event.mjs'
-import ModalInactive from '../../view/room/modal/inactive.mjs'
-import Room from '../../view/room/index.mjs'
-import State from '../../state/index.mjs'
-import Util from '../../lib/util.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  startAutoSync,
-  stopAutoSync,
-  touch
-}
+import * as Api from '../../api/index.mjs'
+import * as Content from '../../view/room/tabletop/content.mjs'
+import * as Dom from '../../view/room/tabletop/dom.mjs'
+import * as Error from '../../view/error.mjs'
+import * as Event from '../../lib/event.mjs'
+import * as ModalInactive from '../../view/room/modal/inactive.mjs'
+import * as Room from '../../view/room/index.mjs'
+import * as State from '../../state/index.mjs'
+import * as Util from '../../lib/util.mjs'
 
 // --- events ------------------------------------------------------------------
 
@@ -66,7 +58,7 @@ Event.register('Sync', Event.HOOK.SYNCNOW, (forceUIUpdate = false) => {
  *
  * @param {Function} callback Optional function to call after first sync.
  */
-function startAutoSync (callback = null) {
+export function startAutoSync (callback = null) {
   touch()
   scheduleSync(0, callback)
 }
@@ -74,7 +66,7 @@ function startAutoSync (callback = null) {
 /**
  * Stop/pause the automatic polling in the background.
  */
-function stopAutoSync () {
+export function stopAutoSync () {
   setTimeout(() => {
     syncNextMs = -1
     clearTimeout(syncTimeout)
@@ -87,7 +79,7 @@ function stopAutoSync () {
  * @param {?boolean} remote If true, the remote timestamp is touched. Otherwise
  *                          the local is.
  */
-function touch (remote = false) {
+export function touch (remote = false) {
   if (remote) {
     lastRemoteActivity = Date.now()
   } else {

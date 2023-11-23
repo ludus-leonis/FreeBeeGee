@@ -20,22 +20,14 @@
  */
 
 import _ from '../lib/FreeDOM.mjs'
-import Screen from '../lib/screen.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  show
-}
-
-// -----------------------------------------------------------------------------
+import * as Screen from '../lib/screen.mjs'
 
 /**
  * Show a install-site dialog
  *
  * @param {string} page A page of the setup wizard. Currenly always 1.
  */
-function show (page) {
+export function show (page) {
   Screen.create(
     'Almost there!',
     `

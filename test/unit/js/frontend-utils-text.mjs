@@ -22,7 +22,7 @@
 
 import { expect } from '../../integration/utils/test.mjs'
 
-import Text from '../../../src/js/lib/util-text.mjs'
+import * as Text from '../../../src/js/lib/util-text.mjs'
 
 describe('Frontend - util-text.mjs', function () {
   it('uuid()', function () {

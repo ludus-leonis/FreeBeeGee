@@ -19,26 +19,18 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import Content from '../../../../view/room/tabletop/content.mjs'
-import Event from '../../../../lib/event.mjs'
-import Modal from '../../../../view/room/modal.mjs'
-import State from '../../../../state/index.mjs'
-import Text from '../../../../lib/util-text.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  open
-}
-
-// -----------------------------------------------------------------------------
+import * as Content from '../../../../view/room/tabletop/content.mjs'
+import * as Event from '../../../../lib/event.mjs'
+import * as Modal from '../../../../view/room/modal.mjs'
+import * as State from '../../../../state/index.mjs'
+import * as Text from '../../../../lib/util-text.mjs'
 
 /**
  * Show the confirmation modal to delete an asset.
  *
  * @param {string} asset Asset to be deleted.
  */
-function open (asset) {
+export function open (asset) {
   const amount = Content.countAssets(asset.id)
   Modal.createConfirm(
     '<h3 class="modal-title">Delete asset?</h3>',

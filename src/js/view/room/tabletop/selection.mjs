@@ -22,47 +22,14 @@
 // This only operates on state, not on DOM.
 // Selection is different for each table and always applies to current one.
 
-import Content from '../../../view/room/tabletop/content.mjs'
-import Dom from '../../../view/room/tabletop/dom.mjs'
-import ModalEdit from '../../../view/room/modal/piece/index.mjs'
-import State from '../../../state/index.mjs'
+import * as Content from '../../../view/room/tabletop/content.mjs'
+import * as Dom from '../../../view/room/tabletop/dom.mjs'
+import * as ModalEdit from '../../../view/room/modal/piece/index.mjs'
+import * as State from '../../../state/index.mjs'
 
-// -----------------------------------------------------------------------------
-
-export default {
-  clear,
-  clipboardGetPieces,
-  clone,
-  cut,
-  copy,
-  edit,
-  flip,
-  flipRandom,
-  getFeatures,
-  getIds,
-  getPieces,
-  grid,
-  isSelectedId,
-  moveTiles,
-  number,
-  paste,
-  pile,
-  remove,
-  rotate,
-  rotateRandom,
-  select,
-  selectAll,
-  selectNode,
-  toBottom,
-  toggleBorder,
-  toggleColor,
-  toTop,
-  unselect,
-
-  _private: {
-    selectionReset: function () { // exposed only for testing
-      selectionIds = [[], [], [], [], [], [], [], [], [], []]
-    }
+export const _private = {
+  selectionReset: function () { // exposed only for testing
+    selectionIds = [[], [], [], [], [], [], [], [], [], []]
   }
 }
 
@@ -75,7 +42,7 @@ export default {
  * @param {boolean} forced If false (default), selection will only happen if piece exists.
  * @returns {boolean} True if id could be found and added, false otherwise.
  */
-function select (id, forced = false) {
+export function select (id, forced = false) {
   const piece = Content.findPiece(id)
   if ([Content.ID.POINTER, Content.ID.LOS].includes(piece?.a)) return false
   if ((piece || forced) && !getIds().includes(id)) {
@@ -88,7 +55,7 @@ function select (id, forced = false) {
 /**
  * Add all pieces on the table to the selection.
  */
-function selectAll () {
+export function selectAll () {
   const layers = {}
   for (const layer of [Content.LAYER.TILE, Content.LAYER.TOKEN, Content.LAYER.STICKER, Content.LAYER.OTHER]) {
     layers[layer] = State.isLayerActive(layer)
@@ -108,7 +75,7 @@ function selectAll () {
  * @param {string} id Piece id to remove.
  * @returns {boolean} True if id could be found and was unselected, false otherwise
  */
-function unselect (id) {
+export function unselect (id) {
   const piece = Content.findPiece(id)
   if (piece && getIds().includes(id)) {
     const selection = getIds()
@@ -124,7 +91,7 @@ function unselect (id) {
  * @param {string} layer Either LAYER.TILE, LAYER.STICKER or LAYER.TOKEN to clear a specific
  *                       layer, or 'all' for all layers.
  */
-function clear (layer = 'all') {
+export function clear (layer = 'all') {
   for (const piece of getPieces(layer)) {
     unselect(piece.id)
   }
@@ -137,7 +104,7 @@ function clear (layer = 'all') {
  * @param {string} id ID to check.
  * @returns {boolean} True, if this element is selected.
  */
-function isSelectedId (id) {
+export function isSelectedId (id) {
   return getIds().includes(id)
 }
 
@@ -148,7 +115,7 @@ function isSelectedId (id) {
  * @param {boolean} toggle If false (default), selection replaces all previous.
  *                         If true, selection is added/removed.
  */
-function selectNode (node, toggle = false) {
+export function selectNode (node, toggle = false) {
   if (toggle) { // toggle-selects add/remove one item to the selection
     // no change on table click
     if (node.id === 'tabletop') return
@@ -182,7 +149,7 @@ function selectNode (node, toggle = false) {
  *                       layer, or 'all' for all layers.
  * @returns {object[]} Possibly empty array of selected pieces.
  */
-function getPieces (layer = 'all') {
+export function getPieces (layer = 'all') {
   const selected = []
   for (const piece of State.getTable()) {
     if (layer === 'all' || piece.l === layer) {
@@ -197,7 +164,7 @@ function getPieces (layer = 'all') {
  *
  * @returns {object[]} Possibly empty array of selected pieces.
  */
-function getIds () {
+export function getIds () {
   return selectionIds[State.getTableNo()]
 }
 
@@ -206,7 +173,7 @@ function getIds () {
  *
  * @returns {object} Object with features true/false.
  */
-function getFeatures () {
+export function getFeatures () {
   return Content.getFeatures(getPieces())
 }
 
@@ -215,7 +182,7 @@ function getFeatures () {
  *
  * @returns {object} Object with features true/false.
  */
-function clipboardGetPieces () {
+export function clipboardGetPieces () {
   return clipboard.pieces
 }
 
@@ -230,7 +197,7 @@ function clipboardGetPieces () {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function clone (xy, api = true) {
+export function clone (xy, api = true) {
   const toClone = getPieces()
   clear()
   return Content.clone(toClone, xy, 1, api)
@@ -243,7 +210,7 @@ function clone (xy, api = true) {
  *
  * @param {boolean} cut If true, selection was cut. Stored for later.
  */
-function copy (cut = false) {
+export function copy (cut = false) {
   clipboard.pieces = getPieces()
   clipboard.pastes = 1
 }
@@ -251,7 +218,7 @@ function copy (cut = false) {
 /**
  * Cut the currently selected piece(s) into our clipboard.
  */
-function cut () {
+export function cut () {
   clipboard.pieces = getPieces()
   clipboard.pastes = 0
   remove()
@@ -266,7 +233,7 @@ function cut () {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function paste (xy, api = true) {
+export function paste (xy, api = true) {
   clear()
   return Content.clone(clipboardGetPieces(), xy, clipboard.pastes++, api)
 }
@@ -279,7 +246,7 @@ function paste (xy, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function rotateRandom (api = true) {
+export function rotateRandom (api = true) {
   return Content.rotateRandom(getPieces(), api)
 }
 
@@ -292,7 +259,7 @@ function rotateRandom (api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function rotate (cw = true, api = true) {
+export function rotate (cw = true, api = true) {
   return Content.rotate(getPieces(), cw, api)
 }
 
@@ -302,7 +269,7 @@ function rotate (cw = true, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function toTop (api = true) {
+export function toTop (api = true) {
   return Content.toTop(getPieces(), api)
 }
 
@@ -312,7 +279,7 @@ function toTop (api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function toBottom (api = true) {
+export function toBottom (api = true) {
   return Content.toBottom(getPieces(), api)
 }
 
@@ -322,7 +289,7 @@ function toBottom (api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function remove (api = true) {
+export function remove (api = true) {
   return Content.remove(getPieces(), api)
 }
 
@@ -334,7 +301,7 @@ function remove (api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function toggleColor (api = true) {
+export function toggleColor (api = true) {
   return Content.toggleColor(getPieces(), api)
 }
 
@@ -346,7 +313,7 @@ function toggleColor (api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function toggleBorder (api = true) {
+export function toggleBorder (api = true) {
   return Content.toggleBorder(getPieces(), api)
 }
 
@@ -359,7 +326,7 @@ function toggleBorder (api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function flip (forward = true, api = true) {
+export function flip (forward = true, api = true) {
   return Content.flip(getPieces(), forward, api)
 }
 
@@ -375,7 +342,7 @@ function flip (forward = true, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function flipRandom (api = true) {
+export function flipRandom (api = true) {
   return Content.flipRandom(getPieces(), api)
 }
 
@@ -390,7 +357,7 @@ function flipRandom (api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {object[]} Pieces to be moved.
  */
-function moveTiles (x, y, api = true) {
+export function moveTiles (x, y, api = true) {
   return Content.moveTiles(getPieces(), x, y, api)
 }
 
@@ -403,7 +370,7 @@ function moveTiles (x, y, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function number (delta, api = true) {
+export function number (delta, api = true) {
   return Content.number(getPieces(), delta, api)
 }
 
@@ -416,7 +383,7 @@ function number (delta, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function pile (randomize = false, api = true) {
+export function pile (randomize = false, api = true) {
   return Content.pile(getPieces(), randomize, api)
 }
 
@@ -428,7 +395,7 @@ function pile (randomize = false, api = true) {
  * @param {boolean} api If true, send the data to the API (default).
  * @returns {Promise<object>} Resulting API request (for testing).
  */
-function grid (api = true) {
+export function grid (api = true) {
   return Content.grid(getPieces(), api)
 }
 
@@ -437,7 +404,7 @@ function grid (api = true) {
  *
  * Will silently fail if nothing is selected.
  */
-function edit () {
+export function edit () {
   if (!getFeatures().edit) return
 
   const selected = getPieces()

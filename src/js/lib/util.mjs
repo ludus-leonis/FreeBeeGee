@@ -19,44 +19,13 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
-const REGEXP = {
+export const REGEXP = {
   ROOM_NAME: '^[a-zA-Z0-9]{8,48}$',
   ASSET_NAME: '^(_|[a-zA-Z0-9\\-]+( [a-zA-Z0-9\\-]+)*)(, [a-zA-Z0-9\\-]+)?( [a-zA-Z0-9\\-]+)*$',
   COLOR: '^#[a-zA-Z0-9]{6}$'
 }
 
-const timeRecords = []
-
-export default {
-  REGEXP,
-
-  isAll,
-  isAny,
-  isNone,
-  mode,
-  shuffle,
-
-  clamp,
-  contains,
-  findClosestPoint,
-  getDimensionsRotated,
-  intersect,
-  mod,
-  snapGrid,
-  snapHex,
-  snapHex2,
-
-  epoch,
-
-  equalsJSON,
-
-  recordTime,
-  timeRecords,
-
-  generateAnimal,
-  generateName,
-  generateUsername
-}
+export const timeRecords = []
 
 // --- Arrays ------------------------------------------------------------------
 
@@ -67,7 +36,7 @@ export default {
  * @param {Function} check Callback (item) => {}. Supposed to return true or false.
  * @returns {boolean} True, if all items check out. False if not.
  */
-function isAll (items, check) {
+export function isAll (items, check) {
   for (const item of items) {
     if (!check(item)) return false
   }
@@ -81,7 +50,7 @@ function isAll (items, check) {
  * @param {Function} check Callback (item) => {}. Supposed to return true or false.
  * @returns {boolean} True, if one items check out. False if not.
  */
-function isAny (items, check) {
+export function isAny (items, check) {
   for (const item of items) {
     if (check(item)) return true
   }
@@ -95,7 +64,7 @@ function isAny (items, check) {
  * @param {Function} check Callback (item) => {}. Supposed to return true or false.
  * @returns {boolean} True, if no items check out. False if not.
  */
-function isNone (items, check) {
+export function isNone (items, check) {
   for (const item of items) {
     if (check(item)) return false
   }
@@ -108,7 +77,7 @@ function isNone (items, check) {
  * @param {Array} array Array to shuffle. Will be modified!
  * @returns {Array} Will also return the shuffled array for convenience.
  */
-function shuffle (array) {
+export function shuffle (array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]]
@@ -124,7 +93,7 @@ function shuffle (array) {
  * @param {Array} array Array to check.
  * @returns {*} Most occuring item in array.
  */
-function mode (array = []) {
+export function mode (array = []) {
   return array.sort((a, b) =>
     array.filter(v => v === a).length - array.filter(v => v === b).length
   ).pop()
@@ -139,7 +108,7 @@ function mode (array = []) {
  * @param {number} m Number to modulo by.
  * @returns {number} Modulo value.
  */
-function mod (n, m) {
+export function mod (n, m) {
   return ((n % m) + m) % m
 }
 
@@ -151,7 +120,7 @@ function mod (n, m) {
  * @param {number} max Maximum number.
  * @returns {number} Clamped value within [min, max].
  */
-function clamp (min, value, max) {
+export function clamp (min, value, max) {
   if (value < min) return min
   if (value > max) return max
   return value
@@ -165,7 +134,7 @@ function clamp (min, value, max) {
  * @param {number} points Array of {x, y} points.
  * @returns {object} Closest point of array to original x/y as {x, y, d}.
  */
-function findClosestPoint (x, y, points) {
+export function findClosestPoint (x, y, points) {
   const closest = {
     d: 999999999.0,
     x: 0,
@@ -192,7 +161,7 @@ function findClosestPoint (x, y, points) {
  *                     corners, 3 = also side centers). Defaults to 1.
  * @returns {object} Closest grid vertex to original x/y as {x, y}.
  */
-function snapGrid (x, y, snap, lod = 1) {
+export function snapGrid (x, y, snap, lod = 1) {
   if (lod <= 1) { // tile centers
     return {
       x: Math.floor(x / snap) * snap + snap / 2,
@@ -231,7 +200,7 @@ function snapGrid (x, y, snap, lod = 1) {
  *                     corners, 3 = also side centers). Defaults to 1.
  * @returns {object} Closest grid vertex to original x/y as {x, y}.
  */
-function snapHex (x, y, snap, lod = 1) {
+export function snapHex (x, y, snap, lod = 1) {
   const hexTileX = snap * 1.71875 // 110x64
   const hexTileY = snap
   const hexSide = 37
@@ -301,7 +270,7 @@ function snapHex (x, y, snap, lod = 1) {
  *                     corners, 3 = also side centers). Defaults to 1.
  * @returns {object} Closest grid vertex to original x/y as {x, y}.
  */
-function snapHex2 (x, y, snap, lod = 1) {
+export function snapHex2 (x, y, snap, lod = 1) {
   const snapped = snapHex(y, x, snap, lod) // hex2 is actually a 90° rotated hex
   return {
     x: snapped.y,
@@ -316,7 +285,7 @@ function snapHex2 (x, y, snap, lod = 1) {
  * @param {object} rect2 Second rect, containing of top/left/bottom/right.
  * @returns {boolean} True if they intersect.
  */
-function intersect (rect1, rect2) {
+export function intersect (rect1, rect2) {
   return (rect1.left <= rect2.right &&
     rect2.left <= rect1.right &&
     rect1.top <= rect2.bottom &&
@@ -330,7 +299,7 @@ function intersect (rect1, rect2) {
  * @param {object} smaller Rect, containing of top/left/bottom/right.
  * @returns {boolean} True if they intersect.
  */
-function contains (larger, smaller) {
+export function contains (larger, smaller) {
   return (smaller.left >= larger.left &&
     smaller.right <= larger.right &&
     smaller.top >= larger.top &&
@@ -345,7 +314,7 @@ function contains (larger, smaller) {
  * @param {number} r Angle to rotate to.
  * @returns {object} '{ w: ..., h: ...}' of transformed rectangle.
  */
-function getDimensionsRotated (w, h, r) {
+export function getDimensionsRotated (w, h, r) {
   // basic rotations don't need long transformation
   switch (r) {
     case 0:
@@ -384,7 +353,7 @@ function getDimensionsRotated (w, h, r) {
  * @param {number} delta Optional delta in seconds to apply.
  * @returns {number} Seconds since epoch.
  */
-function epoch (delta = 0) {
+export function epoch (delta = 0) {
   return Math.floor(new Date().getTime() / 1000) + delta
 }
 
@@ -399,7 +368,7 @@ function epoch (delta = 0) {
  * @param {*} b Item B.
  * @returns {boolean} True, of JSON representations of a and b are string-equal.
  */
-function equalsJSON (a, b) {
+export function equalsJSON (a, b) {
   return JSON.stringify(a ?? []) === JSON.stringify(b ?? [])
 }
 
@@ -414,7 +383,7 @@ function equalsJSON (a, b) {
  * @param {object} value Value to add, if > 0.
  * @returns {number} Recorded timestamp in ms.
  */
-function recordTime (name, value) {
+export function recordTime (name, value) {
   timeRecords[name] = timeRecords[name] ?? [0]
   while (timeRecords[name].length >= 10) timeRecords[name].shift()
   if (value > 0) timeRecords[name].push(value)
@@ -428,7 +397,7 @@ function recordTime (name, value) {
  *
  * @returns {string} Random user name consisting of initial and name.
  */
-function generateUsername () {
+export function generateUsername () {
   return letters[Math.floor(Math.random() * letters.length)] + '. ' +
   animals[Math.floor(Math.random() * animals.length)]
 }
@@ -438,7 +407,7 @@ function generateUsername () {
  *
  * @returns {string} Random name constisting of 3 parts (adjective, verb, noun).
  */
-function generateName () {
+export function generateName () {
   return adjectives[Math.floor(Math.random() * adjectives.length)] +
   verbs[Math.floor(Math.random() * verbs.length)] +
   generateAnimal()
@@ -449,7 +418,7 @@ function generateName () {
  *
  * @returns {string} Random name constisting of 3 parts (adjective, verb, noun).
  */
-function generateAnimal () {
+export function generateAnimal () {
   return animals[Math.floor(Math.random() * animals.length)]
 }
 

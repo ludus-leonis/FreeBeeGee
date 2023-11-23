@@ -21,30 +21,18 @@
 
 import _ from '../../../lib/FreeDOM.mjs'
 import { Grab } from './Grab.mjs'
-import Popup from '../../../view/room/tabletop/popup.mjs'
-import Room from '../../../view/room/index.mjs'
+import * as Popup from '../../../view/room/tabletop/popup.mjs'
+import * as Room from '../../../view/room/index.mjs'
 import { SelectAndDrag } from './SelectAndDrag.mjs'
 import { SelectAndProperties } from './SelectAndProperties.mjs'
-import Sync from '../../../view/room/sync.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  enableDragAndDrop,
-  getMouseCoords,
-  isDragging,
-  release,
-  setButtons
-}
-
-// -----------------------------------------------------------------------------
+import * as Sync from '../../../view/room/sync.mjs'
 
 /**
  * Determine if user is currently dropping (move while mouse button down) something.
  *
  * @returns {boolean} True if so, false if not.
  */
-function isDragging () {
+export function isDragging () {
   return dragCurrent !== null
 }
 
@@ -53,7 +41,7 @@ function isDragging () {
  *
  * @returns {object} Object with x and y in pixels on the tabletop.
  */
-function getMouseCoords () {
+export function getMouseCoords () {
   return Room.getTableCoordinates(mouseX, mouseY)
 }
 
@@ -62,7 +50,7 @@ function getMouseCoords () {
  *
  * @param {string} tabletop Selector/ID for tabletop div.
  */
-function enableDragAndDrop (tabletop) {
+export function enableDragAndDrop (tabletop) {
   _(tabletop)
     .on('mousedown', mousedown => mouseDown(mousedown))
     .on('mousemove', mousemove => mouseMove(mousemove)) // also tracks cursor
@@ -76,7 +64,7 @@ function enableDragAndDrop (tabletop) {
  * @param {object} center Center mouse button.
  * @param {object} right Right mouse button.
  */
-function setButtons (
+export function setButtons (
   left = new SelectAndDrag(),
   center = new Grab(),
   right = new SelectAndProperties()
@@ -91,7 +79,7 @@ function setButtons (
  *
  * @param {number} no Number of the mouse button (0/1/2 = left/middle/right).
  */
-function release (no) {
+export function release (no) {
   if (dragHandlers[no].isDragging()) {
     dragHandlers[no].release()
     dragCurrent = null

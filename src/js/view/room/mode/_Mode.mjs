@@ -21,22 +21,20 @@
 
 export class Mode {
   enter () { // initialize UI
-    console.error('Mode', 'enter() not implemented!')
   }
 
   quit () { // initialize UI
-    console.error('Mode', 'quit() not implemented!')
   }
 
   update () { // update UI, e.g. grey-out states
-    console.error('Mode', 'update() not implemented!')
   }
 
   keydown (keydown) { // handle mode-specific hotkeys
-    console.error('Mode', 'keydown() not implemented!')
+  }
+
+  keydrag (keydown) { // keys pressed during dragging
   }
 
   mousedown (mousedown) { // handle mode-specific mouse buttons
-    console.error('Mode', 'mousedown() not implemented!')
   }
 }

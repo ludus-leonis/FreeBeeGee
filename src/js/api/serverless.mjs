@@ -27,11 +27,11 @@
  * Demo mode implements a simplified in-memory API with almost no checks.
  */
 
-import Api from '../api/index.mjs'
-import Browser from '../lib/util-browser.mjs'
-import State from '../state/index.mjs'
-import Text from '../lib/util-text.mjs'
-import Util from '../lib/util.mjs'
+import * as Api from '../api/index.mjs'
+import * as Browser from '../lib/util-browser.mjs'
+import * as State from '../state/index.mjs'
+import * as Text from '../lib/util-text.mjs'
+import * as Util from '../lib/util.mjs'
 
 const UNDO_LEVELS = 5
 

@@ -21,13 +21,13 @@
 
 import _ from '../../../lib/FreeDOM.mjs'
 import { Mode } from './_Mode.mjs'
-import Dom from '../tabletop/dom.mjs'
-import Icon from '../../../lib/icon.mjs'
-import ModalLibrary from '../library/index.mjs'
-import Mouse from '../mouse/index.mjs'
-import Room from '../index.mjs'
-import Selection from '../tabletop/selection.mjs'
-import WindowLibrary from '../library/editor.mjs'
+import * as Dom from '../tabletop/dom.mjs'
+import * as Icon from '../../../lib/icon.mjs'
+import * as ModalLibrary from '../library/index.mjs'
+import * as Mouse from '../mouse/index.mjs'
+import * as Room from '../index.mjs'
+import * as Selection from '../tabletop/selection.mjs'
+import * as WindowLibrary from '../library/editor.mjs'
 
 import { Grab } from '../mouse/Grab.mjs'
 import { SelectAndDrag } from '../mouse/SelectAndDrag.mjs'
@@ -67,7 +67,7 @@ export class Main extends Mode {
       new Grab(),
       new SelectAndProperties()
     )
-    Room.setCursor()
+    Dom.setCursor()
 
     this.update()
   }

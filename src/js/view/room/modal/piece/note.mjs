@@ -20,18 +20,10 @@
  */
 
 import _ from '../../../../lib/FreeDOM.mjs'
-import Browser from '../../../../lib/util-browser.mjs'
-import Content from '../../../../view/room/tabletop/content.mjs'
-import Modal from './index.mjs'
-import State from '../../../../state/index.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  create
-}
-
-// -----------------------------------------------------------------------------
+import * as Browser from '../../../../lib/util-browser.mjs'
+import * as Content from '../../../../view/room/tabletop/content.mjs'
+import * as Modal from './index.mjs'
+import * as State from '../../../../state/index.mjs'
 
 const NOTE_LENGTH = 256
 
@@ -41,7 +33,7 @@ const NOTE_LENGTH = 256
  * @param {object} piece The piece's data object.
  * @returns {Function} Callback for ok/save button.
  */
-function create (piece) {
+export function create (piece) {
   _('#modal-body').innerHTML = getModalNote()
 
   Modal.setupLabel(piece)

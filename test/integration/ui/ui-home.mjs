@@ -26,7 +26,7 @@
 
 import { JSDOM } from 'jsdom'
 
-import Test, { expect } from '../utils/test.mjs'
+import * as Test, { expect } from '../utils/test.mjs'
 
 // -----------------------------------------------------------------------------
 

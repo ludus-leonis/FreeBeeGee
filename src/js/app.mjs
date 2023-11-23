@@ -18,25 +18,15 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import Api from './api/index.mjs'
-import Error from './view/error.mjs'
-import Room from './view/room/index.mjs'
-import State from './state/index.mjs'
-import Tools from './view/tools.mjs'
-import ViewCreate from './view/create.mjs'
-import ViewInstaller from './view/installer.mjs'
-import ViewJoin from './view/join.mjs'
-import ViewPassword from './view/password.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  auth,
-  navigateToJoin,
-  navigateToRoom,
-  reload,
-  route
-}
+import * as Api from './api/index.mjs'
+import * as Error from './view/error.mjs'
+import * as Room from './view/room/index.mjs'
+import * as State from './state/index.mjs'
+import * as Tools from './view/tools.mjs'
+import * as ViewCreate from './view/create.mjs'
+import * as ViewInstaller from './view/installer.mjs'
+import * as ViewJoin from './view/join.mjs'
+import * as ViewPassword from './view/password.mjs'
 
 // --- startup & page routing --------------------------------------------------
 
@@ -65,7 +55,7 @@ if (typeof document !== 'undefined') { // don't run in non-browser (test) enviro
 /**
  * Reload the current page.
  */
-function reload () {
+export function reload () {
   globalThis.location.reload()
 }
 
@@ -74,7 +64,7 @@ function reload () {
  *
  * @param {?string} roomName Optional name of room to add in redirect.
  */
-function navigateToJoin (roomName) {
+export function navigateToJoin (roomName) {
   if (roomName) {
     goto('./?room=' + roomName)
   } else {
@@ -87,7 +77,7 @@ function navigateToJoin (roomName) {
  *
  * @param {string} roomName Name of room to go to.
  */
-function navigateToRoom (roomName) {
+export function navigateToRoom (roomName) {
   goto('./' + roomName)
 }
 
@@ -100,7 +90,7 @@ function navigateToRoom (roomName) {
  * @param {string} roomName Room name (user input).
  * @param {string} password Password (user input).
  */
-function auth (roomName, password) {
+export function auth (roomName, password) {
   // try to login
   Api.postRoomAuth(roomName, {
     password
@@ -122,7 +112,7 @@ function auth (roomName, password) {
 /**
  * Main entry point for the app. Will route the page to the proper code.
  */
-function route () {
+export function route () {
   Api.getServerInfo()
     .then(info => {
       State.setServerInfo(info)
@@ -156,7 +146,7 @@ function route () {
  *
  * @param {string} url Redirect target.
  */
-function goto (url) {
+export function goto (url) {
   setTimeout(() => {
     globalThis.location = url
   }, 10)

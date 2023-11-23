@@ -20,50 +20,23 @@
  */
 
 import _ from '../../../../lib/FreeDOM.mjs'
-import Content from '../../../../view/room/tabletop/content.mjs'
-import Dom from '../../../../view/room/tabletop/dom.mjs'
-import Modal from '../../../../view/room/modal.mjs'
-import ModalNote from './note.mjs'
-import ModalOther from './other.mjs'
-import ModalTile from './tile.mjs'
-import ModalToken from './token.mjs'
-import State from '../../../../state/index.mjs'
-import Text from '../../../../lib/util-text.mjs'
-import Util from '../../../../lib/util.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  open,
-  setupBadge,
-  setupColor,
-  setupColorBorder,
-  setupFlags,
-  setupGrid,
-  setupLabel,
-  setupNumber,
-  setupRotate,
-  setupSide,
-  setupSize,
-  updateBadge,
-  updateColor,
-  updateColorBorder,
-  updateFlags,
-  updateLabel,
-  updateNumber,
-  updateRotate,
-  updateSide,
-  updateSize
-}
-
-// -----------------------------------------------------------------------------
+import * as Content from '../../../../view/room/tabletop/content.mjs'
+import * as Dom from '../../../../view/room/tabletop/dom.mjs'
+import * as Modal from '../../../../view/room/modal.mjs'
+import * as ModalNote from './note.mjs'
+import * as ModalOther from './other.mjs'
+import * as ModalTile from './tile.mjs'
+import * as ModalToken from './token.mjs'
+import * as State from '../../../../state/index.mjs'
+import * as Text from '../../../../lib/util-text.mjs'
+import * as Util from '../../../../lib/util.mjs'
 
 /**
  * Show the edit-piece modal.
  *
  * @param {object} piece A piece to show.
  */
-function open (piece) {
+export function open (piece) {
   if (piece != null && !Modal.isOpen()) {
     const node = Modal.create()
     node.piece = piece
@@ -111,7 +84,7 @@ function open (piece) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupBadge (piece) {
+export function setupBadge (piece) {
   // badges
   const badges = _('#piece-badges')
   for (const badge of State.getLibrary().badge) {
@@ -133,7 +106,7 @@ function setupBadge (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateBadge (piece, updates) {
+export function updateBadge (piece, updates) {
   const b = []
   for (const node of _('#piece-badges .active').nodes()) {
     b.push(node.badge.id)
@@ -148,7 +121,7 @@ function updateBadge (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupColor (piece) {
+export function setupColor (piece) {
   const pieceColor = _('#piece-color')
   const setup = State.getSetup()
 
@@ -172,7 +145,7 @@ function setupColor (piece) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupColorBorder (piece) {
+export function setupColorBorder (piece) {
   // border color
   const borderColor = _('#piece-border')
   const setup = State.getSetup()
@@ -198,7 +171,7 @@ function setupColorBorder (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateColor (piece, updates) {
+export function updateColor (piece, updates) {
   const c = Number(_('#piece-color').value)
   if (c !== piece.c[0]) {
     updates.c = [c]
@@ -211,7 +184,7 @@ function updateColor (piece, updates) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateColorBorder (piece, updates) {
+export function updateColorBorder (piece, updates) {
   const c = Number(_('#piece-color').value)
   const c2 = Number(_('#piece-border').value)
   if (c !== piece.c[0] || c2 !== piece.c[1]) {
@@ -225,7 +198,7 @@ function updateColorBorder (piece, updates) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateFlags (piece, updates) {
+export function updateFlags (piece, updates) {
   let flags = 0
 
   if (_('#piece-no-move').checked) flags |= Content.FLAG.NO_MOVE
@@ -248,7 +221,7 @@ function updateFlags (piece, updates) {
  * @param {object} piece The piece's data object.
  * @param {Function} onEnter Optional callback to be run on enter.
  */
-function setupLabel (piece, onEnter) {
+export function setupLabel (piece, onEnter) {
   const label = _('#piece-label')
   label.value = piece.t?.[0] ?? ''
   if (onEnter) {
@@ -268,7 +241,7 @@ function setupLabel (piece, onEnter) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateLabel (piece, updates) {
+export function updateLabel (piece, updates) {
   const label = _('#piece-label').value.trim()
   if (piece.t?.length > 0) { // piece had label
     if (label.length <= 0) {
@@ -289,7 +262,7 @@ function updateLabel (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupGrid (piece) {
+export function setupGrid (piece) {
   // piece number
   const grid = _('#piece-grid')
 
@@ -314,7 +287,7 @@ function setupGrid (piece) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupNumber (piece) {
+export function setupNumber (piece) {
   // piece number
   const pieceNo = _('#piece-number')
   const option = _('option').create('none')
@@ -336,7 +309,7 @@ function setupNumber (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateNumber (piece, updates) {
+export function updateNumber (piece, updates) {
   const n = Number(_('#piece-number').value)
   if (n !== piece.n) updates.n = n
 }
@@ -346,7 +319,7 @@ function updateNumber (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupRotate (piece) {
+export function setupRotate (piece) {
   const pieceR = _('#piece-r')
   const increment = State.getRoomPreference(State.PREF.PIECE_ROTATE)
   for (let r = 0; r < 360; r += increment) {
@@ -363,7 +336,7 @@ function setupRotate (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateRotate (piece, updates) {
+export function updateRotate (piece, updates) {
   const r = Number(_('#piece-r').value)
   if (r !== piece.r) updates.r = r
 }
@@ -373,7 +346,7 @@ function updateRotate (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupSide (piece) {
+export function setupSide (piece) {
   const pieceSide = _('#piece-side')
   const sides = piece._meta.sides + piece._meta.sidesExtra
   for (let s = 1; s <= sides; s++) {
@@ -395,7 +368,7 @@ function setupSide (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateSide (piece, updates) {
+export function updateSide (piece, updates) {
   const side = Number(_('#piece-side').value)
   if (side !== piece.s) updates.s = side
 }
@@ -405,7 +378,7 @@ function updateSide (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupSize (piece) {
+export function setupSize (piece) {
   // width
   const pieceW = _('#piece-w')
   for (let w = 1; w <= 32; w++) {
@@ -431,7 +404,7 @@ function setupSize (piece) {
  * @param {object} piece The piece's data object.
  * @param {object} updates The update object for the API call.
  */
-function updateSize (piece, updates) {
+export function updateSize (piece, updates) {
   const w = Number(_('#piece-w').value)
   const h = Number(_('#piece-h').value)
   if (w !== piece.w || h !== piece.h) { // always send both
@@ -445,10 +418,8 @@ function updateSize (piece, updates) {
  *
  * @param {object} piece The piece's data object.
  */
-function setupFlags (piece) {
+export function setupFlags (piece) {
   _('#piece-no-move').checked = piece.f & Content.FLAG.NO_MOVE
   _('#piece-no-delete').checked = piece.f & Content.FLAG.NO_DELETE
   _('#piece-no-clone').checked = piece.f & Content.FLAG.NO_CLONE
 }
-
-// --- internal ----------------------------------------------------------------

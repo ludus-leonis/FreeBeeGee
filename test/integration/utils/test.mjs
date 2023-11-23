@@ -33,68 +33,45 @@ import AdmZip from 'adm-zip'
 import fetch from 'node-fetch'
 import { JSDOM } from 'jsdom'
 
-import Api from '../../../src/js/api/index.mjs'
-import Content from '../../../src/js/view/room/tabletop/content.mjs'
-import State from '../../../src/js/state/index.mjs'
-import Selection from '../../../src/js/view/room/tabletop/selection.mjs'
-import Testdata from './data.mjs'
+import * as Api from '../../../src/js/api/index.mjs'
+import * as Content from '../../../src/js/view/room/tabletop/content.mjs'
+import * as State from '../../../src/js/state/index.mjs'
+import * as Selection from '../../../src/js/view/room/tabletop/selection.mjs'
+import * as Testdata from './data.mjs'
 
 // -----------------------------------------------------------------------------
 
-const REGEXP = {
+export const REGEXP = {
   ID: /^[a-zA-Z0-9_-]{8}$/,
   DIGEST: /^crc32:-?[0-9]+$/
 }
 
-const TEST_STATE = 5
+export const TEST_STATE = 5
 
-export default {
-  ACCESS_ANY: '00000000-0000-0000-0000-000000000000',
-  p: JSON.parse(fs.readFileSync('package.json')),
-  TEST_STATE,
-  REGEXP,
+export const ACCESS_ANY = '00000000-0000-0000-0000-000000000000'
 
-  snapshot: {
-    _: { // asset count in system snapshot
-      badge: 2,
-      material: 5,
-      other: 16,
-      sticker: 17,
-      tile: 2,
-      token: 8
-    },
-    classic: { // asset count in classic snapshot
-      badge: 3,
-      material: 0,
-      other: 0,
-      sticker: 0,
-      tile: 10,
-      token: 6
-    }
+export const p = JSON.parse(fs.readFileSync('package.json'))
+
+export const snapshot = {
+  _: { // asset count in system snapshot
+    badge: 2,
+    material: 5,
+    other: 16,
+    sticker: 17,
+    tile: 2,
+    token: 8
   },
-
-  setupTestData,
-  mock,
-
-  expect: chai.expect,
-  data: Testdata,
-
-  openTestroom,
-  closeTestroom,
-  getBuffer,
-  getBufferQuery,
-  jsonDelete,
-  jsonGet,
-  jsonPatch,
-  jsonPost,
-  jsonPut,
-  jsonDeleteBatch,
-  httpGet,
-  fetchAndTest,
-  zipCreate,
-  zipToc,
-  zipUpload
+  classic: { // asset count in classic snapshot
+    badge: 3,
+    material: 0,
+    other: 0,
+    sticker: 0,
+    tile: 10,
+    token: 6
+  }
 }
+
+export const data = Testdata
 
 // --- test setup --------------------------------------------------------------
 
@@ -107,7 +84,7 @@ export default {
  * @param {object} room (Optional) Initial room data.
  * @param {object} server (Optional) Initial server data.
  */
-function setupTestData (table = Testdata.table(), room = Testdata.room(), server = Testdata.server()) {
+export function setupTestData (table = Testdata.table(), room = Testdata.room(), server = Testdata.server()) {
   Api.setMock(1) // disable server calls, enable request-mirroring
   State.setServerInfo(server)
   State._private.setRoom(room)
@@ -133,6 +110,7 @@ function setupTestData (table = Testdata.table(), room = Testdata.room(), server
 // --- request helpers ---------------------------------------------------------
 
 export const expect = chai.expect
+
 chai
   .use(http)
   .use(match)
@@ -143,7 +121,7 @@ chai
  * @param {object} request Request object from API.
  * @returns {object} Split properties path, method, body, headers and expectedStatus.
  */
-function mock (request) {
+export function mock (request) {
   return request
     ? {
         path: request.path,
@@ -165,7 +143,7 @@ function mock (request) {
  *                                further checking.
  * @param {number} status Expected HTTP status.
  */
-function httpGet (server, path, payloadTests, status = 200) {
+export function httpGet (server, path, payloadTests, status = 200) {
   it(`GET ${server}${typeof path === 'string' ? path : path()}`, function () {
     return fetch(`${server}${path}`)
       .then(res => {
@@ -189,7 +167,7 @@ function httpGet (server, path, payloadTests, status = 200) {
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
  */
-function jsonGet (api, path, payloadTests, status = 200, token = undefined) {
+export function jsonGet (api, path, payloadTests, status = 200, token = undefined) {
   it(`GET ${api}${path()}`, function (done) {
     const request = chai.request(api)
       .get(path())
@@ -229,7 +207,7 @@ const binaryParser = function (res, cb) {
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
  */
-function getBuffer (api, path, headerTests, payloadTests, status = 200, token = undefined) {
+export function getBuffer (api, path, headerTests, payloadTests, status = 200, token = undefined) {
   it(`GET ${api}${path()}`, function (done) {
     const request = chai.request(api)
       .get(path())
@@ -260,7 +238,7 @@ function getBuffer (api, path, headerTests, payloadTests, status = 200, token = 
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method. Passed in query string, not in header, as if clicking links.
  */
-function getBufferQuery (api, path, headerTests, payloadTests, status = 200, token = undefined) {
+export function getBufferQuery (api, path, headerTests, payloadTests, status = 200, token = undefined) {
   it(`GET ${api}${path()}?token=...`, function (done) {
     const request = chai.request(api)
       .get(path())
@@ -293,7 +271,7 @@ function getBufferQuery (api, path, headerTests, payloadTests, status = 200, tok
  * @param {number} status Expected HTTP status.
  * @param {boolean} json If true (default), tests expects a json reply from PHP.
  */
-function zipUpload (api, path, name, auth, upload, payloadTests, status = 200, json = true) {
+export function zipUpload (api, path, name, auth, upload, payloadTests, status = 200, json = true) {
   it(`POST ${api}${path()}`, function (done) {
     chai.request(api)
       .post(path())
@@ -323,7 +301,7 @@ function zipUpload (api, path, name, auth, upload, payloadTests, status = 200, j
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
  */
-function jsonPost (api, path, payload, payloadTests, status = 200, token = undefined) {
+export function jsonPost (api, path, payload, payloadTests, status = 200, token = undefined) {
   it(`POST ${api}${path()}`, function (done) {
     const request = chai.request(api)
       .post(path())
@@ -356,7 +334,7 @@ function jsonPost (api, path, payload, payloadTests, status = 200, token = undef
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
  */
-function jsonPut (api, path, payload, payloadTests, status = 200, token = undefined) {
+export function jsonPut (api, path, payload, payloadTests, status = 200, token = undefined) {
   it(`PUT ${api}${path()}`, function (done) {
     const request = chai.request(api)
       .put(path())
@@ -387,7 +365,7 @@ function jsonPut (api, path, payload, payloadTests, status = 200, token = undefi
  * @param {number} status Expected HTTP status.
  * @param {string} token Optional API token method.
  */
-function jsonPatch (api, path, payload, payloadTests, status = 200, token = undefined) {
+export function jsonPatch (api, path, payload, payloadTests, status = 200, token = undefined) {
   it(`PATCH ${api}${path()}`, function (done) {
     const request = chai.request(api)
       .patch(path())
@@ -415,7 +393,7 @@ function jsonPatch (api, path, payload, payloadTests, status = 200, token = unde
  * @param {number} status Expected HTTP status. Defaults to 204 = gone.
  * @param {string} token Optional API token method.
  */
-function jsonDelete (api, path, status = 204, token = undefined) {
+export function jsonDelete (api, path, status = 204, token = undefined) {
   it(`DELETE ${api}${path()}`, function (done) {
     const request = chai.request(api)
       .delete(path())
@@ -446,7 +424,7 @@ function jsonDelete (api, path, status = 204, token = undefined) {
  * @param {number} status Expected HTTP status. Defaults to 204 = gone.
  * @param {string} token Optional API token method.
  */
-function jsonDeleteBatch (api, path, payload, payloadTests, status = 204, token = undefined) {
+export function jsonDeleteBatch (api, path, payload, payloadTests, status = 204, token = undefined) {
   it(`DELETE ${api}${path()}`, function (done) {
     const request = chai.request(api)
       .delete(path())
@@ -476,7 +454,7 @@ function jsonDeleteBatch (api, path, payload, payloadTests, status = 204, token 
  * @param {boolean} js If enabled (default), execute JS in JSDOM.
  * @returns {Promise} Promise of execution.
  */
-function fetchAndTest (url, tests = () => Promise.resolve(), status = 200, js = true) {
+export function fetchAndTest (url, tests = () => Promise.resolve(), status = 200, js = true) {
   const JSDOM_DELAY = 250
 
   return fetch(url)
@@ -512,7 +490,7 @@ function fetchAndTest (url, tests = () => Promise.resolve(), status = 200, js = 
  * @param {string} snapshot Snapshot to use for room.
  * @param {string} password Optional password for the room.
  */
-function openTestroom (api, room, snapshot, password = undefined) {
+export function openTestroom (api, room, snapshot, password = undefined) {
   jsonPost(api, () => '/rooms/', () => {
     return {
       name: room,
@@ -533,7 +511,7 @@ function openTestroom (api, room, snapshot, password = undefined) {
  * @param {string} api Server URL to API root.
  * @param {string} room Room name to create.
  */
-function closeTestroom (api, room) {
+export function closeTestroom (api, room) {
   jsonDelete(api, () => `/rooms/${room}/`)
 }
 
@@ -543,7 +521,7 @@ function closeTestroom (api, room) {
  * @param {Function} add Called with a zip object to add stuff.
  * @returns {Buffer} Zipped files as buffer for uploads.
  */
-function zipCreate (add) {
+export function zipCreate (add) {
   const zip = new AdmZip()
   add(zip)
   return zip.toBuffer()
@@ -555,7 +533,7 @@ function zipCreate (add) {
  * @param {Buffer} buffer Buffer of ZIP sent by server.
  * @returns {Array} Array of strings of all files in zip.
  */
-function zipToc (buffer) {
+export function zipToc (buffer) {
   const zip = new AdmZip(buffer)
   const zipEntries = zip.getEntries()
   const entries = []

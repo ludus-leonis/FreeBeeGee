@@ -25,7 +25,7 @@
 
 // Mocha / Chai 'test' to generate static files for the demo version
 
-import Test from '../integration/utils/test.mjs'
+import * as Test from '../integration/utils/test.mjs'
 
 import * as fs from 'fs'
 

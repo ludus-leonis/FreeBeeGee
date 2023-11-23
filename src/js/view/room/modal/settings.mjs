@@ -20,25 +20,17 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
-import App from '../../../app.mjs'
-import Content from '../../../view/room/tabletop/content.mjs'
-import Dom from '../../../view/room/tabletop/dom.mjs'
-import Modal from '../../../view/room/modal.mjs'
-import Room from '../../../view/room/index.mjs'
-import State from '../../../state/index.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  open
-}
-
-// -----------------------------------------------------------------------------
+import * as App from '../../../app.mjs'
+import * as Content from '../../../view/room/tabletop/content.mjs'
+import * as Dom from '../../../view/room/tabletop/dom.mjs'
+import * as Modal from '../../../view/room/modal.mjs'
+import * as Room from '../../../view/room/index.mjs'
+import * as State from '../../../state/index.mjs'
 
 /**
  * Show the settings modal.
  */
-function open () {
+export function open () {
   Modal.create()
 
   _('#modal-header').innerHTML = `

@@ -20,19 +20,10 @@
  */
 
 import _ from '../lib/FreeDOM.mjs'
-import Api from '../api/index.mjs'
-import App from '../app.mjs'
-import Screen from '../lib/screen.mjs'
-import Sync from './room/sync.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  apiError,
-  runError
-}
-
-// -----------------------------------------------------------------------------
+import * as Api from '../api/index.mjs'
+import * as App from '../app.mjs'
+import * as Screen from '../lib/screen.mjs'
+import * as Sync from './room/sync.mjs'
 
 /**
  * React on an API error.
@@ -41,7 +32,7 @@ export default {
  * @param {string} roomName Room we are in.
  * @param {number[]} ignore Array of status codes to ignore as not-an-error.
  */
-function apiError (error, roomName, ignore = []) {
+export function apiError (error, roomName, ignore = []) {
   if (error instanceof Api.UnexpectedStatus) { // API error
     if (ignore.includes(error.status)) {
       return // semi-expected error that is silently ignored
@@ -69,7 +60,7 @@ function apiError (error, roomName, ignore = []) {
  * @param {string} code Code of error message to show.
  * @param {*} options Options / stuff to simply forward to the error.
  */
-function runError (code, options) {
+export function runError (code, options) {
   switch (code) {
     case 'INVALID_ENGINE':
       runErrorRoomDeprecated(options)

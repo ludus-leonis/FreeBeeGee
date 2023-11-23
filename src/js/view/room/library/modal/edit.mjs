@@ -20,27 +20,19 @@
  */
 
 import _ from '../../../../lib/FreeDOM.mjs'
-import Event from '../../../../lib/event.mjs'
-import Modal from '../../../../view/room/modal.mjs'
-import ModalDisabled from '../../../../view/room/modal/disabled.mjs'
-import State from '../../../../state/index.mjs'
-import Text from '../../../../lib/util-text.mjs'
-import Util from '../../../../lib/util.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  open
-}
-
-// -----------------------------------------------------------------------------
+import * as Event from '../../../../lib/event.mjs'
+import * as Modal from '../../../../view/room/modal.mjs'
+import * as ModalDisabled from '../../../../view/room/modal/disabled.mjs'
+import * as State from '../../../../state/index.mjs'
+import * as Text from '../../../../lib/util-text.mjs'
+import * as Util from '../../../../lib/util.mjs'
 
 /**
  * Show the asset editor modal.
  *
  * @param {string} asset Asset to be edited.
  */
-function open (asset) {
+export function open (asset) {
   const setup = State.getSetup()
 
   Modal.createConfirm(

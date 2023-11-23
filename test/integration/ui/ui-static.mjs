@@ -24,7 +24,7 @@
 
 // Mocha / Chai tests for UI/DOM tests
 
-import Test, { expect } from '../utils/test.mjs'
+import * as Test, { expect } from '../utils/test.mjs'
 
 // -----------------------------------------------------------------------------
 

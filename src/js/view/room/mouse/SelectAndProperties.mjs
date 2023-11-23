@@ -20,11 +20,11 @@
  */
 
 import { MouseButtonHandler } from './_MouseButtonHandler.mjs'
-import Content from '../../../view/room/tabletop/content.mjs'
-import Dom from '../../../view/room/tabletop/dom.mjs'
-import Mouse from '../../../view/room/mouse/index.mjs'
-import Popup from '../../../view/room/tabletop/popup.mjs'
-import Room from '../../../view/room/index.mjs'
+import * as Content from '../../../view/room/tabletop/content.mjs'
+import * as Dom from '../../../view/room/tabletop/dom.mjs'
+import * as Mouse from '../../../view/room/mouse/index.mjs'
+import * as Popup from '../../../view/room/tabletop/popup.mjs'
+import * as Room from '../../../view/room/index.mjs'
 
 export class SelectAndProperties extends MouseButtonHandler {
   isPreDrag () {
@@ -62,6 +62,6 @@ export class SelectAndProperties extends MouseButtonHandler {
   }
 
   cancel () {
-    Room.setCursor()
+    Dom.setCursor()
   }
 }

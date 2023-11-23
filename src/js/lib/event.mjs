@@ -19,23 +19,13 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
-const HOOK = {
+export const HOOK = {
   SYNCNOW: 'SYNCNOW',
   LIBRARY_EDIT: 'LIBRARY_EDIT',
   LIBRARY_UPDATE: 'LIBRARY_UPDATE',
   LIBRARY_RELOAD: 'LIBRARY_RELOAD',
   LIBRARY_SELECT: 'LIBRARY_SELECT'
 }
-
-export default {
-  HOOK,
-
-  register,
-  trigger,
-  unregister
-}
-
-// -----------------------------------------------------------------------------
 
 /**
  * Register an observer.
@@ -44,7 +34,7 @@ export default {
  * @param {string} what HOOK.* event to listen for.
  * @param {Function} callback Function to call when corresponding event is triggered.
  */
-function register (who, what, callback) {
+export function register (who, what, callback) {
   if (!observers[what]) {
     observers[what] = []
   }
@@ -61,7 +51,7 @@ function register (who, what, callback) {
  * @param {string} who Name of the observer. Re-registering an observer removes the old entry first.
  * @param {string} what HOOK.* event to listen for.
  */
-function unregister (who, what) {
+export function unregister (who, what) {
   if (!observers[what]) {
     observers[what] = []
   }
@@ -76,7 +66,7 @@ function unregister (who, what) {
  * @param {string} what HOOK.* event to trigger.
  * @param {*} data (Optional) data to pass to callback.
  */
-function trigger (what, data) {
+export function trigger (what, data) {
   for (const observer of observers[what] ?? []) {
     observer.callback(data)
   }

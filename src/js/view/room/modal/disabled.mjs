@@ -20,22 +20,14 @@
  */
 
 import _ from '../../../lib/FreeDOM.mjs'
-import Modal from '../../../view/room/modal.mjs'
-
-// -----------------------------------------------------------------------------
-
-export default {
-  open
-}
-
-// -----------------------------------------------------------------------------
+import * as Modal from '../../../view/room/modal.mjs'
 
 /**
  * Inform user about a disabled feature.
  *
  * @param {string} what Partial sentence for the feature paragraph.
  */
-function open (what) {
+export function open (what) {
   if (!Modal.isOpen()) {
     Modal.create()
 

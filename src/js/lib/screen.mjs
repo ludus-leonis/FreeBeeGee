@@ -21,14 +21,6 @@
 
 import _ from './FreeDOM.mjs'
 
-// -----------------------------------------------------------------------------
-
-export default {
-  create
-}
-
-// -----------------------------------------------------------------------------
-
 /**
  * Display a card-style page on dark background. Replaces the current body content.
  *
@@ -37,7 +29,7 @@ export default {
  * @param {string} footer Optional HTML to be shown as .p-small footer below the card.
  * @returns {_} FreeDOM object with preselected body for customizatons.
  */
-function create (headline, content, footer = '') {
+export function create (headline, content, footer = '') {
   const body = _('body')
   _('body').add('.page-boxed').innerHTML = `
     <div class="container is-slim">

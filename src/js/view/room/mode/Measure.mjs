@@ -21,9 +21,10 @@
 
 import _ from '../../../lib/FreeDOM.mjs'
 import { Mode } from './_Mode.mjs'
-import Icon from '../../../lib/icon.mjs'
-import Mouse from '../mouse/index.mjs'
-import Room from '../index.mjs'
+import * as Dom from '../tabletop/dom.mjs'
+import * as Icon from '../../../lib/icon.mjs'
+import * as Mouse from '../mouse/index.mjs'
+import * as Room from '../index.mjs'
 import { Grab } from '../mouse/Grab.mjs'
 import { Los } from '../mouse/Los.mjs'
 
@@ -41,7 +42,7 @@ export class Measure extends Mode {
       new Grab(),
       null
     )
-    Room.setCursor('.cursor-cross')
+    Dom.setCursor('.cursor-cross')
 
     this.update()
   }
@@ -60,6 +61,17 @@ export class Measure extends Mode {
     switch (keydown.key) {
       case 'm': // back to main mode
         Room.setMode(Room.MODE.MAIN)
+        break
+      default:
+        return false // key not handled
+    }
+    return true // key handled
+  }
+
+  keydrag (keydown) {
+    switch (keydown.key) {
+      case ' ': // put los line on table
+        Mouse.release(0)
         break
       default:
         return false // key not handled
