@@ -20,9 +20,9 @@
 
 /* global describe, it */
 
-import { expect } from '../../integration/utils/test.mjs'
+import { expect } from 'test/integration/utils/test.mjs'
 
-import * as Browser from '../../../src/js/lib/util-browser.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
 
 describe('Frontend - util.mjs - HTML', function () {
   it('getGetParameter()', function () {

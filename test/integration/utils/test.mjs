@@ -33,11 +33,12 @@ import AdmZip from 'adm-zip'
 import fetch from 'node-fetch'
 import { JSDOM } from 'jsdom'
 
-import * as Api from '../../../src/js/api/index.mjs'
-import * as Content from '../../../src/js/view/room/tabletop/content.mjs'
-import * as State from '../../../src/js/state/index.mjs'
-import * as Selection from '../../../src/js/view/room/tabletop/selection.mjs'
-import * as Testdata from './data.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
+
+import * as Testdata from 'test/integration/utils/data.mjs'
 
 // -----------------------------------------------------------------------------
 

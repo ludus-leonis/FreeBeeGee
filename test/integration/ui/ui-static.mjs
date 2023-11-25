@@ -24,7 +24,7 @@
 
 // Mocha / Chai tests for UI/DOM tests
 
-import * as Test, { expect } from '../utils/test.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
 
 // -----------------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ export default {
  */
 function testIndexExists (api) {
   Test.httpGet(api, '/', body => {
-    expect(body).to.contain('If you are like us, you\'ll have a JavaScript-Blocker installed.')
+    Test.expect(body).to.contain('If you are like us, you\'ll have a JavaScript-Blocker installed.')
   })
 }
 
@@ -48,7 +48,7 @@ function testIndexExists (api) {
  */
 function testPrivacyExists (api) {
   Test.httpGet(api, '/privacy', body => {
-    expect(body).to.contain('This is the default privacy policy')
+    Test.expect(body).to.contain('This is the default privacy policy')
   })
 }
 
@@ -57,7 +57,7 @@ function testPrivacyExists (api) {
  */
 function testTermsExists (api) {
   Test.httpGet(api, '/terms', body => {
-    expect(body).to.contain('This website runs a copy of')
+    Test.expect(body).to.contain('This website runs a copy of')
   })
 }
 
@@ -66,7 +66,7 @@ function testTermsExists (api) {
  */
 function testToolsExists (api) {
   Test.httpGet(api, '/tools', body => {
-    expect(body).to.contain('bcrypt tool')
+    Test.expect(body).to.contain('bcrypt tool')
   })
 }
 
@@ -75,7 +75,7 @@ function testToolsExists (api) {
  */
 function testNoVoid (api) {
   Test.httpGet(api, '/void', body => {
-    expect(body).to.contain('404 Not Found')
+    Test.expect(body).to.contain('404 Not Found')
   }, 404)
 }
 
@@ -84,7 +84,7 @@ function testNoVoid (api) {
  */
 function testNoSubdir (api) {
   Test.httpGet(api, '/xx/blueBird', body => {
-    expect(body).to.contain('404 Not Found')
+    Test.expect(body).to.contain('404 Not Found')
   }, 404)
 }
 

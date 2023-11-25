@@ -19,14 +19,14 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../lib/FreeDOM.mjs'
-import * as Api from '../api/index.mjs'
-import * as App from '../app.mjs'
-import * as Error from './error.mjs'
-import * as Icon from '../lib/icon.mjs'
-import * as Screen from '../lib/screen.mjs'
-import * as State from '../state/index.mjs'
-import * as Text from '../lib/util-text.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Error from 'src/js/view/error.mjs'
+import * as Icon from 'src/js/lib/icon.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
 
 /**
  * Show a setup-room dialog.

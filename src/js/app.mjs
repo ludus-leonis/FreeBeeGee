@@ -18,15 +18,15 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as Api from './api/index.mjs'
-import * as Error from './view/error.mjs'
-import * as Room from './view/room/index.mjs'
-import * as State from './state/index.mjs'
-import * as Tools from './view/tools.mjs'
-import * as ViewCreate from './view/create.mjs'
-import * as ViewInstaller from './view/installer.mjs'
-import * as ViewJoin from './view/join.mjs'
-import * as ViewPassword from './view/password.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as Error from 'src/js/view/error.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Tools from 'src/js/view/tools.mjs'
+import * as ViewCreate from 'src/js/view/create.mjs'
+import * as ViewInstaller from 'src/js/view/installer.mjs'
+import * as ViewJoin from 'src/js/view/join.mjs'
+import * as ViewPassword from 'src/js/view/password.mjs'
 
 // --- startup & page routing --------------------------------------------------
 

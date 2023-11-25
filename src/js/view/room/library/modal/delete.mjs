@@ -19,11 +19,11 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as Content from '../../../../view/room/tabletop/content.mjs'
-import * as Event from '../../../../lib/event.mjs'
-import * as Modal from '../../../../view/room/modal.mjs'
-import * as State from '../../../../state/index.mjs'
-import * as Text from '../../../../lib/util-text.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Event from 'src/js/lib/event.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
 
 /**
  * Show the confirmation modal to delete an asset.

@@ -139,7 +139,9 @@ gulp.task('js-main', () => {
   ], {
     paths: ['src/js']
   })
-    .transform('babelify', { presets: ['@babel/preset-env'] })
+    .transform('babelify', {
+      presets: ['@babel/preset-env']
+    })
     .bundle()
     .pipe(vinylSource('main.js')))
     .pipe(gulp.dest(dirs.site))

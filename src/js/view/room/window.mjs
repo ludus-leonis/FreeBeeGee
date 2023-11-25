@@ -19,8 +19,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
-import * as Sync from '../../view/room/sync.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Sync from 'src/js/view/room/sync.mjs'
 
 let window = null // currently open instance
 

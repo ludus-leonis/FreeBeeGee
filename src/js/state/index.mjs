@@ -21,12 +21,12 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as Api from '../api/index.mjs'
-import * as Browser from '../lib/util-browser.mjs'
-import * as Content from '../view/room/tabletop/content.mjs'
-import * as Error from '../view/error.mjs'
-import * as Event from '../lib/event.mjs'
-import * as Selection from '../view/room/tabletop/selection.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Error from 'src/js/view/error.mjs'
+import * as Event from 'src/js/lib/event.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
 
 // -----------------------------------------------------------------------------
 

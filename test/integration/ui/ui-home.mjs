@@ -26,7 +26,7 @@
 
 import { JSDOM } from 'jsdom'
 
-import * as Test, { expect } from '../utils/test.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
 
 // -----------------------------------------------------------------------------
 
@@ -60,7 +60,7 @@ function testHome (api) {
       resources: 'usable',
       runScripts: 'dangerously'
     })
-    expect(dom.window.document.body.innerHTML).to.be.eql('x')
+    Test.expect(dom.window.document.body.innerHTML).to.be.eql('x')
   })
 }
 

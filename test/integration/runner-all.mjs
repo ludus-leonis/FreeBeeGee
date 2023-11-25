@@ -20,16 +20,16 @@
 
 /* global describe */
 
-import Assets from './api/api-assets.mjs'
-import Crud from './api/api-crud.mjs'
-import Digests from './api/api-digests.mjs'
-import Permissions from './api/api-permissions.mjs'
-import Pieces from './api/api-pieces.mjs'
-import Server from './api/api-server.mjs'
-import Snapshots from './api/api-snapshots.mjs'
-import Tables from './api/api-tables.mjs'
-import Templates from './api/api-templates.mjs'
-import Uploads from './api/api-uploads.mjs'
+import Assets from 'test/integration/api/api-assets.mjs'
+import Crud from 'test/integration/api/api-crud.mjs'
+import Digests from 'test/integration/api/api-digests.mjs'
+import Permissions from 'test/integration/api/api-permissions.mjs'
+import Pieces from 'test/integration/api/api-pieces.mjs'
+import Server from 'test/integration/api/api-server.mjs'
+import Snapshots from 'test/integration/api/api-snapshots.mjs'
+import Tables from 'test/integration/api/api-tables.mjs'
+import Templates from 'test/integration/api/api-templates.mjs'
+import Uploads from 'test/integration/api/api-uploads.mjs'
 
 const runner = function (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')

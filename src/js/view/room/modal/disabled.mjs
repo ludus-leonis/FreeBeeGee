@@ -19,8 +19,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-import * as Modal from '../../../view/room/modal.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
 
 /**
  * Inform user about a disabled feature.

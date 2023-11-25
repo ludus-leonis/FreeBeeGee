@@ -21,19 +21,19 @@
 
 import shajs from 'sha.js'
 
-import _ from '../../../lib/FreeDOM.mjs'
-import * as Browser from '../../../lib/util-browser.mjs'
-import * as Content from '../../../view/room/tabletop/content.mjs'
-import * as Dom from '../../../view/room/tabletop/dom.mjs'
-import * as Event from '../../../lib/event.mjs'
-import * as Icon from '../../../lib/icon.mjs'
-import * as Modal from '../../../view/room/modal.mjs'
-import * as ModalDelete from './modal/delete.mjs'
-import * as ModalEdit from './modal/edit.mjs'
-import * as Selection from '../../../view/room/tabletop/selection.mjs'
-import * as State from '../../../state/index.mjs'
-import * as Text from '../../../lib/util-text.mjs'
-import * as Window from '../../../view/room/window.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Event from 'src/js/lib/event.mjs'
+import * as Icon from 'src/js/lib/icon.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as ModalDelete from 'src/js/view/room/library/modal/delete.mjs'
+import * as ModalEdit from 'src/js/view/room/library/modal/edit.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Window from 'src/js/view/room/window.mjs'
 
 Event.register('LibraryManager', Event.HOOK.LIBRARY_EDIT, () => selection && ModalEdit.open(selection))
 Event.register('LibraryManager', Event.HOOK.LIBRARY_RELOAD, () => showSpinner())

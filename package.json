@@ -61,6 +61,8 @@
   "devDependencies": {
     "@babel/core": "^7.23.2",
     "@babel/preset-env": "^7.23.2",
+    "src": "./src",
+    "test": "./test",
     "adm-zip": "^0.5.10",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
@@ -114,5 +116,17 @@
     "chokidar": "^3.5.3",
     "glob-parent": "^6.0.2",
     "postcss": "^8.4.31"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/preset-env"
+          ]
+        }
+      ]
+    ]
   }
 }

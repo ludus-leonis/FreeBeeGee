@@ -19,19 +19,19 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-import { Mode } from './_Mode.mjs'
-import * as Dom from '../tabletop/dom.mjs'
-import * as Icon from '../../../lib/icon.mjs'
-import * as ModalLibrary from '../library/index.mjs'
-import * as Mouse from '../mouse/index.mjs'
-import * as Room from '../index.mjs'
-import * as Selection from '../tabletop/selection.mjs'
-import * as WindowLibrary from '../library/editor.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import { Mode } from 'src/js/view/room/mode/_Mode.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Icon from 'src/js/lib/icon.mjs'
+import * as ModalLibrary from 'src/js/view/room/library/index.mjs'
+import * as Mouse from 'src/js/view/room/mouse/index.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
+import * as WindowLibrary from 'src/js/view/room/library/editor.mjs'
 
-import { Grab } from '../mouse/Grab.mjs'
-import { SelectAndDrag } from '../mouse/SelectAndDrag.mjs'
-import { SelectAndProperties } from '../mouse/SelectAndProperties.mjs'
+import { Grab } from 'src/js/view/room/mouse/Grab.mjs'
+import { SelectAndDrag } from 'src/js/view/room/mouse/SelectAndDrag.mjs'
+import { SelectAndProperties } from 'src/js/view/room/mouse/SelectAndProperties.mjs'
 
 export class Main extends Mode {
   enter () { // initialize UI

@@ -21,11 +21,11 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-import * as Dom from '../../../view/room/tabletop/dom.mjs'
-import * as State from '../../../state/index.mjs'
-import * as Text from '../../../lib/util-text.mjs'
-import * as Util from '../../../lib/util.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 // -----------------------------------------------------------------------------
 

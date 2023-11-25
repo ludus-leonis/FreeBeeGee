@@ -19,11 +19,11 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-import { MouseButtonHandler } from './_MouseButtonHandler.mjs'
-import * as Content from '../../../view/room/tabletop/content.mjs'
-import * as Dom from '../../../view/room/tabletop/dom.mjs'
-import * as Mouse from '../../../view/room/mouse/index.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import { MouseButtonHandler } from 'src/js/view/room/mouse/_MouseButtonHandler.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Mouse from 'src/js/view/room/mouse/index.mjs'
 
 export class Los extends MouseButtonHandler {
   constructor () {

@@ -19,11 +19,11 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../lib/FreeDOM.mjs'
-import * as Api from '../api/index.mjs'
-import * as App from '../app.mjs'
-import * as Screen from '../lib/screen.mjs'
-import * as Sync from './room/sync.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
+import * as Sync from 'src/js/view/room/sync.mjs'
 
 /**
  * React on an API error.

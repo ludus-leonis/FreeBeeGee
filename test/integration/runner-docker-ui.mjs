@@ -22,6 +22,6 @@
 // We can only run those tests that work with a default server.json here.
 // So e.g. no snapshot/uploads, as they are off per default.
 
-import Static from './ui/ui-static.mjs'
+import Static from 'test/integration/ui/ui-static.mjs'
 
 Static.run('http://localhost:8765')

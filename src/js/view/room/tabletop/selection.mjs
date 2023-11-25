@@ -22,10 +22,10 @@
 // This only operates on state, not on DOM.
 // Selection is different for each table and always applies to current one.
 
-import * as Content from '../../../view/room/tabletop/content.mjs'
-import * as Dom from '../../../view/room/tabletop/dom.mjs'
-import * as ModalEdit from '../../../view/room/modal/piece/index.mjs'
-import * as State from '../../../state/index.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as ModalEdit from 'src/js/view/room/modal/piece/index.mjs'
+import * as State from 'src/js/state/index.mjs'
 
 export const _private = {
   selectionReset: function () { // exposed only for testing

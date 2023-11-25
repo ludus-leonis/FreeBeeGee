@@ -19,19 +19,19 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
-import * as Browser from '../../lib/util-browser.mjs'
-import * as Content from '../../view/room/tabletop/content.mjs'
-import * as Dom from '../../view/room/tabletop/dom.mjs'
-import * as Event from '../../lib/event.mjs'
-import * as Modal from '../../view/room/modal.mjs'
-import * as ModalHelp from '../../view/room/modal/help.mjs'
-import * as ModalSettings from '../../view/room/modal/settings.mjs'
-import * as Mouse from '../../view/room/mouse/index.mjs'
-import * as Room from '../../view/room/index.mjs'
-import * as State from '../../state/index.mjs'
-import * as Sync from '../../view/room/sync.mjs'
-import * as Window from '../../view/room/window.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Event from 'src/js/lib/event.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as ModalHelp from 'src/js/view/room/modal/help.mjs'
+import * as ModalSettings from 'src/js/view/room/modal/settings.mjs'
+import * as Mouse from 'src/js/view/room/mouse/index.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Sync from 'src/js/view/room/sync.mjs'
+import * as Window from 'src/js/view/room/window.mjs'
 
 // -----------------------------------------------------------------------------
 

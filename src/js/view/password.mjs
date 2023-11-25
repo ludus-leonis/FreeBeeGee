@@ -19,9 +19,9 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../lib/FreeDOM.mjs'
-import * as App from '../app.mjs'
-import * as Screen from '../lib/screen.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
 
 /**
  * Show a password dialog.

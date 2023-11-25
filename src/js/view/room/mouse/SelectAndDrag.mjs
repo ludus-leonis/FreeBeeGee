@@ -19,16 +19,16 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-import { MouseButtonHandler } from './_MouseButtonHandler.mjs'
-import * as Content from '../../../view/room/tabletop/content.mjs'
-import * as Dom from '../../../view/room/tabletop/dom.mjs'
-import * as Mouse from '../../../view/room/mouse/index.mjs'
-import * as Room from '../../../view/room/index.mjs'
-import * as Selection from '../../../view/room/tabletop/selection.mjs'
-import * as State from '../../../state/index.mjs'
-import * as Text from '../../../lib/util-text.mjs'
-import * as Util from '../../../lib/util.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import { MouseButtonHandler } from 'src/js/view/room/mouse/_MouseButtonHandler.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Mouse from 'src/js/view/room/mouse/index.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 export class SelectAndDrag extends MouseButtonHandler {
   constructor () {

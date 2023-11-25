@@ -19,13 +19,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-import { Mode } from './_Mode.mjs'
-import * as Dom from '../tabletop/dom.mjs'
-import * as Mouse from '../mouse/index.mjs'
-import * as Room from '../index.mjs'
-import { Grab } from '../mouse/Grab.mjs'
-import { Los } from '../mouse/Los.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import { Mode } from 'src/js/view/room/mode/_Mode.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Mouse from 'src/js/view/room/mouse/index.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import { Grab } from 'src/js/view/room/mouse/Grab.mjs'
+import { Los } from 'src/js/view/room/mouse/Los.mjs'
 
 export class Measure extends Mode {
   enter () { // initialize UI

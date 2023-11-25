@@ -19,17 +19,17 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../../lib/FreeDOM.mjs'
-import * as Content from '../../../../view/room/tabletop/content.mjs'
-import * as Dom from '../../../../view/room/tabletop/dom.mjs'
-import * as Modal from '../../../../view/room/modal.mjs'
-import * as ModalNote from './note.mjs'
-import * as ModalOther from './other.mjs'
-import * as ModalTile from './tile.mjs'
-import * as ModalToken from './token.mjs'
-import * as State from '../../../../state/index.mjs'
-import * as Text from '../../../../lib/util-text.mjs'
-import * as Util from '../../../../lib/util.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as ModalNote from 'src/js/view/room/modal/piece/note.mjs'
+import * as ModalOther from 'src/js/view/room/modal/piece/other.mjs'
+import * as ModalTile from 'src/js/view/room/modal/piece/tile.mjs'
+import * as ModalToken from 'src/js/view/room/modal/piece/token.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 /**
  * Show the edit-piece modal.

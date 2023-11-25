@@ -20,10 +20,10 @@
 
 /* global describe, it, beforeEach */
 
-import * as Content from '../../../src/js/view/room/tabletop/content.mjs'
-import * as Selection from '../../../src/js/view/room/tabletop/selection.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
 
-import * as Test from '../../integration/utils/test.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
 const expect = Test.expect
 
 const pieceJSON = `

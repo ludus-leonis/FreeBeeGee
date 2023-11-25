@@ -13,7 +13,8 @@ module.exports = {
   ],
   parserOptions: {
     ecmaVersion: 'latest',
-    sourceType: 'module'
+    sourceType: 'module',
+    allowImportExportEverywhere: true
   },
   ignorePatterns: [
   ],

@@ -21,7 +21,7 @@
 
 /* global FormData */
 
-import Serverless from '../api/serverless.mjs'
+import Serverless from 'src/js/api/serverless.mjs'
 
 // -----------------------------------------------------------------------------
 

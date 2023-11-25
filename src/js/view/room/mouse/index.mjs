@@ -19,13 +19,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-import { Grab } from './Grab.mjs'
-import * as Popup from '../../../view/room/tabletop/popup.mjs'
-import * as Room from '../../../view/room/index.mjs'
-import { SelectAndDrag } from './SelectAndDrag.mjs'
-import { SelectAndProperties } from './SelectAndProperties.mjs'
-import * as Sync from '../../../view/room/sync.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import { Grab } from 'src/js/view/room/mouse/Grab.mjs'
+import * as Popup from 'src/js/view/room/tabletop/popup.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import { SelectAndDrag } from 'src/js/view/room/mouse/SelectAndDrag.mjs'
+import { SelectAndProperties } from 'src/js/view/room/mouse/SelectAndProperties.mjs'
+import * as Sync from 'src/js/view/room/sync.mjs'
 
 /**
  * Determine if user is currently dropping (move while mouse button down) something.

@@ -20,15 +20,15 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import * as Api from '../../api/index.mjs'
-import * as Content from '../../view/room/tabletop/content.mjs'
-import * as Dom from '../../view/room/tabletop/dom.mjs'
-import * as Error from '../../view/error.mjs'
-import * as Event from '../../lib/event.mjs'
-import * as ModalInactive from '../../view/room/modal/inactive.mjs'
-import * as Room from '../../view/room/index.mjs'
-import * as State from '../../state/index.mjs'
-import * as Util from '../../lib/util.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Error from 'src/js/view/error.mjs'
+import * as Event from 'src/js/lib/event.mjs'
+import * as ModalInactive from 'src/js/view/room/modal/inactive.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 // --- events ------------------------------------------------------------------
 

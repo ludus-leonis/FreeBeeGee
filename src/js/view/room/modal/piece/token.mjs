@@ -19,9 +19,9 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../../lib/FreeDOM.mjs'
-import * as Modal from './index.mjs'
-import * as State from '../../../../state/index.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Modal from 'src/js/view/room/modal/piece/index.mjs'
+import * as State from 'src/js/state/index.mjs'
 
 /**
  * Show the edit-piece modal.

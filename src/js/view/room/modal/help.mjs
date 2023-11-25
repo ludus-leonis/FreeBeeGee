@@ -19,12 +19,12 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { marked } from '../../../../../node_modules/marked/lib/marked.cjs'
+import { marked } from '../../../../../node_modules/marked/lib/marked.cjs' // path needed for babel
 
-import _ from '../../../lib/FreeDOM.mjs'
-import * as Modal from '../../../view/room/modal.mjs'
-import * as State from '../../../state/index.mjs'
-import * as Util from '../../../lib/util.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 /**
  * Show the help window.

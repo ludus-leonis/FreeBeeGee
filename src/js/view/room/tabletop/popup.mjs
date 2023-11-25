@@ -21,13 +21,13 @@
 
 import { createPopper } from '@popperjs/core'
 
-import _ from '../../../lib/FreeDOM.mjs'
-import * as Dom from '../../../view/room/tabletop/dom.mjs'
-import * as Icon from '../../../lib/icon.mjs'
-import * as ModalLibrary from '../../../view/room/library/index.mjs'
-import * as ModalSettings from '../../../view/room/modal/settings.mjs'
-import * as Room from '../../../view/room/index.mjs'
-import * as Selection from './selection.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Icon from 'src/js/lib/icon.mjs'
+import * as ModalLibrary from 'src/js/view/room/library/index.mjs'
+import * as ModalSettings from 'src/js/view/room/modal/settings.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
 
 /**
  * Show the popup menu for a piece.

@@ -19,13 +19,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-import * as App from '../../../app.mjs'
-import * as Content from '../../../view/room/tabletop/content.mjs'
-import * as Dom from '../../../view/room/tabletop/dom.mjs'
-import * as Modal from '../../../view/room/modal.mjs'
-import * as Room from '../../../view/room/index.mjs'
-import * as State from '../../../state/index.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as State from 'src/js/state/index.mjs'
 
 /**
  * Show the settings modal.

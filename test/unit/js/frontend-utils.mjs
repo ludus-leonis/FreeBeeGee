@@ -20,9 +20,9 @@
 
 /* global describe, it */
 
-import { expect } from '../../integration/utils/test.mjs'
+import { expect } from 'test/integration/utils/test.mjs'
 
-import * as Util from '../../../src/js/lib/util.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 describe('Frontend - util.mjs - Arrays', function () {
   it('isAll()', function () {

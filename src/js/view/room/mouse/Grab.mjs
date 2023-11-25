@@ -19,9 +19,9 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { MouseButtonHandler } from './_MouseButtonHandler.mjs'
-import * as Dom from '../tabletop/dom.mjs'
-import * as Util from '../../../lib/util.mjs'
+import { MouseButtonHandler } from 'src/js/view/room/mouse/_MouseButtonHandler.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 export class Grab extends MouseButtonHandler {
   constructor () {

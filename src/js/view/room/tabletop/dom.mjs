@@ -20,17 +20,17 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { marked } from '../../../../../node_modules/marked/lib/marked.cjs'
+import { marked } from '../../../../../node_modules/marked/lib/marked.cjs' // path needed for babel
 
-import _ from '../../../lib/FreeDOM.mjs'
-import * as Browser from '../../../lib/util-browser.mjs'
-import * as Content from '../../../view/room/tabletop/content.mjs'
-import * as ModalEdit from '../../../view/room/modal/piece/index.mjs'
-import * as Popup from '../../../view/room/tabletop/popup.mjs'
-import * as Room from '../../../view/room/index.mjs'
-import * as Selection from './selection.mjs'
-import * as State from '../../../state/index.mjs'
-import * as Util from '../../../lib/util.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as ModalEdit from 'src/js/view/room/modal/piece/index.mjs'
+import * as Popup from 'src/js/view/room/tabletop/popup.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 // -----------------------------------------------------------------------------
 

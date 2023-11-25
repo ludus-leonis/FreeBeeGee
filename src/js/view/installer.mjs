@@ -19,8 +19,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../lib/FreeDOM.mjs'
-import * as Screen from '../lib/screen.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
 
 /**
  * Show a install-site dialog

@@ -19,13 +19,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../lib/FreeDOM.mjs'
-import * as App from '../app.mjs'
-import * as Browser from '../lib/util-browser.mjs'
-import * as Screen from '../lib/screen.mjs'
-import * as State from '../state/index.mjs'
-import * as Text from '../lib/util-text.mjs'
-import * as Util from '../lib/util.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 /** Limit room names like hilariousGazingPenguin */
 const roomNameMaxLength = 48
