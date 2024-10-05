@@ -36,7 +36,7 @@ const runner = function (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
   const api = 'http://localhost:8765/api'
 
-  describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.local'), '81', `${room}81`) })
+  describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.localhost'), '81', `${room}81`) })
 }
 
 Assets.run(runner)

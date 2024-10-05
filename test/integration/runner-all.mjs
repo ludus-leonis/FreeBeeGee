@@ -35,13 +35,13 @@ const runner = function (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
   const api = 'http://localhost:8765/api'
 
-  describe('PHP 7.2', function () { what(api.replace(/localhost:8765/, 'play72.local'), '72', `${room}72`) })
-  describe('PHP 7.3', function () { what(api.replace(/localhost:8765/, 'play73.local'), '73', `${room}73`) })
-  describe('PHP 7.4', function () { what(api.replace(/localhost:8765/, 'play74.local'), '74', `${room}74`) })
-  describe('PHP 8.0', function () { what(api.replace(/localhost:8765/, 'play80.local'), '80', `${room}80`) })
-  describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.local'), '81', `${room}81`) })
-  describe('PHP 8.2', function () { what(api.replace(/localhost:8765/, 'play82.local'), '82', `${room}82`) })
-  describe('PHP 8.3', function () { what(api.replace(/localhost:8765/, 'play83.local'), '83', `${room}83`) })
+  describe('PHP 7.2', function () { what(api.replace(/localhost:8765/, 'play72.localhost'), '72', `${room}72`) })
+  describe('PHP 7.3', function () { what(api.replace(/localhost:8765/, 'play73.localhost'), '73', `${room}73`) })
+  describe('PHP 7.4', function () { what(api.replace(/localhost:8765/, 'play74.localhost'), '74', `${room}74`) })
+  describe('PHP 8.0', function () { what(api.replace(/localhost:8765/, 'play80.localhost'), '80', `${room}80`) })
+  describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.localhost'), '81', `${room}81`) })
+  describe('PHP 8.2', function () { what(api.replace(/localhost:8765/, 'play82.localhost'), '82', `${room}82`) })
+  describe('PHP 8.3', function () { what(api.replace(/localhost:8765/, 'play83.localhost'), '83', `${room}83`) })
 }
 
 Assets.run(runner)

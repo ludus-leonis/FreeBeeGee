@@ -36,7 +36,7 @@ import * as fs from 'fs'
  */
 function runner (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
-  const api = 'http://play81.local/api'
+  const api = 'http://play81.localhost/api'
 
   describe('PHP 8.1', function () { what(api, '81', `${room}81`) })
 }
