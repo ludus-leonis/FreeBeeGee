@@ -1517,7 +1517,7 @@ function isSolid (piece, x, y) {
 
   // now do the hit detection
   return new Promise((resolve, reject) => {
-    const img = new Image() // eslint-disable-line no-undef
+    const img = new Image()
     img.addEventListener('load', () => resolve(img))
     img.addEventListener('error', (err) => reject(err))
     img.src = mask

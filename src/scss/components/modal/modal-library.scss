@@ -60,7 +60,7 @@
       p {
         @extend %p-small;
 
-        letter-spacing: -.025em;
+        letter-spacing: -0.025em;
         margin: $spacing-tiny auto $spacing-small;
         text-align: center;
       }
@@ -86,19 +86,19 @@
       .is-grid-square & {
         @include modal-library-flate(64px, 64px, 1);
 
-        &.is-inflate-2x { @include modal-library-flate(128px, 128px, 2) }
-        &.is-deflate-2x { @include modal-library-flate(32px, 32px, .5) }
-        &.is-deflate-3x { @include modal-library-flate(24px, 24px, .375) }
-        &.is-deflate-4x { @include modal-library-flate(16px, 16px, .25) }
+        &.is-inflate-2x { @include modal-library-flate(128px, 128px, 2); }
+        &.is-deflate-2x { @include modal-library-flate(32px, 32px, 0.5); }
+        &.is-deflate-3x { @include modal-library-flate(24px, 24px, 0.375); }
+        &.is-deflate-4x { @include modal-library-flate(16px, 16px, 0.25); }
       }
 
       .is-grid-hex & {
         @include modal-library-flate(110px, 64px, 1);
 
-        &.is-inflate-2x { @include modal-library-flate(220px, 128px, 2) }
-        &.is-deflate-2x { @include modal-library-flate(55px, 32px, .5) }
-        &.is-deflate-3x { @include modal-library-flate(41px, 24px, .375) }
-        &.is-deflate-4x { @include modal-library-flate(28px, 16px, .25) }
+        &.is-inflate-2x { @include modal-library-flate(220px, 128px, 2); }
+        &.is-deflate-2x { @include modal-library-flate(55px, 32px, 0.5); }
+        &.is-deflate-3x { @include modal-library-flate(41px, 24px, 0.375); }
+        &.is-deflate-4x { @include modal-library-flate(28px, 16px, 0.25); }
       }
 
     }

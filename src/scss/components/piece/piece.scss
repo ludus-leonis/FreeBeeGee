@@ -81,10 +81,10 @@ $material-size: 512;
     $selected-color: $color-secondary;
 
     filter:
-    drop-shadow(zoom(2px) 0 0 $selected-color)
-    drop-shadow(0 zoom(2px) 0 $selected-color)
-    drop-shadow(zoom(-2px) 0 0 $selected-color)
-    drop-shadow(0 zoom(-2px) 0 $selected-color) !important; // sass-lint:disable-line no-important
+      drop-shadow(zoom(2px) 0 0 $selected-color)
+      drop-shadow(0 zoom(2px) 0 $selected-color)
+      drop-shadow(zoom(-2px) 0 0 $selected-color)
+      drop-shadow(0 zoom(-2px) 0 $selected-color) !important; // sass-lint:disable-line no-important
   }
 
   &.is-invalid {
@@ -95,8 +95,8 @@ $material-size: 512;
 
   &.is-pointer {
     animation: whirl 1s linear infinite;
-    #{'--fbg-side'}: url('img/pointer.png');
     filter: none !important; // sass-lint:disable-line no-important
+    #{'--fbg-side'}: url('img/pointer.png');
   }
 
   // --- size ------------------------------------------------------------------
@@ -132,7 +132,7 @@ $material-size: 512;
   .is-quality-high &,
   .is-quality-ultra & {
     background-image: var(--fbg-material), var(--fbg-grid), var(--fbg-side), var(--fbg-base);
-    background-size: zoom($material-size * .5px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
+    background-size: zoom($material-size * 0.5px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
 
     &.has-highlight {
       box-shadow: highlight();
@@ -149,11 +149,11 @@ $material-size: 512;
     background-color: $color-black-50a;
     border-radius: 2em;
     color: $color-white-100;
-    font-size: zoom(.6875em);
+    font-size: zoom(0.6875em);
     font-weight: 600;
-    letter-spacing: -.025em;
+    letter-spacing: -0.025em;
     line-height: 1.1875em;
-    padding: .125em .5em;
+    padding: 0.125em 0.5em;
     pointer-events: none;
     position: relative;
     white-space: nowrap;
@@ -207,7 +207,7 @@ $material-size: 512;
       background-color: var(--fbg-color);
       background-image: none, var(--fbg-grid), var(--fbg-side), var(--fbg-base);
       background-position: center, var(--fbg-grid-x-origin) var(--fbg-grid-y-origin), center, center;
-      background-size: zoom($material-size * .5px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
+      background-size: zoom($material-size * 0.5px), zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), cover, cover;
       height: 100%;
       mask-image: var(--fbg-mask);
       mask-position: center;
@@ -229,7 +229,7 @@ $material-size: 512;
   // --- drag-n-drop -----------------------------------------------------------
 
   &.is-dragging {
-    opacity: .5;
+    opacity: 0.5;
 
     &.is-dragging-hidden {
       opacity: 0;
@@ -238,13 +238,13 @@ $material-size: 512;
 
   &:not(.is-dragging) {
     transition:
-    left $fbg-transition,
-    top $fbg-transition,
-    transform $fbg-transition,
-    filter $fbg-transition,
-    width $fbg-transition,
-    height $fbg-transition,
-    box-shadow $fbg-transition;
+      left $fbg-transition,
+      top $fbg-transition,
+      transform $fbg-transition,
+      filter $fbg-transition,
+      width $fbg-transition,
+      height $fbg-transition,
+      box-shadow $fbg-transition;
   }
 
   // --- backsides -------------------------------------------------------------

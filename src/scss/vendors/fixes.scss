@@ -24,7 +24,7 @@
 ////
 
 // firefox filter direction + 180° degree bug
-@-moz-document url-prefix() { // sass-lint:disable-line no-vendor-prefixes
+@-moz-document url-prefix() {
   .is-r-180 {
     #{'--fbg-r'}: 180.015deg;
   }

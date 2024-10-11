@@ -136,7 +136,7 @@ export function toggleFullscreen () {
       document.documentElement.mozRequestFullScreen()
       return true
     } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT) // eslint-disable-line no-undef
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
       return true
     }
   } else {

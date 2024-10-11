@@ -25,18 +25,18 @@
 
 .key {
   border: 1px solid $color-gray-50;
-  border-radius: .25em;
+  border-radius: 0.25em;
   box-shadow: px(1) px(1) 0 $color-gray-80, px(2) px(1) px(2) $color-black-25a;
   display: inline-block;
   font-family: $typography-font-list-monospace;
-  font-size: .85em;
+  font-size: 0.85em;
   font-weight: 500;
-  letter-spacing: -.0625em; // ~1px
+  letter-spacing: -0.0625em; // ~1px
   line-height: 1em;
   margin-right: $spacing-micro;
   min-width: 1.5em;
-  padding: .3em .2em .2em;
+  padding: 0.3em 0.2em 0.2em;
   position: relative;
   text-align: center;
-  top: -.1em;
+  top: -0.1em;
 }

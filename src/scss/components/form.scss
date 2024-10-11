@@ -121,7 +121,7 @@ textarea,
 }
 
 [type='password'] {
-  letter-spacing: .25em;
+  letter-spacing: 0.25em;
 }
 
 textarea {
@@ -136,7 +136,7 @@ textarea {
 select {
   appearance: none;
   background-image: url('img/select.png');
-  background-position: right .5rem center;
+  background-position: right 0.5rem center;
   background-repeat: no-repeat;
   background-size: 1rem;
 }
@@ -147,7 +147,7 @@ select {
   margin-right: $spacing-tiny;
   padding: 0;
   position: relative;
-  top: .15em;
+  top: 0.15em;
   width: 1em;
 
   &:checked {
@@ -163,7 +163,7 @@ select {
   appearance: none;
   background: $color-wb-fg;
   border-radius: 1em;
-  height: .85em;
+  height: 0.85em;
   outline: none;
   width: 100%;
 

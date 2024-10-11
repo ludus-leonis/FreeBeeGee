@@ -29,24 +29,24 @@
 
 $typography-font-list-fallback: // stylelint-disable-line scss/dollar-variable-colon-space-after
 -apple-system,
-'BlinkMacSystemFont',
-'Segoe UI',
-'Roboto',
-'Helvetica Neue',
-'Arial',
-sans-serif,
-'Apple Color Emoji',
-'Segoe UI Emoji',
-'Segoe UI Symbol';
+  'BlinkMacSystemFont',
+  'Segoe UI',
+  'Roboto',
+  'Helvetica Neue',
+  'Arial',
+  sans-serif,
+  'Apple Color Emoji',
+  'Segoe UI Emoji',
+  'Segoe UI Symbol';
 
 $typography-font-list-monospace-fallback: // stylelint-disable-line scss/dollar-variable-colon-space-after
 'SFMono-Regular',
-'Menlo',
-'Monaco',
-'Consolas',
-'Liberation Mono',
-'Courier New',
-monospace;
+  'Menlo',
+  'Monaco',
+  'Consolas',
+  'Liberation Mono',
+  'Courier New',
+  monospace;
 
 /// Setup links (anchors). Fancy with color, opacity and colorful underlines!
 ///
@@ -195,9 +195,9 @@ h6,
   @include typography-font(
     $typography-font-list-sans,
     $typography-font-weight-regular,
-    $typography-font-size-base * .875,
+    $typography-font-size-base * 0.875,
     $typography-paragraph-lineheight,
-    $typography-letter-spacing-base + .015em
+    $typography-letter-spacing-base + 0.015em
   );
 }
 
@@ -208,7 +208,7 @@ h6,
     700,
     px(11),
     1.5em,
-    $typography-letter-spacing-base + .05em
+    $typography-letter-spacing-base + 0.05em
   );
 
   text-transform: uppercase;
@@ -225,7 +225,7 @@ h6,
     600,
     px(11),
     1.2em,
-    $typography-letter-spacing-base - .025em
+    $typography-letter-spacing-base - 0.025em
   );
 }
 
@@ -254,7 +254,7 @@ code {
   color: $color-primary;
   font-size: 13px;
   font-weight: 600;
-  letter-spacing: .05em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
@@ -263,7 +263,7 @@ code {
   display: inline-block;
   height: 1em;
   position: relative;
-  top: -.1em;
+  top: -0.1em;
 
   svg {
     height: 100%;
@@ -379,7 +379,7 @@ hr {
 .is-tabular {
   display: inline-block;
   text-align: center;
-  width: .6em;
+  width: 0.6em;
 }
 
 .is-error {

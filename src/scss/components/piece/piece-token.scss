@@ -51,7 +51,7 @@
     color: var(--fbg-color-invert);
     display: flex;
     flex-direction: row;
-    font-size: zoom(.85em);
+    font-size: zoom(0.85em);
     font-weight: 600;
     height: $is-n-size;
     justify-content: center;
@@ -147,7 +147,7 @@
 .is-quality-ultra .piece-token {
   &.is-border-0 {
     &.is-n::after {
-      opacity: .85;
+      opacity: 0.85;
     }
   }
 }

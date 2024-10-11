@@ -256,7 +256,7 @@ function setupFooter () {
  */
 function averageColor (dataUrl) {
   _('#upload-color').value = '#808080' // color detection is async, so use interim-default
-  const image = new Image() // eslint-disable-line no-undef
+  const image = new Image()
   image.onload = function () {
     // shrink in 2 steps for more accurate average
     const canvas8 = Browser.resizeImage(image, 8)
@@ -481,7 +481,7 @@ function updatePreview (parseFilename = false) {
 
       // guess type/dimensions if no info was in filename
       if (!parts.w) {
-        const image = new Image() // eslint-disable-line no-undef
+        const image = new Image()
         image.src = blob
         image.onload = () => {
           const tilesize = 64 // in px

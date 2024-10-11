@@ -89,11 +89,11 @@ body {
   }
 
   &.is-zoom-0-75 {
-    #{'--fbg-zoom'}: .75;
+    #{'--fbg-zoom'}: 0.75;
   }
 
   &.is-zoom-0-50 {
-    #{'--fbg-zoom'}: .5;
+    #{'--fbg-zoom'}: 0.5;
   }
 
   .layer {

@@ -58,10 +58,10 @@ $shadow-highlight-width: 1.5px;
 /// @returns {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function shadow($blur, $color) {
   @return
-  zoom(calc(var(--fbg-r-sin) * var(--fbg-shadow-length)))
-  zoom(calc(var(--fbg-r-cos) * var(--fbg-shadow-length)))
-  zoom($blur)
-  $color;
+    zoom(calc(var(--fbg-r-sin) * var(--fbg-shadow-length)))
+    zoom(calc(var(--fbg-r-cos) * var(--fbg-shadow-length)))
+    zoom($blur)
+    $color;
 }
 
 /// Return a box-shadow highlight and darklight value for the configured light source.
@@ -72,24 +72,24 @@ $shadow-highlight-width: 1.5px;
 /// @returns {value} The drop shadow value, e.g. '2px 3px 2px #001122'.
 @function highlight() {
   @return
-  zoom(calc(var(--fbg-r-sin) * $shadow-highlight-width)) zoom(calc(var(--fbg-r-cos) * $shadow-highlight-width)) zoom(.5px) 0 $color-white-15a inset,
-  zoom(calc(var(--fbg-r-sin) * -1 * $shadow-highlight-width)) zoom(calc(var(--fbg-r-cos) * -1 * $shadow-highlight-width)) zoom(.5px) 0 $color-black-20a inset;
+    zoom(calc(var(--fbg-r-sin) * $shadow-highlight-width)) zoom(calc(var(--fbg-r-cos) * $shadow-highlight-width)) zoom(0.5px) 0 $color-white-15a inset,
+    zoom(calc(var(--fbg-r-sin) * -1 * $shadow-highlight-width)) zoom(calc(var(--fbg-r-cos) * -1 * $shadow-highlight-width)) zoom(0.5px) 0 $color-black-20a inset;
 }
 
 $shadow: shadow(2px, $color-black-65a);
 
-$shadow-intensity: .5;
+$shadow-intensity: 0.5;
 $shadow-spread: 2;
 $shadow-color: #000;
 
 @function shadow-sharp($px) {
   @return
-  zoom(calc(var(--fbg-r-sin) * $px))
-  zoom(calc(var(--fbg-r-cos) * $px));
+    zoom(calc(var(--fbg-r-sin) * $px))
+    zoom(calc(var(--fbg-r-cos) * $px));
 }
 
 @function shadow-blurry($px) {
-  @return shadow-sharp($px) zoom($px * .5);
+  @return shadow-sharp($px) zoom($px * 0.5);
 }
 
 .is-quality-medium {
@@ -130,8 +130,7 @@ $shadow-color: #000;
   .is-d-1 {
     $shadow-height-intensity: 1;
 
-    filter:
-    drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 1));
+    filter: drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 1));
   }
 
   .is-d-2 {
@@ -139,70 +138,70 @@ $shadow-color: #000;
   }
 
   .is-d-3 {
-    $shadow-height-intensity: .9;
+    $shadow-height-intensity: 0.9;
 
     filter:
-    drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
+      drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
   }
 
   .is-d-4 {
-    $shadow-height-intensity: .8;
+    $shadow-height-intensity: 0.8;
 
     filter:
-    drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5));
+      drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.75))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5));
   }
 
   .is-d-5 {
-    $shadow-height-intensity: .8;
+    $shadow-height-intensity: 0.8;
 
     filter:
-    drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
+      drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.75))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
   }
 
   .is-d-6 {
-    $shadow-height-intensity: .7;
+    $shadow-height-intensity: 0.7;
 
     filter:
-    drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 3)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5));
+      drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.75))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 3)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5));
   }
 
   .is-d-7 {
-    $shadow-height-intensity: .7;
+    $shadow-height-intensity: 0.7;
 
     filter:
-    drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 3)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
+      drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.75))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 3)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
   }
 
   .is-d-8 {
-    $shadow-height-intensity: .6;
+    $shadow-height-intensity: 0.6;
 
     filter:
-    drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 3)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 4)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5));
+      drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.75))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 3)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 4)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5));
   }
 
   .is-d-9 {
-    $shadow-height-intensity: .6;
+    $shadow-height-intensity: 0.6;
 
     filter:
-    drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .75))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 3)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * .5))
-    drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 4)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
+      drop-shadow(shadow-blurry(2px) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 1)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.75))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 2)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 3)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity * 0.5))
+      drop-shadow(shadow-blurry(2px + math.pow($shadow-spread, 4)) rgba($shadow-color, $shadow-height-intensity * $shadow-intensity));
   }
 }

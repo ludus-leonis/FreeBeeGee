@@ -23,14 +23,14 @@
 /// @access public
 ////
 
-$piece-note-glue: rgba(0, 0, 0, .02);
+$piece-note-glue: rgba(0, 0, 0, 0.02);
 $piece-note-rotate: 4deg;
 
 // cursor: grabbing !important; // sass-lint:disable-line no-important
 
 .piece-note {
   @extend %flex-center-center;
-  @include typography-font($typography-font-list-hand, 400, px(32), 1.15em, .025em);
+  @include typography-font($typography-font-list-hand, 400, px(32), 1.15em, 0.025em);
 
   #{'--fbg-color'}: $color-gray-10;
   #{'--fbg-color-invert'}: $color-bw-fg;
@@ -68,12 +68,12 @@ $piece-note-rotate: 4deg;
   // --- reduce text size on small notes ---
 
   &.is-w-1 {
-    font-size: zoom(.5em); // 8px
+    font-size: zoom(0.5em); // 8px
     padding: zoom($spacing-tiny);
   }
 
   &.is-w-2 {
-    font-size: zoom(.75em); // 12px
+    font-size: zoom(0.75em); // 12px
     padding: zoom($spacing-small);
   }
 
@@ -96,8 +96,8 @@ $piece-note-rotate: 4deg;
 .is-quality-high .piece-note,
 .is-quality-ultra .piece-note {
   box-shadow:
-  0 zoom(4px) zoom(4px) zoom(-4px) $color-black-85a, // corner shadow
-  0 zoom(46px) zoom(2px) zoom(-2px) inset $piece-note-glue; // glue band
+    0 zoom(4px) zoom(4px) zoom(-4px) $color-black-85a,
+    0 zoom(46px) zoom(2px) zoom(-2px) inset $piece-note-glue; // glue band
 }
 
 .is-quality-ultra .piece-note {

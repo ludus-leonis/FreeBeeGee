@@ -27,7 +27,6 @@ import changed from 'gulp-changed'
 import concat from 'gulp-concat'
 import browserify from 'browserify'
 import gzip from 'gulp-gzip'
-import rename from 'gulp-rename'
 import repl from 'gulp-replace'
 import shrinkr from 'shrinkr'
 import sort from 'gulp-sort'
@@ -94,9 +93,9 @@ function replace (pipe) {
 }
 
 gulp.task('fonts', () => {
-  return replace(gulp.src([
+  return gulp.src([
     'src/fonts/*/*woff2'
-  ]))
+  ], { encoding: false })
     .pipe(gulp.dest(dirs.site + '/fonts/'))
 })
 
@@ -112,14 +111,14 @@ gulp.task('favicon', gulp.series(gulp.parallel(
       'src/favicon/png/512.png',
       'src/favicon/png/apple-touch-icon.png',
       'src/favicon/png/192.png'
-    ])
+    ], { encoding: false })
       .pipe(gulp.dest(dirs.cache + '/favicon'))
   }
 ), () => {
   // step 2 - use cached icons
   return gulp.src([
     dirs.cache + '/favicon/**/*'
-  ])
+  ], { encoding: false })
     .pipe(gulp.dest(dirs.site))
 }))
 
@@ -184,7 +183,7 @@ gulp.task('img', gulp.series(() => {
   // step 1 - optimize backgrounds in high quality
   return gulp.src([
     'src/img/**/*.jpg'
-  ])
+  ], { encoding: false })
     .pipe(shrinkr({
       cacheDir: '.cache/img',
       jpg: { quality: 9 }
@@ -194,7 +193,7 @@ gulp.task('img', gulp.series(() => {
   return gulp.src([
     'src/img/**/*.svg',
     'src/img/**/*.png'
-  ])
+  ], { encoding: false })
     .pipe(shrinkr({
       cacheDir: '.cache/img'
     }))
@@ -204,7 +203,7 @@ gulp.task('img', gulp.series(() => {
     dirs.cache + '/img/**/*.svg',
     dirs.cache + '/img/**/*.jpg',
     dirs.cache + '/img/**/*.png'
-  ])
+  ], { encoding: false })
     .pipe(gulp.dest(dirs.site + '/img'))
 }))
 
@@ -212,7 +211,7 @@ gulp.task('system', () => {
   return replace(gulp.src([
     'src/misc/system/**/.*',
     'src/misc/system/**/*'
-  ]))
+  ], { encoding: false }))
     .pipe(gulp.dest(dirs.site + '/system'))
 })
 
@@ -230,7 +229,7 @@ function snapshot (name, minimize = false) {
         'src/snapshots/' + name + '/**/*.jpg',
         'src/snapshots/' + name + '/**/*.png',
         'src/snapshots/' + name + '/**/*.svg'
-      ])
+      ], { encoding: false })
         .pipe(shrinkr({
           cacheDir: '.cache/snapshots/' + name,
           jpg: { quality: 7 }
@@ -240,7 +239,7 @@ function snapshot (name, minimize = false) {
         'src/snapshots/' + name + '/**/*.jpg',
         'src/snapshots/' + name + '/**/*.png',
         'src/snapshots/' + name + '/**/*.svg'
-      ])
+      ], { encoding: false })
         .pipe(changed(dirs.cache + '/snapshots/' + name))
         .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
     }
@@ -250,10 +249,10 @@ function snapshot (name, minimize = false) {
       '!src/snapshots/' + name + '/**/*.jpg',
       '!src/snapshots/' + name + '/**/*.png',
       '!src/snapshots/' + name + '/**/*.svg'
-    ]))
+    ], { encoding: false }))
       .pipe(gulp.dest(dirs.cache + '/snapshots/' + name))
   }, () => { // step 3: zip cache
-    return gulp.src(dirs.cache + '/snapshots/' + name + '/**/*')
+    return gulp.src(dirs.cache + '/snapshots/' + name + '/**/*', { encoding: false })
       .pipe(zip(name + '.zip'))
       .pipe(gulp.dest(dirs.site + '/system/snapshots'))
   })
@@ -279,15 +278,15 @@ gulp.task('dist', gulp.parallel(
 // --- testing targets ---------------------------------------------------------
 
 gulp.task('test-zips', gulp.parallel(() => {
-  return replace(gulp.src(['test/data/snapshots/full/**/*']))
+  return replace(gulp.src(['test/data/snapshots/full/**/*'], { encoding: false }))
     .pipe(zip('full.zip'))
     .pipe(gulp.dest(dirs.cache + '/snapshots'))
 }, () => {
-  return replace(gulp.src(['test/data/snapshots/empty/**/*']))
+  return replace(gulp.src(['test/data/snapshots/empty/**/*'], { encoding: false }))
     .pipe(zip('empty.zip'))
     .pipe(gulp.dest(dirs.cache + '/snapshots'))
 }, () => {
-  return replace(gulp.src(['test/data/snapshots/extra/**/*']))
+  return replace(gulp.src(['test/data/snapshots/extra/**/*'], { encoding: false }))
     .pipe(zip('extra.zip'))
     .pipe(gulp.dest(dirs.cache + '/snapshots'))
 }))
@@ -318,12 +317,22 @@ gulp.task('package-tgz', function () {
     dirs.site + '/**/*',
     '!*.css.map',
     '!*.js.map'
-  ], { base: dirs.build, dot: true })
+  ], { encoding: false, base: dirs.build, dot: true })
     .pipe(sort())
     .pipe(tar(p.name + '-' + p.version + '.tar'))
     .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(dirs.build))
-    .pipe(rename(p.name + '-current.tar.gz'))
+})
+
+gulp.task('package-tgz-current', function () {
+  return gulp.src([
+    dirs.site + '/**/*',
+    '!*.css.map',
+    '!*.js.map'
+  ], { encoding: false, base: dirs.build, dot: true })
+    .pipe(sort())
+    .pipe(tar(p.name + '-current.tar'))
+    .pipe(gzip({ gzipOptions: { level: 9 } }))
     .pipe(gulp.dest(dirs.build))
 })
 
@@ -332,7 +341,7 @@ gulp.task('package-zip', function () {
     dirs.site + '/**/*',
     '!*.css.map',
     '!*.js.map'
-  ], { base: dirs.build, dot: true })
+  ], { encoding: false, base: dirs.build, dot: true })
     .pipe(sort())
     .pipe(zip(p.name + '-' + p.version + '.zip'))
     .pipe(gulp.dest(dirs.build))
@@ -343,6 +352,7 @@ gulp.task('release', gulp.series(
   'clean-cache',
   'dist',
   'package-tgz',
+  'package-tgz-current',
   'package-zip'
 ))
 
@@ -356,7 +366,7 @@ gulp.task('release', gulp.series(
  */
 function demo (name) {
   return gulp.series(() => { // step 1: optimize & cache content
-    return replace(gulp.src('src/snapshots/' + name + '/**/*'))
+    return replace(gulp.src('src/snapshots/' + name + '/**/*', { encoding: false }))
       .pipe(changed(dirs.cache + '/snapshots/' + name))
       .pipe(shrinkr({
         cacheDir: '.cache/snapshots/' + name,
@@ -376,12 +386,12 @@ function demoDeploy (name) {
     return gulp.src([
       dirs.cache + '/snapshots/' + name + '/**/*',
       'src/misc/demo/snapshots/' + name + '/**/*'
-    ])
+    ], { encoding: false })
       .pipe(gulp.dest(dirs.demo + '/' + name))
   }, () => {
     return gulp.src([
       dirs.cache + '/snapshots/_/**/*'
-    ])
+    ], { encoding: false })
       .pipe(gulp.dest(dirs.demo + '/' + name))
   })
 }
@@ -389,7 +399,7 @@ function demoDeploy (name) {
 gulp.task('demo', gulp.series('clean', () => {
   demomode = true
   site = 'https://freebeegee.org/'
-  return gulp.src('tools')
+  return gulp.src('tools', { encoding: false })
 }, gulp.parallel(
   'js-main',
   'sass',
@@ -416,7 +426,7 @@ gulp.task('demo', gulp.series('clean', () => {
   return gulp.src([
     `${dirs.site}/**/*`,
     `${dirs.site}/.htaccess*`
-  ])
+  ], { encoding: false })
     .pipe(gulp.dest(`${dirs.build}/demo`))
 }))
 

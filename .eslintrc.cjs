@@ -1,3 +1,5 @@
+// note: only here for eslint <= 8 linting in IDEs, not used during build
+
 module.exports = {
   env: {
     browser: true,

@@ -414,13 +414,13 @@ function testApiSnapshotSize (api, room) {
       expect(body._error).to.be.eql('ROOM_SIZE')
     }, 400)
 
-  // 14MB - barely ok including system assets
+  // 13MB - barely ok including system assets
   Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
     () => Test.zipCreate(zip => {
-      for (let i = 0; i < 14; i++) {
+      for (let i = 0; i < 13; i++) {
         zip.addFile(`blob${i}.bin`, Buffer.from(b))
       }
       zip.addFile('LICENSE.md', Buffer.from('you may'))

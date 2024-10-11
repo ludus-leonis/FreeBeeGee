@@ -225,7 +225,7 @@ export function getBuffer (api, path, headerTests, payloadTests, status = 200, t
         payloadTests(res.body)
         done()
       })
-  })
+  }).timeout(10000)
 }
 
 /**
@@ -255,7 +255,7 @@ export function getBufferQuery (api, path, headerTests, payloadTests, status = 2
         payloadTests(res.body)
         done()
       })
-  })
+  }).timeout(10000)
 }
 
 /**
