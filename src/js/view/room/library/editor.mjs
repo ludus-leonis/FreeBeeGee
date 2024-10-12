@@ -21,117 +21,57 @@
 
 import shajs from 'sha.js'
 
-import _ from '../../../lib/FreeDOM.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Event from 'src/js/lib/event.mjs'
+import * as Icon from 'src/js/lib/icon.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as ModalDelete from 'src/js/view/room/library/modal/delete.mjs'
+import * as ModalEdit from 'src/js/view/room/library/modal/edit.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Window from 'src/js/view/room/window.mjs'
 
-import {
-  createWindow,
-  isWindowActive,
-  closeWindow
-} from '../../../view/room/window.mjs'
-
-import {
-  isModalActive,
-  getModal
-} from '../../../view/room/modal.mjs'
-
-import {
-  getBackground,
-  getLibrary,
-  getRoom,
-  getColorLabel
-} from '../../../state/index.mjs'
-
-import {
-  getRoomMediaURL,
-  findAsset
-} from '../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  selectionGetPieces
-} from '../../../view/room/tabletop/selection.mjs'
-
-import {
-  assetToNode,
-  url
-} from '../../../view/room/tabletop/index.mjs'
-
-import {
-  sortByString,
-  prettyName
-} from '../../../lib/utils-text.mjs'
-
-import {
-  fakeTabularNums
-} from '../../../lib/utils-html.mjs'
-
-import {
-  iconClose
-} from '../../../lib/icons.mjs'
-
-import {
-  HOOK_LIBRARY_UPDATE,
-  HOOK_LIBRARY_EDIT,
-  HOOK_LIBRARY_RELOAD,
-  HOOK_LIBRARY_SELECT,
-  registerObserver,
-  triggerEvent
-} from '../../../lib/events.mjs'
-
-import {
-  DEMO_MODE
-} from '../../../api/index.mjs'
-
-import {
-  modalEdit
-} from './modal/edit.mjs'
-
-import {
-  modalDelete
-} from './modal/delete.mjs'
-
-// --- events ------------------------------------------------------------------
-
-registerObserver('LibraryManager', HOOK_LIBRARY_EDIT, () => selection && modalEdit(selection))
-registerObserver('LibraryManager', HOOK_LIBRARY_RELOAD, () => showSpinner())
-registerObserver('LibraryManager', HOOK_LIBRARY_SELECT, id => { selection = id })
-
-// --- public ------------------------------------------------------------------
+Event.register('LibraryManager', Event.HOOK.LIBRARY_EDIT, () => selection && ModalEdit.open(selection))
+Event.register('LibraryManager', Event.HOOK.LIBRARY_RELOAD, () => showSpinner())
+Event.register('LibraryManager', Event.HOOK.LIBRARY_SELECT, id => { selection = id })
 
 /**
  * Show the advanced library editor modal.
  *
  * @param {object} xy {x, y} coordinates (tile) where to add.
  */
-export function modalLibraryManager (xy) {
+export function open (xy) {
   preselect()
 
-  if (!isModalActive()) {
-    const background = getBackground()
-    const window = createWindow()
+  if (!Modal.isOpen()) {
+    const background = State.getBackground()
+    const window = Window.create()
       .add('.library-editor')
       .css({
         '--fbg-tabletop-color': background.color,
-        '--fbg-tabletop-image': url(background.image),
-        '--fbg-tabletop-grid': url(background.gridFile)
+        '--fbg-tabletop-image': Dom.url(background.image),
+        '--fbg-tabletop-grid': Dom.url(background.gridFile)
       })
 
     window.xy = xy
 
     _('#window .window-header').innerHTML = `
       <h3 class="modal-title">Library editor</h3>
-      <div class="window-header-end">${iconClose}</div>
+      <div class="window-header-end">${Icon.CLOSE}</div>
     `
 
     lastHash = null
     showSpinner()
     updateManager()
-    registerObserver('LibraryManager', HOOK_LIBRARY_UPDATE, () => updateManager())
+    Event.register('LibraryManager', Event.HOOK.LIBRARY_UPDATE, () => updateManager())
 
-    _('.window-header-end').on('click', () => closeWindow())
+    _('.window-header-end').on('click', () => Window.close())
   }
 }
-
-// --- internal ----------------------------------------------------------------
 
 let lastHash = null
 let selection = null
@@ -140,9 +80,9 @@ let selection = null
  * Use table (piece) selection to pre-select an asset (if any).
  */
 function preselect () {
-  const selected = selectionGetPieces()
+  const selected = Selection.getPieces()
   if (selected.length > 0) {
-    const asset = findAsset(selected[0].a)
+    const asset = Content.findAsset(selected[0].a)
     if (asset) selection = asset
   }
 }
@@ -161,10 +101,10 @@ function showSpinner () {
  * Update the window to hold a filetree plus browser panel.
  */
 function updateManager () {
-  if (isWindowActive()) {
-    getModal()?.hide()
+  if (Window.isOpen()) {
+    Modal.close()
 
-    const library = getLibrary()
+    const library = State.getLibrary()
     const newHash = shajs('sha256').update(JSON.stringify(library)).digest('hex')
     if (lastHash !== newHash) {
       _('#window .window-body')
@@ -172,7 +112,7 @@ function updateManager () {
         .add(_('.filetree').create())
         .add(_('.browser.is-content').create())
 
-      const library = getLibrary()
+      const library = State.getLibrary()
 
       const node = _('.filetree')
       node.add(createSubtree('Dice', 'other', library.other))
@@ -204,7 +144,7 @@ function createSubtree (title, type, assets) {
     details.open = true
   }
 
-  for (const asset of sortByString(assets ?? [], 'name')) {
+  for (const asset of Text.sortString(assets ?? [], 'name')) {
     const entry = _(`.${type}`).create()
     entry.asset = asset
     entry.innerHTML = assetToLabel(asset)
@@ -232,7 +172,7 @@ function show (asset) {
   selection = asset
   const browser = _('.browser')
 
-  const color = getColorLabel(asset.bg)
+  const color = State.getColorLabel(asset.bg)
 
   browser.innerHTML = `
     <h1>${assetToLabel(asset)}</h1>
@@ -250,7 +190,7 @@ function show (asset) {
         </tr>
         <tr>
           <th>Material</th>
-          <td>${prettyName(asset.tx ?? 'none')}</td>
+          <td>${Text.prettyName(asset.tx ?? 'none')}</td>
         </tr>
         <tr>
           <th>Shadow</th>
@@ -270,8 +210,8 @@ function show (asset) {
   browser.add(assetToTable(asset))
 
   _('.browser .side').on('mouseenter', mouseenter => updatePreview(asset, parseInt(mouseenter.target.id.substr(9))))
-  _('#asset-edit').on('click', () => triggerEvent(HOOK_LIBRARY_EDIT))
-  _('#asset-delete').on('click', () => modalDelete(asset))
+  _('#asset-edit').on('click', () => Event.trigger(Event.HOOK.LIBRARY_EDIT))
+  _('#asset-delete').on('click', () => ModalDelete.open(asset))
 }
 
 /**
@@ -283,7 +223,7 @@ function show (asset) {
 function updatePreview (asset, side) {
   _('.browser .is-preview')
     .empty()
-    .add(assetToNode(asset, side))
+    .add(Dom.assetToNode(asset, side))
     .remove('.is-max-*')
     .add('.is-max-' + Math.max(asset.w, asset.h))
 }
@@ -314,9 +254,9 @@ function assetToTable (asset) {
   for (const media of asset.media) {
     content += `
       <tr id="${asset.id}-${index}" class="side">
-        <td>Side ${fakeTabularNums(`${index + 1}`)}</td>
+        <td>Side ${Browser.fakeTabularNums(`${index + 1}`)}</td>
         <td><code>${media}</code></td>
-        <td><a href="${getRoomMediaURL(getRoom().name, asset.type, media, DEMO_MODE)}" target="_blank">View</a></td>
+        <td><a href="${Dom.getRoomMediaURL(asset.type, media)}" target="_blank">View</a></td>
       </tr>
     `
     index++
@@ -326,7 +266,7 @@ function assetToTable (asset) {
       <tr>
         <td>Mask</td>
         <td><code>${asset.mask}</code></td>
-        <td><a href="${getRoomMediaURL(getRoom().name, asset.type, asset.mask, DEMO_MODE)}" target="_blank">View</a></td>
+        <td><a href="${Dom.getRoomMediaURL(asset.type, asset.mask)}" target="_blank">View</a></td>
       </tr>
     `
   }
@@ -335,7 +275,7 @@ function assetToTable (asset) {
       <tr>
         <td>Base</td>
         <td><code>${asset.base}</code></td>
-        <td><a href="${getRoomMediaURL(getRoom().name, asset.type, asset.base, DEMO_MODE)}" target="_blank">View</a></td>
+        <td><a href="${Dom.getRoomMediaURL(asset.type, asset.base)}" target="_blank">View</a></td>
       </tr>
     `
   }
@@ -353,10 +293,10 @@ function assetToTable (asset) {
  */
 function assetToLabel (asset) {
   if (asset.media.length > 2) {
-    const html = `${prettyName(asset.name)} (${asset.media.length}) <span class="is-faded-more">${asset.w}x${asset.h}</span>`
-    return fakeTabularNums(html)
+    const html = `${Text.prettyName(asset.name)} (${asset.media.length}) <span class="is-faded-more">${asset.w}x${asset.h}</span>`
+    return Browser.fakeTabularNums(html)
   } else {
-    const html = `${prettyName(asset.name)} <span class="is-faded-more">${asset.w}x${asset.h}</span>`
-    return fakeTabularNums(html)
+    const html = `${Text.prettyName(asset.name)} <span class="is-faded-more">${asset.w}x${asset.h}</span>`
+    return Browser.fakeTabularNums(html)
   }
 }

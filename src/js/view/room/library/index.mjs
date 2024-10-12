@@ -19,93 +19,33 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  DEMO_MODE,
-  UnexpectedStatus
-} from '../../../api/index.mjs'
-
-import {
-  PATTERN_ASSET_NAME,
-  generateAnimal
-} from '../../../lib/utils.mjs'
-
-import {
-  toTitleCase,
-  prettyName,
-  unprettyName,
-  sortByString,
-  bytesToIso
-} from '../../../lib/utils-text.mjs'
-
-import {
-  resizeImage
-} from '../../../lib/utils-html.mjs'
-
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../view/room/modal.mjs'
-
-import {
-  getLibrary,
-  createPieces,
-  PREFS,
-  getRoomPreference,
-  setRoomPreference,
-  addAsset,
-  reloadRoom,
-  getBackground,
-  getMaterialMedia
-} from '../../../state/index.mjs'
-
-import {
-  LAYER,
-  createPieceFromAsset,
-  splitAssetFilename,
-  snap
-} from '../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  assetToNode,
-  url
-} from '../../../view/room/tabletop/index.mjs'
-
-import {
-  selectionClear
-} from '../../../view/room/tabletop/selection.mjs'
-
-import {
-  modalDisabled
-} from '../../../view/room/modal/disabled.mjs'
-
-import {
-  iconEdit,
-  iconSearch
-} from '../../../lib/icons.mjs'
-
-import {
-  modalLibraryManager
-} from './editor.mjs'
-
-// --- public ------------------------------------------------------------------
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Icon from 'src/js/lib/icon.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as ModalDisabled from 'src/js/view/room/modal/disabled.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Util from 'src/js/lib/util.mjs'
+import * as WindowLibrary from 'src/js/view/room/library/editor.mjs'
 
 /**
  * Show the pieces library modal.
  *
  * @param {object} xy {x, y} coordinates (tile) where to add.
  */
-export function modalLibrary (xy) {
-  if (!isModalActive()) {
-    const node = createModal(true)
+export function open (xy) {
+  if (!Modal.isOpen()) {
+    const node = Modal.create(true)
     node.xy = xy
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Library</h3>
-      <div class="modal-header-end" title="Library editor">${iconEdit}</div>
+      <div class="modal-header-end" title="Library editor">${Icon.EDIT}</div>
     `
     _('#modal-body').add('.is-maximizied').innerHTML = `
       <div class="has-spinner">Loading</div>
@@ -113,12 +53,12 @@ export function modalLibrary (xy) {
     _('#modal-footer').innerHTML = `
       <button id='btn-close' type="button" class="btn">Cancel</button>
 
-      <span class="search">${iconSearch}<input id='input-search' type="text" class="search" placeholder="search ..." maxlength="8"></span>
+      <span class="search">${Icon.SEARCH}<input id='input-search' type="text" class="search" placeholder="search ..." maxlength="8"></span>
 
       <button id='btn-ok' type="button" class="btn btn-primary">Add</button>
     `
 
-    _('#modal').add('.modal-library').on('hidden.bs.modal', () => modalClose())
+    _('#modal').add('.modal-library')
 
     _('#modal-body').innerHTML = `
       <div id="tabs-library" class="tabs">
@@ -143,7 +83,7 @@ export function modalLibrary (xy) {
             <button class="is-hidden" type="submit" disabled aria-hidden="true"></button>
             <div class="col-12 col-lg-6">
               <label for="upload-name">Name</label>
-              <input id="upload-name" name="name" type="text" placeholder="e.g. '${generateAnimal()}'" minlength="1" maxlength="64" pattern="${PATTERN_ASSET_NAME}">
+              <input id="upload-name" name="name" type="text" placeholder="e.g. '${Util.generateAnimal()}'" minlength="1" maxlength="64" pattern="${Util.REGEXP.ASSET_NAME}">
             </div>
             <div class="col-6 col-lg-1">
               <label for="upload-w">Width</label>
@@ -177,24 +117,24 @@ export function modalLibrary (xy) {
     `
 
     // bg image
-    const background = getBackground()
+    const background = State.getBackground()
     _('#modal').css({
       '--fbg-tabletop-color': background.color,
-      '--fbg-tabletop-image': url(background.image),
-      '--fbg-tabletop-grid': url(background.gridFile)
+      '--fbg-tabletop-image': Dom.url(background.image),
+      '--fbg-tabletop-grid': Dom.url(background.gridFile)
     })
 
     // store/retrieve selected tab
     _('input[name="tabs"]').on('change', change => {
-      setRoomPreference(PREFS.TAB_LIBRARY, change.target.id)
+      State.setRoomPreference(State.PREF.TAB_LIBRARY, change.target.id)
     })
-    const preselect = getRoomPreference(PREFS.TAB_LIBRARY)
+    const preselect = State.getRoomPreference(State.PREF.TAB_LIBRARY)
     _('#' + preselect).checked = true
 
     refreshTabs()
     setupTabUpload()
     setupFooter()
-    getModal().show()
+    Modal.open()
     _('#input-search').focus()
 
     // adapt footer on change
@@ -203,8 +143,8 @@ export function modalLibrary (xy) {
     })
 
     _('.modal-header-end').on('click', click => {
-      getModal().hide()
-      modalLibraryManager(xy)
+      Modal.close()
+      WindowLibrary.open(xy)
     })
   }
 }
@@ -225,7 +165,7 @@ let prevSearch = ''
 function sortPieces (label, tab, assets, expand = false, sideCount = true) {
   const systemTiles = []
   const regularTiles = []
-  for (const asset of sortByString(assets ?? [], 'name')) {
+  for (const asset of Text.sortString(assets ?? [], 'name')) {
     const folder = asset.name.match(/^_\./) ? systemTiles : regularTiles
     if (expand) {
       for (let i = 0; i < (asset.media?.length ?? 1); i++) {
@@ -246,7 +186,7 @@ function sortPieces (label, tab, assets, expand = false, sideCount = true) {
  * Get a fresh dataset from the state and populate the tabs with the items.
  */
 function refreshTabs () {
-  const library = getLibrary()
+  const library = State.getLibrary()
 
   // add items to their tab, sort system assets (_) last
   sortPieces('Tiles', _('#tab-tiles').empty(), library.tile, true)
@@ -290,19 +230,19 @@ function setupFooter () {
       <button id='btn-close' type="button" class="btn">Cancel</button>
       <button id='btn-ok' type="button" class="btn btn-primary">Upload</button>
     `
-    _('#btn-close').on('click', () => getModal().hide())
+    _('#btn-close').on('click', () => Modal.close())
     _('#btn-ok').on('click', () => modalUpload())
   } else {
     _('#modal-footer').innerHTML = `
       <button id='btn-close' type="button" class="btn">Cancel</button>
-      <span class="search">${iconSearch}<input id='input-search' type="text" class="search" placeholder="search ..." maxlength="8"></span>
+      <span class="search">${Icon.SEARCH}<input id='input-search' type="text" class="search" placeholder="search ..." maxlength="8"></span>
       <button id='btn-ok' type="button" class="btn btn-primary">Add</button>
     `
     _('#input-search').on('keyup', () => filter()).value = prevSearch
     filter()
     _('#input-search').focus()
 
-    _('#btn-close').on('click', () => getModal().hide())
+    _('#btn-close').on('click', () => Modal.close())
     _('#btn-ok').on('click', () => modalOk())
   }
 }
@@ -316,11 +256,11 @@ function setupFooter () {
  */
 function averageColor (dataUrl) {
   _('#upload-color').value = '#808080' // color detection is async, so use interim-default
-  const image = new Image() // eslint-disable-line no-undef
+  const image = new Image()
   image.onload = function () {
     // shrink in 2 steps for more accurate average
-    const canvas8 = resizeImage(image, 8)
-    const canvas1 = resizeImage(canvas8, 1)
+    const canvas8 = Browser.resizeImage(image, 8)
+    const canvas1 = Browser.resizeImage(canvas8, 1)
 
     let [r, g, b] = canvas1.getContext('2d').getImageData(0, 0, 1, 1).data
     r = r.toString(16).padStart(2, '0')
@@ -366,15 +306,15 @@ function modalUpload () {
 
   // upload stuff if checks were ok
   if (errorMessage.innerHTML === '') {
-    if (DEMO_MODE) {
-      getModal().hide()
-      modalDisabled('would have uploaded your piece to the library by now')
+    if (State.SERVERLESS) {
+      Modal.close()
+      ModalDisabled.open('would have uploaded your piece to the library by now')
       return
     }
 
     const type = _('#upload-type').value
     const data = {
-      name: unprettyName(name.value),
+      name: Text.unprettyName(name.value),
       format: file.type === 'image/png' ? 'png' : 'jpg',
       type,
       w: Number(_('#upload-w').value),
@@ -391,25 +331,25 @@ function modalUpload () {
     }
 
     // set bg color
-    if (type === LAYER.TOKEN || data.format === 'jpg') {
+    if (type === Content.LAYER.TOKEN || data.format === 'jpg') {
       data.bg = _('#upload-color').value
     } else {
       data.bg = 'transparent'
     }
 
-    addAsset(data)
+    State.addAsset(data)
       .then(() => {
-        reloadRoom()
+        State.reloadRoom()
           .then(() => {
             refreshTabs()
             switch (data.type) {
-              case LAYER.TILE:
+              case Content.LAYER.TILE:
                 _('#tab-1').checked = true
                 break
-              case LAYER.STICKER:
+              case Content.LAYER.STICKER:
                 _('#tab-2').checked = true
                 break
-              case LAYER.TOKEN:
+              case Content.LAYER.TOKEN:
                 _('#tab-3').checked = true
                 break
               default:
@@ -419,13 +359,13 @@ function modalUpload () {
       })
       .catch(error => {
         _('#ok').remove('.is-spinner')
-        if (error instanceof UnexpectedStatus) {
+        if (error instanceof Api.UnexpectedStatus) {
           switch (error.status) {
             case 400:
               if (error?.body?._error === 'UPLOAD_SIZE') {
-                uploadFailed(`Assets are limited to ${bytesToIso(error.body._messages[1])}.`)
+                uploadFailed(`Assets are limited to ${Text.bytesToIso(error.body._messages[1])}.`)
               } else if (error?.body?._error === 'ROOM_SIZE') {
-                uploadFailed(`Room limit exceeded - ${bytesToIso(error.body._messages[1])} left.`)
+                uploadFailed(`Room limit exceeded - ${Text.bytesToIso(error.body._messages[1])} left.`)
               } else {
                 uploadFailed('Invalid file (400).')
               }
@@ -461,10 +401,10 @@ function uploadFailed (why) {
 function setupTabUpload () {
   // width
   const type = _('#upload-type')
-  for (const l of [LAYER.TOKEN, LAYER.STICKER, LAYER.TILE]) {
-    const option = _('option').create(toTitleCase(l))
+  for (const l of [Content.LAYER.TOKEN, Content.LAYER.STICKER, Content.LAYER.TILE]) {
+    const option = _('option').create(Text.toTitleCase(l))
     option.value = l
-    if (l === LAYER.TOKEN) option.selected = true
+    if (l === Content.LAYER.TOKEN) option.selected = true
     type.add(option)
   }
   type.on('change', change => updatePreview())
@@ -491,8 +431,8 @@ function setupTabUpload () {
 
   // material
   const materials = _('#upload-material')
-  for (const material of getLibrary().material) {
-    const option = _('option').create(prettyName(material.name))
+  for (const material of State.getLibrary().material) {
+    const option = _('option').create(Text.prettyName(material.name))
     option.value = material.name
     if (material.name === 'none') option.selected = true
     materials.add(option)
@@ -518,18 +458,18 @@ function updatePreview (parseFilename = false) {
   const file = _('#upload-file').files[0]
 
   if (file && parseFilename) {
-    const parts = splitAssetFilename(file.name)
+    const parts = Content.splitAssetFilename(file.name)
     if (parts.w) _('#upload-w').value = parts.w
     if (parts.h) _('#upload-h').value = parts.h
     if (parts.name) {
-      _('#upload-name').value = prettyName(parts.name)
+      _('#upload-name').value = Text.prettyName(parts.name)
     }
     if (['wood', 'paper'].includes(parts.tx)) {
       _('#upload-material').value = parts.tx
     } else {
       _('#upload-material').value = 'none'
     }
-    if ([LAYER.TILE, LAYER.TOKEN].includes(parts.type)) {
+    if ([Content.LAYER.TILE, Content.LAYER.TOKEN].includes(parts.type)) {
       _('#upload-type').value = parts.type
     }
 
@@ -541,7 +481,7 @@ function updatePreview (parseFilename = false) {
 
       // guess type/dimensions if no info was in filename
       if (!parts.w) {
-        const image = new Image() // eslint-disable-line no-undef
+        const image = new Image()
         image.src = blob
         image.onload = () => {
           const tilesize = 64 // in px
@@ -551,94 +491,29 @@ function updatePreview (parseFilename = false) {
           const tilesY = Math.round(image.height / tilesize) || 1
           if (square) {
             if (tilesX <= 4) {
-              _('#upload-type').value = LAYER.TOKEN
+              _('#upload-type').value = Content.LAYER.TOKEN
               _('#upload-w').value = tilesX
               _('#upload-h').value = tilesX
             } else {
-              _('#upload-type').value = LAYER.TILE
+              _('#upload-type').value = Content.LAYER.TILE
               _('#upload-w').value = Math.min(tilesX, 32)
               _('#upload-h').value = Math.min(tilesY, 32)
             }
           } else {
-            _('#upload-type').value = LAYER.TILE
+            _('#upload-type').value = Content.LAYER.TILE
             _('#upload-w').value = Math.min(tilesX, 32)
             _('#upload-h').value = Math.min(tilesY, 32)
           }
-          updatePreviewDOM(blob)
+          Dom.updatePreviewDOM(blob)
         }
       } else {
-        updatePreviewDOM(blob)
+        Dom.updatePreviewDOM(blob)
       }
     }, false)
     reader.readAsDataURL(file)
   } else {
-    updatePreviewDOM(blob)
+    Dom.updatePreviewDOM(blob)
   }
-}
-
-/**
- * Create a new preview piece.
- *
- * @param {string} blob The URL() image data loaded by the browser.
- */
-function updatePreviewDOM (blob) {
-  const preview = _('.modal-library .is-preview-upload').remove('.is-*').add('.is-preview-upload')
-  preview.innerHTML = ''
-
-  const type = _('#upload-type').value
-  const material = _('#upload-material').value
-  const w = _('#upload-w').value
-  const h = _('#upload-h').value
-
-  if (w % 2 === 0) preview.add('.is-even-x')
-  if (h % 2 === 0) preview.add('.is-even-y')
-
-  // add piece to DOM
-  const piece = _(`.piece.piece-${type}.is-w-${w}.is-h-${h}`).create()
-  if (type === LAYER.STICKER || type === LAYER.TILE) {
-    piece.css({ '--fbg-color': 'rgba(0,0,0,.05)' })
-  } else {
-    piece.css({ '--fbg-color': '#202020' })
-  }
-  if (type === LAYER.TOKEN) {
-    piece.add('.has-highlight')
-  }
-  piece.css({ '--fbg-material': url(getMaterialMedia(material)) })
-
-  if (w > 16 || h > 16) {
-    preview.add('.is-deflate-4x')
-  } else if (w > 12 || h > 12) {
-    preview.add('.is-deflate-3x')
-  } else if (w > 8 || h > 8) {
-    preview.add('.is-deflate-2x')
-  } else if (w > 2 || h > 2) {
-    // nothing
-  } else {
-    preview.add('.is-inflate-2x')
-  }
-
-  // asdf grid offset odd/even
-
-  if (blob) { // image loaded
-    piece.css({
-      backgroundImage: `var(--fbg-material), url("${blob}")`,
-      backgroundSize: '256px, cover'
-    })
-  } else { // show upload placeholder
-    piece.css({
-      backgroundImage: url('img/upload.svg'),
-      backgroundRepeat: 'no-repeat'
-    })
-    if (w <= 1 || h <= 1) {
-      piece.css({ backgroundSize: '32px' })
-    } else if (w <= 8 || h <= 8) {
-      piece.css({ backgroundSize: '64px' })
-    } else {
-      piece.css({ backgroundSize: '128px' })
-    }
-  }
-
-  preview.add(piece)
 }
 
 /**
@@ -650,7 +525,7 @@ function updatePreviewDOM (blob) {
  * @returns {HTMLElement} Node for the modal.
  */
 function assetToPreview (asset, side = 0, sideCount = true) {
-  const max = _('.is-preview').create(assetToNode(asset, side))
+  const max = _('.is-preview').create(Dom.assetToNode(asset, side))
   if (asset.w % 2 === 0) max.add('.is-even-x')
   if (asset.h % 2 === 0) max.add('.is-even-y')
 
@@ -662,7 +537,7 @@ function assetToPreview (asset, side = 0, sideCount = true) {
   }
 
   if (tag !== '') max.add(_('.tag.tr').create().add(tag))
-  let name = prettyName(asset.name)
+  let name = Text.prettyName(asset.name)
   if (sideCount && asset.media.length > 1) name += ` <span class="is-faded-more">${side + 1}/${asset.media.length}</span>`
   const label = _('p').create()
   label.innerHTML = name
@@ -676,10 +551,10 @@ function assetToPreview (asset, side = 0, sideCount = true) {
 function modalOk () {
   const modal = document.getElementById('modal')
   const pieces = []
-  const snapped = snap(modal.xy.x, modal.xy.y)
+  const snapped = Content.snap(modal.xy.x, modal.xy.y)
   let offsetZ = 0
   _('#tabs-library .is-selected .piece').each(item => {
-    const piece = createPieceFromAsset(item.asset.id, snapped.x, snapped.y)
+    const piece = Content.createPieceFromAsset(item.asset.id, snapped.x, snapped.y)
 
     piece.z = piece.z + offsetZ
     piece.s = item.side
@@ -687,9 +562,9 @@ function modalOk () {
     offsetZ += 1
   })
   if (pieces.length > 0) {
-    selectionClear()
-    createPieces(pieces, true)
-    getModal().hide()
+    Selection.clear()
+    State.createPieces(pieces, true)
+    Modal.close()
   }
 }
 

@@ -2,6 +2,31 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
+## v0.24.0 - Relieved Raven
+
+### Notable changes
+
+* added random rotation for pieces via Alt+r
+* added zoom-to-cursor for Ctrl+mousewheel
+* added (slight) random rotation to dice when rolled
+* added Tatami background and tweaked Carpet/Leather backgrounds
+
+### Other changes
+
+* added slight stain marks to tabletop
+* improved material rendering and fixed linen border bug
+* improved copy/cut/paste behavior for numbered tokens
+* improved token number circle to have material
+* improved blue main menu bar
+* improved material display on transparent png pieces
+* improved allowed characters in snapshot filenames
+* fixed pointer/los-line part of selection
+* fixed token label has sometimes odd cut-off
+* fixed missing material on default upload preview token
+* fixed missing shadow on default upload preview token
+* refactored imports and module responsibility
+
+
 ## v0.23.0 - Shady Shrew
 
 ### Notable changes

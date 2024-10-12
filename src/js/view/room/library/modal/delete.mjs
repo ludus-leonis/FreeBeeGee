@@ -19,42 +19,24 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  createModalConfirm,
-  getModal
-} from '../../../../view/room/modal.mjs'
-
-import {
-  deleteAsset
-} from '../../../../state/index.mjs'
-
-import {
-  countAssets
-} from '../../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  prettyName
-} from '../../../../lib/utils-text.mjs'
-
-import {
-  HOOK_LIBRARY_RELOAD,
-  triggerEvent
-} from '../../../../lib/events.mjs'
-
-// --- public ------------------------------------------------------------------
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Event from 'src/js/lib/event.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
 
 /**
  * Show the confirmation modal to delete an asset.
  *
  * @param {string} asset Asset to be deleted.
  */
-export function modalDelete (asset) {
-  const amount = countAssets(asset.id)
-  createModalConfirm(
+export function open (asset) {
+  const amount = Content.countAssets(asset.id)
+  Modal.createConfirm(
     '<h3 class="modal-title">Delete asset?</h3>',
     `
       <p>
-        Asset <strong>${prettyName(asset.name)} ${asset.w}x${asset.h}</strong> is currently <strong>${amount}x</strong> in use in your game.
+        Asset <strong>${Text.prettyName(asset.name)} ${asset.w}x${asset.h}</strong> is currently <strong>${amount}x</strong> in use in your game.
         Are you sure you want to delete it?
       </p>
       <p>This action can't be undone!</p>
@@ -73,9 +55,9 @@ export function modalDelete (asset) {
  * @param {string} asset Asset being viewed.
  */
 function ok (asset) {
-  deleteAsset(asset.id)
+  State.deleteAsset(asset.id)
     .then(() => {
-      getModal().hide()
-      triggerEvent(HOOK_LIBRARY_RELOAD)
+      Modal.close()
+      Event.trigger(Event.HOOK.LIBRARY_RELOAD)
     })
 }

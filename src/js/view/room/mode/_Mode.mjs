@@ -1,5 +1,6 @@
 /**
- * @file Bootstrap our app.
+ * @file Handle all features of a specific tabletop/game mode.
+ * @module
  * @copyright 2021-2023 Markus Leupold-Löwenthal
  * @license AGPL-3.0-or-later
  *
@@ -18,33 +19,22 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  route
-} from './app.mjs'
+export class Mode {
+  enter () { // initialize UI
+  }
 
-import * as Tools from './tools.mjs'
+  quit () { // initialize UI
+  }
 
-import {
-  setTabActive
-} from './state/index.mjs'
+  update () { // update UI, e.g. grey-out states
+  }
 
-// --- startup & page routing --------------------------------------------------
+  keydown (keydown) { // handle mode-specific hotkeys
+  }
 
-document.onreadystatechange = function (event) {
-  if (document.readyState === 'complete') {
-    if (document.getElementById('tool-bcrypt')) {
-      return Tools.setupBcrypt()
-    }
+  keydrag (keydown) { // keys pressed during dragging
+  }
 
-    // time to setup our routes
-    route()
+  mousedown (mousedown) { // handle mode-specific mouse buttons
   }
 }
-
-document.addEventListener('visibilitychange', (visibilitychange) => {
-  if (globalThis.hidden) {
-    setTabActive(false)
-  } else {
-    setTabActive(true)
-  }
-})

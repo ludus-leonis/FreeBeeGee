@@ -19,15 +19,9 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
-
-import {
-  auth
-} from '../../app.mjs'
-
-import {
-  createScreen
-} from '../../view/screen.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
 
 /**
  * Show a password dialog.
@@ -35,8 +29,8 @@ import {
  * @param {string} roomName The room name the user entered in the join dialog.
  * @param {boolean} first If true, this is the first password attempt (no error message shown).
  */
-export function passwordView (roomName, first) {
-  createScreen(
+export function show (roomName, first) {
+  Screen.create(
     'Room password required',
     `
       <div class="page-setup">
@@ -81,5 +75,5 @@ export function passwordView (roomName, first) {
  */
 function ok (roomName) {
   _('#ok').add('.is-spinner')
-  auth(roomName, _('#roompwd').value)
+  App.auth(roomName, _('#roompwd').value)
 }

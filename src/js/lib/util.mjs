@@ -19,12 +19,13 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
-export const PATTERN_ROOM_NAME =
-  '^[a-zA-Z0-9]{8,48}$'
-export const PATTERN_ASSET_NAME =
-  '^(_|[a-zA-Z0-9\\-]+( [a-zA-Z0-9\\-]+)*)(, [a-zA-Z0-9\\-]+)?( [a-zA-Z0-9\\-]+)*$'
-export const PATTERN_COLOR =
-  '^#[a-zA-Z0-9]{6}$'
+export const REGEXP = {
+  ROOM_NAME: '^[a-zA-Z0-9]{8,48}$',
+  ASSET_NAME: '^(_|[a-zA-Z0-9\\-]+( [a-zA-Z0-9\\-]+)*)(, [a-zA-Z0-9\\-]+)?( [a-zA-Z0-9\\-]+)*$',
+  COLOR: '^#[a-zA-Z0-9]{6}$'
+}
+
+export const timeRecords = []
 
 // --- Arrays ------------------------------------------------------------------
 
@@ -133,7 +134,7 @@ export function clamp (min, value, max) {
  * @param {number} points Array of {x, y} points.
  * @returns {object} Closest point of array to original x/y as {x, y, d}.
  */
-function findClosestPoint (x, y, points) {
+export function findClosestPoint (x, y, points) {
   const closest = {
     d: 999999999.0,
     x: 0,
@@ -372,8 +373,6 @@ export function equalsJSON (a, b) {
 }
 
 // --- time & timestamps -------------------------------------------------------
-
-export const timeRecords = []
 
 /**
  * Record an execution time in a stats array.

@@ -30,8 +30,8 @@
 ///
 /// @output Markdown scss.
 @mixin markdown {
-  $markdown-spacing-paragraph: .5em;
-  $markdown-line-width: .125em;
+  $markdown-spacing-paragraph: 0.5em;
+  $markdown-line-width: 0.125em;
 
   a {
     @include typography-links(inherit, inherit, 2px, $color-black-15a, $color-black-25a);
@@ -62,7 +62,7 @@
   h4,
   h5,
   h6 {
-    @include typography-font($typography-font-list-hand, 800, 1em, 1.15em, .025em);
+    @include typography-font($typography-font-list-hand, 800, 1em, 1.15em, 0.025em);
 
     color: $color-black-100;
     margin-top: $markdown-spacing-paragraph * 2;
@@ -75,7 +75,7 @@
     margin-top: 0;
 
     li {
-      margin-top: $markdown-spacing-paragraph * .5;
+      margin-top: $markdown-spacing-paragraph * 0.5;
     }
   }
 
@@ -107,8 +107,8 @@
   // --- tables ----------------------------------------------------------------
 
   table {
-    font-size: .9em;
-    margin-top: $markdown-spacing-paragraph * .5;
+    font-size: 0.9em;
+    margin-top: $markdown-spacing-paragraph * 0.5;
     text-align: left;
     width: 100%;
 
@@ -118,7 +118,7 @@
     }
 
     thead {
-      font-size: .5em;
+      font-size: 0.5em;
       text-transform: uppercase;
     }
 

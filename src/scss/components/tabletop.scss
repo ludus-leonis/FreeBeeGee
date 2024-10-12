@@ -33,7 +33,7 @@ body {
   #{'--fbg-tabletop-color'}: #808080;
   #{'--fbg-tabletop-width'}: 1024px;
   #{'--fbg-tabletop-height'}: 1024px;
-  #{'--fbg-tabletop-grid'}: 'none';
+  #{'--fbg-tabletop-grid'}: none;
   #{'--fbg-zoom'}: 1;
 
   $tile-size: 64px;
@@ -67,6 +67,8 @@ body {
   }
 
   .is-quality-ultra & {
+    background-image: var(--fbg-tabletop-grid), url('img/stain.png'), var(--fbg-tabletop-image);
+    background-size: zoom(var(--fbg-grid-x)) zoom(var(--fbg-grid-y)), zoom(2048px), zoom(1536px);
     filter: grayscale(10%) sepia(5%);
   }
 
@@ -87,11 +89,11 @@ body {
   }
 
   &.is-zoom-0-75 {
-    #{'--fbg-zoom'}: .75;
+    #{'--fbg-zoom'}: 0.75;
   }
 
   &.is-zoom-0-50 {
-    #{'--fbg-zoom'}: .5;
+    #{'--fbg-zoom'}: 0.5;
   }
 
   .layer {

@@ -27,29 +27,17 @@
  * Demo mode implements a simplified in-memory API with almost no checks.
  */
 
-import {
-  UnexpectedStatus
-} from '../api/index.mjs'
-
-import {
-  getPreference,
-  setPreference
-} from '../state/index.mjs'
-
-import {
-  setStoreValue,
-  removeStoreValue
-} from '../lib/utils-html.mjs'
-
-import {
-  anId
-} from '../lib/utils-text.mjs'
-
-import {
-  epoch
-} from '../lib/utils.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 const UNDO_LEVELS = 5
+
+export default {
+  fetchOrThrow
+}
 
 // --- public ------------------------------------------------------------------
 
@@ -62,9 +50,9 @@ const UNDO_LEVELS = 5
  * @param {boolean} headers If true, the HTTP headers will be added as '_headers'
  *                          to the JSON reply.
  * @returns {Promise} Promise of a JSON object.
- * @throws {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
+ * @throws {Api.UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
-export function demoFetchOrThrow (_, path, data = {}, headers = false) {
+function fetchOrThrow (_, path, data = {}, headers = false) {
   if (!data.method) data.method = 'GET'
 
   if (path.match(/^api\/rooms\/[a-zA-Z0-9]+\/digest\/$/)) {
@@ -105,7 +93,7 @@ export function demoFetchOrThrow (_, path, data = {}, headers = false) {
     return api(data, headers)
   }
 
-  throw new UnexpectedStatus(501, 'demo call not implemented - no route')
+  throw new Api.UnexpectedStatus(501, 'demo call not implemented - no route')
 }
 
 // --- private -----------------------------------------------------------------
@@ -155,9 +143,9 @@ function hash (string) {
  * @param {object} data Data/string to hash.
  */
 function updateDigest (roomName, key, data) {
-  const digests = getPreference(`freebeegee-demo-${roomName}`, PREFS.DIGEST)
+  const digests = State.getPreference(`freebeegee-demo-${roomName}`, PREFS.DIGEST)
   digests[key] = hash(data)
-  setPreference(`freebeegee-demo-${roomName}`, PREFS.DIGEST, digests)
+  State.setPreference(`freebeegee-demo-${roomName}`, PREFS.DIGEST, digests)
 }
 
 /**
@@ -176,9 +164,9 @@ function addAll (array, items) {
     if (item.a?.match(/^ZZZZZZZ/)) { // system pieces
       del(array, 'id', item.a) // no duplicates
       item.id = item.a
-      item.expires = epoch(8)
+      item.expires = Util.epoch(8)
     } else {
-      item.id = anId()
+      item.id = Text.anId()
     }
 
     array.push(item)
@@ -224,7 +212,7 @@ function patch (array, key, value, patch) {
       for (const field in patch) {
         item[field] = patch[field]
       }
-      if (item.a?.match(/^ZZZZZZZ/)) item.expires = epoch(8)
+      if (item.a?.match(/^ZZZZZZZ/)) item.expires = Util.epoch(8)
       return item
     }
   }
@@ -267,7 +255,7 @@ function delayPromise (status, body, headers = false, ms = 50) {
   if (headers) {
     const map = new Map()
     map.set('digest', hash(body))
-    map.set('servertime', epoch())
+    map.set('servertime', Util.epoch())
     return new Promise(resolve => setTimeout(resolve, ms, { status, body, headers: map }))
   } else {
     return new Promise(resolve => setTimeout(resolve, ms, body))
@@ -281,7 +269,7 @@ function delayPromise (status, body, headers = false, ms = 50) {
  * @returns {object} Room data (parsed json).
  */
 function getRoom (roomName) {
-  return getPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM)
+  return State.getPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM)
 }
 
 /**
@@ -299,8 +287,8 @@ function getRoom (roomName) {
  * @returns {Promise} Delayed promise of the content.
  */
 function cache (roomName, pref, payload, status, headers, digest = null) {
-  setPreference(`freebeegee-demo-${roomName}`, pref, payload)
-  setStoreValue(`freebeegee-demo-${roomName}`, 't', epoch()) // touch
+  State.setPreference(`freebeegee-demo-${roomName}`, pref, payload)
+  Browser.setStoreValue(`freebeegee-demo-${roomName}`, 't', Util.epoch()) // touch
   if (cache) {
     updateDigest(roomName, digest, payload)
   }
@@ -335,7 +323,7 @@ function fetchAndCache (roomName, url, pref, fix, status, headers, digest = null
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function api (data, headers) {
   const root = window.location.pathname.replace(/\/[^/]+$/, '/')
@@ -350,12 +338,12 @@ function api (data, headers) {
         root: root + 'api',
         backgrounds: [
           { name: 'Cardboard', image: 'img/desktop-cardboard.jpg', color: '#b2997d', scroller: '#7f6d59' },
-          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#375F68', scroller: '#547C86' },
+          { name: 'Carpet', image: 'img/desktop-carpet.jpg', color: '#A99C82', scroller: '#766852' },
           { name: 'Casino', image: 'img/desktop-casino.jpg', color: '#2D5B3D', scroller: '#3a7750' },
           { name: 'Concrete', image: 'img/desktop-concrete.jpg', color: '#6C6964', scroller: '#494540' },
           { name: 'Dark', image: 'img/desktop-dark.jpg', color: '#212121', scroller: '#444444' },
           { name: 'Ice', image: 'img/desktop-ice.jpg', color: '#7B909D', scroller: '#BAC1C7' },
-          { name: 'Leather', image: 'img/desktop-leather.jpg', color: '#3C2D26', scroller: '#6a4b40' },
+          { name: 'Leather', image: 'img/desktop-leather.jpg', color: '#4F2A23', scroller: '#875D54' },
           { name: 'Marble', image: 'img/desktop-marble.jpg', color: '#B6AB99', scroller: '#80725e' },
           { name: 'Metal', image: 'img/desktop-metal.jpg', color: '#565859', scroller: '#3e3e3e' },
           { name: 'Paper', image: 'img/desktop-paper.jpg', color: '#cbcbcb', scroller: '#989898' },
@@ -364,11 +352,12 @@ function api (data, headers) {
           { name: 'Sand', image: 'img/desktop-sand.jpg', color: '#D7D2BF', scroller: '#a19e8f' },
           { name: 'Snow', image: 'img/desktop-snow.jpg', color: '#FAFAFA', scroller: '#C9C9C9' },
           { name: 'Space', image: 'img/desktop-space.jpg', color: '#101010', scroller: '#404040' },
+          { name: 'Tatami', image: 'img/desktop-tatami.jpg', color: '#D2C49E', scroller: '#786C4A' },
           { name: 'Wood', image: 'img/desktop-wood.jpg', color: '#524A43', scroller: '#3E3935' }
         ]
       }, headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -378,7 +367,7 @@ function api (data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiSnapshots (data, headers) {
   switch (data.method) {
@@ -397,7 +386,7 @@ function apiSnapshots (data, headers) {
         system: true
       }], headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -408,7 +397,7 @@ function apiSnapshots (data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiRoomAuth (roomName, data, headers) {
   switch (data.method) {
@@ -420,7 +409,7 @@ function apiRoomAuth (roomName, data, headers) {
         return delayPromise(404, {}, headers)
       }
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -431,7 +420,7 @@ function apiRoomAuth (roomName, data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiRoom (roomName, data, headers) {
   switch (data.method) {
@@ -457,10 +446,10 @@ function apiRoom (roomName, data, headers) {
         'room.json'
       )
     case 'DELETE':
-      removeStoreValue(`freebeegee-demo-${roomName}`)
+      Browser.removeStoreValue(`freebeegee-demo-${roomName}`)
       return delayPromise(201, {}, headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -471,15 +460,15 @@ function apiRoom (roomName, data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiRoomDigest (roomName, data, headers) {
   switch (data.method) {
     case 'GET':
-      temp = getPreference(`freebeegee-demo-${roomName}`, PREFS.DIGEST)
+      temp = State.getPreference(`freebeegee-demo-${roomName}`, PREFS.DIGEST)
       return delayPromise(200, temp, headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -491,13 +480,13 @@ function apiRoomDigest (roomName, data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiRoomTable (roomName, no, data, headers) {
   const pref = PREFS[`TABLE${no}`]
   switch (data.method) {
     case 'GET':
-      temp = getPreference(`freebeegee-demo-${roomName}`, pref)
+      temp = State.getPreference(`freebeegee-demo-${roomName}`, pref)
       if (temp) {
         return delayPromise(200, temp, headers)
       } else {
@@ -515,11 +504,11 @@ function apiRoomTable (roomName, no, data, headers) {
       }
     case 'PUT':
       temp = JSON.parse(data.body)
-      setPreference(`freebeegee-demo-${roomName}`, pref, temp)
+      State.setPreference(`freebeegee-demo-${roomName}`, pref, temp)
       updateDigest(roomName, `tables/${no}.json`, temp)
       return delayPromise(200, temp, headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -532,43 +521,43 @@ function apiRoomTable (roomName, no, data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
   const pref = PREFS[`TABLE${no}`]
   let reply
   switch (data.method) {
     case 'GET':
-      throw new UnexpectedStatus(501, 'GET room table pieces not implemented yet')
+      throw new Api.UnexpectedStatus(501, 'GET room table pieces not implemented yet')
     case 'POST':
-      temp = getPreference(`freebeegee-demo-${roomName}`, pref)
+      temp = State.getPreference(`freebeegee-demo-${roomName}`, pref)
       undoPush(roomName, temp, pref)
       reply = addAll(temp, JSON.parse(data.body))
-      setPreference(`freebeegee-demo-${roomName}`, pref, temp)
+      State.setPreference(`freebeegee-demo-${roomName}`, pref, temp)
       updateDigest(roomName, `tables/${no}.json`, temp)
       return delayPromise(204, reply, headers)
     case 'PUT':
-      throw new UnexpectedStatus(501, 'PUT room table piece not implemented yet')
+      throw new Api.UnexpectedStatus(501, 'PUT room table piece not implemented yet')
     case 'PATCH':
-      temp = getPreference(`freebeegee-demo-${roomName}`, pref)
+      temp = State.getPreference(`freebeegee-demo-${roomName}`, pref)
       undoPush(roomName, temp, pref)
       if (pieceId) {
         reply = patch(temp, 'id', pieceId, JSON.parse(data.body))
       } else {
         reply = patchAll(temp, 'id', JSON.parse(data.body).map(p => p.id), JSON.parse(data.body))
       }
-      setPreference(`freebeegee-demo-${roomName}`, pref, temp)
+      State.setPreference(`freebeegee-demo-${roomName}`, pref, temp)
       updateDigest(roomName, `tables/${no}.json`, temp)
       return delayPromise(200, reply, headers)
     case 'DELETE':
-      temp = getPreference(`freebeegee-demo-${roomName}`, pref)
+      temp = State.getPreference(`freebeegee-demo-${roomName}`, pref)
       undoPush(roomName, temp, pref)
       for (const delId of JSON.parse(data.body)) del(temp, 'id', delId)
-      setPreference(`freebeegee-demo-${roomName}`, pref, temp)
+      State.setPreference(`freebeegee-demo-${roomName}`, pref, temp)
       updateDigest(roomName, `tables/${no}.json`, temp)
       return delayPromise(204, {}, headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -580,18 +569,18 @@ function apiRoomTablePieces (roomName, no, pieceId, data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiRoomTableUndo (roomName, no, data, headers) {
   const pref = PREFS[`TABLE${no}`]
   switch (data.method) {
     case 'POST':
       undoPop(roomName, pref)
-      temp = getPreference(`freebeegee-demo-${roomName}`, pref)
+      temp = State.getPreference(`freebeegee-demo-${roomName}`, pref)
       updateDigest(roomName, `tables/${no}.json`, temp)
       return delayPromise(204, {}, headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -603,7 +592,7 @@ function apiRoomTableUndo (roomName, no, data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiRoomAssets (roomName, assetId, data, headers) {
   switch (data.method) {
@@ -614,11 +603,11 @@ function apiRoomAssets (roomName, assetId, data, headers) {
       del(temp.library.token, 'id', assetId)
       del(temp.library.other, 'id', assetId)
       del(temp.library.badge, 'id', assetId)
-      setPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM, temp)
+      State.setPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM, temp)
       updateDigest(roomName, 'room.json', temp)
       return delayPromise(204, {}, headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -629,7 +618,7 @@ function apiRoomAssets (roomName, assetId, data, headers) {
  * @param {object} data Original fetch()'s data object.
  * @param {boolean} headers If true, reply with a full header object. If false, reply only with the payload.
  * @returns {Promise} Delayed promise of the API content.
- * @throws UnexpectedStatus for not implemented HTTP methods.
+ * @throws {Api.UnexpectedStatus} For not implemented HTTP methods.
  */
 function apiRoomSetup (roomName, data, headers) {
   let setup
@@ -639,11 +628,11 @@ function apiRoomSetup (roomName, data, headers) {
       setup = patch([temp.setup], 'name', temp.setup.name, JSON.parse(data.body))
       temp.width = setup.gridWidth * setup.gridSize
       temp.height = setup.gridHeight * setup.gridSize
-      setPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM, temp)
+      State.setPreference(`freebeegee-demo-${roomName}`, PREFS.ROOM, temp)
       updateDigest(roomName, 'room.json', temp)
       return delayPromise(200, temp, headers)
     default:
-      throw new UnexpectedStatus(501, 'not implemented for demo')
+      throw new Api.UnexpectedStatus(501, 'not implemented for demo')
   }
 }
 
@@ -657,14 +646,14 @@ function apiRoomSetup (roomName, data, headers) {
 function undoPush (roomName, tableData, pref) {
   let temp
   for (let i = UNDO_LEVELS - 2; i >= 0; i--) {
-    temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i}`, default: '' })
+    temp = State.getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i}`, default: '' })
     if (temp !== '') {
-      setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i + 1}`, default: '' }, temp)
+      State.setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i + 1}`, default: '' }, temp)
     }
   }
-  temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}`, default: '' })
+  temp = State.getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}`, default: '' })
   if (temp !== '') {
-    setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.0`, default: '' }, temp)
+    State.setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.0`, default: '' }, temp)
   }
 }
 
@@ -676,14 +665,14 @@ function undoPush (roomName, tableData, pref) {
  */
 function undoPop (roomName, pref) {
   let temp
-  temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.0`, default: '' })
+  temp = State.getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.0`, default: '' })
   if (temp !== '') {
-    setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}`, default: '' }, temp)
+    State.setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}`, default: '' }, temp)
 
     for (let i = 1; i <= UNDO_LEVELS - 1; i++) {
-      temp = getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i}`, default: '' })
+      temp = State.getPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i}`, default: '' })
       if (temp !== '') {
-        setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i - 1}`, default: '' }, temp)
+        State.setPreference(`freebeegee-demo-${roomName}`, { name: `${pref.name}.${i - 1}`, default: '' }, temp)
       }
     }
   }

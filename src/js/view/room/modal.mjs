@@ -19,31 +19,17 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
-
-import {
-  startAutoSync
-} from '../../view/room/sync.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Sync from 'src/js/view/room/sync.mjs'
 
 let modal = null /** Currently open Bootstrap modal instance */
-
-// --- public ------------------------------------------------------------------
-
-/**
- * Get the currently open modal.
- *
- * @returns {?object} Bootstrap modal or null if currently closed.
- */
-export function getModal () {
-  return modal
-}
 
 /**
  * Determine if the/a modal is currently open.
  *
  * @returns {boolean} True, if there is a modal open.
  */
-export function isModalActive () {
+export function isOpen () {
   return modal !== null
 }
 
@@ -55,7 +41,7 @@ export function isModalActive () {
  * @param {string} html Modal body content.
  * @returns {_} The modal's FreeDOM node ('#modal').
  */
-export function createModalRaw (html) {
+export function createRaw (html) {
   const node = _('#modal.modal.is-noselect').create()
   node.tabindex = -1
   _('body').add(node)
@@ -74,6 +60,8 @@ export function createModalRaw (html) {
     }
   })
 
+  node.on('hidden.bs.modal', () => { close() })
+
   return node.node()
 }
 
@@ -87,8 +75,8 @@ export function createModalRaw (html) {
  *                        regular (smaller) modal will be created.
  * @returns {_} The modal's FreeDOM node ('#modal').
  */
-export function createModal (large = false) {
-  const node = createModalRaw(`
+export function create (large = false) {
+  const node = createRaw(`
       <div class="modal-dialog">
         <div id="modal-content" class="modal-content">
           <div id="modal-header" class="modal-header is-content"></div>
@@ -104,27 +92,10 @@ export function createModal (large = false) {
 }
 
 /**
- * Initialize a new fullscreen modal.
- *
- * Assumes an hidden, empty modal frame to be present in the DOM as '#modal' and
- * will return it as Bootstrap Modal instance.
- *
- * @returns {_} The modal's FreeDOM node ('#modal').
+ * Open/show modal if it already exists. Will not create one.
  */
-export function createModalFullscreen () {
-  const node = createModalRaw(`
-      <div class="modal-dialog">
-        <div id="modal-content" class="modal-content">
-          <div id="modal-header" class="modal-header is-content"></div>
-          <div id="modal-body" class="modal-body is-content"></div>
-          <div id="modal-footer" class="modal-footer fb"></div>
-        </div>
-      </div>
-    `)
-
-  node.classList.add('modal-fullscreen')
-
-  return node
+export function open () {
+  modal?.show()
 }
 
 /**
@@ -132,14 +103,14 @@ export function createModalFullscreen () {
  *
  * Will also empty the `#modal` DOM node for reuse and trigger a new API poll.
  */
-export function modalClose () {
-  if (isModalActive()) {
+export function close () {
+  if (isOpen()) {
     modal.dispose()
     modal = null
     _('#modal').delete()
     _('.modal-backdrop').delete()
   }
-  startAutoSync() // might have gotten shut down in long-opened modals
+  Sync.startAutoSync() // might have gotten shut down in long-opened modals
 }
 
 /**
@@ -153,9 +124,9 @@ export function modalClose () {
  * @param {object} data Data to pass on to OK handler.
  * @param {Function} onOk Handler to call on OK click.
  */
-export function createModalConfirm (title, body, button, data = {}, onOk = () => true) {
-  if (!isModalActive()) {
-    createModal()
+export function createConfirm (title, body, button, data = {}, onOk = () => true) {
+  if (!isOpen()) {
+    create()
 
     _('#modal-header').innerHTML = title
     _('#modal-body').innerHTML = body
@@ -165,12 +136,11 @@ export function createModalConfirm (title, body, button, data = {}, onOk = () =>
       <button id='btn-ok' type="button" class="btn btn-primary">${button}</button>
     `
 
-    _('#btn-close').on('click', () => getModal().hide())
+    _('#btn-close').on('click', () => modal.hide())
     _('#btn-ok').on('click', () => onOk(data))
     _('#modal')
       .add('.modal-small')
-      .on('hidden.bs.modal', () => { modalClose() })
 
-    getModal().show()
+    modal.show()
   }
 }

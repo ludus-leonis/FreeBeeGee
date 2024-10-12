@@ -19,25 +19,17 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../view/room/modal.mjs'
-
-// --- public ------------------------------------------------------------------
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
 
 /**
  * Inform user about a disabled feature.
  *
  * @param {string} what Partial sentence for the feature paragraph.
  */
-export function modalDisabled (what) {
-  if (!isModalActive()) {
-    createModal()
+export function open (what) {
+  if (!Modal.isOpen()) {
+    Modal.create()
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">I'm afraid I can't do that 😞</h3>
@@ -51,11 +43,10 @@ export function modalDisabled (what) {
       <button id='btn-close' type="button" class="btn btn-primary">Oh. Ok!</button>
     `
 
-    _('#btn-close').on('click', () => getModal().hide())
+    _('#btn-close').on('click', () => Modal.close())
     _('#modal')
       .add('.modal-small')
-      .on('hidden.bs.modal', () => { modalClose() })
 
-    getModal().show()
+    Modal.open()
   }
 }

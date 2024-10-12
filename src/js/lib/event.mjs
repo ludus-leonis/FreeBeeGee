@@ -19,20 +19,22 @@
  * along with FreeBeeGee. If not, see https://www.gnu.org/licenses/.
  */
 
-export const HOOK_SYNCNOW = 'HOOK_SYNCNOW'
-export const HOOK_LIBRARY_EDIT = 'HOOK_LIBRARY_EDIT'
-export const HOOK_LIBRARY_UPDATE = 'HOOK_LIBRARY_UPDATE'
-export const HOOK_LIBRARY_RELOAD = 'HOOK_LIBRARY_RELOAD'
-export const HOOK_LIBRARY_SELECT = 'HOOK_LIBRARY_SELECT'
+export const HOOK = {
+  SYNCNOW: 'SYNCNOW',
+  LIBRARY_EDIT: 'LIBRARY_EDIT',
+  LIBRARY_UPDATE: 'LIBRARY_UPDATE',
+  LIBRARY_RELOAD: 'LIBRARY_RELOAD',
+  LIBRARY_SELECT: 'LIBRARY_SELECT'
+}
 
 /**
  * Register an observer.
  *
  * @param {string} who Name of the observer. Re-registering an observer removes the old entry first.
- * @param {string} what HOOK_* event to listen for.
+ * @param {string} what HOOK.* event to listen for.
  * @param {Function} callback Function to call when corresponding event is triggered.
  */
-export function registerObserver (who, what, callback) {
+export function register (who, what, callback) {
   if (!observers[what]) {
     observers[what] = []
   }
@@ -47,9 +49,9 @@ export function registerObserver (who, what, callback) {
  * Register an observer.
  *
  * @param {string} who Name of the observer. Re-registering an observer removes the old entry first.
- * @param {string} what HOOK_* event to listen for.
+ * @param {string} what HOOK.* event to listen for.
  */
-export function unregisterObserver (who, what) {
+export function unregister (who, what) {
   if (!observers[what]) {
     observers[what] = []
   }
@@ -61,15 +63,13 @@ export function unregisterObserver (who, what) {
  *
  * Will call callback() on every observer registered for a given event.
  *
- * @param {string} what HOOK_* event to trigger.
+ * @param {string} what HOOK.* event to trigger.
  * @param {*} data (Optional) data to pass to callback.
  */
-export function triggerEvent (what, data) {
+export function trigger (what, data) {
   for (const observer of observers[what] ?? []) {
     observer.callback(data)
   }
 }
-
-// -----------------------------------------------------------------------------
 
 const observers = {}

@@ -18,25 +18,25 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global describe */
+/* global describe, Buffer */
 
 // -----------------------------------------------------------------------------
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
-import {
-  p,
-  expect,
-  zipCreate,
-  zipToc,
-  testGetBuffer,
-  testZIPUpload,
-  testJsonGet,
-  openTestroom,
-  closeTestroom
-} from '../utils/chai.mjs'
-
 import dateformat from 'dateformat'
+
+import * as Test from 'test/integration/utils/test.mjs'
+
+const expect = Test.expect
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
+
+// -----------------------------------------------------------------------------
 
 /**
  * Calculate daylight standard time aware offset of CET/CEST timezone vs GMT.
@@ -60,13 +60,13 @@ function dstOffset () { // return 60/120 depending if DST is off or on
  * @param {string} room Room name to use for test.
  */
 function testApiSnapshotClassic (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
+  Test.getBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
-    const entries = zipToc(buffer)
+    const entries = Test.zipToc(buffer)
     expect(entries.length).to.be.gte(100)
     expect(entries).to.contain('LICENSE.md')
     expect(entries).to.contain('setup.json')
@@ -76,21 +76,21 @@ function testApiSnapshotClassic (api, room) {
     expect(entries).not.to.contain('snapshot.zip')
   }, 200)
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/`, headers => {
+  Test.getBuffer(api, () => `/rooms/${room}/snapshot/`, headers => {
     const now = new Date()
     now.setHours(now.getHours() - dstOffset() / 60)
     const date = dateformat(now, 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {}, 200)
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset() + 60}`, headers => {
+  Test.getBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset() + 60}`, headers => {
     const now = new Date()
     now.setHours(now.getHours() + 1)
     const date = dateformat(now, 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {}, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -100,13 +100,13 @@ function testApiSnapshotClassic (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiSnapshotRPG (api, room) {
-  openTestroom(api, room, 'RPG')
+  Test.openTestroom(api, room, 'RPG')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
+  Test.getBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
-    const entries = zipToc(buffer)
+    const entries = Test.zipToc(buffer)
     expect(entries.length).to.be.gte(100)
     expect(entries).to.contain('LICENSE.md')
     expect(entries).to.contain('setup.json')
@@ -116,7 +116,7 @@ function testApiSnapshotRPG (api, room) {
     expect(entries).not.to.contain('snapshot.zip')
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -126,13 +126,13 @@ function testApiSnapshotRPG (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiSnapshotHex (api, room) {
-  openTestroom(api, room, 'Hex')
+  Test.openTestroom(api, room, 'Hex')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
+  Test.getBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
-    const entries = zipToc(buffer)
+    const entries = Test.zipToc(buffer)
     expect(entries.length).to.be.gte(100)
     expect(entries).to.contain('LICENSE.md')
     expect(entries).to.contain('setup.json')
@@ -142,7 +142,7 @@ function testApiSnapshotHex (api, room) {
     expect(entries).not.to.contain('snapshot.zip')
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -152,13 +152,13 @@ function testApiSnapshotHex (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiSnapshotTutorial (api, room) {
-  openTestroom(api, room, 'Tutorial')
+  Test.openTestroom(api, room, 'Tutorial')
 
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
+  Test.getBuffer(api, () => `/rooms/${room}/snapshot/?tzo=${dstOffset()}`, headers => {
     const date = dateformat(new Date(), 'yyyy-mm-dd-HHMM')
     expect(headers['content-disposition']).to.contain(`${room}.${date}.zip`)
   }, buffer => {
-    const entries = zipToc(buffer)
+    const entries = Test.zipToc(buffer)
     expect(entries.length).to.be.gte(225)
     expect(entries.length).to.be.lte(275)
     expect(entries).to.contain('LICENSE.md')
@@ -169,7 +169,63 @@ function testApiSnapshotTutorial (api, room) {
     expect(entries).not.to.contain('snapshot.zip')
   }, 200)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
+}
+
+// -----------------------------------------------------------------------------
+
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshoInvalid (api, room) {
+  Test.jsonPost(api, () => '/rooms/', () => {
+    return {
+      name: room,
+      snapshot: 'unkown',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body._error).to.be.eql('GENERIC_ERROR')
+    expect(body._messages[0]).to.match(/snapshot unkown.zip not available/)
+  }, 400)
+
+  Test.jsonPost(api, () => '/rooms/', () => {
+    return {
+      name: room,
+      snapshot: '_öäü 2024.10.12',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body._error).to.be.eql('GENERIC_ERROR')
+    expect(body._messages[0]).to.match(/snapshot _öäü 2024.10.12.zip not available/)
+  }, 400)
+
+  Test.jsonPost(api, () => '/rooms/', () => {
+    return {
+      name: room,
+      snapshot: '../../../../../../../../file.txt',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body._error).to.be.eql('GENERIC_ERROR')
+    expect(body._messages[0]).to.match(/snapshot does not match/)
+  }, 400)
+
+  Test.jsonPost(api, () => '/rooms/', () => {
+    return {
+      name: room,
+      snapshot: 'aaaaa\x00bbbbb',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body._error).to.be.eql('GENERIC_ERROR')
+    expect(body._messages[0]).to.match(/snapshot does not match/)
+  }, 400)
 }
 
 // -----------------------------------------------------------------------------
@@ -179,11 +235,11 @@ function testApiSnapshotTutorial (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiSnapshotUpload (api, room) {
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('LICENSE.md', Buffer.from('you may'))
     }),
     body => {
@@ -191,7 +247,7 @@ function testApiSnapshotUpload (api, room) {
       expect(body.credits).to.be.eql('you may')
     }, 201)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -201,146 +257,146 @@ function testApiSnapshotUpload (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiSnapshotVersions (api, room) {
-  const v = p.versionEngine.split('.')
+  const v = Test.p.versionEngine.split('.')
   v[0] = Number.parseInt(v[0])
   v[1] = Number.parseInt(v[1])
   v[2] = Number.parseInt(v[2])
 
   // snapshot matches current version
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
-        "version": "${p.version}",
+        "version": "${Test.p.version}",
         "engine": "${v[0]}.${v[1]}.0"
       }`))
     }),
     body => {
       expect(body).to.be.an('object')
     }, 201)
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 
   // snapshot matches same patch - ok
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
-        "version": "${p.version}",
+        "version": "${Test.p.version}",
         "engine": "${v[0]}.${v[1]}.${v[2]}"
       }`))
     }),
     body => {
       expect(body).to.be.an('object')
     }, 201)
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 
   // snapshot matches older patch -> ok
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
-        "version": "${p.version}",
+        "version": "${Test.p.version}",
         "engine": "${v[0]}.${v[1]}.${v[2] - 1}"
       }`))
     }),
     body => {
       expect(body).to.be.an('object')
     }, 201)
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 
   // snapshot requires newer patch -> bad
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
-        "version": "${p.version}",
+        "version": "${Test.p.version}",
         "engine": "${v[0]}.${v[1]}.${v[2] + 1}"
       }`))
     }),
     body => {
       expect(body._messages[0]).to.match(/ engine mismatch/)
     }, 400)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
 
   // snapshot is from a newer engine (major) -> bad
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
-        "version": "${p.version}",
+        "version": "${Test.p.version}",
         "engine": "${v[0] + 1}.${v[1]}.0"
       }`))
     }),
     body => {
       expect(body._messages[0]).to.match(/ engine mismatch/)
     }, 400)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
 
   // snapshot is from an older engine (major) -> bad
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
-        "version": "${p.version}",
+        "version": "${Test.p.version}",
         "engine": "${v[0] - 1}.${v[1]}.0"
       }`))
     }),
     body => {
       expect(body._messages[0]).to.match(/ engine mismatch/)
     }, 400)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
 
   // snapshot is from a newer engine (minor) -> bad
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
-        "version": "${p.version}",
+        "version": "${Test.p.version}",
         "engine": "${v[0]}.${v[1] + 1}.0"
       }`))
     }),
     body => {
       expect(body._messages[0]).to.match(/ engine mismatch/)
     }, 400)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 404)
 
   // snapshot is from an older engine (minor) -> ok
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       zip.addFile('setup.json', Buffer.from(`{
         "type": "grid-square",
-        "version": "${p.version}",
+        "version": "${Test.p.version}",
         "engine": "${v[0]}.${v[1] - 1}.0"
       }`))
     }),
     body => {
       expect(body).to.be.an('object')
     }, 201)
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -370,11 +426,11 @@ function testApiSnapshotSize (api, room) {
   const b = blob(1)
 
   // 33MB - size exceeds php but not webserver
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       for (let i = 0; i < 33; i++) {
         zip.addFile(`blob${i}.bin`, Buffer.from(b))
       }
@@ -385,11 +441,11 @@ function testApiSnapshotSize (api, room) {
     }, 400)
 
   // 65MB - size exceeds webserver
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       for (let i = 0; i < 65; i++) {
         zip.addFile(`blob${i}.bin`, Buffer.from(b))
       }
@@ -400,11 +456,11 @@ function testApiSnapshotSize (api, room) {
     }, 413, false)
 
   // 15MB - too large, as system assets are too much
-  testZIPUpload(api,
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
+    () => Test.zipCreate(zip => {
       for (let i = 0; i < 15; i++) {
         zip.addFile(`blob${i}.bin`, Buffer.from(b))
       }
@@ -414,13 +470,13 @@ function testApiSnapshotSize (api, room) {
       expect(body._error).to.be.eql('ROOM_SIZE')
     }, 400)
 
-  // 14MB - barely ok including system assets
-  testZIPUpload(api,
+  // 13MB - barely ok including system assets
+  Test.zipUpload(api,
     () => '/rooms/',
     () => { return room },
     () => { return 'apitests' },
-    () => zipCreate(zip => {
-      for (let i = 0; i < 14; i++) {
+    () => Test.zipCreate(zip => {
+      for (let i = 0; i < 13; i++) {
         zip.addFile(`blob${i}.bin`, Buffer.from(b))
       }
       zip.addFile('LICENSE.md', Buffer.from('you may'))
@@ -430,7 +486,7 @@ function testApiSnapshotSize (api, room) {
       expect(body.credits).to.be.eql('you may')
     }, 201)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // --- the test runners --------------------------------------------------------
@@ -438,13 +494,14 @@ function testApiSnapshotSize (api, room) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - snapshots', function () {
     runner((api, version, room) => {
       describe('Classic', () => testApiSnapshotClassic(api, room))
       describe('RPG', () => testApiSnapshotRPG(api, room))
       describe('Hex', () => testApiSnapshotHex(api, room))
       describe('Tutorial', () => testApiSnapshotTutorial(api, room))
+      describe('invalid', () => testApiSnapshoInvalid(api, room))
       describe('upload', () => testApiSnapshotUpload(api, room))
       describe('versions', () => testApiSnapshotVersions(api, room))
       describe('size', () => testApiSnapshotSize(api, room))

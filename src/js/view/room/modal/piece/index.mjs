@@ -19,62 +19,26 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../../lib/FreeDOM.mjs'
-
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../../view/room/modal.mjs'
-
-import {
-  LAYER,
-  getAssetURL
-} from '../../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  PREFS,
-  FLAGS,
-  getSetup,
-  getLibrary,
-  getRoomPreference
-} from '../../../../state/index.mjs'
-
-import {
-  equalsJSON
-} from '../../../../lib/utils.mjs'
-
-import {
-  prettyName
-} from '../../../../lib/utils-text.mjs'
-
-import {
-  setup as setupModalToken
-} from './token.mjs'
-
-import {
-  setup as setupModalOther
-} from './other.mjs'
-
-import {
-  setup as setupModalTile
-} from './tile.mjs'
-
-import {
-  setup as setupModalNote
-} from './note.mjs'
-
-// --- public ------------------------------------------------------------------
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as ModalNote from 'src/js/view/room/modal/piece/note.mjs'
+import * as ModalOther from 'src/js/view/room/modal/piece/other.mjs'
+import * as ModalTile from 'src/js/view/room/modal/piece/tile.mjs'
+import * as ModalToken from 'src/js/view/room/modal/piece/token.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 /**
  * Show the edit-piece modal.
  *
  * @param {object} piece A piece to show.
  */
-export function modalEdit (piece) {
-  if (piece != null && !isModalActive()) {
-    const node = createModal()
+export function open (piece) {
+  if (piece != null && !Modal.isOpen()) {
+    const node = Modal.create()
     node.piece = piece
 
     _('#modal-header').innerHTML = `
@@ -83,19 +47,19 @@ export function modalEdit (piece) {
 
     let save = null
     switch (piece.l) {
-      case LAYER.NOTE:
-        save = setupModalNote(piece)
+      case Content.LAYER.NOTE:
+        save = ModalNote.create(piece)
         break
-      case LAYER.TILE:
-      case LAYER.STICKER:
-        save = setupModalTile(piece)
+      case Content.LAYER.TILE:
+      case Content.LAYER.STICKER:
+        save = ModalTile.create(piece)
         break
-      case LAYER.OTHER:
-        save = setupModalOther(piece)
+      case Content.LAYER.OTHER:
+        save = ModalOther.create(piece)
         break
-      case LAYER.TOKEN:
+      case Content.LAYER.TOKEN:
       default:
-        save = setupModalToken(piece)
+        save = ModalToken.create(piece)
         break
     }
 
@@ -104,11 +68,10 @@ export function modalEdit (piece) {
       <button id='btn-ok' type="button" class="btn btn-primary">Apply</button>
     `
 
-    _('#btn-close').on('click', () => getModal().hide())
-    _('#btn-ok').on('click', () => save() && getModal().hide())
-    _('#modal').on('hidden.bs.modal', () => modalClose())
+    _('#btn-close').on('click', () => Modal.close())
+    _('#btn-ok').on('click', () => save() && Modal.close())
 
-    getModal().show()
+    Modal.open()
 
     const input = document.getElementById('piece-label')
     input?.focus()
@@ -124,15 +87,15 @@ export function modalEdit (piece) {
 export function setupBadge (piece) {
   // badges
   const badges = _('#piece-badges')
-  for (const badge of getLibrary().badge) {
+  for (const badge of State.getLibrary().badge) {
     const span = _('span.toggle-icon').create().css({
-      backgroundImage: `url('${getAssetURL(badge)}'`
+      backgroundImage: `url('${Dom.getAssetURL(badge)}'`
     }).on('click', () => {
       span.toggle('.active')
     })
     if (piece.b?.includes(badge.id)) span.add('.active')
     span.badge = badge
-    span.title = prettyName(badge.name)
+    span.title = Text.prettyName(badge.name)
     badges.add(span)
   }
 }
@@ -148,7 +111,7 @@ export function updateBadge (piece, updates) {
   for (const node of _('#piece-badges .active').nodes()) {
     b.push(node.badge.id)
   }
-  if (!equalsJSON(piece.b, b)) {
+  if (!Util.equalsJSON(piece.b, b)) {
     updates.b = b
   }
 }
@@ -160,7 +123,7 @@ export function updateBadge (piece, updates) {
  */
 export function setupColor (piece) {
   const pieceColor = _('#piece-color')
-  const setup = getSetup()
+  const setup = State.getSetup()
 
   // default/none color
   const option = _('option').create('none')
@@ -185,7 +148,7 @@ export function setupColor (piece) {
 export function setupColorBorder (piece) {
   // border color
   const borderColor = _('#piece-border')
-  const setup = getSetup()
+  const setup = State.getSetup()
 
   // default/none color
   const option = _('option').create('none')
@@ -238,16 +201,16 @@ export function updateColorBorder (piece, updates) {
 export function updateFlags (piece, updates) {
   let flags = 0
 
-  if (_('#piece-no-move').checked) flags |= FLAGS.NO_MOVE
-  if (_('#piece-no-delete').checked) flags |= FLAGS.NO_DELETE
-  if (_('#piece-no-clone').checked) flags |= FLAGS.NO_CLONE
+  if (_('#piece-no-move').checked) flags |= Content.FLAG.NO_MOVE
+  if (_('#piece-no-delete').checked) flags |= Content.FLAG.NO_DELETE
+  if (_('#piece-no-clone').checked) flags |= Content.FLAG.NO_CLONE
   const tileGrid = _('#piece-grid')
   if (tileGrid.exists()) {
-    if (tileGrid.value === 'minor') flags |= FLAGS.TILE_GRID_MINOR
-    if (tileGrid.value === 'major') flags |= FLAGS.TILE_GRID_MAJOR
+    if (tileGrid.value === 'minor') flags |= Content.FLAG.TILE_GRID_MINOR
+    if (tileGrid.value === 'major') flags |= Content.FLAG.TILE_GRID_MAJOR
   }
   const noteType = _('#piece-note-type')
-  if (noteType.exists() && noteType.value === 'tl') flags |= FLAGS.NOTE_TOPLEFT
+  if (noteType.exists() && noteType.value === 'tl') flags |= Content.FLAG.NOTE_TOPLEFT
 
   if (flags !== piece.f) updates.f = flags
 }
@@ -266,7 +229,7 @@ export function setupLabel (piece, onEnter) {
       switch (keydown.keyCode) {
         case 13: // simulate submitbutton push
           keydown.preventDefault()
-          onEnter() && getModal().hide()
+          onEnter() && Modal.close()
       }
     })
   }
@@ -305,17 +268,17 @@ export function setupGrid (piece) {
 
   let option = _('option').create('None')
   option.value = 'none'
-  if (!(piece.f & FLAGS.TILE_GRID_MINOR || piece.f & FLAGS.TILE_GRID_MAJOR)) option.selected = true
+  if (!(piece.f & Content.FLAG.TILE_GRID_MINOR || piece.f & Content.FLAG.TILE_GRID_MAJOR)) option.selected = true
   grid.add(option)
 
   option = _('option').create('Minor')
   option.value = 'minor'
-  if (piece.f & FLAGS.TILE_GRID_MINOR) option.selected = true
+  if (piece.f & Content.FLAG.TILE_GRID_MINOR) option.selected = true
   grid.add(option)
 
   option = _('option').create('Major')
   option.value = 'major'
-  if (piece.f & FLAGS.TILE_GRID_MAJOR) option.selected = true
+  if (piece.f & Content.FLAG.TILE_GRID_MAJOR) option.selected = true
   grid.add(option)
 }
 
@@ -358,7 +321,7 @@ export function updateNumber (piece, updates) {
  */
 export function setupRotate (piece) {
   const pieceR = _('#piece-r')
-  const increment = getRoomPreference(PREFS.PIECE_ROTATE)
+  const increment = State.getRoomPreference(State.PREF.PIECE_ROTATE)
   for (let r = 0; r < 360; r += increment) {
     const option = _('option').create(r === 0 ? '0°' : r + '°')
     option.value = r
@@ -456,9 +419,7 @@ export function updateSize (piece, updates) {
  * @param {object} piece The piece's data object.
  */
 export function setupFlags (piece) {
-  _('#piece-no-move').checked = piece.f & FLAGS.NO_MOVE
-  _('#piece-no-delete').checked = piece.f & FLAGS.NO_DELETE
-  _('#piece-no-clone').checked = piece.f & FLAGS.NO_CLONE
+  _('#piece-no-move').checked = piece.f & Content.FLAG.NO_MOVE
+  _('#piece-no-delete').checked = piece.f & Content.FLAG.NO_DELETE
+  _('#piece-no-clone').checked = piece.f & Content.FLAG.NO_CLONE
 }
-
-// --- internal ----------------------------------------------------------------

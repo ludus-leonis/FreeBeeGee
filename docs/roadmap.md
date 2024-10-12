@@ -2,32 +2,25 @@
 
 This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a list what might happen next. However, priorities may change.
 
-## v0.23.0
+## v0.24.0
 
-* [X] asset depth setting for more/less shadow
-* [X] exclude protected pieces from multi-select operation, instead of denying it to all
-* [X] move selection via cursor keys
-* [X] tweak grid visibility
-* [X] cleanup 'x/y' and '3x3:3' in library window
-* [X] system separator line in library window
-* [X] auto-populate empty data dir (for docker volumes)
-* [X] grid-on-tile flag major/minor
-* [X] support more special hotkeys (copy, paste, zoom, ...)
-* [X] rename overlays to stickers
-* [X] remember last used snapshot in create-room dialog
+* [X] zoom-to-cursor
+* [X] rotate dice on random
+* [X] random 360° rotation for pieces via Alt+r
+* [X] different blue menu for measure and non-measure mode
+* [X] use png for mask
 * [X] pre-release
   * [X] bump dependencies
   * [X] bugfixes + refactoring
-    * [X] table.json caching in demo mode
-    * [X] dragging multi-selection not snapping correctly
-    * [X] fix sass import warning
-    * [X] edit modal dropdown sizes
-    * [X] token + mask + rounded
-    * [X] RPG orc label - badge
-    * [X] add PHP 7.3 to self diagnosis
-    * [X] refactor LAYER_* to LAYER.*
-    * [X] laser pointer not working
-    * [X] low quality shadows going in wrong direction
+    * [X] note padding won't zoom properly
+    * [X] clone no-clone object disables edit without reselection
+    * [X] refactor imports and module responsibility
+    * [X] should token numbers increase on cut+paste?
+    * [X] long token label + 2 icons cutoff wrong
+    * [X] linen material border
+    * [X] token number material
+    * [X] upload preview - no shadow
+    * [X] upload preview - no material on default token
   * [X] review docs
   * [X] review tutorial
   * [X] bump engine, version/codename & update CHANGELOG
@@ -38,12 +31,12 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 
 ### rather sooner (before v1)
 
-* [ ] zoom-to-cursor
+* [ ] update screenshots (new nav)
+* [ ] refactor: always use getFeatures([piece]) to check
+* [ ] refactor: test selectionFeatures() for mixed selections, e.g. .flip
+* [ ] refactor: always use numeric layer number in 'l' (no string translation)
+* [ ] refactor: frontend-state: test all State.xyz, all API endpoints
 * [ ] switch to PHP 8.3 for docker release
-* [ ] different blue menu for measure and non-measure mode
-* [ ] refactor: cleanup responsibility state/tabletop abcSelected/abcPieces
-  * [ ] more tabletop/index.js tests
-  * [ ] move abcSelected to selection.js?
 * [ ] invert svg/decal on white
 * [ ] refactor: system asset flag instead of '_'
 * [ ] snapshot download for demo mode
@@ -56,7 +49,6 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
   * [ ] automated screenshots using screenshot.zip snapshot
 * [ ] engine: option to rotate group vs individual pieces
 * [ ] engine: protect api objects in JS code
-* [ ] ui: move dice more / rotate
 * [ ] bug: png maps make pieces flicker when cursor changes
 * [ ] when dragging pieces, move those on top of the original piece too
 * [ ] dedicated HP/Mana/Value field(s)
@@ -69,6 +61,7 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [ ] dicemat: randomize button
 * [ ] dicemat: don't roll dice on transparent parts
 * [ ] dicemat: count dice values
+* [ ] outline material overlay
 * [ ] concurrent drag-n-drop (first mover wins) via hash/deprecation header
 * [ ] system: password-protect assets, too
 * [ ] build: minify js

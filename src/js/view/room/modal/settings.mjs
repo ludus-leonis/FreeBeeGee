@@ -19,64 +19,24 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  navigateToJoin
-} from '../../../app.mjs'
-
-import {
-  PREFS,
-  getSetup,
-  patchSetup,
-  updateTable,
-  getRoom,
-  getServerInfo,
-  deleteRoom,
-  setRoomPassword,
-  getTableNo,
-  setTableNo,
-  getServerPreference,
-  setServerPreference,
-  getRoomPreference,
-  setRoomPreference,
-  undo
-} from '../../../state/index.mjs'
-
-import {
-  createModal,
-  getModal,
-  modalClose
-} from '../../../view/room/modal.mjs'
-
-import {
-  ZOOM_LEVELS,
-  moveContent
-} from '../../../view/room/tabletop/index.mjs'
-
-import {
-  GRID,
-  getContentRect
-} from '../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  setupBackground,
-  setupZoom,
-  toggleGrid
-} from '../../../view/room/index.mjs'
-
-// --- public ------------------------------------------------------------------
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as State from 'src/js/state/index.mjs'
 
 /**
  * Show the settings modal.
  */
-export function modalSettings () {
-  createModal()
+export function open () {
+  Modal.create()
 
   _('#modal-header').innerHTML = `
     <h3 class="modal-title">Settings</h3>
   `
-  const grid = getRoomPreference(PREFS.GRID)
+  const grid = State.getRoomPreference(State.PREF.GRID)
   _('#modal-body').innerHTML = `
     <div id="tabs-settings" class="tabs">
       <input id="tab-1" type="radio" name="tabs">
@@ -121,7 +81,7 @@ export function modalSettings () {
 
             <div class="col-12">
               <label for="table-quality">Render quality</label>
-              <input id="table-quality" class="slider" type="range" min="0" max="3" value="${getServerPreference(PREFS.QUALITY)}" >
+              <input id="table-quality" class="slider" type="range" min="0" max="3" value="${State.getServerPreference(State.PREF.QUALITY)}" >
               <p class="p-small spacing-tiny if-quality-low"><strong>Low:</strong> No shadows, bells and whistles. Will look very flat.</p>
               <p class="p-small spacing-tiny if-quality-medium"><strong>Medium:</strong> Simplified shadows and no rounded corners.</p>
               <p class="p-small spacing-tiny if-quality-high"><strong>High:</strong> Some minor details are missing.</p>
@@ -252,12 +212,15 @@ export function modalSettings () {
 
   // store/retrieve selected tab
   _('input[name="tabs"]').on('change', change => {
-    setRoomPreference(PREFS.TAB_SETTINGS, change.target.id)
+    State.setRoomPreference(State.PREF.TAB_SETTINGS, change.target.id)
   })
-  const preselect = getRoomPreference(PREFS.TAB_SETTINGS)
+  const preselect = State.getRoomPreference(State.PREF.TAB_SETTINGS)
   _('#' + preselect).checked = true
 
-  _('#table-quality').on('change', () => changeQuality(Number(_('#table-quality').value)))
+  _('#table-quality').on('change', () => {
+    State.setServerPreference(State.PREF.QUALITY, Number(_('#table-quality').value))
+    Dom.updateQuality()
+  })
 
   _('#dangerRoom').on('click', () => {
     if (_('#dangerRoom').checked) {
@@ -270,19 +233,19 @@ export function modalSettings () {
   })
 
   const zoom = _('#table-zoom')
-  for (const z of ZOOM_LEVELS) {
+  for (const z of Dom.ZOOM_LEVELS) {
     const option = _('option').create(z * 100 + '%')
     option.value = z
-    if (z === getRoomPreference(PREFS.ZOOM)) option.selected = true
+    if (z === State.getRoomPreference(State.PREF.ZOOM)) option.selected = true
     zoom.add(option)
   }
 
-  const server = getServerInfo()
+  const server = State.getServerInfo()
   const backgrounds = _('#table-background')
   for (const background of server.backgrounds) {
     const option = _('option').create(background.name)
     option.value = background.name
-    if (background.name === getServerPreference(PREFS.BACKGROUND)) option.selected = true
+    if (background.name === State.getServerPreference(State.PREF.BACKGROUND)) option.selected = true
     backgrounds.add(option)
   }
 
@@ -290,56 +253,55 @@ export function modalSettings () {
   for (let i = 1; i <= 9; i++) {
     const option = _('option').create(i)
     option.value = i
-    if (i === getTableNo()) option.selected = true
+    if (i === State.getTableNo()) option.selected = true
     table.add(option)
   }
 
   const rotate = _('#table-rstep')
-  const range = [GRID.HEX, GRID.HEX2].includes(getSetup().type) ? [10, 30, 60] : [10, 45, 90]
+  const range = [Content.GRID.HEX, Content.GRID.HEX2].includes(State.getSetup().type) ? [10, 30, 60] : [10, 45, 90]
   for (const r of range) {
     const option = _('option').create(`${r}°`)
     option.value = r
-    if (r === getRoomPreference(PREFS.PIECE_ROTATE)) option.selected = true
+    if (r === State.getRoomPreference(State.PREF.PIECE_ROTATE)) option.selected = true
     rotate.add(option)
   }
 
-  const setup = getSetup()
-  const rect = getContentRect()
-  populateSizes('#table-w', getSetup().gridWidth, Math.floor(rect.right / setup.gridSize))
-  populateSizes('#table-h', getSetup().gridHeight, Math.floor(rect.bottom / setup.gridSize))
+  const setup = State.getSetup()
+  const rect = Content.getFeatures(State.getTable()).boundingBox
+  populateSizes('#table-w', State.getSetup().gridWidth, Math.floor(rect.right / setup.gridSize))
+  populateSizes('#table-h', State.getSetup().gridHeight, Math.floor(rect.bottom / setup.gridSize))
 
-  _('#btn-close').on('click', () => getModal().hide())
-  _('#modal').on('hidden.bs.modal', () => modalClose())
+  _('#btn-close').on('click', () => Modal.close())
 
   // ---------------------------------------------------------------------------
 
   _('#btn-table-clear').on('click', click => {
     click.preventDefault()
-    updateTable([])
+    State.updateTable([])
   })
   _('#btn-table-undo').on('click', click => {
     click.preventDefault()
-    undo()
+    State.undo()
   })
   _('#btn-room-password').on('click', click => {
     click.preventDefault()
-    setRoomPassword(_('#room-password').value.trim()).then(() => getModal().hide())
+    State.setRoomPassword(_('#room-password').value.trim()).then(() => Modal.close())
   })
   _('#btn-room-delete').on('click', click => {
     click.preventDefault()
-    deleteRoom().then(() => navigateToJoin(getRoom().name))
+    State.deleteRoom().then(() => App.navigateToJoin(State.getRoom().name))
   })
 
   // ---------------------------------------------------------------------------
 
-  _('#table-grid').on('change', () => toggleGrid(Number.parseInt(_('#table-grid').value)))
-  _('#table-zoom').on('change', () => setupZoom(Number(_('#table-zoom').value)))
+  _('#table-grid').on('change', () => Room.toggleGrid(Number.parseInt(_('#table-grid').value)))
+  _('#table-zoom').on('change', () => Room.setupZoom(Number(_('#table-zoom').value)))
   _('#table-background').on('change', () => {
-    setServerPreference(PREFS.BACKGROUND, _('#table-background').value)
-    setupBackground()
+    State.setServerPreference(State.PREF.BACKGROUND, _('#table-background').value)
+    Room.setupBackground()
   })
-  _('#table-sub').on('change', () => setTableNo(Number(_('#table-sub').value)))
-  _('#table-rstep').on('change', () => setRoomPreference(PREFS.PIECE_ROTATE, Number(_('#table-rstep').value)))
+  _('#table-sub').on('change', () => State.setTableNo(Number(_('#table-sub').value)))
+  _('#table-rstep').on('change', () => State.setRoomPreference(State.PREF.PIECE_ROTATE, Number(_('#table-rstep').value)))
 
   _('#btn-table-tl').on('click', click => handleAlign(click, -1, -1))
   _('#btn-table-tc').on('click', click => handleAlign(click, 0, -1))
@@ -354,38 +316,12 @@ export function modalSettings () {
   _('#btn-table-resize').on('click', click => {
     click.preventDefault()
     resizeRoom()
-    getModal().hide()
+    Modal.close()
   })
 
   // ---------------------------------------------------------------------------
 
-  getModal().show()
-}
-
-/**
- * Adapt the quality settings based on the current slider position.
- *
- * Will add matching .is-quality-* classes to the body.
- *
- * @param {number} value Quality setting. 0 = low, 1 = medium, 2 = high, 3 = ultra
- */
-export function changeQuality (value) {
-  const body = _('body').remove('.is-quality-*')
-  setServerPreference(PREFS.QUALITY, value)
-  switch (value) {
-    case 0:
-      body.add('.is-quality-low')
-      break
-    case 1:
-      body.add('.is-quality-medium')
-      break
-    case 2:
-      body.add('.is-quality-high')
-      break
-    case 3:
-    default:
-      body.add('.is-quality-ultra')
-  }
+  Modal.open()
 }
 
 // --- internal ----------------------------------------------------------------
@@ -416,11 +352,11 @@ function populateSizes (id, roomSize, contentSize, increments = 16) {
  * Resize the room (if size actually changed)
  */
 function resizeRoom () {
-  const setup = getSetup()
+  const setup = State.getSetup()
   const w = Number(_('#table-w').value)
   const h = Number(_('#table-h').value)
   if (w !== setup.gridWidth || h !== setup.gridHeight) {
-    patchSetup({
+    State.patchSetup({
       gridWidth: w,
       gridHeight: h
     })
@@ -436,34 +372,34 @@ function resizeRoom () {
  */
 function handleAlign (click, x, y) {
   click.preventDefault()
-  const setup = getSetup()
+  const setup = State.getSetup()
   const padding = setup.gridSize // leave room on side
-  const rect = getContentRect()
+  const rect = Content.getFeatures(State.getTable()).boundingBox
 
   let x2
   let y2
 
   switch (x) {
     case -1:
-      x2 = (padding + rect.width / 2) - (rect.left + rect.width / 2)
+      x2 = (padding + rect.w / 2) - (rect.left + rect.w / 2)
       break
     case 0:
-      x2 = setup._meta.widthPx / 2 - (rect.left + rect.width / 2)
+      x2 = setup._meta.widthPx / 2 - (rect.left + rect.w / 2)
       break
     case 1:
-      x2 = (setup._meta.widthPx - padding - rect.width / 2) - (rect.left + rect.width / 2)
+      x2 = (setup._meta.widthPx - padding - rect.w / 2) - (rect.left + rect.w / 2)
   }
 
   switch (y) {
     case -1:
-      y2 = (padding + rect.height / 2) - (rect.top + rect.height / 2)
+      y2 = (padding + rect.h / 2) - (rect.top + rect.h / 2)
       break
     case 0:
-      y2 = setup._meta.heightPx / 2 - (rect.top + rect.height / 2)
+      y2 = setup._meta.heightPx / 2 - (rect.top + rect.h / 2)
       break
     case 1:
-      y2 = (setup._meta.heightPx - padding - rect.height / 2) - (rect.top + rect.height / 2)
+      y2 = (setup._meta.heightPx - padding - rect.h / 2) - (rect.top + rect.h / 2)
   }
 
-  moveContent(Math.floor(x2), Math.floor(y2))
+  Dom.moveContent(Math.floor(x2), Math.floor(y2))
 }

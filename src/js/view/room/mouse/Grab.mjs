@@ -19,19 +19,9 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  MouseButtonHandler
-} from '../../../view/room/mouse/_MouseButtonHandler.mjs'
-
-import {
-  getScrollPositionNative,
-  setScrollPositionNative,
-  setCursor
-} from '../../../view/room/index.mjs'
-
-import {
-  clamp
-} from '../../../lib/utils.mjs'
+import { MouseButtonHandler } from 'src/js/view/room/mouse/_MouseButtonHandler.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 export class Grab extends MouseButtonHandler {
   constructor () {
@@ -65,7 +55,7 @@ export class Grab extends MouseButtonHandler {
     this.grabbing = {
       startX: mousedown.clientX, // no need to compensate, as we
       startY: mousedown.clientY, // only calculate offset anyway
-      origin: getScrollPositionNative(),
+      origin: Dom.getScrollPosition(),
       rectInner: tabletop.getBoundingClientRect(),
       rectOuter: tabletop.parentNode.getBoundingClientRect()
     }
@@ -76,21 +66,21 @@ export class Grab extends MouseButtonHandler {
   drag (mousemove) {
     if (this.isDragging()) {
       if (!this.grabbing.cursor) { // set cursor (only once)
-        setCursor('.cursor-grab')
+        Dom.setCursor('.cursor-grab')
         this.grabbing.cursor = true
       }
 
-      const scrollToX = clamp(
+      const scrollToX = Util.clamp(
         0,
         this.grabbing.origin.x + (this.grabbing.startX - mousemove.clientX),
         this.grabbing.rectInner.width - this.grabbing.rectOuter.width
       )
-      const scrollToY = clamp(
+      const scrollToY = Util.clamp(
         0,
         this.grabbing.origin.y + (this.grabbing.startY - mousemove.clientY),
         this.grabbing.rectInner.height - this.grabbing.rectOuter.height
       )
-      setScrollPositionNative(scrollToX, scrollToY)
+      Dom.setScrollPosition(scrollToX, scrollToY)
       mousemove.preventDefault()
     }
   }
@@ -101,6 +91,6 @@ export class Grab extends MouseButtonHandler {
 
   cancel () {
     this.grabbing = null
-    setCursor()
+    Dom.setCursor()
   }
 }

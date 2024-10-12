@@ -24,19 +24,15 @@
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
-import {
-  expect,
-  openTestroom,
-  closeTestroom,
-  testJsonGet,
-  testJsonPut,
-  testJsonPost,
-  testJsonPatch
-} from '../utils/chai.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
 
-import {
-  pieceMinimal
-} from '../utils/data.mjs'
+const expect = Test.expect
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
 
 // -----------------------------------------------------------------------------
 
@@ -48,37 +44,37 @@ let i
  * @param {string} room Room name to use for test.
  */
 function testApiMinimalTable (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return []
   }, body => {
     expect(body.length).to.be.eql(0)
   }, 200)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal()]
   }, body => {
     expect(body.length).to.be.eql(1)
   }, 200)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal, pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal(), Test.data.pieceMinimal()]
   }, body => {
     expect(body.length).to.be.eql(2)
   }, 200)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return []
   }, body => {
     expect(body.length).to.be.eql(0)
   }, 200)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(0)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -88,60 +84,60 @@ function testApiMinimalTable (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiInvalidTable (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return {}
   }, body => {
     expect(body._messages[0]).to.match(/ table is not an array of length/)
   }, 400)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
   }, body => {
     expect(body._messages[0]).to.match(/table is not valid JSON/)
   }, 400)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return ''
   }, body => {
     expect(body._messages[0]).to.match(/table is not valid JSON/)
   }, 400)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return null
   }, body => {
     expect(body._messages[0]).to.match(/table is not valid JSON/)
   }, 400)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return 1234
   }, body => {
     expect(body._messages[0]).to.match(/ table is not an array of length/)
   }, 400)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return [[], []]
   }, body => {
     expect(body._messages[0]).to.match(/ table is not an array of/)
   }, 400)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal, [], pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal(), [], Test.data.pieceMinimal()]
   }, body => {
     expect(body._messages[0]).to.match(/ table is not an array of/)
   }, 400)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal, 1234, pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal(), 1234, Test.data.pieceMinimal()]
   }, body => {
     expect(body._messages[0]).to.match(/ table is not an array of/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(0)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -151,25 +147,25 @@ function testApiInvalidTable (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiInvalidPieces (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
     return [{}]
   }, body => {
     expect(body._messages[0]).to.match(/ l missing/)
   }, 400)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal, {}, pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal(), {}, Test.data.pieceMinimal()]
   }, body => {
     expect(body._messages[0]).to.match(/ l missing/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(0)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -182,11 +178,11 @@ let level
  * @param {string} room Room name to use for test.
  */
 function testApiUndo (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // create piece
-  testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {
-    return { ...pieceMinimal, a: '73740cdf', x: 0, y: 64 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: '73740cdf', x: 0, y: 64 }
   }, body => {
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(0)
@@ -194,7 +190,7 @@ function testApiUndo (api, room) {
   }, 201)
 
   // get & compare piece
-  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(0)
   })
@@ -202,7 +198,7 @@ function testApiUndo (api, room) {
   // do more changes than 0..9 history
   level = 1 // note: loop counter is not available during actual test runs.
   for (i = 0; i <= LEVELS; i++) {
-    testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
+    Test.jsonPatch(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', () => {
       return { x: level }
     }, body => {
       expect(body.a).to.be.eql('73740cdf')
@@ -211,34 +207,34 @@ function testApiUndo (api, room) {
   }
 
   // get & compare piece (and revert level for first undo test)
-  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(--level)
   })
 
   // undo changes
   for (i = LEVELS; i >= 1; i--) {
-    testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {
+    Test.jsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {
     }, 204)
-    testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+    Test.jsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
       expect(body.a).to.be.eql('73740cdf')
       expect(body.x).to.be.eql(--level)
     })
   }
 
   // no more undos to initial '0' available
-  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {}, 204)
-  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {}, 204)
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(1)
   })
-  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {}, 204)
-  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => ({}), body => {}, 204)
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/pieces/` + (data ? data.id : 'ID') + '/', body => {
     expect(body.a).to.be.eql('73740cdf')
     expect(body.x).to.be.eql(1)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // --- the test runners --------------------------------------------------------
@@ -246,7 +242,7 @@ function testApiUndo (api, room) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - tables', function () {
     runner((api, version, room) => {
       describe('minimal tables', () => testApiMinimalTable(api, room))

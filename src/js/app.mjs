@@ -18,44 +18,44 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  runError,
-  apiError
-} from './view/error/index.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as Error from 'src/js/view/error.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Tools from 'src/js/view/tools.mjs'
+import * as ViewCreate from 'src/js/view/create.mjs'
+import * as ViewInstaller from 'src/js/view/installer.mjs'
+import * as ViewJoin from 'src/js/view/join.mjs'
+import * as ViewPassword from 'src/js/view/password.mjs'
 
-import {
-  setupView
-} from './view/setup/index.mjs'
+// --- startup & page routing --------------------------------------------------
 
-import {
-  installer
-} from './view/installer/index.mjs'
+if (typeof document !== 'undefined') { // don't run in non-browser (test) environments
+  document.onreadystatechange = function (event) {
+    if (document.readyState === 'complete') {
+      if (document.getElementById('tool-bcrypt')) {
+        return Tools.setupBcrypt()
+      }
 
-import {
-  passwordView
-} from './view/password/index.mjs'
+      // time to setup our routes
+      route()
+    }
+  }
 
-import {
-  runRoom
-} from './view/room/index.mjs'
+  document.addEventListener('visibilitychange', (visibilitychange) => {
+    if (globalThis.hidden) {
+      State.setTabActive(false)
+    } else {
+      State.setTabActive(true)
+    }
+  })
+}
 
-import {
-  runJoin
-} from './view/join/index.mjs'
-
-import {
-  setServerInfo
-} from './state/index.mjs'
-
-import {
-  apiGetServerInfo,
-  apiPostRoomAuth
-} from './api/index.mjs'
-
+// -----------------------------------------------------------------------------
 /**
  * Reload the current page.
  */
-export function navigateReload () {
+export function reload () {
   globalThis.location.reload()
 }
 
@@ -92,43 +92,43 @@ export function navigateToRoom (roomName) {
  */
 export function auth (roomName, password) {
   // try to login
-  apiPostRoomAuth(roomName, {
+  Api.postRoomAuth(roomName, {
     password
   }, true)
     .then((auth) => {
       if (auth.status === 200) {
-        runRoom(roomName, auth.body.token)
+        Room.runRoom(roomName, auth.body.token)
       } else if (auth.status === 403) {
-        passwordView(roomName, password === undefined)
+        ViewPassword.show(roomName, password === undefined)
       } else if (auth.status === 404) {
-        setupView(roomName)
+        ViewCreate.show(roomName)
       } else {
-        runError()
+        Error.runError()
       }
     })
-    .catch(error => apiError(error, roomName))
+    .catch(error => Error.apiError(error, roomName))
 }
 
 /**
  * Main entry point for the app. Will route the page to the proper code.
  */
 export function route () {
-  apiGetServerInfo()
+  Api.getServerInfo()
     .then(info => {
-      setServerInfo(info)
+      State.setServerInfo(info)
 
       if (info.version !== '$VERSION$') {
         console.info('update', info.version, '$VERSION$')
-        runError('UPDATE')
+        Error.runError('UPDATE')
       } else if (info.install ?? 0 > 1) {
-        installer(info.install)
+        ViewInstaller.show(info.install)
       } else {
         // run the corresponding screen/dialog
         const rootFolder = info.root.substr(0, info.root.length - '/api'.length)
         let path = window.location.pathname
         if (path[0] !== '/') path = '/' + path
         if (path === rootFolder || path === rootFolder + '/') {
-          runJoin()
+          ViewJoin.show()
         } else if (path.endsWith('/')) {
           globalThis.location = path.substr(0, path.length - 1)
         } else {
@@ -136,7 +136,7 @@ export function route () {
         }
       }
     })
-    .catch(error => apiError(error))
+    .catch(error => Error.apiError(error))
 }
 
 /**
@@ -146,7 +146,7 @@ export function route () {
  *
  * @param {string} url Redirect target.
  */
-function goto (url) {
+export function goto (url) {
   setTimeout(() => {
     globalThis.location = url
   }, 10)

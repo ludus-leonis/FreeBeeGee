@@ -20,7 +20,7 @@
 
 import * as bcrypt from 'bcryptjs'
 
-import _ from 'lib/FreeDOM.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
 
 /**
  *

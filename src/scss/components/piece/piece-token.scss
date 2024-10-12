@@ -46,11 +46,12 @@
   &.is-n::after {
     align-items: center;
     background-color: var(--fbg-color);
+    background-image: var(--fbg-material);
     border-radius: 100%;
     color: var(--fbg-color-invert);
     display: flex;
     flex-direction: row;
-    font-size: zoom(.85em);
+    font-size: zoom(0.85em);
     font-weight: 600;
     height: $is-n-size;
     justify-content: center;
@@ -59,6 +60,14 @@
     right: 0;
     top: 50%;
     width: $is-n-size;
+  }
+
+  @each $id in $random-ids {
+    $i: index($random-ids, $id);
+
+    &[id^='#{$id}'].is-n::after {
+      background-position: zoom(($i * 64px) % math.div($material-size, 2)) zoom(math.floor(math.div(($i * 64px), math.div($material-size, 2))));
+    }
   }
 
   &.has-border.is-n::after {
@@ -138,7 +147,7 @@
 .is-quality-ultra .piece-token {
   &.is-border-0 {
     &.is-n::after {
-      opacity: .85;
+      opacity: 0.85;
     }
   }
 }

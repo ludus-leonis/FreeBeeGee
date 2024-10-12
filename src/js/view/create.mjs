@@ -19,63 +19,33 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
-
-import {
-  iconHelp
-} from '../../lib/icons.mjs'
-
-import {
-  sortByString,
-  bytesToIso,
-  hoursToTimespan
-} from '../../lib/utils-text.mjs'
-
-import {
-  createScreen,
-  serverFeedback
-} from '../../view/screen.mjs'
-
-import {
-  runError
-} from '../../view/error/index.mjs'
-
-import {
-  PREFS,
-  addRoom,
-  getServerInfo,
-  setServerPreference,
-  getServerPreference
-} from '../../state/index.mjs'
-
-import {
-  DEMO_MODE,
-  apiGetSnapshots,
-  UnexpectedStatus
-} from '../../api/index.mjs'
-
-import {
-  navigateToRoom
-} from '../../app.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Error from 'src/js/view/error.mjs'
+import * as Icon from 'src/js/lib/icon.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
 
 /**
  * Show a setup-room dialog.
  *
  * @param {string} name The room name the user entered in the join dialog.
  */
-export function setupView (name) {
-  if (getServerInfo().freeRooms <= 0) {
-    runError('NO_SLOT')
+export function show (name) {
+  if (State.getServerInfo().freeRooms <= 0) {
+    Error.runError('NO_SLOT')
     return
   }
 
-  const snapshotHelp = getServerInfo().snapshotUploads
+  const snapshotHelp = State.getServerInfo().snapshotUploads
     ? 'You may also <label for="mode" class="is-link">upload</label> a snapshot instead.'
     : 'Let us know what game we may prepare for you.'
 
-  const ttl = getServerInfo().ttl
+  const ttl = State.getServerInfo().ttl
 
-  createScreen(
+  Screen.create(
     'Set up room',
     `
       <div class="page-setup">
@@ -87,7 +57,7 @@ export function setupView (name) {
 
         <p class="server-feedback"></p>
 
-        ` + (getServerInfo().createPassword
+        ` + (State.getServerInfo().createPassword
       ? `
           <label for="password">Admin password</label>
           <input id="password" type="password" placeholder="* * * * * *">
@@ -113,7 +83,7 @@ export function setupView (name) {
         </select>
         <p class="snapshot-text p-small spacing-tiny">${snapshotHelp}</p>
 
-        ` + (!DEMO_MODE
+        ` + (!State.SERVERLESS
       ? `
           <input id="enablepassword" class="enablepassword" type="checkbox">
           <label for="enablepassword" class="p-medium">Password-protect room</label>
@@ -133,24 +103,25 @@ export function setupView (name) {
     `,
 
     ttl > 0
-      ? `This server deletes rooms after ${hoursToTimespan(ttl)} of inactivity.`
+      ? `This server deletes rooms after ${Text.hoursToTimespan(ttl)} of inactivity.`
       : 'Don\'t forget your room\'s name! You can reopen it later.'
   )
 
-  apiGetSnapshots()
+  Api.getSnapshots()
     .then(snapshots => {
       const t = _('#snapshot')
 
       // determine preselected snapshot (with fallbacks)
       let preselected = snapshots.length > 0 ? snapshots[0].name : 'none'
       if (snapshots.find(s => s.name === 'Tutorial')) preselected = 'Tutorial'
-      if (snapshots.find(s => s.name === getServerInfo().defaultSnapshot)) preselected = getServerInfo().defaultSnapshot
-      if (snapshots.find(s => s.name === getServerPreference(PREFS.SNAPSHOT))) preselected = getServerPreference(PREFS.SNAPSHOT)
+      if (snapshots.find(s => s.name === State.getServerInfo().defaultSnapshot)) preselected = State.getServerInfo().defaultSnapshot
+      if (snapshots.find(s => s.name === State.getServerPreference(State.PREF.SNAPSHOT))) preselected = State.getServerPreference(State.PREF.SNAPSHOT)
 
       t.innerHTML = ''
-      for (const snapshot of sortByString(snapshots ?? [], 'name')) {
-        const option = _('option').create(snapshot.name + (snapshot.system ? '' : ' (custom)'))
-        option.value = snapshot.name
+      for (const snapshot of Text.sortString(snapshots ?? [], 'name')) {
+        const name = new Option(snapshot.name).innerHTML
+        const option = _('option').create(name + (snapshot.system ? '' : ' (custom)'))
+        option.value = name
         if (snapshot.name === preselected) option.selected = true
         t.add(option)
       }
@@ -161,7 +132,7 @@ export function setupView (name) {
         t.add(option)
         _('.server-feedback').add('.show').innerHTML = `
           There are no snapshots available on this server.
-          <span class="is-icon" title="Admins should check if the data/ directory is empty.">${iconHelp}</span>
+          <span class="is-icon" title="Admins should check if the data/ directory is empty.">${Icon.HELP}</span>
         `
       }
     })
@@ -259,24 +230,24 @@ function ok (name) {
     room.convert = _('#convert').checked
   }
 
-  addRoom(room, snapshot)
+  State.addRoom(room, snapshot)
     .then((remoteRoom) => {
       if (!_('#mode').checked) { // not upload mode
-        setServerPreference(PREFS.SNAPSHOT, room.snapshot)
+        State.setServerPreference(State.PREF.SNAPSHOT, room.snapshot)
       }
-      navigateToRoom(remoteRoom.name)
+      App.navigateToRoom(remoteRoom.name)
     })
     .catch((error) => {
       console.error(error)
       _('#ok').remove('.is-spinner')
-      if (error instanceof UnexpectedStatus) {
+      if (error instanceof Api.UnexpectedStatus) {
         switch (error.status) {
           case 400:
             switch (error.body._error) {
               case 'FILE_PERMISSIONS':
                 serverFeedback(`
                   FreeBeeGee is missing file-permissions on the server and can't set up new rooms right now.
-                  <span class="is-icon" title="Admins should check '${error.body._messages[0]}' to be writable.">${iconHelp}</span>
+                  <span class="is-icon" title="Admins should check '${error.body._messages[0]}' to be writable.">${Icon.HELP}</span>
                 `)
                 _('#uploadInput').add('.invalid')
                 _('#snapshot').add('.invalid').focus()
@@ -294,16 +265,16 @@ function ok (name) {
                 break
               case 'ROOM_SIZE':
                 serverFeedback(`
-                  The snapshot is too large. This FreeBeeGee server limits ZIPs and their content to ${bytesToIso(error.body._messages[1])}.
-                  <span class="is-icon" title="Admins can change the limit in FBG's server.json.">${iconHelp}</span>
+                  The snapshot is too large. This FreeBeeGee server limits ZIPs and their content to ${Text.bytesToIso(error.body._messages[1])}.
+                  <span class="is-icon" title="Admins can change the limit in FBG's server.json.">${Icon.HELP}</span>
                 `)
                 _('#uploadInput').add('.invalid')
                 _('#snapshot').add('.invalid').focus()
                 break
               case 'PHP_SIZE':
                 serverFeedback(`
-                  The snapshot is too large. The current limit is ${bytesToIso(error.body._messages[1])}.
-                  <span class="is-icon" title="Admins should check the php.ini upload settings.">${iconHelp}</span>
+                  The snapshot is too large. The current limit is ${Text.bytesToIso(error.body._messages[1])}.
+                  <span class="is-icon" title="Admins should check the php.ini upload settings.">${Icon.HELP}</span>
                 `)
                 _('#uploadInput').add('.invalid')
                 _('#snapshot').add('.invalid').focus()
@@ -325,17 +296,33 @@ function ok (name) {
           case 413:
             serverFeedback(`
               The snapshot is too large. It was rejeced by the webserver (or a proxy).
-              <span class="is-icon" title="This is not an FBG issue. Admins should check the server's httpd.conf file.">${iconHelp}</span>
+              <span class="is-icon" title="This is not an FBG issue. Admins should check the server's httpd.conf file.">${Icon.HELP}</span>
             `)
             _('#uploadInput').add('.invalid')
             _('#snapshot').add('.invalid').focus()
             break
           case 503:
-            runError('FULL')
+            Error.runError('FULL')
             break
           default:
-            runError('BUG', error)
+            Error.runError('BUG', error)
         }
       }
     })
+}
+
+/**
+ * Show a server feedback (error message).
+ *
+ * @param {string} message Message to show.
+ * @param {string} form HTML form to add.
+ */
+function serverFeedback (message, form) {
+  _('.server-feedback').remove('.show')
+  _('#server-feedback-form').remove('.show')
+
+  _('.server-feedback').add('.show').innerHTML = message
+  if (form) {
+    _('#server-feedback-form').add('.show').innerHTML = form
+  }
 }

@@ -19,23 +19,15 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../view/room/modal.mjs'
-
-// --- public ------------------------------------------------------------------
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
 
 /**
  * Inform user about demo mode restrictions.
  */
-export function modalDemo () {
-  if (!isModalActive()) {
-    createModal(true)
+export function open () {
+  if (!Modal.isOpen()) {
+    Modal.create(true)
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Welcome to demo mode!</h3>
@@ -55,10 +47,8 @@ export function modalDemo () {
       <button id='btn-close' type="button" class="btn btn-primary">Cool!</button>
     `
 
-    _('#btn-close').on('click', () => getModal().hide())
-    _('#modal')
-      .on('hidden.bs.modal', () => { modalClose() })
+    _('#btn-close').on('click', () => Modal.close())
 
-    getModal().show()
+    Modal.open()
   }
 }

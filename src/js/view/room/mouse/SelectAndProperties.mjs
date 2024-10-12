@@ -19,31 +19,12 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  MouseButtonHandler
-} from '../../../view/room/mouse/_MouseButtonHandler.mjs'
-
-import {
-  getMouseCoords
-} from '../../../view/room/mouse/index.mjs'
-
-import {
-  findRealClickTarget
-} from '../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  updateSelection,
-  setCursor
-} from '../../../view/room/index.mjs'
-
-import {
-  popupPiece,
-  popupTable
-} from '../../../view/room/tabletop/popup.mjs'
-
-import {
-  updateSelectionDOM
-} from '../../../view/room/tabletop/index.mjs'
+import { MouseButtonHandler } from 'src/js/view/room/mouse/_MouseButtonHandler.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Mouse from 'src/js/view/room/mouse/index.mjs'
+import * as Popup from 'src/js/view/room/tabletop/popup.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
 
 export class SelectAndProperties extends MouseButtonHandler {
   isPreDrag () {
@@ -59,16 +40,16 @@ export class SelectAndProperties extends MouseButtonHandler {
     if (!piece) return
     mousedown.preventDefault()
 
-    findRealClickTarget(piece, getMouseCoords()).then(target => {
-      updateSelection(target, mousedown.ctrlKey)
+    Content.findRealClickTarget(piece, Mouse.getMouseCoords()).then(target => {
+      Room.updateSelection(target, mousedown.ctrlKey)
       if (target) {
         if (target.classList.contains('piece')) {
-          popupPiece(target.piece)
+          Popup.piece(target.piece)
         }
       } else {
-        popupTable(getMouseCoords())
+        Popup.table(Mouse.getMouseCoords())
       }
-      updateSelectionDOM()
+      Dom.updateSelection()
     })
   }
 
@@ -81,6 +62,6 @@ export class SelectAndProperties extends MouseButtonHandler {
   }
 
   cancel () {
-    setCursor()
+    Dom.setCursor()
   }
 }

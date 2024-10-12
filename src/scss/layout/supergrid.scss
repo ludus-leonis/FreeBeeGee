@@ -69,8 +69,8 @@ $grid-spacing: $spacing-small;
 
     > * {
       margin-top: $grid-spacing;
-      padding-left: calc(#{$spacing-small} * .5);
-      padding-right: calc(#{$spacing-small} * .5);
+      padding-left: calc(#{$spacing-small} * 0.5);
+      padding-right: calc(#{$spacing-small} * 0.5);
 
       &:last-child {
         margin-bottom: $grid-spacing;
@@ -90,8 +90,8 @@ form.container,
   padding-top: 0;
 
   > .row {
-    margin-left: calc(#{$spacing-small} * -.5);
-    margin-right: calc(#{$spacing-small} * -.5);
+    margin-left: calc(#{$spacing-small} * -0.5);
+    margin-right: calc(#{$spacing-small} * -0.5);
 
     &:first-of-type {
       margin-top: calc(#{$spacing-small} * -1); // pin to row as form-container might have hidden field
@@ -101,7 +101,7 @@ form.container,
       margin-top: $grid-spacing;
     }
 
-    > :last-child  {
+    > :last-child {
       margin-bottom: 0;
     }
   }

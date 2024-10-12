@@ -21,90 +21,49 @@
 
 import { createPopper } from '@popperjs/core'
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  iconAdd,
-  iconNote,
-  iconSettings,
-  iconEdit,
-  iconRotate,
-  iconFlip,
-  iconShuffle,
-  iconPile,
-  iconTop,
-  iconBottom,
-  iconCopy,
-  iconPaste,
-  iconDelete
-} from '../../../lib/icons.mjs'
-
-import {
-  clipboardCopy,
-  clipboardGetPieces,
-  selectionGetFeatures
-} from './selection.mjs'
-
-import {
-  createNote,
-  editSelected,
-  rotateSelected,
-  flipSelected,
-  randomSelected,
-  pileSelected,
-  toTopSelected,
-  toBottomSelected,
-  deleteSelected,
-  clipboardPaste
-} from '../../../view/room/tabletop/index.mjs'
-
-import {
-  modalSettings
-} from '../../../view/room/modal/settings.mjs'
-
-import {
-  modalLibrary
-} from '../../../view/room/library/index.mjs'
-
-import {
-  zoomCoordinates
-} from '../../../view/room/index.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Icon from 'src/js/lib/icon.mjs'
+import * as ModalLibrary from 'src/js/view/room/library/index.mjs'
+import * as ModalSettings from 'src/js/view/room/modal/settings.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
 
 /**
  * Show the popup menu for a piece.
  *
  * @param {object} piece The piece.
  */
-export function popupPiece (piece) {
-  popupHide()
+export function piece (piece) {
+  close()
   const popup = _('#popper.popup.is-content').create()
-  const f = selectionGetFeatures()
+  const f = Selection.getFeatures()
 
   popup.node().for = piece.id
   popup.innerHTML = `
-    <a class="popup-menu edit ${f.edit ? '' : 'disabled'}" href="#">${iconEdit}Edit</a>
-    <a class="popup-menu rotate ${f.rotate ? '' : 'disabled'}" href="#">${iconRotate}Rotate</a>
-    <a class="popup-menu flip ${f.flip ? '' : 'disabled'}" href="#">${iconFlip}Flip</a>
-    <a class="popup-menu random ${f.random ? '' : 'disabled'}" href="#">${iconShuffle}Random</a>
-    <a class="popup-menu pile ${f.move ? '' : 'disabled'}" href="#">${iconPile}Pile</a>
-    <a class="popup-menu top ${f.top ? '' : 'disabled'}" href="#">${iconTop}To top</a>
-    <a class="popup-menu bottom ${f.bottom ? '' : 'disabled'}" href="#">${iconBottom}To bottom</a>
+    <a class="popup-menu edit ${f.edit ? '' : 'disabled'}" href="#">${Icon.EDIT}Edit</a>
+    <a class="popup-menu rotate ${f.rotate ? '' : 'disabled'}" href="#">${Icon.ROTATE}Rotate</a>
+    <a class="popup-menu flip ${f.flip ? '' : 'disabled'}" href="#">${Icon.FLIP}Flip</a>
+    <a class="popup-menu random ${f.random ? '' : 'disabled'}" href="#">${Icon.SHUFFLE}Random</a>
+    <a class="popup-menu pile ${f.move ? '' : 'disabled'}" href="#">${Icon.PILE}Pile</a>
+    <a class="popup-menu top ${f.top ? '' : 'disabled'}" href="#">${Icon.TOP}To top</a>
+    <a class="popup-menu bottom ${f.bottom ? '' : 'disabled'}" href="#">${Icon.BOTTOM}To bottom</a>
     ${(f.clone || f.delete) ? '<hr>' : ''}
-    <a class="popup-menu clone ${f.clone ? '' : 'disabled'}" href="#">${iconCopy}Copy</a>
-    <a class="popup-menu delete ${f.delete ? '' : 'disabled'}" href="#">${iconDelete}Delete</a>
+    <a class="popup-menu clone ${f.clone ? '' : 'disabled'}" href="#">${Icon.COPY}Copy</a>
+    <a class="popup-menu delete ${f.delete ? '' : 'disabled'}" href="#">${Icon.DELETE}Delete</a>
   `
   _('#tabletop').add(popup)
 
-  popupClick('#popper .edit', () => { editSelected() })
-  popupClick('#popper .rotate', () => { rotateSelected() })
-  popupClick('#popper .flip', () => { flipSelected() })
-  popupClick('#popper .pile', () => { pileSelected() })
-  // popupClick('#popper .shuffle', () => { pileSelected(true) })
-  popupClick('#popper .random', () => { randomSelected() })
-  popupClick('#popper .top', () => { toTopSelected() })
-  popupClick('#popper .bottom', () => { toBottomSelected() })
-  popupClick('#popper .delete', () => { deleteSelected() })
-  popupClick('#popper .clone', () => { clipboardCopy() })
+  popupClick('#popper .edit', () => { Selection.edit() })
+  popupClick('#popper .rotate', () => { Selection.rotate() })
+  popupClick('#popper .flip', () => { Selection.flip() })
+  popupClick('#popper .pile', () => { Selection.pile() })
+  // popupClick('#popper .shuffle', () => { Selection.pile(true) })
+  popupClick('#popper .random', () => { Selection.flipRandom() })
+  popupClick('#popper .top', () => { Selection.toTop() })
+  popupClick('#popper .bottom', () => { Selection.toBottom() })
+  popupClick('#popper .delete', () => { Selection.remove() })
+  popupClick('#popper .clone', () => { Selection.copy() })
 
   createPopper(_('#' + piece.id).node(), popup.node(), {
     placement: 'right'
@@ -117,31 +76,31 @@ export function popupPiece (piece) {
  *
  * @param {object} coords {x, y} coords to show the popup at.
  */
-export function popupTable (coords) {
-  popupHide()
+export function table (coords) {
+  close()
   const anchor = _('#popper-anchor.popup-anchor').create()
   const popup = _('#popper.popup.is-content').create()
 
   popup.innerHTML = `
-    <a class="popup-menu add" href="#">${iconAdd}Add piece</a>
-    <a class="popup-menu note" href="#">${iconNote}Add note</a>
-    ${clipboardGetPieces().length > 0 ? '<a class="popup-menu paste" href="#">' + iconPaste + 'Paste</a>' : ''}
+    <a class="popup-menu add" href="#">${Icon.ADD}Add piece</a>
+    <a class="popup-menu note" href="#">${Icon.NOTE}Add note</a>
+    ${Selection.clipboardGetPieces().length > 0 ? '<a class="popup-menu paste" href="#">' + Icon.PASTE + 'Paste</a>' : ''}
     <hr>
-    <a class="popup-menu settings" href="#">${iconSettings}Settings</a>
+    <a class="popup-menu settings" href="#">${Icon.SETTINGS}Settings</a>
   `
 
   _('#tabletop').add(anchor)
-  const zoomedCoords = zoomCoordinates(coords)
+  const zoomedCoords = Room.zoomCoordinates(coords)
   anchor.css({
     left: `${zoomedCoords.x}px`,
     top: `${zoomedCoords.y}px`
   })
   _('#tabletop').add(popup)
 
-  popupClick('#popper .add', () => { modalLibrary(coords) })
-  popupClick('#popper .note', () => { createNote(coords) })
-  popupClick('#popper .paste', () => { clipboardPaste(coords) })
-  popupClick('#popper .settings', () => { modalSettings() })
+  popupClick('#popper .add', () => { ModalLibrary.open(coords) })
+  popupClick('#popper .note', () => { Dom.createNote(coords) })
+  popupClick('#popper .paste', () => { Selection.paste(coords) })
+  popupClick('#popper .settings', () => { ModalSettings.open() })
 
   createPopper(anchor.node(), popup.node(), {
     placement: 'right'
@@ -154,7 +113,7 @@ export function popupTable (coords) {
  *
  * @param {string} id If this optional ID is given, the popup is only removed if it belongs to it.
  */
-export function popupHide (id) {
+export function close (id) {
   const popper = _('#popper')
   if (id && popper.exists() && popper.node().for !== id) return
   popper.delete()

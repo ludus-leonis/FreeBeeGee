@@ -24,20 +24,16 @@
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
-import {
-  REGEXP,
-  expect,
-  openTestroom,
-  closeTestroom,
-  testGetBuffer,
-  testJsonGet,
-  testJsonPatch,
-  testJsonPut
-} from '../utils/chai.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
+const expect = Test.expect
 
-import {
-  pieceMinimal
-} from '../utils/data.mjs'
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
+
+// -----------------------------------------------------------------------------
 
 let digest = null
 let data = null
@@ -78,9 +74,9 @@ function crc32 (str) {
  * @param {string} room Room name to use for test.
  */
 function testApiRoomDigest (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.width).to.be.eql(4096)
     expect(body.height).to.be.eql(4096)
     expect(body.setup.gridWidth).to.be.eql(64)
@@ -89,24 +85,24 @@ function testApiRoomDigest (api, room) {
   }, 200)
 
   // fetch digest
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body).to.be.an('object')
-    expect(body['room.json']).to.match(REGEXP.DIGEST)
+    expect(body['room.json']).to.match(Test.REGEXP.DIGEST)
     digest = body['room.json']
   })
 
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.width).to.be.eql(4096)
     expect(body.height).to.be.eql(4096)
   }, 200)
 
   // get didn't change digest
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['room.json']).to.be.eql(digest)
   })
 
   // change of setup should change room digest
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 128,
       gridHeight: 256
@@ -115,12 +111,12 @@ function testApiRoomDigest (api, room) {
     expect(body.gridWidth).to.be.eql(128)
     expect(body.gridHeight).to.be.eql(256)
   })
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['room.json']).not.to.be.eql(digest)
   })
 
   // change it back and digest should revert
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 64,
       gridHeight: 64
@@ -129,32 +125,32 @@ function testApiRoomDigest (api, room) {
     expect(body.gridWidth).to.be.eql(64)
     expect(body.gridHeight).to.be.eql(64)
   })
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['room.json']).to.be.eql(digest)
   })
 
   // change of table should not change room digest
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal, pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal(), Test.data.pieceMinimal()]
   }, body => {
     expect(body.length).to.be.eql(2)
     data = body[0].id
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['room.json']).to.be.eql(digest)
   })
 
   // change of piece should not change room digest
-  testJsonPatch(api, () => `/rooms/${room}/tables/9/pieces/${data}/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/9/pieces/${data}/`, () => {
     return { w: 8 }
   }, body => {
     expect(body.w).to.be.eql(8)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['room.json']).to.be.eql(digest)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -164,32 +160,32 @@ function testApiRoomDigest (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiTableDigest (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal()]
   }, body => {
     expect(body.length).to.be.eql(1)
   }, 200)
 
   // fetch digest
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
+    expect(body['tables/9.json']).to.match(Test.REGEXP.DIGEST)
     digest = body['tables/9.json']
   })
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(1)
   }, 200)
 
   // get didn't change digest
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
+    expect(body['tables/9.json']).to.match(Test.REGEXP.DIGEST)
     expect(body['tables/9.json']).to.be.eql(digest)
   })
 
   // change of setup should not change table digest
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 128,
       gridHeight: 256
@@ -198,36 +194,36 @@ function testApiTableDigest (api, room) {
     expect(body.gridWidth).to.be.eql(128)
     expect(body.gridHeight).to.be.eql(256)
   })
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
+    expect(body['tables/9.json']).to.match(Test.REGEXP.DIGEST)
     expect(body['tables/9.json']).to.be.eql(digest)
   })
 
   // change of table should change table digest
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal, pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal(), Test.data.pieceMinimal()]
   }, body => {
     expect(body.length).to.be.eql(2)
     data = body[0].id
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
+    expect(body['tables/9.json']).to.match(Test.REGEXP.DIGEST)
     expect(body['tables/9.json']).not.to.be.eql(digest)
     digest = body['tables/9.json']
   })
 
   // change of piece should change digest again
-  testJsonPatch(api, () => `/rooms/${room}/tables/9/pieces/${data}/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/9/pieces/${data}/`, () => {
     return { w: 8 }
   }, body => {
     expect(body.w).to.be.eql(8)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
-    expect(body['tables/9.json']).to.match(REGEXP.DIGEST)
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
+    expect(body['tables/9.json']).to.match(Test.REGEXP.DIGEST)
     expect(body['tables/9.json']).not.to.be.eql(digest)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -237,9 +233,9 @@ function testApiTableDigest (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiSetupDigest (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.width).to.be.eql(4096)
     expect(body.height).to.be.eql(4096)
     expect(body.setup.gridWidth).to.be.eql(64)
@@ -248,24 +244,24 @@ function testApiSetupDigest (api, room) {
   }, 200)
 
   // fetch digest
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body).to.be.an('object')
-    expect(body['setup.json']).to.match(REGEXP.DIGEST)
+    expect(body['setup.json']).to.match(Test.REGEXP.DIGEST)
     digest = body['setup.json']
   })
 
-  testJsonGet(api, () => `/rooms/${room}/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {
     expect(body.width).to.be.eql(4096)
     expect(body.height).to.be.eql(4096)
   }, 200)
 
   // get didn't change digest
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['setup.json']).to.be.eql(digest)
   })
 
   // change of setup should change setup digest
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 128,
       gridHeight: 256
@@ -274,12 +270,12 @@ function testApiSetupDigest (api, room) {
     expect(body.gridWidth).to.be.eql(128)
     expect(body.gridHeight).to.be.eql(256)
   })
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['setup.json']).not.to.be.eql(digest)
   })
 
   // change it back and digest should revert
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 64,
       gridHeight: 64
@@ -288,32 +284,32 @@ function testApiSetupDigest (api, room) {
     expect(body.gridWidth).to.be.eql(64)
     expect(body.gridHeight).to.be.eql(64)
   })
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['setup.json']).to.be.eql(digest)
   })
 
   // change of table should not change setup digest
-  testJsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
-    return [pieceMinimal, pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/9/`, () => {
+    return [Test.data.pieceMinimal(), Test.data.pieceMinimal()]
   }, body => {
     expect(body.length).to.be.eql(2)
     data = body[0].id
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['setup.json']).to.be.eql(digest)
   })
 
   // change of piece should not change room digest
-  testJsonPatch(api, () => `/rooms/${room}/tables/9/pieces/${data}/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/9/pieces/${data}/`, () => {
     return { w: 8 }
   }, body => {
     expect(body.w).to.be.eql(8)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['setup.json']).to.be.eql(digest)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -323,32 +319,32 @@ function testApiSetupDigest (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiDigestHeader (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // room digest
-  testGetBuffer(api, () => `/rooms/${room}/`, headers => {
-    expect(headers.digest).to.match(REGEXP.DIGEST)
+  Test.getBuffer(api, () => `/rooms/${room}/`, headers => {
+    expect(headers.digest).to.match(Test.REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['room.json']).to.be.eql(digest)
   })
 
   // table digest
-  testGetBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
-    expect(headers.digest).to.match(REGEXP.DIGEST)
+  Test.getBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
+    expect(headers.digest).to.match(Test.REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['tables/1.json']).to.be.eql(digest)
   })
 
   // change room/setup
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {
     return {
       gridWidth: 128,
       gridHeight: 256
@@ -359,57 +355,57 @@ function testApiDigestHeader (api, room) {
   })
 
   // room digest
-  testGetBuffer(api, () => `/rooms/${room}/`, headers => {
-    expect(headers.digest).to.match(REGEXP.DIGEST)
+  Test.getBuffer(api, () => `/rooms/${room}/`, headers => {
+    expect(headers.digest).to.match(Test.REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['room.json']).to.be.eql(digest)
   })
 
   // table digest
-  testGetBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
-    expect(headers.digest).to.match(REGEXP.DIGEST)
+  Test.getBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
+    expect(headers.digest).to.match(Test.REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['tables/1.json']).to.be.eql(digest)
   })
 
   // change table
-  testJsonPut(api, () => `/rooms/${room}/tables/1/`, () => {
-    return [pieceMinimal, pieceMinimal]
+  Test.jsonPut(api, () => `/rooms/${room}/tables/1/`, () => {
+    return [Test.data.pieceMinimal(), Test.data.pieceMinimal()]
   }, body => {
     expect(body.length).to.be.eql(2)
   }, 200)
 
   // room digest
-  testGetBuffer(api, () => `/rooms/${room}/`, headers => {
-    expect(headers.digest).to.match(REGEXP.DIGEST)
+  Test.getBuffer(api, () => `/rooms/${room}/`, headers => {
+    expect(headers.digest).to.match(Test.REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['room.json']).to.be.eql(digest)
   })
 
   // table digest
-  testGetBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
-    expect(headers.digest).to.match(REGEXP.DIGEST)
+  Test.getBuffer(api, () => `/rooms/${room}/tables/1/`, headers => {
+    expect(headers.digest).to.match(Test.REGEXP.DIGEST)
     digest = headers.digest
   }, buffer => {
     expect(crc32(buffer.toString('utf-8'))).to.be.eql(digest)
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {
     expect(body['tables/1.json']).to.be.eql(digest)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // --- the test runners --------------------------------------------------------
@@ -417,7 +413,7 @@ function testApiDigestHeader (api, room) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - digests', function () {
     runner((api, version, room) => {
       describe('room digest', () => testApiRoomDigest(api, room))

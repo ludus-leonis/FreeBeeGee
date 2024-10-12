@@ -49,7 +49,7 @@ This can have multiple reasons. Hover over the (?) icon of the error message to 
 
 You can install any snapshot on your server, avoiding the need to upload it during room create. Snapshots are just `*.zip` files with pre-configured assets and table layouts. You can obtain a snapshot by downloading it from any room you have joined via the icon on the bottom left.
 
-* Rename the `*.zip` file to something meaningful, e.g. `Dungeon.zip` or `Chess.zip`. Snapshot names must not have spaces and can only contain a-z, A-Z and 0-9.
+* Rename the `*.zip` file to something meaningful, e.g. `Dungeon.zip` or `Chess.zip`. Snapshot filenames can have most chararacters including dashes, underscores and spaces, but except: <, >, ", &
 * Copy the renamed file into `.../api/data/snapshots/`.
 
 Now *Dungeon (custom)* or *Chess (custom)* should appear in the snapshot drop-down when you set up new rooms.

@@ -44,7 +44,7 @@
     @include spinner(1em);
 
     color: $color-white-100;
-    margin-left: .25em;
+    margin-left: 0.25em;
   }
 }
 
@@ -66,9 +66,9 @@
     @include spinner(1em);
 
     color: $color-white-100;
-    left: calc(50% - .5em);
+    left: calc(50% - 0.5em);
     position: absolute;
-    top: calc(50% - .5em);
+    top: calc(50% - 0.5em);
   }
 }
 
@@ -82,8 +82,8 @@
     @include spinner(px(16));
 
     color: $color-bw-fg;
-    left: calc(50% - .5em);
+    left: calc(50% - 0.5em);
     position: absolute;
-    top: calc(50% - .5em);
+    top: calc(50% - 0.5em);
   }
 }

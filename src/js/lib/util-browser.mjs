@@ -136,7 +136,7 @@ export function toggleFullscreen () {
       document.documentElement.mozRequestFullScreen()
       return true
     } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT) // eslint-disable-line no-undef
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT)
       return true
     }
   } else {
@@ -230,7 +230,7 @@ export function brightness (color) {
  * @param {string} b Second string.
  * @returns {number} Length of the difference.
  */
-function getChangeLength (a, b) {
+export function getChangeLength (a, b) {
   let shorter = a.length < b.length ? a.split('') : b.split('')
   let longer = a.length < b.length ? b.split('') : a.split('')
 

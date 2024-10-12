@@ -26,18 +26,15 @@
 
 import shajs from 'sha.js'
 
-import {
-  openTestroom,
-  testJsonGet,
-  testJsonPost,
-  testJsonPut,
-  testJsonPatch,
-  testJsonDelete,
-  testGetBuffer,
-  testGetBufferQuery,
-  expect,
-  closeTestroom
-} from '../utils/chai.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
+
+const expect = Test.expect
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
 
 // -----------------------------------------------------------------------------
 
@@ -48,8 +45,8 @@ let token = null
  * @param {string} room Room name to use for test.
  */
 function test401 (api, room) { // no token
-  openTestroom(api, room, 'Classic', 'myPassword')
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.openTestroom(api, room, 'Classic', 'myPassword')
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'myPassword'
     }
@@ -58,32 +55,32 @@ function test401 (api, room) { // no token
     token = body.token
   }, 200)
 
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 401)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {}, 401)
-  testJsonGet(api, () => `/rooms/${room}/tables/1/`, body => {}, 401)
-  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, body => {}, 401)
-  testJsonGet(api, () => `/rooms/${room}/snapshot/`, body => {}, 401)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 401)
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {}, 401)
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/`, body => {}, 401)
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, body => {}, 401)
+  Test.jsonGet(api, () => `/rooms/${room}/snapshot/`, body => {}, 401)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 401)
-  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 401)
-  testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 401)
-  testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 401)
-  testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 401)
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 401)
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 401)
+  Test.jsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 401)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/123/`, 401)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 401)
 
-  testJsonPut(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 401)
-  testJsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 401)
+  Test.jsonPut(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 401)
+  Test.jsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 401)
 
-  testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 401)
-  testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 401)
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 401)
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 401)
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 401)
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 401)
 
-  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, 401)
-  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 401)
-  testJsonDelete(api, () => `/rooms/${room}/`, 401)
+  Test.jsonDelete(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, 401)
+  Test.jsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 401)
+  Test.jsonDelete(api, () => `/rooms/${room}/`, 401)
 
-  testJsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404)
+  Test.jsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404)
 
-  testJsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
+  Test.jsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
 }
 
 /**
@@ -91,8 +88,8 @@ function test401 (api, room) { // no token
  * @param {string} room Room name to use for test.
  */
 function test403 (api, room) { // wrong token
-  openTestroom(api, room, 'Classic', 'myPassword')
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.openTestroom(api, room, 'Classic', 'myPassword')
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'myPassword'
     }
@@ -101,32 +98,32 @@ function test403 (api, room) { // wrong token
     token = body.token
   }, 200)
 
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonGet(api, () => `/rooms/${room}/tables/1/`, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonGet(api, () => `/rooms/${room}/snapshot/`, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/`, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/snapshot/`, body => {}, 403, () => 'INVALID-TOKEN')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 403, () => 'INVALID-TOKEN') // non-existing ID
-  testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 403, () => 'INVALID-TOKEN') // existing ID
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/123/`, 403, () => 'INVALID-TOKEN') // non-existing ID
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 403, () => 'INVALID-TOKEN') // existing ID
 
-  testJsonPut(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonPut(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
 
-  testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 403, () => 'INVALID-TOKEN')
 
-  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, 403, () => 'INVALID-TOKEN')
-  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 403, () => 'INVALID-TOKEN')
-  testJsonDelete(api, () => `/rooms/${room}/`, 403, () => 'INVALID-TOKEN')
+  Test.jsonDelete(api, () => `/rooms/${room}/tables/1/pieces/12345678/`, 403, () => 'INVALID-TOKEN')
+  Test.jsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 403, () => 'INVALID-TOKEN')
+  Test.jsonDelete(api, () => `/rooms/${room}/`, 403, () => 'INVALID-TOKEN')
 
-  testJsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404, () => 'INVALID-TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404, () => 'INVALID-TOKEN')
 
-  testJsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
+  Test.jsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
 }
 
 /**
@@ -136,8 +133,8 @@ function test403 (api, room) { // wrong token
 function test20x (api, room) {
   // hint: 400 is also ok, as this means the permission checks were successfull
 
-  openTestroom(api, room, 'Classic', 'myPassword')
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.openTestroom(api, room, 'Classic', 'myPassword')
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'myPassword'
     }
@@ -146,31 +143,31 @@ function test20x (api, room) {
     token = body.token
   }, 200)
 
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
-  testJsonGet(api, () => `/rooms/${room}/digest/`, body => {}, 200, () => token)
-  testJsonGet(api, () => `/rooms/${room}/tables/1/`, body => {}, 200, () => token)
-  testJsonGet(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, body => {}, 200, () => token)
-  testGetBuffer(api, () => `/rooms/${room}/snapshot/`, header => {}, body => {}, 200, () => token)
-  testGetBufferQuery(api, () => `/rooms/${room}/snapshot/`, header => {}, body => {}, 200, () => shajs('sha256').update(`fbg-${token}`).digest('hex'))
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
+  Test.jsonGet(api, () => `/rooms/${room}/digest/`, body => {}, 200, () => token)
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/`, body => {}, 200, () => token)
+  Test.jsonGet(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, body => {}, 200, () => token)
+  Test.getBuffer(api, () => `/rooms/${room}/snapshot/`, header => {}, body => {}, 200, () => token)
+  Test.getBufferQuery(api, () => `/rooms/${room}/snapshot/`, header => {}, body => {}, 200, () => shajs('sha256').update(`fbg-${token}`).digest('hex'))
 
-  testJsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 400, () => token)
-  testJsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 204, () => token)
-  testJsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 400, () => token)
-  testJsonDelete(api, () => `/rooms/${room}/assets/123/`, 204, () => token) // non-existing ID
-  testJsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 204, () => token) // existing ID
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPost(api, () => `/rooms/${room}/tables/1/undo/`, () => {}, body => {}, 204, () => token)
+  Test.jsonPost(api, () => `/rooms/${room}/assets/`, () => {}, body => {}, 400, () => token)
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/123/`, 204, () => token) // non-existing ID
+  Test.jsonDelete(api, () => `/rooms/${room}/assets/wAksS100/`, 204, () => token) // existing ID
 
-  testJsonPut(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, () => {}, body => {}, 400, () => token)
-  testJsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPut(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPut(api, () => `/rooms/${room}/tables/1/`, () => {}, body => {}, 400, () => token)
 
-  testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, () => {}, body => {}, 400, () => token)
-  testJsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 400, () => token)
-  testJsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPatch(api, () => `/rooms/${room}/tables/1/pieces/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPatch(api, () => `/rooms/${room}/setup/`, () => {}, body => {}, 400, () => token)
 
-  testJsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404, () => token)
+  Test.jsonGet(api, () => `/rooms/${room}/blah/`, body => {}, 404, () => token)
 
-  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, 204, () => token)
-  testJsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 400, () => token)
-  testJsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
+  Test.jsonDelete(api, () => `/rooms/${room}/tables/1/pieces/G1iUfa3J/`, 204, () => token)
+  Test.jsonDelete(api, () => `/rooms/${room}/tables/1/pieces/`, 400, () => token)
+  Test.jsonDelete(api, () => `/rooms/${room}/`, 204, () => token)
 }
 
 /**
@@ -178,10 +175,10 @@ function test20x (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testPasswordChange (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
   // --- login to public room results in 0000 token ----------------------------
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'wrongpassword'
     }
@@ -189,18 +186,18 @@ function testPasswordChange (api, room) {
     expect(body.token).to.be.eql('00000000-0000-0000-0000-000000000000')
     token = body.token
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => 'INVALID_TOKEN')
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => 'INVALID_TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
 
   // --- change password - also changes token ----------------------------------
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'myPassword'
     }
@@ -211,30 +208,30 @@ function testPasswordChange (api, room) {
   }, 200, () => token)
 
   // room/login now requires password
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'myPassword'
     }
   }, body => {
     expect(body.token).to.be.eql(token)
   }, 200)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'wrongpassword'
     }
   }, body => {}, 403)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 401)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 403, () => 'INVALID_TOKEN')
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 401)
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 403, () => 'INVALID_TOKEN')
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 401)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 403, () => 'INVALID_TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 401)
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 403, () => 'INVALID_TOKEN')
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
 
   // --- change password again - token stays -----------------------------------
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'myPassword2'
     }
@@ -244,30 +241,30 @@ function testPasswordChange (api, room) {
   }, 200, () => token)
 
   // room/login now requires different password but same token
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'myPassword2'
     }
   }, body => {
     expect(body.token).to.be.eql(token)
   }, 200)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'myPassword'
     }
   }, body => {}, 403)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 401)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 403, () => 'INVALID_TOKEN')
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 401)
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 403, () => 'INVALID_TOKEN')
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 401)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 403, () => 'INVALID_TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 401)
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 403, () => 'INVALID_TOKEN')
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
 
   // --- unset password - token reverts to 0000 --------------------------------
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: ''
     }
@@ -276,24 +273,24 @@ function testPasswordChange (api, room) {
   }, 200, () => token)
 
   // passwords now no longer matter
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {
     return {
       password: 'wrongpassword'
     }
   }, body => {
     expect(body.token).to.be.eql('00000000-0000-0000-0000-000000000000')
   }, 200)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200)
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => 'INVALID_TOKEN')
-  testJsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
-  testJsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
-  testJsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200)
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => 'INVALID_TOKEN')
+  Test.jsonGet(api, () => `/rooms/${room}/`, body => {}, 200, () => token)
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
+  Test.jsonPost(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400)
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => 'INVALID_TOKEN')
+  Test.jsonPatch(api, () => `/rooms/${room}/auth/`, () => {}, body => {}, 400, () => token)
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // --- the test runners --------------------------------------------------------
@@ -301,7 +298,7 @@ function testPasswordChange (api, room) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - auth', function () {
     runner((api, version, room) => {
       describe('401 - no token', () => test401(api, room))

@@ -19,42 +19,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  getTableCoordinates
-} from '../../../view/room/index.mjs'
-
-import {
-  touch
-} from '../../../view/room/sync.mjs'
-
-import {
-  pointTo
-  // zoom
-} from '../../../view/room/tabletop/index.mjs'
-
-import {
-  SelectAndDrag
-} from '../../../view/room/mouse/SelectAndDrag.mjs'
-
-import {
-  SelectAndProperties
-} from '../../../view/room/mouse/SelectAndProperties.mjs'
-
-import {
-  Grab
-} from '../../../view/room/mouse/Grab.mjs'
-
-import {
-  Los
-} from '../../../view/room/mouse/Los.mjs'
-
-import {
-  popupHide
-} from '../../../view/room/tabletop/popup.mjs'
-
-// --- public ------------------------------------------------------------------
+import _ from 'src/js/lib/FreeDOM.mjs'
+import { Grab } from 'src/js/view/room/mouse/Grab.mjs'
+import * as Popup from 'src/js/view/room/tabletop/popup.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import { SelectAndDrag } from 'src/js/view/room/mouse/SelectAndDrag.mjs'
+import { SelectAndProperties } from 'src/js/view/room/mouse/SelectAndProperties.mjs'
+import * as Sync from 'src/js/view/room/sync.mjs'
 
 /**
  * Determine if user is currently dropping (move while mouse button down) something.
@@ -71,7 +42,7 @@ export function isDragging () {
  * @returns {object} Object with x and y in pixels on the tabletop.
  */
 export function getMouseCoords () {
-  return getTableCoordinates(mouseX, mouseY)
+  return Room.getTableCoordinates(mouseX, mouseY)
 }
 
 /**
@@ -87,29 +58,20 @@ export function enableDragAndDrop (tabletop) {
 }
 
 /**
- * Enable LOS drawing mode on the left mouse button.
- */
-export function toggleLMBLos () {
-  if (dragCurrent === null) {
-    if (isLMBLos()) {
-      dragHandlers[0] = new SelectAndDrag()
-    } else {
-      dragHandlers[0] = new Los()
-    }
-  }
-}
-
-/**
- * Enable LOS drawing mode on the left mouse button.
+ * Set the actions that happen on left/center/right mouse buttons.
  *
- * @param {boolean} active If true, will also check if an actual drag is going on. Default false.
- * @returns {boolean} True if Los mode is on.
+ * @param {object} left Left mouse button.
+ * @param {object} center Center mouse button.
+ * @param {object} right Right mouse button.
  */
-export function isLMBLos (active = false) {
-  if (active) {
-    return dragHandlers[0] instanceof Los && dragHandlers[0].isDragging()
-  }
-  return dragHandlers[0] instanceof Los
+export function setButtons (
+  left = new SelectAndDrag(),
+  center = new Grab(),
+  right = new SelectAndProperties()
+) {
+  dragHandlers[0] = left
+  dragHandlers[1] = center
+  dragHandlers[2] = right
 }
 
 /**
@@ -141,9 +103,9 @@ function touchMousePosition (x, y) {
 }
 
 const dragHandlers = [
-  new SelectAndDrag(), // LMB
-  new Grab(), // CMB
-  new SelectAndProperties() // RMB
+  null, // LMB
+  null, // CMB
+  null // RMB
 ]
 
 let dragCurrent = null // current 'move' handler
@@ -157,16 +119,13 @@ let dragCurrent = null // current 'move' handler
  */
 function mouseDown (mousedown) {
   if (![mousedown.target.id, mousedown.target.parentNode?.id].includes('popper')) {
-    popupHide()
+    Popup.close()
   }
   if (dragCurrent != null) { // cancel any drag in progress
     dragHandlers[dragCurrent].cancel()
     dragCurrent = null
   }
-  if (mousedown.button === 0 && mousedown.shiftKey && !isLMBLos()) {
-    pointTo(getMouseCoords())
-    return
-  }
+  if (Room.getMode().mousedown(mousedown)) return
   if (dragHandlers?.[mousedown.button]) {
     dragCurrent = mousedown.button
     dragHandlers[dragCurrent].push(mousedown)
@@ -181,8 +140,8 @@ function mouseDown (mousedown) {
  * @param {MouseEvent} mousemove The triggering mouse event.
  */
 function mouseMove (mousemove) {
-  touch()
-  touchMousePosition(mousemove.clientX, mousemove.clientY)
+  Sync.touch()
+  touchMousePosition(mousemove.clientX, mousemove.clientY) // inclusive sidenav
 
   if (dragCurrent != null) {
     const buttonMask = dragCurrent === 0 ? 1 : (dragCurrent === 2 ? 2 : 4)

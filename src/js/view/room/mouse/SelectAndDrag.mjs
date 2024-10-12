@@ -19,56 +19,16 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  clamp
-} from '../../../lib/utils.mjs'
-
-import {
-  sortByNumber
-} from '../../../lib/utils-text.mjs'
-
-import {
-  MouseButtonHandler
-} from '../../../view/room/mouse/_MouseButtonHandler.mjs'
-
-import {
-  movePieces,
-  isLayerActive,
-  getRoom
-} from '../../../state/index.mjs'
-
-import {
-  getMouseCoords
-} from '../../../view/room/mouse/index.mjs'
-
-import {
-  findRealClickTarget,
-  findPiecesContained,
-  snap,
-  ID,
-  LAYER
-} from '../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  selectionGetPieces,
-  selectionAdd,
-  selectionClear,
-  selectionGetFeatures,
-  findMaxZBelow
-} from '../../../view/room/tabletop/selection.mjs'
-
-import {
-  updateSelection,
-  setCursor
-} from '../../../view/room/index.mjs'
-
-import {
-  moveNodeTo,
-  createSelectPiece,
-  updateSelectionDOM
-} from '../../../view/room/tabletop/index.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import { MouseButtonHandler } from 'src/js/view/room/mouse/_MouseButtonHandler.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Dom from 'src/js/view/room/tabletop/dom.mjs'
+import * as Mouse from 'src/js/view/room/mouse/index.mjs'
+import * as Room from 'src/js/view/room/index.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Text from 'src/js/lib/util-text.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 export class SelectAndDrag extends MouseButtonHandler {
   constructor () {
@@ -99,14 +59,14 @@ export class SelectAndDrag extends MouseButtonHandler {
     if (!piece) return
     mousedown.preventDefault()
 
-    findRealClickTarget(piece, getMouseCoords()).then(target => {
+    Content.findRealClickTarget(piece, Mouse.getMouseCoords()).then(target => {
       if (target) { // drag mode
-        updateSelection(target, mousedown.ctrlKey)
+        Room.updateSelection(target, mousedown.ctrlKey)
         this.dragStart(target.piece)
       } else { // select mode
         this.selectStart()
       }
-      updateSelectionDOM()
+      Dom.updateSelection()
     })
   }
 
@@ -122,26 +82,26 @@ export class SelectAndDrag extends MouseButtonHandler {
 
   release (mouseup) {
     if (this.isSelecting()) {
-      if (!mouseup.ctrlKey) selectionClear()
+      if (!mouseup.ctrlKey) Selection.clear()
       this.selectEnd()
       mouseup.preventDefault()
     } else if (this.isMoving()) {
       this.dragEnd()
       mouseup.preventDefault()
     }
-    updateSelectionDOM()
+    Dom.updateSelection()
   }
 
   cancel () {
     this.clear()
-    setCursor()
+    Dom.setCursor()
   }
 
   clear () {
     for (const node of this.dragging) {
       node.parentNode && node.parentNode.removeChild(node)
     }
-    _(`#${ID.SELECT}-drag`).delete()
+    _(`#${Content.ID.SELECT}-drag`).delete()
     this.dragging = []
     this.multiselect = null
   }
@@ -149,7 +109,7 @@ export class SelectAndDrag extends MouseButtonHandler {
   // --- (multi) select --------------------------------------------------------
 
   selectStart () {
-    const coords = getMouseCoords()
+    const coords = Mouse.getMouseCoords()
 
     this.multiselect = {
       x: coords.x,
@@ -160,32 +120,32 @@ export class SelectAndDrag extends MouseButtonHandler {
   }
 
   selectContinue () {
-    const tableCoords = getMouseCoords()
+    const tableCoords = Mouse.getMouseCoords()
     this.multiselect.width = tableCoords.x - this.multiselect.x
     this.multiselect.height = tableCoords.y - this.multiselect.y
 
-    _(`#${ID.SELECT}-drag`).delete()
+    _(`#${Content.ID.SELECT}-drag`).delete()
     if (this.multiselect.width !== 0 && this.multiselect.height !== 0) {
-      const svg = createSelectPiece(
+      const svg = Dom.createSelectPiece(
         this.multiselect.x,
         this.multiselect.y,
         this.multiselect.width,
         this.multiselect.height
       )
-      svg.id = `${ID.SELECT}-drag`
+      svg.id = `${Content.ID.SELECT}-drag`
       _('#layer-other').add(svg)
     }
   }
 
   selectEnd () {
-    for (const piece of findPiecesContained({
+    for (const piece of Content.findPiecesContained({
       left: this.multiselect.width >= 0 ? this.multiselect.x : this.multiselect.x + this.multiselect.width,
       top: this.multiselect.height >= 0 ? this.multiselect.y : this.multiselect.y + this.multiselect.height,
       right: this.multiselect.width >= 0 ? this.multiselect.x + this.multiselect.width : this.multiselect.x,
       bottom: this.multiselect.height >= 0 ? this.multiselect.y + this.multiselect.height : this.multiselect.y
     })) {
-      if (isLayerActive(piece.l) || piece.l === LAYER.NOTE) {
-        selectionAdd(piece.id)
+      if (State.isLayerActive(piece.l) || piece.l === Content.LAYER.NOTE) {
+        Selection.select(piece.id)
       }
     }
     this.clear()
@@ -194,14 +154,14 @@ export class SelectAndDrag extends MouseButtonHandler {
   // --- drag+drop -------------------------------------------------------------
 
   dragStart (piece) {
-    const coords = getMouseCoords()
+    const coords = Mouse.getMouseCoords()
 
     if (this.isMoving()) { // you can't drag twice
       this.clear() // quick fix for release-outsite bug
       return
     }
 
-    for (const piece of sortByNumber(selectionGetPieces(), 'z', 0)) {
+    for (const piece of Text.sortNumber(Selection.getPieces(), 'z', 0)) {
       const originial = _(`#${piece.id}`).node()
 
       const clone = originial.cloneNode(true)
@@ -219,7 +179,7 @@ export class SelectAndDrag extends MouseButtonHandler {
       this.dragging.push(clone)
     }
 
-    this.dragData = selectionGetFeatures().boundingBox
+    this.dragData = Selection.getFeatures().boundingBox
     this.dragData.startX = coords.x
     this.dragData.startY = coords.y
     this.dragData.xa = this.dragData.startX - this.dragData.left
@@ -251,19 +211,19 @@ export class SelectAndDrag extends MouseButtonHandler {
 
   dragContinue (shiftKey) {
     if (!this.dragData.cursor) { // set cursor (only once)
-      setCursor('.cursor-grab')
+      Dom.setCursor('.cursor-grab')
       this.dragData.cursor = true
     }
 
-    const room = getRoom()
-    const coords = getMouseCoords()
+    const room = State.getRoom()
+    const coords = Mouse.getMouseCoords()
     const clampCoords = {
-      x: clamp(this.dragData.xa, coords.x, room.width - 1 - this.dragData.xb),
-      y: clamp(this.dragData.ya, coords.y, room.height - 1 - this.dragData.yb)
+      x: Util.clamp(this.dragData.xa, coords.x, room.width - 1 - this.dragData.xb),
+      y: Util.clamp(this.dragData.ya, coords.y, room.height - 1 - this.dragData.yb)
     }
 
     // how far to shift all selected pieces so they still snap afterwards?
-    const offset = snap(
+    const offset = Content.snap(
       this.dragData.center.x + clampCoords.x - this.dragData.startX,
       this.dragData.center.y + clampCoords.y - this.dragData.startY,
       shiftKey ? 4 : undefined
@@ -276,7 +236,7 @@ export class SelectAndDrag extends MouseButtonHandler {
 
     for (const node of this.dragging) {
       node.classList.remove('is-dragging-hidden') // we are moving now (1)
-      moveNodeTo(
+      Dom.moveNodeTo(
         node,
         node.piece.x + offset.x,
         node.piece.y + offset.y
@@ -286,7 +246,8 @@ export class SelectAndDrag extends MouseButtonHandler {
 
   dragEnd () {
     // find the highest Z in the target area not occupied by the selection itself
-    const zLower = findMaxZBelow(selectionGetFeatures().boundingBox, {
+
+    const zLower = Content.findMaxZs(Selection.getPieces(), Selection.getPieces(), {
       x: this.dragData.finalCenterX,
       y: this.dragData.finalCenterY
     })
@@ -309,7 +270,7 @@ export class SelectAndDrag extends MouseButtonHandler {
         })
       }
     }
-    movePieces(toMove)
+    State.movePieces(toMove)
 
     this.cancel()
   }

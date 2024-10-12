@@ -25,7 +25,7 @@
 
 .room {
   $menu-icon-size: 32px;
-  $menu-shadow: rgba(0, 0, 0, .5);
+  $menu-shadow: rgba(0, 0, 0, 0.5);
 
   padding-left: $menu-icon-size;
 
@@ -63,22 +63,25 @@
       border-radius: 0;
       color: $color-white-100;
       margin: 0;
-      padding: $spacing-tiny $spacing-micro;
-
-      &.active {
-        color: $color-black-100;
-      }
+      padding: $spacing-micro;
 
       svg {
         height: px(20);
         width: px(20);
       }
+
+      &.active svg {
+        background-color: $color-white-100;
+        border-radius: 2px;
+        box-shadow: 0 0 0 2px $color-white-100;
+        color: $color-primary;
+      }
     }
 
     .btn-icon.disabled,
     .disabled > .btn-icon {
-      color: $color-white-25a;
       cursor: not-allowed;
+      opacity: 0.25;
     }
 
     > div {
@@ -86,7 +89,7 @@
 
       > a {
         display: inline-block;
-        padding: .2em;
+        padding: 0.2em;
 
       }
     }
@@ -95,7 +98,7 @@
   .status {
     bottom: $spacing-small;
     font-weight: 500;
-    opacity: .75;
+    opacity: 0.75;
     padding-right: $spacing-micro;
     position: absolute;
     right: $spacing-small;

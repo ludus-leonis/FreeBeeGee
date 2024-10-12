@@ -19,35 +19,13 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../../lib/FreeDOM.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Browser from 'src/js/lib/util-browser.mjs'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Modal from 'src/js/view/room/modal/piece/index.mjs'
+import * as State from 'src/js/state/index.mjs'
 
-import {
-  FLAGS,
-  createPieces,
-  editPiece
-} from '../../../../state/index.mjs'
-
-import {
-  stickyNoteColors
-} from '../../../../view/room/tabletop/tabledata.mjs'
-
-import {
-  inputMaxLength
-} from '../../../../lib/utils-html.mjs'
-
-import {
-  setupFlags,
-  setupLabel,
-  setupSize,
-  updateColor,
-  updateFlags,
-  updateLabel,
-  updateSize
-} from './index.mjs'
-
-// --- public ------------------------------------------------------------------
-
-export const NOTE_LENGTH = 256
+const NOTE_LENGTH = 256
 
 /**
  * Show the edit-piece modal.
@@ -55,16 +33,16 @@ export const NOTE_LENGTH = 256
  * @param {object} piece The piece's data object.
  * @returns {Function} Callback for ok/save button.
  */
-export function setup (piece) {
+export function create (piece) {
   _('#modal-body').innerHTML = getModalNote()
 
-  setupLabel(piece)
-  setupSize(piece)
+  Modal.setupLabel(piece)
+  Modal.setupSize(piece)
 
   // piece color
   const pieceColor = _('#piece-color')
-  for (let c = 0; c < stickyNoteColors.length; c++) {
-    const option = _('option').create(stickyNoteColors[c].name)
+  for (let c = 0; c < Content.NOTE_COLOR.length; c++) {
+    const option = _('option').create(Content.NOTE_COLOR[c].name)
     option.value = c
     if (c === piece.c[0]) option.selected = true
     pieceColor.add(option)
@@ -74,23 +52,21 @@ export function setup (piece) {
   const noteType = _('#piece-note-type')
   const option1 = _('option').create('Center')
   option1.value = 'c'
-  if (piece.f & !FLAGS.NOTE_TOPLEFT) option1.selected = true
+  if (piece.f & !Content.FLAG.NOTE_TOPLEFT) option1.selected = true
   noteType.add(option1)
   const option2 = _('option').create('Top-Left')
   option2.value = 'tl'
-  if (piece.f & FLAGS.NOTE_TOPLEFT) option2.selected = true
+  if (piece.f & Content.FLAG.NOTE_TOPLEFT) option2.selected = true
   noteType.add(option2)
 
-  setupFlags(piece)
+  Modal.setupFlags(piece)
 
-  inputMaxLength(_('#piece-label').node(), NOTE_LENGTH, size => {
+  Browser.inputMaxLength(_('#piece-label').node(), NOTE_LENGTH, size => {
     _('#note-hint').innerText = `Markdown available, no HTML though. Bytes left: ${NOTE_LENGTH - size}`
   })
 
   return modalOk
 }
-
-// --- internal ----------------------------------------------------------------
 
 /**
  * Hides modal and pushes changes to the state.
@@ -101,15 +77,15 @@ function modalOk () {
   const piece = _('#modal').node().piece
   const updates = {}
 
-  updateLabel(piece, updates)
-  updateSize(piece, updates)
-  updateColor(piece, updates)
-  updateFlags(piece, updates)
+  Modal.updateLabel(piece, updates)
+  Modal.updateSize(piece, updates)
+  Modal.updateColor(piece, updates)
+  Modal.updateFlags(piece, updates)
 
   if (piece.id) {
-    editPiece(piece.id, updates)
+    State.editPiece(piece.id, updates)
   } else {
-    createPieces([{
+    State.createPieces([{
       ...piece,
       ...updates
     }], true)

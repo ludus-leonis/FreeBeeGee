@@ -20,40 +20,22 @@
 
 /* global describe, it, beforeEach */
 
-import { expect } from 'chai'
+import * as Content from 'src/js/view/room/tabletop/content.mjs'
+import * as Selection from 'src/js/view/room/tabletop/selection.mjs'
 
-import {
-  _test,
-  setTableNo
-} from '../../../src/js/state/index.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
+const expect = Test.expect
 
-import {
-  populatePieceDefaults,
-  populatePiecesDefaults,
-  snap
-} from '../../../src/js/view/room/tabletop/tabledata.mjs'
-
-import {
-  selectionAdd,
-  selectionGetFeatures
-} from '../../../src/js/view/room/tabletop/selection.mjs'
-
-const TEST_STATE = 5
-
-/**
- * Initialize table+room data for tests.
- */
-function setupTestData () {
-  _test.setRoom(JSON.parse(roomJSON))
-  for (let i = 1; i <= 9; i++) {
-    if (i === TEST_STATE) {
-      _test.setTable(i, populatePiecesDefaults([{ ...JSON.parse(pieceJSON), r: 60 }]))
-    } else {
-      _test.setTable(i, [])
-    }
-  }
-  setTableNo(1, false)
-}
+const pieceJSON = `
+{
+  "id": "fe008a4d",
+  "l": 4,
+  "a": "U0kg8300",
+  "w": 4,
+  "h": 2,
+  "x": 512,
+  "y": 256
+}`
 
 /**
  * Get current seconds.
@@ -75,18 +57,69 @@ function headers () {
   ])
 }
 
-describe('Frontend - tabledata.mjs', function () {
+describe('Frontend - content.mjs (hex)', function () {
   beforeEach(function () {
-    setupTestData()
+    Test.setupTestData([{ ...JSON.parse(pieceJSON), r: 60 }], Test.data.roomHex())
   })
 
-  it('snap()', function () { // hint - more in-depth snapping tests in utils-test
-    expect(snap(31, -1).x).to.be.eql(37)
-    expect(snap(31, -1).y).to.be.eql(0)
+  it('snap()', function () { // hint - more in-depth snapping tests in util-test
+    expect(Content.snap(31, -1).x).to.be.eql(37)
+    expect(Content.snap(31, -1).y).to.be.eql(0)
+  })
+
+  it('moveTiles() hex', async function () {
+    const pieces = [
+      { ...Test.data.pieceMinimal(), id: '4', x: 55, y: 32 },
+      { ...Test.data.pieceMinimal(), id: '5', x: 32 + 64 * 1, y: 32 + 64 * 1, f: Content.FLAG.NO_MOVE },
+      { ...Test.data.pieceMinimal(), id: '6', x: 110, y: 128 }
+    ]
+    Test.setupTestData(pieces, Test.data.roomHex())
+
+    expect(Test.mock(await Content.moveTiles([pieces[1]], 1, 1, false))).to.be.eql({})
+
+    const move1 = Test.mock(await Content.moveTiles([pieces[0]], 1, 1, false)).body
+    expect(move1.length).to.be.eql(1)
+    expect(move1[0].id).to.be.eql('4')
+    expect(move1[0].x).to.be.eql(55 + 55)
+    expect(move1[0].y).to.be.eql(32 + 32)
+
+    const move2 = Test.mock(await Content.moveTiles([pieces[0]], 0, 1, false)).body
+    expect(move2.length).to.be.eql(1)
+    expect(move2[0].id).to.be.eql('4')
+    expect(move2[0].x).to.be.eql(55)
+    expect(move2[0].y).to.be.eql(32 + 64)
+
+    const move3 = Test.mock(await Content.moveTiles([pieces[2]], 1, 0, false)).body
+    expect(move3.length).to.be.eql(1)
+    expect(move3[0].id).to.be.eql('6')
+    expect(move3[0].x).to.be.eql(110 + 55)
+    expect(move3[0].y).to.be.eql(128 - 32)
+    const move4 = Test.mock(await Content.moveTiles([pieces[2]], 0, -1, false)).body
+    expect(move4.length).to.be.eql(1)
+    expect(move4[0].id).to.be.eql('6')
+    expect(move4[0].x).to.be.eql(110)
+    expect(move4[0].y).to.be.eql(128 - 64)
+
+    const move5 = Test.mock(await Content.moveTiles(pieces, 1, 0, false)).body
+    expect(move5.length).to.be.eql(2)
+    expect(move5[0].id).to.be.eql('6')
+    expect(move5[0].x).to.be.eql(110 + 55)
+    expect(move5[0].y).to.be.eql(128 + 32)
+    expect(move5[1].id).to.be.eql('4')
+    expect(move5[1].x).to.be.eql(55 + 55)
+    expect(move5[1].y).to.be.eql(32 + 32)
+    const move6 = Test.mock(await Content.moveTiles(pieces, 0, 1, false)).body
+    expect(move6.length).to.be.eql(2)
+    expect(move6[0].id).to.be.eql('6')
+    expect(move6[0].x).to.be.eql(110)
+    expect(move6[0].y).to.be.eql(128 + 64)
+    expect(move6[1].id).to.be.eql('4')
+    expect(move6[1].x).to.be.eql(55)
+    expect(move6[1].y).to.be.eql(32 + 64)
   })
 
   it('populatePieceDefaults()', function () {
-    const p0 = populatePieceDefaults(JSON.parse(pieceJSON), headers())
+    const p0 = Content.populatePieceDefaults(JSON.parse(pieceJSON), headers())
     expect(p0.w).to.be.eql(4)
     expect(p0.h).to.be.eql(2)
     expect(p0.r).to.be.eql(0)
@@ -97,7 +130,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p0._meta.originOffsetXPx).to.be.eql(0)
     expect(p0._meta.originOffsetYPx).to.be.eql(0)
 
-    const p60 = populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 60 }, headers())
+    const p60 = Content.populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 60 }, headers())
     expect(p60.w).to.be.eql(4)
     expect(p60.h).to.be.eql(2)
     expect(p60.r).to.be.eql(60)
@@ -108,7 +141,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p60._meta.originOffsetXPx).to.be.eql(9)
     expect(p60._meta.originOffsetYPx).to.be.eql(-79)
 
-    const p120 = populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 120 }, headers())
+    const p120 = Content.populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 120 }, headers())
     expect(p120.w).to.be.eql(4)
     expect(p120.h).to.be.eql(2)
     expect(p120.r).to.be.eql(120)
@@ -119,7 +152,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p120._meta.originOffsetXPx).to.be.eql(9)
     expect(p120._meta.originOffsetYPx).to.be.eql(-79)
 
-    const p180 = populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 180 }, headers())
+    const p180 = Content.populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 180 }, headers())
     expect(p180.w).to.be.eql(4)
     expect(p180.h).to.be.eql(2)
     expect(p180.r).to.be.eql(180)
@@ -130,7 +163,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p180._meta.originOffsetXPx).to.be.eql(0)
     expect(p180._meta.originOffsetYPx).to.be.eql(0)
 
-    const p240 = populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 240 }, headers())
+    const p240 = Content.populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 240 }, headers())
     expect(p240.w).to.be.eql(4)
     expect(p240.h).to.be.eql(2)
     expect(p240.r).to.be.eql(240)
@@ -141,7 +174,7 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p240._meta.originOffsetXPx).to.be.eql(9)
     expect(p240._meta.originOffsetYPx).to.be.eql(-79)
 
-    const p300 = populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 300 }, headers())
+    const p300 = Content.populatePieceDefaults({ ...JSON.parse(pieceJSON), r: 300 }, headers())
     expect(p300.w).to.be.eql(4)
     expect(p300.h).to.be.eql(2)
     expect(p300.r).to.be.eql(300)
@@ -153,23 +186,21 @@ describe('Frontend - tabledata.mjs', function () {
     expect(p300._meta.originOffsetYPx).to.be.eql(-79)
   })
 
-  it('selectionGetFeatures()', function () {
-    // select a single token
-    setTableNo(TEST_STATE, false)
-    selectionAdd('fe008a4d')
+  it('Selection.getFeatures()', function () {
+    Selection.select('fe008a4d') // barbarian
 
-    const features = selectionGetFeatures()
+    const features = Selection.getFeatures()
     expect(features.edit).to.be.eql(true)
     expect(features.rotate).to.be.eql(true)
     expect(features.flip).to.be.eql(true)
-    expect(features.random).to.be.eql(true)
+    expect(features.random).to.be.eql(false)
     expect(features.top).to.be.eql(true)
     expect(features.bottom).to.be.eql(true)
     expect(features.clone).to.be.eql(true)
     expect(features.delete).to.be.eql(true)
-    expect(features.color).to.be.eql(false)
-    expect(features.border).to.be.eql(false)
-    expect(features.number).to.be.eql(false)
+    expect(features.color).to.be.eql(true)
+    expect(features.border).to.be.eql(true)
+    expect(features.number).to.be.eql(true)
     expect(features.boundingBox.top).to.be.eql(113)
     expect(features.boundingBox.left).to.be.eql(393)
     expect(features.boundingBox.bottom).to.be.eql(398)
@@ -180,114 +211,3 @@ describe('Frontend - tabledata.mjs', function () {
     expect(features.boundingBox.h).to.be.eql(286)
   })
 })
-
-const pieceJSON = `
-{
-  "id": "fe008a4d",
-  "l": 1,
-  "a": "f45f27b5",
-  "w": 4,
-  "h": 2,
-  "x": 512,
-  "y": 256
-}`
-
-const roomJSON = `
-{
-  "id": "f9d05a1e",
-  "name": "testroom",
-  "engine": "0.3.0",
-  "background": {
-    "color": "#423e3d",
-    "scroller": "#2b2929",
-    "image": "img/desktop-wood.jpg"
-  },
-  "library": {
-    "sticker": [{
-      "media": ["area.1x1.1x1x1.svg", "##BACK##"],
-      "w": 1,
-      "h": 1,
-      "bg": "#808080",
-      "name": "area.1x1",
-      "type": "sticker",
-      "id": "7261fff0"
-    }],
-    "tile": [{
-      "media": ["altar.3x2x1.transparent.png", "##BACK##"],
-      "w": 3,
-      "h": 2,
-      "bg": "transparent",
-      "name": "altar",
-      "type": "tile",
-      "id": "5b150d84"
-    }],
-    "token": [{
-      "media": ["aasimar.1x1x1.piece.svg", "##BACK##"],
-      "w": 1,
-      "h": 1,
-      "bg": "piece",
-      "name": "aasimar",
-      "type": "token",
-      "id": "484d7d45"
-    }],
-    "other": [{
-      "media": ["classic.a.1x1x1.svg", "classic.a.1x1x2.svg", "classic.a.1x1x3.svg"],
-      "w": 1,
-      "h": 1,
-      "bg": "#808080",
-      "name": "classic.a",
-      "type": "other",
-      "id": "f45f27b5",
-      "base": "classic.a.1x1x0.png"
-    }, {
-      "media": ["_.dicemat.4x4x1.jpg", "##BACK##"],
-      "w": 4,
-      "h": 4,
-      "bg": "#808080",
-      "name": "_.dicemat",
-      "type": "other",
-      "id": "bb07ac49"
-    }, {
-      "media": ["_.discard.4x4x1.png"],
-      "w": 4,
-      "h": 4,
-      "bg": "#808080",
-      "name": "_.discard",
-      "type": "other",
-      "id": "dd07ac49"
-    }],
-    "badge": []
-  },
-  "setup": {
-    "type": "grid-hex",
-    "version": "0.9.0-dev",
-    "engine": "^0.3.0",
-    "gridSize": 64,
-    "gridWidth": 48,
-    "gridHeight": 32,
-    "colors": [{
-      "name": "black",
-      "value": "#0d0d0d"
-    }, {
-      "name": "blue",
-      "value": "#061862"
-    }, {
-      "name": "white",
-      "value": "#ffffff"
-    }],
-    "borders": [{
-      "name": "black",
-      "value": "#0d0d0d"
-    }, {
-      "name": "blue",
-      "value": "#061862"
-    }, {
-      "name": "white",
-      "value": "#ffffff"
-    }]
-  },
-  "credits": "test snapshot",
-  "width": 3072,
-  "height": 2048
-}
-`

@@ -24,7 +24,7 @@
 ////
 
 .zoom-on-hover {
-  transition: transform .05s ease-in;
+  transition: transform 0.05s ease-in;
 
   &:hover {
     @include media-breakpoint-up(md) {

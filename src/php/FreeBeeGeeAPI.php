@@ -48,6 +48,8 @@ const REGEXP_COLOR = '/^#[0-9a-fA-F]{6}$/';
 const REGEXP_MATERIAL = '/^[0-9a-zA-Z]{1,32}$/';
 const REGEXP_ASSET_BG = '/^#[a-fA-F0-9]{6}|transparent|[0-9]+$/';
 const REGEXP_ASSET_NAME = '/^(_|[A-Za-z0-9-]{1,64})(.[A-Za-z0-9-]{1,64})?$/';
+const REGEXP_SNAPSHOT_NAME = '/^[^\/\x00<>&"]{1,99}$/';
+const REGEXP_ROOM_NAME = '/^[A-Za-z0-9]{8,48}$/';
 
 const PASSWORD_UNKNOWN = '$2y$12$ZLUoJ7k6JODIgKk6et8ire6XxGDlCS4nupZo9NyJvSnomZ6lgFKGa';
 
@@ -567,12 +569,12 @@ class FreeBeeGeeAPI
     {
         return [
             $this->getBackground('Cardboard', 'img/desktop-cardboard.jpg', '#B2997D', '#7F6D59'),
-            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#375F68', '#547C86'),
+            $this->getBackground('Carpet', 'img/desktop-carpet.jpg', '#A99C82', '#766852'),
             $this->getBackground('Casino', 'img/desktop-casino.jpg', '#2D5B3D', '#3A7750'),
             $this->getBackground('Concrete', 'img/desktop-concrete.jpg', '#6C6964', '#494540'),
             $this->getBackground('Dark', 'img/desktop-dark.jpg', '#212121', '#444444'),
             $this->getBackground('Ice', 'img/desktop-ice.jpg', '#7B909D', '#BAC1C7'),
-            $this->getBackground('Leather', 'img/desktop-leather.jpg', '#3C2D26', '#6A4B40'),
+            $this->getBackground('Leather', 'img/desktop-leather.jpg', '#4F2A23', '#875D54'),
             $this->getBackground('Marble', 'img/desktop-marble.jpg', '#B6AB99', '#80725E'),
             $this->getBackground('Metal', 'img/desktop-metal.jpg', '#565859', '#3E3E3E'),
             $this->getBackground('Paper', 'img/desktop-paper.jpg', '#CBCBCB', '#989898'),
@@ -581,6 +583,7 @@ class FreeBeeGeeAPI
             $this->getBackground('Sand', 'img/desktop-sand.jpg', '#D7D2BF', '#A19E8F'),
             $this->getBackground('Snow', 'img/desktop-snow.jpg', '#FAFAFA', '#C9C9C9'),
             $this->getBackground('Space', 'img/desktop-space.jpg', '#101010', '#404040'),
+            $this->getBackground('Tatami', 'img/desktop-tatami.jpg', '#D2C49E', '#786C4A'),
             $this->getBackground('Wood', 'img/desktop-wood.jpg', '#524A43', '#3E3935'),
         ];
     }
@@ -1575,13 +1578,13 @@ class FreeBeeGeeAPI
                     $validated->$property = $value;
                     break;
                 case 'name':
-                    $validated->$property = $this->api->assertString('name', $value, '/^[A-Za-z0-9]{8,48}$/');
+                    $validated->$property = $this->api->assertString('name', $value, REGEXP_ROOM_NAME);
                     break;
                 case 'convert':
                     $validated->$property = $this->api->assertBoolean('convert', $value);
                     break;
                 case 'snapshot':
-                    $validated->$property = $this->api->assertString('snapshot', $value, '/^[A-Za-z0-9]{1,99}$/');
+                    $validated->$property = $this->api->assertString('snapshot', $value, REGEXP_SNAPSHOT_NAME);
                     break;
                 case 'password':
                     $validated->$property = $this->api->assertString('password', $value, '/^..*$/');
@@ -1798,7 +1801,7 @@ class FreeBeeGeeAPI
         $snapshots = [];
         foreach (glob($this->getSystemPath('snapshots/*zip')) as $filename) {
             $zip = pathinfo($filename);
-            if ($zip['filename'] != '_') { // don't add '_' snapshot
+            if ($zip['filename'] != '_' && preg_match(REGEXP_SNAPSHOT_NAME, $zip['filename'])) {
                 $snapshots[] = (object) [
                     'name' => $zip['filename'],
                     'system' => true
@@ -1807,7 +1810,7 @@ class FreeBeeGeeAPI
         }
         foreach (glob($this->api->getDataDir('snapshots/*zip')) as $filename) {
             $zip = pathinfo($filename);
-            if ($zip['filename'] != '_') { // don't add '_' snapshot
+            if ($zip['filename'] != '_' && preg_match(REGEXP_SNAPSHOT_NAME, $zip['filename'])) {
                 $snapshots[] = (object) [
                     'name' => $zip['filename'],
                     'system' => false

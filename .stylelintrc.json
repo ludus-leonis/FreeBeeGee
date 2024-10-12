@@ -23,6 +23,6 @@
 
     "max-nesting-depth": 4,
     "selector-max-compound-selectors": 10,
-    "string-quotes": "single"
+    "at-rule-no-vendor-prefix": null
   }
 }

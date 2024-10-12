@@ -26,10 +26,15 @@
 
 import { JSDOM } from 'jsdom'
 
-import {
-  testHttpGet,
-  expect
-} from '../utils/chai.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
+
+// -----------------------------------------------------------------------------
 
 /**
  * @param {string} body HTML payload to inject fakefetch script.
@@ -45,7 +50,7 @@ function addFetch (body) {
  * @param {string} api Base URL to test against.
  */
 function testHome (api) {
-  testHttpGet(api, '/', body => {
+  Test.httpGet(api, '/', body => {
     const dom = new JSDOM(addFetch(body), {
       url: `${api}/`,
       referrer: api,
@@ -55,7 +60,7 @@ function testHome (api) {
       resources: 'usable',
       runScripts: 'dangerously'
     })
-    expect(dom.window.document.body.innerHTML).to.be.eql('x')
+    Test.expect(dom.window.document.body.innerHTML).to.be.eql('x')
   })
 }
 
@@ -64,7 +69,7 @@ function testHome (api) {
 /**
  * @param {string} api Base URL to test against.
  */
-export function run (api) {
+function run (api) {
   describe('UI', function () {
     describe('home renders', () => testHome(api))
   })

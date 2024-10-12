@@ -21,13 +21,11 @@
 
 /* global FormData */
 
-import {
-  demoFetchOrThrow
-} from '../api/serverless.mjs'
+import Serverless from 'src/js/api/serverless.mjs'
 
-// --- public endpoint calls ---------------------------------------------------
+// -----------------------------------------------------------------------------
 
-export const DEMO_MODE = ('true' === '$DEMOMODE$')
+const SERVERLESS = ('true' === '$SERVERLESS$')
 
 /**
  * Error class when the API responds with an unexpected HTTP code.
@@ -44,12 +42,14 @@ export class UnexpectedStatus extends Error {
   }
 }
 
+// --- public endpoint calls ---------------------------------------------------
+
 /**
  * API GET /
  *
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetServerInfo () {
+export function getServerInfo () {
   return getJson([200], 'api/')
 }
 
@@ -58,7 +58,7 @@ export function apiGetServerInfo () {
  *
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetSnapshots () {
+export function getSnapshots () {
   return getJson([200], 'api/snapshots/')
 }
 
@@ -70,7 +70,7 @@ export function apiGetSnapshots () {
  * @param {boolean} headers If true, replay with a header/payload object.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostRoomAuth (roomName, auth, headers = false) {
+export function postRoomAuth (roomName, auth, headers = false) {
   return postJson([200, 403, 404], `api/rooms/${roomName}/auth/`, auth, null, headers)
 }
 
@@ -82,7 +82,7 @@ export function apiPostRoomAuth (roomName, auth, headers = false) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchRoomAuth (roomName, patch, token) {
+export function patchRoomAuth (roomName, patch, token) {
   return patchJson([200], `api/rooms/${roomName}/auth/`, patch, token)
 }
 
@@ -94,7 +94,7 @@ export function apiPatchRoomAuth (roomName, patch, token) {
  * @param {boolean} headers If true, replay with a header/payload object.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetRoom (roomName, token, headers = false) {
+export function getRoom (roomName, token, headers = false) {
   return getJson([200, 400, 404], `api/rooms/${roomName}/`, token, headers)
 }
 
@@ -105,7 +105,7 @@ export function apiGetRoom (roomName, token, headers = false) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetRoomDigest (roomName, token) {
+export function getRoomDigest (roomName, token) {
   return getJson([200], `api/rooms/${roomName}/digest/`, token)
 }
 
@@ -117,7 +117,7 @@ export function apiGetRoomDigest (roomName, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostRoom (room, blob, token) {
+export function postRoom (room, blob, token) {
   const formData = new FormData()
   formData.append('name', room.name)
   if (room.snapshot) formData.append('snapshot', room.snapshot)
@@ -139,7 +139,7 @@ export function apiPostRoom (room, blob, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeleteRoom (roomName, token) {
+export function deleteRoom (roomName, token) {
   return deleteJson([204], `api/rooms/${roomName}/`, token)
 }
 
@@ -151,7 +151,7 @@ export function apiDeleteRoom (roomName, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchSetup (roomName, patch, token) {
+export function patchSetup (roomName, patch, token) {
   return patchJson([200], `api/rooms/${roomName}/setup/`, patch, token)
 }
 
@@ -164,7 +164,7 @@ export function apiPatchSetup (roomName, patch, token) {
  * @param {boolean} headers If true, replay with a header/payload object.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiGetTable (roomName, tableId, token, headers = false) {
+export function getTable (roomName, tableId, token, headers = false) {
   return getJson([200], `api/rooms/${roomName}/tables/${tableId}/`, token, headers)
 }
 
@@ -177,33 +177,8 @@ export function apiGetTable (roomName, tableId, token, headers = false) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPutTable (roomName, tableId, table, token) {
+export function putTable (roomName, tableId, table, token) {
   return putJson([200], `api/rooms/${roomName}/tables/${tableId}/`, table, token)
-}
-
-/**
- * API HEAD /rooms/:roomName/tables/:tableId/
- *
- * @param {string} roomName Name of room, e.g. 'funnyLovingWhale'.
- * @param {number} tableId Number of table (0-9), 1 = normal.
- * @param {string} token API access token.
- * @returns {Promise} Promise containing JSON/Object payload.
- */
-export function apiHeadTable (roomName, tableId, token) {
-  return head(`api/rooms/${roomName}/tables/${tableId}/`, token)
-}
-
-/**
- * API PUT /rooms/:roomName/tables/:tableId/pieces/
- *
- * @param {string} roomName Name of room, e.g. 'funnyLovingWhale'.
- * @param {number} tableId Number of table (0-9), 1 = normal.
- * @param {object} piece Piece JSON/Object to send.
- * @param {string} token API access token.
- * @returns {Promise} Promise containing JSON/Object payload.
- */
-export function apiPutPiece (roomName, tableId, piece, token) {
-  return putJson([200], `api/rooms/${roomName}/tables/${tableId}/pieces/${piece.id}/`, piece, token)
 }
 
 /**
@@ -216,7 +191,7 @@ export function apiPutPiece (roomName, tableId, piece, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPiece (roomName, tableId, pieceId, patch, token) {
+export function patchPiece (roomName, tableId, pieceId, patch, token) {
   return patchJson([200], `api/rooms/${roomName}/tables/${tableId}/pieces/${pieceId}/`, patch, token)
 }
 
@@ -229,21 +204,8 @@ export function apiPatchPiece (roomName, tableId, pieceId, patch, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchPieces (roomName, tableId, patches, token) {
+export function patchPieces (roomName, tableId, patches, token) {
   return patchJson([200], `api/rooms/${roomName}/tables/${tableId}/pieces/`, patches, token)
-}
-
-/**
- * API DELETE /rooms/:roomName/tables/:tableId/pieces/:pieceId/
- *
- * @param {string} roomName Name of room, e.g. 'funnyLovingWhale'.
- * @param {number} tableId Number of table (0-9), 1 = normal.
- * @param {string} pieceId Piece-ID (ID) of piece to delete.
- * @param {string} token API access token.
- * @returns {Promise} Promise containing JSON/Object payload.
- */
-export function apiDeletePiece (roomName, tableId, pieceId, token) {
-  return deleteJson([204], `api/rooms/${roomName}/tables/${tableId}/pieces/${pieceId}/`, token)
 }
 
 /**
@@ -255,21 +217,8 @@ export function apiDeletePiece (roomName, tableId, pieceId, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeletePieces (roomName, tableId, pieceIds, token) {
+export function deletePieces (roomName, tableId, pieceIds, token) {
   return deleteJson([204], `api/rooms/${roomName}/tables/${tableId}/pieces/`, token, false, pieceIds)
-}
-
-/**
- * API POST /rooms/:roomName/tables/:tableId/pieces/
- *
- * @param {string} roomName Name of room, e.g. 'funnyLovingWhale'.
- * @param {number} tableId Number of table (0-9), 1 = normal.
- * @param {object} piece Piece JSON/Object to send.
- * @param {string} token API access token.
- * @returns {Promise} Promise containing JSON/Object payload.
- */
-export function apiPostPiece (roomName, tableId, piece, token) {
-  return postJson([201], `api/rooms/${roomName}/tables/${tableId}/pieces/`, piece, token)
 }
 
 /**
@@ -281,7 +230,7 @@ export function apiPostPiece (roomName, tableId, piece, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostPieces (roomName, tableId, pieces, token) {
+export function postPieces (roomName, tableId, pieces, token) {
   return postJson([201], `api/rooms/${roomName}/tables/${tableId}/pieces/`, pieces, token)
 }
 
@@ -293,7 +242,7 @@ export function apiPostPieces (roomName, tableId, pieces, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostUndo (roomName, tableId, token) {
+export function postUndo (roomName, tableId, token) {
   return postJson([204], `api/rooms/${roomName}/tables/${tableId}/undo/`, {}, token)
 }
 
@@ -305,7 +254,7 @@ export function apiPostUndo (roomName, tableId, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPostAsset (roomName, asset, token) {
+export function postAsset (roomName, asset, token) {
   return postJson([201], `api/rooms/${roomName}/assets/`, asset, token)
 }
 
@@ -317,7 +266,7 @@ export function apiPostAsset (roomName, asset, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiPatchAsset (roomName, patch, token) {
+export function patchAsset (roomName, patch, token) {
   return patchJson([200, 404, 409], `api/rooms/${roomName}/assets/${patch.id}/`, patch, token)
 }
 
@@ -329,22 +278,22 @@ export function apiPatchAsset (roomName, patch, token) {
  * @param {string} token API access token.
  * @returns {Promise} Promise containing JSON/Object payload.
  */
-export function apiDeleteAsset (roomName, assetId, token) {
+export function deleteAsset (roomName, assetId, token) {
   return deleteJson([204], `api/rooms/${roomName}/assets/${assetId}/`, token)
 }
 
 /**
  * Helper method for unit tests to mock module calls.
  *
- * @param {number} mode A numeric mode for the mocking. 0 = off.
+ * @param {number} mock A numeric mode for the mocking. 0 = off.
  */
-export function _setMock (mode) {
-  mock = mode
+export function setMock (mock) {
+  mode = mock
 }
 
 // --- internal methods --------------------------------------------------------
 
-let mock = 0 // mock mode for unit testing, 0 = off
+let mode = 0 // mock mode for unit testing, 0 = off
 
 /**
  * Wrap a JS fetch() for a JSON/Rest call with basic status and error handling
@@ -358,8 +307,8 @@ let mock = 0 // mock mode for unit testing, 0 = off
  * @throws {UnexpectedStatus} In case of an HTTP that did not match the expected ones.
  */
 function fetchOrThrow (expectedStatus, path, data = {}, headers = false) {
-  if (DEMO_MODE) return demoFetchOrThrow(expectedStatus, path, data, headers) // for serverless mode
-  if (mock === 1) return Promise.resolve({ expectedStatus, path, data, headers }) // for unit tests
+  if (SERVERLESS) return Serverless.fetchOrThrow(expectedStatus, path, data, headers) // for serverless mode
+  if (mode === 1) return Promise.resolve({ expectedStatus, path, data, headers }) // for unit tests
   return globalThis.fetch(path, data)
     .then(response => {
       return response.text()
@@ -386,30 +335,6 @@ function fetchOrThrow (expectedStatus, path, data = {}, headers = false) {
             throw new UnexpectedStatus(response.status, json)
           }
         })
-    })
-}
-
-/**
- * Do a HEAD JSON/Rest request.
- *
- * Does implicit status/error checking.
- *
- * @param {string} path The URL to call. Can be relative.
- * @returns {Promise} Promise of Headers object.
- */
-function head (path) {
-  return globalThis.fetch(path, {
-    method: 'HEAD',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  })
-    .then(response => {
-      if (response.status === 200) {
-        return response.headers
-      } else {
-        throw new UnexpectedStatus(response.status)
-      }
     })
 }
 

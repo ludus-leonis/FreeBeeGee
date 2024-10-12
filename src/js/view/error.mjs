@@ -19,24 +19,11 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
-
-import {
-  createScreen
-} from '../../view/screen.mjs'
-
-import {
-  UnexpectedStatus
-} from '../../api/index.mjs'
-
-import {
-  navigateToJoin,
-  navigateReload
-} from '../../app.mjs'
-
-import {
-  stopAutoSync
-} from '../room/sync.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Api from 'src/js/api/index.mjs'
+import * as App from 'src/js/app.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
+import * as Sync from 'src/js/view/room/sync.mjs'
 
 /**
  * React on an API error.
@@ -46,17 +33,17 @@ import {
  * @param {number[]} ignore Array of status codes to ignore as not-an-error.
  */
 export function apiError (error, roomName, ignore = []) {
-  if (error instanceof UnexpectedStatus) { // API error
+  if (error instanceof Api.UnexpectedStatus) { // API error
     if (ignore.includes(error.status)) {
       return // semi-expected error that is silently ignored
     }
-    stopAutoSync()
+    Sync.stopAutoSync()
     switch (error.status) {
       case 401:
         runError('BUG', error)
         return
       case 403:
-        navigateReload() // force reload to reset data + show password screen
+        App.reload() // force reload to reset data + show password screen
         return
       case 404:
         runErrorRoomGone()
@@ -135,7 +122,7 @@ function detectProblem () {
                 <p>No more information is available. Please try again later.</p>
                 <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
               `
-              _('#ok').on('click', click => { navigateReload() })
+              _('#ok').on('click', click => { App.reload() })
             }
           }
           if (response.status === 204) return {}
@@ -175,14 +162,14 @@ function runErrorBug (error) {
   console.error('*that* was unexpected!', error, error.body) // only log if error is serious
 
   if (!'$VERSION$'.endsWith('dev')) {
-    createScreen(
+    Screen.create(
       'We are sorry ...',
       `
         <p>We are currently experiencing technical difficulties. You might have found a bug here. Please try again, but if the issue persists, please consider reporting it.</p>
         <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Try again</a>
       `
     )
-    _('#ok').on('click', click => { navigateReload() })
+    _('#ok').on('click', click => { App.reload() })
   }
 }
 
@@ -191,7 +178,7 @@ function runErrorBug (error) {
  * deleted/closed it.
  */
 function runErrorRoomGone () {
-  createScreen(
+  Screen.create(
     'Room gone ...',
     `
       <p class="is-wrapping">This room does not exist (any more).</p>
@@ -199,7 +186,7 @@ function runErrorRoomGone () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Restart</a>
     `
   )
-  _('#ok').on('click', click => { navigateToJoin() })
+  _('#ok').on('click', click => { App.navigateToJoin() })
 }
 
 /**
@@ -209,7 +196,7 @@ function runErrorRoomGone () {
  * @param {string} roomName Room name for the card.
  */
 function runErrorRoomDeprecated (roomName) {
-  createScreen(
+  Screen.create(
     'Room outdated ...',
     `
       <p class="is-wrapping">Room <strong>${roomName}</strong> contains invalid data. It has probably been created by an older FreeBeeGee version.</p>
@@ -221,7 +208,7 @@ function runErrorRoomDeprecated (roomName) {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `
   )
-  _('#ok').on('click', click => { navigateToJoin() })
+  _('#ok').on('click', click => { App.navigateToJoin() })
 }
 
 /**
@@ -229,7 +216,7 @@ function runErrorRoomDeprecated (roomName) {
  * is known in advance.
  */
 function runErrorNoSlotAvailable () {
-  createScreen(
+  Screen.create(
     'Room not found ...',
     `
       <p>Your room does not exist yet.</p>
@@ -241,7 +228,7 @@ function runErrorNoSlotAvailable () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `
   )
-  _('#ok').on('click', click => { navigateToJoin() })
+  _('#ok').on('click', click => { App.navigateToJoin() })
 }
 
 /**
@@ -249,7 +236,7 @@ function runErrorNoSlotAvailable () {
  * is is discovered during a create-api call.
  */
 function runErrorOverCapacity () {
-  createScreen(
+  Screen.create(
     'We are out of space ...',
     `
       <p>It seems our server is curreontly over capacity. All available rooms are taken. Please try again later.</p>
@@ -259,7 +246,7 @@ function runErrorOverCapacity () {
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Back</a>
     `
   )
-  _('#ok').on('click', click => { navigateToJoin() })
+  _('#ok').on('click', click => { App.navigateToJoin() })
 }
 
 /**
@@ -267,21 +254,21 @@ function runErrorOverCapacity () {
  * (probably cached) client.
  */
 function runErrorUpdate () {
-  createScreen(
+  Screen.create(
     'Update available!',
     `
       <p>Good news: $NAME$ just got an update. Please reload this page to get the newer, better and faster version!</p>
       <a id="ok" class="btn btn-wide btn-primary spacing-medium" href="#">Reload</a>
     `
   )
-  _('#ok').on('click', click => { navigateReload() })
+  _('#ok').on('click', click => { App.reload() })
 }
 
 /**
  * A generic server error to be shown when the unexcepted happened.
  */
 function runErrorServerGeneric () {
-  createScreen(
+  Screen.create(
     'We are sorry ...',
     `
       <p>Our server is currently experiencing technical difficulties.</p>

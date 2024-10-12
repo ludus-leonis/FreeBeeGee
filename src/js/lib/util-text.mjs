@@ -146,7 +146,7 @@ export function unCamelCase (string) {
  * @param {string} property Property to sort by.
  * @returns {Array} Sorted array.
  */
-export function sortByString (objects, property) {
+export function sortString (objects, property) {
   return objects.sort((a, b) => {
     const valueA = (a[property] ?? '').toLowerCase()
     const valueB = (b[property] ?? '').toLowerCase()
@@ -162,7 +162,7 @@ export function sortByString (objects, property) {
  * @param {number} fallback A default value for objects without that property.
  * @returns {Array} Sorted array.
  */
-export function sortByNumber (objects, property, fallback = 0) {
+export function sortNumber (objects, property, fallback = 0) {
   return objects.sort((a, b) => {
     return (a[property] ?? fallback) - (b[property] ?? fallback)
   })

@@ -19,41 +19,23 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { marked } from '../../../../../node_modules/marked/lib/marked.cjs'
+import { marked } from '../../../../../node_modules/marked/lib/marked.cjs' // path needed for babel
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../view/room/modal.mjs'
-
-import {
-  getRoom,
-  PREFS,
-  getRoomPreference,
-  setRoomPreference,
-  getSetup
-} from '../../../state/index.mjs'
-
-import {
-  timeRecords
-} from '../../../lib/utils.mjs'
-
-// --- public ------------------------------------------------------------------
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
+import * as State from 'src/js/state/index.mjs'
+import * as Util from 'src/js/lib/util.mjs'
 
 /**
  * Show the help window.
  *
  * Contains basis help, shortcuts and an About section.
  */
-export function modalHelp () {
-  if (!isModalActive()) {
-    createModal(true)
+export function open () {
+  if (!Modal.isOpen()) {
+    Modal.create(true)
 
-    const setup = getSetup()
+    const setup = State.getSetup()
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">FreeBeeGee v$VERSION$ “$CODENAME$”</h3>
@@ -133,12 +115,12 @@ export function modalHelp () {
 
             <p>The following hotkeys are available for <strong>selected pieces</strong>:</p>
             <p><span class="key">e</span> Edit selected piece.</p>
-            <p><span class="key">r</span>/<span class="key">R</span> Rotate piece clockwise/counter-clockwise.</p>
+            <p><span class="key">r</span>/<span class="key">R</span> Rotate piece clockwise/counter-clockwise. <span class="key">Alt</span> + <span class="key">r</span> Random rotate.</p>
             <p><span class="key">f</span>/<span class="key">F</span> Flip piece forward/backward. Pieces can have one, two or even more sides.</p>
+            <p><span class="key">#</span>, <span class="key">Alt</span> + <span class="key">f</span> Roll dice / all dice on trays / flip piece to a random side.</p>
             <p><span class="key">o</span> Change piece color (if a piece supports that).</p>
             <p><span class="key">O</span> Change outline/border color (token only).</p>
             <p><span class="key">p</span> Pile selected pieces.</p>
-            <p><span class="key">#</span> Shuffle/roll piece / all dice on dicetrays.</p>
             <p><span class="key">t</span> Move selected piece to the top of its layer.</p>
             <p><span class="key">b</span> Move selected piece to the bottom of its layer.</p>
             <p><span class="key">c</span> Clone selected piece to the current mouse cursor position.</p>
@@ -153,7 +135,7 @@ export function modalHelp () {
           <div class="copyright">
             <h2>Room assets</h2>
 
-            ${marked.parse(getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
+            ${marked.parse(State.getRoom().credits.replaceAll('<', '&lt;').replaceAll('>', '&gt;'))}
 
             <h2>UI assets</h2>
 
@@ -172,7 +154,7 @@ export function modalHelp () {
 
             <h3>Statistics</h3>
 
-            <p>Refresh time: ${Math.ceil(timeRecords['sync-network'].reduce((a, b) => a + b) / timeRecords['sync-network'].length)}ms network + ${Math.ceil(timeRecords['sync-ui'].reduce((a, b) => a + b) / timeRecords['sync-ui'].length)}ms browser</p>
+            <p>Refresh time: ${Math.ceil(Util.timeRecords['sync-network'].reduce((a, b) => a + b) / Util.timeRecords['sync-network'].length)}ms network + ${Math.ceil(Util.timeRecords['sync-ui'].reduce((a, b) => a + b) / Util.timeRecords['sync-ui'].length)}ms browser</p>
 
             <p>Engine version: $ENGINE$</p>
 
@@ -187,15 +169,14 @@ export function modalHelp () {
     `
 
     _('input[name="tabs"]').on('change', change => {
-      setRoomPreference(PREFS.TAB_HELP, change.target.id)
+      State.setRoomPreference(State.PREF.TAB_HELP, change.target.id)
     })
 
-    const preselect = getRoomPreference(PREFS.TAB_HELP)
+    const preselect = State.getRoomPreference(State.PREF.TAB_HELP)
     _('#' + preselect).checked = true
 
-    _('#btn-close').on('click', () => getModal().hide())
-    _('#modal').on('hidden.bs.modal', () => modalClose())
+    _('#btn-close').on('click', () => Modal.close())
 
-    getModal().show()
+    Modal.open()
   }
 }

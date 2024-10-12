@@ -24,19 +24,17 @@
 
 // Mocha / Chai tests for the API. See test/README.md how to run them.
 
-import {
-  REGEXP,
-  expect,
-  openTestroom,
-  closeTestroom,
-  testJsonGet,
-  testJsonPost,
-  testJsonDeleteBatch
-} from '../utils/chai.mjs'
+import * as Test from 'test/integration/utils/test.mjs'
 
-import {
-  pieceMinimal
-} from '../utils/data.mjs'
+const expect = Test.expect
+
+// -----------------------------------------------------------------------------
+
+export default {
+  run
+}
+
+// -----------------------------------------------------------------------------
 
 const NOTE_MAX_LENGTH = 256
 const LABEL_MAX_LENGTH = 32
@@ -48,48 +46,48 @@ const LABEL_MAX_LENGTH = 32
  * @param {string} room Room name to use for test.
  */
 function testApiInvalidPiece (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return []
   }, body => {
     expect(body._messages[0]).to.match(/ piece is not an array of objects nor an object/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
   }, body => {
     expect(body._messages[0]).to.match(/piece is not valid JSON/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return ''
   }, body => {
     expect(body._messages[0]).to.match(/piece is not valid JSON/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return null
   }, body => {
     expect(body._messages[0]).to.match(/piece is not valid JSON/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return 1234
   }, body => {
     expect(body._messages[0]).to.match(/ piece is not an array of objects nor an object/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return [[], []]
   }, body => {
     expect(body._messages[0]).to.match(/ piece is not an array of objects nor an object/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(0)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -99,15 +97,15 @@ function testApiInvalidPiece (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiMinimalPiece (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return {}
   }, body => {
     expect(body._messages[0]).to.match(/ . missing/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return {
       l: 99
     }
@@ -115,7 +113,7 @@ function testApiMinimalPiece (api, room) {
     expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return {
       l: 1
     }
@@ -123,7 +121,7 @@ function testApiMinimalPiece (api, room) {
     expect(body._messages[0]).to.match(/ . missing/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return {
       l: 1,
       a: '12345678'
@@ -132,7 +130,7 @@ function testApiMinimalPiece (api, room) {
     expect(body._messages[0]).to.match(/ x missing/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return {
       l: 1,
       a: '12345678',
@@ -142,7 +140,7 @@ function testApiMinimalPiece (api, room) {
     expect(body._messages[0]).to.match(/ y missing/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return {
       l: 1,
       a: '12345678',
@@ -153,7 +151,7 @@ function testApiMinimalPiece (api, room) {
     expect(body._messages[0]).to.match(/ z missing/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return {
       l: 1,
       a: '12345678',
@@ -163,7 +161,7 @@ function testApiMinimalPiece (api, room) {
     }
   }, body => {
     expect(body).to.have.all.keys('id', 'l', 'a', 'x', 'y', 'z')
-    expect(body.id).to.match(REGEXP.ID)
+    expect(body.id).to.match(Test.REGEXP.ID)
     expect(body.l).to.be.eql(1)
     expect(body.a).to.be.eql('12345678')
     expect(body.x).to.be.eql(2)
@@ -171,11 +169,11 @@ function testApiMinimalPiece (api, room) {
     expect(body.z).to.be.eql(4)
   }, 201)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(1)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -185,38 +183,38 @@ function testApiMinimalPiece (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceID (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal() }
   }, body => {
-    expect(body.id).to.be.match(REGEXP.ID)
+    expect(body.id).to.be.match(Test.REGEXP.ID)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, id: '87654321' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), id: '87654321' }
   }, body => {
-    expect(body.id).to.be.match(REGEXP.ID)
+    expect(body.id).to.be.match(Test.REGEXP.ID)
     expect(body.id).not.to.be.eql('87654321')
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, id: '8765432' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), id: '8765432' }
   }, body => {
     expect(body._messages[0]).to.match(/ id does not match/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, id: '876543210' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), id: '876543210' }
   }, body => {
     expect(body._messages[0]).to.match(/ id does not match/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(2)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -226,50 +224,50 @@ function testApiPieceID (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceL (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 0 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 0 }
   }, body => {
     expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 6 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 6 }
   }, body => {
     expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 'one' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 'one' }
   }, body => {
     expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: [1] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: [1] }
   }, body => {
     expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: '1' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: '1' }
   }, body => {
     expect(body.l).not.to.be.eq('1')
     expect(body.l).to.be.eq(1)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 1.9 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 1.9 }
   }, body => {
     expect(body._messages[0]).to.match(/ l not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(1)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -279,31 +277,31 @@ function testApiPieceL (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceA (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: '1234567' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: '1234567' }
   }, body => {
     expect(body._messages[0]).to.match(/ a does not match/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: '123456789' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: '123456789' }
   }, body => {
     expect(body._messages[0]).to.match(/ a does not match/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: '1234$678' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: '1234$678' }
   }, body => {
     expect(body._messages[0]).to.match(/ a does not match/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(0)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -313,50 +311,50 @@ function testApiPieceA (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceX (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, x: -100000000 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), x: -100000000 }
   }, body => {
     expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, x: 100000000 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), x: 100000000 }
   }, body => {
     expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, x: 'ten' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), x: 'ten' }
   }, body => {
     expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, x: '[8]' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), x: '[8]' }
   }, body => {
     expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, x: '10' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), x: '10' }
   }, body => {
     expect(body.x).not.to.be.eq('10')
     expect(body.x).to.be.eq(10)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, x: 10.9 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), x: 10.9 }
   }, body => { // xxx
     expect(body._messages[0]).to.match(/ x not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(1)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -366,50 +364,50 @@ function testApiPieceX (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceY (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, y: -100000000 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), y: -100000000 }
   }, body => {
     expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, y: 100000000 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), y: 100000000 }
   }, body => {
     expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, y: 'ten' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), y: 'ten' }
   }, body => {
     expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, y: [8] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), y: [8] }
   }, body => {
     expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, y: '10' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), y: '10' }
   }, body => {
     expect(body.y).not.to.be.eq('10')
     expect(body.y).to.be.eq(10)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, y: '10.9' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), y: '10.9' }
   }, body => { // xxx
     expect(body._messages[0]).to.match(/ y not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(1)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -419,50 +417,50 @@ function testApiPieceY (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceZ (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, z: -100000000 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), z: -100000000 }
   }, body => {
     expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, z: 100000000 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), z: 100000000 }
   }, body => {
     expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, z: 'ten' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), z: 'ten' }
   }, body => {
     expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, z: [8] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), z: [8] }
   }, body => {
     expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, z: '10' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), z: '10' }
   }, body => {
     expect(body.z).not.to.be.eq('10')
     expect(body.z).to.be.eq(10)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, z: 10.9 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), z: 10.9 }
   }, body => { // xxx
     expect(body._messages[0]).to.match(/ z not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(1)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -472,67 +470,67 @@ function testApiPieceZ (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceR (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: 0 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: 0 }
   }, body => {
     expect(body.r).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: 60 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: 60 }
   }, body => {
     expect(body.r).to.be.eq(60)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: 180.9 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: 180.9 }
   }, body => {
     expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: -1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: -1 }
   }, body => {
     expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: 360 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: 360 }
   }, body => {
     expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: 366 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: 366 }
   }, body => {
     expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: '120' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: '120' }
   }, body => {
     expect(body.r).to.be.eq(120)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: 'zero' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: 'zero' }
   }, body => {
     expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, r: [0] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), r: [0] }
   }, body => {
     expect(body._messages[0]).to.match(/ r not integer between 0 and 359/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(3)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -542,67 +540,67 @@ function testApiPieceR (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceW (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: 1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: 1 }
   }, body => {
     expect(body.w).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: 2 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: 2 }
   }, body => {
     expect(body.w).to.be.eql(2)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZY', w: -500 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZY', w: -500 }
   }, body => {
     expect(body.w).to.be.eql(-500)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZY', w: 500 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZY', w: 500 }
   }, body => {
     expect(body.w).to.be.eql(500)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: -1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: -1 }
   }, body => {
     expect(body._messages[0]).to.match(/ w not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: 33 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: 33 }
   }, body => {
     expect(body._messages[0]).to.match(/ w not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: '8' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: '8' }
   }, body => {
     expect(body.w).to.be.eq(8)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: 'eight' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: 'eight' }
   }, body => {
     expect(body._messages[0]).to.match(/ w not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: [8] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: [8] }
   }, body => {
     expect(body._messages[0]).to.match(/ w not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(4)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -612,67 +610,67 @@ function testApiPieceW (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceH (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: 1, h: 1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: 1, h: 1 }
   }, body => {
     expect(body.h).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, w: 2, h: 2 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), w: 2, h: 2 }
   }, body => {
     expect(body.h).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZY', h: -500 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZY', h: -500 }
   }, body => {
     expect(body.h).to.be.eql(-500)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZY', h: 500 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZY', h: 500 }
   }, body => {
     expect(body.h).to.be.eql(500)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, h: -1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), h: -1 }
   }, body => {
     expect(body._messages[0]).to.match(/ h not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, h: 33 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), h: 33 }
   }, body => {
     expect(body._messages[0]).to.match(/ h not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, h: '8' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), h: '8' }
   }, body => {
     expect(body.h).to.be.eq(8)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, h: 'eight' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), h: 'eight' }
   }, body => {
     expect(body._messages[0]).to.match(/ h not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, h: [8] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), h: [8] }
   }, body => {
     expect(body._messages[0]).to.match(/ h not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(4)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -682,61 +680,61 @@ function testApiPieceH (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceS (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal() }
   }, body => {
     expect(body.s).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, s: 0 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), s: 0 }
   }, body => {
     expect(body.s).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, s: 2 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), s: 2 }
   }, body => {
     expect(body.s).to.be.eql(2)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, s: -1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), s: -1 }
   }, body => {
     expect(body._messages[0]).to.match(/ s not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, s: 133 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), s: 133 }
   }, body => {
     expect(body._messages[0]).to.match(/ s not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, s: '8' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), s: '8' }
   }, body => {
     expect(body.s).to.be.eq(8)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, s: 'eight' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), s: 'eight' }
   }, body => {
     expect(body._messages[0]).to.match(/ s not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, s: [8] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), s: [8] }
   }, body => {
     expect(body._messages[0]).to.match(/ s not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(4)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -746,61 +744,61 @@ function testApiPieceS (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceN (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal() }
   }, body => {
     expect(body.n).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, n: 0 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), n: 0 }
   }, body => {
     expect(body.n).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, n: 2 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), n: 2 }
   }, body => {
     expect(body.n).to.be.eql(2)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, n: -1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), n: -1 }
   }, body => {
     expect(body._messages[0]).to.match(/ n not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, n: 36 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), n: 36 }
   }, body => {
     expect(body._messages[0]).to.match(/ n not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, n: '8' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), n: '8' }
   }, body => {
     expect(body.n).to.be.eq(8)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, n: 'eight' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), n: 'eight' }
   }, body => {
     expect(body._messages[0]).to.match(/ n not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, n: [8] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), n: [8] }
   }, body => {
     expect(body._messages[0]).to.match(/ n not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(4)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -810,85 +808,85 @@ function testApiPieceN (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceC (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal() }
   }, body => {
     expect(body.c).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: [] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: [] }
   }, body => {
     expect(body.c).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: [0] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: [0] }
   }, body => {
     expect(body.c).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: [0, 0] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: [0, 0] }
   }, body => {
     expect(body.c).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: [2] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: [2] }
   }, body => {
     expect(body.c).to.be.eql([2])
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: [2, 0] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: [2, 0] }
   }, body => {
     expect(body.c).to.be.eql([2])
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: 0 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: 0 }
   }, body => {
     expect(body._messages[0]).to.match(/ c is not an array/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: 8 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: 8 }
   }, body => {
     expect(body._messages[0]).to.match(/ c is not an array/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: [-1] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: [-1] }
   }, body => {
     expect(body._messages[0]).to.match(/some c entries are not/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: [16] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: [16] }
   }, body => {
     expect(body._messages[0]).to.match(/some c entries are not/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: ['8'] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: ['8'] }
   }, body => {
     expect(body.c).to.be.eql([8])
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, c: ['eight'] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), c: ['eight'] }
   }, body => {
     expect(body._messages[0]).to.match(/some c entries are not/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(7)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -898,85 +896,85 @@ function testApiPieceC (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceT (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal() }
   }, body => {
     expect(body.t).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: [] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), t: [] }
   }, body => {
     expect(body.t).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: [' '] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), t: [' '] }
   }, body => {
     expect(body.t).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: [' ', ' '] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), t: [' ', ' '] }
   }, body => {
     expect(body._messages[0]).to.match(/ t is not an array of length/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: ['text'] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), t: ['text'] }
   }, body => {
     expect(body.t).to.be.eql(['text'])
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: ['text', ' '] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), t: ['text', ' '] }
   }, body => {
     expect(body._messages[0]).to.match(/ t is not an array of length/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: '' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), t: '' }
   }, body => {
     expect(body._messages[0]).to.match(/ t is not an array/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: 'text' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), t: 'text' }
   }, body => {
     expect(body._messages[0]).to.match(/ t is not an array/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => { // <-
-    return { ...pieceMinimal, t: ['f'.repeat(LABEL_MAX_LENGTH + 1)] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => { // <-
+    return { ...Test.data.pieceMinimal(), t: ['f'.repeat(LABEL_MAX_LENGTH + 1)] }
   }, body => {
     expect(body._messages[0]).to.match(/ t entries do not match/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 3, t: ['y'.repeat(LABEL_MAX_LENGTH + 1)] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 3, t: ['y'.repeat(LABEL_MAX_LENGTH + 1)] }
   }, body => {
     expect(body.t).to.be.eql(['y'.repeat(LABEL_MAX_LENGTH + 1)])
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 3, t: ['z'.repeat(NOTE_MAX_LENGTH + 1)] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 3, t: ['z'.repeat(NOTE_MAX_LENGTH + 1)] }
   }, body => {
     expect(body._messages[0]).to.match(/ t entries do not match/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, t: [888] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), t: [888] }
   }, body => {
     expect(body.t).to.be.eql(['888'])
   }, 201)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(6)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -986,91 +984,91 @@ function testApiPieceT (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceB (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal() }
   }, body => {
     expect(body.b).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: [] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: [] }
   }, body => {
     expect(body.b).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: [' x '] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: [' x '] }
   }, body => {
     expect(body._messages[0]).to.match(/ b entries do not matc/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: ['  '] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: ['  '] }
   }, body => {
     expect(body._messages[0]).to.match(/ b entries do not matc/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: [' ', '  '] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: [' ', '  '] }
   }, body => {
     expect(body._messages[0]).to.match(/ b entries do not matc/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: ['texttext', '  '] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: ['texttext', '  '] }
   }, body => {
     expect(body._messages[0]).to.match(/ b entries do not matc/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: [' ', 'texttext'] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: [' ', 'texttext'] }
   }, body => {
     expect(body._messages[0]).to.match(/ b entries do not matc/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: ['texttext'] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: ['texttext'] }
   }, body => {
     expect(body.b).to.be.eql(['texttext'])
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: '' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: '' }
   }, body => {
     expect(body._messages[0]).to.match(/ b is not an array/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: 'texttext' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: 'texttext' }
   }, body => {
     expect(body._messages[0]).to.match(/ b is not an array/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: ['x'.repeat(33)] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: ['x'.repeat(33)] }
   }, body => {
     expect(body._messages[0]).to.match(/ b entries do not match/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 3, b: ['x'.repeat(33)] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 3, b: ['x'.repeat(33)] }
   }, body => {
     expect(body._messages[0]).to.match(/ b entries do not match/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, b: [12345678] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), b: [12345678] }
   }, body => {
     expect(body.b).to.be.eql(['12345678'])
   }, 201)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(4)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -1080,50 +1078,50 @@ function testApiPieceB (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceF (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, f: -1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), f: -1 }
   }, body => {
     expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, f: 0b100000000 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), f: 0b100000000 }
   }, body => {
     expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, f: 'three' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), f: 'three' }
   }, body => {
     expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, f: [3] }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), f: [3] }
   }, body => {
     expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, f: '3' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), f: '3' }
   }, body => {
     expect(body.f).not.to.be.eq('3')
     expect(body.f).to.be.eq(3)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, f: 3.9 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), f: 3.9 }
   }, body => { // xxx
     expect(body._messages[0]).to.match(/ f not integer between/)
   }, 400)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(1)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // -----------------------------------------------------------------------------
@@ -1133,73 +1131,73 @@ function testApiPieceF (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiPieceExpires (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal() }
   }, body => {
     expect(body.expires).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, expires: 1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), expires: 1 }
   }, body => {
     expect(body.expires).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, expires: 2641467929 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), expires: 2641467929 }
   }, body => {
     expect(body.expires).to.be.eql(undefined)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZY' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZY' }
   }, body => {
     expect(body.expires).to.be.gt(new Date().getTime() / 1000 - 60)
     expect(body.expires).to.be.lt(new Date().getTime() / 1000 + 60)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZY', expires: 1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZY', expires: 1 }
   }, body => {
     expect(body.expires).to.be.gt(new Date().getTime() / 1000 - 60)
     expect(body.expires).to.be.lt(new Date().getTime() / 1000 + 60)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZY', expires: 2641467929 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZY', expires: 2641467929 }
   }, body => {
     expect(body.expires).to.be.gt(new Date().getTime() / 1000 - 60)
     expect(body.expires).to.be.lt(new Date().getTime() / 1000 + 60)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZZ' }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZZ' }
   }, body => {
     expect(body.expires).to.be.gt(new Date().getTime() / 1000 - 60)
     expect(body.expires).to.be.lt(new Date().getTime() / 1000 + 60)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZZ', expires: 1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZZ', expires: 1 }
   }, body => {
     expect(body.expires).to.be.gt(new Date().getTime() / 1000 - 60)
     expect(body.expires).to.be.lt(new Date().getTime() / 1000 + 60)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, a: 'ZZZZZZZZ', expires: 2641467929 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), a: 'ZZZZZZZZ', expires: 2641467929 }
   }, body => {
     expect(body.expires).to.be.gt(new Date().getTime() / 1000 - 60)
     expect(body.expires).to.be.lt(new Date().getTime() / 1000 + 60)
   }, 201)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(5)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 /**
@@ -1207,16 +1205,16 @@ function testApiPieceExpires (api, room) {
  * @param {string} room Room name to use for test.
  */
 function testApiCreatePieces (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(0)
   })
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return [
-      { ...pieceMinimal, l: 3 },
-      { ...pieceMinimal, l: 4 }
+      { ...Test.data.pieceMinimal(), l: 3 },
+      { ...Test.data.pieceMinimal(), l: 4 }
     ]
   }, body => {
     expect(body).to.be.an('array')
@@ -1225,11 +1223,11 @@ function testApiCreatePieces (api, room) {
     expect(body[1].l).to.be.eql(4)
   }, 201)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(2)
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 const deleteIDs = []
@@ -1239,42 +1237,42 @@ const deleteIDs = []
  * @param {string} room Room name to use for test.
  */
 function testApiDeletePieces (api, room) {
-  openTestroom(api, room, 'Classic')
+  Test.openTestroom(api, room, 'Classic')
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(0)
   })
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 1 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 1 }
   }, body => {
     deleteIDs.length = 0
     deleteIDs.push(body.id)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 2 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 2 }
   }, body => {
     deleteIDs.push(body.id)
   }, 201)
 
-  testJsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
-    return { ...pieceMinimal, l: 3 }
+  Test.jsonPost(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+    return { ...Test.data.pieceMinimal(), l: 3 }
   }, body => {
     deleteIDs.push(body.id)
   }, 201)
 
-  testJsonDeleteBatch(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
+  Test.jsonDeleteBatch(api, () => `/rooms/${room}/tables/9/pieces/`, () => {
     return [deleteIDs[0], deleteIDs[2]]
   }, body => {
   }, 204)
 
-  testJsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
+  Test.jsonGet(api, () => `/rooms/${room}/tables/9/`, body => {
     expect(body.length).to.be.eql(1)
     expect(body[0].id).to.be.eql(deleteIDs[1])
   })
 
-  closeTestroom(api, room)
+  Test.closeTestroom(api, room)
 }
 
 // --- the test runners --------------------------------------------------------
@@ -1282,7 +1280,7 @@ function testApiDeletePieces (api, room) {
 /**
  * @param {object} runner Test runner to add our tests to.
  */
-export function run (runner) {
+function run (runner) {
   describe('API - pieces', function () {
     runner((api, version, room) => {
       describe('invalid pieces', () => testApiInvalidPiece(api, room))

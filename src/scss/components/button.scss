@@ -26,7 +26,7 @@
 @import '../../../node_modules/bootstrap/scss/buttons';
 
 @mixin button-color($color-text, $color-bg, $color-border) {
-  $btn-primary-glow: rgba($color-border, .25);
+  $btn-primary-glow: rgba($color-border, 0.25);
 
   // hint: we need some !important's here as BS 5.2+ startet using very specific selectors
 
@@ -69,7 +69,7 @@
   border-radius: $border-radius;
   border-width: 2px;
   font-weight: 500;
-  letter-spacing: .025em;
+  letter-spacing: 0.025em;
   min-width: px(128);
 
   &,
@@ -83,7 +83,7 @@
   }
 
   &:active {
-    opacity: .8;
+    opacity: 0.8;
   }
 
   &.active,
@@ -98,7 +98,7 @@
 
   &:disabled,
   &.disabled {
-    opacity: .25;
+    opacity: 0.25;
   }
 
   &.btn-wide {
@@ -119,7 +119,7 @@
 .btn-xs {
   #{'--bs-btn-padding-y'}: 0;
   #{'--bs-btn-padding-x'}: 0;
-  #{'--bs-btn-font-size'}: .75em;
+  #{'--bs-btn-font-size'}: 0.75em;
   #{'--bs-btn-border-radius'}: var(--bs-border-radius-sm);
   min-width: 4rem;
 }

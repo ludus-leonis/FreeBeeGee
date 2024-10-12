@@ -20,34 +20,33 @@
 
 /* global describe */
 
-import { run as runAssets } from './api/api-assets.mjs'
-import { run as runCrud } from './api/api-crud.mjs'
-import { run as runDigests } from './api/api-digests.mjs'
-import { run as runPermissions } from './api/api-permissions.mjs'
-import { run as runPieces } from './api/api-pieces.mjs'
-import { run as runServer } from './api/api-server.mjs'
-import { run as runSnapshots } from './api/api-snapshots.mjs'
-import { run as runTables } from './api/api-tables.mjs'
-import { run as runTemplates } from './api/api-templates.mjs'
-import { run as runUploads } from './api/api-uploads.mjs'
-import { run as runInstall } from './api/api-install.mjs'
+import Assets from 'test/integration/api/api-assets.mjs'
+import Crud from 'test/integration/api/api-crud.mjs'
+import Digests from 'test/integration/api/api-digests.mjs'
+import Permissions from 'test/integration/api/api-permissions.mjs'
+import Pieces from 'test/integration/api/api-pieces.mjs'
+import Server from 'test/integration/api/api-server.mjs'
+import Snapshots from 'test/integration/api/api-snapshots.mjs'
+import Tables from 'test/integration/api/api-tables.mjs'
+import Templates from 'test/integration/api/api-templates.mjs'
+import Uploads from 'test/integration/api/api-uploads.mjs'
+import Install from 'test/integration/api/api-install.mjs'
 
 const runner = function (what) {
   const room = [...Array(14)].map(() => Math.floor(Math.random() * 16).toString(16)).join('')
   const api = 'http://localhost:8765/api'
 
-  describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.local'), '81', `${room}81`) })
+  describe('PHP 8.1', function () { what(api.replace(/localhost:8765/, 'play81.localhost'), '81', `${room}81`) })
 }
 
-runAssets(runner)
-runCrud(runner)
-runDigests(runner)
-runPermissions(runner)
-runPieces(runner)
-runServer(runner)
-runSnapshots(runner)
-runTables(runner)
-runTemplates(runner)
-runUploads(runner)
-
-runInstall(runner) // last tests - destructive!
+Assets.run(runner)
+Crud.run(runner)
+Digests.run(runner)
+Permissions.run(runner)
+Pieces.run(runner)
+Server.run(runner)
+Snapshots.run(runner)
+Tables.run(runner)
+Templates.run(runner)
+Uploads.run(runner)
+Install.run(runner) // last tests - destructive!

@@ -19,16 +19,8 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../../lib/FreeDOM.mjs'
-
-import {
-  createModal,
-  getModal,
-  isModalActive,
-  modalClose
-} from '../../../view/room/modal.mjs'
-
-// --- public ------------------------------------------------------------------
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Modal from 'src/js/view/room/modal.mjs'
 
 /**
  * Show the help window.
@@ -37,9 +29,9 @@ import {
  *
  * @param {Function} callback Function to call upon modal close/wakeup.
  */
-export function modalInactive (callback) {
-  if (!isModalActive()) {
-    createModal()
+export function open (callback) {
+  if (!Modal.isOpen()) {
+    Modal.create()
 
     _('#modal-header').innerHTML = `
       <h3 class="modal-title">Time to take a break!</h3>
@@ -52,11 +44,10 @@ export function modalInactive (callback) {
       <button id='btn-close' type="button" class="btn btn-primary">Wake up!</button>
     `
 
-    _('#btn-close').on('click', () => getModal().hide())
+    _('#btn-close').on('click', () => Modal.close())
     _('#modal')
       .add('.modal-small')
-      .on('hidden.bs.modal', () => { modalClose(); callback() })
 
-    getModal().show()
+    Modal.open()
   }
 }

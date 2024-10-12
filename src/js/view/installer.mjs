@@ -19,19 +19,16 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-import _ from '../../lib/FreeDOM.mjs'
-
-import {
-  createScreen
-} from '../../view/screen.mjs'
+import _ from 'src/js/lib/FreeDOM.mjs'
+import * as Screen from 'src/js/lib/screen.mjs'
 
 /**
  * Show a install-site dialog
  *
  * @param {string} page A page of the setup wizard. Currenly always 1.
  */
-export function installer (page) {
-  createScreen(
+export function show (page) {
+  Screen.create(
     'Almost there!',
     `
       <div class="page-setup">

@@ -29,8 +29,8 @@
   border-radius: $border-radius;
   color: $color-bw-fg;
   display: none;
-  margin-left: .25em;
-  padding: .25em;
+  margin-left: 0.25em;
+  padding: 0.25em;
   z-index: $z-index-menu - 1; // right below menu bar
 
   &.show {
@@ -42,14 +42,14 @@
 
     display: block;
     line-height: 1em;
-    padding: .5em .25em;
+    padding: 0.5em 0.25em;
 
     &:hover {
       background-color: $color-secondary;
     }
 
     svg {
-      margin-right: .5em;
+      margin-right: 0.5em;
       pointer-events: none;
     }
 
