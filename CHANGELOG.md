@@ -19,6 +19,7 @@ Download current and previous releases from [https://github.com/ludus-leonis/Fre
 * improved token number circle to have material
 * improved blue main menu bar
 * improved material display on transparent png pieces
+* improved allowed characters in snapshot filenames
 * fixed pointer/los-line part of selection
 * fixed token label has sometimes odd cut-off
 * fixed missing material on default upload preview token

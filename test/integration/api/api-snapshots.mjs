@@ -18,7 +18,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global describe */
+/* global describe, Buffer */
 
 // -----------------------------------------------------------------------------
 
@@ -170,6 +170,62 @@ function testApiSnapshotTutorial (api, room) {
   }, 200)
 
   Test.closeTestroom(api, room)
+}
+
+// -----------------------------------------------------------------------------
+
+/**
+ * @param {string} api API root path.
+ * @param {string} room Room name to use for test.
+ */
+function testApiSnapshoInvalid (api, room) {
+  Test.jsonPost(api, () => '/rooms/', () => {
+    return {
+      name: room,
+      snapshot: 'unkown',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body._error).to.be.eql('GENERIC_ERROR')
+    expect(body._messages[0]).to.match(/snapshot unkown.zip not available/)
+  }, 400)
+
+  Test.jsonPost(api, () => '/rooms/', () => {
+    return {
+      name: room,
+      snapshot: '_öäü 2024.10.12',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body._error).to.be.eql('GENERIC_ERROR')
+    expect(body._messages[0]).to.match(/snapshot _öäü 2024.10.12.zip not available/)
+  }, 400)
+
+  Test.jsonPost(api, () => '/rooms/', () => {
+    return {
+      name: room,
+      snapshot: '../../../../../../../../file.txt',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body._error).to.be.eql('GENERIC_ERROR')
+    expect(body._messages[0]).to.match(/snapshot does not match/)
+  }, 400)
+
+  Test.jsonPost(api, () => '/rooms/', () => {
+    return {
+      name: room,
+      snapshot: 'aaaaa\x00bbbbb',
+      auth: 'apitests'
+    }
+  }, body => {
+    expect(body).to.be.an('object')
+    expect(body._error).to.be.eql('GENERIC_ERROR')
+    expect(body._messages[0]).to.match(/snapshot does not match/)
+  }, 400)
 }
 
 // -----------------------------------------------------------------------------
@@ -445,6 +501,7 @@ function run (runner) {
       describe('RPG', () => testApiSnapshotRPG(api, room))
       describe('Hex', () => testApiSnapshotHex(api, room))
       describe('Tutorial', () => testApiSnapshotTutorial(api, room))
+      describe('invalid', () => testApiSnapshoInvalid(api, room))
       describe('upload', () => testApiSnapshotUpload(api, room))
       describe('versions', () => testApiSnapshotVersions(api, room))
       describe('size', () => testApiSnapshotSize(api, room))

@@ -49,5 +49,4 @@ Snapshots.run(runner)
 Tables.run(runner)
 Templates.run(runner)
 Uploads.run(runner)
-
 Install.run(runner) // last tests - destructive!

@@ -18,7 +18,7 @@
  * along with FreeBeeGee. If not, see <https://www.gnu.org/licenses/>.
  */
 
-/* global describe */
+/* global describe, Buffer */
 
 // -----------------------------------------------------------------------------
 

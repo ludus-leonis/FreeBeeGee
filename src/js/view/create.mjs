@@ -119,8 +119,9 @@ export function show (name) {
 
       t.innerHTML = ''
       for (const snapshot of Text.sortString(snapshots ?? [], 'name')) {
-        const option = _('option').create(snapshot.name + (snapshot.system ? '' : ' (custom)'))
-        option.value = snapshot.name
+        const name = new Option(snapshot.name).innerHTML
+        const option = _('option').create(name + (snapshot.system ? '' : ' (custom)'))
+        option.value = name
         if (snapshot.name === preselected) option.selected = true
         t.add(option)
       }
