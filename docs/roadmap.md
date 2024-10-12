@@ -9,9 +9,9 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
 * [X] random 360° rotation for pieces via Alt+r
 * [X] different blue menu for measure and non-measure mode
 * [X] use png for mask
-* [ ] pre-release
-  * [ ] bump dependencies
-  * [ ] bugfixes + refactoring
+* [X] pre-release
+  * [X] bump dependencies
+  * [X] bugfixes + refactoring
     * [X] note padding won't zoom properly
     * [X] clone no-clone object disables edit without reselection
     * [X] refactor imports and module responsibility
@@ -21,16 +21,17 @@ This document is part of the [FreeBeeGee documentation](DOCS.md). It contains a 
     * [X] token number material
     * [X] upload preview - no shadow
     * [X] upload preview - no material on default token
-  * [ ] review docs
-  * [ ] review tutorial
-  * [ ] bump engine, version/codename & update CHANGELOG
-  * [ ] review + run tests
-  * [ ] update screenshots
+  * [X] review docs
+  * [X] review tutorial
+  * [X] bump engine, version/codename & update CHANGELOG
+  * [X] review + run tests
+  * [X] update screenshots
 
 ## Backlog
 
 ### rather sooner (before v1)
 
+* [ ] update screenshots (new nav)
 * [ ] refactor: always use getFeatures([piece]) to check
 * [ ] refactor: test selectionFeatures() for mixed selections, e.g. .flip
 * [ ] refactor: always use numeric layer number in 'l' (no string translation)

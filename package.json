@@ -1,9 +1,9 @@
 {
   "name": "FreeBeeGee",
-  "version": "0.24.0-dev1",
+  "version": "0.24.0",
   "versionEngine": "2.6.1",
   "type": "module",
-  "codename": "??? ???",
+  "codename": "Relieved Raven",
   "description": "A virtual tabletop for board games and RPGs.",
   "engines": {
     "npm": ">=8.0.0",
@@ -39,6 +39,7 @@
     "lint:js": "eslint src/js/ *.js *.mjs",
     "lint:sass": "stylelint 'src/scss/**/*.scss'",
     "lint:php": "tools/phpcs.phar --standard=PSR12 src/php/",
+    "test": "npm-run-all test:unit test:api",
     "test:api": "npm-run-all clean:cache dist:test test:api:all",
     "test:api:all": "mocha test/integration/runner-all.mjs",
     "test:api:latest": "mocha test/integration/runner-latest.mjs",

@@ -2,7 +2,7 @@
 
 Download current and previous releases from [https://github.com/ludus-leonis/FreeBeeGee/releases](https://github.com/ludus-leonis/FreeBeeGee/releases).
 
-## v0.24.0 - ??? ???
+## v0.24.0 - Relieved Raven
 
 ### Notable changes
 
