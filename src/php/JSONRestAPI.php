@@ -928,8 +928,8 @@ class JSONRestAPI
     public function sendReply(
         int $code = 200,
         ?string $body = '',
-        string $location = null,
-        string $digest = null
+        ?string $location = null,
+        ?string $digest = null
     ): void {
         if ($this->http) { // regular mode uses HTTP replies
             http_response_code($code);
@@ -1113,7 +1113,7 @@ class JSONRestAPI
      * @return string A UUID, e.g. '8b8deba5-640b-4388-a2cc-3a4c56af9fb8'.
      */
     public static function uuid(
-        string $seed = null
+        ?string $seed = null
     ): string {
         $data = $seed ?? random_bytes(16);
         $data[6] = chr(ord($data[6]) & 0x0f | 0x40);
@@ -1147,7 +1147,7 @@ class JSONRestAPI
      * @return string 16-digit hex string, e.g. 'a2cc3a4c56af9fb8'.
      */
     public static function id(
-        string $seed = null
+        ?string $seed = null
     ): string {
         if ($seed) {
             $data = substr($seed . '1234567890', 0, 8);
@@ -1167,7 +1167,7 @@ class JSONRestAPI
      * @return string 8-digit base-64 string, e.g. 'a2-Jc5Xe'.
      */
     public static function id64(
-        int $seed = null
+        ?int $seed = null
     ): string {
         $letters = 'abcdefghijklmnopqrstuvwxyz'
             . 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';

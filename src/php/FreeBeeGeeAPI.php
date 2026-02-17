@@ -1240,7 +1240,7 @@ class FreeBeeGeeAPI
     public function cleanupTable(
         array $table,
         bool $assignIds = false,
-        object $library = null
+        ?object $library = null
     ): array {
         $clean = [];
         foreach ($table as $piece) {
@@ -1279,7 +1279,7 @@ class FreeBeeGeeAPI
     public function cleanupPiece(
         object $piece,
         bool $assignId = false,
-        object $library = null
+        ?object $library = null
     ): object {
         $out = new \stdClass();
 
@@ -3010,7 +3010,7 @@ class FreeBeeGeeAPI
      * @returns {String} A random ID.
      */
     public static function generateId(
-        int $seed = null
+        ? int $seed = null
     ) {
         return JSONRestAPI::id64($seed);
     }
