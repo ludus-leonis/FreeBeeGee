@@ -20,4 +20,6 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ ./index.php?path=$1 [NC,L,QSA]
 
 # PHP
-php_flag display_startup_errors off
+<IfModule mod_php.c>
+    php_flag display_startup_errors off
+</IfModule> 
